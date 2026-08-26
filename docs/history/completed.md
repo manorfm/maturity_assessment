@@ -42,3 +42,8 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   confiança sensível a contradições e radar navegável com próximos passos.
 - Adicionados deep dives de incidentes e fluxo de trabalho, com variantes por
   perspectiva, causas sociotécnicas e recomendações condicionadas ao diagnóstico.
+
+## 2026-08-26
+
+- Adicionados sinais entre capacidades, melhoria contínua, contexto de superfície
+  compartilhada e classificação hierárquica limitada pelo elo mais frágil.

@@ -65,8 +65,8 @@
 
 ## Relatórios e recomendações
 
-- evolução do radar direcional para explicitar cobertura, confiança e relações entre
-  capacidades sem produzir uma nota global;
+- calibrar a classificação por elo limitante e a relação entre sinais cruzados,
+  cobertura e confiança sem convertê-la em ranking de times;
 - cadeia de evidências navegável para cada finding;
 - recomendações como experimentos, com custo, dependências e sinal de sucesso;
 - exportação controlada e relatórios para públicos com diferentes níveis de detalhe;

@@ -1,6 +1,7 @@
 import type { Database } from '../../shared/database.js';
 import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
+import { TeamClassification } from './domain/team-classification.js';
 
 type AggregateResponse = { capability: string; pattern: string; weight: number; total: number };
 type Finding = { capability: string; pattern: string; title: string; evidence: number; intervention: string };
@@ -95,6 +96,30 @@ const recommendations: Record<string, { title: string; intervention: string }> =
   'solucao-entregue-pronta': { title: 'A solução chega pronta para implementação', intervention: 'Inclua negócio, produto e competências técnicas na comparação de opções antes de fechar o próximo desenho relevante.' },
   'decisao-concentrada': { title: 'Decisões dependem de uma referência técnica', intervention: 'Registre contexto e trade-offs de uma decisão e faça outra pessoa conduzir sua revisão usando os mesmos critérios.' },
   'decisao-por-inercia': { title: 'Padrões só são revistos depois que falham', intervention: 'Defina um sinal de custo ou risco que dispara revisão do padrão antes da próxima mudança difícil.' },
+  'retrospectiva-sem-fechamento': { title: 'Ações de melhoria perdem dono e continuidade', intervention: 'Limite a próxima reflexão a uma mudança, com responsável, capacidade reservada, sinal de sucesso e revisão marcada.' },
+  'melhoria-sem-prioridade': { title: 'Melhoria não compete explicitamente por capacidade', intervention: 'Reserve um limite pequeno de capacidade e compare recorrência, espera ou retrabalho antes e depois da ação.' },
+  'cerimonia-sem-adaptacao': { title: 'A reflexão virou cerimônia sem efeito', intervention: 'Suspenda a coleta ampla de opiniões e use um evento recente para escolher uma decisão concreta que o grupo pode revisar.' },
+  'processo-sem-autonomia': { title: 'O grupo executa o processo sem poder adaptá-lo', intervention: 'Explicite quais partes são obrigatórias, quais riscos protegem e qual experimento o grupo pode conduzir com segurança.' },
+  'melhoria-reativa': { title: 'O sistema só muda depois de crise ou cobrança', intervention: 'Defina um gatilho antecipado de espera, recorrência ou desgaste e revise-o antes do próximo incidente grave.' },
+  'mudanca-centralizada': { title: 'Mudanças no modo de trabalhar dependem da liderança', intervention: 'Delegue ao grupo um experimento reversível com limite, prazo e resultado observável.' },
+  'causa-melhoria-sem-capacidade': { title: 'Entregas consomem toda capacidade de melhoria', intervention: 'Pare uma iniciativa pequena e use essa capacidade para remover o gargalo recorrente de maior espera.' },
+  'causa-melhoria-sem-autonomia': { title: 'Causas reconhecidas estão fora da autonomia do grupo', intervention: 'Crie um caminho de escalada com impacto, responsável sistêmico e prazo de decisão, não apenas status.' },
+  'causa-acoes-sem-foco': { title: 'Ações de melhoria excedem a capacidade de concluir', intervention: 'Limite trabalho de melhoria em andamento e encerre explicitamente ações sem dono ou sinal de efeito.' },
+  'causa-baixa-seguranca-psicologica': { title: 'Riscos pessoais reduzem a qualidade da reflexão', intervention: 'Use facilitação segura, fatos do sistema e acompanhamento não punitivo; verifique se temas difíceis passam a aparecer.' },
+  'mudanca-sobrescrita': { title: 'Mudanças concorrentes podem substituir entregas', intervention: 'Defina uma única origem reproduzível e bloqueie promoção de versões que não incorporam a linha compartilhada verificada.' },
+  'fonte-nao-confiavel': { title: 'A versão válida não possui origem inequívoca', intervention: 'Escolha um artefato crítico, torne sua proveniência verificável e remova um caminho alternativo de produção.' },
+  'comunicacao-de-mudanca-fragil': { title: 'Segurança da mudança depende de aviso manual', intervention: 'Torne ownership e alterações incompatíveis detectáveis no fluxo, preservando comunicação para decisões e não sincronização básica.' },
+  'conflito-de-integracao-tardio': { title: 'Times encontram incompatibilidades perto da liberação', intervention: 'Integre duas mudanças concorrentes enquanto ainda pequenas e adicione a verificação que teria antecipado o último conflito.' },
+  'fronteira-compartilhada-acoplada': { title: 'A superfície compartilhada não acompanha ownership', intervention: 'Mapeie frequência de mudança e responsáveis e teste um limite ou contrato que reduza alterações cruzadas.' },
+  'concorrencia-coordenada-manualmente': { title: 'Colisões são evitadas por coordenação constante', intervention: 'Automatize uma verificação de concorrência ou contrato e meça a redução de alinhamentos necessários.' },
+  'planejamento-compensa-acoplamento': { title: 'Mais planejamento compensa feedback técnico tardio', intervention: 'Reduza o intervalo até a primeira composição verificável antes de adicionar outra cerimônia de alinhamento.' },
+  'causa-multiplas-fontes': { title: 'Mais de um caminho produz a versão válida', intervention: 'Eleja uma fonte verificável, registre proveniência e desative gradualmente caminhos paralelos.' },
+  'causa-limites-sem-ownership': { title: 'Limites técnicos e de responsabilidade divergem', intervention: 'Teste um ownership alinhado à jornada ou um contrato explícito na área de maior mudança cruzada.' },
+  'causa-prioridades-na-superficie': { title: 'Times compartilham código sem compartilhar resultado', intervention: 'Defina objetivo, regra de decisão e responsabilidade comuns para uma mudança concorrente.' },
+  'causa-verificacao-concorrente': { title: 'Falta feedback antecipado entre mudanças concorrentes', intervention: 'Adicione uma verificação reproduzível para contrato, configuração ou composição antes da liberação conjunta.' },
+  'estrutura-definida-centralmente': { title: 'A estrutura muda sem experimento conduzido pelo grupo', intervention: 'Inclua as pessoas afetadas, explicite hipótese de desenho e revise carga, fluxo e conflitos após a mudança.' },
+  'coordenacao-compensa-carga': { title: 'Coordenação cresce no lugar de reduzir carga cognitiva', intervention: 'Identifique uma responsabilidade que pode sair, ser automatizada ou receber fronteira mais clara antes de adicionar papéis.' },
+  'estrutura-implicita': { title: 'Responsabilidades mudam informalmente sob pressão', intervention: 'Torne explícito ownership, limites e modo de interação de uma jornada e revise-o após uma entrega real.' },
 };
 
 const capabilityLabels: Record<string, string> = {
@@ -112,17 +137,27 @@ export class InferenceService {
 
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
-    if (completed < minimum) return { completed, minimum, findings: [] as Finding[], capabilities: [] as CapabilityLevel[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
+    if (completed < minimum) return { completed, minimum, classification: null, findings: [] as Finding[], capabilities: [] as CapabilityLevel[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
     const capabilities = this.capabilities(projectId);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
-    const scopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
+    const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
       findings: this.findings(projectId, scope.completed, scope.id),
       capabilities: this.capabilities(projectId, scope.id),
       perspectiveGaps: this.perspectiveGaps(projectId, minimum, scope.id),
     }));
-    return { completed, minimum, findings, capabilities, perspectiveGaps, scopes };
+    const scopes: ScopeReport[] = rawScopes.map((scope) => {
+      const local = TeamClassification.from(scope.capabilities);
+      const descendants = rawScopes
+        .filter((candidate) => candidate.path.startsWith(`${scope.path}/`))
+        .map((candidate) => TeamClassification.at(TeamClassification.from(candidate.capabilities).level, [candidate.path]));
+      return { ...scope, classification: local.constrainedBy(descendants) };
+    });
+    const classification = TeamClassification.from(capabilities).constrainedBy(
+      rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
+    );
+    return { completed, minimum, classification, findings, capabilities, perspectiveGaps, scopes };
   }
 
   private capabilities(projectId: string, unitId?: string): CapabilityLevel[] {
@@ -249,5 +284,5 @@ export class InferenceService {
   }
 }
 
-type ScopeReport = { id: string; path: string; completed: number; findings: Finding[]; capabilities: CapabilityLevel[]; perspectiveGaps: PerspectiveGap[] };
+type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; capabilities: CapabilityLevel[]; perspectiveGaps: PerspectiveGap[] };
 type QueryScope = { sql: string; parameters: string[] };

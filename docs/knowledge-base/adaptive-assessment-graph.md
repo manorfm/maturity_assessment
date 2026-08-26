@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão `sociotechnical-depth-v5` começa por uma escolha neutra de perspectiva e também
+A versão `cross-capability-v6` começa por uma escolha neutra de perspectiva e também
 persiste variantes de texto por perfil.
 Elas alteram contexto e linguagem do nó, preservando opções e sinais compartilhados
 quando a capacidade observada é a mesma.
@@ -37,7 +37,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O percurso-base atual contém vinte e oito nós e cobre eventos de priorização, integração,
+O percurso-base atual contém trinta e três nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura e aprendizado após falhas. Quantidade de perguntas
 não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
@@ -60,6 +60,16 @@ runtime, configuração, infraestrutura ou dados.
 O ramo de trabalho verifica se uma iteração é orientada a resultado ou ocupação,
 como o grupo reage a bloqueios e se decisões chegam como solução pronta, escolha
 concentrada, convenção por inércia ou trade-off intencionalmente revisável.
+
+O ramo de melhoria verifica consequência em vez de frequência da cerimônia: ação
+limitada, ownership, capacidade, revisão de efeito, autonomia e segurança para
+expor problemas. As respostas geram sinais cruzados somente quando a cadeia completa
+afeta mais de uma capacidade.
+
+Um nó de contexto sem sinais identifica se a superfície de mudança pertence a um
+time ou é alterada por vários. Apenas os casos compartilhados aprofundam colisão,
+sobrescrita, integração tardia, coordenação manual, fonte reproduzível, limites de
+arquitetura, prioridades e verificações entre times.
 
 ## Duas passagens de raciocínio
 

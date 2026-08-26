@@ -120,6 +120,19 @@ test('fluxo de trabalho investiga objetivo bloqueio e decisão antes da constru�
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'decision-context', 'options-recorded'), 'change-verification');
 });
 
+test('aprendizado gera sinais cruzados e compartilhamento aprofunda apenas quando aplicável', () => {
+  const db = createDatabase(':memory:');
+  const catalog = new CatalogService(db);
+  const reflection = catalog.getNode(GRAPH_VERSION, 'improvement-loop')!;
+  const sustained = reflection.options.find((option) => option.id === 'owned-and-verified')!;
+  assert.deepEqual(new Set(sustained.signals.map((signal) => signal.capability)), new Set(['aprendizado', 'organizacao', 'fluxo']));
+  const context = catalog.getNode(GRAPH_VERSION, 'shared-surface-context')!;
+  assert.equal(context.options.every((option) => option.signals.length === 0), true);
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-context', 'single-owner'), 'team-health');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-context', 'multiple-teams'), 'shared-surface-risk');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-risk', 'overwritten-change'), 'shared-surface-cause');
+});
+
 test('validador rejeita ciclos e nós inalcançáveis antes da publicação', () => {
   const node = (id: string) => ({ id, title: id, scenario: id, prompt: id, options: [{ id: 'ok', label: 'ok', signals: [] }] });
   assert.throws(() => validateGraphDefinition([node('a'), node('b')], [{ from: 'a', to: 'a' }], 'a'), /cycle/);
@@ -179,19 +192,22 @@ test('suprime toda a cadeia quando uma partição irmã é pequena', () => {
   const timeA = units.find((unit) => unit.path === 'Empresa/Time A')!;
   const timeB = units.find((unit) => unit.path === 'Empresa/Time B')!;
 
-  const complete = (token: string) => {
+  const complete = (token: string, constrained = false) => {
     const claimed = invitations.claim(token) as { resumeToken: string };
     while (participations.find(claimed.resumeToken)?.status === 'in_progress') {
       const current = participations.find(claimed.resumeToken)!;
       const node = new CatalogService(db).getNode(current.graph_version, current.current_node)!;
-      participations.answer(claimed.resumeToken, node.options[0]!.id);
+      participations.answer(claimed.resumeToken, constrained && node.id === 'improvement-loop' ? 'ceremony-report' : node.options[0]!.id);
     }
   };
-  invitations.createBatch(String(project.id), timeA.id, 5).tokens.forEach(complete);
-  invitations.createBatch(String(project.id), timeB.id, 1).tokens.forEach(complete);
+  invitations.createBatch(String(project.id), timeA.id, 5).tokens.forEach((token) => complete(token));
+  invitations.createBatch(String(project.id), timeB.id, 1).tokens.forEach((token) => complete(token, true));
   assert.deepEqual(inference.report(String(project.id), 5).scopes, []);
 
-  invitations.createBatch(String(project.id), timeB.id, 4).tokens.forEach(complete);
-  const paths = inference.report(String(project.id), 5).scopes.map((scope) => scope.path);
+  invitations.createBatch(String(project.id), timeB.id, 4).tokens.forEach((token) => complete(token, true));
+  const report = inference.report(String(project.id), 5);
+  const paths = report.scopes.map((scope) => scope.path);
   assert.deepEqual(paths, ['Empresa', 'Empresa/Time A', 'Empresa/Time B']);
+  const timeBClassification = report.scopes.find((scope) => scope.path === 'Empresa/Time B')!.classification;
+  assert.equal(report.classification!.level, timeBClassification.level);
 });

@@ -2,7 +2,7 @@ import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { edges, graph, GRAPH_VERSION, nodeVariants, type AssessmentEdge, type AssessmentNode, type Option } from './assessment-graph.js';
 
-type NodeRow = { node_key: string; node_type: 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
+type NodeRow = { node_key: string; node_type: 'context' | 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
 type OptionRow = { option_key: string; label: string; capability: string | null; pattern: string | null; weight: number | null };
 
 export class CatalogService {

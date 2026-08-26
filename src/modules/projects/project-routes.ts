@@ -58,7 +58,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       : '<p class="notice">Ainda não há um padrão problemático com evidência agregada suficiente.</p>';
     const gaps = report.perspectiveGaps.map((gap) => `<article class="card"><span class="tag">divergência agregada</span><h3>${escapeHtml(gap.title)}</h3><p>Uma prática aparece mais sustentável para ${escapeHtml(gap.strongerProfiles.join(', '))}, enquanto restrições são percebidas por ${escapeHtml(gap.constrainedProfiles.join(', '))}. Investigue visibilidade, fronteiras e autonomia antes de atribuir causa.</p></article>`).join('');
     const capabilityMap = report.capabilities.length ? renderCapabilityRadar(report.capabilities, report.findings, 'global') : '';
-    const scopeReports = report.scopes.map((scope, index) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="muted">· grupo elegível</span></summary>${scope.capabilities.length ? renderCapabilityRadar(scope.capabilities, scope.findings, `scope-${index}`) : ''}${scope.findings.length ? scope.findings.map((finding) => `<article><h3>${escapeHtml(finding.title)}</h3><p>${escapeHtml(finding.intervention)}</p></article>`).join('') : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
+    const classification = report.classification ? renderClassification(report.classification) : '';
+    const scopeReports = report.scopes.map((scope, index) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification)}${scope.capabilities.length ? renderCapabilityRadar(scope.capabilities, scope.findings, `scope-${index}`) : ''}${scope.findings.length ? scope.findings.map((finding) => `<article><h3>${escapeHtml(finding.title)}</h3><p>${escapeHtml(finding.intervention)}</p></article>`).join('') : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
@@ -68,7 +69,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
         <button type="submit">Gerar links</button></form></section>
       ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
-      <section><h2>Mapa agregado</h2>${capabilityMap}${findings}</section>
+      <section><h2>Mapa agregado</h2>${classification}${capabilityMap}${findings}</section>
       ${gaps ? `<section><h2>Perspectivas</h2>${gaps}</section>` : ''}
       ${scopeReports ? `<section><h2>Mapa por estrutura</h2><p class="muted">Somente partições que preservam o grupo mínimo aparecem. Contagens e alternativas individuais são suprimidas.</p>${scopeReports}</section>` : ''}
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
@@ -96,6 +97,10 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const batch = invitations.reissueBatch(String(auth.project.id), batchId);
     return reply.type('text/html').send(invitationLinksPage(request.protocol, request.host, batch.tokens, auth.params));
   });
+}
+
+function renderClassification(classification: { level: number; label: string; limitingCapabilities: string[] }): string {
+  return `<article class="classification"><p class="eyebrow">Classificação sociotécnica</p><div class="classification-level">${classification.level} · ${escapeHtml(classification.label)}</div><p>Limitada por: ${escapeHtml(classification.limitingCapabilities.join(', '))}.</p><p class="muted">O nível representa o elo mais frágil com evidência suficiente; capacidades fortes não compensam gargalos nem unidades descendentes.</p></article>`;
 }
 
 function renderCapabilityRadar(

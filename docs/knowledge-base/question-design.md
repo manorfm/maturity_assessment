@@ -105,6 +105,18 @@ Os sinais podem indicar integração tardia, branches longevas, ownership ambíg
 ausência de fonte confiável, dependência coordenada manualmente, acoplamento e
 limites organizacionais desalinhados ao sistema.
 
+Antes do deep dive, usar um nó de contexto sem sinal para confirmar se mais de um
+time altera diretamente a mesma superfície. Ownership exclusivo segue adiante sem
+ser premiado; compartilhamento abre cenários sobre sobrescrita, colisão, composição,
+proveniência e comunicação.
+
+### Reflexão e melhoria contínua
+
+Não perguntar apenas se existe retrospectiva. Reconstruir encontros recentes e
+verificar quantas mudanças foram escolhidas, quem assumiu, como ganharam capacidade,
+quando retornaram à pauta e qual efeito alterou a decisão. Cerimônia recorrente sem
+adaptação é um sinal diferente de ação bloqueada por governança ou baixa autonomia.
+
 ### Agilidade declarada e fluxo em cascata
 
 Não perguntar “vocês são ágeis?”. Reconstruir a jornada de uma necessidade recente:

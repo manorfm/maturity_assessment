@@ -88,7 +88,7 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com vinte e oito nós, aprofundamentos
+O corte vigente implementa esses cinco passos com trinta e três nós, aprofundamentos
 condicionais e perspectivas de gestão, produto, qualidade, engenharia e
 plataforma/operações escolhidas durante a entrevista.
 
@@ -96,6 +96,10 @@ O cálculo de nível e confiança vive no domínio de inferência. Sinais contra
 reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível e
 links nativos para abrir diagnóstico e próximos passos de cada eixo, sem framework
 de frontend ou duplicação da regra de inferência.
+
+`TeamClassification` encapsula a escala e a regra de elo limitante. O serviço de
+inferência calcula classificações locais e aplica a menor classificação descendente
+somente entre recortes já liberados pelas proteções de anonimato.
 
 ## Agregação hierárquica segura
 

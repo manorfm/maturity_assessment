@@ -37,6 +37,10 @@ As agregações preservam distribuição, confiança, divergências e volume suf
 não calculam apenas média. Um resultado global alto não esconde um gargalo crítico,
 e um time forte não compensa matematicamente uma restrição organizacional.
 
+A classificação sociotécnica de cada unidade usa seu elo confiável mais frágil. Na
+consolidação, o ancestral é limitado pela unidade descendente publicável de menor
+nível, mantendo no relatório tanto a origem do limite quanto os radares locais.
+
 ## Regra de anonimato
 
 Uma visão só é liberada quando atinge o limiar mínimo de participantes concluídos.

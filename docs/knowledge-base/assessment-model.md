@@ -86,6 +86,20 @@ em vez de desaparecerem em uma média. Um comportamento positivo é aprofundado 
 verificar consistência sob urgência; um comportamento frágil abre discriminação de
 causas prováveis. O resultado continua sujeito a calibração empírica.
 
+## Classificação sociotécnica
+
+Cada recorte elegível recebe `Opaco`, `Reativo`, `Repetível`, `Gerenciado` ou
+`Adaptativo`. A classificação usa a menor capacidade com confiança mínima, não a
+média. Ao consolidar a hierarquia, uma unidade ancestral também é limitada pela
+classificação mais baixa entre descendentes publicáveis. O relatório preserva as
+capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
+isso evita que uma squad forte esconda outra bloqueada.
+
+Uma opção pode produzir sinais em várias capacidades quando o mesmo comportamento
+possui efeitos sociotécnicos demonstráveis. Uma melhoria com dono e efeito revisto,
+por exemplo, sustenta aprendizado, organização e fluxo; a presença nominal de uma
+retrospectiva continua sem pontuação.
+
 ## Tipos de evidência
 
 - escolha em cenário com trade-off real;

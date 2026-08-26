@@ -76,9 +76,10 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
   return {
     completed: report.completed,
     minimum: report.minimum,
+    classification: report.classification,
     findings: report.findings.map(finding),
     capabilities: report.capabilities,
     perspectiveGaps: report.perspectiveGaps,
-    scopes: report.scopes.map((scope) => ({ path: scope.path, findings: scope.findings.map(finding), capabilities: scope.capabilities, perspectiveGaps: scope.perspectiveGaps })),
+    scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, findings: scope.findings.map(finding), capabilities: scope.capabilities, perspectiveGaps: scope.perspectiveGaps })),
   };
 }

@@ -1,11 +1,11 @@
-export const GRAPH_VERSION = 'sociotechnical-depth-v5';
+export const GRAPH_VERSION = 'cross-capability-v6';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
 export type Signal = { capability: string; pattern: string; weight: number };
 export type Option = { id: string; label: string; signals: Signal[] };
 export type AssessmentNode = {
   id: string;
-  type?: 'scenario' | 'probe';
+  type?: 'context' | 'scenario' | 'probe';
   title: string;
   scenario: string;
   prompt: string;
@@ -345,6 +345,101 @@ export const graph: AssessmentNode[] = [
       { id: 'accountability-person', label: 'Identifica quem deveria ter evitado a falha e reforça revisão, atenção ou aprovação nessa etapa.', signals: [{ capability: 'organizacao', pattern: 'culpa-e-controle', weight: -2 }] },
       { id: 'private-resolution', label: 'Lideranças e especialistas resolvem o caso em um grupo pequeno para reduzir exposição e recuperar a entrega.', signals: [{ capability: 'aprendizado', pattern: 'aprendizado-restrito', weight: -2 }] },
       { id: 'move-on', label: 'Corrige o efeito imediato; com a pressão seguinte, a análise mais ampla perde prioridade.', signals: [{ capability: 'confiabilidade', pattern: 'incidente-sem-aprendizado', weight: -2 }] },
+    ], next: 'improvement-loop',
+  },
+  {
+    id: 'improvement-loop', title: 'O que muda após refletir sobre o trabalho?',
+    scenario: 'Pense nas últimas vezes em que o grupo parou para revisar entrega, colaboração, incidentes ou forma de trabalhar. O encontro pode ter qualquer nome e frequência.',
+    prompt: 'Qual consequência aparece com mais consistência nas semanas seguintes?',
+    options: [
+      { id: 'owned-and-verified', label: 'Poucas mudanças são escolhidas pelo grupo, recebem responsável e condição de sucesso, voltam à pauta e são ajustadas até produzir efeito.', signals: [
+        { capability: 'aprendizado', pattern: 'melhoria-com-ciclo-fechado', weight: 2 },
+        { capability: 'organizacao', pattern: 'melhoria-com-ownership', weight: 2 },
+        { capability: 'fluxo', pattern: 'melhoria-protegida-no-fluxo', weight: 1 },
+      ] },
+      { id: 'action-list-fades', label: 'A conversa gera ações, mas elas competem com entregas, perdem responsáveis ou deixam de ser revisitadas.', signals: [
+        { capability: 'aprendizado', pattern: 'retrospectiva-sem-fechamento', weight: -2 },
+        { capability: 'governanca', pattern: 'melhoria-sem-prioridade', weight: -1 },
+      ] },
+      { id: 'ceremony-report', label: 'O encontro acontece no calendário e registra percepções, porém raramente muda decisão, processo ou capacidade reservada.', signals: [
+        { capability: 'aprendizado', pattern: 'cerimonia-sem-adaptacao', weight: -2 },
+        { capability: 'organizacao', pattern: 'processo-sem-autonomia', weight: -1 },
+      ] },
+      { id: 'only-after-crisis', label: 'Mudanças no modo de trabalhar surgem principalmente após crise ou cobrança externa, conduzidas por liderança ou especialistas.', signals: [
+        { capability: 'aprendizado', pattern: 'melhoria-reativa', weight: -2 },
+        { capability: 'organizacao', pattern: 'mudanca-centralizada', weight: -1 },
+      ] },
+    ],
+  },
+  {
+    id: 'improvement-cause', type: 'probe', title: 'O que impede a melhoria de fechar o ciclo?',
+    scenario: 'Os mesmos temas retornam em encontros diferentes sem mudança sustentada, mesmo quando o grupo reconhece o impacto.',
+    prompt: 'Qual condição mais mantém esse padrão?',
+    options: [
+      { id: 'no-capacity', label: 'Toda a capacidade é consumida por entregas e urgências; melhorar o sistema não compete de forma explícita na priorização.', signals: [{ capability: 'governanca', pattern: 'causa-melhoria-sem-capacidade', weight: -1 }] },
+      { id: 'no-autonomy', label: 'As causas dependem de decisões, políticas ou estruturas fora da autonomia do grupo e não há caminho efetivo de escalada.', signals: [{ capability: 'organizacao', pattern: 'causa-melhoria-sem-autonomia', weight: -1 }] },
+      { id: 'too-many-actions', label: 'Muitas ações são abertas sem limite, evidência de sucesso ou encerramento explícito.', signals: [{ capability: 'aprendizado', pattern: 'causa-acoes-sem-foco', weight: -1 }] },
+      { id: 'unsafe-dialogue', label: 'Conflitos, erros e decisões difíceis são suavizados porque expô-los traz risco pessoal ou pouca mudança prática.', signals: [{ capability: 'organizacao', pattern: 'causa-baixa-seguranca-psicologica', weight: -2 }] },
+    ], next: 'shared-surface-context',
+  },
+  {
+    id: 'shared-surface-context', type: 'context', title: 'Fronteira de mudança',
+    scenario: 'Considere o código e a configuração que sustentam a principal jornada do grupo. Esta etapa apenas seleciona um cenário aplicável.',
+    prompt: 'Quem normalmente altera essa mesma superfície?',
+    options: [
+      { id: 'single-owner', label: 'Um único time mantém a maior parte dessa superfície; outros colaboram por interfaces ou pedidos explícitos.', signals: [] },
+      { id: 'multiple-teams', label: 'Vários times alteram diretamente a mesma base, configuração ou pipeline ao longo do mesmo período.', signals: [] },
+      { id: 'mixed-boundaries', label: 'Há áreas com ownership claro e outras compartilhadas conforme produto, prazo ou especialidade.', signals: [] },
+      { id: 'unknown-ownership', label: 'Não consigo identificar com segurança quem pode alterar ou quem responde por todas as partes relevantes.', signals: [] },
+    ],
+  },
+  {
+    id: 'shared-surface-risk', type: 'probe', title: 'Mudanças concorrentes na mesma superfície',
+    scenario: 'Dois grupos preparam mudanças próximas na mesma base. Uma delas altera comportamento, configuração ou sequência esperada pela outra.',
+    prompt: 'Como esse conflito normalmente se torna visível?',
+    options: [
+      { id: 'early-contract-feedback', label: 'Ownership e mudanças em curso são visíveis; integração e verificações encontram incompatibilidades enquanto os lotes ainda são pequenos.', signals: [
+        { capability: 'engenharia', pattern: 'concorrencia-detectada-cedo', weight: 2 },
+        { capability: 'organizacao', pattern: 'ownership-compartilhado-explicito', weight: 1 },
+      ] },
+      { id: 'overwritten-change', label: 'Uma versão, configuração ou pacote já foi sobrescrito ou substituído sem que o outro grupo percebesse a tempo.', signals: [
+        { capability: 'entrega', pattern: 'mudanca-sobrescrita', weight: -2 },
+        { capability: 'engenharia', pattern: 'fonte-nao-confiavel', weight: -2 },
+        { capability: 'organizacao', pattern: 'comunicacao-de-mudanca-fragil', weight: -1 },
+      ] },
+      { id: 'late-integration-conflict', label: 'Conflitos e regressões aparecem ao reunir versões ou preparar a liberação, exigindo decisão conjunta sob pressão.', signals: [
+        { capability: 'fluxo', pattern: 'conflito-de-integracao-tardio', weight: -2 },
+        { capability: 'arquitetura', pattern: 'fronteira-compartilhada-acoplada', weight: -1 },
+      ] },
+      { id: 'manual-coordination', label: 'Responsáveis mantêm alinhamentos, mensagens e calendário para evitar colisões; o resultado depende de todos conhecerem o plano.', signals: [
+        { capability: 'organizacao', pattern: 'concorrencia-coordenada-manualmente', weight: -1 },
+        { capability: 'fluxo', pattern: 'planejamento-compensa-acoplamento', weight: -1 },
+      ] },
+    ],
+  },
+  {
+    id: 'shared-surface-cause', type: 'probe', title: 'Por que a colisão continua possível?',
+    scenario: 'Problemas de concorrência reaparecem apesar de mais comunicação, revisão e cuidado das pessoas envolvidas.',
+    prompt: 'Qual causa provável melhor explica a recorrência?',
+    options: [
+      { id: 'ambiguous-source', label: 'Há mais de uma origem ou processo capaz de produzir a versão considerada válida.', signals: [{ capability: 'engenharia', pattern: 'causa-multiplas-fontes', weight: -1 }] },
+      { id: 'weak-boundaries', label: 'Os limites do sistema não acompanham ownership; mudanças locais exigem compreender uma área extensa compartilhada.', signals: [{ capability: 'arquitetura', pattern: 'causa-limites-sem-ownership', weight: -1 }] },
+      { id: 'independent-priorities', label: 'Times compartilham a superfície, mas objetivos, prazos e decisões são independentes.', signals: [{ capability: 'governanca', pattern: 'causa-prioridades-na-superficie', weight: -1 }] },
+      { id: 'missing-verification', label: 'Contratos, configuração e integração não possuem feedback repetível antes da composição final.', signals: [{ capability: 'engenharia', pattern: 'causa-verificacao-concorrente', weight: -1 }] },
+    ], next: 'team-health',
+  },
+  {
+    id: 'team-health', title: 'Quando a forma de trabalhar deixa de servir',
+    scenario: 'O grupo cresce, muda de responsabilidades ou passa a depender de mais áreas. Conflitos e carga cognitiva aumentam sem uma falha técnica única.',
+    prompt: 'Como a estrutura e o modo de interação normalmente são revistos?',
+    options: [
+      { id: 'observe-and-adapt', label: 'O grupo observa fluxo, carga, conflitos e resultados; testa mudanças de fronteira ou colaboração e revisa seus efeitos com as pessoas afetadas.', signals: [
+        { capability: 'organizacao', pattern: 'estrutura-adaptada-por-evidencia', weight: 2 },
+        { capability: 'aprendizado', pattern: 'dinamica-de-time-revisada', weight: 2 },
+      ] },
+      { id: 'manager-reorganizes', label: 'A liderança reorganiza responsabilidades e pessoas usando desempenho, capacidade e prioridades disponíveis.', signals: [{ capability: 'organizacao', pattern: 'estrutura-definida-centralmente', weight: -1 }] },
+      { id: 'add-coordination', label: 'Mantêm-se as fronteiras e adicionam-se alinhamentos, responsáveis ou especialistas para absorver a complexidade.', signals: [{ capability: 'organizacao', pattern: 'coordenacao-compensa-carga', weight: -1 }] },
+      { id: 'individual-adaptation', label: 'As pessoas ajustam informalmente responsabilidades e buscam ajuda conforme a pressão aparece.', signals: [{ capability: 'organizacao', pattern: 'estrutura-implicita', weight: -2 }] },
     ],
   },
 ];
@@ -379,6 +474,24 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, optionId: 'facilitator-chases', to: 'blocked-cause' },
     { from: node.id, optionId: 'waiting-external', to: 'blocked-cause' },
     { from: node.id, optionId: 'local-workaround', to: 'blocked-cause' },
+  ];
+  if (node.id === 'improvement-loop') return [
+    { from: node.id, optionId: 'owned-and-verified', to: 'shared-surface-context' },
+    { from: node.id, optionId: 'action-list-fades', to: 'improvement-cause' },
+    { from: node.id, optionId: 'ceremony-report', to: 'improvement-cause' },
+    { from: node.id, optionId: 'only-after-crisis', to: 'improvement-cause' },
+  ];
+  if (node.id === 'shared-surface-context') return [
+    { from: node.id, optionId: 'single-owner', to: 'team-health' },
+    { from: node.id, optionId: 'multiple-teams', to: 'shared-surface-risk' },
+    { from: node.id, optionId: 'mixed-boundaries', to: 'shared-surface-risk' },
+    { from: node.id, optionId: 'unknown-ownership', to: 'shared-surface-risk' },
+  ];
+  if (node.id === 'shared-surface-risk') return [
+    { from: node.id, optionId: 'early-contract-feedback', to: 'team-health' },
+    { from: node.id, optionId: 'overwritten-change', to: 'shared-surface-cause' },
+    { from: node.id, optionId: 'late-integration-conflict', to: 'shared-surface-cause' },
+    { from: node.id, optionId: 'manual-coordination', to: 'shared-surface-cause' },
   ];
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });

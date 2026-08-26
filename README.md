@@ -13,7 +13,7 @@ ficam separadas em [`docs/backlog`](docs/backlog/README.md).
 
 O primeiro corte vertical está executável. Ele permite criar um projeto, configurar
 uma hierarquia livre, gerar convites individuais, responder anonimamente a uma
-entrevista de vinte e oito nós com aprofundamentos condicionais e liberar findings globais e hierárquicos
+entrevista de trinta e três nós com aprofundamentos condicionais e liberar findings globais e hierárquicos
 após cinco conclusões em partições seguras.
 
 A versão 0.3 adapta a linguagem de cenários ao perfil e apresenta divergências de
@@ -34,6 +34,10 @@ dentro do radar navegável.
 
 A versão 0.7 adiciona anamnese de incidentes, diagnóstico e correção operacional,
 além de aprofundar objetivo da iteração, bloqueios e decisões antes da construção.
+
+A versão 0.8 conecta comportamentos a múltiplas capacidades, investiga melhoria
+contínua e superfícies compartilhadas somente quando aplicáveis e classifica cada
+nível da hierarquia pelo elo confiável mais frágil.
 
 ## Executar localmente
 

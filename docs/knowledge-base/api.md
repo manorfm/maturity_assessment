@@ -5,6 +5,8 @@ respostas individuais, hashes, tokens antigos ou contagens por alternativa. O
 relatório inclui capacidades direcionais globais e por recorte elegível, sempre
 submetidas ao mesmo limiar e à supressão hierárquica das telas. Cada capacidade
 inclui nível, confiança, volume agregado de sinais e indicação de contradição.
+O relatório também inclui classificação sociotécnica global e por unidade elegível,
+com nível, rótulo e capacidades ou unidades limitantes.
 
 ## Autorização
 
