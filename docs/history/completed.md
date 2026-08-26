@@ -24,3 +24,9 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   sem saída e nós inalcançáveis; versão da aplicação avançada para 0.2.0.
 - Registrada a convenção permanente de encerrar interações com uma mensagem curta
   de commit em inglês, no passado e baseada no trabalho concluído.
+- Entregue a versão 0.3.0 com cenários adaptados ao perfil e triangulação entre
+  perspectivas protegida por limiar mínimo por grupo.
+- Introduzidos value objects para projeto, hierarquia, perfil e quantidade, além de
+  transações reutilizáveis e tratamento HTTP universal de erros seguros.
+- Aplicado ciclo red/green/blue, ampliada a suíte para onze testes e ativadas
+  verificações contra símbolos não usados; código e CSS mortos foram removidos.

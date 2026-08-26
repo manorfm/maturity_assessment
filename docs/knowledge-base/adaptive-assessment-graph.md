@@ -11,6 +11,10 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
+A versão `delivery-observability-v2` também persiste variantes de texto por perfil.
+Elas alteram contexto e linguagem do nó, preservando opções e sinais compartilhados
+quando a capacidade observada é a mesma.
+
 ## Tipos de nó
 
 - `context`: identifica aplicabilidade sem produzir maturidade;

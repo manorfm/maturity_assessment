@@ -16,6 +16,9 @@ uma hierarquia livre, gerar convites individuais, responder anonimamente a cinco
 cenários com aprofundamentos condicionais e liberar findings globais e hierárquicos
 após cinco conclusões em partições seguras.
 
+A versão 0.3 adapta a linguagem de cenários ao perfil e apresenta divergências de
+perspectiva somente quando cada grupo comparado possui ao menos cinco respostas.
+
 ## Executar localmente
 
 Requer Node.js 22.13 ou superior.
@@ -44,3 +47,5 @@ npm run build
   nós, opções, arestas e sinais no SQLite. Um editor visual continua no backlog.
 - Os recortes hierárquicos são suprimidos quando um grupo irmão pequeno permitiria
   inferência por subtração; filtros combináveis mais avançados ainda não existem.
+- Variantes por perfil cobrem inicialmente urgência e degradação; a expansão e a
+  calibração do catálogo continuam sendo trabalho incremental.

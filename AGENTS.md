@@ -57,6 +57,23 @@ entregues e a base de conhecimento descreve o estado atual.
 - Recomendações devem atacar causas plausíveis e considerar pré-condições, custo,
   risco e menor experimento útil.
 
+## Qualidade de implementação
+
+- Desenvolva mudanças de comportamento em ciclos TDD explícitos: `red` (teste novo
+  falhando pela razão esperada), `green` (menor implementação correta) e `blue`
+  (refatoração com todos os testes verdes).
+- Modele regras e invariantes no domínio. Use entidades ricas e value objects quando
+  um conceito possuir validação, normalização ou comportamento próprios.
+- Prefira simplicidade, coesão, responsabilidade única, nomes significativos e uma
+  arquitetura que revele o domínio nos diretórios e APIs.
+- Centralize tratamento de erros e respostas seguras. Nunca exponha stack trace,
+  segredo, SQL ou detalhe interno ao usuário; registre contexto técnico sem tokens.
+- Antes de concluir, procure e remova código morto, duplicação, ramos equivalentes,
+  compatibilidade obsoleta e artefatos que perderam uso.
+- Não introduza React ou outro framework por antecipação. Se uma interface React
+  vier a ser adotada por uma decisão documentada, aplique componentes coesos,
+  estado mínimo e TypeScript estrito.
+
 ## Encerramento de cada interação
 
 Toda resposta final deve terminar com uma única sugestão curta de mensagem de

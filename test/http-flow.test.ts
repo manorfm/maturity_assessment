@@ -41,3 +41,13 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(completed.body, /não são exibidos novamente/);
   await app.close();
 });
+
+test('erros de validação usam resposta universal sem detalhes internos', async () => {
+  const db = createDatabase(':memory:');
+  const app = await createApp(db);
+  const response = await app.inject({ method: 'POST', url: '/projects', payload: { name: ' ', hierarchy: 'Empresa//Time' } });
+  assert.equal(response.statusCode, 422);
+  assert.match(response.body, /Não foi possível validar os dados/);
+  assert.doesNotMatch(response.body, /SQL|stack|DomainValidationError/);
+  await app.close();
+});

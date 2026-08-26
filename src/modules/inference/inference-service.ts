@@ -1,7 +1,14 @@
 import type { Database } from '../../shared/database.js';
+import { profiles, type Profile } from '../catalog/assessment-graph.js';
 
 type AggregateResponse = { pattern: string; weight: number; total: number };
-export type Finding = { pattern: string; title: string; evidence: number; intervention: string };
+type Finding = { pattern: string; title: string; evidence: number; intervention: string };
+type PerspectiveGap = {
+  capability: string;
+  title: string;
+  strongerProfiles: string[];
+  constrainedProfiles: string[];
+};
 
 const recommendations: Record<string, { title: string; intervention: string }> = {
   'sobrecarga-silenciosa': { title: 'Mudanças entram sem ajuste explícito de capacidade', intervention: 'Experimente tornar a troca de prioridade visível: para cada urgência, registre conjuntamente o que sai, o risco aceito e quando revisar o efeito.' },
@@ -33,30 +40,61 @@ export class InferenceService {
 
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
-    if (completed < minimum) return { completed, minimum, findings: [] as Finding[], scopes: [] as ScopeReport[] };
+    if (completed < minimum) return { completed, minimum, findings: [] as Finding[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
+    const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const scopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
       findings: this.findings(projectId, scope.completed, scope.id),
+      perspectiveGaps: this.perspectiveGaps(projectId, minimum, scope.id),
     }));
-    return { completed, minimum, findings, scopes };
+    return { completed, minimum, findings, perspectiveGaps, scopes };
+  }
+
+  private perspectiveGaps(projectId: string, minimum: number, unitId?: string): PerspectiveGap[] {
+    const scope = this.scope(projectId, unitId);
+    const eligible = this.db.prepare(`
+      SELECT p.profile, COUNT(*) total FROM participations p
+      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
+      GROUP BY p.profile HAVING total >= ?
+    `).all(...[...scope.parameters, minimum]) as unknown as Array<{ profile: Profile; total: number }>;
+    if (eligible.length < 2) return [];
+    const profileValues = eligible.map((item) => item.profile);
+    const placeholders = profileValues.map(() => '?').join(',');
+    const scores = this.db.prepare(`
+      SELECT p.profile, s.capability, AVG(s.weight) score
+      FROM responses r JOIN participations p ON p.id = r.participation_id
+      JOIN assessment_signals s ON s.graph_version = p.graph_version
+        AND s.node_key = r.node_id AND s.option_key = r.option_id
+      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
+        AND p.profile IN (${placeholders})
+      GROUP BY p.profile, s.capability
+    `).all(...[...scope.parameters, ...profileValues]) as unknown as Array<{ profile: Profile; capability: string; score: number }>;
+    const capabilities = [...new Set(scores.map((score) => score.capability))];
+    return capabilities.flatMap((capability) => {
+      const comparable = scores.filter((score) => score.capability === capability);
+      const stronger = comparable.filter((score) => Number(score.score) >= 1).map((score) => profiles[score.profile]);
+      const constrained = comparable.filter((score) => Number(score.score) <= -1).map((score) => profiles[score.profile]);
+      if (!stronger.length || !constrained.length) return [];
+      return [{
+        capability,
+        title: `Perspectivas divergem sobre ${capability}`,
+        strongerProfiles: stronger,
+        constrainedProfiles: constrained,
+      }];
+    });
   }
 
   private findings(projectId: string, population: number, unitId?: string): Finding[] {
-    const unitFilter = unitId ? `AND p.unit_id IN (
-      WITH RECURSIVE subtree(id) AS (
-        SELECT id FROM organization_units WHERE id = ?
-        UNION ALL SELECT u.id FROM organization_units u JOIN subtree s ON u.parent_id = s.id
-      ) SELECT id FROM subtree
-    )` : '';
+    const scope = this.scope(projectId, unitId);
     const rows = this.db.prepare(`
       SELECT s.pattern, s.weight, COUNT(*) total
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
-      WHERE p.project_id = ? AND p.status = 'completed' ${unitFilter}
+      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
       GROUP BY s.pattern, s.weight
-    `).all(...(unitId ? [projectId, unitId] : [projectId])) as unknown as AggregateResponse[];
+    `).all(...scope.parameters) as unknown as AggregateResponse[];
     const patternCounts = new Map<string, number>();
     for (const row of rows) {
       if (Number(row.weight) < 0) patternCounts.set(row.pattern, (patternCounts.get(row.pattern) ?? 0) + Number(row.total));
@@ -66,6 +104,19 @@ export class InferenceService {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
       .map(([pattern, evidence]) => ({ pattern, evidence, ...recommendations[pattern]! }));
+  }
+
+  private scope(projectId: string, unitId?: string): QueryScope {
+    if (!unitId) return { sql: '', parameters: [projectId] };
+    return {
+      sql: `AND p.unit_id IN (
+        WITH RECURSIVE subtree(id) AS (
+          SELECT id FROM organization_units WHERE id = ?
+          UNION ALL SELECT u.id FROM organization_units u JOIN subtree s ON u.parent_id = s.id
+        ) SELECT id FROM subtree
+      )`,
+      parameters: [projectId, unitId],
+    };
   }
 
   private eligibleScopes(projectId: string, minimum: number): Array<{ id: string; path: string; completed: number }> {
@@ -104,4 +155,5 @@ export class InferenceService {
   }
 }
 
-export type ScopeReport = { id: string; path: string; completed: number; findings: Finding[] };
+type ScopeReport = { id: string; path: string; completed: number; findings: Finding[]; perspectiveGaps: PerspectiveGap[] };
+type QueryScope = { sql: string; parameters: string[] };

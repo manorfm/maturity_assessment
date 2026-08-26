@@ -5,6 +5,7 @@ import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CatalogService } from '../catalog/catalog-service.js';
 import { InvitationService } from './invitation-service.js';
 import { ParticipationService } from './participation-service.js';
+import { ResourceNotFoundError } from '../../shared/errors.js';
 
 export function registerAssessmentRoutes(app: FastifyInstance, db: Database): void {
   const invitations = new InvitationService(db);
@@ -22,10 +23,10 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
   app.get('/respond/:resumeToken', async (request, reply) => {
     const { resumeToken } = request.params as { resumeToken: string };
     const participation = participations.find(resumeToken);
-    if (!participation) return reply.code(404).send('Participação não encontrada');
+    if (!participation) throw new ResourceNotFoundError('Participação não encontrada.');
     if (participation.status === 'completed') return reply.type('text/html').send(layout('Obrigado', '<div class="card"><p class="eyebrow">Concluído</p><h1>Obrigado pela participação</h1><p>Suas respostas foram registradas anonimamente. Por segurança, elas e o percurso não são exibidos novamente.</p></div>'));
-    const node = catalog.getNode(participation.graph_version, participation.current_node);
-    if (!node) return reply.code(500).send('Nó do assessment não encontrado');
+    const node = catalog.getNode(participation.graph_version, participation.current_node, participation.profile);
+    if (!node) throw new Error('Published assessment node was not found');
     const answered = participations.answeredCount(participation.id);
     const choices = node.options.map((option) => `<label class="choice"><input type="radio" name="optionId" value="${escapeHtml(option.id)}" required><span>${escapeHtml(option.label)}</span></label>`).join('');
     const profile = profiles[participation.profile as Profile] ?? 'Participante';

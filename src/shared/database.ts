@@ -4,6 +4,18 @@ import { dirname } from 'node:path';
 
 export type Database = DatabaseSync;
 
+export function inTransaction<T>(db: Database, work: () => T, mode: 'DEFERRED' | 'IMMEDIATE' = 'DEFERRED'): T {
+  db.exec(`BEGIN ${mode}`);
+  try {
+    const result = work();
+    db.exec('COMMIT');
+    return result;
+  } catch (error) {
+    db.exec('ROLLBACK');
+    throw error;
+  }
+}
+
 export function createDatabase(filename = process.env.DATABASE_PATH ?? 'data/app.sqlite'): Database {
   if (filename !== ':memory:') mkdirSync(dirname(filename), { recursive: true });
   const db = new DatabaseSync(filename);
@@ -57,6 +69,12 @@ function migrate(db: Database): void {
       graph_version TEXT NOT NULL, node_key TEXT NOT NULL, option_key TEXT NOT NULL,
       label TEXT NOT NULL, position INTEGER NOT NULL,
       PRIMARY KEY (graph_version, node_key, option_key),
+      FOREIGN KEY (graph_version, node_key) REFERENCES assessment_nodes(graph_version, node_key)
+    );
+    CREATE TABLE IF NOT EXISTS assessment_node_variants (
+      graph_version TEXT NOT NULL, node_key TEXT NOT NULL, profile TEXT NOT NULL,
+      title TEXT, scenario TEXT NOT NULL, prompt TEXT,
+      PRIMARY KEY (graph_version, node_key, profile),
       FOREIGN KEY (graph_version, node_key) REFERENCES assessment_nodes(graph_version, node_key)
     );
     CREATE TABLE IF NOT EXISTS assessment_edges (

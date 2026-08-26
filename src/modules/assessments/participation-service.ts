@@ -1,8 +1,8 @@
-import type { Database } from '../../shared/database.js';
+import { inTransaction, type Database } from '../../shared/database.js';
 import { hashSecret, id } from '../../shared/ids.js';
 import { CatalogService } from '../catalog/catalog-service.js';
 
-export type Participation = { id: string; profile: string; status: string; current_node: string; graph_version: string };
+type Participation = { id: string; profile: string; status: string; current_node: string; graph_version: string };
 
 export class ParticipationService {
   private readonly catalog: CatalogService;
@@ -20,12 +20,11 @@ export class ParticipationService {
   answer(resumeToken: string, optionId: string): 'next' | 'complete' | 'invalid' {
     const participation = this.find(resumeToken);
     if (!participation || participation.status !== 'in_progress') return 'invalid';
-    const node = this.catalog.getNode(participation.graph_version, participation.current_node);
+    const node = this.catalog.getNode(participation.graph_version, participation.current_node, participation.profile);
     const option = node?.options.find((item) => item.id === optionId);
     if (!node || !option) return 'invalid';
     const now = new Date().toISOString();
-    this.db.exec('BEGIN IMMEDIATE');
-    try {
+    return inTransaction(this.db, () => {
       this.db.prepare('INSERT INTO responses (id, participation_id, node_id, option_id, created_at) VALUES (?, ?, ?, ?, ?)')
         .run(id(), participation.id, node.id, option.id, now);
       const next = this.catalog.nextNode(participation.graph_version, node.id, option.id);
@@ -34,11 +33,7 @@ export class ParticipationService {
       } else {
         this.db.prepare("UPDATE participations SET status = 'completed', completed_at = ? WHERE id = ?").run(now, participation.id);
       }
-      this.db.exec('COMMIT');
       return next ? 'next' : 'complete';
-    } catch (error) {
-      this.db.exec('ROLLBACK');
-      throw error;
-    }
+    }, 'IMMEDIATE');
   }
 }

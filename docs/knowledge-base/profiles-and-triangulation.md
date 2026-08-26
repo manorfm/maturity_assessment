@@ -50,6 +50,19 @@ O motor compara sinais apenas de forma agregada:
 O relatório apresenta a divergência como finding do sistema. Nunca mostra “o QA
 disse X” quando isso puder identificar alguém.
 
+## Implementação vigente
+
+Convites carregam uma família de perfil validada pelo domínio. O catálogo pode
+substituir cenário e pergunta por uma variante daquele perfil sem alterar a
+capacidade nem premiar o cargo. A primeira publicação possui variantes para
+urgências e degradação, com perspectivas de gestão, produto, qualidade, engenharia
+e plataforma/operações.
+
+A triangulação compara a média direcional dos sinais por capacidade somente entre
+perfis com pelo menos cinco participações concluídas no escopo. O relatório mostra
+uma divergência de perspectiva, não uma nota do perfil. Se qualquer grupo estiver
+abaixo do limiar, ele não participa da comparação nem pode ser inferido pelo texto.
+
 ## Modelos de referência
 
 Tuckman, Team Topologies, DORA, SRE, DDD, TOGAF, Well-Architected e conhecimento
@@ -70,4 +83,3 @@ gargalo ao escopo mais plausível e diferencia:
 - processo sequencial com linguagem ágil;
 - controle de governança proporcional e habilitador;
 - controle que apenas transfere responsabilidade ou cria espera.
-

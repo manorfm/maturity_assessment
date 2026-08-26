@@ -19,6 +19,20 @@ progressivo e usado apenas onde melhorar a interação.
 Fastify e `node:sqlite` foram confirmados no primeiro corte executável. Detalhes
 internos podem evoluir por ADR sem alterar o modelo de domínio.
 
+## Domínio e fronteiras
+
+Valores recebidos por HTTP não entram diretamente nas regras. `ProjectName`,
+`OrganizationPath`, `ProjectDraft`, `AssessmentProfile` e `InvitationQuantity`
+normalizam e protegem invariantes antes da persistência. Operações que alteram um
+agregado usam a mesma função transacional para commit/rollback atômico.
+
+Erros conhecidos derivam de `AppError` e carregam apenas status, código e mensagem
+segura. Um handler HTTP único converte erros em páginas com referência da requisição;
+falhas inesperadas são registradas internamente sem apresentar stack, SQL ou segredo.
+
+TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudanças de
+comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
+
 ## Limites modulares
 
 Cada módulo contém domínio, casos de uso, persistência e interface HTTP próprios.

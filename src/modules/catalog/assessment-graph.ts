@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'delivery-observability-v1';
+export const GRAPH_VERSION = 'delivery-observability-v2';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
 export type Signal = { capability: string; pattern: string; weight: number };
@@ -14,6 +14,7 @@ export type AssessmentNode = {
 };
 
 export type AssessmentEdge = { from: string; to: string; optionId?: string };
+export type NodeVariant = { nodeId: string; profile: Profile; title?: string; scenario: string; prompt?: string };
 
 export const profiles: Record<Profile, string> = {
   management: 'Gestão', product: 'Produto', quality: 'Qualidade / QA',
@@ -119,8 +120,6 @@ export const graph: AssessmentNode[] = [
   },
 ];
 
-export const nodeById = (nodeId: string): AssessmentNode | undefined => graph.find((node) => node.id === nodeId);
-
 export const edges: AssessmentEdge[] = graph.flatMap((node) => {
   if (node.id === 'ready-to-release') return [
     { from: node.id, optionId: 'small-automated', to: 'degradation' },
@@ -130,3 +129,14 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
   ];
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });
+
+export const nodeVariants: NodeVariant[] = [
+  { nodeId: 'urgent-change', profile: 'management', scenario: 'Uma necessidade importante surge no meio do ciclo. Pessoas de produto, engenharia e qualidade já assumiram outros compromissos, e as dependências atravessam mais de um time.', prompt: 'Como você normalmente estrutura a decisão e acompanha seu impacto?' },
+  { nodeId: 'urgent-change', profile: 'product', scenario: 'Uma necessidade importante surge no meio do ciclo. Ela promete valor, mas compete com hipóteses e entregas já comunicadas; engenharia e qualidade ainda não avaliaram todo o impacto.', prompt: 'Qual descrição mais se aproxima de como a prioridade normalmente muda?' },
+  { nodeId: 'urgent-change', profile: 'quality', scenario: 'Uma necessidade importante surge no meio do ciclo. A implementação começa rapidamente, enquanto critérios de risco, dados e regressão ainda precisam ser entendidos.', prompt: 'Como qualidade normalmente entra nessa mudança?' },
+  { nodeId: 'urgent-change', profile: 'engineering', scenario: 'Uma necessidade importante surge no meio do ciclo. O time já possui mudanças em andamento e precisa acomodar novo escopo sem perder integração e capacidade de entrega.', prompt: 'Qual descrição mais se aproxima do fluxo real?' },
+  { nodeId: 'urgent-change', profile: 'platform', scenario: 'Uma necessidade importante surge no meio do ciclo e depende de capacidade oferecida por plataforma, infraestrutura ou operação, além dos compromissos já assumidos.', prompt: 'Como a nova demanda normalmente atravessa as dependências?' },
+  { nodeId: 'degradation', profile: 'management', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. Indicadores oscilam, não há falha total e o time precisa decidir se interrompe trabalho planejado.', prompt: 'Que informação normalmente sustenta sua decisão e o espaço dado ao time?' },
+  { nodeId: 'degradation', profile: 'quality', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. O comportamento não apareceu de forma clara nas verificações anteriores e os indicadores oscilam.', prompt: 'O que mais orienta a investigação e a revisão da estratégia de qualidade?' },
+  { nodeId: 'degradation', profile: 'platform', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. Sinais de aplicação e infraestrutura oscilam e diferentes grupos observam apenas partes da jornada.', prompt: 'O que mais orienta a primeira decisão operacional?' },
+];

@@ -17,6 +17,8 @@
 
 - simulações com consequências visíveis e ramificações com múltiplos checkpoints;
 - banco de cenários por papel, contexto, tamanho e tipo de organização;
+- ampliar variantes de perfil para todo o catálogo e validar linguagem com cada
+  disciplina antes da publicação;
 - modo facilitado para workshops, além da coleta individual;
 - entrevistas qualitativas associadas a uma campanha;
 - adaptação do questionário conforme sinais anteriores, sem esconder o critério;
@@ -29,6 +31,7 @@
 ## Modelo de inferência
 
 - calibração empírica de perguntas e pesos;
+- calibrar os limiares direcionais usados para divergência entre perspectivas;
 - análise de contradições e confiança por capacidade;
 - diferenciação mais precisa entre lacuna de conhecimento e bloqueio sistêmico;
 - relações causais apresentadas como hipóteses, nunca como causalidade comprovada;
@@ -62,7 +65,6 @@
 ## Relatórios e recomendações
 
 - mapas de capacidades e gargalos em vez de nota única;
-- comparação segura entre percepções de papéis;
 - cadeia de evidências navegável para cada finding;
 - recomendações como experimentos, com custo, dependências e sinal de sucesso;
 - exportação controlada e relatórios para públicos com diferentes níveis de detalhe;

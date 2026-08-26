@@ -1,6 +1,6 @@
-import type { Database } from '../../shared/database.js';
+import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
-import { edges, graph, GRAPH_VERSION, type AssessmentEdge, type AssessmentNode, type Option } from './assessment-graph.js';
+import { edges, graph, GRAPH_VERSION, nodeVariants, type AssessmentEdge, type AssessmentNode, type Option } from './assessment-graph.js';
 
 type NodeRow = { node_key: string; node_type: 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
 type OptionRow = { option_key: string; label: string; capability: string | null; pattern: string | null; weight: number | null };
@@ -12,13 +12,12 @@ export class CatalogService {
     const exists = this.db.prepare('SELECT 1 FROM assessment_graph_versions WHERE version = ?').get(GRAPH_VERSION);
     if (exists) return;
     validateGraphDefinition(graph, edges, graph[0]!.id);
-    this.db.exec('BEGIN');
-    try {
+    inTransaction(this.db, () => {
       this.db.prepare('INSERT INTO assessment_graph_versions (version, title, status, entry_node_key, published_at) VALUES (?, ?, ?, ?, ?)')
         .run(GRAPH_VERSION, 'Entrega e observabilidade', 'published', graph[0]!.id, new Date().toISOString());
-      graph.forEach((node, nodePosition) => {
+      graph.forEach((node, position) => {
         this.db.prepare('INSERT INTO assessment_nodes (graph_version, node_key, node_type, title, scenario, prompt, position) VALUES (?, ?, ?, ?, ?, ?, ?)')
-          .run(GRAPH_VERSION, node.id, node.type ?? 'scenario', node.title, node.scenario, node.prompt, nodePosition);
+          .run(GRAPH_VERSION, node.id, node.type ?? 'scenario', node.title, node.scenario, node.prompt, position);
         node.options.forEach((option, optionPosition) => {
           this.db.prepare('INSERT INTO assessment_options (graph_version, node_key, option_key, label, position) VALUES (?, ?, ?, ?, ?)')
             .run(GRAPH_VERSION, node.id, option.id, option.label, optionPosition);
@@ -28,13 +27,11 @@ export class CatalogService {
           }
         });
       });
+      nodeVariants.forEach((variant) => this.db.prepare('INSERT INTO assessment_node_variants (graph_version, node_key, profile, title, scenario, prompt) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(GRAPH_VERSION, variant.nodeId, variant.profile, variant.title ?? null, variant.scenario, variant.prompt ?? null));
       edges.forEach((edge, position) => this.db.prepare('INSERT INTO assessment_edges (id, graph_version, from_node_key, option_key, to_node_key, priority) VALUES (?, ?, ?, ?, ?, ?)')
         .run(id(), GRAPH_VERSION, edge.from, edge.optionId ?? null, edge.to, position));
-      this.db.exec('COMMIT');
-    } catch (error) {
-      this.db.exec('ROLLBACK');
-      throw error;
-    }
+    });
   }
 
   entryNode(version = GRAPH_VERSION): string {
@@ -43,7 +40,7 @@ export class CatalogService {
     return row.entry_node_key;
   }
 
-  getNode(version: string, nodeKey: string): AssessmentNode | undefined {
+  getNode(version: string, nodeKey: string, profile?: string): AssessmentNode | undefined {
     const row = this.db.prepare('SELECT node_key, node_type, title, scenario, prompt FROM assessment_nodes WHERE graph_version = ? AND node_key = ?')
       .get(version, nodeKey) as NodeRow | undefined;
     if (!row) return undefined;
@@ -59,7 +56,16 @@ export class CatalogService {
       if (option.pattern && option.capability && option.weight !== null) current.signals.push({ capability: option.capability, pattern: option.pattern, weight: Number(option.weight) });
       options.set(option.option_key, current);
     }
-    return { id: row.node_key, type: row.node_type, title: row.title, scenario: row.scenario, prompt: row.prompt, options: [...options.values()] };
+    const variant = profile ? this.db.prepare('SELECT title, scenario, prompt FROM assessment_node_variants WHERE graph_version = ? AND node_key = ? AND profile = ?')
+      .get(version, nodeKey, profile) as { title: string | null; scenario: string; prompt: string | null } | undefined : undefined;
+    return {
+      id: row.node_key,
+      type: row.node_type,
+      title: variant?.title ?? row.title,
+      scenario: variant?.scenario ?? row.scenario,
+      prompt: variant?.prompt ?? row.prompt,
+      options: [...options.values()],
+    };
   }
 
   nextNode(version: string, nodeKey: string, optionKey: string): string | undefined {
@@ -71,11 +77,6 @@ export class CatalogService {
     return row?.to_node_key;
   }
 
-  nodePosition(version: string, nodeKey: string): { position: number; total: number } {
-    const row = this.db.prepare('SELECT position FROM assessment_nodes WHERE graph_version = ? AND node_key = ?').get(version, nodeKey) as { position: number };
-    const total = Number((this.db.prepare('SELECT COUNT(*) total FROM assessment_nodes WHERE graph_version = ?').get(version) as { total: number }).total);
-    return { position: Number(row.position), total };
-  }
 }
 
 export function validateGraphDefinition(nodes: AssessmentNode[], graphEdges: AssessmentEdge[], entryNode: string): void {

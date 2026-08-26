@@ -5,7 +5,7 @@ import { ProjectService } from '../src/modules/projects/project-service.js';
 import { InvitationService } from '../src/modules/assessments/invitation-service.js';
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
 import { InferenceService } from '../src/modules/inference/inference-service.js';
-import { graph } from '../src/modules/catalog/assessment-graph.js';
+import { graph, GRAPH_VERSION } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 
 test('convite é consumido uma vez e não mantém vínculo com a participação', () => {
@@ -82,6 +82,41 @@ test('validador rejeita ciclos e nós inalcançáveis antes da publicação', ()
   const node = (id: string) => ({ id, title: id, scenario: id, prompt: id, options: [{ id: 'ok', label: 'ok', signals: [] }] });
   assert.throws(() => validateGraphDefinition([node('a'), node('b')], [{ from: 'a', to: 'a' }], 'a'), /cycle/);
   assert.throws(() => validateGraphDefinition([node('a'), node('b')], [], 'a'), /unreachable/);
+});
+
+test('catálogo adapta o cenário ao perfil sem alterar a capacidade avaliada', () => {
+  const db = createDatabase(':memory:');
+  const catalog = new CatalogService(db);
+  const management = catalog.getNode(GRAPH_VERSION, 'urgent-change', 'management')!;
+  const quality = catalog.getNode(GRAPH_VERSION, 'urgent-change', 'quality')!;
+  assert.notEqual(management.scenario, quality.scenario);
+  assert.deepEqual(management.options.map((option) => option.id), quality.options.map((option) => option.id));
+});
+
+test('triangulação só compara perfis elegíveis e detecta perspectivas divergentes', () => {
+  const db = createDatabase(':memory:');
+  const projects = new ProjectService(db);
+  const invitations = new InvitationService(db);
+  const participations = new ParticipationService(db);
+  const inference = new InferenceService(db);
+  const created = projects.create('Perspectivas', 'Empresa/Time A');
+  const project = projects.authorize(created.publicId, created.adminSecret)!;
+  const unit = projects.listUnits(String(project.id)).at(-1)!;
+  const complete = (token: string, firstOption: string) => {
+    const claimed = invitations.claim(token) as { resumeToken: string };
+    while (participations.find(claimed.resumeToken)?.status === 'in_progress') {
+      const current = participations.find(claimed.resumeToken)!;
+      const node = new CatalogService(db).getNode(current.graph_version, current.current_node, current.profile)!;
+      participations.answer(claimed.resumeToken, node.id === 'urgent-change' ? firstOption : node.options[0]!.id);
+    }
+  };
+  invitations.issue(String(project.id), unit.id, 'management', 5).forEach((token) => complete(token, 'replan-together'));
+  invitations.issue(String(project.id), unit.id, 'engineering', 4).forEach((token) => complete(token, 'add-to-sprint'));
+  assert.deepEqual(inference.report(String(project.id), 5).perspectiveGaps, []);
+
+  invitations.issue(String(project.id), unit.id, 'engineering', 1).forEach((token) => complete(token, 'add-to-sprint'));
+  const gaps = inference.report(String(project.id), 5).perspectiveGaps;
+  assert.equal(gaps.some((gap) => gap.capability === 'fluxo'), true);
 });
 
 test('suprime toda a cadeia quando uma partição irmã é pequena', () => {
