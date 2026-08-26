@@ -42,7 +42,7 @@ const projectForm = () => layout('Novo projeto', `
         else if(nodes.some(node=>depth(node)>12)) message='A estrutura pode ter no máximo 12 níveis.';
         else if(nodes.some(node=>nodes.some(other=>other.id!==node.id&&other.parentId===node.parentId&&other.name.trim().toLocaleLowerCase('pt-BR')===node.name.trim().toLocaleLowerCase('pt-BR')))) message='Unidades no mesmo nível precisam ter nomes diferentes.';
         const leaves=nodes.filter(node=>!nodes.some(candidate=>candidate.parentId===node.id));
-        value.value=message?'':leaves.map(node=>path(node).join('/')).join('\n');
+        value.value=message?'':leaves.map(node=>path(node).join('/')).join('\\n');
         error.textContent=message;
         submit.disabled=Boolean(message)||!leaves.length;
       };

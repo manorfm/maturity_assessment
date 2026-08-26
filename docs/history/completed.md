@@ -3,6 +3,11 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-26 — Interações do editor de hierarquia restauradas
+
+- Corrigida a serialização das folhas que invalidava o JavaScript entregue ao
+  navegador; um teste agora compila os scripts da página para prevenir regressão.
+
 ## 2026-08-26 — Editor visual da estrutura organizacional
 
 - A criação do projeto substituiu caminhos digitados manualmente por uma árvore

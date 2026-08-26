@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import vm from 'node:vm';
 import { createApp } from '../src/app/create-app.js';
 import { createDatabase } from '../src/shared/database.js';
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
@@ -13,6 +14,9 @@ test('criação de projeto usa editor visual para uma hierarquia livre', async (
   assert.match(response.body, /Adicionar unidade abaixo/);
   assert.match(response.body, /type="hidden" name="hierarchy"/);
   assert.doesNotMatch(response.body, /textarea[^>]+name="hierarchy"/);
+  const scripts = [...response.body.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  assert.ok(scripts.length > 0);
+  scripts.forEach((match) => assert.doesNotThrow(() => new vm.Script(match[1]!)));
   await app.close();
 });
 
