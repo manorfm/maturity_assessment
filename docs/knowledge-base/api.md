@@ -7,6 +7,9 @@ submetidas ao mesmo limiar e à supressão hierárquica das telas. Cada capacida
 inclui nível, confiança, volume agregado de sinais e indicação de contradição.
 O relatório também inclui classificação sociotécnica global e por unidade elegível,
 com nível, rótulo e capacidades ou unidades limitantes.
+O objeto `areas` agrupa os problemas por capacidade e informa `diagnosis`,
+`correction`, evidência agregada e se o padrão representa comportamento ou
+restrição. O mesmo formato existe nos recortes hierárquicos elegíveis.
 
 ## Autorização
 

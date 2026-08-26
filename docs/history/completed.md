@@ -3,6 +3,13 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-26 — Diagnóstico agrupado por capacidade
+
+- O relatório deixou de repetir uma lista plana e passou a apresentar, dentro de
+  cada área do radar, o problema identificado e o que precisa ser corrigido; a API
+  expõe a mesma estrutura agregada por área. Consulte [modelo de avaliação](../knowledge-base/assessment-model.md)
+  e [API](../knowledge-base/api.md).
+
 ## 2026-08-25
 
 - Criada a fundação do assessment comportamental, seus pilares e limites éticos.

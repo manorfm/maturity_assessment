@@ -5,6 +5,14 @@ import { TeamClassification } from './domain/team-classification.js';
 
 type AggregateResponse = { capability: string; pattern: string; weight: number; total: number };
 type Finding = { capability: string; pattern: string; title: string; evidence: number; intervention: string };
+type DiagnosticProblem = {
+  pattern: string;
+  diagnosis: string;
+  correction: string;
+  evidence: number;
+  nature: 'behavior' | 'constraint';
+};
+type DiagnosticArea = { id: string; label: string; problems: DiagnosticProblem[] };
 type CapabilityLevel = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean };
 type PerspectiveGap = {
   capability: string;
@@ -137,8 +145,9 @@ export class InferenceService {
 
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
-    if (completed < minimum) return { completed, minimum, classification: null, findings: [] as Finding[], capabilities: [] as CapabilityLevel[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
+    if (completed < minimum) return { completed, minimum, classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
+    const areas = this.diagnosticAreas(findings);
     const capabilities = this.capabilities(projectId);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
@@ -152,12 +161,29 @@ export class InferenceService {
       const descendants = rawScopes
         .filter((candidate) => candidate.path.startsWith(`${scope.path}/`))
         .map((candidate) => TeamClassification.at(TeamClassification.from(candidate.capabilities).level, [candidate.path]));
-      return { ...scope, classification: local.constrainedBy(descendants) };
+      return { ...scope, areas: this.diagnosticAreas(scope.findings), classification: local.constrainedBy(descendants) };
     });
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
     );
-    return { completed, minimum, classification, findings, capabilities, perspectiveGaps, scopes };
+    return { completed, minimum, classification, findings, areas, capabilities, perspectiveGaps, scopes };
+  }
+
+  private diagnosticAreas(findings: Finding[]): DiagnosticArea[] {
+    const grouped = new Map<string, DiagnosticArea>();
+    for (const finding of findings) {
+      const id = capabilityGroup[finding.capability] ?? finding.capability;
+      const area = grouped.get(id) ?? { id, label: capabilityLabels[id] ?? id, problems: [] };
+      area.problems.push({
+        pattern: finding.pattern,
+        diagnosis: finding.title,
+        correction: finding.intervention,
+        evidence: finding.evidence,
+        nature: finding.pattern.startsWith('causa-') ? 'constraint' : 'behavior',
+      });
+      grouped.set(id, area);
+    }
+    return [...grouped.values()].sort((left, right) => left.label.localeCompare(right.label));
   }
 
   private capabilities(projectId: string, unitId?: string): CapabilityLevel[] {
@@ -284,5 +310,11 @@ export class InferenceService {
   }
 }
 
-type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; capabilities: CapabilityLevel[]; perspectiveGaps: PerspectiveGap[] };
+const capabilityGroup: Record<string, string> = {
+  fluxo: 'fluxo', entrega: 'fluxo', engenharia: 'engenharia', qualidade: 'engenharia',
+  arquitetura: 'arquitetura', confiabilidade: 'confiabilidade', observabilidade: 'confiabilidade',
+  plataforma: 'plataforma', organizacao: 'organizacao', governanca: 'governanca', aprendizado: 'aprendizado',
+};
+
+type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; perspectiveGaps: PerspectiveGap[] };
 type QueryScope = { sql: string; parameters: string[] };

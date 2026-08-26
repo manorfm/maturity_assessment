@@ -53,9 +53,15 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   const report = inference.report(String(project.id), 5);
   assert.equal(report.completed, 5);
   assert.equal(report.findings.some((finding) => finding.pattern === 'integracao-tardia'), true);
+  const engineeringArea = report.areas.find((area) => area.id === 'engenharia');
+  assert.ok(engineeringArea);
+  assert.equal(engineeringArea.label, 'Engenharia e SDLC');
+  assert.equal(engineeringArea.problems.some((problem) => problem.pattern === 'integracao-tardia'), true);
+  assert.equal(engineeringArea.problems.every((problem) => problem.correction.length > 0), true);
   assert.equal(report.capabilities.some((capability) => capability.id === 'engenharia' && capability.level >= 0 && capability.level <= 4), true);
   assert.equal(report.scopes.some((item) => item.path === 'Empresa/Time A'), true);
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.capabilities.length > 0);
+  assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.areas.length > 0);
 });
 
 test('grafo publicado é persistido e ramifica conforme a resposta', () => {

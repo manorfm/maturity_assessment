@@ -35,6 +35,9 @@
 - calibrar os limiares direcionais usados para divergência entre perspectivas;
 - calibrar empiricamente a fórmula inicial de contradição e confiança por capacidade;
 - diferenciação mais precisa entre lacuna de conhecimento e bloqueio sistêmico;
+- formalizar em todo o catálogo a matriz capacidade × etapa do SDLC × perspectiva
+  × camada de evidência × causa (ferramenta, acesso, competência, prática, processo,
+  estrutura, governança, cultura, arquitetura e estratégia);
 - relações causais apresentadas como hipóteses, nunca como causalidade comprovada;
 - análise longitudinal para identificar mudança sustentada;
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;
@@ -62,13 +65,16 @@
 - políticas de dados, propriedade intelectual, acesso e modelos autorizados;
 - diferença entre adoção nominal de IA e melhoria observável de capacidade;
 - risco de automação ampliar gargalos ou enfraquecer entendimento do sistema.
+- criar nós de contexto sem pontuação e deep dives comportamentais sobre uso real,
+  revisão, autonomia, aprendizagem, segurança de dados e consequências da IA;
 
 ## Relatórios e recomendações
 
 - calibrar a classificação por elo limitante e a relação entre sinais cruzados,
   cobertura e confiança sem convertê-la em ranking de times;
 - cadeia de evidências navegável para cada finding;
-- recomendações como experimentos, com custo, dependências e sinal de sucesso;
+- enriquecer as correções já agrupadas por área com custo, dependências, responsável,
+  menor experimento útil e sinal de sucesso;
 - exportação controlada e relatórios para públicos com diferentes níveis de detalhe;
 - acompanhamento de ações sem transformar o assessment em ferramenta punitiva.
 

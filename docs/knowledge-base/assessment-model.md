@@ -131,6 +131,11 @@ O relatório deve distinguir ausência de necessidade, solução alternativa ade
 lacuna de capacidade e bloqueio. Não recomendar tecnologia antes de identificar o
 problema, o impacto e as restrições.
 
+O relatório agrupa padrões recorrentes pela área de capacidade e apresenta cada
+item como diagnóstico e correção recomendada. Padrões de comportamento e padrões
+de causa permanecem distinguíveis na API; ambos reutilizam a mesma evidência
+agregada e nunca expõem a resposta que os originou.
+
 ## Capacidade, sintoma, causa e solução
 
 O modelo não salta de uma resposta para uma ferramenta recomendada. Ele constrói
