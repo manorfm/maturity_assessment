@@ -57,3 +57,17 @@ entregues e a base de conhecimento descreve o estado atual.
 - Recomendações devem atacar causas plausíveis e considerar pré-condições, custo,
   risco e menor experimento útil.
 
+## Encerramento de cada interação
+
+Toda resposta final deve terminar com uma única sugestão curta de mensagem de
+commit sobre o que foi efetivamente concluído naquela interação, nunca sobre o que
+foi apenas solicitado ou planejado.
+
+Formato obrigatório, em inglês e no passado:
+
+```text
+<type>: <text>
+```
+
+Use um tipo convencional adequado, como `feat`, `fix`, `docs`, `test`, `refactor` ou
+`chore`. Não inclua prefixos adicionais, lista, hash ou bloco de código.

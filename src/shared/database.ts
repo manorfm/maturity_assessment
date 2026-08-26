@@ -43,5 +43,34 @@ function migrate(db: Database): void {
       node_id TEXT NOT NULL, option_id TEXT NOT NULL, created_at TEXT NOT NULL,
       UNIQUE(participation_id, node_id)
     );
+    CREATE TABLE IF NOT EXISTS assessment_graph_versions (
+      version TEXT PRIMARY KEY, title TEXT NOT NULL, status TEXT NOT NULL,
+      entry_node_key TEXT NOT NULL, published_at TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS assessment_nodes (
+      graph_version TEXT NOT NULL REFERENCES assessment_graph_versions(version),
+      node_key TEXT NOT NULL, node_type TEXT NOT NULL, title TEXT NOT NULL,
+      scenario TEXT NOT NULL, prompt TEXT NOT NULL, position INTEGER NOT NULL,
+      PRIMARY KEY (graph_version, node_key)
+    );
+    CREATE TABLE IF NOT EXISTS assessment_options (
+      graph_version TEXT NOT NULL, node_key TEXT NOT NULL, option_key TEXT NOT NULL,
+      label TEXT NOT NULL, position INTEGER NOT NULL,
+      PRIMARY KEY (graph_version, node_key, option_key),
+      FOREIGN KEY (graph_version, node_key) REFERENCES assessment_nodes(graph_version, node_key)
+    );
+    CREATE TABLE IF NOT EXISTS assessment_edges (
+      id TEXT PRIMARY KEY, graph_version TEXT NOT NULL, from_node_key TEXT NOT NULL,
+      option_key TEXT, to_node_key TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 0,
+      FOREIGN KEY (graph_version, from_node_key) REFERENCES assessment_nodes(graph_version, node_key),
+      FOREIGN KEY (graph_version, to_node_key) REFERENCES assessment_nodes(graph_version, node_key)
+    );
+    CREATE TABLE IF NOT EXISTS assessment_signals (
+      id TEXT PRIMARY KEY, graph_version TEXT NOT NULL, node_key TEXT NOT NULL,
+      option_key TEXT NOT NULL, capability TEXT NOT NULL, pattern TEXT NOT NULL,
+      weight INTEGER NOT NULL,
+      FOREIGN KEY (graph_version, node_key, option_key)
+        REFERENCES assessment_options(graph_version, node_key, option_key)
+    );
   `);
 }

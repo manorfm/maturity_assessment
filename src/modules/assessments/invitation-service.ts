@@ -1,9 +1,11 @@
 import type { Database } from '../../shared/database.js';
 import { hashSecret, id, secret } from '../../shared/ids.js';
-import { GRAPH_VERSION, graph, type Profile } from '../catalog/assessment-graph.js';
+import { GRAPH_VERSION, type Profile } from '../catalog/assessment-graph.js';
+import { CatalogService } from '../catalog/catalog-service.js';
 
 export class InvitationService {
-  constructor(private readonly db: Database) {}
+  private readonly catalog: CatalogService;
+  constructor(private readonly db: Database) { this.catalog = new CatalogService(db); }
 
   issue(projectId: string, unitId: string, profile: Profile, count: number): string[] {
     const tokens: string[] = [];
@@ -33,7 +35,7 @@ export class InvitationService {
         .run(new Date().toISOString(), invitation.id);
       if (changed.changes !== 1) { this.db.exec('ROLLBACK'); return 'used'; }
       this.db.prepare('INSERT INTO participations (id, project_id, unit_id, profile, resume_hash, graph_version, current_node, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-        .run(id(), invitation.project_id, invitation.unit_id, invitation.profile, hashSecret(resumeToken), GRAPH_VERSION, graph[0]!.id, new Date().toISOString());
+        .run(id(), invitation.project_id, invitation.unit_id, invitation.profile, hashSecret(resumeToken), GRAPH_VERSION, this.catalog.entryNode(GRAPH_VERSION), new Date().toISOString());
       this.db.exec('COMMIT');
       return { resumeToken };
     } catch (error) {

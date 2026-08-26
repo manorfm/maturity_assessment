@@ -51,6 +51,11 @@ Comparações entre papel, senioridade ou disciplina só aparecem se cada grupo
 comparado cumprir o limiar. O sistema deve testar ataques por interseção, como
 deduzir uma pessoa subtraindo o resultado de um time do resultado do cluster.
 
+No relatório vigente, além do limiar da unidade, todas as partições não vazias do
+caminho hierárquico precisam atingir o mínimo. Um time com cinco respostas não é
+mostrado se seu irmão tiver apenas uma, pois a comparação com o ancestral revelaria
+informação sobre o grupo pequeno. Findings não exibem contagens por alternativa.
+
 ## Problemas transversais
 
 O motor agrega `ProblemPattern`s semelhantes por escopo e origem provável. Exemplos:

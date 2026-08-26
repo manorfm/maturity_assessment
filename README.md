@@ -13,7 +13,8 @@ ficam separadas em [`docs/backlog`](docs/backlog/README.md).
 
 O primeiro corte vertical está executável. Ele permite criar um projeto, configurar
 uma hierarquia livre, gerar convites individuais, responder anonimamente a cinco
-cenários e liberar findings agregados após cinco conclusões.
+cenários com aprofundamentos condicionais e liberar findings globais e hierárquicos
+após cinco conclusões em partições seguras.
 
 ## Executar localmente
 
@@ -39,7 +40,7 @@ npm run build
 - O segredo no link administrativo é o único acesso do criador; ainda não há conta
   ou recuperação.
 - Convites são copiados manualmente e expiram em 30 dias.
-- O relatório apresenta findings globais e as unidades que alcançaram o limiar;
-  findings navegáveis por cada nível da hierarquia entram na próxima evolução.
-- O grafo inicial é declarativo e versionado no código. Editor e persistência de
-  versões publicáveis continuam no backlog.
+- O grafo é semeado a partir do catálogo versionado e executado pelas tabelas de
+  nós, opções, arestas e sinais no SQLite. Um editor visual continua no backlog.
+- Os recortes hierárquicos são suprimidos quando um grupo irmão pequeno permitiria
+  inferência por subtração; filtros combináveis mais avançados ainda não existem.

@@ -6,6 +6,11 @@ Construir uma jornada de perguntas que aprofunda problemas relevantes sem codifi
 um questionário fixo ou espalhar condicionais pela aplicação. O grafo é conteúdo
 versionado, validado e publicável.
 
+No estado vigente, o catálogo em TypeScript é a fonte de autoria e semeia uma
+versão publicada em tabelas SQLite. Participações guardam a versão usada; o motor
+carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
+versão não modifica campanhas já semeadas.
+
 ## Tipos de nó
 
 - `context`: identifica aplicabilidade sem produzir maturidade;
@@ -18,6 +23,10 @@ versionado, validado e publicável.
 As arestas usam condições declarativas sobre respostas e sinais já observados. Não
 executam código arbitrário. Cada percurso tem limites de tamanho, detecção de ciclo
 e uma saída segura.
+
+O primeiro grafo possui três ramificações de discriminação após a espera para
+entregar: empacotamento manual, fila de qualidade ou aprovação/governança. Uma
+resposta de fluxo curto segue diretamente ao cenário seguinte.
 
 Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não geram
 sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,

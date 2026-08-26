@@ -58,8 +58,9 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const profileOptions = Object.entries(profiles).map(([value, label]) => `<option value="${value}">${escapeHtml(label)}</option>`).join('');
     const findings = report.completed < report.minimum
       ? `<p class="notice">O relatório será liberado com ${report.minimum} respostas concluídas. Atualmente: ${report.completed}.</p>`
-      : report.findings.length ? report.findings.map((finding) => `<article class="card"><span class="tag">${finding.evidence} sinais agregados</span><h3>${escapeHtml(finding.title)}</h3><p>${escapeHtml(finding.intervention)}</p></article>`).join('')
+      : report.findings.length ? report.findings.map((finding) => `<article class="card"><span class="tag">padrão recorrente</span><h3>${escapeHtml(finding.title)}</h3><p>${escapeHtml(finding.intervention)}</p></article>`).join('')
       : '<p class="notice">Ainda não há um padrão problemático com evidência agregada suficiente.</p>';
+    const scopeReports = report.scopes.map((scope) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="muted">· grupo elegível</span></summary>${scope.findings.length ? scope.findings.map((finding) => `<article><h3>${escapeHtml(finding.title)}</h3><p>${escapeHtml(finding.intervention)}</p></article>`).join('') : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}</details>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
       <div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${issued.reduce((sum,item)=>sum+Number(item.total),0)}</div><span class="muted">convites emitidos</span></div></div>
@@ -69,7 +70,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
         <button type="submit">Gerar links</button></form></section>
       <section><h2>Mapa agregado</h2>${findings}</section>
-      ${report.units.length ? `<section class="card"><h2>Unidades elegíveis</h2><table><thead><tr><th>Unidade</th><th>Respostas</th></tr></thead><tbody>${report.units.map((unit)=>`<tr><td>${escapeHtml(unit.path)}</td><td>${unit.completed}</td></tr>`).join('')}</tbody></table></section>` : ''}
+      ${scopeReports ? `<section><h2>Mapa por estrutura</h2><p class="muted">Somente partições que preservam o grupo mínimo aparecem. Contagens e alternativas individuais são suprimidas.</p>${scopeReports}</section>` : ''}
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
   });
 
@@ -83,4 +84,3 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     return reply.type('text/html').send(layout('Convites gerados', `<header><p class="eyebrow">Convites únicos</p><h1>Distribua um link por pessoa</h1><p class="lead">Esta é a única vez em que os tokens aparecem juntos. Não associe nomes aos links na plataforma.</p></header><div class="card"><ol>${tokens.map((token) => `<li><code>${escapeHtml(`${origin}/invite/${token}`)}</code></li>`).join('')}</ol></div><a class="button" href="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}">Voltar ao painel</a>`));
   });
 }
-

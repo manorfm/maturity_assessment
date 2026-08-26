@@ -43,10 +43,10 @@ src/
 sem proprietário.
 
 O questionário e a inferência não são cadeias de `if` espalhadas pelas rotas.
-Definições declarativas versionadas no módulo `catalog` descrevem nós, opções e
-sinais; o primeiro grafo é linear, mas já possui identidade e versão próprias. Nós,
-arestas condicionais e publicação persistidos em SQLite são a evolução natural do
-motor, sem exigir banco de grafos.
+Definições declarativas versionadas no módulo `catalog` semeiam tabelas de versões,
+nós, opções, arestas e sinais. O motor lê exclusivamente a versão publicada no
+SQLite e escolhe arestas específicas por resposta antes da aresta padrão. O grafo
+de domínio permanece relacional e não exige banco de grafos.
 
 ## Critérios da decisão
 
@@ -65,8 +65,20 @@ motor, sem exigir banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com cinco cenários iniciais e perfis
-de gestão, produto, qualidade, engenharia e plataforma/operações.
+O corte vigente implementa esses cinco passos com cinco cenários iniciais, três
+aprofundamentos condicionais e perfis de gestão, produto, qualidade, engenharia e
+plataforma/operações.
+
+## Agregação hierárquica segura
+
+Uma consulta recursiva calcula participantes concluídos em cada subárvore. O motor
+só publica o recorte quando a unidade alcança o limiar e cada partição não vazia
+(filhos e participantes diretamente associados) também alcança o mínimo. Se um
+irmão pequeno permitir dedução por subtração, a cadeia relacionada é suprimida.
+
+Findings por unidade não mostram contagem do padrão nem distribuição de opções.
+Eles apresentam apenas padrões que atingiram a confiança mínima e a intervenção
+correspondente.
 
 ## Links e proteção contra respostas repetidas
 

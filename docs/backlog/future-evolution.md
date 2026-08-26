@@ -8,20 +8,18 @@
 - configuração do limiar de anonimato sem permitir redução insegura;
 - editor administrativo ou continuidade da autoria por arquivos versionados;
 - envio de convites por e-mail/identidade versus distribuição manual;
-- findings e recomendações navegáveis em cada nível elegível da hierarquia;
-- proteção contra ataques de interseção ao combinar filtros e níveis;
+- proteção contra ataques de interseção em futuros filtros combináveis por perfil,
+  tempo ou outras dimensões; a hierarquia simples já usa supressão por partição;
 - política para texto livre, que permanece fora do primeiro corte;
 - modelo de migrações incremental antes de operação com dados reais.
 
 ## Instrumento e experiência
 
-- cenários ramificados e simulações com consequências visíveis; o primeiro grafo é
-  linear e declarativo;
+- simulações com consequências visíveis e ramificações com múltiplos checkpoints;
 - banco de cenários por papel, contexto, tamanho e tipo de organização;
 - modo facilitado para workshops, além da coleta individual;
 - entrevistas qualitativas associadas a uma campanha;
 - adaptação do questionário conforme sinais anteriores, sem esconder o critério;
-- persistência de nós, arestas, versões publicadas e condições em SQLite;
 - editor visual do grafo com simulação de percursos e validação antes de publicar;
 - versões multilíngues revisadas semanticamente, não apenas traduzidas;
 - acessibilidade validada com usuários e tecnologias assistivas;
