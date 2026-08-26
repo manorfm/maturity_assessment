@@ -88,7 +88,7 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com dezenove nós, aprofundamentos
+O corte vigente implementa esses cinco passos com vinte e oito nós, aprofundamentos
 condicionais e perspectivas de gestão, produto, qualidade, engenharia e
 plataforma/operações escolhidas durante a entrevista.
 

@@ -95,6 +95,31 @@ test('entrega aprofunda sinais maduros e investiga bloqueio após integração f
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-validation', 'bypass-under-pressure'), 'degradation');
 });
 
+test('incidente aprofunda roteamento diagnóstico e correção sem premiar ferramenta', () => {
+  const db = createDatabase(':memory:');
+  const catalog = new CatalogService(db);
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'degradation', 'impact-change'), 'incident-intake');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-triage', 'risk-classified'), 'incident-diagnosis');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-triage', 'relationship-escalation'), 'incident-routing-cause');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-diagnosis', 'direct-runtime-access'), 'diagnostic-cause');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'diagnostic-cause', 'telemetry-gap'), 'incident-remediation');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-remediation', 'reproducible-change'), 'recurrence');
+  const management = catalog.getNode(GRAPH_VERSION, 'incident-intake', 'management')!;
+  const engineering = catalog.getNode(GRAPH_VERSION, 'incident-intake', 'engineering')!;
+  assert.notEqual(management.scenario, engineering.scenario);
+  assert.deepEqual(management.options.map((option) => option.id), engineering.options.map((option) => option.id));
+});
+
+test('fluxo de trabalho investiga objetivo bloqueio e decisão antes da construção', () => {
+  const db = createDatabase(':memory:');
+  const catalog = new CatalogService(db);
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'recent-need', 'small-evidence'), 'iteration-purpose');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-work', 'team-resolves'), 'decision-context');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-work', 'waiting-external'), 'blocked-cause');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-cause', 'permission-policy'), 'decision-context');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'decision-context', 'options-recorded'), 'change-verification');
+});
+
 test('validador rejeita ciclos e nós inalcançáveis antes da publicação', () => {
   const node = (id: string) => ({ id, title: id, scenario: id, prompt: id, options: [{ id: 'ok', label: 'ok', signals: [] }] });
   assert.throws(() => validateGraphDefinition([node('a'), node('b')], [{ from: 'a', to: 'a' }], 'a'), /cycle/);
@@ -127,6 +152,8 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
       const option = node.id === 'respondent-context' ? profile
         : node.id === 'urgent-change' ? firstOption
         : node.id === 'recent-need' && firstOption === 'add-to-sprint' ? 'defined-then-built'
+        : node.id === 'iteration-purpose' && firstOption === 'add-to-sprint' ? 'fill-capacity'
+        : node.id === 'blocked-work' && firstOption === 'add-to-sprint' ? 'waiting-external'
         : node.options[0]!.id;
       participations.answer(claimed.resumeToken, option);
     }

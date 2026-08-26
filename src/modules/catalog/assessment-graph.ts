@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'sdlc-depth-v4';
+export const GRAPH_VERSION = 'sociotechnical-depth-v5';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
 export type Signal = { capability: string; pattern: string; weight: number };
@@ -156,7 +156,73 @@ export const graph: AssessmentNode[] = [
       { id: 'specialist', label: 'A experiência de quem conhece melhor o sistema; essa pessoa decide quais dados procurar.', signals: [{ capability: 'confiabilidade', pattern: 'dependencia-de-heroi', weight: -2 }] },
       { id: 'customer-volume', label: 'O volume de reclamações; sem ele é difícil saber se a oscilação merece interromper a entrega.', signals: [{ capability: 'observabilidade', pattern: 'deteccao-tardia', weight: -2 }] },
     ],
-    next: 'recurrence',
+    next: 'incident-intake',
+  },
+  {
+    id: 'incident-intake', title: 'O incidente se torna visível',
+    scenario: 'Um comportamento crítico afeta parte das pessoas durante o horário de maior uso. Pense no último evento real que exigiu interromper trabalho planejado.',
+    prompt: 'Como o grupo responsável normalmente percebe e assume esse evento?',
+    options: [
+      { id: 'impact-routed', label: 'Um sinal ligado ao impacto aciona responsáveis definidos, reúne contexto inicial e confirma rapidamente quem conduz comunicação e resposta.', signals: [{ capability: 'confiabilidade', pattern: 'incidente-orientado-impacto', weight: 2 }] },
+      { id: 'central-screening', label: 'Uma central ou sustentação recebe, registra e tenta resolver antes de encaminhar ao time que mantém o produto.', signals: [{ capability: 'organizacao', pattern: 'incidente-por-handoff', weight: -1 }] },
+      { id: 'customer-report', label: 'Atendimento ou negócio relata casos até que alguém reconheça abrangência suficiente para mobilizar o time.', signals: [{ capability: 'observabilidade', pattern: 'incidente-detectado-por-cliente', weight: -2 }] },
+      { id: 'author-contacted', label: 'Procuram primeiro quem fez a mudança ou quem conhece melhor o componente afetado.', signals: [{ capability: 'organizacao', pattern: 'incidente-depende-do-autor', weight: -2 }] },
+    ], next: 'incident-triage',
+  },
+  {
+    id: 'incident-triage', type: 'probe', title: 'Severidade e roteamento',
+    scenario: 'O impacto ainda está evoluindo e diferentes áreas precisam decidir prioridade, comunicação e quem será mobilizado.',
+    prompt: 'O que normalmente determina o caminho do incidente?',
+    options: [
+      { id: 'risk-classified', label: 'Critérios de impacto, abrangência e urgência são conhecidos; a classificação muda resposta e comunicação e pode ser revisada com evidências.', signals: [{ capability: 'governanca', pattern: 'severidade-operacional', weight: 2 }] },
+      { id: 'fixed-labels', label: 'Existem categorias e procedimentos, mas a classificação depende bastante da interpretação de quem recebe.', signals: [{ capability: 'governanca', pattern: 'severidade-inconsistente', weight: -1 }] },
+      { id: 'relationship-escalation', label: 'A prioridade cresce quando alguém com influência encontra e aciona as pessoas certas.', signals: [{ capability: 'organizacao', pattern: 'incidente-por-escalada-relacional', weight: -2 }] },
+      { id: 'same-queue', label: 'O evento entra na fila comum e o time decide urgência quando consegue analisar o caso.', signals: [{ capability: 'fluxo', pattern: 'incidente-na-fila-de-trabalho', weight: -2 }] },
+    ],
+  },
+  {
+    id: 'incident-routing-cause', type: 'probe', title: 'Por que o roteamento depende de pessoas?',
+    scenario: 'Casos semelhantes percorrem caminhos diferentes e consomem tempo até encontrar quem consegue agir.',
+    prompt: 'Qual condição mais sustenta essa variação?',
+    options: [
+      { id: 'unclear-ownership', label: 'Serviços e jornadas não possuem responsabilidade operacional clara ou atualizada.', signals: [{ capability: 'organizacao', pattern: 'causa-ownership-operacional', weight: -1 }] },
+      { id: 'impact-unknown', label: 'Não há informação suficiente para relacionar sintomas técnicos, clientes afetados e criticidade.', signals: [{ capability: 'observabilidade', pattern: 'causa-impacto-invisivel', weight: -1 }] },
+      { id: 'support-boundary', label: 'A estrutura separa sustentação e desenvolvimento, mas transferência de contexto e autoridade é lenta.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-sustentacao', weight: -1 }] },
+      { id: 'classification-policy', label: 'A política existe, porém categorias e respostas não refletem o risco real dos produtos.', signals: [{ capability: 'governanca', pattern: 'causa-politica-incidente', weight: -1 }] },
+    ], next: 'incident-diagnosis',
+  },
+  {
+    id: 'incident-diagnosis', type: 'probe', title: 'Do impacto à hipótese',
+    scenario: 'O time assumiu o incidente. Há sinais em mais de um componente e é necessário localizar a transação afetada sem ampliar exposição de dados.',
+    prompt: 'Como a investigação costuma avançar nos primeiros minutos?',
+    options: [
+      { id: 'correlated-telemetry', label: 'Jornada, mudança recente, métricas, eventos e rastros podem ser correlacionados por identificadores técnicos, com acesso controlado e hipóteses compartilhadas.', signals: [{ capability: 'observabilidade', pattern: 'diagnostico-correlacionado', weight: 2 }] },
+      { id: 'separate-searches', label: 'Cada responsável consulta sua parte e combina horários e sintomas em uma conversa até formar a sequência provável.', signals: [{ capability: 'observabilidade', pattern: 'telemetria-fragmentada', weight: -1 }] },
+      { id: 'direct-runtime-access', label: 'Pessoas acessam diretamente processos, máquinas ou componentes em execução para coletar arquivos, comandos e estado.', signals: [{ capability: 'plataforma', pattern: 'diagnostico-por-acesso-direto', weight: -2 }] },
+      { id: 'personal-data-search', label: 'A busca começa por um identificador pessoal ou dado do cliente porque é a forma mais rápida de encontrar o caso entre sistemas.', signals: [{ capability: 'plataforma', pattern: 'diagnostico-por-dado-pessoal', weight: -3 }] },
+    ],
+  },
+  {
+    id: 'diagnostic-cause', type: 'probe', title: 'O que impede diagnóstico seguro?',
+    scenario: 'O acesso direto ou a combinação manual reaparece em incidentes diferentes, apesar do risco e do tempo consumido.',
+    prompt: 'Qual causa provável melhor explica essa dependência?',
+    options: [
+      { id: 'telemetry-gap', label: 'Sinais necessários não são coletados, indexados ou correlacionados de ponta a ponta.', signals: [{ capability: 'observabilidade', pattern: 'causa-lacuna-telemetria', weight: -1 }] },
+      { id: 'tool-access-gap', label: 'A informação existe, mas ferramentas homologadas, licenças, acesso ou experiência não permitem usá-la no tempo do incidente.', signals: [{ capability: 'plataforma', pattern: 'causa-ferramenta-observabilidade', weight: -1 }] },
+      { id: 'context-propagation-gap', label: 'Componentes não preservam um identificador técnico comum ou contratos de instrumentação.', signals: [{ capability: 'arquitetura', pattern: 'causa-correlacao-arquitetural', weight: -1 }] },
+      { id: 'privacy-design-gap', label: 'O desenho não oferece busca operacional minimizada e empurra a investigação para dados pessoais.', signals: [{ capability: 'plataforma', pattern: 'causa-privacidade-operacional', weight: -2 }] },
+    ], next: 'incident-remediation',
+  },
+  {
+    id: 'incident-remediation', type: 'probe', title: 'A correção durante o incidente',
+    scenario: 'A hipótese aponta para código, configuração, dado ou recurso de infraestrutura. Mitigar rápido importa, mas o estado precisa continuar reproduzível depois.',
+    prompt: 'Como a mudança corretiva normalmente chega ao ambiente afetado?',
+    options: [
+      { id: 'reproducible-change', label: 'A menor correção percorre um caminho rápido e verificável; código, configuração, schema ou infraestrutura mantêm uma fonte reproduzível e observada após aplicação.', signals: [{ capability: 'confiabilidade', pattern: 'correcao-reproduzivel', weight: 2 }] },
+      { id: 'controlled-emergency', label: 'Uma alteração emergencial é feita com dupla verificação e trilha; logo depois é reconciliada na fonte e validada contra divergência.', signals: [{ capability: 'governanca', pattern: 'mudanca-emergencial-reconciliada', weight: 1 }] },
+      { id: 'live-console-change', label: 'Uma pessoa experiente altera configuração ou recurso diretamente e depois documenta ou tenta reproduzir a correção.', signals: [{ capability: 'plataforma', pattern: 'correcao-direta-na-producao', weight: -2 }] },
+      { id: 'live-data-change', label: 'Dados ou estruturas são ajustados diretamente para recuperar o serviço; validação e reconciliação dependem do contexto de quem executa.', signals: [{ capability: 'engenharia', pattern: 'correcao-manual-de-dados', weight: -2 }] },
+    ], next: 'recurrence',
   },
   {
     id: 'recurrence',
@@ -180,6 +246,50 @@ export const graph: AssessmentNode[] = [
       { id: 'defined-then-built', label: 'A necessidade é detalhada e aprovada antes de chegar às especialidades que construirão e operarão a solução.', signals: [{ capability: 'fluxo', pattern: 'cascata-fracionada', weight: -2 }] },
       { id: 'demo-feedback', label: 'O principal feedback conjunto ocorre em demonstrações, quando uma parte relevante da solução já foi construída.', signals: [{ capability: 'aprendizado', pattern: 'feedback-tardio', weight: -1 }] },
       { id: 'deadline-validates', label: 'O prazo define o que será feito; valor e impacto são avaliados principalmente depois da entrega.', signals: [{ capability: 'governanca', pattern: 'prazo-sem-aprendizado', weight: -2 }] },
+    ], next: 'iteration-purpose',
+  },
+  {
+    id: 'iteration-purpose', title: 'O propósito do trabalho corrente',
+    scenario: 'No início do período atual, há mais trabalho possível do que capacidade. Algumas atividades entregam partes diferentes de uma mesma mudança e outras tratam manutenção.',
+    prompt: 'Como o grupo normalmente decide o que significa ter avançado ao final desse período?',
+    options: [
+      { id: 'outcome-goal', label: 'Existe um resultado ou hipótese compartilhada; itens são ajustados durante o período para preservar o objetivo e obter feedback utilizável.', signals: [{ capability: 'fluxo', pattern: 'trabalho-orientado-resultado', weight: 2 }] },
+      { id: 'deliver-committed-items', label: 'O principal compromisso é concluir os itens aceitos; mudanças ameaçam previsibilidade e são negociadas separadamente.', signals: [{ capability: 'fluxo', pattern: 'iteracao-orientada-a-escopo', weight: -1 }] },
+      { id: 'fill-capacity', label: 'As pessoas recebem trabalho suficiente para ocupar sua capacidade e o progresso é acompanhado pela movimentação das atividades.', signals: [{ capability: 'organizacao', pattern: 'ocupacao-como-progresso', weight: -2 }] },
+      { id: 'urgent-priority', label: 'Prioridades mudam conforme urgências e solicitações; o objetivo é absorver o mais importante sem uma meta estável.', signals: [{ capability: 'governanca', pattern: 'prioridade-sem-foco', weight: -2 }] },
+    ], next: 'blocked-work',
+  },
+  {
+    id: 'blocked-work', type: 'probe', title: 'Quando o trabalho para',
+    scenario: 'Uma atividade importante não consegue avançar por depender de decisão, acesso, ambiente ou conhecimento fora de quem a iniciou.',
+    prompt: 'O que costuma acontecer nas horas e dias seguintes?',
+    options: [
+      { id: 'team-resolves', label: 'O bloqueio fica visível imediatamente; o grupo reorganiza trabalho, aciona o caminho conhecido e usa o ocorrido para reduzir recorrência.', signals: [{ capability: 'fluxo', pattern: 'bloqueio-tratado-pelo-sistema', weight: 2 }] },
+      { id: 'facilitator-chases', label: 'Uma pessoa de facilitação, produto ou gestão acompanha responsáveis e escaladas enquanto os demais seguem com outras atividades.', signals: [{ capability: 'organizacao', pattern: 'bloqueio-depende-de-coordenador', weight: -1 }] },
+      { id: 'waiting-external', label: 'A atividade permanece aguardando a área responsável; quem iniciou atualiza o status e ocupa a capacidade com outro item.', signals: [{ capability: 'fluxo', pattern: 'espera-normalizada', weight: -2 }] },
+      { id: 'local-workaround', label: 'O time cria um contorno para continuar, mesmo que aumente divergência, trabalho manual ou dívida a reconciliar.', signals: [{ capability: 'arquitetura', pattern: 'contorno-acumula-divida', weight: -1 }] },
+    ],
+  },
+  {
+    id: 'blocked-cause', type: 'probe', title: 'O que torna a espera recorrente?',
+    scenario: 'Bloqueios semelhantes aparecem em atividades diferentes e o simples escalonamento não reduz o tempo total.',
+    prompt: 'Qual condição mais mantém esse padrão?',
+    options: [
+      { id: 'permission-policy', label: 'Permissões e controles não distinguem riscos nem oferecem um caminho seguro de autosserviço.', signals: [{ capability: 'governanca', pattern: 'causa-permissao-sem-autonomia', weight: -1 }] },
+      { id: 'dependency-priority', label: 'A dependência pertence a outro grupo com prioridades e tempos que não são negociados pelo resultado compartilhado.', signals: [{ capability: 'organizacao', pattern: 'causa-prioridade-entre-times', weight: -1 }] },
+      { id: 'missing-capability', label: 'Conhecimento necessário não está acessível no time, na plataforma ou em uma colaboração com tempo definido.', signals: [{ capability: 'organizacao', pattern: 'causa-competencia-inacessivel', weight: -1 }] },
+      { id: 'architecture-dependency', label: 'O desenho técnico exige alterar ou consultar muitos responsáveis para uma mudança comum.', signals: [{ capability: 'arquitetura', pattern: 'causa-dependencia-arquitetural', weight: -1 }] },
+    ], next: 'decision-context',
+  },
+  {
+    id: 'decision-context', type: 'probe', title: 'Como uma decisão chega para construção?',
+    scenario: 'Uma necessidade relevante permite caminhos com custos, riscos e reversibilidade diferentes. O prazo pressiona por uma escolha rápida.',
+    prompt: 'Como a opção que será construída normalmente ganha contexto e compromisso?',
+    options: [
+      { id: 'options-recorded', label: 'Negócio, produto e competências técnicas necessárias avaliam opções e restrições; decisões relevantes registram contexto, trade-offs e sinais para revisão.', signals: [{ capability: 'arquitetura', pattern: 'decisao-intencional-revisavel', weight: 2 }] },
+      { id: 'design-handed-off', label: 'A solução chega definida e o time detalha implementação; dúvidas relevantes retornam aos responsáveis pela concepção.', signals: [{ capability: 'fluxo', pattern: 'solucao-entregue-pronta', weight: -2 }] },
+      { id: 'expert-decides', label: 'Uma referência técnica escolhe o caminho usando experiência e comunica o necessário para o restante do grupo executar.', signals: [{ capability: 'arquitetura', pattern: 'decisao-concentrada', weight: -1 }] },
+      { id: 'local-convention', label: 'O grupo segue o padrão habitual; alternativas são discutidas principalmente quando o padrão deixa de funcionar.', signals: [{ capability: 'aprendizado', pattern: 'decisao-por-inercia', weight: -1 }] },
     ], next: 'change-verification',
   },
   {
@@ -252,6 +362,24 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, optionId: 'isolated-days', to: 'delivery-cause' },
     { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause' },
   ];
+  if (node.id === 'incident-triage') return [
+    { from: node.id, optionId: 'risk-classified', to: 'incident-diagnosis' },
+    { from: node.id, optionId: 'fixed-labels', to: 'incident-diagnosis' },
+    { from: node.id, optionId: 'relationship-escalation', to: 'incident-routing-cause' },
+    { from: node.id, optionId: 'same-queue', to: 'incident-routing-cause' },
+  ];
+  if (node.id === 'incident-diagnosis') return [
+    { from: node.id, optionId: 'correlated-telemetry', to: 'incident-remediation' },
+    { from: node.id, optionId: 'separate-searches', to: 'diagnostic-cause' },
+    { from: node.id, optionId: 'direct-runtime-access', to: 'diagnostic-cause' },
+    { from: node.id, optionId: 'personal-data-search', to: 'diagnostic-cause' },
+  ];
+  if (node.id === 'blocked-work') return [
+    { from: node.id, optionId: 'team-resolves', to: 'decision-context' },
+    { from: node.id, optionId: 'facilitator-chases', to: 'blocked-cause' },
+    { from: node.id, optionId: 'waiting-external', to: 'blocked-cause' },
+    { from: node.id, optionId: 'local-workaround', to: 'blocked-cause' },
+  ];
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });
 
@@ -264,4 +392,9 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'degradation', profile: 'management', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. Indicadores oscilam, não há falha total e o time precisa decidir se interrompe trabalho planejado.', prompt: 'Que informação normalmente sustenta sua decisão e o espaço dado ao time?' },
   { nodeId: 'degradation', profile: 'quality', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. O comportamento não apareceu de forma clara nas verificações anteriores e os indicadores oscilam.', prompt: 'O que mais orienta a investigação e a revisão da estratégia de qualidade?' },
   { nodeId: 'degradation', profile: 'platform', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. Sinais de aplicação e infraestrutura oscilam e diferentes grupos observam apenas partes da jornada.', prompt: 'O que mais orienta a primeira decisão operacional?' },
+  { nodeId: 'incident-intake', profile: 'management', scenario: 'Um comportamento crítico afeta clientes no horário de maior uso. Você precisa saber impacto, prioridade, responsável e comunicação sem depender de localizar informalmente quem conhece o sistema.', prompt: 'Como a informação normalmente chega até você e mobiliza a resposta?' },
+  { nodeId: 'incident-intake', profile: 'product', scenario: 'Um comportamento crítico afeta parte dos clientes. Produto precisa compreender impacto, orientar comunicação e decidir como o incidente altera compromissos em andamento.', prompt: 'Como o evento normalmente ganha prioridade e contexto de negócio?' },
+  { nodeId: 'incident-intake', profile: 'quality', scenario: 'Um comportamento crítico escapa das verificações e afeta parte dos clientes. É necessário entender abrangência, condições e quais riscos não estavam visíveis antes.', prompt: 'Como qualidade normalmente entra na detecção e na resposta?' },
+  { nodeId: 'incident-intake', profile: 'engineering', scenario: 'Um comportamento crítico afeta parte dos clientes. Você precisa formar uma hipótese, conter impacto e mudar o sistema sem depender de alterar componentes vivos de modo irreproduzível.', prompt: 'Como o incidente normalmente chega ao time e começa a ser investigado?' },
+  { nodeId: 'incident-intake', profile: 'platform', scenario: 'Um comportamento crítico atravessa aplicação, dados e infraestrutura. Sinais e responsabilidades estão distribuídos e a resposta precisa preservar segurança operacional.', prompt: 'Como o evento normalmente é detectado, correlacionado e direcionado?' },
 ];

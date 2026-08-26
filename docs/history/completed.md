@@ -40,3 +40,5 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   participante, convites sem perfil, cópia de links e radar agregado de capacidades.
 - Aprofundado o ramo de entrega com validação sob pressão, discriminação de causas,
   confiança sensível a contradições e radar navegável com próximos passos.
+- Adicionados deep dives de incidentes e fluxo de trabalho, com variantes por
+  perspectiva, causas sociotécnicas e recomendações condicionadas ao diagnóstico.

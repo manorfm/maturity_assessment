@@ -20,8 +20,9 @@
   disciplina antes da publicação;
 - modo facilitado para workshops, além da coleta individual;
 - entrevistas qualitativas associadas a uma campanha;
-- expandir o padrão de aprofundamento já aplicado à entrega para todos os pilares,
-  com critérios transparentes de continuidade e encerramento por confiança;
+- expandir o padrão de aprofundamento já aplicado à entrega, incidentes e fluxo de
+  trabalho para os pilares ainda rasos, com critérios transparentes de continuidade
+  e encerramento por confiança;
 - editor visual do grafo com simulação de percursos e validação antes de publicar;
 - versões multilíngues revisadas semanticamente, não apenas traduzidas;
 - acessibilidade validada com usuários e tecnologias assistivas;

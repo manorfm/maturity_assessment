@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão `sdlc-depth-v4` começa por uma escolha neutra de perspectiva e também
+A versão `sociotechnical-depth-v5` começa por uma escolha neutra de perspectiva e também
 persiste variantes de texto por perfil.
 Elas alteram contexto e linguagem do nó, preservando opções e sinais compartilhados
 quando a capacidade observada é a mesma.
@@ -37,7 +37,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O percurso-base atual contém dezenove nós e cobre eventos de priorização, integração,
+O percurso-base atual contém vinte e oito nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura e aprendizado após falhas. Quantidade de perguntas
 não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
@@ -49,6 +49,17 @@ de times e acoplamento arquitetural. Integração frequente segue para verificar
 implantação e exposição são decisões independentes, se controles de release possuem
 ownership e se o caminho seguro resiste a uma urgência. Uma contradição posterior
 reduz confiança e pode regredir o nível inferido.
+
+O ramo de incidentes percorre detecção, classificação, roteamento, diagnóstico,
+correção e aprendizado. Caminhos frágeis discriminam ownership, política, fronteira
+de sustentação, ausência de impacto observável, lacuna de telemetria, ferramenta ou
+acesso insuficiente, quebra de correlação arquitetural e privacidade operacional.
+Correções distinguem fonte reproduzível, exceção reconciliada e mutação direta de
+runtime, configuração, infraestrutura ou dados.
+
+O ramo de trabalho verifica se uma iteração é orientada a resultado ou ocupação,
+como o grupo reage a bloqueios e se decisões chegam como solução pronta, escolha
+concentrada, convenção por inércia ou trade-off intencionalmente revisável.
 
 ## Duas passagens de raciocínio
 

@@ -56,9 +56,9 @@ O convite é comum à unidade. Na primeira etapa, a pessoa seleciona a perspecti
 que mais se aproxima de sua atuação cotidiana; a seleção não gera sinais nem mede
 conhecimento. O catálogo pode substituir cenário e pergunta por uma variante daquela
 perspectiva sem alterar a
-capacidade nem premiar o cargo. A primeira publicação possui variantes para
-urgências e degradação, com perspectivas de gestão, produto, qualidade, engenharia
-e plataforma/operações.
+capacidade nem premiar o cargo. A publicação vigente possui variantes para
+urgências, degradação e entrada de incidentes, com perspectivas de gestão, produto,
+qualidade, engenharia e plataforma/operações sobre o mesmo evento.
 
 A triangulação compara a média direcional dos sinais por capacidade somente entre
 perfis com pelo menos cinco participações concluídas no escopo. O relatório mostra

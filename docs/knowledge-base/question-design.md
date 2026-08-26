@@ -134,6 +134,24 @@ esperas, aprovações, reconstrução de pacote, diferenças entre ambientes, or
 artefatos, rollback e evidência de sucesso. Um script local conta como automação e
 aprendizado; sua fragilidade, abrangência e reutilização determinam o próximo nó.
 
+### Incidente, diagnóstico e correção
+
+Reconstruir um incidente recente desde o primeiro sinal até a reconciliação final:
+como impacto define severidade, quem recebe, como ownership é encontrado, quais
+dados permitem correlacionar a jornada e como mudanças em código, configuração,
+infraestrutura ou dados chegam ao ambiente. Acesso direto ao runtime, busca por dado
+pessoal e alteração em console são comportamentos investigados por risco e efeito,
+não por nomes de produtos. Um caminho maduro continua reproduzível, auditável,
+minimizado e capaz de aprender após a urgência.
+
+### Objetivo, bloqueio e decisão
+
+Usar um período recente para distinguir objetivo compartilhado de preenchimento de
+capacidade. Ao surgir bloqueio, observar se o sistema reduz espera ou apenas inicia
+mais trabalho, escala por uma pessoa ou cria contorno. Antes de construir, investigar
+se opções, restrições e reversibilidade foram consideradas pelas competências
+necessárias; ADR é uma possível evidência, não um requisito nominal.
+
 ### Especialistas, generalistas e lacunas de disciplina
 
 Não inferir maturidade por títulos como SRE, QA ou full-stack. Usar cenários que
