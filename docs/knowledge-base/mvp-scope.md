@@ -8,7 +8,9 @@ completo sem acesso direto ao banco ou alteração de código.
 ## Critérios obrigatórios
 
 1. ✅ Criar projeto e hierarquia organizacional configurável.
-2. ✅ Gerar convites únicos por unidade e perfil, sem coletar identidade.
+2. ✅ Gerar convites únicos por unidade e perfil, sem coletar identidade. Na versão
+   0.5.0, o perfil deixou de ser imposto no convite e passou a ser escolhido durante
+   a entrevista; a linha preserva o critério histórico da versão 0.4.0.
 3. ✅ Acompanhar lotes por estados agregados, revogar links ainda não usados e
    reemitir um lote sem recuperar tokens antigos.
 4. ✅ Impedir participação duplicada e não revelar respostas após conclusão.

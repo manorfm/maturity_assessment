@@ -20,7 +20,8 @@
   disciplina antes da publicação;
 - modo facilitado para workshops, além da coleta individual;
 - entrevistas qualitativas associadas a uma campanha;
-- adaptação do questionário conforme sinais anteriores, sem esconder o critério;
+- aprofundamento por lacunas, contradições e confiança, com critérios transparentes
+  de continuidade e encerramento da entrevista;
 - editor visual do grafo com simulação de percursos e validação antes de publicar;
 - versões multilíngues revisadas semanticamente, não apenas traduzidas;
 - acessibilidade validada com usuários e tecnologias assistivas;
@@ -63,7 +64,8 @@
 
 ## Relatórios e recomendações
 
-- mapas de capacidades e gargalos em vez de nota única;
+- evolução do radar direcional para explicitar cobertura, confiança e relações entre
+  capacidades sem produzir uma nota global;
 - cadeia de evidências navegável para cada finding;
 - recomendações como experimentos, com custo, dependências e sinal de sucesso;
 - exportação controlada e relatórios para públicos com diferentes níveis de detalhe;

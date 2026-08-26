@@ -1,7 +1,9 @@
 # API administrativa do MVP
 
 A API JSON reutiliza os mesmos serviços de aplicação das telas. Ela não expõe
-respostas individuais, hashes, tokens antigos ou contagens por alternativa.
+respostas individuais, hashes, tokens antigos ou contagens por alternativa. O
+relatório inclui capacidades direcionais globais e por recorte elegível, sempre
+submetidas ao mesmo limiar e à supressão hierárquica das telas.
 
 ## Autorização
 
@@ -19,8 +21,8 @@ O header e as URLs são removidos dos logs estruturados.
 
 - `POST /api/projects` — cria projeto e hierarquia;
 - `GET /api/projects/:publicId` — retorna unidades, lotes e relatório sanitizado;
-- `POST /api/projects/:publicId/invitation-batches` — cria lote e retorna links uma
-  única vez;
+- `POST /api/projects/:publicId/invitation-batches` — cria lote para uma unidade,
+  sem perfil pré-definido, e retorna links uma única vez;
 - `POST /api/projects/:publicId/invitation-batches/:batchId/revoke` — invalida links
   ainda disponíveis, sem afetar participações iniciadas;
 - `POST /api/projects/:publicId/invitation-batches/:batchId/reissue` — cria uma única
@@ -42,4 +44,3 @@ Erros usam o mesmo envelope, sem detalhes internos:
 
 JSON malformado retorna `REQUEST_ERROR`; falhas inesperadas retornam mensagem
 genérica e são registradas apenas no servidor.
-

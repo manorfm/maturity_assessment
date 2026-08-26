@@ -4,7 +4,6 @@ import { ResourceNotFoundError } from '../../shared/errors.js';
 import { InvitationService } from '../assessments/invitation-service.js';
 import { InferenceService } from '../inference/inference-service.js';
 import { ProjectService } from './project-service.js';
-import type { Profile } from '../catalog/assessment-graph.js';
 
 type ProjectParams = { publicId: string };
 type BatchParams = ProjectParams & { batchId: string };
@@ -37,8 +36,8 @@ export function registerProjectApiRoutes(app: FastifyInstance, db: Database): vo
 
   app.post('/api/projects/:publicId/invitation-batches', async (request, reply) => {
     const context = authorize(request, projects);
-    const body = (request.body ?? {}) as { unitId?: string; profile?: string; quantity?: number };
-    const batch = invitations.createBatch(String(context.project.id), body.unitId ?? '', body.profile as Profile, Number(body.quantity));
+    const body = (request.body ?? {}) as { unitId?: string; quantity?: number };
+    const batch = invitations.createBatch(String(context.project.id), body.unitId ?? '', Number(body.quantity));
     return reply.code(201).send({
       batchId: batch.batchId,
       invitationLinks: batch.tokens.map((token) => absoluteUrl(request, `/invite/${token}`)),
@@ -78,7 +77,8 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
     completed: report.completed,
     minimum: report.minimum,
     findings: report.findings.map(finding),
+    capabilities: report.capabilities,
     perspectiveGaps: report.perspectiveGaps,
-    scopes: report.scopes.map((scope) => ({ path: scope.path, findings: scope.findings.map(finding), perspectiveGaps: scope.perspectiveGaps })),
+    scopes: report.scopes.map((scope) => ({ path: scope.path, findings: scope.findings.map(finding), capabilities: scope.capabilities, perspectiveGaps: scope.perspectiveGaps })),
   };
 }

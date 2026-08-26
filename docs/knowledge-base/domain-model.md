@@ -16,7 +16,8 @@
 - **AssessmentRun:** rodada de um template dentro de um projeto.
 - **Invitation:** credencial individual, aleatória, com validade e uso controlado;
   autoriza uma participação sem precisar aparecer no relatório.
-- **InvitationBatch:** agregado administrativo de convites de uma unidade e perfil;
+- **InvitationBatch:** agregado administrativo de convites de uma unidade, sem perfil
+  imposto pelo criador;
   permite estados coletivos, revogação e uma reemissão sem identificar pessoas.
 - **Participation:** sessão anônima associada a um convite, separada das respostas.
 - **RespondentContext:** papel, escopo e contexto relevantes, com minimização de PII.
@@ -73,9 +74,11 @@ Reabrir o mesmo link nunca exibe respostas, resultados, percurso ou alternativas
 selecionadas e não permite iniciar novamente. A retomada só existe enquanto a
 participação estiver incompleta.
 
-Convites são emitidos em lotes. O criador vê unidade, perfil, quantidade e estado
+Convites são emitidos em lotes. O criador vê unidade, quantidade e estado
 do lote, nunca a relação entre link e resposta. Revogar afeta somente links ainda
-não usados; participações iniciadas permanecem anônimas e válidas. Reemissão cria
+não usados; participações iniciadas permanecem anônimas e válidas. Cada participante
+escolhe uma perspectiva ampla na primeira etapa; essa resposta apenas roteia a
+entrevista e não gera sinal de maturidade. Reemissão cria
 novos segredos, ocorre no máximo uma vez por lote de origem e não recupera tokens.
 
 ## Requisitos de explicabilidade

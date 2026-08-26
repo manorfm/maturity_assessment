@@ -73,6 +73,13 @@ Não haverá média simples entre pilares. O relatório deve destacar capacidade
 limitantes, relações causais plausíveis e confiança. Uma nota agregada, se existir,
 será secundária e explicável.
 
+O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
+um radar apenas das capacidades para as quais o grupo
+elegível produziu sinais. Cada eixo é uma estimativa direcional de 0 a 4 calculada
+dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
+evidência insuficiente e nunca é desenhado como zero. O radar não combina pilares
+em uma nota global e não substitui findings, bloqueios ou recomendações.
+
 ## Tipos de evidência
 
 - escolha em cenário com trade-off real;

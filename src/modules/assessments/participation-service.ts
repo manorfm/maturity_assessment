@@ -1,6 +1,7 @@
 import { inTransaction, type Database } from '../../shared/database.js';
 import { hashSecret, id } from '../../shared/ids.js';
 import { CatalogService } from '../catalog/catalog-service.js';
+import { AssessmentProfile } from './domain/invitation.js';
 
 type Participation = { id: string; profile: string; status: string; current_node: string; graph_version: string };
 
@@ -27,6 +28,10 @@ export class ParticipationService {
     return inTransaction(this.db, () => {
       this.db.prepare('INSERT INTO responses (id, participation_id, node_id, option_id, created_at) VALUES (?, ?, ?, ?, ?)')
         .run(id(), participation.id, node.id, option.id, now);
+      if (node.id === 'respondent-context') {
+        const profile = AssessmentProfile.create(option.id);
+        this.db.prepare('UPDATE participations SET profile = ? WHERE id = ?').run(profile.value, participation.id);
+      }
       const next = this.catalog.nextNode(participation.graph_version, node.id, option.id);
       if (next) {
         this.db.prepare('UPDATE participations SET current_node = ? WHERE id = ?').run(next, participation.id);

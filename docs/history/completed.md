@@ -36,3 +36,5 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   tratamento seguro de corpos ausentes ou malformados.
 - Verificados os dez critérios de conclusão do MVP com quinze testes, tipagem
   estrita, build e revisão de vazamento e código morto.
+- Evoluída a entrevista para quinze nós de SDLC, com perspectiva escolhida pelo
+  participante, convites sem perfil, cópia de links e radar agregado de capacidades.

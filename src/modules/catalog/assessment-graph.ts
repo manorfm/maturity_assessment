@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'delivery-observability-v2';
+export const GRAPH_VERSION = 'sdlc-interview-v3';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
 export type Signal = { capability: string; pattern: string; weight: number };
@@ -22,6 +22,14 @@ export const profiles: Record<Profile, string> = {
 };
 
 export const graph: AssessmentNode[] = [
+  {
+    id: 'respondent-context',
+    title: 'Seu ponto de observação',
+    scenario: 'Pessoas diferentes vivenciam partes distintas do mesmo sistema de entrega. Escolha a perspectiva que mais se aproxima de onde você atua hoje. Isso apenas adapta a entrevista e não produz pontuação.',
+    prompt: 'De qual perspectiva você acompanha a maior parte do trabalho no dia a dia?',
+    options: Object.entries(profiles).map(([profile, label]) => ({ id: profile, label, signals: [] })),
+    next: 'urgent-change',
+  },
   {
     id: 'urgent-change',
     title: 'Uma necessidade urgente',
@@ -116,6 +124,73 @@ export const graph: AssessmentNode[] = [
       { id: 'action-list', label: 'Criamos uma lista de ações; algumas entram no planejamento e outras perdem prioridade com o tempo.', signals: [{ capability: 'aprendizado', pattern: 'acao-sem-fechamento', weight: -1 }] },
       { id: 'documentation', label: 'Atualizamos documentação ou orientação para que as pessoas saibam reagir mais rápido na próxima vez.', signals: [{ capability: 'confiabilidade', pattern: 'mitigacao-sem-prevencao', weight: -1 }] },
       { id: 'local-fix', label: 'Uma pessoa ou time cria uma automação local que ajuda naquele contexto, mas não se espalha facilmente.', signals: [{ capability: 'plataforma', pattern: 'solucao-local-nao-difundida', weight: -1 }] },
+    ],
+    next: 'recent-need',
+  },
+  {
+    id: 'recent-need', title: 'Da necessidade ao primeiro feedback',
+    scenario: 'Pense em uma necessidade recente que parecia importante quando chegou. Antes de uma solução completa ficar pronta, havia incertezas sobre valor e impacto técnico.',
+    prompt: 'Como essa incerteza normalmente diminui no trabalho real?',
+    options: [
+      { id: 'small-evidence', label: 'Produto, engenharia e outras especialidades testam a menor hipótese útil cedo e mudam direção com a evidência.', signals: [{ capability: 'fluxo', pattern: 'descoberta-integrada', weight: 2 }] },
+      { id: 'defined-then-built', label: 'A necessidade é detalhada e aprovada antes de chegar às especialidades que construirão e operarão a solução.', signals: [{ capability: 'fluxo', pattern: 'cascata-fracionada', weight: -2 }] },
+      { id: 'demo-feedback', label: 'O principal feedback conjunto ocorre em demonstrações, quando uma parte relevante da solução já foi construída.', signals: [{ capability: 'aprendizado', pattern: 'feedback-tardio', weight: -1 }] },
+      { id: 'deadline-validates', label: 'O prazo define o que será feito; valor e impacto são avaliados principalmente depois da entrega.', signals: [{ capability: 'governanca', pattern: 'prazo-sem-aprendizado', weight: -2 }] },
+    ], next: 'change-verification',
+  },
+  {
+    id: 'change-verification', title: 'Feedback durante a construção',
+    scenario: 'Uma mudança pequena toca uma regra antiga e pode afetar mais de uma jornada. Considere o período entre a primeira alteração e a confiança para integrá-la.',
+    prompt: 'De onde costuma vir o feedback mais rápido e confiável?',
+    options: [
+      { id: 'repeatable-checks', label: 'Verificações rápidas e repetíveis acompanham a mudança; riscos novos são discutidos e cobertos conforme aparecem.', signals: [{ capability: 'engenharia', pattern: 'feedback-tecnico-rapido', weight: 2 }] },
+      { id: 'qa-cycle', label: 'Uma pessoa de qualidade executa a maior parte das verificações quando recebe uma versão e um ambiente utilizável.', signals: [{ capability: 'qualidade', pattern: 'qualidade-como-handoff', weight: -2 }] },
+      { id: 'developer-memory', label: 'Quem alterou valida os casos que conhece; outros efeitos aparecem na revisão, regressão ou uso posterior.', signals: [{ capability: 'engenharia', pattern: 'verificacao-dependente-de-memoria', weight: -2 }] },
+      { id: 'slow-suite', label: 'Há verificações automatizadas, mas o retorno demora ou varia tanto que frequentemente seguimos sem esperar.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1 }] },
+    ], next: 'environment-access',
+  },
+  {
+    id: 'environment-access', title: 'Um ambiente para aprender',
+    scenario: 'O time precisa reproduzir uma condição, validar integração e colocar uma alteração em um ambiente seguro. A necessidade não estava planejada.',
+    prompt: 'Como isso normalmente acontece do pedido ao primeiro uso?',
+    options: [
+      { id: 'self-service', label: 'Um caminho suportado cria configuração reproduzível com limites de segurança, retorno rápido e remoção prevista.', signals: [{ capability: 'plataforma', pattern: 'self-service-com-guardrails', weight: 2 }] },
+      { id: 'ticket-queue', label: 'Abre-se uma solicitação e o trabalho aguarda disponibilidade, esclarecimentos e execução de outro grupo.', signals: [{ capability: 'plataforma', pattern: 'provisionamento-em-fila', weight: -2 }] },
+      { id: 'manual-access', label: 'Pessoas experientes combinam acessos e ajustam recursos existentes até a validação se tornar possível.', signals: [{ capability: 'governanca', pattern: 'acesso-artesanal', weight: -2 }] },
+      { id: 'shared-drift', label: 'Usa-se um ambiente compartilhado; diferenças e concorrência são resolvidas durante a execução.', signals: [{ capability: 'confiabilidade', pattern: 'ambiente-inconsistente', weight: -2 }] },
+    ], next: 'security-change',
+  },
+  {
+    id: 'security-change', title: 'Uma mudança com risco diferente',
+    scenario: 'Uma alteração de baixo impacto e outra que toca dados sensíveis avançam na mesma semana. Ambas precisam demonstrar que podem operar com segurança.',
+    prompt: 'Como os controles costumam participar dessas mudanças?',
+    options: [
+      { id: 'risk-guardrails', label: 'Risco muda o caminho; controles repetíveis dão retorno durante o trabalho e especialistas entram onde julgamento é necessário.', signals: [{ capability: 'plataforma', pattern: 'seguranca-habilitadora', weight: 2 }] },
+      { id: 'late-review', label: 'A revisão especializada ocorre perto da liberação e pode devolver a mudança para etapas anteriores.', signals: [{ capability: 'governanca', pattern: 'seguranca-tardia', weight: -2 }] },
+      { id: 'same-checklist', label: 'As duas seguem a mesma lista e aprovações; cumprir o processo é a principal evidência disponível.', signals: [{ capability: 'governanca', pattern: 'controle-indiferenciado', weight: -2 }] },
+      { id: 'team-best-effort', label: 'O time aplica o que conhece e procura ajuda quando percebe algo fora do comum.', signals: [{ capability: 'engenharia', pattern: 'competencia-de-seguranca-inacessivel', weight: -1 }] },
+    ], next: 'architecture-pressure',
+  },
+  {
+    id: 'architecture-pressure', title: 'Mudança além de uma fronteira',
+    scenario: 'Uma regra muda com frequência e agora exige alterações coordenadas em componentes mantidos por grupos diferentes. O custo vem crescendo a cada entrega.',
+    prompt: 'O que normalmente acontece quando esse padrão fica visível?',
+    options: [
+      { id: 'measure-and-adjust', label: 'Os grupos tornam o custo observável, testam uma fronteira ou contrato menor e acompanham se a coordenação diminui.', signals: [{ capability: 'arquitetura', pattern: 'arquitetura-evolutiva', weight: 2 }] },
+      { id: 'planning-sync', label: 'Aumentam alinhamentos, calendário e responsáveis para coordenar melhor a estrutura existente.', signals: [{ capability: 'arquitetura', pattern: 'acoplamento-coordenado', weight: -1 }] },
+      { id: 'architecture-project', label: 'A solução aguarda uma iniciativa maior de arquitetura enquanto entregas continuam usando contornos locais.', signals: [{ capability: 'arquitetura', pattern: 'evolucao-em-grande-lote', weight: -2 }] },
+      { id: 'ownership-dispute', label: 'A prioridade varia conforme quem sofre o impacto e quem possui autoridade sobre cada componente.', signals: [{ capability: 'organizacao', pattern: 'ownership-fragmentado', weight: -2 }] },
+    ], next: 'team-pressure',
+  },
+  {
+    id: 'team-pressure', title: 'Pressão, conflito e aprendizado',
+    scenario: 'Após uma falha relevante, há pressão por explicações. Decisões envolveram prazo, produto, código, controles e operação; nenhuma pessoa viu a cadeia inteira.',
+    prompt: 'Como a organização costuma conduzir os dias seguintes?',
+    options: [
+      { id: 'system-learning', label: 'Reconstrói condições e decisões sem buscar culpado, protege relatos difíceis e muda o sistema com responsáveis e sinais de efeito.', signals: [{ capability: 'organizacao', pattern: 'aprendizado-blameless', weight: 2 }] },
+      { id: 'accountability-person', label: 'Identifica quem deveria ter evitado a falha e reforça revisão, atenção ou aprovação nessa etapa.', signals: [{ capability: 'organizacao', pattern: 'culpa-e-controle', weight: -2 }] },
+      { id: 'private-resolution', label: 'Lideranças e especialistas resolvem o caso em um grupo pequeno para reduzir exposição e recuperar a entrega.', signals: [{ capability: 'aprendizado', pattern: 'aprendizado-restrito', weight: -2 }] },
+      { id: 'move-on', label: 'Corrige o efeito imediato; com a pressão seguinte, a análise mais ampla perde prioridade.', signals: [{ capability: 'confiabilidade', pattern: 'incidente-sem-aprendizado', weight: -2 }] },
     ],
   },
 ];

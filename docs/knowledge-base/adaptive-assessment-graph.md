@@ -11,7 +11,8 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão `delivery-observability-v2` também persiste variantes de texto por perfil.
+A versão `sdlc-interview-v3` começa por uma escolha neutra de perspectiva e também
+persiste variantes de texto por perfil.
 Elas alteram contexto e linguagem do nó, preservando opções e sinais compartilhados
 quando a capacidade observada é a mesma.
 
@@ -28,13 +29,19 @@ As arestas usam condições declarativas sobre respostas e sinais já observados
 executam código arbitrário. Cada percurso tem limites de tamanho, detecção de ciclo
 e uma saída segura.
 
-O primeiro grafo possui três ramificações de discriminação após a espera para
+O grafo vigente possui três ramificações de discriminação após a espera para
 entregar: empacotamento manual, fila de qualidade ou aprovação/governança. Uma
 resposta de fluxo curto segue diretamente ao cenário seguinte.
 
 Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não geram
 sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
+
+O percurso-base atual contém quinze nós e cobre eventos de priorização, integração,
+entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
+ambientes, segurança, arquitetura e aprendizado após falhas. Quantidade de perguntas
+não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
+com base em lacunas de evidência e sinais anteriores, como uma entrevista.
 
 ## Duas passagens de raciocínio
 

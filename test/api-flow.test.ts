@@ -22,7 +22,7 @@ test('API cria projeto e administra lote sem expor tokens no resumo', async () =
   const unitId = summary.json<{ units: Array<{ id: string }> }>().units.at(-1)!.id;
   const batch = await app.inject({
     method: 'POST', url: `/api/projects/${project.publicId}/invitation-batches`, headers: { authorization },
-    payload: { unitId, profile: 'quality', quantity: 2 },
+    payload: { unitId, quantity: 2 },
   });
   assert.equal(batch.statusCode, 201);
   const issued = batch.json<{ batchId: string; invitationLinks: string[] }>();

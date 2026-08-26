@@ -15,7 +15,7 @@ test('convite é consumido uma vez e não mantém vínculo com a participação'
   const created = projects.create('Piloto', 'Empresa/Tribo/Time A');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
-  const [token] = invitations.createBatch(String(project.id), unit.id, 'engineering', 1).tokens;
+  const [token] = invitations.createBatch(String(project.id), unit.id, 1).tokens;
 
   const first = invitations.claim(token!);
   assert.notEqual(first, 'invalid');
@@ -36,7 +36,7 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   const created = projects.create('Piloto', 'Empresa/Time A');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
-  const tokens = invitations.createBatch(String(project.id), unit.id, 'engineering', 5).tokens;
+  const tokens = invitations.createBatch(String(project.id), unit.id, 5).tokens;
 
   for (const token of tokens) {
     const claimed = invitations.claim(token);
@@ -45,7 +45,7 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
     while (participations.find(resumeToken)?.status === 'in_progress') {
       const current = participations.find(resumeToken)!;
       const node = new CatalogService(db).getNode(current.graph_version, current.current_node)!;
-      const option = node.id === 'shared-change' ? 'before-release' : node.options[0]!.id;
+      const option = node.id === 'respondent-context' ? 'engineering' : node.id === 'shared-change' ? 'before-release' : node.options[0]!.id;
       participations.answer(resumeToken, option);
     }
   }
@@ -53,7 +53,9 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   const report = inference.report(String(project.id), 5);
   assert.equal(report.completed, 5);
   assert.equal(report.findings.some((finding) => finding.pattern === 'integracao-tardia'), true);
+  assert.equal(report.capabilities.some((capability) => capability.id === 'engenharia' && capability.level >= 0 && capability.level <= 4), true);
   assert.equal(report.scopes.some((item) => item.path === 'Empresa/Time A'), true);
+  assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.capabilities.length > 0);
 });
 
 test('grafo publicado é persistido e ramifica conforme a resposta', () => {
@@ -63,13 +65,18 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   const participations = new ParticipationService(db);
   const catalog = new CatalogService(db);
   assert.equal((db.prepare('SELECT COUNT(*) total FROM assessment_nodes').get() as { total: number }).total, graph.length);
+  assert.ok(graph.length >= 15, 'a entrevista deve cobrir o SDLC além de um questionário raso');
+  assert.deepEqual(graph[0]!.options.map((option) => option.id), ['management', 'product', 'quality', 'engineering', 'platform']);
+  assert.equal(graph[0]!.options.every((option) => option.signals.length === 0), true);
   assert.ok((db.prepare('SELECT COUNT(*) total FROM assessment_edges WHERE option_key IS NOT NULL').get() as { total: number }).total >= 4);
 
   const created = projects.create('Piloto', 'Empresa/Time A');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
-  const [token] = invitations.createBatch(String(project.id), unit.id, 'quality', 1).tokens;
+  const [token] = invitations.createBatch(String(project.id), unit.id, 1).tokens;
   const claimed = invitations.claim(token!) as { resumeToken: string };
+  participations.answer(claimed.resumeToken, 'quality');
+  assert.equal(participations.find(claimed.resumeToken)?.profile, 'quality');
   participations.answer(claimed.resumeToken, 'replan-together');
   participations.answer(claimed.resumeToken, 'continuous');
   participations.answer(claimed.resumeToken, 'test-queue');
@@ -102,19 +109,23 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
   const created = projects.create('Perspectivas', 'Empresa/Time A');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
-  const complete = (token: string, firstOption: string) => {
+  const complete = (token: string, firstOption: string, profile: 'management' | 'engineering') => {
     const claimed = invitations.claim(token) as { resumeToken: string };
     while (participations.find(claimed.resumeToken)?.status === 'in_progress') {
       const current = participations.find(claimed.resumeToken)!;
       const node = new CatalogService(db).getNode(current.graph_version, current.current_node, current.profile)!;
-      participations.answer(claimed.resumeToken, node.id === 'urgent-change' ? firstOption : node.options[0]!.id);
+      const option = node.id === 'respondent-context' ? profile
+        : node.id === 'urgent-change' ? firstOption
+        : node.id === 'recent-need' && firstOption === 'add-to-sprint' ? 'defined-then-built'
+        : node.options[0]!.id;
+      participations.answer(claimed.resumeToken, option);
     }
   };
-  invitations.createBatch(String(project.id), unit.id, 'management', 5).tokens.forEach((token) => complete(token, 'replan-together'));
-  invitations.createBatch(String(project.id), unit.id, 'engineering', 4).tokens.forEach((token) => complete(token, 'add-to-sprint'));
+  invitations.createBatch(String(project.id), unit.id, 5).tokens.forEach((token) => complete(token, 'replan-together', 'management'));
+  invitations.createBatch(String(project.id), unit.id, 4).tokens.forEach((token) => complete(token, 'add-to-sprint', 'engineering'));
   assert.deepEqual(inference.report(String(project.id), 5).perspectiveGaps, []);
 
-  invitations.createBatch(String(project.id), unit.id, 'engineering', 1).tokens.forEach((token) => complete(token, 'add-to-sprint'));
+  invitations.createBatch(String(project.id), unit.id, 1).tokens.forEach((token) => complete(token, 'add-to-sprint', 'engineering'));
   const gaps = inference.report(String(project.id), 5).perspectiveGaps;
   assert.equal(gaps.some((gap) => gap.capability === 'fluxo'), true);
 });
@@ -139,11 +150,11 @@ test('suprime toda a cadeia quando uma partição irmã é pequena', () => {
       participations.answer(claimed.resumeToken, node.options[0]!.id);
     }
   };
-  invitations.createBatch(String(project.id), timeA.id, 'engineering', 5).tokens.forEach(complete);
-  invitations.createBatch(String(project.id), timeB.id, 'engineering', 1).tokens.forEach(complete);
+  invitations.createBatch(String(project.id), timeA.id, 5).tokens.forEach(complete);
+  invitations.createBatch(String(project.id), timeB.id, 1).tokens.forEach(complete);
   assert.deepEqual(inference.report(String(project.id), 5).scopes, []);
 
-  invitations.createBatch(String(project.id), timeB.id, 'engineering', 4).tokens.forEach(complete);
+  invitations.createBatch(String(project.id), timeB.id, 4).tokens.forEach(complete);
   const paths = inference.report(String(project.id), 5).scopes.map((scope) => scope.path);
   assert.deepEqual(paths, ['Empresa', 'Empresa/Time A', 'Empresa/Time B']);
 });

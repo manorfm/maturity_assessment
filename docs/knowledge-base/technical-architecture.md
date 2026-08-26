@@ -88,9 +88,9 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com cinco cenários iniciais, três
-aprofundamentos condicionais e perfis de gestão, produto, qualidade, engenharia e
-plataforma/operações.
+O corte vigente implementa esses cinco passos com quinze nós, três aprofundamentos
+condicionais e perspectivas de gestão, produto, qualidade, engenharia e
+plataforma/operações escolhidas durante a entrevista.
 
 ## Agregação hierárquica segura
 

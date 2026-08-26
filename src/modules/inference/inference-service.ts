@@ -3,6 +3,7 @@ import { profiles, type Profile } from '../catalog/assessment-graph.js';
 
 type AggregateResponse = { pattern: string; weight: number; total: number };
 type Finding = { pattern: string; title: string; evidence: number; intervention: string };
+type CapabilityLevel = { id: string; label: string; level: number; evidence: number };
 type PerspectiveGap = {
   capability: string;
   title: string;
@@ -33,6 +34,33 @@ const recommendations: Record<string, { title: string; intervention: string }> =
   'controle-indiferenciado': { title: 'Mudanças de riscos diferentes percorrem o mesmo controle', intervention: 'Defina duas classes simples de risco e teste um caminho com guardrails para a classe de baixo impacto.' },
   'governanca-relacional': { title: 'A velocidade da governança depende de relações e escalada', intervention: 'Explicite critérios, tempos e caminho de exceção para que urgência não dependa de acesso pessoal aos aprovadores.' },
   'controle-sem-proposito': { title: 'Não está claro qual risco o controle reduz', intervention: 'Para uma aprovação, documente ameaça, evidência esperada e decisão possível; retire ou redesenhe o passo se nenhuma evidência puder mudar o resultado.' },
+  'cascata-fracionada': { title: 'O feedback multidisciplinar chega depois da definição', intervention: 'Escolha uma necessidade pequena e envolva produto, engenharia, qualidade e operação na primeira hipótese, antes de detalhar toda a solução.' },
+  'feedback-tardio': { title: 'A solução acumula antes do primeiro feedback conjunto', intervention: 'Reduza o próximo lote até conseguir validar uma suposição relevante antes da demonstração formal.' },
+  'prazo-sem-aprendizado': { title: 'O prazo substitui a validação de valor e impacto', intervention: 'Registre a hipótese e um sinal de efeito antes da próxima entrega urgente; reserve uma data curta para decidir com a evidência.' },
+  'qualidade-como-handoff': { title: 'Qualidade recebe a mudança como uma etapa posterior', intervention: 'Antecipe a discussão de risco e transforme uma verificação recorrente em feedback compartilhado durante a construção.' },
+  'verificacao-dependente-de-memoria': { title: 'A confiança depende dos casos lembrados por quem alterou', intervention: 'Use um escape recente para criar uma verificação pequena e repetível junto à mudança que o provocaria.' },
+  'automacao-sem-feedback': { title: 'A automação é lenta ou instável demais para orientar decisões', intervention: 'Meça espera e instabilidade das verificações; isole primeiro a causa que mais incentiva ignorar o retorno.' },
+  'provisionamento-em-fila': { title: 'Ambientes e capacidades chegam por fila externa', intervention: 'Mapeie o pedido mais repetido e teste um caminho self-service com limites explícitos e tempo de entrega observável.' },
+  'acesso-artesanal': { title: 'Acesso e provisão dependem de coordenação pessoal', intervention: 'Padronize uma necessidade frequente com acesso mínimo, expiração e trilha automática antes de ampliar o escopo.' },
+  'ambiente-inconsistente': { title: 'Ambientes compartilhados geram concorrência e diferenças', intervention: 'Torne reproduzível a menor dependência crítica e meça tempo de diagnóstico e conflitos evitados.' },
+  'seguranca-tardia': { title: 'Segurança devolve mudanças perto da liberação', intervention: 'Escolha um risco recorrente e mova sua evidência para o início do trabalho, mantendo revisão humana nos casos de julgamento.' },
+  'competencia-de-seguranca-inacessivel': { title: 'A competência de segurança chega apenas por exceção', intervention: 'Defina um canal e guardrail para a classe de risco mais comum, com critérios claros de quando envolver especialistas.' },
+  'acoplamento-coordenado': { title: 'Mais coordenação compensa fronteiras custosas', intervention: 'Meça uma mudança transversal e teste um contrato ou limite menor capaz de reduzir uma interação recorrente.' },
+  'evolucao-em-grande-lote': { title: 'A evolução arquitetural depende de uma iniciativa grande', intervention: 'Extraia um experimento reversível da iniciativa e valide redução de custo de mudança antes de ampliar.' },
+  'ownership-fragmentado': { title: 'Prioridade e ownership se fragmentam nas fronteiras', intervention: 'Reconstrua uma mudança transversal, explicite decisão e impacto de ponta a ponta e teste um responsável pelo resultado, não por cada etapa.' },
+  'culpa-e-controle': { title: 'Falhas reforçam culpa e controles locais', intervention: 'Reconstrua condições, incentivos e barreiras do próximo incidente sem atribuição individual; escolha uma mudança sistêmica verificável.' },
+  'aprendizado-restrito': { title: 'O aprendizado fica restrito a lideranças e especialistas', intervention: 'Compartilhe uma síntese segura das condições e decisões, permitindo contestação e reaproveitamento por outros grupos.' },
+  'incidente-sem-aprendizado': { title: 'A urgência encerra o incidente antes do aprendizado', intervention: 'Reserve uma análise curta após estabilizar e limite-a a uma mudança com responsável e sinal de recorrência.' },
+};
+
+const capabilityLabels: Record<string, string> = {
+  fluxo: 'Fluxo e entrega', entrega: 'Fluxo e entrega',
+  engenharia: 'Engenharia e SDLC', qualidade: 'Engenharia e SDLC',
+  arquitetura: 'Arquitetura e evolução',
+  confiabilidade: 'Confiabilidade e observabilidade', observabilidade: 'Confiabilidade e observabilidade',
+  plataforma: 'Plataforma, cloud e segurança',
+  organizacao: 'Organização e interação', governanca: 'Governança e estratégia',
+  aprendizado: 'Aprendizado e adaptação',
 };
 
 export class InferenceService {
@@ -40,15 +68,43 @@ export class InferenceService {
 
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
-    if (completed < minimum) return { completed, minimum, findings: [] as Finding[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
+    if (completed < minimum) return { completed, minimum, findings: [] as Finding[], capabilities: [] as CapabilityLevel[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
+    const capabilities = this.capabilities(projectId);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const scopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
       findings: this.findings(projectId, scope.completed, scope.id),
+      capabilities: this.capabilities(projectId, scope.id),
       perspectiveGaps: this.perspectiveGaps(projectId, minimum, scope.id),
     }));
-    return { completed, minimum, findings, perspectiveGaps, scopes };
+    return { completed, minimum, findings, capabilities, perspectiveGaps, scopes };
+  }
+
+  private capabilities(projectId: string, unitId?: string): CapabilityLevel[] {
+    const scope = this.scope(projectId, unitId);
+    const rows = this.db.prepare(`
+      SELECT s.capability, AVG(s.weight) average_weight, COUNT(*) evidence
+      FROM responses r JOIN participations p ON p.id = r.participation_id
+      JOIN assessment_signals s ON s.graph_version = p.graph_version
+        AND s.node_key = r.node_id AND s.option_key = r.option_id
+      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
+      GROUP BY s.capability
+    `).all(...scope.parameters) as unknown as Array<{ capability: string; average_weight: number; evidence: number }>;
+    const grouped = new Map<string, { total: number; evidence: number }>();
+    for (const row of rows) {
+      const label = capabilityLabels[row.capability] ?? row.capability;
+      const current = grouped.get(label) ?? { total: 0, evidence: 0 };
+      current.total += Number(row.average_weight) * Number(row.evidence);
+      current.evidence += Number(row.evidence);
+      grouped.set(label, current);
+    }
+    return [...grouped.entries()].map(([label, value]) => ({
+      id: Object.entries(capabilityLabels).find(([, candidate]) => candidate === label)?.[0] ?? label,
+      label,
+      level: Math.max(0, Math.min(4, Number((2 + value.total / value.evidence).toFixed(2)))),
+      evidence: value.evidence,
+    })).sort((left, right) => left.label.localeCompare(right.label));
   }
 
   private perspectiveGaps(projectId: string, minimum: number, unitId?: string): PerspectiveGap[] {
@@ -155,5 +211,5 @@ export class InferenceService {
   }
 }
 
-type ScopeReport = { id: string; path: string; completed: number; findings: Finding[]; perspectiveGaps: PerspectiveGap[] };
+type ScopeReport = { id: string; path: string; completed: number; findings: Finding[]; capabilities: CapabilityLevel[]; perspectiveGaps: PerspectiveGap[] };
 type QueryScope = { sql: string; parameters: string[] };

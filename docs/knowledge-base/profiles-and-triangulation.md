@@ -52,8 +52,10 @@ disse X” quando isso puder identificar alguém.
 
 ## Implementação vigente
 
-Convites carregam uma família de perfil validada pelo domínio. O catálogo pode
-substituir cenário e pergunta por uma variante daquele perfil sem alterar a
+O convite é comum à unidade. Na primeira etapa, a pessoa seleciona a perspectiva
+que mais se aproxima de sua atuação cotidiana; a seleção não gera sinais nem mede
+conhecimento. O catálogo pode substituir cenário e pergunta por uma variante daquela
+perspectiva sem alterar a
 capacidade nem premiar o cargo. A primeira publicação possui variantes para
 urgências e degradação, com perspectivas de gestão, produto, qualidade, engenharia
 e plataforma/operações.

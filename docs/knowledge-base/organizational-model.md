@@ -20,8 +20,9 @@ rígidas. Uma organização enxuta pode ter apenas organização e time. Cada co
 associado à menor unidade relevante antes da distribuição; o respondente não
 precisa declarar informações que permitam sua identificação.
 
-O convite também pode receber um perfil amplo necessário ao roteamento, mas os
-relatórios só permitem cortes por perfil quando o limiar de anonimato for cumprido.
+O convite não recebe perfil. O mesmo lote atende qualquer integrante da unidade, e
+a primeira etapa coleta uma perspectiva ampla somente para roteamento. Os relatórios
+só permitem comparações por perspectiva quando o limiar de anonimato for cumprido.
 Perfis raros devem ser agrupados ou reportados apenas no nível ancestral.
 
 ## Visões do relatório

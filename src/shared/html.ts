@@ -24,6 +24,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .muted,small { color:var(--muted) }.notice { border-left:4px solid var(--accent); background:var(--soft); padding:13px 16px }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px }.metric { font-size:2rem; font-weight:750 }.tag { display:inline-block; background:var(--soft); color:var(--accent); padding:3px 9px; border-radius:999px; font-size:.82rem; margin:2px }
     code { overflow-wrap:anywhere } summary { cursor:pointer }
+    .radar { display:block; width:min(100%,520px); margin:12px auto }.radar-grid polygon,.radar-grid line { fill:none; stroke:var(--line); stroke-width:1 }.radar-result { fill:rgba(25,95,70,.22); stroke:var(--accent); stroke-width:3 }.capability-legend { padding-left:20px }
     @media(max-width:600px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem} }
   </style>
 </head>

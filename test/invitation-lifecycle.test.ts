@@ -17,7 +17,7 @@ test('lote pode ser revogado e reemitido sem recuperar tokens antigos', () => {
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
 
-  const original = invitations.createBatch(String(project.id), unit.id, 'engineering', 3);
+  const original = invitations.createBatch(String(project.id), unit.id, 3);
   assert.equal(original.tokens.length, 3);
   assert.equal(invitations.revokeBatch(String(project.id), original.batchId), 3);
   assert.equal(invitations.claim(original.tokens[0]!), 'invalid');

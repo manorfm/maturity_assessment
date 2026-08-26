@@ -16,7 +16,8 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(dashboard.body, /Gerar convites individuais/);
 
   const unit = db.prepare("SELECT id FROM organization_units WHERE path = 'Empresa/Time A'").get() as { id: string };
-  const invitationPage = await app.inject({ method: 'POST', url: `${managementUrl}/invitations`, payload: { unitId: unit.id, profile: 'quality', count: '2' } });
+  const invitationPage = await app.inject({ method: 'POST', url: `${managementUrl}/invitations`, payload: { unitId: unit.id, count: '2' } });
+  assert.match(invitationPage.body, /Copiar todos os links/);
   const token = invitationPage.body.match(/\/invite\/([A-Za-z0-9_-]+)/)?.[1];
   assert.ok(token);
   const first = await app.inject({ method: 'GET', url: `/invite/${token}` });
@@ -42,7 +43,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   while (participations.find(resumeToken)?.status === 'in_progress') {
     const current = participations.find(resumeToken)!;
     const node = catalog.getNode(current.graph_version, current.current_node)!;
-    participations.answer(resumeToken, node.options[0]!.id);
+    participations.answer(resumeToken, node.id === 'respondent-context' ? 'quality' : node.options[0]!.id);
   }
   const completed = await app.inject({ method: 'GET', url: `/respond/${resumeToken}` });
   assert.equal(completed.statusCode, 200);
