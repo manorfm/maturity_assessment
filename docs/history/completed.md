@@ -30,3 +30,9 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   transações reutilizáveis e tratamento HTTP universal de erros seguros.
 - Aplicado ciclo red/green/blue, ampliada a suíte para onze testes e ativadas
   verificações contra símbolos não usados; código e CSS mortos foram removidos.
+- Concluído o MVP na versão 0.4.0 com lotes de convites, estados agregados,
+  revogação, reemissão única, telas administrativas e API JSON autenticada.
+- Implantadas migrações incrementais com backfill dos convites existentes e
+  tratamento seguro de corpos ausentes ou malformados.
+- Verificados os dez critérios de conclusão do MVP com quinze testes, tipagem
+  estrita, build e revisão de vazamento e código morto.

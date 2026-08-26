@@ -33,6 +33,15 @@ falhas inesperadas são registradas internamente sem apresentar stack, SQL ou se
 TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudanças de
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
+O schema evolui por migrações incrementais numeradas e transacionais registradas em
+`schema_migrations`. A migração de lotes preserva convites anteriores e os agrupa
+sem recriar tokens. Índices garantem que um lote de origem seja reemitido no máximo
+uma vez.
+
+A API administrativa usa bearer token apenas no header e compartilha os serviços
+das telas. Relatórios JSON passam por sanitização para remover contagem de padrões e
+campos internos. Erros HTML e JSON são produzidos por um único handler universal.
+
 ## Limites modulares
 
 Cada módulo contém domínio, casos de uso, persistência e interface HTTP próprios.

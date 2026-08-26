@@ -16,13 +16,22 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(dashboard.body, /Gerar convites individuais/);
 
   const unit = db.prepare("SELECT id FROM organization_units WHERE path = 'Empresa/Time A'").get() as { id: string };
-  const invitationPage = await app.inject({ method: 'POST', url: `${managementUrl}/invitations`, payload: { unitId: unit.id, profile: 'quality', count: '1' } });
+  const invitationPage = await app.inject({ method: 'POST', url: `${managementUrl}/invitations`, payload: { unitId: unit.id, profile: 'quality', count: '2' } });
   const token = invitationPage.body.match(/\/invite\/([A-Za-z0-9_-]+)/)?.[1];
   assert.ok(token);
   const first = await app.inject({ method: 'GET', url: `/invite/${token}` });
   assert.equal(first.statusCode, 302);
   assert.match(first.headers.location!, /^\/respond\//);
   const resumeToken = first.headers.location!.split('/').at(-1)!;
+  const batch = db.prepare('SELECT id FROM invitation_batches ORDER BY rowid DESC LIMIT 1').get() as { id: string };
+  const batchDashboard = await app.inject({ method: 'GET', url: managementUrl });
+  assert.match(batchDashboard.body, /Lotes de convites/);
+  assert.match(batchDashboard.body, /Revogar links disponíveis/);
+  const revoked = await app.inject({ method: 'POST', url: `${managementUrl}/invitation-batches/${batch.id}/revoke` });
+  assert.equal(revoked.statusCode, 302);
+  const reissued = await app.inject({ method: 'POST', url: `${managementUrl}/invitation-batches/${batch.id}/reissue` });
+  assert.equal(reissued.statusCode, 200);
+  assert.match(reissued.body, /Distribua um link por pessoa/);
   const repeated = await app.inject({ method: 'GET', url: `/invite/${token}` });
   assert.equal(repeated.statusCode, 200);
   assert.doesNotMatch(repeated.body, /name="optionId"/);

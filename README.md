@@ -9,7 +9,7 @@ API, interface web sóbria renderizada no servidor e SQLite. A definição do mo
 está em [`docs/knowledge-base`](docs/knowledge-base) e as possibilidades futuras
 ficam separadas em [`docs/backlog`](docs/backlog/README.md).
 
-## Estado atual
+## Estado atual — MVP concluído
 
 O primeiro corte vertical está executável. Ele permite criar um projeto, configurar
 uma hierarquia livre, gerar convites individuais, responder anonimamente a cinco
@@ -18,6 +18,11 @@ após cinco conclusões em partições seguras.
 
 A versão 0.3 adapta a linguagem de cenários ao perfil e apresenta divergências de
 perspectiva somente quando cada grupo comparado possui ao menos cinco respostas.
+
+A versão 0.4 conclui o [escopo do MVP](docs/knowledge-base/mvp-scope.md): adiciona
+lotes revogáveis/reemitíveis, migrações incrementais e uma
+[API administrativa](docs/knowledge-base/api.md). O sistema está pronto para um
+piloto controlado; itens de escala, integração e calibração permanecem no backlog.
 
 ## Executar localmente
 
@@ -42,7 +47,8 @@ npm run build
 
 - O segredo no link administrativo é o único acesso do criador; ainda não há conta
   ou recuperação.
-- Convites são copiados manualmente e expiram em 30 dias.
+- Convites são copiados manualmente e expiram em 30 dias; lotes podem ser revogados
+  e reemitidos sem recuperar segredos antigos.
 - O grafo é semeado a partir do catálogo versionado e executado pelas tabelas de
   nós, opções, arestas e sinais no SQLite. Um editor visual continua no backlog.
 - Os recortes hierárquicos são suprimidos quando um grupo irmão pequeno permitiria

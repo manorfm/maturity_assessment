@@ -11,7 +11,6 @@
 - proteção contra ataques de interseção em futuros filtros combináveis por perfil,
   tempo ou outras dimensões; a hierarquia simples já usa supressão por partição;
 - política para texto livre, que permanece fora do primeiro corte;
-- modelo de migrações incremental antes de operação com dados reais.
 
 ## Instrumento e experiência
 
@@ -81,7 +80,8 @@
 - importação configurável de hierarquias organizacionais;
 - PostgreSQL quando concorrência, escala ou operação justificarem a migração;
 - trilha de auditoria, retenção configurável e exclusão de dados;
-- API pública e webhooks com escopos mínimos;
+- ampliar a API administrativa do MVP para uma API pública versionada e webhooks
+  com escopos mínimos;
 - execução on-premises para organizações com restrições regulatórias.
 
 ## Pesquisa e governança do próprio modelo

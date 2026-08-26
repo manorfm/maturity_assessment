@@ -35,7 +35,7 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
 
   app.post('/respond/:resumeToken', async (request, reply) => {
     const { resumeToken } = request.params as { resumeToken: string };
-    const body = request.body as { optionId?: string };
+    const body = (request.body ?? {}) as { optionId?: string };
     if (!body.optionId) return reply.code(400).send('Escolha uma alternativa');
     const result = participations.answer(resumeToken, body.optionId);
     if (result === 'invalid') return reply.redirect(`/respond/${resumeToken}`);

@@ -28,7 +28,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
   app.get('/', async (_request, reply) => reply.type('text/html').send(projectForm()));
   app.get('/projects/new', async (_request, reply) => reply.type('text/html').send(projectForm()));
   app.post('/projects', async (request, reply) => {
-    const body = request.body as { name?: string; hierarchy?: string };
+    const body = (request.body ?? {}) as { name?: string; hierarchy?: string };
     const created = projects.create(body.name ?? '', body.hierarchy ?? '');
     return reply.redirect(`/projects/${created.publicId}/manage/${created.adminSecret}`);
   });
@@ -51,7 +51,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const projectId = String(auth.project.id);
     const units = projects.listUnits(projectId);
     const report = inference.report(projectId, Number(auth.project.minimum_group_size));
-    const issued = db.prepare('SELECT status, COUNT(*) total FROM invitations WHERE project_id = ? GROUP BY status').all(projectId) as Array<{ status: string; total: number }>;
+    const batches = invitations.listBatches(projectId);
     const unitOptions = units.map((unit) => `<option value="${escapeHtml(unit.id)}">${escapeHtml(unit.path)}</option>`).join('');
     const profileOptions = Object.entries(profiles).map(([value, label]) => `<option value="${value}">${escapeHtml(label)}</option>`).join('');
     const findings = report.completed < report.minimum
@@ -60,14 +60,16 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       : '<p class="notice">Ainda não há um padrão problemático com evidência agregada suficiente.</p>';
     const gaps = report.perspectiveGaps.map((gap) => `<article class="card"><span class="tag">divergência agregada</span><h3>${escapeHtml(gap.title)}</h3><p>Uma prática aparece mais sustentável para ${escapeHtml(gap.strongerProfiles.join(', '))}, enquanto restrições são percebidas por ${escapeHtml(gap.constrainedProfiles.join(', '))}. Investigue visibilidade, fronteiras e autonomia antes de atribuir causa.</p></article>`).join('');
     const scopeReports = report.scopes.map((scope) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="muted">· grupo elegível</span></summary>${scope.findings.length ? scope.findings.map((finding) => `<article><h3>${escapeHtml(finding.title)}</h3><p>${escapeHtml(finding.intervention)}</p></article>`).join('') : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
+    const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)} · ${escapeHtml(profiles[batch.profile])}</h3><p class="muted">${batch.quantity} convites no lote</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
-      <div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${issued.reduce((sum,item)=>sum+Number(item.total),0)}</div><span class="muted">convites emitidos</span></div></div>
+      <div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
         <label for="unitId">Unidade</label><select id="unitId" name="unitId">${unitOptions}</select>
         <label for="profile">Perfil</label><select id="profile" name="profile">${profileOptions}</select>
         <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
         <button type="submit">Gerar links</button></form></section>
+      ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
       <section><h2>Mapa agregado</h2>${findings}</section>
       ${gaps ? `<section><h2>Perspectivas</h2>${gaps}</section>` : ''}
       ${scopeReports ? `<section><h2>Mapa por estrutura</h2><p class="muted">Somente partições que preservam o grupo mínimo aparecem. Contagens e alternativas individuais são suprimidas.</p>${scopeReports}</section>` : ''}
@@ -76,11 +78,29 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
     const auth = requireProject(request.params as Params);
-    const body = request.body as { unitId?: string; profile?: Profile; count?: string };
+    const body = (request.body ?? {}) as { unitId?: string; profile?: Profile; count?: string };
     const units = projects.listUnits(String(auth.project.id));
     if (!body.unitId || !units.some((unit) => unit.id === body.unitId) || !body.profile || !profiles[body.profile]) throw new DomainValidationError();
-    const tokens = invitations.issue(String(auth.project.id), body.unitId, body.profile, Number(body.count ?? 1));
-    const origin = `${request.protocol}://${request.host}`;
-    return reply.type('text/html').send(layout('Convites gerados', `<header><p class="eyebrow">Convites únicos</p><h1>Distribua um link por pessoa</h1><p class="lead">Esta é a única vez em que os tokens aparecem juntos. Não associe nomes aos links na plataforma.</p></header><div class="card"><ol>${tokens.map((token) => `<li><code>${escapeHtml(`${origin}/invite/${token}`)}</code></li>`).join('')}</ol></div><a class="button" href="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}">Voltar ao painel</a>`));
+    const batch = invitations.createBatch(String(auth.project.id), body.unitId, body.profile, Number(body.count ?? 1));
+    return reply.type('text/html').send(invitationLinksPage(request.protocol, request.host, batch.tokens, auth.params));
   });
+
+  app.post('/projects/:publicId/manage/:adminSecret/invitation-batches/:batchId/revoke', async (request, reply) => {
+    const auth = requireProject(request.params as Params);
+    const { batchId } = request.params as Params & { batchId: string };
+    invitations.revokeBatch(String(auth.project.id), batchId);
+    return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
+  });
+
+  app.post('/projects/:publicId/manage/:adminSecret/invitation-batches/:batchId/reissue', async (request, reply) => {
+    const auth = requireProject(request.params as Params);
+    const { batchId } = request.params as Params & { batchId: string };
+    const batch = invitations.reissueBatch(String(auth.project.id), batchId);
+    return reply.type('text/html').send(invitationLinksPage(request.protocol, request.host, batch.tokens, auth.params));
+  });
+}
+
+function invitationLinksPage(protocol: string, host: string, tokens: string[], params: Params): string {
+  const origin = `${protocol}://${host}`;
+  return layout('Convites gerados', `<header><p class="eyebrow">Convites únicos</p><h1>Distribua um link por pessoa</h1><p class="lead">Esta é a única vez em que os tokens aparecem juntos. Não associe nomes aos links na plataforma.</p></header><div class="card"><ol>${tokens.map((token) => `<li><code>${escapeHtml(`${origin}/invite/${token}`)}</code></li>`).join('')}</ol></div><a class="button" href="/projects/${params.publicId}/manage/${params.adminSecret}">Voltar ao painel</a>`);
 }

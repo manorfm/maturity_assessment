@@ -21,3 +21,8 @@ export class ResourceNotFoundError extends AppError {
   }
 }
 
+export class ConflictError extends AppError {
+  constructor(message: string) {
+    super('CONFLICT', 409, message);
+  }
+}

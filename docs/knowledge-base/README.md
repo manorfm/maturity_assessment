@@ -15,6 +15,8 @@ regras de inferência.
 - `organizational-model.md`: hierarquias configuráveis, anonimato e agregações.
 - `adaptive-assessment-graph.md`: jornada dinâmica, inferências e recomendações.
 - `profiles-and-triangulation.md`: cenários por perfil e síntese sociotécnica.
+- `mvp-scope.md`: critérios verificáveis para declarar o MVP concluído.
+- `api.md`: autenticação, operações e contrato de erros da API administrativa.
 
 Ideias ainda não incorporadas ao modelo vigente pertencem ao
 [`docs/backlog`](../backlog/README.md), para que hipótese futura e decisão atual não

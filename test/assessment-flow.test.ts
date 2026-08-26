@@ -15,7 +15,7 @@ test('convite é consumido uma vez e não mantém vínculo com a participação'
   const created = projects.create('Piloto', 'Empresa/Tribo/Time A');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
-  const [token] = invitations.issue(String(project.id), unit.id, 'engineering', 1);
+  const [token] = invitations.createBatch(String(project.id), unit.id, 'engineering', 1).tokens;
 
   const first = invitations.claim(token!);
   assert.notEqual(first, 'invalid');
@@ -36,7 +36,7 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   const created = projects.create('Piloto', 'Empresa/Time A');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
-  const tokens = invitations.issue(String(project.id), unit.id, 'engineering', 5);
+  const tokens = invitations.createBatch(String(project.id), unit.id, 'engineering', 5).tokens;
 
   for (const token of tokens) {
     const claimed = invitations.claim(token);
@@ -68,7 +68,7 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   const created = projects.create('Piloto', 'Empresa/Time A');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const unit = projects.listUnits(String(project.id)).at(-1)!;
-  const [token] = invitations.issue(String(project.id), unit.id, 'quality', 1);
+  const [token] = invitations.createBatch(String(project.id), unit.id, 'quality', 1).tokens;
   const claimed = invitations.claim(token!) as { resumeToken: string };
   participations.answer(claimed.resumeToken, 'replan-together');
   participations.answer(claimed.resumeToken, 'continuous');
@@ -110,11 +110,11 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
       participations.answer(claimed.resumeToken, node.id === 'urgent-change' ? firstOption : node.options[0]!.id);
     }
   };
-  invitations.issue(String(project.id), unit.id, 'management', 5).forEach((token) => complete(token, 'replan-together'));
-  invitations.issue(String(project.id), unit.id, 'engineering', 4).forEach((token) => complete(token, 'add-to-sprint'));
+  invitations.createBatch(String(project.id), unit.id, 'management', 5).tokens.forEach((token) => complete(token, 'replan-together'));
+  invitations.createBatch(String(project.id), unit.id, 'engineering', 4).tokens.forEach((token) => complete(token, 'add-to-sprint'));
   assert.deepEqual(inference.report(String(project.id), 5).perspectiveGaps, []);
 
-  invitations.issue(String(project.id), unit.id, 'engineering', 1).forEach((token) => complete(token, 'add-to-sprint'));
+  invitations.createBatch(String(project.id), unit.id, 'engineering', 1).tokens.forEach((token) => complete(token, 'add-to-sprint'));
   const gaps = inference.report(String(project.id), 5).perspectiveGaps;
   assert.equal(gaps.some((gap) => gap.capability === 'fluxo'), true);
 });
@@ -139,11 +139,11 @@ test('suprime toda a cadeia quando uma partição irmã é pequena', () => {
       participations.answer(claimed.resumeToken, node.options[0]!.id);
     }
   };
-  invitations.issue(String(project.id), timeA.id, 'engineering', 5).forEach(complete);
-  invitations.issue(String(project.id), timeB.id, 'engineering', 1).forEach(complete);
+  invitations.createBatch(String(project.id), timeA.id, 'engineering', 5).tokens.forEach(complete);
+  invitations.createBatch(String(project.id), timeB.id, 'engineering', 1).tokens.forEach(complete);
   assert.deepEqual(inference.report(String(project.id), 5).scopes, []);
 
-  invitations.issue(String(project.id), timeB.id, 'engineering', 4).forEach(complete);
+  invitations.createBatch(String(project.id), timeB.id, 'engineering', 4).tokens.forEach(complete);
   const paths = inference.report(String(project.id), 5).scopes.map((scope) => scope.path);
   assert.deepEqual(paths, ['Empresa', 'Empresa/Time A', 'Empresa/Time B']);
 });
