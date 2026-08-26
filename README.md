@@ -44,6 +44,10 @@ sistema de engenharia, coloca cloud e plataforma sob arquitetura/operação, ofe
 acesso explícito a projetos existentes e adiciona um showcase Playwright com
 organizações sintéticas ruim, mediana e elite.
 
+A versão 0.10 mantém quatro capacidades macro sempre visíveis e move cada explosão
+para uma página própria, com breadcrumb, escopo organizacional preservado e
+diagnóstico coerente quando a evidência é insuficiente ou contraditória.
+
 ## Executar localmente
 
 Requer Node.js 22.13 ou superior.
@@ -64,9 +68,10 @@ npm run build
 npm run test:e2e
 ```
 
-O E2E imprime três links administrativos. Para reabri-los depois do teste, execute
-`npm run demo`; a demonstração usa a base persistente em `/private/tmp` e a porta
-`3217`.
+Para gerar os três projetos sintéticos e deixar a aplicação aberta para inspeção,
+execute apenas `npm run demo`. O comando percorre toda a jornada em Chromium,
+imprime os links administrativos e mantém o servidor na porta `3217`; não exige
+preparação manual do banco. `npm run showcase` permanece como alias compatível.
 
 ## Limites deste corte
 

@@ -117,9 +117,10 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ? `<p class="notice">O relatório será liberado com ${report.minimum} respostas concluídas. Atualmente: ${report.completed}.</p>`
       : report.findings.length ? '' : '<p class="notice">Ainda não há um padrão problemático com evidência agregada suficiente.</p>';
     const gaps = report.perspectiveGaps.map((gap) => `<article class="card"><span class="tag">divergência agregada</span><h3>${escapeHtml(gap.title)}</h3><p>Uma prática aparece mais sustentável para ${escapeHtml(gap.strongerProfiles.join(', '))}, enquanto restrições são percebidas por ${escapeHtml(gap.constrainedProfiles.join(', '))}. Investigue visibilidade, fronteiras e autonomia antes de atribuir causa.</p></article>`).join('');
-    const capabilityMap = report.capabilityGroups.length ? renderCapabilityRadar(report.capabilityGroups, report.findings, 'global') : '';
+    const capabilityBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/capabilities`;
+    const capabilityMap = renderCapabilityRadar(report.capabilityGroups, capabilityBase);
     const classification = report.classification ? renderClassification(report.classification) : '';
-    const scopeReports = report.scopes.map((scope, index) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification)}${scope.capabilityGroups.length ? renderCapabilityRadar(scope.capabilityGroups, scope.findings, `scope-${index}`) : ''}${scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
+    const scopeReports = report.scopes.map((scope) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification)}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
@@ -133,6 +134,30 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ${gaps ? `<section><h2>Perspectivas</h2>${gaps}</section>` : ''}
       ${scopeReports ? `<section><h2>Mapa por estrutura</h2><p class="muted">Somente partições que preservam o grupo mínimo aparecem. Contagens e alternativas individuais são suprimidas.</p>${scopeReports}</section>` : ''}
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/capabilities/:capabilityId', async (request, reply) => {
+    const params = request.params as Params & { capabilityId: string };
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const scopeId = (request.query as { scope?: string }).scope;
+    const source = scopeId ? report.scopes.find((scope) => scope.id === scopeId) : undefined;
+    if (scopeId && !source) throw new ResourceNotFoundError('Recorte não disponível.');
+    const groups = source?.capabilityGroups ?? report.capabilityGroups;
+    const path = findCapabilityPath(groups, params.capabilityId);
+    if (!path) throw new ResourceNotFoundError('Capacidade não encontrada.');
+    const selected = path.at(-1)!;
+    const findings = source?.findings ?? report.findings;
+    const relevantIds = new Set(flattenCapabilityIds(selected));
+    const relevant = findings.filter((finding) => relevantIds.has(finding.detailCapability));
+    const base = `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`;
+    const scopeQuery = scopeId ? `?scope=${encodeURIComponent(scopeId)}` : '';
+    const breadcrumb = path.map((item) => `<a href="${base}/${item.id}${scopeQuery}">${escapeHtml(item.label)}</a>`).join(' <span aria-hidden="true">›</span> ');
+    const status = selected.assessed
+      ? `<div class="classification-level">${selected.level.toFixed(1)} / 4</div><p>Confiança ${Math.round(selected.confidence * 100)}% com ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p>`
+      : '<p class="notice">Esta capacidade ainda não possui evidência suficiente nesta jornada. Ela não foi calculada como zero.</p>';
+    const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : renderCapabilityDiagnosis(relevant, selected);
+    return reply.type('text/html').send(layout(selected.label, `<nav class="breadcrumb"><a href="/projects/${params.publicId}/manage/${params.adminSecret}">Projeto</a> <span aria-hidden="true">›</span> ${breadcrumb}</nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header><article class="classification">${status}</article>${diagnosis}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -163,12 +188,12 @@ function renderClassification(classification: { level: number; label: string; li
   return `<article class="classification"><p class="eyebrow">Classificação sociotécnica</p><div class="classification-level">${classification.level} · ${escapeHtml(classification.label)}</div><p>Limitada por: ${escapeHtml(classification.limitingCapabilities.join(', '))}.</p><p class="muted">O nível representa o elo mais frágil com evidência suficiente; capacidades fortes não compensam gargalos nem unidades descendentes.</p></article>`;
 }
 
-type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; children?: CapabilityRadarNode[] };
+type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; assessed: boolean; children: CapabilityRadarNode[] };
 
 function renderCapabilityRadar(
   capabilities: CapabilityRadarNode[],
-  findings: Array<{ capability: string; title: string; intervention: string }>,
-  prefix: string,
+  baseUrl: string,
+  scopeId?: string,
 ): string {
   const center = 210;
   const radius = 130;
@@ -178,21 +203,35 @@ function renderCapabilityRadar(
   };
   const axes = capabilities.map((_, index) => `<line x1="${center}" y1="${center}" x2="${point(index, 1).split(',')[0]}" y2="${point(index, 1).split(',')[1]}" />`).join('');
   const rings = [1, 2, 3, 4].map((level) => `<polygon points="${capabilities.map((_, index) => point(index, level / 4)).join(' ')}" />`).join('');
-  const result = capabilities.map((capability, index) => point(index, capability.level / 4)).join(' ');
+  const result = capabilities.map((capability, index) => point(index, capability.assessed ? capability.level / 4 : 0)).join(' ');
+  const capabilityUrl = (id: string) => `${baseUrl}/${id}${scopeId ? `?scope=${encodeURIComponent(scopeId)}` : ''}`;
   const points = capabilities.map((capability, index) => {
     const [x, y] = point(index, Math.max(.12, capability.level / 4)).split(',');
     const [labelX, labelY] = point(index, 1.14).split(',');
-    return `<a href="#${prefix}-${capability.id}" class="radar-point"><circle cx="${x}" cy="${y}" r="8"><title>${escapeHtml(capability.label)}: ${capability.level.toFixed(1)} de 4, confiança ${Math.round(capability.confidence * 100)}%</title></circle><text x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}</text></a>`;
+    return `<a href="${capabilityUrl(capability.id)}" class="radar-point"><circle cx="${x}" cy="${y}" r="8"><title>${escapeHtml(capability.label)}: ${capability.assessed ? `${capability.level.toFixed(1)} de 4` : 'não avaliado'}</title></circle><text x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}</text></a>`;
   }).join('');
-  const drillNavigation = capabilities.map((capability) => `<a class="radar-drill-link" href="#${prefix}-${capability.id}">${escapeHtml(capability.label)} <span>${capability.level.toFixed(1)}</span></a>`).join('');
-  const groupByCapability: Record<string, string> = { fluxo: 'fluxo', entrega: 'fluxo', engenharia: 'engenharia', qualidade: 'engenharia', arquitetura: 'arquitetura', confiabilidade: 'confiabilidade', observabilidade: 'confiabilidade', plataforma: 'plataforma', organizacao: 'organizacao', governanca: 'governanca', aprendizado: 'aprendizado' };
-  const details = capabilities.map((capability) => {
-    const related = findings.filter((finding) => groupByCapability[finding.capability] === capability.id);
-    const actions = related.length ? related.map((finding) => `<article class="diagnostic-problem"><span class="tag">problema identificado</span><h5>${escapeHtml(finding.title)}</h5><h6>O que precisa ser corrigido</h6><p>${escapeHtml(finding.intervention)}</p></article>`).join('') : '<p>Nenhum gargalo recorrente atingiu confiança suficiente; preserve a prática e procure evidência em situações de pressão.</p>';
-    const children = capability.children?.length ? `<h5>Detalhamento da capacidade</h5>${renderCapabilityRadar(capability.children, findings, `${prefix}-${capability.id}`)}` : actions;
-    return `<section class="radar-detail" id="${prefix}-${capability.id}"><h4>${escapeHtml(capability.label)} · ${capability.level.toFixed(1)} / 4</h4><p>Confiança ${Math.round(capability.confidence * 100)}% com ${capability.evidence} sinais agregados.${capability.hasContradiction ? ' Há sinais contraditórios; investigue variação de contexto antes de concluir.' : ''}</p>${children}</section>`;
-  }).join('');
-  return `<article class="card radar-card"><h3>Radar de capacidades observadas</h3><p class="muted">Selecione uma capacidade para aprofundar suas subcapacidades, evidências e correções. Cada nível é limitado pelo filho mais frágil com evidência.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g><polygon class="radar-result" points="${result}" />${points}</svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav><div class="radar-details">${details}</div></article>`;
+  const drillNavigation = capabilities.map((capability) => `<a class="radar-drill-link" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${capability.assessed ? capability.level.toFixed(1) : 'não avaliado'}</span></a>`).join('');
+  return `<article class="card radar-card"><h3>Radar de capacidades</h3><p class="muted">Selecione uma capacidade para abrir uma página de análise. Ramos apresentam outro radar; folhas apresentam problemas, evidências e correções.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g><polygon class="radar-result" points="${result}" />${points}</svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
+}
+
+function findCapabilityPath(nodes: CapabilityRadarNode[], id: string, ancestors: CapabilityRadarNode[] = []): CapabilityRadarNode[] | undefined {
+  for (const node of nodes) {
+    if (node.id === id) return [...ancestors, node];
+    const nested = findCapabilityPath(node.children, id, [...ancestors, node]);
+    if (nested) return nested;
+  }
+  return undefined;
+}
+
+function flattenCapabilityIds(node: CapabilityRadarNode): string[] {
+  return [node.id, ...node.children.flatMap(flattenCapabilityIds)];
+}
+
+function renderCapabilityDiagnosis(findings: Array<{ title: string; intervention: string }>, capability: CapabilityRadarNode): string {
+  if (findings.length) return `<section><h2>Problemas e correções</h2>${findings.map((finding) => `<article class="card diagnostic-problem"><span class="tag">problema identificado</span><h3>${escapeHtml(finding.title)}</h3><h4>O que precisa ser corrigido</h4><p>${escapeHtml(finding.intervention)}</p></article>`).join('')}</section>`;
+  if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';
+  if (capability.confidence < .5) return '<p class="notice">A evidência ainda é insuficiente para afirmar ausência de problema ou recomendar preservação da prática.</p>';
+  return '<p class="notice">Nenhum problema recorrente atingiu confiança suficiente nesta capacidade.</p>';
 }
 
 function invitationLinksPage(protocol: string, host: string, tokens: string[], params: Params): string {

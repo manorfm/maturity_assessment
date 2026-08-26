@@ -10,16 +10,18 @@ relações com outras capacidades.
 
 Os eixos não são uma lista plana de frameworks. A visão superior vigente separa:
 
-1. **Valor e fluxo** — necessidade, lote, feedback, dependências e entrega de valor.
-2. **Sistema de engenharia** — design, qualidade, integração e SDLC sustentável.
-3. **Arquitetura e operação** — arquitetura de software; cloud, plataforma e
+1. **Fluxo de valor e produto** — necessidade, lote, feedback, dependências e entrega de valor.
+2. **Excelência de engenharia** — design, qualidade, integração e SDLC sustentável.
+3. **Arquitetura e operação de produtos** — arquitetura de software; cloud, plataforma e
    segurança; confiabilidade e observabilidade.
-4. **Organização e direção** — organização e interação; governança e estratégia;
+4. **Organização, governança e aprendizado** — organização e interação; governança e estratégia;
    aprendizado e adaptação.
 
 Cada nó pode possuir filhos e produzir outro radar. Seu nível é limitado pelo filho
-com evidência mais frágil; clicar em um ramo abre as subcapacidades, enquanto clicar
-em uma folha abre problemas, evidências e correções. A taxonomia não duplica o mesmo
+com evidência mais frágil. Cada clique abre uma página própria, preserva o recorte
+organizacional e apresenta um breadcrumb do macro ao micro; folhas mostram problemas
+e correções. Os quatro eixos macro permanecem visíveis, mas ausência de evidência é
+rotulada como “não avaliado”, nunca como nível zero. A taxonomia não duplica o mesmo
 sinal para preencher frameworks diferentes.
 
 Cloud é contexto de arquitetura e operação, não maturidade autônoma. Quando o
@@ -102,10 +104,9 @@ limitantes, relações causais plausíveis e confiança. Uma nota agregada, se e
 será secundária e explicável.
 
 O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
-um radar apenas das capacidades para as quais o grupo
-elegível produziu sinais. Cada eixo é uma estimativa direcional de 0 a 4 calculada
+os quatro eixos macro e suas explosões. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
 dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
-evidência insuficiente e nunca é desenhado como zero. O radar não combina pilares
+evidência insuficiente, aparece como “não avaliado” e nunca é interpretado como zero. O radar não combina pilares
 em uma nota global e não substitui findings, bloqueios ou recomendações.
 
 O cálculo vigente combina sinais comportamentais convergentes dentro da capacidade.

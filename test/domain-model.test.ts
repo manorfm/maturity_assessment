@@ -37,14 +37,14 @@ test('classificação sociotécnica é limitada pela capacidade e unidade mais f
 test('taxonomia separa fluxo de SDLC e permite aprofundar arquitetura', () => {
   const measure = (id: string, label: string, level: number) => ({ id, label, level, confidence: 1, evidence: 5, hasContradiction: false });
   const branches = CapabilityTaxonomy.organize([
-    measure('fluxo', 'Fluxo e entrega', 3), measure('engenharia', 'Engenharia e SDLC', 2),
-    measure('arquitetura', 'Arquitetura e evolução', 4), measure('plataforma', 'Plataforma', 1),
+    measure('product-discovery', 'Descoberta e direção de produto', 3), measure('integration-code', 'Integração e código', 2),
+    measure('arquitetura', 'Arquitetura e evolução', 4), measure('platform-self-service', 'Autosserviço de plataforma', 1),
   ]);
   assert.equal(branches.find((branch) => branch.id === 'value-flow')?.level, 3);
   assert.equal(branches.find((branch) => branch.id === 'engineering-system')?.level, 2);
   const architecture = branches.find((branch) => branch.id === 'architecture-runtime')!;
   assert.equal(architecture.level, 1);
-  assert.deepEqual(architecture.children.map((child) => child.id), ['arquitetura', 'plataforma']);
+  assert.deepEqual(architecture.children.map((child) => child.id), ['arquitetura', 'cloud-platform', 'confiabilidade']);
 });
 
 test('value objects normalizam valores válidos uma única vez', () => {

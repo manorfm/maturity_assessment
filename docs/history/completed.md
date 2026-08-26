@@ -3,6 +3,16 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-26 — Drill-down por página e showcase contínuo
+
+- Os quatro eixos macro passaram a permanecer visíveis, com estados não avaliados
+  distintos de baixa maturidade e nomes orientados a capacidades organizacionais.
+- Cada explosão ganhou URL, breadcrumb, preservação do escopo hierárquico e
+  diagnóstico seguro para sinais insuficientes ou contraditórios.
+- O comando `npm run demo` agora executa o E2E completo e mantém os três resultados
+  sintéticos disponíveis para exploração, sem preparação manual do banco;
+  `showcase` permanece como alias.
+
 ## 2026-08-26 — Taxonomia navegável e showcase de maturidade
 
 - Capacidades passaram a formar uma árvore recursiva com radares de drill-down;

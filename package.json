@@ -1,6 +1,6 @@
 {
   "name": "maturity-assessment",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,9 @@
     "start": "node dist/src/server.js",
     "test": "node --import tsx --test test/**/*.test.ts",
     "test:e2e": "playwright test",
-    "demo": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e.sqlite PORT=3217 node --import tsx src/server.ts",
+    "demo:serve": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e.sqlite PORT=3217 node --import tsx src/server.ts",
+    "demo": "npm run test:e2e && npm run demo:serve",
+    "showcase": "npm run demo",
     "check": "tsc -p tsconfig.json --noEmit"
   },
   "engines": {

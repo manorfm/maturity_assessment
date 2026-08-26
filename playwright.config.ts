@@ -7,9 +7,9 @@ export default defineConfig({
   reporter: 'line',
   use: { baseURL: 'http://127.0.0.1:3217', headless: true },
   webServer: {
-    command: 'npm run demo',
+    command: 'npm run demo:serve',
     url: 'http://127.0.0.1:3217/health',
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

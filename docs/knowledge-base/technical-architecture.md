@@ -100,9 +100,12 @@ de frontend ou duplicação da regra de inferência.
 
 `CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos. O radar
 superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula
-níveis. O showcase E2E cria cinco participações para cada cenário ruim, mediano e
-elite, percorre o grafo em Chromium, valida a ordenação e imprime os caminhos dos
-painéis para inspeção manual.
+níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmente o
+escopo da unidade, permitindo navegação macro→micro sem perder o recorte. O showcase
+E2E cria cinco participações para cada cenário ruim, mediano e elite, percorre o
+grafo em Chromium, valida a ordenação, imprime os caminhos e deixa a mesma base
+servida para inspeção manual quando iniciado por `npm run demo`. O servidor interno
+usado pelo Playwright fica isolado em `demo:serve`, evitando recursão entre scripts.
 
 `TeamClassification` encapsula a escala e a regra de elo limitante. O serviço de
 inferência calcula classificações locais e aplica a menor classificação descendente

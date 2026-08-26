@@ -5,7 +5,7 @@ import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 
 type AggregateResponse = { capability: string; pattern: string; weight: number; total: number };
-type Finding = { capability: string; pattern: string; title: string; evidence: number; intervention: string };
+type Finding = { capability: string; detailCapability: string; pattern: string; title: string; evidence: number; intervention: string };
 type DiagnosticProblem = {
   pattern: string;
   diagnosis: string;
@@ -150,7 +150,7 @@ export class InferenceService {
     const findings = this.findings(projectId, completed);
     const areas = this.diagnosticAreas(findings);
     const capabilities = this.capabilities(projectId);
-    const capabilityGroups = CapabilityTaxonomy.organize(capabilities);
+    const capabilityGroups = CapabilityTaxonomy.organize([...capabilities, ...this.capabilityDetails(projectId)]);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
@@ -163,7 +163,7 @@ export class InferenceService {
       const descendants = rawScopes
         .filter((candidate) => candidate.path.startsWith(`${scope.path}/`))
         .map((candidate) => TeamClassification.at(TeamClassification.from(candidate.capabilities).level, [candidate.path]));
-      return { ...scope, areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize(scope.capabilities), classification: local.constrainedBy(descendants) };
+      return { ...scope, areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize([...scope.capabilities, ...this.capabilityDetails(projectId, scope.id)]), classification: local.constrainedBy(descendants) };
     });
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
@@ -206,6 +206,23 @@ export class InferenceService {
       const assessment = CapabilityAssessment.from(weights);
       return { id: Object.entries(capabilityLabels).find(([, candidate]) => candidate === label)?.[0] ?? label, label, ...assessment };
     }).sort((left, right) => left.label.localeCompare(right.label));
+  }
+
+  private capabilityDetails(projectId: string, unitId?: string): CapabilityLevel[] {
+    const scope = this.scope(projectId, unitId);
+    const rows = this.db.prepare(`
+      SELECT s.capability, s.pattern, s.weight
+      FROM responses r JOIN participations p ON p.id = r.participation_id
+      JOIN assessment_signals s ON s.graph_version = p.graph_version
+        AND s.node_key = r.node_id AND s.option_key = r.option_id
+      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
+    `).all(...scope.parameters) as unknown as Array<{ capability: string; pattern: string; weight: number }>;
+    const grouped = new Map<string, number[]>();
+    for (const row of rows) {
+      const detail = detailCapability(row.capability, row.pattern);
+      if (detail) grouped.set(detail, [...(grouped.get(detail) ?? []), Number(row.weight)]);
+    }
+    return [...grouped.entries()].map(([id, weights]) => ({ id, label: id, ...CapabilityAssessment.from(weights) }));
   }
 
   private perspectiveGaps(projectId: string, minimum: number, unitId?: string): PerspectiveGap[] {
@@ -260,7 +277,7 @@ export class InferenceService {
       .filter(([pattern, item]) => recommendations[pattern] && item.evidence >= Math.max(2, Math.ceil(population * 0.3)))
       .sort((a, b) => b[1].evidence - a[1].evidence)
       .slice(0, 8)
-      .map(([pattern, item]) => ({ pattern, ...item, ...recommendations[pattern]! }));
+      .map(([pattern, item]) => ({ pattern, ...item, detailCapability: detailCapability(item.capability, pattern) ?? capabilityGroup[item.capability] ?? item.capability, ...recommendations[pattern]! }));
   }
 
   private scope(projectId: string, unitId?: string): QueryScope {
@@ -317,6 +334,28 @@ const capabilityGroup: Record<string, string> = {
   arquitetura: 'arquitetura', confiabilidade: 'confiabilidade', observabilidade: 'confiabilidade',
   plataforma: 'plataforma', organizacao: 'organizacao', governanca: 'governanca', aprendizado: 'aprendizado',
 };
+
+function detailCapability(capability: string, pattern: string): string | undefined {
+  if (capability === 'entrega') return 'delivery-release';
+  if (capability === 'qualidade') return 'continuous-quality';
+  if (capability === 'fluxo') {
+    if (/descoberta|feedback-tardio|cascata|prazo|solucao/.test(pattern)) return 'product-discovery';
+    if (/integracao|release|entrega|mudanca-sobrescrita/.test(pattern)) return 'delivery-release';
+    return 'work-flow';
+  }
+  if (capability === 'engenharia') {
+    if (/seguranca|privacidade|dado-pessoal/.test(pattern)) return 'secure-sdlc';
+    if (/qualidade|verificacao|teste|regressao|dados/.test(pattern)) return 'continuous-quality';
+    return 'integration-code';
+  }
+  if (capability === 'plataforma') {
+    if (/seguranca|privacidade|dado-pessoal/.test(pattern)) return 'cloud-security';
+    if (/reproduz|correcao|fonte|inconsistente|infraestrutura/.test(pattern)) return 'reproducible-infrastructure';
+    return 'platform-self-service';
+  }
+  if (capability === 'governanca' && /seguranca|privacidade/.test(pattern)) return 'secure-sdlc';
+  return undefined;
+}
 
 type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[] };
 type QueryScope = { sql: string; parameters: string[] };

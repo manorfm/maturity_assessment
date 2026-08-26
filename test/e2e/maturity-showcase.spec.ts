@@ -13,9 +13,14 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
     for (const link of invitationLinks) await completeAssessment(page, link, scenario);
     await page.goto(paths[scenario]);
     await expect(page.getByText('Classificação sociotécnica').first()).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Radar de capacidades observadas' }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Radar de capacidades' }).first()).toBeVisible();
     await page.locator('.radar-drill-link', { hasText: 'Arquitetura e operação' }).first().click();
-    await expect(page.getByText('Detalhamento da capacidade').first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Arquitetura e operação de produtos' })).toBeVisible();
+    await page.locator('.radar-drill-link', { hasText: 'Cloud e plataforma' }).click();
+    await expect(page.getByRole('heading', { name: 'Cloud e plataforma' })).toBeVisible();
+    await page.locator('.radar-drill-link', { hasText: 'Autosserviço' }).click();
+    await expect(page.getByRole('heading', { name: 'Autosserviço e experiência de plataforma' })).toBeVisible();
+    await page.goto(paths[scenario]);
     const classification = await page.locator('.classification-level').first().textContent();
     classifications[scenario] = Number(classification?.split('·')[0]?.trim());
   }
