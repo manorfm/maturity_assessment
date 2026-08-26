@@ -21,6 +21,11 @@ associados exclusivamente às folhas da árvore, qualquer que seja o nome local;
 nós intermediários existem para consolidar e navegar resultados. O respondente não
 precisa declarar informações que permitam sua identificação.
 
+Na tela, a árvore é montada adicionando raízes e unidades filhas; a pessoa não
+digita caminhos nem separadores. O editor impede nomes vazios, barras, irmãos com
+o mesmo nome, mais de doze níveis e mais de duzentas unidades. Apenas no envio as
+folhas são serializadas no formato interno validado pelo domínio.
+
 O convite não recebe perfil. O mesmo lote atende qualquer integrante da unidade, e
 a primeira etapa coleta uma perspectiva ampla somente para roteamento. Os relatórios
 só permitem comparações por perspectiva quando o limiar de anonimato for cumprido.

@@ -13,11 +13,56 @@ const projectForm = () => layout('Novo projeto', `
   <p class="lead">Configure a estrutura, distribua convites anônimos e observe gargalos sem avaliar pessoas ou premiar ferramentas.</p></header>
   <form class="card" method="post" action="/projects">
     <label for="name">Nome do projeto</label><input id="name" name="name" required maxlength="100" placeholder="Assessment da Tribo Digital">
-    <label for="hierarchy">Estrutura organizacional</label>
-    <textarea id="hierarchy" name="hierarchy" required placeholder="Empresa/Tribo Pagamentos/Cluster Core/Time Checkout&#10;Empresa/Tribo Pagamentos/Cluster Core/Time Antifraude"></textarea>
-    <small>Uma unidade final por linha, separando níveis com /. Nomes e profundidade são livres.</small><br>
-    <button type="submit">Criar projeto</button>
-  </form>`);
+    <fieldset class="hierarchy-editor" data-hierarchy-editor>
+      <legend>Estrutura organizacional</legend>
+      <p class="muted">Monte a árvore com os nomes usados na sua organização. Convites serão gerados somente para as unidades finais.</p>
+      <div data-hierarchy-tree></div>
+      <button class="button secondary compact" type="button" data-add-root>Adicionar unidade raiz</button>
+      <p class="form-error" role="alert" data-hierarchy-error></p>
+    </fieldset>
+    <input type="hidden" name="hierarchy" data-hierarchy-value required>
+    <button type="submit" data-create-project disabled>Criar projeto</button>
+  </form>
+  <script>
+    (()=>{
+      const tree=document.querySelector('[data-hierarchy-tree]');
+      const value=document.querySelector('[data-hierarchy-value]');
+      const error=document.querySelector('[data-hierarchy-error]');
+      const submit=document.querySelector('[data-create-project]');
+      let sequence=2;
+      let nodes=[{id:'1',parentId:null,name:''},{id:'2',parentId:'1',name:''}];
+      const descendants=(id)=>nodes.filter(node=>node.parentId===id).flatMap(node=>[node.id,...descendants(node.id)]);
+      const depth=(node)=>node.parentId?1+depth(nodes.find(candidate=>candidate.id===node.parentId)):1;
+      const path=(node)=>node.parentId?path(nodes.find(candidate=>candidate.id===node.parentId)).concat(node.name.trim()):[node.name.trim()];
+      const button=(label,action,className='button secondary compact')=>{const element=document.createElement('button');element.type='button';element.className=className;element.textContent=label;element.dataset.action=action;return element};
+      const validate=()=>{
+        let message='';
+        if(nodes.some(node=>!node.name.trim())) message='Preencha o nome de todas as unidades.';
+        else if(nodes.some(node=>node.name.includes('/'))) message='Os nomes não podem conter barras.';
+        else if(nodes.some(node=>depth(node)>12)) message='A estrutura pode ter no máximo 12 níveis.';
+        else if(nodes.some(node=>nodes.some(other=>other.id!==node.id&&other.parentId===node.parentId&&other.name.trim().toLocaleLowerCase('pt-BR')===node.name.trim().toLocaleLowerCase('pt-BR')))) message='Unidades no mesmo nível precisam ter nomes diferentes.';
+        const leaves=nodes.filter(node=>!nodes.some(candidate=>candidate.parentId===node.id));
+        value.value=message?'':leaves.map(node=>path(node).join('/')).join('\n');
+        error.textContent=message;
+        submit.disabled=Boolean(message)||!leaves.length;
+      };
+      const render=()=>{
+        tree.replaceChildren();
+        const visit=(parentId,level)=>nodes.filter(node=>node.parentId===parentId).forEach(node=>{
+          const row=document.createElement('div');row.className='hierarchy-row';row.style.setProperty('--level',String(level));
+          const branch=document.createElement('span');branch.className='hierarchy-branch';branch.textContent=level?'↳':'●';
+          const input=document.createElement('input');input.value=node.name;input.maxLength=80;input.placeholder=level?'Nome da unidade':'Nome da organização ou unidade raiz';input.setAttribute('aria-label','Nome da unidade');input.addEventListener('input',()=>{node.name=input.value;validate()});
+          const controls=document.createElement('div');controls.className='hierarchy-actions';
+          const add=button('Adicionar unidade abaixo','add');add.addEventListener('click',()=>{if(nodes.length>=200)return;nodes.push({id:String(++sequence),parentId:node.id,name:''});render()});controls.append(add);
+          const remove=button('Remover','remove','button danger compact');remove.disabled=nodes.length===1;remove.addEventListener('click',()=>{const removed=new Set([node.id,...descendants(node.id)]);nodes=nodes.filter(candidate=>!removed.has(candidate.id));render()});controls.append(remove);
+          row.append(branch,input,controls);tree.append(row);visit(node.id,level+1);
+        });
+        visit(null,0);validate();
+      };
+      document.querySelector('[data-add-root]').addEventListener('click',()=>{if(nodes.length>=200)return;nodes.push({id:String(++sequence),parentId:null,name:''});render()});
+      render();
+    })();
+  </script>`);
 
 export function registerProjectRoutes(app: FastifyInstance, db: Database): void {
   const projects = new ProjectService(db);

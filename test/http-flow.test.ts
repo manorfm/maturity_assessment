@@ -5,6 +5,17 @@ import { createDatabase } from '../src/shared/database.js';
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
 import { CatalogService } from '../src/modules/catalog/catalog-service.js';
 
+test('criação de projeto usa editor visual para uma hierarquia livre', async () => {
+  const app = await createApp(createDatabase(':memory:'));
+  const response = await app.inject({ method: 'GET', url: '/projects/new' });
+  assert.equal(response.statusCode, 200);
+  assert.match(response.body, /data-hierarchy-editor/);
+  assert.match(response.body, /Adicionar unidade abaixo/);
+  assert.match(response.body, /type="hidden" name="hierarchy"/);
+  assert.doesNotMatch(response.body, /textarea[^>]+name="hierarchy"/);
+  await app.close();
+});
+
 test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const db = createDatabase(':memory:');
   const app = await createApp(db);

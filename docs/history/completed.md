@@ -3,6 +3,12 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-26 — Editor visual da estrutura organizacional
+
+- A criação do projeto substituiu caminhos digitados manualmente por uma árvore
+  visual livre, com raízes, filhos e validação preventiva de nomes, duplicidades,
+  profundidade e quantidade. Consulte [estrutura organizacional](../knowledge-base/organizational-model.md).
+
 ## 2026-08-26 — Convites vinculados às folhas da estrutura
 
 - A hierarquia permaneceu livre em nomes e profundidade, enquanto convites passaram
