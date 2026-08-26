@@ -5,6 +5,7 @@ import { OrganizationPath, ProjectName } from '../src/modules/projects/domain/pr
 import { AssessmentProfile, InvitationQuantity } from '../src/modules/assessments/domain/invitation.js';
 import { CapabilityAssessment } from '../src/modules/inference/domain/capability-assessment.js';
 import { TeamClassification } from '../src/modules/inference/domain/team-classification.js';
+import { CapabilityTaxonomy } from '../src/modules/inference/domain/capability-taxonomy.js';
 
 test('value objects rejeitam estados inválidos na fronteira do domínio', () => {
   assert.throws(() => ProjectName.create('  '), DomainValidationError);
@@ -31,6 +32,19 @@ test('classificação sociotécnica é limitada pela capacidade e unidade mais f
   const rolledUp = local.constrainedBy([TeamClassification.at(1, ['Time B'])]);
   assert.equal(rolledUp.label, 'Reativo');
   assert.deepEqual(rolledUp.limitingCapabilities, ['Time B']);
+});
+
+test('taxonomia separa fluxo de SDLC e permite aprofundar arquitetura', () => {
+  const measure = (id: string, label: string, level: number) => ({ id, label, level, confidence: 1, evidence: 5, hasContradiction: false });
+  const branches = CapabilityTaxonomy.organize([
+    measure('fluxo', 'Fluxo e entrega', 3), measure('engenharia', 'Engenharia e SDLC', 2),
+    measure('arquitetura', 'Arquitetura e evolução', 4), measure('plataforma', 'Plataforma', 1),
+  ]);
+  assert.equal(branches.find((branch) => branch.id === 'value-flow')?.level, 3);
+  assert.equal(branches.find((branch) => branch.id === 'engineering-system')?.level, 2);
+  const architecture = branches.find((branch) => branch.id === 'architecture-runtime')!;
+  assert.equal(architecture.level, 1);
+  assert.deepEqual(architecture.children.map((child) => child.id), ['arquitetura', 'plataforma']);
 });
 
 test('value objects normalizam valores válidos uma única vez', () => {

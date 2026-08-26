@@ -1,6 +1,6 @@
 {
   "name": "maturity-assessment",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/src/server.js",
     "test": "node --import tsx --test test/**/*.test.ts",
+    "test:e2e": "playwright test",
+    "demo": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e.sqlite PORT=3217 node --import tsx src/server.ts",
     "check": "tsc -p tsconfig.json --noEmit"
   },
   "engines": {
@@ -18,6 +20,7 @@
     "fastify": "^5.6.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^24.10.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"

@@ -67,6 +67,8 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   const report = inference.report(String(project.id), 5);
   assert.equal(report.completed, 5);
   assert.equal(report.findings.some((finding) => finding.pattern === 'integracao-tardia'), true);
+  assert.equal(report.capabilityGroups.some((group) => group.id === 'engineering-system'), true);
+  assert.equal(report.capabilityGroups.some((group) => group.id === 'architecture-runtime' && group.children.length > 0), true);
   const engineeringArea = report.areas.find((area) => area.id === 'engenharia');
   assert.ok(engineeringArea);
   assert.equal(engineeringArea.label, 'Engenharia e SDLC');

@@ -39,6 +39,11 @@ A versão 0.8 conecta comportamentos a múltiplas capacidades, investiga melhori
 contínua e superfícies compartilhadas somente quando aplicáveis e classifica cada
 nível da hierarquia pelo elo confiável mais frágil.
 
+A versão 0.9 organiza capacidades em uma árvore navegável, separa valor/fluxo do
+sistema de engenharia, coloca cloud e plataforma sob arquitetura/operação, oferece
+acesso explícito a projetos existentes e adiciona um showcase Playwright com
+organizações sintéticas ruim, mediana e elite.
+
 ## Executar localmente
 
 Requer Node.js 22.13 ou superior.
@@ -56,7 +61,12 @@ Acesse `http://127.0.0.1:3000`. O banco é criado em `data/app.sqlite`.
 npm run check
 npm test
 npm run build
+npm run test:e2e
 ```
+
+O E2E imprime três links administrativos. Para reabri-los depois do teste, execute
+`npm run demo`; a demonstração usa a base persistente em `/private/tmp` e a porta
+`3217`.
 
 ## Limites deste corte
 
@@ -65,7 +75,8 @@ npm run build
 - Convites podem ser copiados em conjunto e expiram em 30 dias; lotes podem ser revogados
   e reemitidos sem recuperar segredos antigos.
 - O grafo é semeado a partir do catálogo versionado e executado pelas tabelas de
-  nós, opções, arestas e sinais no SQLite. Um editor visual continua no backlog.
+  nós, opções, arestas e sinais no SQLite. Um editor visual do grafo de perguntas,
+  diferente do editor de hierarquia organizacional já entregue, continua no backlog.
 - Os recortes hierárquicos são suprimidos quando um grupo irmão pequeno permitiria
   inferência por subtração; filtros combináveis mais avançados ainda não existem.
 - Variantes por perspectiva cobrem inicialmente urgência e degradação; a expansão e a

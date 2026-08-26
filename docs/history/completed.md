@@ -3,6 +3,17 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-26 — Taxonomia navegável e showcase de maturidade
+
+- Capacidades passaram a formar uma árvore recursiva com radares de drill-down;
+  fluxo foi separado do sistema de engenharia e cloud ficou sob arquitetura/operação.
+- Adicionado acesso explícito a projetos existentes e showcase Playwright persistente
+  com cinco respostas para cenários ruim, mediano e elite, incluindo URLs no console.
+- Corrigida a interação dos pontos do radar e calibrado o sinal adaptativo de melhoria
+  protegida no fluxo em uma nova versão imutável do grafo. Consulte
+  [modelo de avaliação](../knowledge-base/assessment-model.md) e
+  [arquitetura técnica](../knowledge-base/technical-architecture.md).
+
 ## 2026-08-26 — Interações do editor de hierarquia restauradas
 
 - Corrigida a serialização das folhas que invalidava o JavaScript entregue ao

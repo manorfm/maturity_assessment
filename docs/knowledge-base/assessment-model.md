@@ -6,7 +6,30 @@ A unidade principal é uma capacidade observável em um contexto. Cada capacidad
 possui comportamentos esperados, anti-padrões, evidências, bloqueios possíveis e
 relações com outras capacidades.
 
-## Pilares iniciais
+## Árvore de capacidades
+
+Os eixos não são uma lista plana de frameworks. A visão superior vigente separa:
+
+1. **Valor e fluxo** — necessidade, lote, feedback, dependências e entrega de valor.
+2. **Sistema de engenharia** — design, qualidade, integração e SDLC sustentável.
+3. **Arquitetura e operação** — arquitetura de software; cloud, plataforma e
+   segurança; confiabilidade e observabilidade.
+4. **Organização e direção** — organização e interação; governança e estratégia;
+   aprendizado e adaptação.
+
+Cada nó pode possuir filhos e produzir outro radar. Seu nível é limitado pelo filho
+com evidência mais frágil; clicar em um ramo abre as subcapacidades, enquanto clicar
+em uma folha abre problemas, evidências e correções. A taxonomia não duplica o mesmo
+sinal para preencher frameworks diferentes.
+
+Cloud é contexto de arquitetura e operação, não maturidade autônoma. Quando o
+catálogo possuir evidência discriminativa suficiente, workloads cloud poderão
+aprofundar os seis pilares Well-Architected — excelência operacional, segurança,
+confiabilidade, eficiência de performance, otimização de custos e sustentabilidade.
+Ferramentas como vault aparecem como possível intervenção para um problema de
+gestão de segredos demonstrado; sua presença nunca constitui um nível.
+
+As capacidades detalhadas atualmente são:
 
 1. **Fluxo e entrega** — tamanho de lote, feedback, dependências, previsibilidade,
    trabalho não planejado e capacidade de concluir.
@@ -28,6 +51,11 @@ relações com outras capacidades.
 Referenciais como DORA, SRE, Well-Architected, DDD, Team Topologies, Tuckman,
 TOGAF e práticas de engenharia alimentam capacidades; não viram pilares ou notas
 por mera adoção nominal.
+
+DORA é uma lente de resultado e capacidades, não um ramo equivalente ao SDLC. Uma
+classificação DORA futura exigirá as cinco métricas vigentes no contexto de uma
+aplicação ou serviço — lead time, frequência, tempo de recuperação de implantação
+falha, taxa de falha e taxa de retrabalho — sem inferi-las apenas da entrevista.
 
 ## Contexto não é evidência
 

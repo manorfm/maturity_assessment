@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'cross-capability-v6';
+export const GRAPH_VERSION = 'capability-drilldown-v7';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
 export type Signal = { capability: string; pattern: string; weight: number };
@@ -355,7 +355,7 @@ export const graph: AssessmentNode[] = [
       { id: 'owned-and-verified', label: 'Poucas mudanças são escolhidas pelo grupo, recebem responsável e condição de sucesso, voltam à pauta e são ajustadas até produzir efeito.', signals: [
         { capability: 'aprendizado', pattern: 'melhoria-com-ciclo-fechado', weight: 2 },
         { capability: 'organizacao', pattern: 'melhoria-com-ownership', weight: 2 },
-        { capability: 'fluxo', pattern: 'melhoria-protegida-no-fluxo', weight: 1 },
+        { capability: 'fluxo', pattern: 'melhoria-protegida-no-fluxo', weight: 2 },
       ] },
       { id: 'action-list-fades', label: 'A conversa gera ações, mas elas competem com entregas, perdem responsáveis ou deixam de ser revisitadas.', signals: [
         { capability: 'aprendizado', pattern: 'retrospectiva-sem-fechamento', weight: -2 },

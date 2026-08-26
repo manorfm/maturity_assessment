@@ -2,6 +2,7 @@ import type { Database } from '../../shared/database.js';
 import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { TeamClassification } from './domain/team-classification.js';
+import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 
 type AggregateResponse = { capability: string; pattern: string; weight: number; total: number };
 type Finding = { capability: string; pattern: string; title: string; evidence: number; intervention: string };
@@ -145,10 +146,11 @@ export class InferenceService {
 
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
-    if (completed < minimum) return { completed, minimum, classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
+    if (completed < minimum) return { completed, minimum, classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
     const areas = this.diagnosticAreas(findings);
     const capabilities = this.capabilities(projectId);
+    const capabilityGroups = CapabilityTaxonomy.organize(capabilities);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
@@ -161,12 +163,12 @@ export class InferenceService {
       const descendants = rawScopes
         .filter((candidate) => candidate.path.startsWith(`${scope.path}/`))
         .map((candidate) => TeamClassification.at(TeamClassification.from(candidate.capabilities).level, [candidate.path]));
-      return { ...scope, areas: this.diagnosticAreas(scope.findings), classification: local.constrainedBy(descendants) };
+      return { ...scope, areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize(scope.capabilities), classification: local.constrainedBy(descendants) };
     });
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
     );
-    return { completed, minimum, classification, findings, areas, capabilities, perspectiveGaps, scopes };
+    return { completed, minimum, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, scopes };
   }
 
   private diagnosticAreas(findings: Finding[]): DiagnosticArea[] {
@@ -316,5 +318,5 @@ const capabilityGroup: Record<string, string> = {
   plataforma: 'plataforma', organizacao: 'organizacao', governanca: 'governanca', aprendizado: 'aprendizado',
 };
 
-type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; perspectiveGaps: PerspectiveGap[] };
+type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[] };
 type QueryScope = { sql: string; parameters: string[] };

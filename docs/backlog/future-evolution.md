@@ -47,8 +47,12 @@
 ## Pilares e referências
 
 - aprofundar DORA sem reduzir maturidade às quatro métricas;
+- incorporar as cinco métricas DORA vigentes como resultados por aplicação/serviço,
+  sem derivar categoria DORA apenas de respostas comportamentais;
 - SRE: SLOs, error budgets, incidentes, toil, capacidade e aprendizado;
 - Well-Architected e cloud: trade-offs, resiliência, custo, segurança e operação;
+- expandir o ramo cloud para os seis pilares Well-Architected e seus tópicos somente
+  após criar sinais próprios que evitem replicar a mesma nota em vários eixos;
 - DDD e arquitetura evolutiva: limites, linguagem, acoplamento e fitness functions;
 - Team Topologies: carga cognitiva, modos de interação e plataforma como produto;
 - Tuckman e dinâmica de times sem transformar estágios em classificação rígida;

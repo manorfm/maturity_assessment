@@ -14,6 +14,7 @@ progressivo e usado apenas onde melhorar a interação.
 - `node:sqlite`, schema inicial idempotente e acesso isolado por serviços;
 - CSS local com design tokens simples, sem depender inicialmente de um SPA;
 - testes unitários para inferências e testes de integração para API/banco;
+- Playwright para fluxos reais de navegador e projetos sintéticos de demonstração;
 - conteúdo inicial do assessment versionado em arquivos no repositório.
 
 Fastify e `node:sqlite` foram confirmados no primeiro corte executável. Detalhes
@@ -96,6 +97,12 @@ O cálculo de nível e confiança vive no domínio de inferência. Sinais contra
 reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível e
 links nativos para abrir diagnóstico e próximos passos de cada eixo, sem framework
 de frontend ou duplicação da regra de inferência.
+
+`CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos. O radar
+superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula
+níveis. O showcase E2E cria cinco participações para cada cenário ruim, mediano e
+elite, percorre o grafo em Chromium, valida a ordenação e imprime os caminhos dos
+painéis para inspeção manual.
 
 `TeamClassification` encapsula a escala e a regra de elo limitante. O serviço de
 inferência calcula classificações locais e aplica a menor classificação descendente

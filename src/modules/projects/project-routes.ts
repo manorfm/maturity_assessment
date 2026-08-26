@@ -62,7 +62,15 @@ const projectForm = () => layout('Novo projeto', `
       document.querySelector('[data-add-root]').addEventListener('click',()=>{if(nodes.length>=200)return;nodes.push({id:String(++sequence),parentId:null,name:''});render()});
       render();
     })();
-  </script>`);
+  </script><p><a href="/projects/access">Já possui um projeto? Acessar painel</a></p>`);
+
+const projectAccessForm = () => layout('Acessar projeto', `
+  <header><p class="eyebrow">Projeto existente</p><h1>Acesse o painel protegido</h1><p class="lead">Use o identificador e a chave administrativa entregues na criação do projeto.</p></header>
+  <form class="card" method="post" action="/projects/access">
+    <label for="publicId">Identificador do projeto</label><input id="publicId" name="publicId" required autocomplete="off">
+    <label for="adminSecret">Chave administrativa</label><input id="adminSecret" name="adminSecret" type="password" required autocomplete="current-password">
+    <button type="submit">Acessar relatório</button>
+  </form><p><a href="/projects/new">Criar outro projeto</a></p>`);
 
 export function registerProjectRoutes(app: FastifyInstance, db: Database): void {
   const projects = new ProjectService(db);
@@ -71,6 +79,14 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.get('/', async (_request, reply) => reply.type('text/html').send(projectForm()));
   app.get('/projects/new', async (_request, reply) => reply.type('text/html').send(projectForm()));
+  app.get('/projects/access', async (_request, reply) => reply.type('text/html').send(projectAccessForm()));
+  app.post('/projects/access', async (request, reply) => {
+    const body = (request.body ?? {}) as { publicId?: string; adminSecret?: string };
+    const publicId = body.publicId?.trim() ?? '';
+    const adminSecret = body.adminSecret?.trim() ?? '';
+    if (!projects.authorize(publicId, adminSecret)) throw new ResourceNotFoundError('Confira os dados administrativos.');
+    return reply.redirect(`/projects/${publicId}/manage/${adminSecret}`);
+  });
   app.post('/projects', async (request, reply) => {
     const body = (request.body ?? {}) as { name?: string; hierarchy?: string };
     const created = projects.create(body.name ?? '', body.hierarchy ?? '');
@@ -101,9 +117,9 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ? `<p class="notice">O relatório será liberado com ${report.minimum} respostas concluídas. Atualmente: ${report.completed}.</p>`
       : report.findings.length ? '' : '<p class="notice">Ainda não há um padrão problemático com evidência agregada suficiente.</p>';
     const gaps = report.perspectiveGaps.map((gap) => `<article class="card"><span class="tag">divergência agregada</span><h3>${escapeHtml(gap.title)}</h3><p>Uma prática aparece mais sustentável para ${escapeHtml(gap.strongerProfiles.join(', '))}, enquanto restrições são percebidas por ${escapeHtml(gap.constrainedProfiles.join(', '))}. Investigue visibilidade, fronteiras e autonomia antes de atribuir causa.</p></article>`).join('');
-    const capabilityMap = report.capabilities.length ? renderCapabilityRadar(report.capabilities, report.findings, 'global') : '';
+    const capabilityMap = report.capabilityGroups.length ? renderCapabilityRadar(report.capabilityGroups, report.findings, 'global') : '';
     const classification = report.classification ? renderClassification(report.classification) : '';
-    const scopeReports = report.scopes.map((scope, index) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification)}${scope.capabilities.length ? renderCapabilityRadar(scope.capabilities, scope.findings, `scope-${index}`) : ''}${scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
+    const scopeReports = report.scopes.map((scope, index) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification)}${scope.capabilityGroups.length ? renderCapabilityRadar(scope.capabilityGroups, scope.findings, `scope-${index}`) : ''}${scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
@@ -147,8 +163,10 @@ function renderClassification(classification: { level: number; label: string; li
   return `<article class="classification"><p class="eyebrow">Classificação sociotécnica</p><div class="classification-level">${classification.level} · ${escapeHtml(classification.label)}</div><p>Limitada por: ${escapeHtml(classification.limitingCapabilities.join(', '))}.</p><p class="muted">O nível representa o elo mais frágil com evidência suficiente; capacidades fortes não compensam gargalos nem unidades descendentes.</p></article>`;
 }
 
+type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; children?: CapabilityRadarNode[] };
+
 function renderCapabilityRadar(
-  capabilities: Array<{ id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean }>,
+  capabilities: CapabilityRadarNode[],
   findings: Array<{ capability: string; title: string; intervention: string }>,
   prefix: string,
 ): string {
@@ -166,13 +184,15 @@ function renderCapabilityRadar(
     const [labelX, labelY] = point(index, 1.14).split(',');
     return `<a href="#${prefix}-${capability.id}" class="radar-point"><circle cx="${x}" cy="${y}" r="8"><title>${escapeHtml(capability.label)}: ${capability.level.toFixed(1)} de 4, confiança ${Math.round(capability.confidence * 100)}%</title></circle><text x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}</text></a>`;
   }).join('');
+  const drillNavigation = capabilities.map((capability) => `<a class="radar-drill-link" href="#${prefix}-${capability.id}">${escapeHtml(capability.label)} <span>${capability.level.toFixed(1)}</span></a>`).join('');
   const groupByCapability: Record<string, string> = { fluxo: 'fluxo', entrega: 'fluxo', engenharia: 'engenharia', qualidade: 'engenharia', arquitetura: 'arquitetura', confiabilidade: 'confiabilidade', observabilidade: 'confiabilidade', plataforma: 'plataforma', organizacao: 'organizacao', governanca: 'governanca', aprendizado: 'aprendizado' };
   const details = capabilities.map((capability) => {
     const related = findings.filter((finding) => groupByCapability[finding.capability] === capability.id);
     const actions = related.length ? related.map((finding) => `<article class="diagnostic-problem"><span class="tag">problema identificado</span><h5>${escapeHtml(finding.title)}</h5><h6>O que precisa ser corrigido</h6><p>${escapeHtml(finding.intervention)}</p></article>`).join('') : '<p>Nenhum gargalo recorrente atingiu confiança suficiente; preserve a prática e procure evidência em situações de pressão.</p>';
-    return `<section class="radar-detail" id="${prefix}-${capability.id}"><h4>${escapeHtml(capability.label)} · ${capability.level.toFixed(1)} / 4</h4><p>Confiança ${Math.round(capability.confidence * 100)}% com ${capability.evidence} sinais agregados.${capability.hasContradiction ? ' Há sinais contraditórios; investigue variação de contexto antes de concluir.' : ''}</p>${actions}</section>`;
+    const children = capability.children?.length ? `<h5>Detalhamento da capacidade</h5>${renderCapabilityRadar(capability.children, findings, `${prefix}-${capability.id}`)}` : actions;
+    return `<section class="radar-detail" id="${prefix}-${capability.id}"><h4>${escapeHtml(capability.label)} · ${capability.level.toFixed(1)} / 4</h4><p>Confiança ${Math.round(capability.confidence * 100)}% com ${capability.evidence} sinais agregados.${capability.hasContradiction ? ' Há sinais contraditórios; investigue variação de contexto antes de concluir.' : ''}</p>${children}</section>`;
   }).join('');
-  return `<article class="card radar-card"><h3>Radar de capacidades observadas</h3><p class="muted">Selecione um eixo para ver confiança, contradições e por onde começar. A estimativa é agregada e não combina pilares em nota individual.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g><polygon class="radar-result" points="${result}" />${points}</svg><div class="radar-details">${details}</div></article>`;
+  return `<article class="card radar-card"><h3>Radar de capacidades observadas</h3><p class="muted">Selecione uma capacidade para aprofundar suas subcapacidades, evidências e correções. Cada nível é limitado pelo filho mais frágil com evidência.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g><polygon class="radar-result" points="${result}" />${points}</svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav><div class="radar-details">${details}</div></article>`;
 }
 
 function invitationLinksPage(protocol: string, host: string, tokens: string[], params: Params): string {

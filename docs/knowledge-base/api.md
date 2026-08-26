@@ -10,6 +10,8 @@ com nível, rótulo e capacidades ou unidades limitantes.
 O objeto `areas` agrupa os problemas por capacidade e informa `diagnosis`,
 `correction`, evidência agregada e se o padrão representa comportamento ou
 restrição. O mesmo formato existe nos recortes hierárquicos elegíveis.
+`capabilityGroups` expõe a árvore recursiva usada pelos radares; cada ramo inclui
+nível limitante, confiança, evidência, contradição e filhos observados.
 
 ## Autorização
 

@@ -80,7 +80,8 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
     findings: report.findings.map(finding),
     areas: report.areas,
     capabilities: report.capabilities,
+    capabilityGroups: report.capabilityGroups,
     perspectiveGaps: report.perspectiveGaps,
-    scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, findings: scope.findings.map(finding), areas: scope.areas, capabilities: scope.capabilities, perspectiveGaps: scope.perspectiveGaps })),
+    scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, findings: scope.findings.map(finding), areas: scope.areas, capabilities: scope.capabilities, capabilityGroups: scope.capabilityGroups, perspectiveGaps: scope.perspectiveGaps })),
   };
 }

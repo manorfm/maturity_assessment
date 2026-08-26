@@ -26,6 +26,9 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const created = await app.inject({ method: 'POST', url: '/projects', payload: { name: 'Tribo', hierarchy: 'Empresa/Time A' } });
   assert.equal(created.statusCode, 302);
   const managementUrl = created.headers.location!;
+  const [, , publicId, , adminSecret] = managementUrl.split('/');
+  const accessed = await app.inject({ method: 'POST', url: '/projects/access', payload: { publicId, adminSecret } });
+  assert.equal(accessed.headers.location, managementUrl);
   const dashboard = await app.inject({ method: 'GET', url: managementUrl });
   assert.equal(dashboard.statusCode, 200);
   assert.match(dashboard.body, /Gerar convites individuais/);
