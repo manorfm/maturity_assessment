@@ -1,0 +1,82 @@
+# Modelo de domínio e módulos
+
+## Conceitos principais
+
+- **AssessmentTemplate:** versão publicável do instrumento.
+- **Project:** espaço criado por um responsável para configurar, compartilhar e
+  acompanhar uma aplicação do assessment para um time.
+- **OrganizationUnit:** nó configurável de uma hierarquia, com tipo e nome locais;
+  pode representar organização, tribo, cluster, time, squad ou outra estrutura.
+- **Capability:** comportamento ou resultado que queremos compreender.
+- **Scenario:** contexto apresentado ao respondente.
+- **Question:** interação dentro de um cenário.
+- **Option:** escolha com sinais e trade-offs, nunca uma “alternativa correta” nua.
+- **Signal:** evidência positiva, negativa, ambígua ou de bloqueio.
+- **InferenceRule:** combina sinais para sustentar uma hipótese com confiança.
+- **AssessmentRun:** rodada de um template dentro de um projeto.
+- **Invitation:** credencial individual, aleatória, com validade e uso controlado;
+  autoriza uma participação sem precisar aparecer no relatório.
+- **Participation:** sessão anônima associada a um convite, separada das respostas.
+- **RespondentContext:** papel, escopo e contexto relevantes, com minimização de PII.
+- **Profile:** lente configurável sobre responsabilidades, visibilidade e decisões;
+  seleciona cenários, mas não cria uma escala de maturidade por cargo.
+- **Response:** resposta bruta e metadados consentidos.
+- **Finding:** hipótese explicável, evidências, contradições e confiança.
+- **Recommendation:** experimento ou ação ligada a um finding e suas dependências.
+- **AssessmentNode/Edge:** grafo versionado de cenários, perguntas, condições e
+  encerramentos possíveis.
+- **ProblemPattern:** hipótese de problema ligada a sinais, impactos e bloqueios.
+- **EvidenceFacet:** perspectiva de um perfil sobre uma capacidade compartilhada,
+  usada para triangulação sem identificar o participante.
+
+## Módulos do monólito
+
+1. `identity`: acesso e papéis.
+2. `catalog`: capacidades, cenários, perguntas, versões e referências.
+3. `assessments`: campanhas, participantes e aplicação do questionário.
+4. `inference`: sinais, regras, confiança e geração de findings.
+5. `reporting`: visualizações, divergências e recomendações.
+6. `knowledge`: glossário, fontes, decisões e histórico do modelo.
+
+Cada módulo será dono de suas regras e tabelas. Integrações internas passam por
+interfaces de aplicação/eventos internos, mantendo um único deploy e um único
+banco enquanto os limites continuam explícitos.
+
+## Projeto, compartilhamento e participação única
+
+O criador abre um `Project` e recebe um link de gestão protegido. Para responder,
+há dois tipos diferentes de link:
+
+- **link do projeto:** página de entrada e instruções; não concede uma participação;
+- **link de convite:** token único criado para uma pessoa, válido para uma rodada e
+  consumido ao iniciar/concluir conforme a política definida.
+
+Um mesmo link público compartilhado com todos não impede respostas repetidas.
+Portanto, cada participante recebe um convite diferente. O sistema armazena apenas
+o hash do token, nunca o token em texto puro. Tokens devem ser aleatórios, expirar,
+poder ser revogados e não aparecer em logs.
+
+Para conciliar anonimato e prevenção de duplicidade, identidade de convite e
+conteúdo das respostas ficam separados. O relatório sabe que um convite respondeu,
+mas não expõe qual conjunto de respostas pertence a qual convite. O administrador
+vê estados agregados como “emitido”, “iniciado” e “concluído”, não respostas por
+participante.
+
+Esse mecanismo impede reutilização acidental ou simples do mesmo convite, mas não
+prova identidade humana. Garantias maiores exigiriam e-mail, SSO ou outro dado de
+identidade, reduzindo anonimato. Essa escolha deve ser configurável e transparente.
+
+Após concluir, o token passa a servir apenas para mostrar uma confirmação neutra.
+Reabrir o mesmo link nunca exibe respostas, resultados, percurso ou alternativas
+selecionadas e não permite iniciar novamente. A retomada só existe enquanto a
+participação estiver incompleta.
+
+## Requisitos de explicabilidade
+
+Todo finding precisa informar:
+
+- quais respostas e sinais o sustentam;
+- quais sinais o contradizem;
+- confiança e lacunas;
+- contexto e bloqueios que alteram a interpretação;
+- versão do template e da regra usada.
