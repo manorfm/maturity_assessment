@@ -3,7 +3,7 @@ import { hashSecret, id, secret } from '../../shared/ids.js';
 import { GRAPH_VERSION } from '../catalog/assessment-graph.js';
 import { CatalogService } from '../catalog/catalog-service.js';
 import { InvitationQuantity } from './domain/invitation.js';
-import { ConflictError, ResourceNotFoundError } from '../../shared/errors.js';
+import { ConflictError, DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
 
 type InvitationBatchResult = { batchId: string; tokens: string[] };
 type InvitationBatchSummary = {
@@ -20,6 +20,8 @@ export class InvitationService {
     const quantity = InvitationQuantity.create(count);
     const unitExists = this.db.prepare('SELECT 1 FROM organization_units WHERE id = ? AND project_id = ?').get(unitId, projectId);
     if (!unitExists) throw new ResourceNotFoundError('Unidade organizacional não encontrada.');
+    const hasChildren = this.db.prepare('SELECT 1 FROM organization_units WHERE parent_id = ? LIMIT 1').get(unitId);
+    if (hasChildren) throw new DomainValidationError('Convites devem ser gerados para uma unidade final da estrutura.');
     const batchId = id();
     const tokens: string[] = [];
     const now = new Date();

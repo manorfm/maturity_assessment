@@ -16,8 +16,9 @@ Organização
 ```
 
 `tribo`, `cluster`, `time` e `squad` são rótulos configuráveis, não entidades
-rígidas. Uma organização enxuta pode ter apenas organização e time. Cada convite é
-associado à menor unidade relevante antes da distribuição; o respondente não
+rígidas. Uma organização enxuta pode ter apenas organização e time. Convites são
+associados exclusivamente às folhas da árvore, qualquer que seja o nome local;
+nós intermediários existem para consolidar e navegar resultados. O respondente não
 precisa declarar informações que permitam sua identificação.
 
 O convite não recebe perfil. O mesmo lote atende qualquer integrante da unidade, e
@@ -40,6 +41,8 @@ e um time forte não compensa matematicamente uma restrição organizacional.
 A classificação sociotécnica de cada unidade usa seu elo confiável mais frágil. Na
 consolidação, o ancestral é limitado pela unidade descendente publicável de menor
 nível, mantendo no relatório tanto a origem do limite quanto os radares locais.
+Assim, duas folhas adaptativas não transformam em madura uma área que também contém
+uma folha reativa: a classificação da área permanece limitada pela folha reativa.
 
 ## Regra de anonimato
 

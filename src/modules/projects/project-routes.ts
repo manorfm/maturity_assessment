@@ -51,7 +51,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const units = projects.listUnits(projectId);
     const report = inference.report(projectId, Number(auth.project.minimum_group_size));
     const batches = invitations.listBatches(projectId);
-    const unitOptions = units.map((unit) => `<option value="${escapeHtml(unit.id)}">${escapeHtml(unit.path)}</option>`).join('');
+    const unitOptions = units.filter((unit) => unit.isLeaf).map((unit) => `<option value="${escapeHtml(unit.id)}">${escapeHtml(unit.path)}</option>`).join('');
     const reportAvailability = report.completed < report.minimum
       ? `<p class="notice">O relatório será liberado com ${report.minimum} respostas concluídas. Atualmente: ${report.completed}.</p>`
       : report.findings.length ? '' : '<p class="notice">Ainda não há um padrão problemático com evidência agregada suficiente.</p>';
@@ -64,7 +64,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
       <div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
-        <label for="unitId">Unidade</label><select id="unitId" name="unitId">${unitOptions}</select>
+        <label for="unitId">Unidade final</label><select id="unitId" name="unitId">${unitOptions}</select>
         <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
         <button type="submit">Gerar links</button></form></section>
       ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}

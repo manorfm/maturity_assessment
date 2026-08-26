@@ -27,6 +27,20 @@ test('convite é consumido uma vez e não mantém vínculo com a participação'
   assert.equal((db.prepare('SELECT COUNT(*) total FROM participations').get() as { total: number }).total, 1);
 });
 
+test('convites pertencem somente às folhas de uma hierarquia livre', () => {
+  const db = createDatabase(':memory:');
+  const projects = new ProjectService(db);
+  const invitations = new InvitationService(db);
+  const created = projects.create('Estrutura livre', 'Empresa/Área/Célula A\nEmpresa/Área/Célula B');
+  const project = projects.authorize(created.publicId, created.adminSecret)!;
+  const units = projects.listUnits(String(project.id));
+  const area = units.find((unit) => unit.path === 'Empresa/Área')!;
+  const cell = units.find((unit) => unit.path === 'Empresa/Área/Célula A')!;
+
+  assert.throws(() => invitations.createBatch(String(project.id), area.id, 1), /unidade final/i);
+  assert.equal(invitations.createBatch(String(project.id), cell.id, 1).tokens.length, 1);
+});
+
 test('relatório respeita limiar e encontra padrão agregado', () => {
   const db = createDatabase(':memory:');
   const projects = new ProjectService(db);

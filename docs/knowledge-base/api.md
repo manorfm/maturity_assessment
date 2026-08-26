@@ -27,8 +27,8 @@ O header e as URLs são removidos dos logs estruturados.
 
 - `POST /api/projects` — cria projeto e hierarquia;
 - `GET /api/projects/:publicId` — retorna unidades, lotes e relatório sanitizado;
-- `POST /api/projects/:publicId/invitation-batches` — cria lote para uma unidade,
-  sem perfil pré-definido, e retorna links uma única vez;
+- `POST /api/projects/:publicId/invitation-batches` — cria lote exclusivamente para
+  uma unidade folha, sem perfil pré-definido, e retorna links uma única vez;
 - `POST /api/projects/:publicId/invitation-batches/:batchId/revoke` — invalida links
   ainda disponíveis, sem afetar participações iniciadas;
 - `POST /api/projects/:publicId/invitation-batches/:batchId/reissue` — cria uma única

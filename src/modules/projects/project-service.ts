@@ -2,7 +2,7 @@ import { inTransaction, type Database } from '../../shared/database.js';
 import { hashSecret, id, secret } from '../../shared/ids.js';
 import { ProjectDraft } from './domain/project.js';
 
-type Unit = { id: string; name: string; unit_type: string; path: string };
+type Unit = { id: string; name: string; unit_type: string; path: string; isLeaf: boolean };
 
 export class ProjectService {
   constructor(private readonly db: Database) {}
@@ -43,7 +43,11 @@ export class ProjectService {
   }
 
   listUnits(projectId: string): Unit[] {
-    return this.db.prepare('SELECT id, name, unit_type, path FROM organization_units WHERE project_id = ? ORDER BY path')
-      .all(projectId) as unknown as Unit[];
+    const rows = this.db.prepare(`
+      SELECT u.id, u.name, u.unit_type, u.path,
+        NOT EXISTS (SELECT 1 FROM organization_units child WHERE child.parent_id = u.id) is_leaf
+      FROM organization_units u WHERE u.project_id = ? ORDER BY u.path
+    `).all(projectId) as unknown as Array<Omit<Unit, 'isLeaf'> & { is_leaf: number }>;
+    return rows.map(({ is_leaf, ...unit }) => ({ ...unit, isLeaf: Boolean(is_leaf) }));
   }
 }

@@ -3,6 +3,13 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-26 — Convites vinculados às folhas da estrutura
+
+- A hierarquia permaneceu livre em nomes e profundidade, enquanto convites passaram
+  a ser aceitos somente nas folhas; níveis intermediários consolidam resultados e
+  continuam limitados pelo descendente elegível mais frágil. Consulte
+  [estrutura organizacional](../knowledge-base/organizational-model.md).
+
 ## 2026-08-26 — Diagnóstico agrupado por capacidade
 
 - O relatório deixou de repetir uma lista plana e passou a apresentar, dentro de
