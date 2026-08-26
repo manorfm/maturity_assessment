@@ -20,8 +20,8 @@
   disciplina antes da publicação;
 - modo facilitado para workshops, além da coleta individual;
 - entrevistas qualitativas associadas a uma campanha;
-- aprofundamento por lacunas, contradições e confiança, com critérios transparentes
-  de continuidade e encerramento da entrevista;
+- expandir o padrão de aprofundamento já aplicado à entrega para todos os pilares,
+  com critérios transparentes de continuidade e encerramento por confiança;
 - editor visual do grafo com simulação de percursos e validação antes de publicar;
 - versões multilíngues revisadas semanticamente, não apenas traduzidas;
 - acessibilidade validada com usuários e tecnologias assistivas;
@@ -32,7 +32,7 @@
 
 - calibração empírica de perguntas e pesos;
 - calibrar os limiares direcionais usados para divergência entre perspectivas;
-- análise de contradições e confiança por capacidade;
+- calibrar empiricamente a fórmula inicial de contradição e confiança por capacidade;
 - diferenciação mais precisa entre lacuna de conhecimento e bloqueio sistêmico;
 - relações causais apresentadas como hipóteses, nunca como causalidade comprovada;
 - análise longitudinal para identificar mudança sustentada;

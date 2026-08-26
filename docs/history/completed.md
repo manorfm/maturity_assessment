@@ -38,3 +38,5 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   estrita, build e revisão de vazamento e código morto.
 - Evoluída a entrevista para quinze nós de SDLC, com perspectiva escolhida pelo
   participante, convites sem perfil, cópia de links e radar agregado de capacidades.
+- Aprofundado o ramo de entrega com validação sob pressão, discriminação de causas,
+  confiança sensível a contradições e radar navegável com próximos passos.

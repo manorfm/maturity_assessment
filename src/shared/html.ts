@@ -24,7 +24,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .muted,small { color:var(--muted) }.notice { border-left:4px solid var(--accent); background:var(--soft); padding:13px 16px }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px }.metric { font-size:2rem; font-weight:750 }.tag { display:inline-block; background:var(--soft); color:var(--accent); padding:3px 9px; border-radius:999px; font-size:.82rem; margin:2px }
     code { overflow-wrap:anywhere } summary { cursor:pointer }
-    .radar { display:block; width:min(100%,520px); margin:12px auto }.radar-grid polygon,.radar-grid line { fill:none; stroke:var(--line); stroke-width:1 }.radar-result { fill:rgba(25,95,70,.22); stroke:var(--accent); stroke-width:3 }.capability-legend { padding-left:20px }
+    .radar { display:block; width:min(100%,620px); margin:12px auto; overflow:visible }.radar-grid polygon,.radar-grid line { fill:none; stroke:var(--line); stroke-width:1 }.radar-result { fill:rgba(25,95,70,.22); stroke:var(--accent); stroke-width:3; pointer-events:none }.radar-point circle { fill:var(--accent); stroke:#fff; stroke-width:3 }.radar-point text { fill:var(--ink); font-size:10px; text-anchor:middle }.radar-point:focus circle,.radar-point:hover circle { fill:#0f8a60; r:11px }.radar-detail { display:none; border-top:1px solid var(--line); padding-top:12px }.radar-detail:target { display:block }.radar-detail h4 { font-size:1.2rem; margin-bottom:.25rem }.radar-detail h5 { font-size:1rem; margin-bottom:.2rem }
     @media(max-width:600px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem} }
   </style>
 </head>

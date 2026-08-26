@@ -72,7 +72,7 @@ function absoluteUrl(request: FastifyRequest, path: string): string {
 }
 
 function sanitizeReport(report: ReturnType<InferenceService['report']>) {
-  const finding = (item: { pattern: string; title: string; intervention: string }) => ({ pattern: item.pattern, title: item.title, intervention: item.intervention });
+  const finding = (item: { capability: string; pattern: string; title: string; intervention: string }) => ({ capability: item.capability, pattern: item.pattern, title: item.title, intervention: item.intervention });
   return {
     completed: report.completed,
     minimum: report.minimum,

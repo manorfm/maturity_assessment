@@ -80,6 +80,12 @@ dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente signi
 evidência insuficiente e nunca é desenhado como zero. O radar não combina pilares
 em uma nota global e não substitui findings, bloqueios ou recomendações.
 
+O cálculo vigente combina sinais comportamentais convergentes dentro da capacidade.
+Evidências em direções opostas reduzem a confiança e são mostradas como contradição,
+em vez de desaparecerem em uma média. Um comportamento positivo é aprofundado para
+verificar consistência sob urgência; um comportamento frágil abre discriminação de
+causas prováveis. O resultado continua sujeito a calibração empírica.
+
 ## Tipos de evidência
 
 - escolha em cenário com trade-off real;
@@ -100,6 +106,12 @@ Todo comportamento ausente pode ser relacionado a um ou mais bloqueios:
 - política, permissão ou governança;
 - arquitetura e dívida técnica;
 - confiança, comunicação ou segurança psicológica.
+
+A existência de QA, SRE, plataforma ou outra função especializada não altera o
+nível por si só. A ausência de um título também não reduz automaticamente maturidade:
+o instrumento verifica se a competência necessária entra cedo no fluxo, por pessoas,
+colaboração ou guardrails. Quando não entra, registra lacuna de competência acessível;
+quando a especialidade vira handoff ou fila, registra o bloqueio organizacional.
 
 O relatório deve distinguir ausência de necessidade, solução alternativa adequada,
 lacuna de capacidade e bloqueio. Não recomendar tecnologia antes de identificar o

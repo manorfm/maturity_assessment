@@ -1,9 +1,10 @@
 import type { Database } from '../../shared/database.js';
 import { profiles, type Profile } from '../catalog/assessment-graph.js';
+import { CapabilityAssessment } from './domain/capability-assessment.js';
 
-type AggregateResponse = { pattern: string; weight: number; total: number };
-type Finding = { pattern: string; title: string; evidence: number; intervention: string };
-type CapabilityLevel = { id: string; label: string; level: number; evidence: number };
+type AggregateResponse = { capability: string; pattern: string; weight: number; total: number };
+type Finding = { capability: string; pattern: string; title: string; evidence: number; intervention: string };
+type CapabilityLevel = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean };
 type PerspectiveGap = {
   capability: string;
   title: string;
@@ -51,6 +52,17 @@ const recommendations: Record<string, { title: string; intervention: string }> =
   'culpa-e-controle': { title: 'Falhas reforçam culpa e controles locais', intervention: 'Reconstrua condições, incentivos e barreiras do próximo incidente sem atribuição individual; escolha uma mudança sistêmica verificável.' },
   'aprendizado-restrito': { title: 'O aprendizado fica restrito a lideranças e especialistas', intervention: 'Compartilhe uma síntese segura das condições e decisões, permitindo contestação e reaproveitamento por outros grupos.' },
   'incidente-sem-aprendizado': { title: 'A urgência encerra o incidente antes do aprendizado', intervention: 'Reserve uma análise curta após estabilizar e limite-a a uma mudança com responsável e sinal de recorrência.' },
+  'mudanca-isolada': { title: 'Mudanças permanecem isoladas e encontram o sistema tarde', intervention: 'Reduza uma mudança até integrá-la no mesmo dia e meça conflito, regressão e tempo de correção antes de alterar toda a estratégia.' },
+  'integracao-por-janela': { title: 'A integração depende de versões e janelas coordenadas', intervention: 'Escolha uma dependência recorrente e crie uma verificação compatível fora da janela para reduzir o primeiro lote de coordenação.' },
+  'causa-ferramental-feedback': { title: 'O feedback automatizado não sustenta integração frequente', intervention: 'Meça duração, instabilidade e lacunas do retorno; corrija primeiro a verificação que mais leva pessoas a acumular mudanças.' },
+  'causa-processo-lote': { title: 'Políticas e etapas exigem acumular mudanças', intervention: 'Explicite o risco protegido por uma etapa e teste um caminho proporcional para uma mudança pequena e reversível.' },
+  'causa-fronteira-times': { title: 'Fronteiras de times impedem concluir sem coordenação', intervention: 'Mapeie uma entrega ponta a ponta e experimente um modo de colaboração ou ownership que reduza uma passagem recorrente.' },
+  'causa-acoplamento-entrega': { title: 'Acoplamento transforma mudanças pequenas em lotes coordenados', intervention: 'Identifique a interface que mais amplia o lote e teste um contrato verificável ou limite mais autônomo.' },
+  'controles-de-release-acumulados': { title: 'Controles de exposição acumulam dívida operacional', intervention: 'Defina responsável e validade para um controle existente e automatize sua remoção antes de ampliar o mecanismo.' },
+  'deploy-igual-release': { title: 'Implantação e exposição compartilham a mesma decisão', intervention: 'Teste exposição gradual e reversível em uma jornada de baixo risco, com sinal de impacto e responsável claros.' },
+  'release-em-lote': { title: 'Mudanças prontas aguardam uma liberação conjunta', intervention: 'Separe uma mudança pequena da próxima janela e registre quais dependências realmente impedem sua liberação independente.' },
+  'maturidade-nao-resiste-urgencia': { title: 'O fluxo seguro é abandonado sob pressão', intervention: 'Transforme o atalho mais usado em um caminho rápido, automatizado e auditável; valide-o com uma correção pequena.' },
+  'dependencia-operacional-sob-urgencia': { title: 'Urgências dependem de especialistas e acessos', intervention: 'Defina uma operação reversível com acesso mínimo e guardrails para reduzir a espera sem ampliar privilégio permanente.' },
 };
 
 const capabilityLabels: Record<string, string> = {
@@ -84,27 +96,21 @@ export class InferenceService {
   private capabilities(projectId: string, unitId?: string): CapabilityLevel[] {
     const scope = this.scope(projectId, unitId);
     const rows = this.db.prepare(`
-      SELECT s.capability, AVG(s.weight) average_weight, COUNT(*) evidence
+      SELECT s.capability, s.weight
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-      GROUP BY s.capability
-    `).all(...scope.parameters) as unknown as Array<{ capability: string; average_weight: number; evidence: number }>;
-    const grouped = new Map<string, { total: number; evidence: number }>();
+    `).all(...scope.parameters) as unknown as Array<{ capability: string; weight: number }>;
+    const grouped = new Map<string, number[]>();
     for (const row of rows) {
       const label = capabilityLabels[row.capability] ?? row.capability;
-      const current = grouped.get(label) ?? { total: 0, evidence: 0 };
-      current.total += Number(row.average_weight) * Number(row.evidence);
-      current.evidence += Number(row.evidence);
-      grouped.set(label, current);
+      grouped.set(label, [...(grouped.get(label) ?? []), Number(row.weight)]);
     }
-    return [...grouped.entries()].map(([label, value]) => ({
-      id: Object.entries(capabilityLabels).find(([, candidate]) => candidate === label)?.[0] ?? label,
-      label,
-      level: Math.max(0, Math.min(4, Number((2 + value.total / value.evidence).toFixed(2)))),
-      evidence: value.evidence,
-    })).sort((left, right) => left.label.localeCompare(right.label));
+    return [...grouped.entries()].map(([label, weights]) => {
+      const assessment = CapabilityAssessment.from(weights);
+      return { id: Object.entries(capabilityLabels).find(([, candidate]) => candidate === label)?.[0] ?? label, label, ...assessment };
+    }).sort((left, right) => left.label.localeCompare(right.label));
   }
 
   private perspectiveGaps(projectId: string, minimum: number, unitId?: string): PerspectiveGap[] {
@@ -144,22 +150,22 @@ export class InferenceService {
   private findings(projectId: string, population: number, unitId?: string): Finding[] {
     const scope = this.scope(projectId, unitId);
     const rows = this.db.prepare(`
-      SELECT s.pattern, s.weight, COUNT(*) total
+      SELECT s.capability, s.pattern, s.weight, COUNT(*) total
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-      GROUP BY s.pattern, s.weight
+      GROUP BY s.capability, s.pattern, s.weight
     `).all(...scope.parameters) as unknown as AggregateResponse[];
-    const patternCounts = new Map<string, number>();
+    const patternCounts = new Map<string, { capability: string; evidence: number }>();
     for (const row of rows) {
-      if (Number(row.weight) < 0) patternCounts.set(row.pattern, (patternCounts.get(row.pattern) ?? 0) + Number(row.total));
+      if (Number(row.weight) < 0) patternCounts.set(row.pattern, { capability: row.capability, evidence: (patternCounts.get(row.pattern)?.evidence ?? 0) + Number(row.total) });
     }
     return [...patternCounts.entries()]
-      .filter(([pattern, evidence]) => recommendations[pattern] && evidence >= Math.max(2, Math.ceil(population * 0.3)))
-      .sort((a, b) => b[1] - a[1])
+      .filter(([pattern, item]) => recommendations[pattern] && item.evidence >= Math.max(2, Math.ceil(population * 0.3)))
+      .sort((a, b) => b[1].evidence - a[1].evidence)
       .slice(0, 8)
-      .map(([pattern, evidence]) => ({ pattern, evidence, ...recommendations[pattern]! }));
+      .map(([pattern, item]) => ({ pattern, ...item, ...recommendations[pattern]! }));
   }
 
   private scope(projectId: string, unitId?: string): QueryScope {

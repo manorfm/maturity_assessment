@@ -13,7 +13,7 @@ ficam separadas em [`docs/backlog`](docs/backlog/README.md).
 
 O primeiro corte vertical está executável. Ele permite criar um projeto, configurar
 uma hierarquia livre, gerar convites individuais, responder anonimamente a uma
-entrevista de quinze nós com aprofundamentos condicionais e liberar findings globais e hierárquicos
+entrevista de dezenove nós com aprofundamentos condicionais e liberar findings globais e hierárquicos
 após cinco conclusões em partições seguras.
 
 A versão 0.3 adapta a linguagem de cenários ao perfil e apresenta divergências de
@@ -27,6 +27,10 @@ piloto controlado; itens de escala, integração e calibração permanecem no ba
 A versão 0.5 torna os convites independentes de perfil, identifica a perspectiva
 na própria jornada, amplia a cobertura comportamental do SDLC, permite copiar os
 links emitidos e apresenta um radar das capacidades com evidência agregada.
+
+A versão 0.6 aprofunda entrega e integração, testa práticas maduras sob pressão,
+discrimina causas prováveis e apresenta confiança, contradições e próximos passos
+dentro do radar navegável.
 
 ## Executar localmente
 

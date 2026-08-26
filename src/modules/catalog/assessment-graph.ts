@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'sdlc-interview-v3';
+export const GRAPH_VERSION = 'sdlc-depth-v4';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
 export type Signal = { capability: string; pattern: string; weight: number };
@@ -77,7 +77,7 @@ export const graph: AssessmentNode[] = [
       { id: 'local-script', label: 'Uma pessoa ou grupo criou scripts que ajudam, mas adoção, suporte e comportamento variam.', signals: [{ capability: 'plataforma', pattern: 'solucao-local-nao-difundida', weight: -1 }] },
       { id: 'runbook', label: 'Há instruções; a execução depende de atenção, acesso e conhecimento de quem está disponível.', signals: [{ capability: 'entrega', pattern: 'operacao-manual-fragil', weight: -2 }] },
       { id: 'memory', label: 'Os passos são conhecidos principalmente por experiência e são ajustados durante a execução.', signals: [{ capability: 'entrega', pattern: 'dependencia-de-heroi', weight: -2 }] },
-    ], next: 'degradation',
+    ], next: 'integration-cadence',
   },
   {
     id: 'quality-probe', type: 'probe', title: 'De onde vem a espera de qualidade?',
@@ -88,7 +88,7 @@ export const graph: AssessmentNode[] = [
       { id: 'data-environment', label: 'Preparar massa e ambiente confiáveis consome grande parte do tempo e exige intervenção.', signals: [{ capability: 'qualidade', pattern: 'dados-de-teste-fragil', weight: -2 }] },
       { id: 'regression', label: 'A regressão cresceu e precisa ser repetida manualmente porque mudanças novas podem afetar áreas antigas.', signals: [{ capability: 'qualidade', pattern: 'regressao-crescente', weight: -2 }] },
       { id: 'late-context', label: 'Critérios, riscos ou contexto chegam quando a implementação já está pronta.', signals: [{ capability: 'fluxo', pattern: 'qualidade-tardia', weight: -2 }] },
-    ], next: 'degradation',
+    ], next: 'integration-cadence',
   },
   {
     id: 'governance-probe', type: 'probe', title: 'O que a aprovação protege?',
@@ -99,6 +99,50 @@ export const graph: AssessmentNode[] = [
       { id: 'same-flow', label: 'O caminho é praticamente igual para todos; isso simplifica a política, embora gere espera.', signals: [{ capability: 'governanca', pattern: 'controle-indiferenciado', weight: -2 }] },
       { id: 'relationship', label: 'A velocidade depende de conhecer responsáveis, explicar urgência e conseguir prioridade.', signals: [{ capability: 'governanca', pattern: 'governanca-relacional', weight: -2 }] },
       { id: 'unclear', label: 'É difícil explicar qual risco cada aprovação reduz ou quais evidências mudariam a decisão.', signals: [{ capability: 'governanca', pattern: 'controle-sem-proposito', weight: -2 }] },
+    ], next: 'integration-cadence',
+  },
+  {
+    id: 'integration-cadence', type: 'probe', title: 'Quanto tempo a mudança fica isolada?',
+    scenario: 'Pense na última alteração comum, sem emergência. Considere desde o primeiro código utilizável até ele encontrar a versão compartilhada e receber verificações do restante do produto.',
+    prompt: 'Qual descrição representa melhor essa integração no dia a dia?',
+    options: [
+      { id: 'integrated-daily', label: 'Mudanças pequenas encontram a versão compartilhada no mesmo dia; verificações rápidas protegem o fluxo e falhas são corrigidas antes de acumular.', signals: [{ capability: 'engenharia', pattern: 'integracao-continua-validada', weight: 2 }] },
+      { id: 'integrated-few-days', label: 'A integração ocorre em poucos dias e geralmente exige estabilização curta antes de outras mudanças seguirem.', signals: [{ capability: 'engenharia', pattern: 'integracao-frequente-fragil', weight: 1 }] },
+      { id: 'isolated-days', label: 'Mudanças ficam isoladas por vários dias ou semanas e encontram conflitos, regressões ou decisões divergentes ao final.', signals: [{ capability: 'engenharia', pattern: 'mudanca-isolada', weight: -2 }] },
+      { id: 'coordinated-window', label: 'A integração depende de uma janela, versão ou combinação coordenada entre responsáveis e ambientes.', signals: [{ capability: 'entrega', pattern: 'integracao-por-janela', weight: -2 }] },
+    ],
+  },
+  {
+    id: 'delivery-cause', type: 'probe', title: 'O que mantém a mudança isolada?',
+    scenario: 'A integração tardia reaparece mesmo quando as pessoas tentam antecipá-la. Considere o impedimento que permanece após uma tentativa concreta de reduzir o intervalo.',
+    prompt: 'Qual causa provável explica melhor a recorrência?',
+    options: [
+      { id: 'tooling-gap', label: 'O retorno automatizado é lento, instável ou incompleto; integrar cedo interrompe o trabalho sem produzir confiança.', signals: [{ capability: 'engenharia', pattern: 'causa-ferramental-feedback', weight: -1 }] },
+      { id: 'process-policy', label: 'Política, revisão ou processo exige acumular escopo ou aguardar uma etapa antes de compartilhar a mudança.', signals: [{ capability: 'governanca', pattern: 'causa-processo-lote', weight: -1 }] },
+      { id: 'team-boundary', label: 'Responsabilidades e prioridades atravessam times; ninguém consegue concluir a integração sem coordenar agendas.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-times', weight: -1 }] },
+      { id: 'architecture-coupling', label: 'O sistema exige alterar e validar muitas partes juntas; uma mudança pequena não permanece pequena.', signals: [{ capability: 'arquitetura', pattern: 'causa-acoplamento-entrega', weight: -1 }] },
+    ], next: 'release-control',
+  },
+  {
+    id: 'release-control', type: 'probe', title: 'Implantar e liberar são a mesma decisão?',
+    scenario: 'Uma alteração passou pelas verificações e pode chegar ao ambiente real, mas produto ainda quer controlar quando e para quem o comportamento ficará disponível.',
+    prompt: 'Como essa separação costuma funcionar de verdade?',
+    options: [
+      { id: 'decoupled-observed', label: 'A versão pode operar desativada ou com exposição gradual; há responsável, validade do controle, observação de impacto e remoção posterior.', signals: [{ capability: 'entrega', pattern: 'deploy-release-desacoplados', weight: 2 }] },
+      { id: 'toggle-permanent', label: 'É possível ativar separadamente, mas controles antigos, combinações e responsáveis tendem a se acumular.', signals: [{ capability: 'entrega', pattern: 'controles-de-release-acumulados', weight: 0 }] },
+      { id: 'deploy-is-release', label: 'Colocar a versão no ambiente já disponibiliza o comportamento; risco é controlado principalmente antes desse momento.', signals: [{ capability: 'entrega', pattern: 'deploy-igual-release', weight: -1 }] },
+      { id: 'release-train', label: 'Mudanças prontas aguardam uma versão ou janela conjunta para serem disponibilizadas.', signals: [{ capability: 'entrega', pattern: 'release-em-lote', weight: -2 }] },
+    ], next: 'release-validation',
+  },
+  {
+    id: 'release-validation', type: 'probe', title: 'Quando a pressão aumenta',
+    scenario: 'Uma correção importante precisa sair no mesmo dia. O fluxo habitual parece maduro, mas esperar todas as verificações ameaça o prazo.',
+    prompt: 'O que normalmente acontece nessa situação recente e concreta?',
+    options: [
+      { id: 'safe-fast-path', label: 'O mesmo caminho automatizado suporta uma mudança pequena, exposição controlada, sinais de impacto e reversão rápida.', signals: [{ capability: 'entrega', pattern: 'fluxo-seguro-sob-pressao', weight: 2 }] },
+      { id: 'manual-fast-path', label: 'Existe um caminho de exceção com ações manuais e aprovação explícita; depois a equipe reconcilia e revisa o ocorrido.', signals: [{ capability: 'governanca', pattern: 'excecao-controlada', weight: 0 }] },
+      { id: 'bypass-under-pressure', label: 'Verificações ou etapas são contornadas por pessoas experientes para ganhar tempo e corrigidas posteriormente.', signals: [{ capability: 'entrega', pattern: 'maturidade-nao-resiste-urgencia', weight: -2 }] },
+      { id: 'wait-specialists', label: 'A entrega aguarda especialistas, acessos ou uma janela segura, mesmo com impacto crescente.', signals: [{ capability: 'plataforma', pattern: 'dependencia-operacional-sob-urgencia', weight: -2 }] },
     ], next: 'degradation',
   },
   {
@@ -197,10 +241,16 @@ export const graph: AssessmentNode[] = [
 
 export const edges: AssessmentEdge[] = graph.flatMap((node) => {
   if (node.id === 'ready-to-release') return [
-    { from: node.id, optionId: 'small-automated', to: 'degradation' },
+    { from: node.id, optionId: 'small-automated', to: 'integration-cadence' },
     { from: node.id, optionId: 'manual-package', to: 'deployment-probe' },
     { from: node.id, optionId: 'test-queue', to: 'quality-probe' },
     { from: node.id, optionId: 'approval', to: 'governance-probe' },
+  ];
+  if (node.id === 'integration-cadence') return [
+    { from: node.id, optionId: 'integrated-daily', to: 'release-control' },
+    { from: node.id, optionId: 'integrated-few-days', to: 'release-control' },
+    { from: node.id, optionId: 'isolated-days', to: 'delivery-cause' },
+    { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause' },
   ];
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });

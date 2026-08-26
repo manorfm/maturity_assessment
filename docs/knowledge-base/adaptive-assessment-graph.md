@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão `sdlc-interview-v3` começa por uma escolha neutra de perspectiva e também
+A versão `sdlc-depth-v4` começa por uma escolha neutra de perspectiva e também
 persiste variantes de texto por perfil.
 Elas alteram contexto e linguagem do nó, preservando opções e sinais compartilhados
 quando a capacidade observada é a mesma.
@@ -37,11 +37,18 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O percurso-base atual contém quinze nós e cobre eventos de priorização, integração,
+O percurso-base atual contém dezenove nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura e aprendizado após falhas. Quantidade de perguntas
 não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
 com base em lacunas de evidência e sinais anteriores, como uma entrevista.
+
+O ramo de entrega aprofunda tanto sinais frágeis quanto maduros. Integração tardia
+discrimina quatro causas prováveis — feedback ferramental, processo/política, fronteira
+de times e acoplamento arquitetural. Integração frequente segue para verificar se
+implantação e exposição são decisões independentes, se controles de release possuem
+ownership e se o caminho seguro resiste a uma urgência. Uma contradição posterior
+reduz confiança e pode regredir o nível inferido.
 
 ## Duas passagens de raciocínio
 

@@ -85,6 +85,16 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   assert.equal(catalog.getNode(current.graph_version, current.current_node)?.type, 'probe');
 });
 
+test('entrega aprofunda sinais maduros e investiga bloqueio após integração frágil', () => {
+  const db = createDatabase(':memory:');
+  const catalog = new CatalogService(db);
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'ready-to-release', 'small-automated'), 'integration-cadence');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'integrated-daily'), 'release-control');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'isolated-days'), 'delivery-cause');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap'), 'release-control');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-validation', 'bypass-under-pressure'), 'degradation');
+});
+
 test('validador rejeita ciclos e nós inalcançáveis antes da publicação', () => {
   const node = (id: string) => ({ id, title: id, scenario: id, prompt: id, options: [{ id: 'ok', label: 'ok', signals: [] }] });
   assert.throws(() => validateGraphDefinition([node('a'), node('b')], [{ from: 'a', to: 'a' }], 'a'), /cycle/);

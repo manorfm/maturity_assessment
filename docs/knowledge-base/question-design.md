@@ -14,6 +14,9 @@
   roteamento; suas respostas não pontuam maturidade.
 - Formular cenários em torno de falhas, mudanças, decisões e consequências, de modo
   que diferentes soluções técnicas possam demonstrar a mesma capacidade.
+- Depois de um sinal positivo, mudar contexto ou pressão para verificar se a prática
+  é consistente; depois de um sinal negativo, discriminar ferramenta, processo,
+  comunicação, desenho de times, arquitetura, governança e conhecimento.
 
 ## Formatos
 

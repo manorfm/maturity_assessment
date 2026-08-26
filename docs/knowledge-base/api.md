@@ -3,7 +3,8 @@
 A API JSON reutiliza os mesmos serviços de aplicação das telas. Ela não expõe
 respostas individuais, hashes, tokens antigos ou contagens por alternativa. O
 relatório inclui capacidades direcionais globais e por recorte elegível, sempre
-submetidas ao mesmo limiar e à supressão hierárquica das telas.
+submetidas ao mesmo limiar e à supressão hierárquica das telas. Cada capacidade
+inclui nível, confiança, volume agregado de sinais e indicação de contradição.
 
 ## Autorização
 
