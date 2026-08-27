@@ -48,8 +48,9 @@ são atendidos.
 
 O mesmo link serve para qualquer integrante da unidade. Ao iniciar, a pessoa escolhe
 a perspectiva mais próxima do seu trabalho — por exemplo, gestão, produto, qualidade,
-engenharia ou plataforma/operações. O perfil adapta linguagem e observabilidade; ele
-não produz nota e não cria uma avaliação individual.
+engenharia, plataforma/operações, arquitetura, segurança, dados ou design. O perfil
+adapta linguagem e observabilidade; ele não produz nota e não cria uma avaliação
+individual.
 
 ### 4. Anamnese comportamental adaptativa
 
@@ -58,7 +59,7 @@ incidente, uma decisão arquitetural ou uma ação de melhoria. Em vez de pergun
 “você usa CI/CD?” ou “aplica SRE?”, ela investiga o que aconteceu, quem percebeu,
 quanto esperou, como decidiu, que consequência ocorreu e o que mudou depois.
 
-O percurso é um grafo versionado com 52 nós. Um tronco comum identifica sintomas;
+O percurso é um grafo versionado com 72 nós. Um tronco comum identifica sintomas;
 branches por perspectiva aprofundam o que a pessoa consegue observar. Depois do
 percurso declarativo, o motor pode selecionar até cinco perguntas adicionais para
 reduzir a incerteza causal, respeitando aplicabilidade, custo e orçamento da jornada.

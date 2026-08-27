@@ -33,6 +33,13 @@ Uma capacidade compartilhada recebe evidências complementares:
 | Fluxo seguro | limita WIP/escalada | negocia escopo | evita fila final | automatiza entrega | cria guardrails e recuperação |
 | Aprendizado | trata conflito/erro | revisa hipótese | analisa escapes | reduz recorrência | evolui plataforma/runbooks |
 
+| Capacidade | Arquitetura | Segurança | Dados | Design |
+|---|---|---|---|---|
+| Feedback rápido | torna o limite observável | antecipa risco de dado e confiança | reconcilia significado a tempo | reduz retrabalho de jornada |
+| Qualidade sustentável | revisa fronteira e contrato | trata achado como mudança de caminho | evolui definição com consumidores | traz evidência de uso à decisão |
+| Fluxo seguro | evita contorno que esconde espera | modela ameaça na mudança comum | impede redefinição silenciosa | entra na decisão antes do handoff |
+| Aprendizado | ajusta linguagem e espera | verifica o padrão em outros fluxos | dono do significado fecha o ciclo | quem não concluiu reabre o fluxo |
+
 A matriz não é uma checklist fixa; orienta autoria e identifica pontos cegos.
 
 ## Triangulação
@@ -55,12 +62,25 @@ disse X” quando isso puder identificar alguém.
 O convite é comum à unidade. Na primeira etapa, a pessoa seleciona a perspectiva
 que mais se aproxima de sua atuação cotidiana; a seleção não gera sinais nem mede
 conhecimento. O catálogo roteia a entrevista pela perspectiva escolhida. Todos
-atravessam um tronco comportamental comum; gestão aprofunda portfólio, poder e
-segurança para expor risco; produto aprofunda discovery e efeito dos resultados;
-qualidade, estratégia de risco e não funcionais; engenharia, segurança e difusão de
-capacidade técnica; plataforma/operações, recuperação, resiliência e eficiência
-cloud. Um ramo pode produzir efeitos cruzados em várias capacidades sem premiar o
-cargo.
+atravessam um tronco comportamental comum. Depois da liderança sistêmica:
+
+- gestão aprofunda portfólio, poder, segurança para expor risco e carga cognitiva
+  do grupo;
+- produto aprofunda discovery e efeito dos resultados;
+- qualidade, estratégia de risco e não funcionais;
+- engenharia, segurança na mudança e difusão de capacidade técnica;
+- plataforma/operações, recuperação, resiliência, eficiência e tempo até uma
+  capacidade compartilhada ser usável;
+- arquitetura, linguagem visível na mudança e espera entre grupos;
+- segurança, ameaça em alteração comum e o que acontece com um achado no prazo;
+- dados, significado compartilhado de um indicador e evolução visível aos
+  consumidores;
+- design, quando a experiência entra na decisão e se evidência de uso reabre o
+  fluxo.
+
+Um ramo pode produzir efeitos cruzados em várias capacidades sem premiar o cargo.
+Nenhum ramo pergunta se a organização “faz DDD”, “usa Team Topologies”, “tem IDP”
+ou qual ferramenta de design está instalada.
 
 O convite continua comum à squad. Uma composição multiperfil pode percorrer todos
 esses ramos, mas o relatório publica somente folhas efetivamente cobertas por padrões

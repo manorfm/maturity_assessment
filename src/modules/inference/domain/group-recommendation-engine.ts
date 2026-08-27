@@ -112,8 +112,14 @@ export function foundationFor(pattern: string): InterventionFoundation {
   if (/incentivo|portfolio|resultado-sem|entrega-substitui|ocupacao-como/.test(pattern)) {
     return { source: 'Lean / Accelerate', principle: 'Incentivo alinhado a resultado, não a ocupação', why: 'Cerimônia de OKR não mede maturidade; o que pesa na decisão sim.' };
   }
-  if (/camada-sem-revisao|prestigio-tecnico|simplicidade/.test(pattern)) {
-    return { source: 'Arquitetura evolutiva', principle: 'Complexidade precisa de motivo revisável', why: 'Camada extra sem revisão é custo de mudança, não evidência de design maduro.' };
+  if (/camada-sem-revisao|prestigio-tecnico|simplicidade|termo-diverge|glossario-adia|linguagem-compartilhada/.test(pattern)) {
+    return { source: 'Arquitetura evolutiva / DDD', principle: 'Linguagem e limite visíveis na mudança', why: 'Glossário ou framework não medem maturidade; o termo que atravessa a entrega sim.' };
+  }
+  if (/significado-de-dado|numero-diverge|reconciliacao-artesanal|redefinicao-silenciosa|dado-espera|contrato-de-dado/.test(pattern)) {
+    return { source: 'Dados como produto', principle: 'Significado com dono, recorte e evolução visível aos consumidores', why: 'Ferramenta de dados não pontua; o desencontro de número e a mudança silenciosa de definição sim.' };
+  }
+  if (/experiencia-entra|design-chega|design-como|interface-sem|aprovacao-visual/.test(pattern)) {
+    return { source: 'Discovery e evidência de uso', principle: 'Experiência entra na decisão e volta com evidência', why: 'Ferramenta de design não pontua; handoff tardio e aprovação visual sem uso sim.' };
   }
   if (/celebra-media|ignora-base|distribuicao|limiar-sem-contexto|limites-escondem/.test(pattern)) {
     return { source: 'Data literacy / SRE', principle: 'Decisão com denominador, cauda e incerteza', why: 'Dashboard sem interpretação gera falsa precisão.' };
@@ -124,17 +130,17 @@ export function foundationFor(pattern: string): InterventionFoundation {
   if (/integracao|release|deploy|entrega|empacotamento/.test(pattern)) {
     return { source: 'Continuous Delivery', principle: 'Lote pequeno, feedback cedo, caminho reproduzível', why: 'Pipeline nominal não substitui o comportamento sob pressão.' };
   }
-  if (/qualidade|teste|regressao|seguranca|vulnerab/.test(pattern)) {
+  if (/qualidade|teste|regressao|seguranca|vulnerab|ameaca-|achado-/.test(pattern)) {
     return { source: 'Qualidade no fluxo', principle: 'Risco entra cedo; verificação é feedback, não fase', why: 'Suíte ou scanner presente não prova estratégia de qualidade.' };
   }
   if (/governanca|controle|aprovacao/.test(pattern)) {
     return { source: 'Governança habilitadora', principle: 'Controle proporcional ao risco, com evidência que muda decisão', why: 'Aprovação que não distingue risco só adiciona espera.' };
   }
-  if (/cloud|infraestrutura|plataforma|provisionamento/.test(pattern)) {
-    return { source: 'Well-Architected / platform engineering', principle: 'Caminho suportado com guardrails, não fila artesanal', why: 'Time de plataforma ou console não é maturidade operacional.' };
+  if (/cloud|infraestrutura|plataforma|provisionamento|caminho-suportado|ticket-heroi|documentacao-substitui/.test(pattern)) {
+    return { source: 'Well-Architected / platform engineering', principle: 'Caminho suportado com guardrails, não fila artesanal', why: 'Time de plataforma, IDP ou console não é maturidade operacional.' };
   }
-  if (/ownership|fronteira|coordenacao|team/.test(pattern)) {
-    return { source: 'Team Topologies', principle: 'Fronteira e modo de interação alinhados ao fluxo', why: 'Mais coordenação costuma compensar limite ruim, não resolvê-lo.' };
+  if (/ownership|fronteira|coordenacao|team|carga-cognitiva|acumulo-silencioso|heroi-troca|modo-implicito|contorno-para-nao|modo-de-interacao/.test(pattern)) {
+    return { source: 'Team Topologies', principle: 'Fronteira, carga e modo de interação alinhados ao fluxo', why: 'Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo.' };
   }
   return { source: 'Melhoria contínua', principle: 'Mudança pequena, dono, sinal de efeito', why: 'A intervenção ataca o comportamento observado, não um inventário de práticas.' };
 }

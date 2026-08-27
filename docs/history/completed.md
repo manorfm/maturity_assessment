@@ -6,6 +6,19 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-27 — Perspectivas de arquitetura, segurança, dados e design
+
+- O grafo `evidence-anamnesis-v13` passou a oferecer nove lentes e ramos próprios
+  para arquitetura (linguagem e espera entre grupos), segurança (ameaça e achado
+  em mudança comum), dados (significado compartilhado) e design (experiência na
+  decisão e evidência de uso), além de carga cognitiva na gestão e caminho até
+  capacidade na plataforma. A especificação vigente está em
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md),
+  [`profiles-and-triangulation.md`](../knowledge-base/profiles-and-triangulation.md) e
+  [`question-design.md`](../knowledge-base/question-design.md). Restam o trabalho
+  humano do piloto e a separação de performance, custo e sustentabilidade no
+  [`plano de evolução`](../backlog/instrument-evolution-plan.md).
+
 ## 2026-08-27 — Infraestrutura do piloto e gate de calibração
 
 - Limiares foram congelados na política da versão do modelo; rótulos cegos e
@@ -26,7 +39,8 @@ Para uma visão resumida dos marcos por versão, consulte o
   [`question-design.md`](../knowledge-base/question-design.md),
   [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
   [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
-  Restam piloto/calibração e ramos extras no
+  Restam o trabalho humano do piloto e a separação de performance, custo e
+  sustentabilidade no
   [`plano de evolução`](../backlog/instrument-evolution-plan.md).
 
 ## 2026-08-27 — Plano de evolução do instrumento

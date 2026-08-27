@@ -1,8 +1,8 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-v12';
+export const GRAPH_VERSION = 'evidence-anamnesis-v13';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
-export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
+export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform' | 'architecture' | 'security' | 'data' | 'design';
 export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
 export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
 export type ObservationKind = 'practice' | 'visibility' | 'not_applicable';
@@ -48,7 +48,10 @@ export type NodeVariant = { nodeId: string; profile: Profile; title?: string; sc
 export const profiles: Record<Profile, string> = {
   management: 'Gestão', product: 'Produto', quality: 'Qualidade / QA',
   engineering: 'Engenharia', platform: 'Plataforma / SRE / Infraestrutura',
+  architecture: 'Arquitetura', security: 'Segurança', data: 'Dados', design: 'Design / Experiência',
 };
+
+export const profileIds = Object.keys(profiles) as Profile[];
 
 const authoredNodes: AssessmentNode[] = [
   {
@@ -642,7 +645,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'risk-changes-decision', label: 'A informação pode mudar escopo, prazo ou apoio; quem trouxe o risco participa da revisão sem sofrer consequência punitiva.', signals: [{ capability: 'organizacao', pattern: 'lideranca-protege-alerta-de-risco', weight: 2, details: ['leadership-management', 'organizational-learning', 'collaboration'], layer: 'consistency' , constraint: 'none' }] },
       { id: 'risk-recorded', label: 'O risco é registrado e escalado, mas compromissos normalmente permanecem até existir evidência mais forte.', signals: [{ capability: 'organizacao', pattern: 'risco-visivel-sem-poder-de-decisao', weight: -1, details: ['leadership-management', 'enabling-governance'], layer: 'system', constraint: 'governance'  }] },
       { id: 'private-warning', label: 'Alertas sensíveis circulam em conversas privadas para evitar conflito, exposição ou interpretação de resistência.', signals: [{ capability: 'organizacao', pattern: 'alerta-de-risco-depende-de-seguranca-pessoal', weight: -2, details: ['leadership-management', 'collaboration'], layer: 'system', constraint: 'culture'  }] },
-    ],
+    ], next: 'management-cognitive-load',
   },
   {
     id: 'product-discovery-depth', title: 'Hipótese antes da solução',
@@ -732,6 +735,106 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'continuous-guardrails', label: 'Ownership, orçamento, sinais e guardrails acompanham novas mudanças; capacidade e descarte são revistos continuamente.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-com-ciclo-continuo', weight: 2, details: ['cloud-efficiency', 'reproducible-infrastructure'], layer: 'consistency' , constraint: 'none' }] },
       { id: 'periodic-review', label: 'Relatórios periódicos geram campanhas de ajuste conduzidas por plataforma ou FinOps.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-por-campanha', weight: -1, details: ['cloud-efficiency', 'organizational-learning'], layer: 'consistency', constraint: 'process'  }] },
       { id: 'local-ownership', label: 'Cada time recebe visibilidade e decide quando otimizar conforme suas prioridades.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-sem-decisao-compartilhada', weight: -1, details: ['cloud-efficiency', 'team-ownership'], layer: 'system', constraint: 'organization'  }] },
+    ], next: 'platform-path-to-capability',
+  },
+  {
+    id: 'management-cognitive-load', title: 'Muitos tipos de problema no mesmo grupo',
+    scenario: 'Na mesma semana, o mesmo grupo atende pedido de produto, incidente, melhoria da plataforma e exceção pedida por outro time. As pessoas relatam que o contexto muda o tempo todo.',
+    prompt: 'Como essa carga costuma ser tratada?',
+    options: [
+      { id: 'load-visible', label: 'Os tipos de trabalho são visíveis e alguém decide o que o grupo deixa de absorver nesta semana.', signals: [{ capability: 'organizacao', pattern: 'carga-cognitiva-negociada', weight: 2, details: ['team-ownership', 'leadership-management'], layer: 'practice', constraint: 'none' }] },
+      { id: 'silent-accumulation', label: 'Tudo entra; o grupo dá um jeito e a espera ou o erro aparecem depois.', signals: [{ capability: 'organizacao', pattern: 'acumulo-silencioso-de-tipos', weight: -2, details: ['team-ownership', 'leadership-management'], layer: 'system', constraint: 'organization' }] },
+      { id: 'hero-switch', label: 'Depende de quem consegue trocar de contexto mais rápido quando a fila aperta.', signals: [{ capability: 'organizacao', pattern: 'heroi-troca-contexto', weight: -1, details: ['team-ownership'], layer: 'practice', constraint: 'organization' }] },
+    ],
+  },
+  {
+    id: 'architecture-language', title: 'Um termo que mudou de significado',
+    scenario: 'Uma alteração que parecia local agora precisa de um conceito que dois grupos usam no dia a dia, mas cada um descreve o mesmo objeto de forma diferente. A mudança só fecha se os dois lados combinarem o que aquele termo faz.',
+    prompt: 'O que normalmente acontece nesse tipo de divergência?',
+    options: [
+      { id: 'shared-language', label: 'Os grupos reconstroem o significado com um exemplo da jornada, ajustam o limite e só então mudam o que está em produção.', signals: [{ capability: 'arquitetura', pattern: 'linguagem-compartilhada-na-mudanca', weight: 2, details: ['domain-alignment', 'architecture-decisions'], layer: 'practice', constraint: 'none' }] },
+      { id: 'term-drifts', label: 'Cada grupo segue com a sua definição; o desencontro aparece na integração ou no uso.', signals: [{ capability: 'arquitetura', pattern: 'termo-diverge-entre-times', weight: -2, details: ['domain-alignment'], layer: 'practice', constraint: 'none' }] },
+      { id: 'glossary-later', label: 'Alguém propõe um alinhamento futuro de termos; a entrega atual contorna o conflito.', signals: [{ capability: 'arquitetura', pattern: 'glossario-adia-o-limite', weight: -1, details: ['domain-alignment', 'evolvability'], layer: 'practice', constraint: 'process' }] },
+    ], next: 'architecture-wait',
+  },
+  {
+    id: 'architecture-wait', title: 'Uma mudança que espera outro grupo',
+    scenario: 'Para uma mudança comum, o time precisa de outro grupo. Não é emergência. Sem esse outro grupo, a alteração não avança.',
+    prompt: 'O que normalmente acontece até a mudança avançar?',
+    options: [
+      { id: 'explicit-mode', label: 'O modo de colaboração é explícito — pedido, parceria ou caminho que o próprio time segue — e o tempo de espera é visível.', signals: [{ capability: 'organizacao', pattern: 'modo-de-interacao-explicito', weight: 2, details: ['team-ownership', 'collaboration'], layer: 'practice', constraint: 'none' }] },
+      { id: 'implicit-wait', label: 'O time espera na fila informal de quem conhece o outro sistema.', signals: [{ capability: 'organizacao', pattern: 'espera-por-modo-implicito', weight: -2, details: ['team-ownership', 'collaboration'], layer: 'system', constraint: 'organization' }] },
+      { id: 'work-around-boundary', label: 'O time contorna o limite para não esperar, e o custo aparece nas próximas mudanças.', signals: [{ capability: 'arquitetura', pattern: 'contorno-para-nao-esperar', weight: -1, details: ['evolvability', 'team-ownership'], layer: 'practice', constraint: 'architecture' }] },
+    ],
+  },
+  {
+    id: 'security-threat-in-change', title: 'Dado sensível em uma mudança comum',
+    scenario: 'Uma alteração de prazo normal passa a manipular dado que identifica pessoas ou abre um caminho novo entre sistemas. Não há incidente em curso.',
+    prompt: 'Como o risco entra nessa mudança?',
+    options: [
+      { id: 'threat-in-design', label: 'O grupo descreve o que pode dar errado — quem acessa, o que vaza, o que falha — e isso muda desenho, teste e evidência antes de liberar.', signals: [{ capability: 'engenharia', pattern: 'ameaca-modelada-na-mudanca', weight: 2, details: ['software-security', 'cloud-security'], layer: 'practice', constraint: 'none' }] },
+      { id: 'checklist-security', label: 'Uma lista ou verificação automática cobre o tema; o julgamento sobre o novo caminho fica para depois da implementação.', signals: [{ capability: 'engenharia', pattern: 'ameaca-so-em-checklist', weight: -1, details: ['software-security'], layer: 'practice', constraint: 'process' }] },
+      { id: 'after-incident-security', label: 'O tema só ganha atenção se alguém lembrar de um incidente parecido ou se segurança for acionada no fim.', signals: [{ capability: 'engenharia', pattern: 'ameaca-depois-do-incidente', weight: -2, details: ['software-security', 'technical-capability'], layer: 'system', constraint: 'knowledge' }] },
+    ], next: 'security-after-finding',
+  },
+  {
+    id: 'security-after-finding', title: 'Um achado no meio da mudança',
+    scenario: 'Durante uma alteração comum, aparece um problema de acesso, dependência ou dado exposto. O prazo original continua.',
+    prompt: 'O que costuma ocorrer até o risco deixar de ser o mesmo?',
+    options: [
+      { id: 'finding-changes-path', label: 'O achado pode atrasar, reduzir escopo ou mudar o caminho; fica dono, evidência e data de revisão.', signals: [{ capability: 'engenharia', pattern: 'achado-altera-o-caminho', weight: 2, details: ['software-security'], layer: 'practice', constraint: 'none' }] },
+      { id: 'finding-queued', label: 'O item entra numa fila de segurança e a mudança segue com um aceite temporário.', signals: [{ capability: 'governanca', pattern: 'achado-na-fila-de-excecao', weight: -2, details: ['software-security', 'enabling-governance'], layer: 'system', constraint: 'governance' }] },
+      { id: 'finding-local-fix', label: 'Quem encontrou corrige o caso visível; não se verifica se o mesmo padrão existe em outros fluxos.', signals: [{ capability: 'engenharia', pattern: 'achado-corrigido-no-caso', weight: -1, details: ['software-security', 'organizational-learning'], layer: 'practice', constraint: 'process' }] },
+    ],
+  },
+  {
+    id: 'data-meaning', title: 'O mesmo número em dois produtos',
+    scenario: 'Dois produtos mostram o mesmo indicador com valores diferentes. Cada um jura que a fonte está certa. Uma decisão de negócio precisa escolher um.',
+    prompt: 'Como o desencontro normalmente é tratado?',
+    options: [
+      { id: 'agreed-meaning', label: 'Alguém com ownership do significado reconcilia definição, recorte e tempo; a decisão espera esse acordo.', signals: [{ capability: 'arquitetura', pattern: 'significado-de-dado-acordado', weight: 2, details: ['integration-data', 'product-direction'], layer: 'practice', constraint: 'none' }] },
+      { id: 'number-without-owner', label: 'Cada produto defende o próprio número; a decisão usa o gráfico mais convincente da reunião.', signals: [{ capability: 'arquitetura', pattern: 'numero-diverge-sem-dono', weight: -2, details: ['integration-data'], layer: 'practice', constraint: 'organization' }] },
+      { id: 'manual-reconcile', label: 'Alguém monta uma planilha pontual para a reunião e o conflito volta na semana seguinte.', signals: [{ capability: 'arquitetura', pattern: 'reconciliacao-artesanal-de-dado', weight: -1, details: ['integration-data'], layer: 'practice', constraint: 'process' }] },
+    ], next: 'data-reconciliation',
+  },
+  {
+    id: 'data-reconciliation', title: 'Quem pode mudar o significado',
+    scenario: 'Depois do desencontro, alguém precisa alterar a definição, o recorte ou o contrato que alimenta os dois produtos.',
+    prompt: 'Como essa alteração costuma avançar?',
+    options: [
+      { id: 'contract-with-consumers', label: 'Consumidores são avisados com evidência de compatibilidade; a definição antiga tem data de fim.', signals: [{ capability: 'arquitetura', pattern: 'contrato-de-dado-com-consumidores', weight: 2, details: ['integration-data', 'evolvability'], layer: 'practice', constraint: 'none' }] },
+      { id: 'silent-redefinition', label: 'A definição muda na fonte e os consumidores descobrem pelo efeito nos seus fluxos.', signals: [{ capability: 'arquitetura', pattern: 'redefinicao-silenciosa-de-dado', weight: -2, details: ['integration-data'], layer: 'practice', constraint: 'none' }] },
+      { id: 'freeze-until-project', label: 'A correção espera uma iniciativa maior de dados; os produtos continuam com contornos locais.', signals: [{ capability: 'arquitetura', pattern: 'dado-espera-iniciativa', weight: -1, details: ['integration-data', 'portfolio-management'], layer: 'system', constraint: 'organization' }] },
+    ],
+  },
+  {
+    id: 'design-in-change', title: 'Um fluxo que as pessoas vão usar',
+    scenario: 'Uma mudança altera passos, textos ou o caminho que a pessoa usuária percorre. Engenharia já tem uma solução possível e um prazo.',
+    prompt: 'Quando a experiência entra na decisão?',
+    options: [
+      { id: 'experience-in-decision', label: 'Critério de uso, restrição técnica e evidência de jornada são decididos juntos antes de ampliar a solução.', signals: [{ capability: 'fluxo', pattern: 'experiencia-entra-na-decisao', weight: 2, details: ['discovery-validation', 'product-direction'], layer: 'practice', constraint: 'none' }] },
+      { id: 'handoff-at-end', label: 'O desenho chega no fim, para deixar apresentável o que já foi construído.', signals: [{ capability: 'fluxo', pattern: 'design-chega-como-handoff', weight: -2, details: ['discovery-validation'], layer: 'practice', constraint: 'process' }] },
+      { id: 'design-as-opinion', label: 'Quem desenha opina quando chamado; o critério de sucesso permanece a entrega do fluxo técnico.', signals: [{ capability: 'fluxo', pattern: 'design-como-opiniao', weight: -1, details: ['discovery-validation', 'collaboration'], layer: 'system', constraint: 'organization' }] },
+    ], next: 'design-evidence',
+  },
+  {
+    id: 'design-evidence', title: 'Depois que a interface mudou',
+    scenario: 'A nova jornada está no ar. Há opiniões fortes e um gráfico de uso. Alguém pergunta se podem considerar o problema resolvido.',
+    prompt: 'O que normalmente decide o próximo passo?',
+    options: [
+      { id: 'usage-changes-interface', label: 'Evidência de uso — inclusive de quem não concluiu — pode interromper, simplificar ou reabrir o fluxo.', signals: [{ capability: 'aprendizado', pattern: 'evidencia-de-uso-altera-interface', weight: 2, details: ['discovery-validation', 'product-direction'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'ship-and-follow', label: 'Acompanham o gráfico principal; se não cair, seguem a próxima demanda.', signals: [{ capability: 'fluxo', pattern: 'interface-sem-retorno-de-uso', weight: -1, details: ['discovery-validation'], layer: 'outcome', constraint: 'process' }] },
+      { id: 'visual-signoff', label: 'A aprovação visual encerra o assunto; comportamento real entra só se houver reclamação.', signals: [{ capability: 'governanca', pattern: 'aprovacao-visual-encerra', weight: -2, details: ['discovery-validation', 'enabling-governance'], layer: 'practice', constraint: 'governance' }] },
+    ],
+  },
+  {
+    id: 'platform-path-to-capability', title: 'Uma capacidade que já existe em algum lugar',
+    scenario: 'Um time precisa de uma capacidade que a plataforma já oferece em algum lugar — ambiente, identidade, observabilidade ou publicação. Não é um pedido exótico.',
+    prompt: 'Quanto tempo e que caminho o time percorre até usar de verdade?',
+    options: [
+      { id: 'supported-path', label: 'Há um caminho que outra pessoa do time consegue seguir, com limite, exemplo e tempo previsível.', signals: [{ capability: 'plataforma', pattern: 'caminho-suportado-ate-capacidade', weight: 2, details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ticket-hero', label: 'Alguém da plataforma faz por eles, ou o pedido espera na fila até haver tempo.', signals: [{ capability: 'plataforma', pattern: 'capacidade-nova-por-ticket-heroi', weight: -2, details: ['platform-autonomy'], layer: 'system', constraint: 'organization' }] },
+      { id: 'docs-instead-of-path', label: 'Existe documentação ou um canal; o time monta sozinho e pede ajuda quando trava.', signals: [{ capability: 'plataforma', pattern: 'documentacao-substitui-caminho', weight: -1, details: ['platform-autonomy', 'technical-capability'], layer: 'knowledge', constraint: 'knowledge' }] },
     ],
   },
 ];
@@ -762,6 +865,10 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: 'quality-risk-strategy', profile: 'quality' },
     { from: node.id, to: 'engineering-security-depth', profile: 'engineering' },
     { from: node.id, to: 'platform-cloud-reliability', profile: 'platform' },
+    { from: node.id, to: 'architecture-language', profile: 'architecture' },
+    { from: node.id, to: 'security-threat-in-change', profile: 'security' },
+    { from: node.id, to: 'data-meaning', profile: 'data' },
+    { from: node.id, to: 'design-in-change', profile: 'design' },
   ];
   if (node.id === 'credential-context') return [
     { from: node.id, optionId: 'occurs', to: 'credential-practice' },
@@ -844,6 +951,10 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'urgent-change', profile: 'quality', scenario: 'Uma necessidade importante surge no meio do ciclo. A implementação começa rapidamente, enquanto critérios de risco, dados e regressão ainda precisam ser entendidos.', prompt: 'Como qualidade normalmente entra nessa mudança?' },
   { nodeId: 'urgent-change', profile: 'engineering', scenario: 'Uma necessidade importante surge no meio do ciclo. O time já possui mudanças em andamento e precisa acomodar novo escopo sem perder integração e capacidade de entrega.', prompt: 'Qual descrição mais se aproxima do fluxo real?' },
   { nodeId: 'urgent-change', profile: 'platform', scenario: 'Uma necessidade importante surge no meio do ciclo e depende de capacidade oferecida por plataforma, infraestrutura ou operação, além dos compromissos já assumidos.', prompt: 'Como a nova demanda normalmente atravessa as dependências?' },
+  { nodeId: 'urgent-change', profile: 'architecture', scenario: 'Uma necessidade importante surge no meio do ciclo e atravessa limites que você ajuda a manter. O prazo original continua sendo cobrado.', prompt: 'Como a urgência normalmente encontra esses limites?' },
+  { nodeId: 'urgent-change', profile: 'security', scenario: 'Uma necessidade importante surge no meio do ciclo. A implementação começa rápido e ainda não está claro se o caminho novo muda dado, confiança ou acesso.', prompt: 'Como o risco normalmente entra nessa urgência?' },
+  { nodeId: 'urgent-change', profile: 'data', scenario: 'Uma necessidade importante surge no meio do ciclo e depende de um número, contrato ou recorte que outros produtos também usam.', prompt: 'Como essa urgência normalmente trata o significado compartilhado?' },
+  { nodeId: 'urgent-change', profile: 'design', scenario: 'Uma necessidade importante surge no meio do ciclo e altera o caminho que a pessoa usuária percorre, com prazo original ainda cobrado.', prompt: 'Quando a experiência normalmente entra nessa decisão?' },
   { nodeId: 'degradation', profile: 'management', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. Indicadores oscilam, não há falha total e o time precisa decidir se interrompe trabalho planejado.', prompt: 'Que informação normalmente sustenta sua decisão e o espaço dado ao time?' },
   { nodeId: 'degradation', profile: 'quality', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. O comportamento não apareceu de forma clara nas verificações anteriores e os indicadores oscilam.', prompt: 'O que mais orienta a investigação e a revisão da estratégia de qualidade?' },
   { nodeId: 'degradation', profile: 'platform', scenario: 'Depois de uma entrega, parte das pessoas percebe lentidão. Sinais de aplicação e infraestrutura oscilam e diferentes grupos observam apenas partes da jornada.', prompt: 'O que mais orienta a primeira decisão operacional?' },
@@ -852,6 +963,10 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'incident-intake', profile: 'quality', scenario: 'Um comportamento crítico escapa das verificações e afeta parte dos clientes. É necessário entender abrangência, condições e quais riscos não estavam visíveis antes.', prompt: 'Como qualidade normalmente entra na detecção e na resposta?' },
   { nodeId: 'incident-intake', profile: 'engineering', scenario: 'Um comportamento crítico afeta parte dos clientes. Você precisa formar uma hipótese, conter impacto e mudar o sistema sem depender de alterar componentes vivos de modo irreproduzível.', prompt: 'Como o incidente normalmente chega ao time e começa a ser investigado?' },
   { nodeId: 'incident-intake', profile: 'platform', scenario: 'Um comportamento crítico atravessa aplicação, dados e infraestrutura. Sinais e responsabilidades estão distribuídos e a resposta precisa preservar segurança operacional.', prompt: 'Como o evento normalmente é detectado, correlacionado e direcionado?' },
+  { nodeId: 'incident-intake', profile: 'architecture', scenario: 'Um comportamento crítico atravessa um limite que vários grupos mantêm. Cada um vê só parte da jornada.', prompt: 'Como o evento normalmente encontra o limite e o responsável pela contenção?' },
+  { nodeId: 'incident-intake', profile: 'security', scenario: 'Um comportamento crítico pode envolver dado exposto, acesso indevido ou um caminho de confiança que não deveria existir.', prompt: 'Como esse tipo de evento normalmente chega até você e começa a ser contido?' },
+  { nodeId: 'incident-intake', profile: 'data', scenario: 'Um comportamento crítico aparece como número incoerente, atraso de dado ou jornada que depende de um recorte errado.', prompt: 'Como o evento normalmente é detectado e direcionado?' },
+  { nodeId: 'incident-intake', profile: 'design', scenario: 'Um comportamento crítico aparece como pessoas que não conseguem concluir um fluxo que ontem funcionava.', prompt: 'Como a evidência de uso normalmente chega e altera a resposta?' },
   { nodeId: 'product-outcome-evidence', profile: 'management', scenario: 'Uma entrega relevante consumiu capacidade de várias áreas. Agora você precisa decidir continuidade, expansão ou interrupção diante de novas prioridades.', prompt: 'Que evidência normalmente muda a decisão de investimento?' },
   { nodeId: 'product-outcome-evidence', profile: 'product', scenario: 'Uma hipótese relevante foi entregue e já possui uso suficiente para revisar valor, comportamento e efeitos não esperados.', prompt: 'Como o aprendizado normalmente retorna ao portfólio?' },
   { nodeId: 'product-outcome-evidence', profile: 'engineering', scenario: 'Uma funcionalidade relevante está em uso. Novas mudanças técnicas competem com ajustes necessários para produzir o resultado esperado.', prompt: 'Como evidência de resultado costuma alterar o trabalho técnico seguinte?' },
@@ -867,4 +982,8 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'leadership-enablement', profile: 'management', scenario: 'Um gargalo sistêmico atravessa times e políticas e não pode ser resolvido pela otimização isolada de uma squad.', prompt: 'Como você normalmente cria ownership, capacidade e aprendizado para removê-lo?' },
   { nodeId: 'leadership-enablement', profile: 'engineering', scenario: 'O time reconhece um gargalo recorrente, mas decisões e capacidade necessárias estão além da sua autonomia.', prompt: 'Como a liderança normalmente transforma essa evidência em mudança do sistema?' },
   { nodeId: 'leadership-enablement', profile: 'platform', scenario: 'Vários times esbarram na mesma capacidade ausente e a plataforma precisa evoluir sem virar apenas uma fila central.', prompt: 'Como liderança e times normalmente convertem a demanda recorrente em capacidade compartilhada?' },
+  { nodeId: 'leadership-enablement', profile: 'architecture', scenario: 'O mesmo limite ruim gera coordenação crescente entre grupos. Resolver exige capacidade e decisão além de um time.', prompt: 'Como a liderança normalmente transforma essa evidência em mudança de fronteira?' },
+  { nodeId: 'leadership-enablement', profile: 'security', scenario: 'O mesmo risco de dado ou confiança reaparece em mudanças comuns e não cabe na revisão de uma única squad.', prompt: 'Como a liderança normalmente cria ownership e capacidade para mudar o sistema?' },
+  { nodeId: 'leadership-enablement', profile: 'data', scenario: 'Números e contratos divergem entre produtos e a correção exige dono, capacidade e acordo além de um time.', prompt: 'Como a liderança normalmente converte o desencontro em significado compartilhado?' },
+  { nodeId: 'leadership-enablement', profile: 'design', scenario: 'A experiência das pessoas usuárias piora em um fluxo que atravessa produto, engenharia e operação, e nenhuma squad resolve sozinha.', prompt: 'Como a liderança normalmente cria ownership para mudar a jornada?' },
 ];

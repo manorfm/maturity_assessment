@@ -254,3 +254,41 @@ o evento ocorre e, se ocorrer, o que acontece: como a credencial chega e expira;
 o que o sistema faz quando a dependência atrasa; o que pesou no último ciclo de
 reconhecimento; como uma saída assistida por modelo é revista quando erra no risco.
 Ausência do evento deixa a folha não avaliada.
+
+### Arquitetura, linguagem e espera entre grupos
+
+Não perguntar “vocês fazem DDD?” nem “qual o interaction mode?”. Apresentar um termo
+que dois grupos usam de formas diferentes numa mudança que parecia local, e uma
+alteração comum que não avança sem outro grupo. A inferência observa se o significado
+é reconstruído na entrega, se a espera é um modo explícito ou uma fila informal, e
+se o time contorna o limite para não esperar.
+
+### Segurança em mudança comum
+
+Não perguntar se existe WAF, scanner ou time de AppSec. Uma alteração de prazo
+normal passa a tocar dado identificável ou um caminho novo entre sistemas; depois,
+um achado aparece no meio do trabalho. A inferência observa se o risco muda desenho
+antes de liberar, se o achado pode atrasar a mudança, ou se vira exceção e correção
+só do caso visível.
+
+### Dados como significado compartilhado
+
+Não perguntar qual warehouse ou catálogo está instalado. Dois produtos mostram o
+mesmo indicador com valores diferentes; em seguida alguém precisa mudar a definição.
+A inferência observa dono do significado, reconciliação artesanal e redefinição
+silenciosa — não a ferramenta de dados.
+
+### Design na fronteira produto–engenharia
+
+Não perguntar se usam Figma ou Design System. Uma mudança altera o caminho da pessoa
+usuária com prazo já definido; depois a interface já está no ar. A inferência observa
+se a experiência entra na decisão, se chega como handoff final, e se evidência de
+quem não concluiu pode reabrir o fluxo.
+
+### Carga cognitiva e caminho até capacidade
+
+Não perguntar o nome de Team Topologies nem se “temos IDP”. O mesmo grupo absorve
+pedido de produto, incidente, melhoria de plataforma e exceção na mesma semana; um
+time precisa usar uma capacidade que a plataforma já oferece em algum lugar. A
+inferência observa se a carga é negociada e se existe caminho que outra pessoa
+consegue seguir, sem herói nem fila.

@@ -33,7 +33,7 @@ O motor probabilístico vigente está consolidado em `recommendation-model.md` e
 [`roadmap restante`](../backlog/probabilistic-inference-roadmap.md) contém somente
 entrevistas, revisão cega e piloto com pessoas reais. O gate de calibração já está
 no produto. O que ainda falta para declarar o instrumento robusto (massa rotulada,
-ramos extras, evidência externa) está no
+validação de linguagem com as disciplinas, evidência externa) está no
 [`plano de evolução`](../backlog/instrument-evolution-plan.md).
 
 ## Princípio central

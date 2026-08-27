@@ -93,9 +93,10 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com 52 nós, aprofundamentos
-condicionais e perspectivas de gestão, produto, qualidade, engenharia e
-plataforma/operações escolhidas durante a entrevista.
+O corte vigente implementa esses cinco passos com 72 nós, aprofundamentos
+condicionais e nove perspectivas — gestão, produto, qualidade, engenharia,
+plataforma/operações, arquitetura, segurança, dados e design — escolhidas durante
+a entrevista.
 
 O cálculo de nível e confiança vive no domínio de inferência. Sinais contraditórios
 reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível,

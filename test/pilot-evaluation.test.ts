@@ -4,7 +4,7 @@ import { PILOT_THRESHOLDS } from '../src/modules/inference/domain/pilot-policy.j
 import { PilotEvaluation, type CognitiveReview, type ExternalLabel } from '../src/modules/inference/domain/pilot-evaluation.js';
 import { PilotService } from '../src/modules/inference/pilot-service.js';
 import { createDatabase } from '../src/shared/database.js';
-import { GRAPH_VERSION } from '../src/modules/catalog/assessment-graph.js';
+import { GRAPH_VERSION, profiles } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService } from '../src/modules/catalog/catalog-service.js';
 
 const discipline = 'engineering';
@@ -14,7 +14,7 @@ const label = (overrides: Partial<ExternalLabel> = {}): ExternalLabel => ({
 });
 
 function enoughReviews(): CognitiveReview[] {
-  return ['management', 'product', 'quality', 'engineering', 'platform'].flatMap((profile) =>
+  return Object.keys(profiles).flatMap((profile) =>
     Array.from({ length: PILOT_THRESHOLDS.minCognitiveReviewsPerProfile }, (_, index) => ({
       nodeKey: `node-${index}`, profile, comprehensionOk: true, goldOptionBias: false, visibilityExitUsed: false,
     })));

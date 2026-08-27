@@ -11,11 +11,12 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão vigente `evidence-anamnesis-v12` começa por uma escolha neutra de
+A versão vigente `evidence-anamnesis-v13` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
-consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia
-e plataforma/operações possuem aprofundamentos dedicados. Variantes de texto ficam
-restritas aos casos em que muda a linguagem, mas não a evidência procurada.
+consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
+plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos
+dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem, mas
+não a evidência procurada.
 
 Cenários e probes (exceto a escolha de perspectiva) oferecem “não observo”, sem
 sinal. Nós de contexto sobre credencial, dependência, reconhecimento e assistência
@@ -23,6 +24,15 @@ de modelo roteiam para a prática somente quando o evento ocorre; caso contrári
 folha permanece não avaliada. Identidade, resiliência de dependência, incentivo, uso
 de modelo, complexidade acidental e leitura de sinal ruidoso alimentam folhas já
 existentes da taxonomia — não criam pilares.
+
+Após a liderança sistêmica, o perfil escolhe o aprofundamento: gestão (portfólio,
+segurança para expor risco e carga cognitiva), produto (discovery e efeito),
+qualidade (estratégia de risco e não funcionais), engenharia (segurança na mudança
+e difusão de conhecimento), plataforma (recuperação, resiliência, eficiência e
+caminho até capacidade), arquitetura (linguagem compartilhada e espera entre
+grupos), segurança (ameaça e achado em mudança comum), dados (significado e
+evolução do contrato) e design (experiência na decisão e evidência de uso). Nenhum
+desses ramos pergunta o nome de um modelo, ferramenta ou cargo.
 
 ## Tipos de nó
 
@@ -45,9 +55,9 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 52 nós e cobre eventos de priorização, integração,
+O catálogo atual contém 72 nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
-ambientes, segurança, arquitetura e aprendizado após falhas. Quantidade de perguntas
+ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
 com base em lacunas de evidência e sinais anteriores, como uma entrevista.
 

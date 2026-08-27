@@ -1,5 +1,6 @@
 import { CalibrationMetrics, type CalibrationReport } from './calibration-metrics.js';
 import { PILOT_THRESHOLDS, assertPilotThresholds, type PilotThresholds } from './pilot-policy.js';
+import { profiles } from '../../catalog/assessment-graph.js';
 
 export type ExternalLabel = {
   caseKey: string;
@@ -83,8 +84,7 @@ function disagreementRate(labels: ExternalLabel[]): number | null {
 }
 
 function missingCognitiveProfiles(coverage: Record<string, number>, minimum: number): string[] {
-  const required = ['management', 'product', 'quality', 'engineering', 'platform'];
-  return required.flatMap((profile) => (coverage[profile] ?? 0) < minimum
+  return Object.keys(profiles).flatMap((profile) => (coverage[profile] ?? 0) < minimum
     ? [`Entrevistas cognitivas insuficientes para ${profile}: ${coverage[profile] ?? 0} de ${minimum}.`]
     : []);
 }

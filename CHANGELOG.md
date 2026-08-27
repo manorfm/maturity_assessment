@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.18.0
+
+- Publicou o grafo `evidence-anamnesis-v13` com perspectivas de arquitetura,
+  segurança, dados e design, além de aprofundar carga cognitiva, linguagem na
+  mudança, ameaça em alteração comum e caminho até capacidade de plataforma.
+- O convite continua comum; a pessoa escolhe uma de nove lentes. Nenhum ramo
+  pergunta ferramenta, DDD, Team Topologies ou IDP.
+
 ## 0.17.0
 
 - Pré-declarou limiares do piloto (rótulos cegos, entrevistas cognitivas, falso

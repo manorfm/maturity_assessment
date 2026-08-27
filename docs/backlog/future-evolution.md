@@ -20,8 +20,8 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 
 - simulações com consequências visíveis e ramificações com múltiplos checkpoints;
 - banco de cenários por papel, contexto, tamanho e tipo de organização;
-- criar ramos próprios para dados, design, arquitetura e segurança e validar a
-  linguagem de todos os ramos com cada disciplina antes da publicação;
+- validar a linguagem dos ramos de dados, design, arquitetura e segurança com cada
+  disciplina antes de aplicar o instrumento em organização real;
 - modo facilitado para workshops, além da coleta individual;
 - entrevistas qualitativas associadas a uma campanha;
 - aprofundar folhas que ainda possuam apenas o mínimo publicável de dois padrões,
@@ -54,11 +54,14 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 - Well-Architected e cloud: trade-offs, resiliência, custo, segurança e operação;
 - separar eficiência de performance, custo e sustentabilidade em folhas próprias
   quando cada uma possuir sinais comportamentais independentes suficientes;
-- DDD e arquitetura evolutiva: limites, linguagem, acoplamento e fitness functions;
-- Team Topologies: carga cognitiva, modos de interação e plataforma como produto;
+- DDD e arquitetura evolutiva: aprofundar fitness functions e mais de um limite
+  visível na mesma jornada, sem perguntar o nome do modelo;
+- Team Topologies: aprofundar modos de interação além da espera entre dois grupos
+  e da carga cognitiva já observadas;
 - Tuckman e dinâmica de times sem transformar estágios em classificação rígida;
 - TOGAF e governança adaptativa, observando tempo de decisão e valor dos controles;
-- segurança de software, supply chain, threat modeling e resposta a vulnerabilidades;
+- segurança de software: aprofundar supply chain e resposta a vulnerabilidades além
+  do achado em mudança comum já observado;
 - produto, discovery, experimentação e conexão entre resultados técnicos e cliente;
 - sustentabilidade, FinOps e eficiência de recursos quando forem relevantes.
 

@@ -15,11 +15,12 @@ Antes de promover um item, registrar:
 
 O plano sequenciado após a auditoria do modelo está em
 [`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam o trabalho
-humano do piloto, novos ramos de perspectiva e evidência externa. Higiene
-observacional, conteúdo aplicável, persistência do experimento e infraestrutura de
-calibração já estão na base de conhecimento.
+humano do piloto, validação de linguagem com as disciplinas, separação de
+performance/custo/sustentabilidade e evidência externa. Higiene observacional,
+conteúdo aplicável, ramos de perspectiva, persistência do experimento e
+infraestrutura de calibração já estão na base de conhecimento.
 
-Hipóteses ainda não sequenciadas (plataforma, pesquisa, ramos extras) estão em
+Hipóteses ainda não sequenciadas (plataforma, pesquisa, aprofundamento adicional) estão em
 `future-evolution.md`. O que depende de massa real e revisão externa está em
 `probabilistic-inference-roadmap.md` e só deve correr depois das ondas 0 e 1 do
 plano; o motor necessário ao piloto já está na base de conhecimento e não

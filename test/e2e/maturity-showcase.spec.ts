@@ -3,7 +3,7 @@ import { graph } from '../../src/modules/catalog/assessment-graph.js';
 import type { Profile } from '../../src/modules/catalog/assessment-graph.js';
 
 type Scenario = 'poor' | 'medium' | 'elite';
-const squadProfiles: Profile[] = ['quality', 'management', 'product', 'engineering', 'engineering', 'engineering', 'platform'];
+const squadProfiles: Profile[] = ['quality', 'management', 'product', 'engineering', 'platform', 'architecture', 'design'];
 
 test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page }) => {
   const paths: Record<Scenario, string> = { poor: '', medium: '', elite: '' };

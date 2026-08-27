@@ -1,10 +1,11 @@
 import type { Database } from '../../shared/database.js';
 import { DomainValidationError } from '../../shared/errors.js';
 import { id } from '../../shared/ids.js';
+import { profiles as catalogProfiles } from '../catalog/assessment-graph.js';
 import { PilotEvaluation, type CognitiveReview, type ExternalLabel, type PilotReport } from './domain/pilot-evaluation.js';
 import { PILOT_THRESHOLDS } from './domain/pilot-policy.js';
 
-const profiles = new Set(['management', 'product', 'quality', 'engineering', 'platform']);
+const allowedProfiles = new Set(Object.keys(catalogProfiles));
 
 export class PilotService {
   constructor(private readonly db: Database) {}
@@ -23,7 +24,7 @@ export class PilotService {
 
   recordCognitiveReview(input: CognitiveReview): void {
     if (!input.nodeKey.trim()) throw new DomainValidationError();
-    if (!profiles.has(input.profile)) throw new DomainValidationError();
+    if (!allowedProfiles.has(input.profile)) throw new DomainValidationError();
     this.db.prepare('INSERT INTO item_reviews (id, node_key, profile, comprehension_ok, gold_option_bias, visibility_exit_used, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
       .run(id(), input.nodeKey, input.profile, input.comprehensionOk ? 1 : 0, input.goldOptionBias ? 1 : 0, input.visibilityExitUsed ? 1 : 0, new Date().toISOString());
   }
@@ -69,7 +70,7 @@ export class PilotService {
 
 function validateLabel(input: ExternalLabel & { modelVersion: string }): ExternalLabel {
   if (!input.modelVersion.trim() || !input.caseKey.trim() || !input.familyKey.trim() || !input.predictedHypothesis.trim() || !input.labeledHypothesis.trim()) throw new DomainValidationError();
-  if (!profiles.has(input.reviewerDiscipline)) throw new DomainValidationError();
+  if (!allowedProfiles.has(input.reviewerDiscipline)) throw new DomainValidationError();
   if (!Number.isFinite(input.predictedConfidence) || input.predictedConfidence < 0 || input.predictedConfidence > 1) throw new DomainValidationError();
   if (/\b(participation|invitation|resume|token)\b/i.test(input.caseKey)) throw new DomainValidationError();
   return input;

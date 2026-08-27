@@ -6,7 +6,7 @@ import { InvitationService } from '../src/modules/assessments/invitation-service
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
 import { AdaptiveJourneyService } from '../src/modules/assessments/adaptive-journey-service.js';
 import { InferenceService, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
-import { edges, graph, GRAPH_VERSION } from '../src/modules/catalog/assessment-graph.js';
+import { edges, graph, GRAPH_VERSION, profileIds } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 
 test('convite é consumido uma vez e não mantém vínculo com a participação', () => {
@@ -103,7 +103,7 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   const catalog = new CatalogService(db);
   assert.equal((db.prepare('SELECT COUNT(*) total FROM assessment_nodes').get() as { total: number }).total, graph.length);
   assert.ok(graph.length >= 15, 'a entrevista deve cobrir o SDLC além de um questionário raso');
-  assert.deepEqual(graph[0]!.options.map((option) => option.id), ['management', 'product', 'quality', 'engineering', 'platform']);
+  assert.deepEqual(graph[0]!.options.map((option) => option.id), profileIds);
   assert.equal(graph[0]!.options.every((option) => option.signals.length === 0), true);
   assert.ok((db.prepare('SELECT COUNT(*) total FROM assessment_edges WHERE option_key IS NOT NULL').get() as { total: number }).total >= 4);
 
@@ -159,6 +159,13 @@ test('entrega aprofunda sinais maduros e investiga bloqueio após integração f
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'management'), 'management-portfolio');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'quality'), 'quality-risk-strategy');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'platform'), 'platform-cloud-reliability');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'architecture'), 'architecture-language');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'security'), 'security-threat-in-change');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'data'), 'data-meaning');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'design'), 'design-in-change');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'management-safety', 'risk-changes-decision'), 'management-cognitive-load');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'architecture-language', 'shared-language'), 'architecture-wait');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'platform-cloud-sustainability', 'continuous-guardrails'), 'platform-path-to-capability');
 });
 
 test('incidente aprofunda roteamento diagnóstico e correção sem premiar ferramenta', () => {
@@ -227,7 +234,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 225);
+  assert.equal(signals.length, 255);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

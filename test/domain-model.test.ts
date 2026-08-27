@@ -12,6 +12,8 @@ test('value objects rejeitam estados inválidos na fronteira do domínio', () =>
   assert.throws(() => ProjectName.create('  '), DomainValidationError);
   assert.throws(() => OrganizationPath.create('Empresa//Time'), DomainValidationError);
   assert.throws(() => AssessmentProfile.create('administrator'), DomainValidationError);
+  assert.equal(AssessmentProfile.create('architecture').value, 'architecture');
+  assert.equal(AssessmentProfile.create('design').value, 'design');
   assert.throws(() => InvitationQuantity.create(101), DomainValidationError);
 });
 

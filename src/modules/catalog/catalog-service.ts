@@ -1,6 +1,6 @@
 import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
-import { edges, graph, GRAPH_VERSION, nodeVariants, observationOf, type AssessmentEdge, type AssessmentNode, type ObservationKind, type Option, type Signal } from './assessment-graph.js';
+import { edges, graph, GRAPH_VERSION, nodeVariants, observationOf, profiles, type AssessmentEdge, type AssessmentNode, type ObservationKind, type Option, type Signal } from './assessment-graph.js';
 import { capabilityLeafIds } from '../inference/domain/capability-taxonomy.js';
 import { PILOT_THRESHOLDS } from '../inference/domain/pilot-policy.js';
 
@@ -75,12 +75,11 @@ export class CatalogService {
         }
       }
     }
-    const allProfiles = ['management', 'product', 'quality', 'engineering', 'platform'];
+    const allProfiles = Object.keys(profiles);
     for (const node of graph) {
-      const variantProfiles = nodeVariants.filter((variant) => variant.nodeId === node.id).map((variant) => variant.profile);
       const applicabilityPatterns = applicabilityPatternsFor(node.id);
       this.db.prepare('INSERT INTO question_observations (model_version, node_key, profiles_json, applicability_patterns_json, cost) VALUES (?, ?, ?, ?, ?)')
-        .run(modelVersion, node.id, JSON.stringify(variantProfiles.length ? variantProfiles : allProfiles), JSON.stringify(applicabilityPatterns), node.type === 'probe' ? .6 : .35);
+        .run(modelVersion, node.id, JSON.stringify(allProfiles), JSON.stringify(applicabilityPatterns), node.type === 'probe' ? .6 : .35);
     }
   }
 
