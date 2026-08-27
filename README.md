@@ -80,21 +80,142 @@ duplicar uma pontuação genérica.
 
 ### 6. Inferência de maturidade e causas
 
-O nível de cada capacidade combina direção, variedade e convergência das evidências.
-Cobertura temática e confiança são medidas diferentes: muitas respostas sobre o
-mesmo comportamento aumentam suporte, mas não substituem a falta de outros padrões.
-Evidência insuficiente permanece “não avaliada” e nunca é convertida em zero.
+O produto usa modelos diferentes para perguntas diferentes. Nota de maturidade,
+cobertura, confiança da nota, probabilidade de uma causa e prioridade de uma ação
+não são o mesmo número e não são combinadas como se fossem uma única certeza.
 
-O diagnóstico causal usa um sistema especialista probabilístico sem LLM. Hipóteses
-versionadas são atualizadas em log-espaço com priors e likelihoods explícitos. O
-cálculo considera população aplicável, recorrência, perspectivas, camadas,
-contradições pareadas e independência entre grupos de evidência. A seleção de probes
-usa ganho esperado de informação, cobertura, poder de validação e custo.
+#### Estimativa direcional de maturidade
 
-Os percentuais atuais expressam força relativa das hipóteses especialistas. Eles
-ainda não são probabilidades empiricamente calibradas; Brier score, erro de
-calibração, precisão e recall estão implementados para uso futuro com rótulos
-externos revisados.
+Cada evidência comportamental possui peso entre fragilidade e prática adaptativa.
+Para uma folha da taxonomia, o motor calcula uma média direcional sobre a escala
+centrada no nível repetível, limita o resultado entre 0 e 4 e registra o volume de
+sinais. Esse cálculo determinístico foi escolhido porque é simples, auditável e
+permite reconstruir quais comportamentos deslocaram o nível.
+
+```text
+nível = limitar(2 + média dos pesos, 0, 4)
+confiança = mínimo(1, quantidade de sinais / 4) × concordância direcional
+```
+
+A confiança dessa nota cresce até quatro sinais e é reduzida pelo desacordo entre
+evidências positivas e negativas. A cobertura é calculada separadamente pela
+variedade de padrões independentes: repetir muitas vezes o mesmo comportamento não
+faz uma folha parecer completa. Ramos superiores herdam o menor nível e a menor
+confiança entre os filhos publicáveis. O efeito prático é evitar que volume,
+repetição ou uma prática muito forte escondam áreas ainda não observadas.
+
+O que esperar desse cálculo:
+
+- uma leitura direcional e explicável da capacidade, não uma medição física exata;
+- regressão de confiança quando perfis ou situações contradizem a narrativa inicial;
+- ausência de nota quando a variedade temática é insuficiente;
+- classificação global limitada pelo gargalo confiável, em vez de uma média otimista.
+
+#### Inferência bayesiana das causas
+
+Depois de identificar um sintoma, o motor estima suas causas prováveis com famílias
+bayesianas binárias independentes. Cada causa compete contra `evidência insuficiente`,
+e não contra todas as outras causas, porque processo, ferramenta, acesso e estrutura
+podem limitar o mesmo fluxo simultaneamente.
+
+Cada família possui um prior especialista e likelihoods versionados que representam
+quanto cada evidência seria esperada caso a causa estivesse ou não sustentada. A
+atualização soma log-likelihoods e normaliza os resultados com softmax. O cálculo em
+log-espaço evita perda numérica quando várias evidências são combinadas e mantém a
+decomposição auditável.
+
+```text
+log posterior(h) ∝ log prior(h) + Σ força(e) × log likelihood(e | h)
+```
+
+A força de uma observação considera:
+
+- prevalência: quantas pessoas observaram o padrão entre as que poderiam observá-lo;
+- recorrência, com crescimento sublinear para volume não dominar o resultado;
+- variedade de perspectivas e camadas de observação;
+- observabilidade da causa para aquele grupo;
+- contradições ligadas especificamente à hipótese;
+- independência causal, consumindo somente uma evidência de cada grupo correlacionado.
+
+Ausência de resposta é neutra. Uma pessoa que não poderia observar provisionamento,
+por exemplo, não conta contra uma hipótese sobre plataforma. Como consequência,
+duas squads com a mesma nota podem receber diagnósticos e intervenções diferentes.
+
+O percentual apresentado é o posterior provisório: a força relativa da hipótese
+diante das premissas e evidências da versão atual. Antes da calibração com casos
+reais, ele não deve ser lido como “há 80% de certeza objetiva de que esta é a causa”.
+
+#### Entropia e seleção da próxima pergunta
+
+A incerteza entre hipóteses é medida por entropia de Shannon, em bits. Para cada
+probe elegível, o motor simula seus resultados possíveis e estima quanta entropia
+seria removida em média. Esse ganho esperado de informação responde: “qual pergunta
+tem maior chance de separar as causas que ainda parecem plausíveis?”.
+
+```text
+ganho esperado = entropia atual − entropia média após os resultados possíveis
+```
+
+O ranking vigente combina 50% de ganho de informação normalizado, 25% de cobertura
+ausente, 15% de necessidade de validação e 10% de custo invertido. Somente perguntas
+observáveis pelo perfil, relacionadas ao sintoma e ainda não respondidas participam.
+O aprofundamento termina após cinco probes ou quando nenhuma pergunta oferece ao
+menos 0,01 bit de ganho esperado.
+
+Isso reduz perguntas genéricas e concentra a entrevista onde uma resposta pode
+mudar o diagnóstico. Não garante a pergunta perfeita: a qualidade depende dos
+resultados e likelihoods definidos no catálogo vigente.
+
+#### Priorização das recomendações
+
+Uma nota baixa não seleciona automaticamente uma solução. A recomendação exige uma
+hipótese causal compatível, suporte coletivo e seus pré-requisitos. A confiança da
+intervenção vem do posterior causal; sua prioridade é calculada separadamente a
+partir de severidade e alcance. Por isso uma ação urgente pode ter incerteza ainda
+relevante, e uma causa muito provável pode não ser a ação de maior impacto imediato.
+
+Entre 50% e 70%, a intervenção permanece como hipótese a validar. Acima do limiar
+de prescrição e com pré-requisitos atendidos, ela pode ser publicada como
+recomendação. O relatório sempre associa a ação a uma medida, horizonte de revisão
+e critério de sucesso para que o efeito possa ser verificado.
+
+#### Calibração implementada para o piloto
+
+O projeto já calcula offline quatro métricas quando recebe previsões acompanhadas
+de rótulos externos:
+
+| Métrica | O que responde | Como melhora o produto |
+|---|---|---|
+| Brier score | Quão distante a probabilidade ficou do resultado observado? | Penaliza confiança excessiva e permite comparar versões do modelo. |
+| Erro esperado de calibração | Quando o motor diz 70%, algo ocorre perto de 70% dos casos equivalentes? | Indica quais faixas precisam de ajuste de prior ou likelihood. |
+| Precisão | Entre causas prescritas, quantas foram confirmadas externamente? | Controla recomendações falsas e intervenções desnecessárias. |
+| Recall | Entre causas existentes, quantas foram detectadas? | Mostra lacunas de perguntas, evidências e cobertura do catálogo. |
+
+Essas métricas estão implementadas, mas ainda não possuem validade operacional sem
+uma base de casos revisados. Resposta escolhida, clique, tempo de tela ou aceitação
+de recomendação não são rótulos de verdade.
+
+#### Como o modelo pode ficar mais robusto
+
+A robustez virá de um ciclo supervisionado e versionado, não de aprendizado
+automático silencioso:
+
+1. especialistas revisam jornadas anonimizadas e registram causa, justificativa e
+   discordância de forma independente;
+2. o piloto mede Brier, calibração, precisão, recall, parada incorreta e poder
+   discriminativo por pergunta;
+3. perguntas ambíguas ou pouco informativas são reescritas, removidas ou recebem
+   novos discriminadores;
+4. priors e likelihoods são ajustados em uma nova versão reproduzível;
+5. a nova versão é comparada com a anterior antes de ser publicada;
+6. drift por contexto, perspectiva e tipo de organização é monitorado ao longo do
+   tempo, com revisão humana e possibilidade de rollback.
+
+Com massa diversa e rótulos confiáveis, espera-se obter probabilidades mais bem
+calibradas, menos falsos positivos, perguntas mais curtas e discriminativas e
+recomendações mais específicas ao contexto. Apenas acumular respostas de muitos
+projetos aumenta a base observável, mas não altera o modelo em produção nem garante
+melhoria: sem revisão externa, os dados representam percepções, não a verdade causal.
 
 ### 7. Consolidação sociotécnica
 
