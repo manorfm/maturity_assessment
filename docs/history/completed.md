@@ -6,6 +6,16 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-27 — Infraestrutura do piloto e gate de calibração
+
+- Limiares foram congelados na política da versão do modelo; rótulos cegos e
+  entrevistas cognitivas passaram a persistir sem identificar pessoas; o gate
+  bloqueia revisão de priors até a massa e as métricas caberem nos limiares, e
+  mesmo então só cria uma versão `draft`. A especificação vigente está em
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md). O trabalho
+  humano restante permanece em
+  [`probabilistic-inference-roadmap.md`](../backlog/probabilistic-inference-roadmap.md).
+
 ## 2026-08-27 — Higiene observacional, conteúdo aplicável e ciclo mínimo
 
 - O grafo `evidence-anamnesis-v12` passou a oferecer três estados observacionais,

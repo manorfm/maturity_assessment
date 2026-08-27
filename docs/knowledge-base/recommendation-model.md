@@ -61,10 +61,14 @@ de cinco perguntas adicionais e o limiar especialista vigente é 0,01 bit.
 ## Calibração e aprendizado
 
 O sistema não usa LLM nem aprende silenciosamente com respostas, cliques ou
-aceitação da recomendação. Há cálculo offline de Brier score, erro esperado de
-calibração, precisão e recall, porém essas métricas só possuem significado com
-rótulos externos produzidos no piloto. Alterações futuras de priors ou likelihoods
-devem criar uma nova versão revisada e reproduzível.
+aceitação da recomendação. Os limiares do piloto são pré-declarados na política
+da versão do modelo, antes de qualquer análise: no mínimo 50 jornadas rotuladas
+de forma cega, 5 entrevistas cognitivas por perspectiva, falso positivo ≤ 20%,
+parada incorreta ≤ 25%, ECE ≤ 0,15, Brier ≤ 0,25 e discordância entre avaliadores
+≤ 30%. Rótulos externos não guardam participação, convite ou resposta. Sem essa
+massa, o gate permanece bloqueado e o posterior exibido continua provisório.
+Mesmo quando o gate abre, uma revisão de priors nasce como versão `draft` e não
+substitui sozinha o modelo publicado.
 
 ## Experimento e reaplicação
 

@@ -1,38 +1,23 @@
 # Piloto, calibração e aprendizado supervisionado
 
-O motor probabilístico necessário ao piloto já foi implementado. Sua arquitetura e
-semântica vigentes estão na base de conhecimento. Este backlog contém apenas o que
-não pode ser concluído honestamente sem massa real e validação externa.
+O software do piloto já está no produto: limiares pré-declarados, persistência de
+rótulos cegos e entrevistas cognitivas, métricas (Brier, ECE, falso positivo,
+parada incorreta, discordância) e um gate que recusa publicar priors
+automaticamente. A especificação vigente está em
+[`recommendation-model.md`](../knowledge-base/recommendation-model.md).
 
-Não executar este roadmap sobre o grafo anterior à higiene observacional e ao
-conteúdo aplicável já vigentes (`evidence-anamnesis-v12`). Calibrar opções ouro
-e jornadas sem “não observo” congelaria o viés.
+Este backlog contém somente o trabalho humano que o código não pode inventar.
 
-## Preparação do piloto
+## Trabalho restante
 
-- Fazer entrevistas cognitivas, inicialmente 5–8 por perspectiva, para verificar
-  compreensão, observabilidade e vieses das alternativas.
-- Revisar de forma cega aproximadamente 50–100 jornadas com especialistas de
-  disciplinas diferentes e registrar causa, justificativa e discordância.
-- Executar piloto controlado com diversidade de organização, perspectiva, contexto
-  e branches; volume concentrado não substitui diversidade.
-- Definir antes da análise os limites aceitáveis de falso positivo, parada
-  incorreta, duração e divergência entre avaliadores.
+- Entrevistas cognitivas reais, 5–8 por perspectiva, incluindo saídas de
+  visibilidade, registradas como `item_reviews`.
+- Revisão cega de 50–100 jornadas com especialistas de disciplinas diferentes,
+  gravada em `pilot_labels` com `case_key` opaco.
+- Piloto controlado com diversidade de organização, perspectiva e contexto;
+  volume concentrado não substitui diversidade.
+- Só então, se o gate abrir, revisar priors/likelihoods numa versão `draft` e
+  publicá-la explicitamente após revisão humana.
 
-## Calibração versionada
-
-Com rótulos externos, medir Brier score, erro de calibração por faixa, precisão,
-recall, taxa de parada incorreta e poder discriminativo das perguntas. Ajustar
-priors e likelihoods somente em uma nova versão revisada e reproduzível. Algumas
-centenas de jornadas podem iniciar a calibração global, mas branches raros e
-recortes por perspectiva exigirão mais observações.
-
-## Evolução supervisionada
-
-Somente após calibração estável, avaliar atualização assistida dos parâmetros.
-Clique, frequência de resposta e aceitação de recomendação não são rótulos. Efeito
-de intervenção exige baseline, janela de revisão, contexto e critério de sucesso.
-O modelo nunca se atualiza silenciosamente em produção.
-
-Monitorar drift, diferenças por contexto/perspectiva, contestação, falsos positivos
-e risco de uso punitivo. Preservar anonimato, revisão humana e rollback de versão.
+Não tratar clique nem aceitação de recomendação como rótulo. Não executar este
+trabalho sobre um grafo anterior a `evidence-anamnesis-v12`.

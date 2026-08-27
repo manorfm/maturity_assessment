@@ -2,6 +2,7 @@ import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { edges, graph, GRAPH_VERSION, nodeVariants, observationOf, type AssessmentEdge, type AssessmentNode, type ObservationKind, type Option, type Signal } from './assessment-graph.js';
 import { capabilityLeafIds } from '../inference/domain/capability-taxonomy.js';
+import { PILOT_THRESHOLDS } from '../inference/domain/pilot-policy.js';
 
 type NodeRow = { node_key: string; node_type: 'context' | 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
 type OptionRow = { option_key: string; label: string; observation_kind: string | null; capability: string | null; pattern: string | null; weight: number | null; detail_capabilities: string | null; evidence_layer: string | null; constraint_kind: string | null };
@@ -39,7 +40,10 @@ export class CatalogService {
   private seedDiagnosticModel(): void {
     const modelVersion = `${GRAPH_VERSION}-bayesian-v2`;
     this.db.prepare('INSERT INTO inference_model_versions (version, graph_version, status, policy_json, published_at) VALUES (?, ?, ?, ?, ?)')
-      .run(modelVersion, GRAPH_VERSION, 'published', JSON.stringify({ informationGain: .5, coverage: .25, validation: .15, inverseCost: .1, minimumInformationGainBits: .01, recommendationThreshold: .7 }), new Date().toISOString());
+      .run(modelVersion, GRAPH_VERSION, 'published', JSON.stringify({
+        informationGain: .5, coverage: .25, validation: .15, inverseCost: .1, minimumInformationGainBits: .01, recommendationThreshold: .7,
+        pilot: PILOT_THRESHOLDS,
+      }), new Date().toISOString());
     const patternsByCapability = new Map<string, Set<string>>();
     for (const node of graph) for (const option of node.options) for (const signal of option.signals) {
       const isCausal = signal.pattern.startsWith('causa-') || signal.constraint !== 'none' || (signal.layer === 'system' && signal.weight < 1);

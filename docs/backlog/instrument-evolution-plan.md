@@ -8,7 +8,8 @@ saídas que não pontuam, opções ouro desempacotadas, catálogo de intervenç�
 regras órfãs, fundamento versionado, contexto→cenário para identidade, resiliência
 de dependência, incentivo, assistência de modelo, complexidade acidental e sinal
 ruidoso, persistência de experimento e comparação de capturas sem identificar
-pessoas. Grafo vigente: `evidence-anamnesis-v12`.
+pessoas, limiares de piloto pré-declarados, rótulos cegos e gate que impede
+recalibrar o modelo publicado sozinho. Grafo vigente: `evidence-anamnesis-v12`.
 
 Itens de plataforma (SSO, editor, PostgreSQL) e pesquisa de longo prazo continuam
 em [`future-evolution.md`](future-evolution.md). Calibração que depende de massa
@@ -41,19 +42,17 @@ do piloto.
 
 ## Onda 2 — Piloto e calibração
 
-Executar
-[`probabilistic-inference-roadmap.md`](probabilistic-inference-roadmap.md)
-**sobre o grafo `evidence-anamnesis-v12`**, não sobre versões anteriores.
-
-Ordem: entrevistas cognitivas (5–8 por perspectiva, incluindo as saídas de
-visibilidade) → revisão cega 50–100 jornadas → piloto diverso → Brier, ECE,
-precisão, recall e poder de item → nova versão de priors e likelihoods.
+A infraestrutura está no produto. Falta o trabalho com pessoas reais descrito em
+[`probabilistic-inference-roadmap.md`](probabilistic-inference-roadmap.md):
+entrevistas cognitivas, revisão cega e piloto diverso **sobre o grafo
+`evidence-anamnesis-v12`**.
 
 Não tratar clique nem aceitação de recomendação como rótulo. Não publicar o
-posterior como probabilidade empírica até esta onda concluir.
+posterior como probabilidade empírica até o gate abrir e uma versão draft ser
+revisada e publicada explicitamente.
 
-**Saída.** Limiares de falso positivo e parada incorreta definidos *antes* da
-análise e atendidos, ou o grafo volta de versão.
+**Saída.** Limiares de falso positivo e parada incorreta (já pré-declarados)
+atendidos com massa rotulada, ou o grafo volta de versão.
 
 ---
 

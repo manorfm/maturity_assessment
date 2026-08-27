@@ -6,6 +6,7 @@ import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
 import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
 import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
+import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
 import { DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
 
 type Params = { publicId: string; adminSecret: string };
@@ -138,6 +139,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         <button type="submit">Gerar links</button></form></section>
       ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
       <section><h2>Mapa agregado</h2>${classification}${reportAvailability}${capabilityMap}</section>
+      ${renderPilotStatus(report.calibration)}
       ${probabilisticSummary}
       ${previous}
       ${gaps || visibility ? `<section><h2>Perspectivas</h2>${gaps}${visibility}</section>` : ''}
@@ -201,6 +203,15 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const batch = invitations.reissueBatch(String(auth.project.id), batchId);
     return reply.type('text/html').send(invitationLinksPage(request.protocol, request.host, batch.tokens, auth.params));
   });
+}
+
+function renderPilotStatus(calibration: PilotReport): string {
+  const policy = calibration.policy;
+  const gate = calibration.gate === 'ready_for_revision'
+    ? 'Há massa rotulada dentro dos limiares; uma revisão de priors ainda precisa ser publicada explicitamente.'
+    : 'Calibração bloqueada. O posterior exibido permanece provisório.';
+  const blockers = calibration.blockers.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+  return `<details class="methodology"><summary>Calibração do modelo</summary><p>${escapeHtml(gate)}</p><p>Rótulos cegos: ${calibration.labeledCases} / ${policy.minLabeledCases}. Entrevistas cognitivas: ${calibration.cognitiveReviews}.</p><p>Limiares pré-declarados antes da análise: falso positivo ≤ ${Math.round(policy.maxFalsePositiveRate * 100)}%, parada incorreta ≤ ${Math.round(policy.maxIncorrectStopRate * 100)}%, ECE ≤ ${policy.maxExpectedCalibrationError}, Brier ≤ ${policy.maxBrierScore}, discordância entre avaliadores ≤ ${Math.round(policy.maxRaterDisagreement * 100)}%.</p>${blockers ? `<ul>${blockers}</ul>` : ''}<p>Clique, frequência de resposta e aceitação de recomendação não são rótulos. O modelo publicado não se atualiza sozinho.</p></details>`;
 }
 
 function renderClassification(classification: { level: number; label: string; limitingCapabilities: string[] }): string {

@@ -35,6 +35,16 @@ export function applyMigrations(db: DatabaseSync): void {
       foundation_source TEXT, foundation_principle TEXT, foundation_why TEXT, created_at TEXT NOT NULL,
       UNIQUE(project_id, unit_id, pattern)
     );
-    INSERT INTO schema_migrations (version, applied_at) VALUES (16, datetime('now'));
+    CREATE TABLE pilot_labels (
+      id TEXT PRIMARY KEY, case_key TEXT NOT NULL, model_version TEXT NOT NULL REFERENCES inference_model_versions(version),
+      family_key TEXT NOT NULL, predicted_hypothesis TEXT NOT NULL, predicted_confidence REAL NOT NULL,
+      labeled_hypothesis TEXT NOT NULL, stopped_without_cause INTEGER NOT NULL, reviewer_discipline TEXT NOT NULL,
+      created_at TEXT NOT NULL, UNIQUE(model_version, case_key, family_key, reviewer_discipline)
+    );
+    CREATE TABLE item_reviews (
+      id TEXT PRIMARY KEY, node_key TEXT NOT NULL, profile TEXT NOT NULL, comprehension_ok INTEGER NOT NULL,
+      gold_option_bias INTEGER NOT NULL, visibility_exit_used INTEGER NOT NULL, created_at TEXT NOT NULL
+    );
+    INSERT INTO schema_migrations (version, applied_at) VALUES (17, datetime('now'));
   `);
 }

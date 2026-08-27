@@ -35,10 +35,8 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 ## Modelo de inferência
 
 - executar o
-  [`roadmap de piloto e calibração`](probabilistic-inference-roadmap.md) **depois**
-  das ondas 0 e 1 do
-  [`plano de evolução do instrumento`](instrument-evolution-plan.md), usando os
-  rótulos externos para medir e ajustar o motor probabilístico já entregue;
+  [`roadmap de piloto`](probabilistic-inference-roadmap.md) com entrevistas e
+  rótulos reais; o gate e as métricas já estão no produto;
 - análise longitudinal para identificar mudança sustentada;
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;
 - revisão humana e contestação de findings;

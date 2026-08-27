@@ -7,6 +7,8 @@ import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed } from './domain/group-recommendation-engine.js';
 import { BayesianInferenceEngine, type DiagnosticPosterior } from './domain/bayesian-inference-engine.js';
 import { DiagnosticModel } from './domain/diagnostic-model.js';
+import { PilotEvaluation, type PilotReport } from './domain/pilot-evaluation.js';
+import { PilotService } from './pilot-service.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -232,7 +234,7 @@ export class InferenceService {
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
     const modelVersion = this.modelVersion();
-    if (completed < minimum) return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, scopes: [] as ScopeReport[] };
+    if (completed < minimum) return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
     this.persistTransformation(projectId, completed, findings);
     const areas = this.diagnosticAreas(findings);
@@ -259,7 +261,11 @@ export class InferenceService {
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
     );
-    return { completed, minimum, modelVersion, hypotheses, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, visibilityGaps, previousMeasurement, scopes };
+    return { completed, minimum, modelVersion, hypotheses, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), scopes };
+  }
+
+  private calibration(modelVersion: string | null): PilotReport {
+    return modelVersion ? new PilotService(this.db).summarize(modelVersion) : PilotEvaluation.from([]);
   }
 
   private modelVersion(): string | null {

@@ -19,8 +19,9 @@ camadas e perspectivas; nunca IDs. `foundation` declara fonte e princípio da
 intervenção e não pontua. `confidence` é o posterior provisório na aderência da
 intervenção e não deve ser interpretada como maturidade ou apoio popular.
 O relatório sanitizado também inclui `visibilityGaps` (perspectivas que atingiram o
-limiar e relataram “não observo”) e `previousMeasurement` (delta de suporte de
-padrões entre capturas), sem identificação individual.
+limiar e relataram “não observo”), `previousMeasurement` (delta de suporte de
+padrões entre capturas) e `calibration` (limiares pré-declarados, contagem de
+rótulos cegos, gate e bloqueios), sem identificação individual.
 
 Cada hipótese causal expõe `observability`, população agregada (`support`,
 `applicable`, quantidade de perspectivas e camadas) e `nextQuestion`. Este último é

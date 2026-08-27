@@ -67,6 +67,8 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
 
   const report = inference.report(String(project.id), 5);
   assert.equal(report.completed, 5);
+  assert.equal(report.calibration.gate, 'blocked');
+  assert.equal(report.calibration.labeledCases, 0);
   assert.equal(report.findings.some((finding) => finding.pattern === 'integracao-tardia'), true);
   assert.equal(report.capabilityGroups.some((group) => group.id === 'engineering-quality'), true);
   assert.equal(report.capabilityGroups.some((group) => group.id === 'architecture-evolution' && group.children.length > 0), true);

@@ -71,6 +71,8 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const report = await app.inject({ method: 'GET', url: managementUrl });
   assert.match(report.body, /Radar interativo das capacidades observadas/);
   assert.match(report.body, /Resumo executivo/);
+  assert.match(report.body, /Calibração do modelo/);
+  assert.match(report.body, /posterior exibido permanece provisório/);
   assert.match(report.body, /Principal limitador/);
   assert.match(report.body, /Risco gerencial/);
   assert.match(report.body, /Prioridade recomendada/);

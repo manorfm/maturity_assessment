@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.17.0
+
+- Pré-declarou limiares do piloto (rótulos cegos, entrevistas cognitivas, falso
+  positivo, parada incorreta, ECE, Brier e discordância entre avaliadores).
+- Passou a persistir rótulos e revisões de item sem participação, convite ou
+  resposta, e a recusar publicação automática de priors.
+- O relatório passou a mostrar o gate de calibração e a manter o posterior
+  provisório enquanto o piloto humano não completar.
+
 ## 0.16.0
 
 - Distinguiu prática, “não observo” e “não se aplica”; só a prática pontua.

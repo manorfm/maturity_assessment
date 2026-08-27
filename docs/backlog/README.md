@@ -14,9 +14,10 @@ Antes de promover um item, registrar:
 - mudanças necessárias na base de conhecimento.
 
 O plano sequenciado após a auditoria do modelo está em
-[`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam piloto e
-calibração, novos ramos de perspectiva e evidência externa. Higiene observacional,
-conteúdo aplicável e persistência do experimento já estão na base de conhecimento.
+[`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam o trabalho
+humano do piloto, novos ramos de perspectiva e evidência externa. Higiene
+observacional, conteúdo aplicável, persistência do experimento e infraestrutura de
+calibração já estão na base de conhecimento.
 
 Hipóteses ainda não sequenciadas (plataforma, pesquisa, ramos extras) estão em
 `future-evolution.md`. O que depende de massa real e revisão externa está em
