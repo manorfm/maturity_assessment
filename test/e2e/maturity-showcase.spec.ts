@@ -24,6 +24,10 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
     await expect(page.getByRole('heading', { name: 'Infraestrutura reproduzível' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Voltar' })).toBeVisible();
     await expect(page.getByText(/Cobertura temática/)).toBeVisible();
+    if (scenario === 'elite') {
+      await expect(page.locator('.classification-level')).toContainText('4 / 4');
+      await expect(page.locator('.classification-level')).not.toContainText('4.0 / 4');
+    }
     if (scenario === 'poor') {
       await expect(page.getByText(/variedade temática suficiente/)).toBeVisible();
       await page.getByRole('link', { name: 'Operação, confiabilidade e plataforma' }).click();
@@ -33,6 +37,13 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
       await expect(page.getByText(/solução sugerida · \d+% aderência/).first()).toBeVisible();
     }
     await page.goto(paths[scenario]);
+    if (scenario === 'elite') {
+      await page.locator('.radar-drill-link', { hasText: 'Sistema organizacional' }).first().click();
+      await page.locator('.radar-drill-link', { hasText: 'Governança habilitadora' }).click();
+      await expect(page.locator('.classification-level')).toContainText('3.7 / 4');
+      await expect(page.getByRole('heading', { name: 'Evoluções recomendadas' })).toBeVisible();
+      await page.goto(paths[scenario]);
+    }
     const classification = await page.locator('.classification-level').first().textContent();
     classifications[scenario] = Number(classification?.split('·')[0]?.trim());
   }

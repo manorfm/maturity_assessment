@@ -5,8 +5,9 @@ import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 import { GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal } from './domain/group-recommendation-engine.js';
 
-export type Finding = { capability: string; detailCapability: string; pattern: string; title: string; evidence: number; intervention: string; confidence: number; constraint: ConstraintKind; reasons: string[] };
+export type Finding = { kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string; title: string; evidence: number; intervention: string; confidence: number; constraint: ConstraintKind; reasons: string[] };
 type DiagnosticProblem = {
+  kind: 'correction' | 'evolution';
   pattern: string;
   diagnosis: string;
   correction: string;
@@ -168,6 +169,18 @@ export const interventionCatalog: Record<string, { title: string; intervention: 
   'eficiencia-cloud-sem-decisao-compartilhada': { title: 'Trade-offs de eficiência permanecem locais', intervention: 'Crie critérios compartilhados entre produto, engenharia e plataforma para decidir custo, desempenho, risco e sustentabilidade.' },
 };
 
+export const evolutionCatalog: Record<string, { title: string; intervention: string }> = {
+  'automacao-local-consistente': { title: 'Automação ainda é uma capacidade local', intervention: 'Transforme a automação validada em caminho suportado, observável e adotável por outros times, medindo tempo e falhas antes e depois.' },
+  'integracao-frequente-fragil': { title: 'Integração frequente ainda depende de condições favoráveis', intervention: 'Remova a principal causa que interrompe a integração sob pressão e valide o fluxo com uma mudança urgente e reversível.' },
+  'controles-de-release-acumulados': { title: 'Controles de exposição ainda acumulam estado operacional', intervention: 'Defina validade, responsável, telemetria e remoção automática para cada controle antes de ampliar o uso.' },
+  'excecao-controlada': { title: 'O caminho emergencial ainda é uma exceção manual', intervention: 'Transforme a exceção recorrente em fluxo rápido, seguro e auditável, com reconciliação automática e limites proporcionais ao risco.' },
+  'mudanca-emergencial-reconciliada': { title: 'A emergência é reconciliada, mas ainda exige trabalho posterior', intervention: 'Automatize a reconciliação e exercite o caminho emergencial para que fonte declarativa, validações e auditoria permaneçam íntegras sob pressão.' },
+  'ownership-compartilhado-explicito': { title: 'Ownership compartilhado ainda exige coordenação', intervention: 'Reduza uma passagem recorrente com contrato, limite ou modo de colaboração explícito e valide autonomia ponta a ponta.' },
+  'divida-revista-por-efeito': { title: 'Dívida é gerida, mas a prevenção ainda não é sistêmica', intervention: 'Converta a causa mais recorrente em guardrail, teste arquitetural ou padrão de design e acompanhe redução de reincidência.' },
+  'compatibilidade-verificada': { title: 'Compatibilidade é verificada, mas a evolução ainda pode depender de coordenação', intervention: 'Automatize contratos e políticas de evolução, incluindo remoção segura de versões e feedback antecipado aos consumidores.' },
+  'seguranca-concentrada-em-scanners': { title: 'Segurança ainda está concentrada na detecção automatizada', intervention: 'Acrescente modelagem proporcional de ameaça, ownership e validação de desenho para riscos que scanners não conseguem interpretar.' },
+};
+
 export class InferenceService {
   constructor(private readonly db: Database) {}
 
@@ -204,6 +217,7 @@ export class InferenceService {
       const id = rootCapabilityByDetail[finding.detailCapability] ?? 'organizational-system';
       const area = grouped.get(id) ?? { id, label: rootCapabilityLabels[id]!, problems: [] };
       area.problems.push({
+        kind: finding.kind,
         pattern: finding.pattern,
         diagnosis: finding.title,
         correction: finding.intervention,
@@ -294,7 +308,8 @@ export class InferenceService {
       layer: row.evidence_layer,
       constraint: row.constraint_kind,
     })));
-    return new GroupRecommendationEngine(interventionCatalog).rank(signals, population).map((ranked) => ({
+    return new GroupRecommendationEngine(interventionCatalog, evolutionCatalog).rank(signals, population).map((ranked) => ({
+      kind: ranked.kind,
       capability: ranked.detailCapability,
       detailCapability: ranked.detailCapability,
       pattern: ranked.pattern,

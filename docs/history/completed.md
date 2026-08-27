@@ -134,3 +134,5 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   vigente e o recomendador auditável foi inicialmente delimitado.
 - Entregue o recomendador simbólico de grupo sem LLM, sensível a coocorrência,
   camadas, restrições e contradições, com justificativas no relatório e na API.
+- Adicionadas recomendações de evolução para capacidades fortes abaixo de 4 e
+  removida a casa decimal da apresentação de níveis inteiros.

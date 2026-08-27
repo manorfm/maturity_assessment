@@ -6,7 +6,7 @@ import { AssessmentProfile, InvitationQuantity } from '../src/modules/assessment
 import { CapabilityAssessment } from '../src/modules/inference/domain/capability-assessment.js';
 import { TeamClassification } from '../src/modules/inference/domain/team-classification.js';
 import { CapabilityTaxonomy } from '../src/modules/inference/domain/capability-taxonomy.js';
-import { renderCapabilityDiagnosis } from '../src/modules/projects/project-routes.js';
+import { formatMaturityLevel, renderCapabilityDiagnosis } from '../src/modules/projects/project-routes.js';
 
 test('value objects rejeitam estados inválidos na fronteira do domínio', () => {
   assert.throws(() => ProjectName.create('  '), DomainValidationError);
@@ -73,4 +73,9 @@ test('diagnóstico distingue força sustentada de ausência de evidência proble
   const diagnosis = renderCapabilityDiagnosis([], capability);
   assert.match(diagnosis, /evidências positivas convergem/i);
   assert.doesNotMatch(diagnosis, /Nenhum problema recorrente atingiu/);
+});
+
+test('nota inteira não exibe casa decimal sem informação', () => {
+  assert.equal(formatMaturityLevel(4), '4');
+  assert.equal(formatMaturityLevel(3.7), '3.7');
 });

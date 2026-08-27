@@ -6,6 +6,9 @@ const catalog = {
   'tooling-gap': { title: 'Feedback técnico insuficiente', intervention: 'Reduza duração e instabilidade do feedback.' },
   'process-gap': { title: 'Política amplia o lote', intervention: 'Crie um caminho proporcional ao risco.' },
 };
+const evolutionCatalog = {
+  'controlled-exception': { title: 'Exceção ainda depende de reconciliação', intervention: 'Transforme o caminho emergencial em capacidade segura e repetível.' },
+};
 
 function evidence(pattern: string, constraint: GroupSignal['constraint'], participantId: string): GroupSignal {
   return { participantId, detailCapability: 'continuous-integration', pattern, weight: -1, layer: 'system', constraint };
@@ -41,4 +44,15 @@ test('contradição na mesma jornada reduz a confiança sem apagar o problema co
   const contradictory = engine.rank([...base, { ...evidence('healthy-feedback', 'none', 'a'), weight: 2, layer: 'outcome' }], 3)[0]!;
   assert.ok(contradictory.confidence < consistent.confidence);
   assert.ok(contradictory.reasons.some((reason) => /contradiz/i.test(reason)));
+});
+
+test('capacidade forte abaixo de quatro recebe recomendação de evolução', () => {
+  const engine = new GroupRecommendationEngine(catalog, evolutionCatalog);
+  const signals: GroupSignal[] = ['a', 'b', 'c'].map((participantId) => ({
+    participantId, detailCapability: 'enabling-governance', pattern: 'controlled-exception',
+    weight: 1, layer: 'consistency', constraint: 'none',
+  }));
+  const recommendation = engine.rank(signals, 3)[0]!;
+  assert.equal(recommendation.kind, 'evolution');
+  assert.match(recommendation.intervention, /caminho emergencial/i);
 });

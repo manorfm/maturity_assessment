@@ -143,6 +143,13 @@ classificação mais baixa entre descendentes publicáveis. O relatório preserv
 capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
 isso evita que uma squad forte esconda outra bloqueada.
 
+Níveis inteiros são exibidos sem decimal (`4/4`); decimais aparecem somente quando
+representam diferença real (`3.7/4`). Toda capacidade avaliada abaixo de 4 deve ter
+uma correção de fragilidade ou uma evolução recomendada sustentada pelo grupo. Uma
+evolução não reclassifica prática forte como problema: identifica o comportamento
+de peso intermediário — exceção, coordenação ou capacidade ainda local — que impede
+o estado adaptativo.
+
 Uma opção pode produzir sinais em várias capacidades quando o mesmo comportamento
 possui efeitos sociotécnicos demonstráveis. Uma melhoria com dono e efeito revisto,
 por exemplo, sustenta aprendizado, organização e fluxo; a presença nominal de uma

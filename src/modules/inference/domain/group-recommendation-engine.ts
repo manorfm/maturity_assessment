@@ -12,6 +12,7 @@ export type GroupSignal = {
 
 export type InterventionDefinition = { title: string; intervention: string };
 export type RankedIntervention = InterventionDefinition & {
+  kind: 'correction' | 'evolution';
   detailCapability: string;
   pattern: string;
   constraint: ConstraintKind;
@@ -21,7 +22,10 @@ export type RankedIntervention = InterventionDefinition & {
 };
 
 export class GroupRecommendationEngine {
-  constructor(private readonly catalog: Record<string, InterventionDefinition>) {}
+  constructor(
+    private readonly correctionCatalog: Record<string, InterventionDefinition>,
+    private readonly evolutionCatalog: Record<string, InterventionDefinition> = {},
+  ) {}
 
   rank(signals: GroupSignal[], population: number): RankedIntervention[] {
     const byCapability = groupBy(signals, (signal) => signal.detailCapability);
@@ -31,16 +35,23 @@ export class GroupRecommendationEngine {
   private rankCapability(signals: GroupSignal[], population: number): RankedIntervention[] {
     const minimumSupport = Math.max(2, Math.ceil(population * .2));
     const byParticipant = groupBy(signals, (signal) => signal.participantId);
-    const negative = signals.filter((signal) => signal.weight < 0 && this.catalog[signal.pattern]);
+    const candidatesSignals = signals.filter((signal) => signal.weight < 0
+      ? this.correctionCatalog[signal.pattern]
+      : signal.weight < 2 && this.evolutionCatalog[signal.pattern]);
+    const negative = candidatesSignals.filter((signal) => signal.weight < 0);
     const dominantConstraint: ConstraintKind = mode(negative.map((signal) => signal.constraint).filter((constraint) => constraint !== 'none')) ?? 'none';
     const layerBreadth = new Set(signals.map((signal) => signal.layer)).size / 5;
-    const candidates = groupBy(negative, (signal) => signal.pattern);
+    const candidates = groupBy(candidatesSignals, (signal) => signal.pattern);
 
     return [...candidates].flatMap(([pattern, patternSignals]) => {
       const participants = new Set(patternSignals.map((signal) => signal.participantId));
       if (participants.size < minimumSupport) return [];
+      const kind: RankedIntervention['kind'] = patternSignals[0]!.weight < 0 ? 'correction' : 'evolution';
+      const definition = kind === 'correction' ? this.correctionCatalog[pattern] : this.evolutionCatalog[pattern];
       const cooccurrence = [...participants].filter((participantId) => new Set((byParticipant.get(participantId) ?? []).filter((signal) => signal.weight < 0).map((signal) => signal.pattern)).size > 1).length / participants.size;
-      const contradiction = [...participants].filter((participantId) => (byParticipant.get(participantId) ?? []).some((signal) => signal.weight > 0)).length / participants.size;
+      const contradiction = kind === 'correction'
+        ? [...participants].filter((participantId) => (byParticipant.get(participantId) ?? []).some((signal) => signal.weight > 0)).length / participants.size
+        : 0;
       const constraint: ConstraintKind = mode(patternSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
       const constraintAlignment = dominantConstraint === 'none' || constraint === dominantConstraint ? 1 : 0;
       const support = participants.size / Math.max(1, population);
@@ -52,7 +63,7 @@ export class GroupRecommendationEngine {
         `Evidências distribuídas por ${new Set(signals.map((signal) => signal.layer)).size} camada(s).`,
         ...(constraint !== 'none' ? [`Restrição dominante: ${constraint}.`] : []),
       ];
-      return [{ detailCapability: patternSignals[0]!.detailCapability, pattern, constraint, support, confidence, reasons, ...this.catalog[pattern]! }];
+      return [{ kind, detailCapability: patternSignals[0]!.detailCapability, pattern, constraint, support, confidence, reasons, ...definition! }];
     }).sort((left, right) => right.confidence - left.confidence || right.support - left.support || left.pattern.localeCompare(right.pattern)).slice(0, 3);
   }
 }
