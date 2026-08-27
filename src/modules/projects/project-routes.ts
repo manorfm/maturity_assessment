@@ -5,6 +5,7 @@ import { InvitationService } from '../assessments/invitation-service.js';
 import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
 import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
+import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
 import { DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
 
 type Params = { publicId: string; adminSecret: string };
@@ -166,7 +167,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const assessedChildren = selected.children.filter((child) => child.assessed).length;
     const breadth = selected.children.length ? ` ${assessedChildren} de ${selected.children.length} subcapacidades possuem cobertura suficiente.` : '';
     const status = selected.assessed
-      ? `<div class="classification-level">${formatMaturityLevel(selected.level)} / 4</div>${coverage}<p>Confiança ${Math.round(selected.confidence * 100)}% com ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p>`
+      ? `<div class="classification-level">${formatMaturityLevel(selected.level)} / 4</div>${coverage}<p>Confiança da medição de maturidade ${Math.round(selected.confidence * 100)}% · ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p>`
       : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
     const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : renderCapabilityDiagnosis(relevant, selected);
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Hipóteses causais');
@@ -243,13 +244,22 @@ function flattenCapabilityIds(node: CapabilityRadarNode): string[] {
 }
 
 function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVersion: string | null, title = 'Diagnóstico probabilístico'): string {
-  const relevant = posteriors.filter((item) => item.evidenceUsed.length > 0)
-    .sort((left, right) => left.entropy - right.entropy).slice(0, 6);
+  const relevant = posteriors.filter((item) => item.evidenceUsed.length > 0);
   if (!relevant.length) return '';
-  const cards = relevant.map((posterior) => {
-    const leader = posterior.hypotheses[0]!;
-    const alternatives = posterior.hypotheses.slice(1, 3).map((item) => `<li>${escapeHtml(item.label)} · ${Math.round(item.probability * 100)}%</li>`).join('');
-    return `<article class="card diagnostic-hypothesis"><span class="tag">posterior provisório · ${Math.round(leader.probability * 100)}%</span><h3>${escapeHtml(leader.label)}</h3><p class="muted">Incerteza ${posterior.entropy.toFixed(2)} bit · ${posterior.evidenceUsed.length} grupo(s) de evidência independente.</p>${alternatives ? `<h4>Hipóteses alternativas</h4><ul>${alternatives}</ul>` : ''}${leader.id === 'unknown' ? '<p class="notice">A causa ainda não foi discriminada; a próxima pergunta deve reduzir esta incerteza antes de prescrever.</p>' : ''}</article>`;
+  const byCapability = new Map<string, DiagnosticPosterior[]>();
+  for (const posterior of relevant) byCapability.set(posterior.capability, [...(byCapability.get(posterior.capability) ?? []), posterior]);
+  const cards = [...byCapability].map(([capability, items]) => {
+    const isConfirmed = (item: DiagnosticPosterior) => item.hypotheses[0]?.id !== 'unknown' && item.hypotheses[0]!.probability >= .7 && (item.population?.support ?? 0) >= 2;
+    const confirmed = items.filter(isConfirmed).sort((left, right) => right.hypotheses[0]!.probability - left.hypotheses[0]!.probability);
+    const inconclusive = items.filter((item) => !isConfirmed(item));
+    const findings = confirmed.slice(0, 3).map((posterior) => {
+      const leader = posterior.hypotheses[0]!;
+      const population = posterior.population ? `${posterior.population.support} de ${posterior.population.applicable} jornadas aplicáveis · ${posterior.population.profiles} perspectiva(s) · ${posterior.population.layers} camada(s)` : 'População não informada';
+      return `<li><strong>${escapeHtml(leader.label)} · ${Math.round(leader.probability * 100)}%</strong><br><span class="muted">${escapeHtml(population)}; incerteza ${posterior.entropy.toFixed(2)} bit.</span></li>`;
+    }).join('');
+    const discriminators = [...new Map(inconclusive.flatMap((item) => item.nextQuestionKey && item.nextQuestionLabel ? [[item.nextQuestionKey, item.nextQuestionLabel] as const] : [])).values()];
+    const gap = inconclusive.length ? `<p class="notice">${inconclusive.length} hipótese(s) permaneceram inconclusivas.${discriminators.length ? ` Próximo discriminador disponível: ${escapeHtml(discriminators[0]!)}.` : ' O instrumento vigente não possui outro discriminador elegível para estas evidências; amplie o catálogo antes de prescrever.'}</p>` : '';
+    return `<article class="card diagnostic-hypothesis"><span class="tag">capacidade diagnóstica</span><h3>${escapeHtml(CapabilityTaxonomy.labelFor(capability))}</h3>${findings ? `<ul>${findings}</ul>` : '<p>Nenhuma causa atingiu sustentação suficiente.</p>'}${gap}</article>`;
   }).join('');
   return `<section><h2>${title}</h2><p class="muted">Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. Os percentuais são inferências especialistas ainda não calibradas com massa real.</p><div class="grid">${cards}</div></section>`;
 }

@@ -39,6 +39,7 @@ function collectLeaves(nodes: TaxonomyNode[]): string[] {
 }
 
 export class CapabilityTaxonomy {
+  static labelFor(id: string): string { return findLabel(taxonomy, id) ?? id; }
   static organize(capabilities: CapabilityMeasure[]): CapabilityBranch[] {
     const byId = new Map(capabilities.map((capability) => [capability.id, capability]));
     const build = (node: TaxonomyNode): CapabilityBranch => {
@@ -67,4 +68,13 @@ export class CapabilityTaxonomy {
     };
     return taxonomy.map(build);
   }
+}
+
+function findLabel(nodes: TaxonomyNode[], id: string): string | undefined {
+  for (const node of nodes) {
+    if (node.id === id) return node.label;
+    const nested = node.children ? findLabel(node.children, id) : undefined;
+    if (nested) return nested;
+  }
+  return undefined;
 }

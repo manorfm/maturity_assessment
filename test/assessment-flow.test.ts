@@ -109,7 +109,7 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   assert.equal(catalog.getNode(current.graph_version, current.current_node)?.type, 'probe');
 });
 
-test('seletor adaptativo escolhe aprofundamento aplicável e registra a decisão', () => {
+test('seletor adaptativo não duplica o aprofundamento já escolhido pelo grafo declarativo', () => {
   const db = createDatabase(':memory:');
   const projects = new ProjectService(db);
   const invitations = new InvitationService(db);
@@ -128,12 +128,11 @@ test('seletor adaptativo escolhe aprofundamento aplicável e registra a decisão
   }
   participations.answer(claimed.resumeToken, 'isolated-days');
   const participation = participations.find(claimed.resumeToken)!;
+  assert.ok(db.prepare("SELECT 1 FROM evidence_likelihoods WHERE pattern = 'mudanca-isolada'").get());
+  assert.ok(db.prepare("SELECT 1 FROM question_observations WHERE node_key = 'delivery-cause' AND applicability_patterns_json LIKE '%mudanca-isolada%'").get());
   const selected = new AdaptiveJourneyService(db).selectAfterTerminal(participation.id, participation.profile, participation.graph_version);
-  assert.ok(selected);
-  const snapshots = db.prepare('SELECT selected_question_key, selection_reason, posterior_json FROM inference_snapshots WHERE participation_id = ?').all(participation.id) as unknown as Array<{ selected_question_key: string; selection_reason: string; posterior_json: string }>;
-  assert.equal(snapshots.length, 1);
-  assert.ok(snapshots.every((snapshot) => snapshot.selection_reason.includes('Ganho esperado')));
-  assert.ok(snapshots.every((snapshot) => JSON.parse(snapshot.posterior_json).length >= 2));
+  assert.equal(selected, undefined);
+  assert.equal(participation.current_node, 'delivery-cause');
 });
 
 test('entrega aprofunda sinais maduros e investiga bloqueio após integração frágil', () => {
@@ -201,9 +200,11 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
   assert.ok(signal.evidence_layer.length > 0);
   assert.ok(signal.constraint_kind.length > 0);
   const model = db.prepare('SELECT version, policy_json FROM inference_model_versions LIMIT 1').get() as { version: string; policy_json: string };
-  assert.match(model.version, /bayesian-v1/);
+  assert.match(model.version, /bayesian-v2/);
   assert.equal(JSON.parse(model.policy_json).recommendationThreshold, .7);
   assert.ok(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_hypotheses').get() as { total: number }).total) > 0);
+  const oversizedFamily = db.prepare('SELECT family_key, COUNT(*) total FROM diagnostic_hypotheses GROUP BY family_key HAVING total > 2 LIMIT 1').get();
+  assert.equal(oversizedFamily, undefined, 'causas simultâneas não devem competir em uma família categórica gigante');
   assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM question_observations').get() as { total: number }).total), graph.length);
   const deliveryApplicability = db.prepare("SELECT applicability_patterns_json FROM question_observations WHERE node_key = 'delivery-cause'").get() as { applicability_patterns_json: string };
   assert.deepEqual(new Set(JSON.parse(deliveryApplicability.applicability_patterns_json) as string[]), new Set(['mudanca-isolada', 'integracao-por-janela']));

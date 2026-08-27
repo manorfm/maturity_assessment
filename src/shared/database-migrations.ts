@@ -24,6 +24,6 @@ export function applyMigrations(db: DatabaseSync): void {
     CREATE TABLE participations (id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), unit_id TEXT NOT NULL REFERENCES organization_units(id), profile TEXT NOT NULL, resume_hash TEXT UNIQUE NOT NULL, graph_version TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'in_progress', current_node TEXT NOT NULL, created_at TEXT NOT NULL, completed_at TEXT);
     CREATE TABLE responses (id TEXT PRIMARY KEY, participation_id TEXT NOT NULL REFERENCES participations(id), node_id TEXT NOT NULL, option_id TEXT NOT NULL, created_at TEXT NOT NULL, UNIQUE(participation_id, node_id));
     CREATE TABLE inference_snapshots (id TEXT PRIMARY KEY, model_version TEXT NOT NULL REFERENCES inference_model_versions(version), participation_id TEXT NOT NULL REFERENCES participations(id), family_key TEXT NOT NULL, posterior_json TEXT NOT NULL, selected_question_key TEXT, selection_reason TEXT NOT NULL, created_at TEXT NOT NULL);
-    INSERT INTO schema_migrations (version, applied_at) VALUES (14, datetime('now'));
+    INSERT INTO schema_migrations (version, applied_at) VALUES (15, datetime('now'));
   `);
 }

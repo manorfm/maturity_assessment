@@ -40,6 +40,23 @@ test('evidências correlacionadas do mesmo grupo não são contadas duas vezes',
   assert.deepEqual(duplicated.ignoredEvidence, ['pipeline-flaky']);
 });
 
+test('posterior populacional distingue ocorrência isolada de comportamento recorrente', () => {
+  const engine = new BayesianInferenceEngine();
+  const isolated = engine.infer(model, [{ pattern: 'slow-feedback', support: 1, applicablePopulation: 10, profiles: ['engineering'], layers: ['system'] }])[0]!;
+  const recurrent = engine.infer(model, [{ pattern: 'slow-feedback', support: 8, applicablePopulation: 10, profiles: ['engineering', 'platform'], layers: ['system', 'outcome'] }])[0]!;
+  const tooling = (result: typeof isolated) => result.hypotheses.find((item) => item.id === 'tooling')!.probability;
+
+  assert.ok(tooling(recurrent) > tooling(isolated));
+  assert.equal(recurrent.population?.support, 8);
+  assert.equal(recurrent.population?.applicable, 10);
+  assert.ok(recurrent.observability > isolated.observability);
+});
+
+test('ausência de uma evidência não é convertida em evidência negativa', () => {
+  const withoutObservation = new BayesianInferenceEngine().infer(model, [])[0]!;
+  assert.deepEqual(withoutObservation.hypotheses.map((item) => item.probability), model.families[0]!.hypotheses.map((item) => item.prior).sort((left, right) => right - left));
+});
+
 test('contradição específica reduz somente a hipótese relacionada', () => {
   const engine = new BayesianInferenceEngine();
   const supported = engine.infer(model, ['slow-feedback'])[0]!;

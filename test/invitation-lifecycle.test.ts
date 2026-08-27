@@ -38,7 +38,7 @@ test('banco novo nasce somente no esquema vigente', () => {
   assert.equal(signals.find((column) => column.name === 'evidence_layer')?.notnull, 1);
   assert.equal(signals.find((column) => column.name === 'constraint_kind')?.notnull, 1);
   assert.equal(invitations.find((column) => column.name === 'batch_id')?.notnull, 1);
-  assert.deepEqual([...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)), [14]);
+  assert.deepEqual([...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)), [15]);
   db.close();
 });
 

@@ -77,6 +77,13 @@ implementação offline, mas só poderão ser interpretados após revisão exter
 real rotulada. O trabalho de piloto está no
 [`roadmap probabilístico`](docs/backlog/probabilistic-inference-roadmap.md).
 
+A versão 0.15 separa sintomas, causas e consequências na publicação do modelo.
+Causas simultâneas deixaram de competir em uma distribuição categórica: cada uma é
+avaliada contra evidência insuficiente. O posterior considera prevalência na
+população aplicável, perspectivas e camadas; ausência de resposta permanece neutra.
+Inconclusões são agrupadas por capacidade e só indicam uma próxima pergunta quando
+existe um probe contextual elegível.
+
 ## Executar localmente
 
 Requer Node.js 22.13 ou superior.
@@ -100,7 +107,9 @@ npm run test:e2e
 Para gerar os três projetos sintéticos e deixar a aplicação aberta para inspeção,
 execute apenas `npm run demo`. O comando percorre toda a jornada em Chromium,
 imprime os links administrativos e mantém o servidor na porta `3217`; não exige
-preparação manual do banco. `npm run showcase` permanece como alias compatível.
+preparação manual do banco. O SQLite é recriado antes do E2E e preservado quando o
+servidor de inspeção assume a mesma porta, portanto os links impressos continuam
+válidos. `npm run showcase` permanece como alias compatível.
 
 ## Limites deste corte
 

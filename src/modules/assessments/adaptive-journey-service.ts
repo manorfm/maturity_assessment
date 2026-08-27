@@ -15,17 +15,20 @@ export class AdaptiveJourneyService {
     if (adaptiveQuestions >= 5) return undefined;
     const modelVersion = (this.db.prepare("SELECT version FROM inference_model_versions WHERE graph_version = ? AND status = 'published' LIMIT 1").get(graphVersion) as { version: string } | undefined)?.version;
     if (!modelVersion) return undefined;
-    const family = this.mostUncertainFamily(modelVersion, participationId);
-    if (!family) return undefined;
-    const candidates = this.questionCandidates(modelVersion, family.familyId, participationId, profile, family.hypotheses.map((item) => item.id));
-    const selected = new AdaptiveQuestionSelector().select(family, candidates);
-    if (!selected || selected.informationGain <= .05) return undefined;
+    const ranked = this.uncertainFamilies(modelVersion, participationId).flatMap((family) => {
+      const candidates = this.questionCandidates(modelVersion, family.capability, participationId, profile, family.hypotheses.map((item) => item.id));
+      const selected = new AdaptiveQuestionSelector().select(family, candidates);
+      return selected ? [{ family, selected }] : [];
+    }).sort((left, right) => right.selected.score - left.selected.score || right.selected.informationGain - left.selected.informationGain);
+    const choice = ranked[0];
+    if (!choice || choice.selected.informationGain <= .01) return undefined;
+    const { family, selected } = choice;
     this.db.prepare('INSERT INTO inference_snapshots (id, model_version, participation_id, family_key, posterior_json, selected_question_key, selection_reason, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .run(id(), modelVersion, participationId, family.familyId, JSON.stringify(family.hypotheses), selected.id, selected.reasons.join(' '), new Date().toISOString());
     return selected.id;
   }
 
-  private mostUncertainFamily(modelVersion: string, participationId: string) {
+  private uncertainFamilies(modelVersion: string, participationId: string) {
     const rows = this.db.prepare('SELECT family_key, capability, hypothesis_key, label, prior FROM diagnostic_hypotheses WHERE model_version = ? ORDER BY family_key, hypothesis_key').all(modelVersion) as unknown as HypothesisRow[];
     const observed = this.db.prepare('SELECT DISTINCT s.pattern FROM responses r JOIN participations p ON p.id = r.participation_id JOIN assessment_signals s ON s.graph_version = p.graph_version AND s.node_key = r.node_id AND s.option_key = r.option_id WHERE p.id = ?').all(participationId) as unknown as Array<{ pattern: string }>;
     const families = [...new Set(rows.map((row) => row.family_key))].map((familyId) => {
@@ -35,10 +38,10 @@ export class AdaptiveJourneyService {
       return { id: familyId, capability: hypotheses[0]!.capability, hypotheses: hypotheses.map((row) => ({ id: row.hypothesis_key, label: row.label, prior: Number(row.prior) })), evidence: patterns.map((pattern) => ({ pattern, group: likelihoodRows.find((row) => row.pattern === pattern)!.evidence_group, likelihoods: Object.fromEntries(likelihoodRows.filter((row) => row.pattern === pattern).map((row) => [row.hypothesis_key, Number(row.likelihood)])) })) };
     });
     const posteriors = new BayesianInferenceEngine().infer(DiagnosticModel.create({ version: modelVersion, families }), observed.map((row) => row.pattern));
-    return posteriors.filter((item) => item.evidenceUsed.length > 0).sort((left, right) => right.entropy - left.entropy)[0];
+    return posteriors.filter((item) => item.evidenceUsed.length > 0).sort((left, right) => right.entropy - left.entropy);
   }
 
-  private questionCandidates(modelVersion: string, familyId: string, participationId: string, profile: string, hypothesisIds: string[]): QuestionCandidate[] {
+  private questionCandidates(modelVersion: string, capability: string, participationId: string, profile: string, hypothesisIds: string[]): QuestionCandidate[] {
     const observedPatterns = new Set((this.db.prepare('SELECT DISTINCT s.pattern FROM responses r JOIN participations p ON p.id = r.participation_id JOIN assessment_signals s ON s.graph_version = p.graph_version AND s.node_key = r.node_id AND s.option_key = r.option_id WHERE p.id = ?').all(participationId) as unknown as Array<{ pattern: string }>).map((item) => item.pattern));
     const rows = this.db.prepare(`
       SELECT DISTINCT q.node_key, q.cost, q.applicability_patterns_json FROM question_observations q
@@ -49,7 +52,7 @@ export class AdaptiveJourneyService {
         AND q.profiles_json LIKE ?
         AND s.detail_capabilities LIKE ?
         AND q.node_key NOT IN (SELECT node_id FROM responses WHERE participation_id = ?)
-    `).all(modelVersion, `%${profile}%`, `%${familyId}%`, participationId) as unknown as Array<{ node_key: string; cost: number; applicability_patterns_json: string }>;
+    `).all(modelVersion, `%${profile}%`, `%${capability}%`, participationId) as unknown as Array<{ node_key: string; cost: number; applicability_patterns_json: string }>;
     return rows.filter((row) => {
       const required = JSON.parse(row.applicability_patterns_json) as string[];
       return required.length === 0 || required.some((pattern) => observedPatterns.has(pattern));
@@ -58,7 +61,7 @@ export class AdaptiveJourneyService {
       const optionIds = [...new Set(options.map((item) => item.option_key))];
       const outcomes = optionIds.map((optionId) => {
         const patterns = options.filter((item) => item.option_key === optionId).flatMap((item) => item.pattern ? [item.pattern] : []);
-        return { probability: 1 / optionIds.length, likelihoods: Object.fromEntries(hypothesisIds.map((hypothesisId) => [hypothesisId, hypothesisId === 'unknown' ? .4 : patterns.includes(hypothesisId) ? .85 : .3])) };
+        return { probability: 1 / optionIds.length, likelihoods: Object.fromEntries(hypothesisIds.map((hypothesisId) => [hypothesisId, hypothesisId === 'unknown' ? .4 : patterns.includes(hypothesisId) ? .95 : .1])) };
       });
       const weights = options.flatMap((item) => item.weight === null ? [] : [Number(item.weight)]);
       return { id: row.node_key, cost: Number(row.cost), coverage: 0, validationNeed: weights.some((value) => value > 0) && weights.some((value) => value < 0) ? 1 : .5, outcomes };

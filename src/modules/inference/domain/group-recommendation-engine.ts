@@ -51,6 +51,7 @@ export class GroupRecommendationEngine {
       const patterns = unique(relevant.map((signal) => signal.pattern));
       const support = supporters.size / Math.max(1, applicablePopulation);
       const confidence = roundConfidence(posterior.get(pattern) ?? 0);
+      if (confidence < .5) return [];
       const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
       const contextualDefaults = experimentDefaults(constraint, pattern);
       const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
@@ -68,12 +69,12 @@ export class GroupRecommendationEngine {
 function posteriorByPattern(signals: GroupSignal[], candidates: string[], corrections: Record<string, InterventionDefinition>, evolutions: Record<string, InterventionDefinition>, population: number): Map<string, number> {
   if (!candidates.length) return new Map();
   const definitions = Object.fromEntries(candidates.map((pattern) => [pattern, corrections[pattern] ?? evolutions[pattern]!]));
-  const prior = .75 / candidates.length;
-  const hypotheses: HypothesisDefinition[] = [...candidates.map((id) => ({ id, label: definitions[id]!.cause, prior })), { id: 'unknown', label: 'Causa ainda não discriminada', prior: .25 }];
-  const evidence: EvidenceDefinition[] = [];
-  const observed: string[] = [];
+  const probabilities = new Map<string, number>();
   for (const pattern of candidates) {
     const definition = definitions[pattern]!;
+    const hypotheses: HypothesisDefinition[] = [{ id: pattern, label: definition.cause, prior: .5 }, { id: 'unknown', label: 'Evidência insuficiente', prior: .5 }];
+    const evidence: EvidenceDefinition[] = [];
+    const observed: string[] = [];
     const related = signals.filter((signal) => definition.evidencePatterns.includes(signal.pattern));
     if (related.length) {
       const supporters = new Set(related.map((signal) => signal.participantId)).size;
@@ -81,19 +82,20 @@ function posteriorByPattern(signals: GroupSignal[], candidates: string[], correc
       const profiles = new Set(related.flatMap((signal) => signal.profile ? [signal.profile] : [])).size;
       const reliability = Math.min(.95, .55 + .25 * Math.min(1, supporters / Math.max(1, population)) + .05 * Math.min(2, layers - 1) + .05 * Math.min(2, profiles - 1) + (related.some((signal) => signal.layer === 'outcome') ? .05 : 0));
       const evidencePattern = `supports:${pattern}`;
-      evidence.push({ pattern: evidencePattern, group: `support:${pattern}`, likelihoods: Object.fromEntries(hypotheses.map((hypothesis) => [hypothesis.id, hypothesis.id === pattern ? reliability : hypothesis.id === 'unknown' ? .4 : .3])) });
+      evidence.push({ pattern: evidencePattern, group: `support:${pattern}`, likelihoods: { [pattern]: reliability, unknown: .35 } });
       observed.push(evidencePattern);
     }
     const contradicted = signals.some((signal) => definition.contradictionPatterns.includes(signal.pattern));
     if (contradicted) {
       const evidencePattern = `contradicts:${pattern}`;
-      evidence.push({ pattern: evidencePattern, group: `contradiction:${pattern}`, likelihoods: Object.fromEntries(hypotheses.map((hypothesis) => [hypothesis.id, hypothesis.id === pattern ? .1 : hypothesis.id === 'unknown' ? .4 : .65])) });
+      evidence.push({ pattern: evidencePattern, group: `contradiction:${pattern}`, likelihoods: { [pattern]: .1, unknown: .75 } });
       observed.push(evidencePattern);
     }
+    const model = DiagnosticModel.create({ version: 'group-bayesian-v2', families: [{ id: `${signals[0]!.detailCapability}:${pattern}`, capability: signals[0]!.detailCapability, hypotheses, evidence }] });
+    const result = new BayesianInferenceEngine().infer(model, observed)[0]!;
+    probabilities.set(pattern, result.hypotheses.find((item) => item.id === pattern)!.probability);
   }
-  const model = DiagnosticModel.create({ version: 'group-bayesian-v1', families: [{ id: signals[0]!.detailCapability, capability: signals[0]!.detailCapability, hypotheses, evidence }] });
-  const result = new BayesianInferenceEngine().infer(model, observed)[0]!;
-  return new Map(result.hypotheses.map((item) => [item.id, item.probability]));
+  return probabilities;
 }
 
 function experimentDefaults(constraint: ConstraintKind, pattern = ''): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {

@@ -21,7 +21,7 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
     await page.locator('.radar-drill-link', { hasText: 'Cloud e infraestrutura' }).click();
     await expect(page.getByRole('heading', { name: 'Cloud e infraestrutura' })).toBeVisible();
     await page.locator('.radar-drill-link', { hasText: 'Infraestrutura reproduzível' }).click();
-    await expect(page.getByRole('heading', { name: 'Infraestrutura reproduzível' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Infraestrutura reproduzível' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Voltar' })).toBeVisible();
     await expect(page.getByText(/Cobertura temática/)).toBeVisible();
     if (scenario === 'elite') {
@@ -51,7 +51,7 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
     classifications[scenario] = Number(classification?.split('·')[0]?.trim());
   }
 
-  for (const scenario of ['poor', 'medium', 'elite'] as const) console.log(`[showcase] ${scenario}: ${paths[scenario]}`);
+  for (const scenario of ['poor', 'medium', 'elite'] as const) console.log(`[showcase] ${scenario}: http://127.0.0.1:3217${new URL(paths[scenario]).pathname}`);
   expect(classifications.poor).toBeLessThan(classifications.medium);
   expect(classifications.medium).toBeLessThan(classifications.elite);
 });

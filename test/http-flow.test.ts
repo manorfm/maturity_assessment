@@ -75,7 +75,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const capabilityUrl = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
   assert.ok(capabilityUrl);
   const capability = await app.inject({ method: 'GET', url: capabilityUrl });
-  assert.match(capability.body, /Confiança \d+%/);
+  assert.match(capability.body, /Confiança da medição de maturidade \d+%/);
   assert.match(capability.body, /Aprofundar|Problemas e correções|evidência/i);
   assert.match(capability.body, /aria-label="Navegação da capacidade"/);
   assert.match(capability.body, /Voltar<\/a>/);

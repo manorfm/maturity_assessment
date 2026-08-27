@@ -130,8 +130,9 @@ que explicita ação, responsável provável, métrica, revisão e critério de 
 Após uma saída declarativa, o motor compara probes ainda não respondidos, visíveis
 à perspectiva e habilitados por padrões de contexto já observados. O ranking combina 50% de ganho esperado de informação, 25% de
 cobertura, 15% de validação e 10% de custo invertido. A extensão termina sem pergunta
-útil acima de 0,05 bit ou após cinco probes, e persiste versão, posterior e motivo
-da escolha sem expor a jornada individual no relatório.
+útil acima de 0,01 bit ou após cinco probes, e persiste versão, posterior e motivo
+da escolha sem expor a jornada individual no relatório. Probes de causa só são
+elegíveis quando um sintoma declarado em sua aplicabilidade foi observado.
 
 Não existe mapeamento “resposta X = compre ferramenta Y”. Duas populações com a
 mesma nota podem receber intervenções diferentes porque as combinações de causas,

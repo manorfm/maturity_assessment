@@ -37,12 +37,13 @@ export class CatalogService {
   }
 
   private seedDiagnosticModel(): void {
-    const modelVersion = `${GRAPH_VERSION}-bayesian-v1`;
+    const modelVersion = `${GRAPH_VERSION}-bayesian-v2`;
     this.db.prepare('INSERT INTO inference_model_versions (version, graph_version, status, policy_json, published_at) VALUES (?, ?, ?, ?, ?)')
-      .run(modelVersion, GRAPH_VERSION, 'published', JSON.stringify({ informationGain: .5, coverage: .25, validation: .15, inverseCost: .1, recommendationThreshold: .7 }), new Date().toISOString());
+      .run(modelVersion, GRAPH_VERSION, 'published', JSON.stringify({ informationGain: .5, coverage: .25, validation: .15, inverseCost: .1, minimumInformationGainBits: .01, recommendationThreshold: .7 }), new Date().toISOString());
     const patternsByCapability = new Map<string, Set<string>>();
     for (const node of graph) for (const option of node.options) for (const signal of option.signals) {
-      if (signal.weight >= 2) continue;
+      const isCausal = signal.pattern.startsWith('causa-') || signal.constraint !== 'none' || (signal.layer === 'system' && signal.weight < 1);
+      if (!isCausal) continue;
       for (const capability of signal.details) {
         const patterns = patternsByCapability.get(capability) ?? new Set<string>();
         patterns.add(signal.pattern);
@@ -51,17 +52,29 @@ export class CatalogService {
     }
     for (const [capability, patternSet] of patternsByCapability) {
       const patterns = [...patternSet];
-      const prior = .75 / patterns.length;
-      for (const pattern of [...patterns, 'unknown']) this.db.prepare('INSERT INTO diagnostic_hypotheses (model_version, family_key, capability, hypothesis_key, label, prior) VALUES (?, ?, ?, ?, ?, ?)')
-        .run(modelVersion, capability, capability, pattern, pattern === 'unknown' ? 'Causa ainda não discriminada' : pattern, pattern === 'unknown' ? .25 : prior);
-      for (const evidencePattern of patterns) for (const hypothesis of [...patterns, 'unknown']) this.db.prepare('INSERT INTO evidence_likelihoods (model_version, family_key, pattern, evidence_group, hypothesis_key, likelihood) VALUES (?, ?, ?, ?, ?, ?)')
-        .run(modelVersion, capability, evidencePattern, evidencePattern, hypothesis, hypothesis === evidencePattern ? .85 : hypothesis === 'unknown' ? .4 : .3);
+      for (const pattern of patterns) {
+        const family = `${capability}:${pattern}`;
+        this.db.prepare('INSERT INTO diagnostic_hypotheses (model_version, family_key, capability, hypothesis_key, label, prior) VALUES (?, ?, ?, ?, ?, ?)')
+          .run(modelVersion, family, capability, pattern, pattern, .5);
+        this.db.prepare('INSERT INTO diagnostic_hypotheses (model_version, family_key, capability, hypothesis_key, label, prior) VALUES (?, ?, ?, ?, ?, ?)')
+          .run(modelVersion, family, capability, 'unknown', 'Evidência insuficiente para confirmar esta causa', .5);
+        this.db.prepare('INSERT INTO evidence_likelihoods (model_version, family_key, pattern, evidence_group, hypothesis_key, likelihood) VALUES (?, ?, ?, ?, ?, ?)')
+          .run(modelVersion, family, pattern, `cause:${pattern}`, pattern, .9);
+        this.db.prepare('INSERT INTO evidence_likelihoods (model_version, family_key, pattern, evidence_group, hypothesis_key, likelihood) VALUES (?, ?, ?, ?, ?, ?)')
+          .run(modelVersion, family, pattern, `cause:${pattern}`, 'unknown', .25);
+        const originNode = graph.find((node) => node.options.some((option) => option.signals.some((signal) => signal.pattern === pattern)));
+        for (const symptom of originNode ? applicabilityPatternsFor(originNode.id) : []) {
+          this.db.prepare('INSERT INTO evidence_likelihoods (model_version, family_key, pattern, evidence_group, hypothesis_key, likelihood) VALUES (?, ?, ?, ?, ?, ?)')
+            .run(modelVersion, family, symptom, `symptom:${symptom}`, pattern, .6);
+          this.db.prepare('INSERT INTO evidence_likelihoods (model_version, family_key, pattern, evidence_group, hypothesis_key, likelihood) VALUES (?, ?, ?, ?, ?, ?)')
+            .run(modelVersion, family, symptom, `symptom:${symptom}`, 'unknown', .45);
+        }
+      }
     }
     const allProfiles = ['management', 'product', 'quality', 'engineering', 'platform'];
     for (const node of graph) {
       const variantProfiles = nodeVariants.filter((variant) => variant.nodeId === node.id).map((variant) => variant.profile);
-      const incoming = edges.filter((edge) => edge.to === node.id && edge.optionId);
-      const applicabilityPatterns = [...new Set(incoming.flatMap((edge) => graph.find((candidate) => candidate.id === edge.from)?.options.find((option) => option.id === edge.optionId)?.signals.map((signal) => signal.pattern) ?? []))];
+      const applicabilityPatterns = applicabilityPatternsFor(node.id);
       this.db.prepare('INSERT INTO question_observations (model_version, node_key, profiles_json, applicability_patterns_json, cost) VALUES (?, ?, ?, ?, ?)')
         .run(modelVersion, node.id, JSON.stringify(variantProfiles.length ? variantProfiles : allProfiles), JSON.stringify(applicabilityPatterns), node.type === 'probe' ? .6 : .35);
     }
@@ -120,6 +133,11 @@ export class CatalogService {
     return row?.to_node_key;
   }
 
+}
+
+function applicabilityPatternsFor(nodeId: string): string[] {
+  const incoming = edges.filter((edge) => edge.to === nodeId && edge.optionId);
+  return [...new Set(incoming.flatMap((edge) => graph.find((candidate) => candidate.id === edge.from)?.options.find((option) => option.id === edge.optionId)?.signals.map((signal) => signal.pattern) ?? []))];
 }
 
 export function validateGraphDefinition(nodes: AssessmentNode[], graphEdges: AssessmentEdge[], entryNode: string): void {

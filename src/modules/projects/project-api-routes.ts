@@ -93,5 +93,5 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
 }
 
 function sanitizePosterior(item: ReturnType<InferenceService['report']>['hypotheses'][number]) {
-  return { familyId: item.familyId, capability: item.capability, modelVersion: item.modelVersion, uncertainty: item.entropy, hypotheses: item.hypotheses.slice(0, 3), evidenceUsed: item.evidenceUsed, missingEvidence: item.hypotheses[0]?.id === 'unknown' ? ['Aprofundamento causal necessário'] : [] };
+  return { familyId: item.familyId, capability: item.capability, modelVersion: item.modelVersion, uncertainty: item.entropy, observability: item.observability, population: item.population, hypotheses: item.hypotheses.slice(0, 3), evidenceUsed: item.evidenceUsed, nextQuestion: item.nextQuestionKey ? { key: item.nextQuestionKey, label: item.nextQuestionLabel } : null, missingEvidence: item.hypotheses[0]?.id === 'unknown' ? [item.nextQuestionKey ? 'Aprofundamento causal disponível' : 'Sem discriminador elegível no instrumento vigente'] : [] };
 }

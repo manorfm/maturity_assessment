@@ -52,10 +52,9 @@ test('somente uma contradição pareada reduz a confiança da recomendação rel
   const baseSignals = [evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b')];
   const consistent = engine.rank(baseSignals, 3)[0]!;
   const unrelatedPositive = engine.rank([...baseSignals, evidence('healthy-code', 'a', { weight: 2, layer: 'outcome', constraint: 'none' })], 3)[0]!;
-  const contradicted = engine.rank([...baseSignals, evidence('fast-reliable-feedback', 'a', { weight: 2, layer: 'outcome', constraint: 'none' })], 3)[0]!;
+  const contradicted = engine.rank([...baseSignals, evidence('fast-reliable-feedback', 'a', { weight: 2, layer: 'outcome', constraint: 'none' })], 3)[0];
   assert.equal(unrelatedPositive.confidence, consistent.confidence);
-  assert.ok(contradicted.confidence < consistent.confidence);
-  assert.equal(contradicted.evidence.contradictingParticipants, 1);
+  assert.equal(contradicted, undefined, 'contradição forte deve suprimir prescrição abaixo de 50%');
 });
 
 test('triangulação específica por camada e perfil aumenta confiança', () => {

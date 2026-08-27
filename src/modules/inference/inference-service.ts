@@ -265,12 +265,55 @@ export class InferenceService {
       };
     });
     const scope = this.scope(projectId, unitId);
-    const observed = this.db.prepare(`SELECT DISTINCT s.pattern FROM responses r JOIN participations p ON p.id = r.participation_id JOIN assessment_signals s ON s.graph_version = p.graph_version AND s.node_key = r.node_id AND s.option_key = r.option_id WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}`)
-      .all(...scope.parameters) as unknown as Array<{ pattern: string }>;
-    return new BayesianInferenceEngine().infer(DiagnosticModel.create({ version, families }), observed.map((item) => item.pattern)).map((posterior) => ({
+    const applicability = this.db.prepare(`
+      SELECT possible.pattern, COUNT(DISTINCT p.id) applicable
+      FROM responses r JOIN participations p ON p.id = r.participation_id
+      JOIN assessment_signals possible ON possible.graph_version = p.graph_version AND possible.node_key = r.node_id
+      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
+      GROUP BY possible.pattern
+    `).all(...scope.parameters) as unknown as Array<{ pattern: string; applicable: number }>;
+    const applicableByPattern = new Map(applicability.map((item) => [item.pattern, Number(item.applicable)]));
+    const observed = this.db.prepare(`
+      SELECT s.pattern, COUNT(DISTINCT p.id) support,
+        GROUP_CONCAT(DISTINCT p.profile) profiles, GROUP_CONCAT(DISTINCT s.evidence_layer) layers
+      FROM responses r JOIN participations p ON p.id = r.participation_id
+      JOIN assessment_signals s ON s.graph_version = p.graph_version AND s.node_key = r.node_id AND s.option_key = r.option_id
+      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
+      GROUP BY s.pattern
+    `).all(...scope.parameters) as unknown as Array<{ pattern: string; support: number; profiles: string; layers: string }>;
+    const posteriors = new BayesianInferenceEngine().infer(DiagnosticModel.create({ version, families }), observed.map((item) => ({
+      pattern: item.pattern, support: Number(item.support), applicablePopulation: applicableByPattern.get(item.pattern) ?? Number(item.support),
+      profiles: item.profiles.split(','), layers: item.layers.split(','),
+    })));
+    const discriminators = this.eligibleDiscriminators(version, projectId, unitId);
+    return posteriors.map((posterior) => ({
       ...posterior,
       hypotheses: posterior.hypotheses.map((hypothesis) => ({ ...hypothesis, label: hypothesis.id === 'unknown' ? hypothesis.label : interventionCatalog[hypothesis.id]?.title ?? evolutionCatalog[hypothesis.id]?.title ?? hypothesis.label })),
+      ...this.nextDiscriminator(posterior, discriminators),
     }));
+  }
+
+  private nextDiscriminator(posterior: DiagnosticPosterior, discriminators: Array<{ key: string; label: string; patterns: string[] }>): Pick<DiagnosticPosterior, 'nextQuestionKey' | 'nextQuestionLabel'> {
+    const observedPattern = posterior.evidenceUsed[0];
+    if (!observedPattern || posterior.hypotheses[0]?.id !== 'unknown') return {};
+    const row = discriminators.find((candidate) => candidate.patterns.includes(observedPattern));
+    return row ? { nextQuestionKey: row.key, nextQuestionLabel: row.label } : {};
+  }
+
+  private eligibleDiscriminators(modelVersion: string, projectId: string, unitId?: string): Array<{ key: string; label: string; patterns: string[] }> {
+    const scope = this.scope(projectId, unitId);
+    const rows = this.db.prepare(`
+      SELECT q.node_key, n.title, q.applicability_patterns_json
+      FROM question_observations q JOIN inference_model_versions m ON m.version = q.model_version
+      JOIN assessment_nodes n ON n.graph_version = m.graph_version AND n.node_key = q.node_key
+      JOIN participations p ON p.project_id = ? AND p.status = 'completed'
+      LEFT JOIN responses r ON r.participation_id = p.id AND r.node_id = q.node_key
+      WHERE q.model_version = ? ${scope.sql}
+      GROUP BY q.node_key, n.title, q.applicability_patterns_json
+      HAVING COUNT(DISTINCT r.participation_id) < COUNT(DISTINCT p.id)
+      ORDER BY q.cost, q.node_key
+    `).all(projectId, modelVersion, ...scope.parameters.slice(1)) as unknown as Array<{ node_key: string; title: string; applicability_patterns_json: string }>;
+    return rows.map((row) => ({ key: row.node_key, label: row.title, patterns: JSON.parse(row.applicability_patterns_json) as string[] }));
   }
 
   private diagnosticAreas(findings: Finding[]): DiagnosticArea[] {

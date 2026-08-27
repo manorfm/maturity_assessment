@@ -5,10 +5,10 @@ export default defineConfig({
   timeout: 120_000,
   workers: 1,
   reporter: 'line',
-  use: { baseURL: 'http://127.0.0.1:3217', headless: true },
+  use: { baseURL: 'http://127.0.0.1:3218', headless: true },
   webServer: {
-    command: 'npm run demo:serve',
-    url: 'http://127.0.0.1:3217/health',
+    command: 'npm run demo:test-server',
+    url: 'http://127.0.0.1:3218/health',
     reuseExistingServer: false,
     timeout: 120_000,
   },

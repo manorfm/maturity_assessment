@@ -149,3 +149,9 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 - Implementadas métricas offline de Brier, calibração, precisão e recall para uso
   exclusivo com futuros rótulos externos; a interface explicita ausência de
   calibração empírica.
+- Corrigido o ciclo do showcase para recriar o SQLite somente antes do E2E e
+  preservar os projetos quando o servidor de inspeção assume a porta.
+- Entregue a versão 0.15 com causas simultâneas independentes, posterior sensível à
+  prevalência e observabilidade, ausência neutra e lacunas agrupadas por capacidade.
+- Removidas sugestões genéricas de aprofundamento quando não existe probe elegível
+  e diferenciada a confiança da maturidade do posterior causal.

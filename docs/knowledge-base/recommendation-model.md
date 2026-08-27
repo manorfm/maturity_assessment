@@ -2,9 +2,11 @@
 
 ## Semântica vigente
 
-O diagnóstico compara hipóteses causais concorrentes dentro de cada capacidade.
-Cada família inclui `unknown`, priors especialistas provisórios e probabilidades
-condicionais versionadas. O resultado exibido é um **posterior provisório**: ele
+O diagnóstico avalia cada causa que pode coexistir em uma família binária própria:
+`causa sustentada` contra `evidência insuficiente`. Sintomas, restrições e
+consequências alimentam evidência ou aplicabilidade, mas não competem como causas.
+Cada família inclui priors especialistas provisórios e probabilidades condicionais
+versionadas. O resultado exibido é um **posterior provisório**: ele
 representa a crença do modelo diante das evidências declaradas, mas ainda não é uma
 probabilidade empiricamente calibrada.
 
@@ -14,7 +16,10 @@ causas e experimentos diferentes.
 
 ## Atualização e explicação
 
-O cálculo usa log-espaço e normalização por softmax. Evidências que pertencem ao
+O cálculo usa log-espaço e normalização por softmax. A força considera suporte sobre
+população aplicável, variedade de perspectivas e camadas. Uma ocorrência isolada
+não equivale a recorrência coletiva, e ausência de resposta não vira evidência
+negativa. Evidências que pertencem ao
 mesmo grupo causal são consumidas uma única vez, evitando premiar perguntas
 redundantes. Contradições alteram apenas as hipóteses às quais foram ligadas.
 
@@ -22,9 +27,12 @@ O relatório preserva:
 
 `comportamento -> evidência independente -> hipótese/alternativas -> restrição -> experimento`
 
-Para cada hipótese são apresentados posterior, incerteza em bits, grupos de
-evidência utilizados e alternativas principais. A versão exata do modelo acompanha
-o relatório. Snapshots individuais da entrevista nunca são publicados.
+O prior de evidência insuficiente varia com a observabilidade, sem uma reserva fixa
+que cresça artificialmente com a quantidade de causas. O relatório agrupa causas
+por capacidade e apresenta posterior, suporte/população, perspectivas, camadas e
+incerteza. “Próximo discriminador” só aparece quando há pergunta contextual ainda
+elegível; caso contrário, declara uma lacuna do instrumento. Snapshots individuais
+nunca são publicados.
 
 ## Recomendações
 
@@ -45,7 +53,7 @@ O tronco comum garante cobertura básica. Ao fim dele, perguntas elegíveis são
 ordenadas por redução esperada de entropia, cobertura ausente, necessidade de
 validação e custo. Somente probes observáveis pela perspectiva, ainda não
 respondidos e relacionados à família incerta podem ser selecionados. O orçamento é
-de cinco perguntas adicionais e o limiar mínimo é 0,05 bit.
+de cinco perguntas adicionais e o limiar especialista vigente é 0,01 bit.
 
 ## Calibração e aprendizado
 

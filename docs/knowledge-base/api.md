@@ -18,6 +18,10 @@ Cada finding também expõe `cause`, `priority`, `recommendationEvidence` e
 perspectivas; nunca IDs. `confidence` é o posterior provisório na aderência da
 intervenção e não deve ser interpretada como maturidade ou apoio popular.
 
+Cada hipótese causal expõe `observability`, população agregada (`support`,
+`applicable`, quantidade de perspectivas e camadas) e `nextQuestion`. Este último é
+`null` quando não existe discriminador contextual elegível.
+
 ## Autorização
 
 Ao criar um projeto, a API retorna `adminToken` uma única vez. As demais operações
