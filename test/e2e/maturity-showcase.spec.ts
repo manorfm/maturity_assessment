@@ -32,9 +32,10 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
       await expect(page.getByText(/variedade temática suficiente/)).toBeVisible();
       await page.getByRole('link', { name: 'Operação, confiabilidade e plataforma' }).click();
       await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
-      await expect(page.getByRole('heading', { name: 'Problemas e soluções priorizadas' })).toBeVisible();
-      await expect(page.getByText(/Por que esta prioridade/).first()).toBeVisible();
-      await expect(page.getByText(/solução sugerida · \d+% aderência/).first()).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Problemas e experimentos priorizados' })).toBeVisible();
+      await expect(page.getByText(/Como a confiança foi formada/).first()).toBeVisible();
+      await expect(page.getByText(/correção sugerida · \d+% de confiança heurística/).first()).toBeVisible();
+      await expect(page.getByText('Menor experimento útil').first()).toBeVisible();
     }
     await page.goto(paths[scenario]);
     if (scenario === 'elite') {

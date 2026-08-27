@@ -1,7 +1,6 @@
 import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { edges, graph, GRAPH_VERSION, nodeVariants, type AssessmentEdge, type AssessmentNode, type Option } from './assessment-graph.js';
-import { inferEvidenceLayer, resolveSignalDetails } from './signal-projection.js';
 import { capabilityLeafIds } from '../inference/domain/capability-taxonomy.js';
 
 type NodeRow = { node_key: string; node_type: 'context' | 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
@@ -25,7 +24,7 @@ export class CatalogService {
             .run(GRAPH_VERSION, node.id, option.id, option.label, optionPosition);
           for (const signal of option.signals) {
             this.db.prepare('INSERT INTO assessment_signals (id, graph_version, node_key, option_key, capability, pattern, weight, detail_capabilities, evidence_layer, constraint_kind) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-              .run(id(), GRAPH_VERSION, node.id, option.id, signal.capability, signal.pattern, signal.weight, JSON.stringify(resolveSignalDetails(signal)), inferEvidenceLayer(signal), signal.constraint ?? 'none');
+              .run(id(), GRAPH_VERSION, node.id, option.id, signal.capability, signal.pattern, signal.weight, JSON.stringify(signal.details), signal.layer, signal.constraint);
           }
         });
       });
@@ -55,11 +54,13 @@ export class CatalogService {
     const options = new Map<string, Option>();
     for (const option of optionRows) {
       const current = options.get(option.option_key) ?? { id: option.option_key, label: option.label, signals: [] };
-      if (option.pattern && option.capability && option.weight !== null) {
-        const storedSignal: Option['signals'][number] = { capability: option.capability, pattern: option.pattern, weight: Number(option.weight) };
-        if (option.detail_capabilities) storedSignal.details = JSON.parse(option.detail_capabilities) as string[];
-        if (option.evidence_layer) storedSignal.layer = option.evidence_layer as NonNullable<Option['signals'][number]['layer']>;
-        if (option.constraint_kind) storedSignal.constraint = option.constraint_kind as NonNullable<Option['signals'][number]['constraint']>;
+      if (option.pattern && option.capability && option.weight !== null && option.detail_capabilities && option.evidence_layer && option.constraint_kind) {
+        const storedSignal: Option['signals'][number] = {
+          capability: option.capability, pattern: option.pattern, weight: Number(option.weight),
+          details: JSON.parse(option.detail_capabilities) as string[],
+          layer: option.evidence_layer as Option['signals'][number]['layer'],
+          constraint: option.constraint_kind as Option['signals'][number]['constraint'],
+        };
         current.signals.push(storedSignal);
       }
       options.set(option.option_key, current);
@@ -121,7 +122,8 @@ export function validateGraphDefinition(nodes: AssessmentNode[], graphEdges: Ass
   }
   const patternsByLeaf = new Map(capabilityLeafIds.map((leafId) => [leafId, new Set<string>()]));
   for (const node of nodes) for (const option of node.options) for (const signal of option.signals) {
-    for (const detail of resolveSignalDetails(signal)) patternsByLeaf.get(detail)?.add(signal.pattern);
+    if (!signal.details.length) throw new Error(`Signal has no capability details: ${node.id}/${option.id}/${signal.pattern}`);
+    for (const detail of signal.details) patternsByLeaf.get(detail)?.add(signal.pattern);
   }
   const insufficient = [...patternsByLeaf].filter(([, patterns]) => patterns.size < 2).map(([leafId, patterns]) => `${leafId} (${patterns.size})`);
   if (insufficient.length) throw new Error(`Graph lacks independent evidence for capability leaves: ${insufficient.join(', ')}`);

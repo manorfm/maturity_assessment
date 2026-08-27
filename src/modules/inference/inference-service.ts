@@ -3,9 +3,15 @@ import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
-import { GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal } from './domain/group-recommendation-engine.js';
+import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed } from './domain/group-recommendation-engine.js';
 
-export type Finding = { kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string; title: string; evidence: number; intervention: string; confidence: number; constraint: ConstraintKind; reasons: string[] };
+export type Finding = {
+  kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
+  title: string; cause: string; evidence: number; intervention: string; confidence: number; priority: number;
+  constraint: ConstraintKind; reasons: string[];
+  recommendationEvidence: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
+  experiment: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
+};
 type DiagnosticProblem = {
   kind: 'correction' | 'evolution';
   pattern: string;
@@ -23,7 +29,7 @@ type PerspectiveGap = {
   constrainedProfiles: string[];
 };
 
-export const interventionCatalog: Record<string, { title: string; intervention: string }> = {
+const interventionSeeds: Record<string, InterventionSeed> = {
   'sobrecarga-silenciosa': { title: 'Mudanças entram sem ajuste explícito de capacidade', intervention: 'Experimente tornar a troca de prioridade visível: para cada urgência, registre conjuntamente o que sai, o risco aceito e quando revisar o efeito.' },
   'coordenacao-centralizada': { title: 'O fluxo depende de coordenação central', intervention: 'Mapeie as decisões repetidamente escaladas e delegue uma delas com limites, informação e caminho de exceção claros.' },
   'decisao-opaca': { title: 'Decisões variam e o impacto aparece tarde', intervention: 'Reconstrua uma decisão recente com participantes e tempos de espera; defina um critério pequeno e observável para a próxima.' },
@@ -162,6 +168,7 @@ export const interventionCatalog: Record<string, { title: string; intervention: 
   'aprendizado-tecnico-sem-caminho-repetivel': { title: 'Aprendizado técnico não vira capacidade repetível', intervention: 'Aplique o aprendizado a uma mudança real e registre exemplos, guardrails e feedback que outra pessoa consiga reutilizar.' },
   'recuperacao-cloud-depende-de-runbook': { title: 'Recuperação cloud depende de execução contextual', intervention: 'Automatize e exercite o passo mais sensível da recuperação, verificando objetivo, dependências e retorno seguro.' },
   'recuperacao-cloud-por-console': { title: 'Recuperação cloud depende de alteração manual', intervention: 'Modele uma recuperação declarativa, auditável e reversível; mantenha acesso emergencial com reconciliação obrigatória.' },
+  'resiliencia-cloud-validada-periodicamente': { title: 'A resiliência é validada apenas em ciclos espaçados', intervention: 'Escolha o modo de falha de maior impacto e execute um ensaio menor no fluxo regular; registre responsável, tempo de recuperação, lacunas e a data da próxima validação.' },
   'incidente-e-unica-evidencia-de-resiliencia': { title: 'Incidentes são a única validação de resiliência', intervention: 'Execute um experimento controlado sobre a falha mais relevante e transforme o resultado em melhoria verificável.' },
   'eficiencia-cloud-por-meta-de-custo': { title: 'Eficiência cloud é uma meta isolada de custo', intervention: 'Conecte custo e capacidade a jornada, resultado e risco para evitar otimização local que transfira impacto.' },
   'eficiencia-cloud-reativa-a-fatura': { title: 'Eficiência cloud reage à fatura', intervention: 'Dê visibilidade contínua a ownership, unidade econômica e tendência antes de o desvio virar uma campanha urgente.' },
@@ -169,7 +176,22 @@ export const interventionCatalog: Record<string, { title: string; intervention: 
   'eficiencia-cloud-sem-decisao-compartilhada': { title: 'Trade-offs de eficiência permanecem locais', intervention: 'Crie critérios compartilhados entre produto, engenharia e plataforma para decidir custo, desempenho, risco e sustentabilidade.' },
 };
 
-export const evolutionCatalog: Record<string, { title: string; intervention: string }> = {
+export const interventionCatalog = defineInterventionCatalog(interventionSeeds, {
+  'causa-ferramental-feedback': { evidencePatterns: ['causa-ferramental-feedback', 'automacao-sem-feedback'], contradictionPatterns: ['integracao-continua-validada', 'fluxo-seguro-sob-pressao'] },
+  'causa-processo-lote': { evidencePatterns: ['causa-processo-lote', 'controle-indiferenciado'], contradictionPatterns: ['governanca-proporcional'] },
+  'causa-fronteira-times': { evidencePatterns: ['causa-fronteira-times', 'coordenacao-entre-times'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
+  'causa-acoplamento-entrega': { evidencePatterns: ['causa-acoplamento-entrega', 'acoplamento-coordenado'], contradictionPatterns: ['compatibilidade-verificada'] },
+  'causa-lacuna-telemetria': { evidencePatterns: ['causa-lacuna-telemetria', 'telemetria-fragmentada'], contradictionPatterns: ['diagnostico-correlacionado'] },
+  'causa-ferramenta-observabilidade': { evidencePatterns: ['causa-ferramenta-observabilidade', 'diagnostico-por-acesso-direto'], contradictionPatterns: ['diagnostico-correlacionado'] },
+  'causa-correlacao-arquitetural': { evidencePatterns: ['causa-correlacao-arquitetural', 'telemetria-fragmentada'], contradictionPatterns: ['diagnostico-correlacionado'] },
+  'causa-privacidade-operacional': { evidencePatterns: ['causa-privacidade-operacional', 'diagnostico-por-dado-pessoal'], contradictionPatterns: ['diagnostico-correlacionado'] },
+  'causa-permissao-bloqueante': { evidencePatterns: ['causa-permissao-bloqueante', 'acesso-artesanal'], contradictionPatterns: ['governanca-proporcional'] },
+  'causa-dependencia-externa': { evidencePatterns: ['causa-dependencia-externa', 'espera-por-dependencia'], contradictionPatterns: ['bloqueio-resolvido-em-conjunto'] },
+  'causa-acoplamento-bloqueio': { evidencePatterns: ['causa-acoplamento-bloqueio', 'dependencia-coordenada'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
+  'causa-limites-organizacionais': { evidencePatterns: ['causa-limites-organizacionais', 'ownership-fragmentado'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
+});
+
+const evolutionSeeds: Record<string, InterventionSeed> = {
   'automacao-local-consistente': { title: 'Automação ainda é uma capacidade local', intervention: 'Transforme a automação validada em caminho suportado, observável e adotável por outros times, medindo tempo e falhas antes e depois.' },
   'integracao-frequente-fragil': { title: 'Integração frequente ainda depende de condições favoráveis', intervention: 'Remova a principal causa que interrompe a integração sob pressão e valide o fluxo com uma mudança urgente e reversível.' },
   'controles-de-release-acumulados': { title: 'Controles de exposição ainda acumulam estado operacional', intervention: 'Defina validade, responsável, telemetria e remoção automática para cada controle antes de ampliar o uso.' },
@@ -180,6 +202,8 @@ export const evolutionCatalog: Record<string, { title: string; intervention: str
   'compatibilidade-verificada': { title: 'Compatibilidade é verificada, mas a evolução ainda pode depender de coordenação', intervention: 'Automatize contratos e políticas de evolução, incluindo remoção segura de versões e feedback antecipado aos consumidores.' },
   'seguranca-concentrada-em-scanners': { title: 'Segurança ainda está concentrada na detecção automatizada', intervention: 'Acrescente modelagem proporcional de ameaça, ownership e validação de desenho para riscos que scanners não conseguem interpretar.' },
 };
+
+export const evolutionCatalog = defineInterventionCatalog(evolutionSeeds);
 
 export class InferenceService {
   constructor(private readonly db: Database) {}
@@ -293,32 +317,41 @@ export class InferenceService {
   private findings(projectId: string, population: number, unitId?: string): Finding[] {
     const scope = this.scope(projectId, unitId);
     const rows = this.db.prepare(`
-      SELECT p.id participant_id, s.capability, s.pattern, s.weight, s.detail_capabilities,
+      SELECT p.id participant_id, p.profile, s.capability, s.pattern, s.weight, s.detail_capabilities,
         s.evidence_layer, s.constraint_kind
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-    `).all(...scope.parameters) as unknown as Array<{ participant_id: string; capability: string; pattern: string; weight: number; detail_capabilities: string; evidence_layer: EvidenceLayer; constraint_kind: ConstraintKind }>;
+    `).all(...scope.parameters) as unknown as Array<{ participant_id: string; profile: string; capability: string; pattern: string; weight: number; detail_capabilities: string; evidence_layer: EvidenceLayer; constraint_kind: ConstraintKind }>;
     const signals: GroupSignal[] = rows.flatMap((row) => (JSON.parse(row.detail_capabilities) as string[]).map((detailCapability) => ({
       participantId: row.participant_id,
+      profile: row.profile,
       detailCapability,
       pattern: row.pattern,
       weight: Number(row.weight),
       layer: row.evidence_layer,
       constraint: row.constraint_kind,
     })));
-    return new GroupRecommendationEngine(interventionCatalog, evolutionCatalog).rank(signals, population).map((ranked) => ({
+    const applicableByCapability = Object.fromEntries([...new Set(signals.map((signal) => signal.detailCapability))].map((capability) => [
+      capability,
+      new Set(signals.filter((signal) => signal.detailCapability === capability).map((signal) => signal.participantId)).size,
+    ]));
+    return new GroupRecommendationEngine(interventionCatalog, evolutionCatalog).rank(signals, { total: population, applicableByCapability }).map((ranked) => ({
       kind: ranked.kind,
       capability: ranked.detailCapability,
       detailCapability: ranked.detailCapability,
       pattern: ranked.pattern,
       title: ranked.title,
+      cause: ranked.cause,
       evidence: Math.round(ranked.support * population),
       intervention: ranked.intervention,
       confidence: ranked.confidence,
+      priority: ranked.priority,
       constraint: ranked.constraint,
       reasons: ranked.reasons,
+      recommendationEvidence: ranked.evidence,
+      experiment: ranked.experiment,
     }));
   }
 

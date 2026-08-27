@@ -1,88 +1,96 @@
 export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
 export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
+export type GroupSignal = { participantId: string; profile?: string; detailCapability: string; pattern: string; weight: number; layer: EvidenceLayer; constraint: ConstraintKind };
+export type InterventionSeed = { title: string; intervention: string };
+export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[] };
+export type RecommendationPopulation = { total: number; applicableByCapability: Record<string, number> };
+export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
+export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; reasons: string[]; evidence: RecommendationEvidence; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
+export type InterventionEvidenceRule = { evidencePatterns?: string[]; contradictionPatterns?: string[]; owner?: string; metric?: string; reviewHorizon?: string; successCriterion?: string };
 
-export type GroupSignal = {
-  participantId: string;
-  detailCapability: string;
-  pattern: string;
-  weight: number;
-  layer: EvidenceLayer;
-  constraint: ConstraintKind;
-};
-
-export type InterventionDefinition = { title: string; intervention: string };
-export type RankedIntervention = InterventionDefinition & {
-  kind: 'correction' | 'evolution';
-  detailCapability: string;
-  pattern: string;
-  constraint: ConstraintKind;
-  support: number;
-  confidence: number;
-  reasons: string[];
-};
+export function defineInterventionCatalog(seeds: Record<string, InterventionSeed>, rules: Record<string, InterventionEvidenceRule> = {}): Record<string, InterventionDefinition> {
+  return Object.fromEntries(Object.entries(seeds).map(([pattern, seed]) => {
+    const rule = rules[pattern] ?? {};
+    return [pattern, {
+      ...seed, cause: seed.title, action: seed.intervention, ...experimentDefaults('none', pattern), ...rule,
+      evidencePatterns: rule.evidencePatterns ?? [pattern], contradictionPatterns: rule.contradictionPatterns ?? [],
+    }];
+  }));
+}
 
 export class GroupRecommendationEngine {
-  constructor(
-    private readonly correctionCatalog: Record<string, InterventionDefinition>,
-    private readonly evolutionCatalog: Record<string, InterventionDefinition> = {},
-  ) {}
+  constructor(private readonly correctionCatalog: Record<string, InterventionDefinition>, private readonly evolutionCatalog: Record<string, InterventionDefinition> = {}) {}
 
-  rank(signals: GroupSignal[], population: number): RankedIntervention[] {
-    const byCapability = groupBy(signals, (signal) => signal.detailCapability);
-    return [...byCapability.values()].flatMap((capabilitySignals) => this.rankCapability(capabilitySignals, population));
+  rank(signals: GroupSignal[], population: number | RecommendationPopulation): RankedIntervention[] {
+    const model = typeof population === 'number' ? { total: population, applicableByCapability: {} } : population;
+    return [...groupBy(signals, (signal) => signal.detailCapability).values()].flatMap((items) => this.rankCapability(items, model));
   }
 
-  private rankCapability(signals: GroupSignal[], population: number): RankedIntervention[] {
-    const minimumSupport = Math.max(2, Math.ceil(population * .2));
-    const byParticipant = groupBy(signals, (signal) => signal.participantId);
-    const candidatesSignals = signals.filter((signal) => signal.weight < 0
-      ? this.correctionCatalog[signal.pattern]
-      : signal.weight < 2 && this.evolutionCatalog[signal.pattern]);
-    const negative = candidatesSignals.filter((signal) => signal.weight < 0);
-    const dominantConstraint: ConstraintKind = mode(negative.map((signal) => signal.constraint).filter((constraint) => constraint !== 'none')) ?? 'none';
-    const layerBreadth = new Set(signals.map((signal) => signal.layer)).size / 5;
-    const candidates = groupBy(candidatesSignals, (signal) => signal.pattern);
-
-    return [...candidates].flatMap(([pattern, patternSignals]) => {
-      const participants = new Set(patternSignals.map((signal) => signal.participantId));
-      if (participants.size < minimumSupport) return [];
-      const kind: RankedIntervention['kind'] = patternSignals[0]!.weight < 0 ? 'correction' : 'evolution';
-      const definition = kind === 'correction' ? this.correctionCatalog[pattern] : this.evolutionCatalog[pattern];
-      const cooccurrence = [...participants].filter((participantId) => new Set((byParticipant.get(participantId) ?? []).filter((signal) => signal.weight < 0).map((signal) => signal.pattern)).size > 1).length / participants.size;
-      const contradiction = kind === 'correction'
-        ? [...participants].filter((participantId) => (byParticipant.get(participantId) ?? []).some((signal) => signal.weight > 0)).length / participants.size
-        : 0;
-      const constraint: ConstraintKind = mode(patternSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
-      const constraintAlignment = dominantConstraint === 'none' || constraint === dominantConstraint ? 1 : 0;
-      const support = participants.size / Math.max(1, population);
-      const confidence = clamp(.4 * support + .25 * cooccurrence + .2 * constraintAlignment + .15 * layerBreadth - .2 * contradiction);
+  private rankCapability(signals: GroupSignal[], population: RecommendationPopulation): RankedIntervention[] {
+    const capability = signals[0]?.detailCapability;
+    if (!capability) return [];
+    const applicablePopulation = population.applicableByCapability[capability] ?? population.total;
+    if (applicablePopulation < 3) return [];
+    const minimumSupport = Math.max(2, Math.ceil(applicablePopulation * .2));
+    const candidates = unique(signals.flatMap((signal) => {
+      const catalog = signal.weight < 0 ? this.correctionCatalog : signal.weight < 2 ? this.evolutionCatalog : {};
+      return catalog[signal.pattern] ? [signal.pattern] : [];
+    }));
+    return candidates.flatMap((pattern) => {
+      const sourceSignals = signals.filter((signal) => signal.pattern === pattern);
+      const kind: RankedIntervention['kind'] = sourceSignals[0]!.weight < 0 ? 'correction' : 'evolution';
+      const definition = (kind === 'correction' ? this.correctionCatalog : this.evolutionCatalog)[pattern]!;
+      const relevant = signals.filter((signal) => definition.evidencePatterns.includes(signal.pattern));
+      const supporters = new Set(relevant.map((signal) => signal.participantId));
+      if (supporters.size < minimumSupport) return [];
+      const contradictions = signals.filter((signal) => definition.contradictionPatterns.includes(signal.pattern));
+      const contradictors = new Set(contradictions.map((signal) => signal.participantId));
+      const layers = unique(relevant.map((signal) => signal.layer));
+      const profiles = unique(relevant.flatMap((signal) => signal.profile ? [signal.profile] : []));
+      const patterns = unique(relevant.map((signal) => signal.pattern));
+      const support = supporters.size / Math.max(1, applicablePopulation);
+      const causal = definition.evidencePatterns.length <= 1 ? 0 : (patterns.length - 1) / (definition.evidencePatterns.length - 1);
+      const layerBreadth = Math.min(1, (layers.length - 1) / 2);
+      const profileBreadth = Math.min(1, (profiles.length - 1) / 2);
+      const outcome = layers.includes('outcome') ? 1 : 0;
+      const contradiction = contradictors.size / Math.max(1, supporters.size);
+      const confidence = roundConfidence(.45 * Math.min(1, support) + .2 * causal + .15 * layerBreadth + .1 * profileBreadth + .1 * outcome - .3 * contradiction);
+      const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
+      const contextualDefaults = experimentDefaults(constraint, pattern);
+      const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
       const reasons = [
-        `Padrão observado em ${participants.size} de ${population} participações elegíveis.`,
-        ...(cooccurrence > 0 ? [`Coocorrência com outros sinais em ${Math.round(cooccurrence * 100)}% das jornadas afetadas.`] : []),
-        ...(contradiction > 0 ? [`Sinais positivos contradizem o padrão em ${Math.round(contradiction * 100)}% das jornadas afetadas.`] : []),
-        `Evidências distribuídas por ${new Set(signals.map((signal) => signal.layer)).size} camada(s).`,
-        ...(constraint !== 'none' ? [`Restrição dominante: ${constraint}.`] : []),
+        `Padrão sustentado por ${supporters.size} de ${applicablePopulation} jornadas aplicáveis.`,
+        `${patterns.length} evidência(s) relacionada(s), em ${layers.length} camada(s) e ${profiles.length || 1} perspectiva(s).`,
+        ...(contradictors.size ? [`Contradição específica em ${contradictors.size} jornada(s).`] : []),
+        ...(constraint !== 'none' ? [`Restrição observada: ${constraint}.`] : []),
       ];
-      return [{ kind, detailCapability: patternSignals[0]!.detailCapability, pattern, constraint, support, confidence, reasons, ...definition! }];
-    }).sort((left, right) => right.confidence - left.confidence || right.support - left.support || left.pattern.localeCompare(right.pattern)).slice(0, 3);
+      return [{ ...definition, kind, detailCapability: capability, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(sourceSignals, support), reasons, evidence, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualDefaults.owner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
+    }).sort((left, right) => right.priority - left.priority || right.confidence - left.confidence || right.support - left.support).slice(0, 3);
   }
 }
 
-function mode<T extends string>(values: T[]): T | undefined {
-  const counts = new Map<T, number>();
-  for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
-  return [...counts].sort((left, right) => right[1] - left[1])[0]?.[0];
+function experimentDefaults(constraint: ConstraintKind, pattern = ''): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
+  const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', knowledge: 'Liderança técnica com a disciplina habilitadora', process: 'Responsável pelo fluxo com as pessoas que executam o processo', tooling: 'Engenharia com plataforma', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado' };
+  return { owner: owners[constraint], metric: metricFor(pattern), reviewHorizon: 'duas iterações ou 30 dias', successCriterion: successFor(pattern) };
 }
-
-function groupBy<T, K>(values: T[], keyOf: (value: T) => K): Map<K, T[]> {
-  const grouped = new Map<K, T[]>();
-  for (const value of values) {
-    const key = keyOf(value);
-    grouped.set(key, [...(grouped.get(key) ?? []), value]);
-  }
-  return grouped;
+function metricFor(pattern: string): string {
+  if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) return 'tempo até detectar, formar hipótese e mitigar; recorrência da mesma classe de falha';
+  if (/integracao|release|deploy|entrega|empacotamento/.test(pattern)) return 'lead time, espera até feedback e taxa de falha ou retrabalho da mudança';
+  if (/qualidade|teste|regressao|seguranca|vulnerab/.test(pattern)) return 'tempo de feedback, escapes por risco e retrabalho após a verificação';
+  if (/produto|discovery|resultado|portfolio|prioridade/.test(pattern)) return 'tempo até evidência, decisões alteradas e trabalho interrompido por hipótese invalidada';
+  if (/governanca|controle|permissao|acesso|aprovacao/.test(pattern)) return 'tempo de espera, exceções e proporção de decisões realmente alteradas pelo controle';
+  if (/cloud|infraestrutura|plataforma|provisionamento/.test(pattern)) return 'tempo de provisão ou recuperação, falhas manuais e adoção do caminho suportado';
+  return 'tempo de espera, recorrência e efeito observado na capacidade afetada';
 }
-
-function clamp(value: number): number {
-  return Number(Math.max(0, Math.min(1, value)).toFixed(2));
+function successFor(pattern: string): string {
+  if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) return 'o próximo evento é detectado e mitigado mais cedo sem ampliar acesso ou exposição de dados';
+  if (/integracao|release|deploy|entrega/.test(pattern)) return 'a próxima mudança atravessa o fluxo em lote menor, com feedback mais cedo e sem aumento de falhas';
+  if (/governanca|controle|permissao|aprovacao/.test(pattern)) return 'casos de baixo risco fluem mais rápido e decisões de alto risco preservam evidência e auditoria';
+  return 'a métrica escolhida melhora no período sem deslocar risco ou espera para outra etapa';
 }
+function priorityOf(signals: GroupSignal[], support: number): number { const severity = Math.min(1, Math.abs(Math.min(...signals.map((signal) => signal.weight))) / 3); return Number((.65 * severity + .35 * Math.min(1, support)).toFixed(2)); }
+function mode<T extends string>(values: T[]): T | undefined { const counts = new Map<T, number>(); for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1); return [...counts].sort((left, right) => right[1] - left[1])[0]?.[0]; }
+function groupBy<T, K>(values: T[], keyOf: (value: T) => K): Map<K, T[]> { const grouped = new Map<K, T[]>(); for (const value of values) { const key = keyOf(value); grouped.set(key, [...(grouped.get(key) ?? []), value]); } return grouped; }
+function unique<T>(values: T[]): T[] { return [...new Set(values)]; }
+function roundConfidence(value: number): number { return Math.round(clamp(value) * 20) / 20; }
+function clamp(value: number): number { return Math.max(0, Math.min(1, value)); }

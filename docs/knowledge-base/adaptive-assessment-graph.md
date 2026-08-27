@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão vigente `profile-routed-taxonomy-v10` começa por uma escolha neutra de
+A versão vigente `evidence-anamnesis-v11` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia
 e plataforma/operações possuem aprofundamentos dedicados. Variantes de texto ficam
@@ -116,12 +116,16 @@ reduz confiança; não vira automaticamente um sinal negativo.
 
 ## Recomendações
 
-O recomendador vigente é um sistema especialista baseado em grafo de evidências e
-não usa LLM. Ele seleciona candidatos pelo padrão diagnosticado e os ordena dentro
-de cada capacidade considerando suporte no grupo, coocorrência de problemas na mesma
-jornada, variedade de camadas, restrição dominante e contradições positivas. A nota
-0–4 não participa do ranking. Cada sugestão expõe aderência e os fatores utilizados;
-identificadores internos de participação nunca aparecem no resultado.
+O recomendador vigente é um sistema especialista explicável e não usa LLM. Cada
+candidato declara seus padrões de sustentação e contradição; sinais apenas
+coexistentes não são tratados como causa. A confiança considera a população que
+observou a capacidade, triangulação específica por camada e perspectiva,
+consequência e contradição pareada. Prioridade permanece separada da confiança. A
+nota 0–4 não participa do ranking e identificadores internos nunca aparecem.
+
+Enquanto não houver piloto, o percentual é denominado confiança heurística e
+arredondado em intervalos de cinco pontos. Sua decomposição acompanha o experimento,
+que explicita ação, responsável provável, métrica, revisão e critério de sucesso.
 
 Não existe mapeamento “resposta X = compre ferramenta Y”. Duas populações com a
 mesma nota podem receber intervenções diferentes porque as combinações de causas,

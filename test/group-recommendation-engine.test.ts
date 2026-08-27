@@ -1,58 +1,81 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { GroupRecommendationEngine, type GroupSignal } from '../src/modules/inference/domain/group-recommendation-engine.js';
+import { GroupRecommendationEngine, type GroupSignal, type InterventionDefinition } from '../src/modules/inference/domain/group-recommendation-engine.js';
 
-const catalog = {
-  'tooling-gap': { title: 'Feedback técnico insuficiente', intervention: 'Reduza duração e instabilidade do feedback.' },
-  'process-gap': { title: 'Política amplia o lote', intervention: 'Crie um caminho proporcional ao risco.' },
+const tooling: InterventionDefinition = {
+  title: 'Feedback técnico insuficiente', intervention: 'Reduza duração e instabilidade do feedback.',
+  cause: 'O retorno automatizado não sustenta decisões frequentes.',
+  action: 'Meça o fluxo e estabilize a verificação que mais interrompe integrações.',
+  owner: 'Liderança técnica com engenharia e plataforma',
+  metric: 'p95 do tempo até feedback e taxa de execuções instáveis', reviewHorizon: 'duas semanas',
+  successCriterion: 'redução mensurável da espera sem aumento de escapes',
+  evidencePatterns: ['tooling-gap', 'slow-feedback'], contradictionPatterns: ['fast-reliable-feedback'],
 };
-const evolutionCatalog = {
-  'controlled-exception': { title: 'Exceção ainda depende de reconciliação', intervention: 'Transforme o caminho emergencial em capacidade segura e repetível.' },
+const catalog: Record<string, InterventionDefinition> = {
+  'tooling-gap': tooling,
+  'process-gap': { ...tooling, title: 'Política amplia o lote', cause: 'Uma regra de processo obriga o trabalho a aguardar.', evidencePatterns: ['process-gap'], contradictionPatterns: ['risk-proportional-flow'] },
 };
 
-function evidence(pattern: string, constraint: GroupSignal['constraint'], participantId: string): GroupSignal {
-  return { participantId, detailCapability: 'continuous-integration', pattern, weight: -1, layer: 'system', constraint };
+function evidence(pattern: string, participantId: string, overrides: Partial<GroupSignal> = {}): GroupSignal {
+  return { participantId, profile: 'engineering', detailCapability: 'continuous-integration', pattern, weight: -1, layer: 'system', constraint: 'tooling', ...overrides };
 }
 
-test('grupos com a mesma nota recebem recomendações diferentes conforme a causa coletiva', () => {
-  const engine = new GroupRecommendationEngine(catalog);
-  const toolingGroup = [evidence('tooling-gap', 'tooling', 'a'), evidence('tooling-gap', 'tooling', 'b'), evidence('process-gap', 'process', 'c')];
-  const processGroup = [evidence('process-gap', 'process', 'a'), evidence('process-gap', 'process', 'b'), evidence('tooling-gap', 'tooling', 'c')];
-
-  assert.equal(toolingGroup.reduce((sum, item) => sum + item.weight, 0), processGroup.reduce((sum, item) => sum + item.weight, 0));
-  assert.equal(engine.rank(toolingGroup, 3)[0]?.pattern, 'tooling-gap');
-  assert.equal(engine.rank(processGroup, 3)[0]?.pattern, 'process-gap');
+test('usa somente a população capaz de observar a intervenção', () => {
+  const recommendation = new GroupRecommendationEngine(catalog).rank([
+    evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b'), evidence('tooling-gap', 'c'),
+  ], { total: 10, applicableByCapability: { 'continuous-integration': 3 } })[0]!;
+  assert.equal(recommendation.support, 1);
+  assert.equal(recommendation.evidence.applicablePopulation, 3);
+  assert.match(recommendation.reasons[0]!, /3 de 3 jornadas aplicáveis/);
 });
 
-test('coocorrência e camadas independentes aumentam a confiança da intervenção', () => {
+test('não publica recomendação para uma coorte aplicável identificável', () => {
+  const recommendations = new GroupRecommendationEngine(catalog).rank([
+    evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b'),
+  ], { total: 10, applicableByCapability: { 'continuous-integration': 2 } });
+  assert.deepEqual(recommendations, []);
+});
+
+test('não concede confiança gratuita nem usa coocorrência não causal', () => {
   const engine = new GroupRecommendationEngine(catalog);
-  const isolated = engine.rank([evidence('tooling-gap', 'tooling', 'a'), evidence('tooling-gap', 'tooling', 'b')], 3)[0]!;
-  const corroboratedSignals: GroupSignal[] = [
-    evidence('tooling-gap', 'tooling', 'a'), evidence('tooling-gap', 'tooling', 'b'),
-    { ...evidence('process-gap', 'tooling', 'a'), layer: 'practice' },
-    { ...evidence('process-gap', 'tooling', 'b'), layer: 'outcome' },
-  ];
-  const corroborated = engine.rank(corroboratedSignals, 3)[0]!;
+  const base = engine.rank([evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b')], { total: 4, applicableByCapability: { 'continuous-integration': 4 } })[0]!;
+  const unrelated = engine.rank([
+    evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b'),
+    evidence('unrelated-problem', 'a', { layer: 'outcome' }), evidence('unrelated-problem', 'b', { layer: 'practice' }),
+  ], { total: 4, applicableByCapability: { 'continuous-integration': 4 } })[0]!;
+  assert.equal(unrelated.confidence, base.confidence);
+  assert.ok(base.confidence < .7);
+});
+
+test('somente uma contradição pareada reduz a confiança da recomendação relacionada', () => {
+  const engine = new GroupRecommendationEngine(catalog);
+  const baseSignals = [evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b')];
+  const consistent = engine.rank(baseSignals, 3)[0]!;
+  const unrelatedPositive = engine.rank([...baseSignals, evidence('healthy-code', 'a', { weight: 2, layer: 'outcome', constraint: 'none' })], 3)[0]!;
+  const contradicted = engine.rank([...baseSignals, evidence('fast-reliable-feedback', 'a', { weight: 2, layer: 'outcome', constraint: 'none' })], 3)[0]!;
+  assert.equal(unrelatedPositive.confidence, consistent.confidence);
+  assert.ok(contradicted.confidence < consistent.confidence);
+  assert.equal(contradicted.evidence.contradictingParticipants, 1);
+});
+
+test('triangulação específica por camada e perfil aumenta confiança', () => {
+  const engine = new GroupRecommendationEngine(catalog);
+  const isolated = engine.rank([evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b')], 3)[0]!;
+  const corroborated = engine.rank([
+    evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b'), evidence('slow-feedback', 'c', { profile: 'platform', layer: 'outcome' }),
+  ], 3)[0]!;
   assert.ok(corroborated.confidence > isolated.confidence);
-  assert.ok(corroborated.reasons.some((reason) => /coocorr/i.test(reason)));
+  assert.deepEqual(corroborated.evidence.profiles.sort(), ['engineering', 'platform']);
+  assert.deepEqual(corroborated.evidence.layers.sort(), ['outcome', 'system']);
 });
 
-test('contradição na mesma jornada reduz a confiança sem apagar o problema coletivo', () => {
-  const engine = new GroupRecommendationEngine(catalog);
-  const base = [evidence('tooling-gap', 'tooling', 'a'), evidence('tooling-gap', 'tooling', 'b')];
-  const consistent = engine.rank(base, 3)[0]!;
-  const contradictory = engine.rank([...base, { ...evidence('healthy-feedback', 'none', 'a'), weight: 2, layer: 'outcome' }], 3)[0]!;
-  assert.ok(contradictory.confidence < consistent.confidence);
-  assert.ok(contradictory.reasons.some((reason) => /contradiz/i.test(reason)));
-});
-
-test('capacidade forte abaixo de quatro recebe recomendação de evolução', () => {
-  const engine = new GroupRecommendationEngine(catalog, evolutionCatalog);
-  const signals: GroupSignal[] = ['a', 'b', 'c'].map((participantId) => ({
-    participantId, detailCapability: 'enabling-governance', pattern: 'controlled-exception',
-    weight: 1, layer: 'consistency', constraint: 'none',
-  }));
-  const recommendation = engine.rank(signals, 3)[0]!;
-  assert.equal(recommendation.kind, 'evolution');
-  assert.match(recommendation.intervention, /caminho emergencial/i);
+test('publica experimento executável e confiança sem falsa precisão', () => {
+  const recommendation = new GroupRecommendationEngine(catalog).rank([
+    evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b'), evidence('slow-feedback', 'c'),
+  ], 3)[0]!;
+  assert.equal((recommendation.confidence * 100) % 5, 0);
+  assert.equal(recommendation.experiment.owner, tooling.owner);
+  assert.equal(recommendation.experiment.metric, tooling.metric);
+  assert.equal(recommendation.experiment.reviewHorizon, tooling.reviewHorizon);
+  assert.equal(recommendation.experiment.successCriterion, tooling.successCriterion);
 });

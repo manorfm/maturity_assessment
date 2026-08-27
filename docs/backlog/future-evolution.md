@@ -34,8 +34,8 @@
 - calibrar os limiares direcionais usados para divergência entre perspectivas;
 - calibrar empiricamente a fórmula inicial de contradição e confiança por capacidade;
 - diferenciação mais precisa entre lacuna de conhecimento e bloqueio sistêmico;
-- evoluir a matriz já explícita capacidade × perspectiva × camada × restrição para
-  também registrar etapa do SDLC e referências, sem inferência por nome de padrão;
+- registrar etapa do SDLC e referências em cada sinal, além da matriz explícita de
+  capacidade, perspectiva, camada e restrição já vigente;
 - relações causais apresentadas como hipóteses, nunca como causalidade comprovada;
 - análise longitudinal para identificar mudança sustentada;
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;
@@ -75,17 +75,16 @@
 
 ## Relatórios e recomendações
 
-- ampliar o sistema especialista vigente com pré-condições, custo, dependências,
-  impacto cruzado e reversibilidade declarados em cada intervenção;
+- ampliar os experimentos vigentes com custo, dependências, riscos,
+  incompatibilidades de contexto e reversibilidade específicos por intervenção;
 - persistir a versão do recomendador e todos os candidatos considerados, além dos
   fatores já apresentados na justificativa, sem armazenar identificação individual;
 - calibrar o ranking com feedback explícito sobre adoção e efeito das intervenções,
   evitando aprender por clique, popularidade ou correlação tratada como causalidade;
 - calibrar a classificação por elo limitante e a relação entre sinais cruzados,
   cobertura e confiança sem convertê-la em ranking de times;
-- cadeia de evidências navegável para cada finding;
-- enriquecer as correções já agrupadas por área com custo, dependências, responsável,
-  menor experimento útil e sinal de sucesso;
+- aprofundar a cadeia de evidências vigente até as perguntas agregadas sem permitir
+  inferência de participantes;
 - exportação controlada e relatórios para públicos com diferentes níveis de detalhe;
 - acompanhamento de ações sem transformar o assessment em ferramenta punitiva.
 

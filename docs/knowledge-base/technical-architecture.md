@@ -114,9 +114,10 @@ sem duplicar respostas. Cada folha calcula nível e confiança pelos pesos e cob
 pela quantidade de padrões distintos; a classificação ignora folhas que ainda não
 atingiram a cobertura mínima.
 
-Na versão vigente, cada sinal persistido contém obrigatoriamente as folhas afetadas,
-a camada de evidência e o tipo de restrição. A inferência não possui leitura ou
-backfill para formatos históricos.
+Na versão vigente, cada sinal do próprio catálogo contém obrigatoriamente as folhas
+afetadas, a camada de evidência e o tipo de restrição. O catálogo não completa esses
+campos por regex ou pelo nome do padrão. A inferência não possui leitura ou backfill
+para formatos históricos.
 
 `TeamClassification` encapsula a escala e a regra de elo limitante. O serviço de
 inferência calcula classificações locais e aplica a menor classificação descendente

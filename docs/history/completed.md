@@ -136,3 +136,6 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
   camadas, restrições e contradições, com justificativas no relatório e na API.
 - Adicionadas recomendações de evolução para capacidades fortes abaixo de 4 e
   removida a casa decimal da apresentação de níveis inteiros.
+- Substituído o ranking compartilhado por confiança específica da intervenção,
+  população aplicável, contradições pareadas e experimentos executáveis; os 204
+  sinais passaram a declarar seus metadados sem projeção textual.

@@ -237,17 +237,26 @@ function flattenCapabilityIds(node: CapabilityRadarNode): string[] {
   return [node.id, ...node.children.flatMap(flattenCapabilityIds)];
 }
 
-export function renderCapabilityDiagnosis(findings: Array<{ kind?: 'correction' | 'evolution'; title: string; intervention: string; confidence?: number; constraint?: string; reasons?: string[] }>, capability: CapabilityRadarNode): string {
+type ReportFinding = {
+  kind?: 'correction' | 'evolution'; title: string; cause?: string; intervention: string; confidence?: number; priority?: number;
+  constraint?: string; reasons?: string[];
+  experiment?: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
+};
+
+export function renderCapabilityDiagnosis(findings: ReportFinding[], capability: CapabilityRadarNode): string {
   if (findings.length) {
     const onlyEvolution = findings.every((finding) => finding.kind === 'evolution');
-    return `<section><h2>${onlyEvolution ? 'Evoluções recomendadas' : 'Problemas e soluções priorizadas'}</h2>${findings.map((finding) => `<article class="card diagnostic-problem"><span class="tag">${finding.kind === 'evolution' ? 'evolução sugerida' : 'solução sugerida'} · ${Math.round((finding.confidence ?? 0) * 100)}% aderência</span><h3>${escapeHtml(finding.title)}</h3>${finding.constraint && finding.constraint !== 'none' ? `<p class="muted">Restrição dominante: ${escapeHtml(finding.constraint)}</p>` : ''}<h4>Por que esta prioridade</h4><ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul><h4>Intervenção recomendada</h4><p>${escapeHtml(finding.intervention)}</p></article>`).join('')}</section>`;
+    return `<section><h2>${onlyEvolution ? 'Evoluções recomendadas' : 'Problemas e experimentos priorizados'}</h2>${findings.map((finding) => {
+      const experiment = finding.experiment;
+      return `<article class="card diagnostic-problem"><span class="tag">${finding.kind === 'evolution' ? 'evolução sugerida' : 'correção sugerida'} · ${Math.round((finding.confidence ?? 0) * 100)}% de confiança heurística</span><h3>${escapeHtml(finding.title)}</h3>${finding.cause ? `<h4>Causa sustentada</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p class="muted">Restrição observada: ${escapeHtml(finding.constraint)}</p>` : ''}<h4>Como a confiança foi formada</h4><ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul><h4>Menor experimento útil</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável provável</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Métrica</dt><dd>${escapeHtml(experiment.metric)}</dd><dt>Revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Critério de sucesso</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}</article>`;
+    }).join('')}</section>`;
   }
   if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';
   if (capability.confidence < .5) return '<p class="notice">A evidência ainda é insuficiente para afirmar ausência de problema ou recomendar preservação da prática.</p>';
   if (capability.level < 1) return `<article class="card diagnostic-problem"><span class="tag">atenção prioritária</span><h2>Capacidade em estado crítico</h2><p>${capability.evidence} sinais convergem para fragilidade, mas estão distribuídos entre padrões que não alcançaram recorrência mínima isoladamente. O relatório não atribui uma causa sem sustentação coletiva.</p><h3>Próximo aprofundamento</h3><p>Recolha outra rodada dirigida aos comportamentos divergentes antes de selecionar uma intervenção estrutural.</p></article>`;
   if (capability.level < 2) return '<p class="notice">A capacidade apresenta comportamento predominantemente reativo. A evidência confirma fragilidade, mas ainda não isolou uma causa recorrente para orientar uma correção específica.</p>';
-  if (capability.level >= 3) return '<p class="notice positive-evidence">As evidências positivas convergem para uma prática gerenciada ou adaptativa. Preserve os mecanismos observados e valide se resistem a mudanças de contexto e pressão.</p>';
-  return '<p class="notice positive-evidence">As evidências convergem para uma prática repetível. Ainda não há um padrão problemático recorrente nesta capacidade; acompanhe consistência e resultado antes de considerá-la sustentável.</p>';
+  if (capability.level < 4) return '<p class="notice">A capacidade ainda não atingiu o estado adaptativo, mas as evidências coletadas não discriminam uma intervenção com confiança suficiente. A próxima rodada deve reconstruir um evento recente, sua consequência e a restrição que impediu a prática de avançar.</p>';
+  return '<p class="notice positive-evidence">As evidências convergem para uma prática adaptativa. Nenhuma intervenção é adicionada apenas para preencher o relatório.</p>';
 }
 
 export function formatMaturityLevel(level: number): string {

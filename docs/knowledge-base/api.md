@@ -13,6 +13,11 @@ restrição. O mesmo formato existe nos recortes hierárquicos elegíveis.
 `capabilityGroups` expõe a árvore recursiva usada pelos radares; cada ramo inclui
 nível limitante, confiança, evidência, contradição e filhos observados.
 
+Cada finding também expõe `cause`, `priority`, `recommendationEvidence` e
+`experiment`. A evidência informa somente totais agregados, padrões, camadas e
+perspectivas; nunca IDs. `confidence` é confiança heurística na aderência da
+intervenção e não deve ser interpretada como maturidade ou apoio popular.
+
 ## Autorização
 
 Ao criar um projeto, a API retorna `adminToken` uma única vez. As demais operações

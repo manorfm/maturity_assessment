@@ -4,7 +4,7 @@ import { createDatabase } from '../src/shared/database.js';
 import { ProjectService } from '../src/modules/projects/project-service.js';
 import { InvitationService } from '../src/modules/assessments/invitation-service.js';
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
-import { InferenceService } from '../src/modules/inference/inference-service.js';
+import { InferenceService, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
 import { edges, graph, GRAPH_VERSION } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 
@@ -174,6 +174,18 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
   assert.ok(signal.constraint_kind.length > 0);
   const withoutCloudEfficiency = graph.map((node) => ({ ...node, options: node.options.map((option) => ({ ...option, signals: option.signals.filter((item) => !item.details?.includes('cloud-efficiency')) })) }));
   assert.throws(() => validateGraphDefinition(withoutCloudEfficiency, edges, graph[0]!.id), /cloud-efficiency/);
+});
+
+test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
+  const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
+  assert.equal(signals.length, 204);
+  for (const signal of signals) {
+    assert.ok(signal.details.length > 0, signal.pattern);
+    assert.ok(signal.layer, signal.pattern);
+    assert.ok(signal.constraint, signal.pattern);
+    if (signal.weight < 0) assert.ok(interventionCatalog[signal.pattern], `correção ausente: ${signal.pattern}`);
+    if (signal.weight >= 0 && signal.weight < 2) assert.ok(evolutionCatalog[signal.pattern], `evolução ausente: ${signal.pattern}`);
+  }
 });
 
 test('catálogo adapta o cenário ao perfil sem alterar a capacidade avaliada', () => {

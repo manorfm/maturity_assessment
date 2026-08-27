@@ -71,7 +71,8 @@ test('value objects normalizam valores válidos uma única vez', () => {
 test('diagnóstico distingue força sustentada de ausência de evidência problemática', () => {
   const capability = { id: 'governance', label: 'Governança', level: 3.7, confidence: 1, evidence: 10, hasContradiction: false, assessed: true, coverage: 1, children: [] };
   const diagnosis = renderCapabilityDiagnosis([], capability);
-  assert.match(diagnosis, /evidências positivas convergem/i);
+  assert.match(diagnosis, /não discriminam uma intervenção/i);
+  assert.match(diagnosis, /evento recente/i);
   assert.doesNotMatch(diagnosis, /Nenhum problema recorrente atingiu/);
 });
 

@@ -14,6 +14,7 @@ do comportamento atual.
 - `product-vision.md`: propósito, usuários e limites do produto.
 - `assessment-model.md`: pilares, evidências, inferências e pontuação.
 - `question-design.md`: como criar cenários capazes de reduzir vieses.
+- `recommendation-model.md`: cadeia diagnóstica, confiança, prioridade e experimentos.
 - `domain-model.md`: conceitos centrais e fronteiras do monólito modular.
 - `open-decisions.md`: decisões que ainda precisam ser tomadas em conjunto.
 - `technical-architecture.md`: arquitetura técnica vigente e seus critérios.
