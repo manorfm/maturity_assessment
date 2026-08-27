@@ -123,9 +123,15 @@ observou a capacidade, triangulação específica por camada e perspectiva,
 consequência e contradição pareada. Prioridade permanece separada da confiança. A
 nota 0–4 não participa do ranking e identificadores internos nunca aparecem.
 
-Enquanto não houver piloto, o percentual é denominado confiança heurística e
+Enquanto não houver piloto, o percentual é denominado posterior provisório e
 arredondado em intervalos de cinco pontos. Sua decomposição acompanha o experimento,
 que explicita ação, responsável provável, métrica, revisão e critério de sucesso.
+
+Após uma saída declarativa, o motor compara probes ainda não respondidos, visíveis
+à perspectiva e habilitados por padrões de contexto já observados. O ranking combina 50% de ganho esperado de informação, 25% de
+cobertura, 15% de validação e 10% de custo invertido. A extensão termina sem pergunta
+útil acima de 0,05 bit ou após cinco probes, e persiste versão, posterior e motivo
+da escolha sem expor a jornada individual no relatório.
 
 Não existe mapeamento “resposta X = compre ferramenta Y”. Duas populações com a
 mesma nota podem receber intervenções diferentes porque as combinações de causas,

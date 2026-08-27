@@ -139,3 +139,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 - Substituído o ranking compartilhado por confiança específica da intervenção,
   população aplicável, contradições pareadas e experimentos executáveis; os 204
   sinais passaram a declarar seus metadados sem projeção textual.
+
+## 2026-08-27
+
+- Entregue a versão 0.14 com ontologia causal persistida, posterior bayesiano
+  explicável, proteção contra dupla contagem e hipóteses alternativas no relatório.
+- Adicionada seleção de probes por ganho esperado de informação, perfil, validação,
+  custo e orçamento de cinco aprofundamentos, com snapshots privados da decisão.
+- Implementadas métricas offline de Brier, calibração, precisão e recall para uso
+  exclusivo com futuros rótulos externos; a interface explicita ausência de
+  calibração empírica.

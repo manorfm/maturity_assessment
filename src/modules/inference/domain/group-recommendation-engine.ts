@@ -36,6 +36,7 @@ export class GroupRecommendationEngine {
       const catalog = signal.weight < 0 ? this.correctionCatalog : signal.weight < 2 ? this.evolutionCatalog : {};
       return catalog[signal.pattern] ? [signal.pattern] : [];
     }));
+    const posterior = posteriorByPattern(signals, candidates, this.correctionCatalog, this.evolutionCatalog, applicablePopulation);
     return candidates.flatMap((pattern) => {
       const sourceSignals = signals.filter((signal) => signal.pattern === pattern);
       const kind: RankedIntervention['kind'] = sourceSignals[0]!.weight < 0 ? 'correction' : 'evolution';
@@ -49,24 +50,50 @@ export class GroupRecommendationEngine {
       const profiles = unique(relevant.flatMap((signal) => signal.profile ? [signal.profile] : []));
       const patterns = unique(relevant.map((signal) => signal.pattern));
       const support = supporters.size / Math.max(1, applicablePopulation);
-      const causal = definition.evidencePatterns.length <= 1 ? 0 : (patterns.length - 1) / (definition.evidencePatterns.length - 1);
-      const layerBreadth = Math.min(1, (layers.length - 1) / 2);
-      const profileBreadth = Math.min(1, (profiles.length - 1) / 2);
-      const outcome = layers.includes('outcome') ? 1 : 0;
-      const contradiction = contradictors.size / Math.max(1, supporters.size);
-      const confidence = roundConfidence(.45 * Math.min(1, support) + .2 * causal + .15 * layerBreadth + .1 * profileBreadth + .1 * outcome - .3 * contradiction);
+      const confidence = roundConfidence(posterior.get(pattern) ?? 0);
       const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
       const contextualDefaults = experimentDefaults(constraint, pattern);
       const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
       const reasons = [
         `Padrão sustentado por ${supporters.size} de ${applicablePopulation} jornadas aplicáveis.`,
-        `${patterns.length} evidência(s) relacionada(s), em ${layers.length} camada(s) e ${profiles.length || 1} perspectiva(s).`,
+        `Posterior bayesiano formado por ${patterns.length} evidência(s), ${layers.length} camada(s) e ${profiles.length || 1} perspectiva(s).`,
         ...(contradictors.size ? [`Contradição específica em ${contradictors.size} jornada(s).`] : []),
         ...(constraint !== 'none' ? [`Restrição observada: ${constraint}.`] : []),
       ];
       return [{ ...definition, kind, detailCapability: capability, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(sourceSignals, support), reasons, evidence, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualDefaults.owner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
     }).sort((left, right) => right.priority - left.priority || right.confidence - left.confidence || right.support - left.support).slice(0, 3);
   }
+}
+
+function posteriorByPattern(signals: GroupSignal[], candidates: string[], corrections: Record<string, InterventionDefinition>, evolutions: Record<string, InterventionDefinition>, population: number): Map<string, number> {
+  if (!candidates.length) return new Map();
+  const definitions = Object.fromEntries(candidates.map((pattern) => [pattern, corrections[pattern] ?? evolutions[pattern]!]));
+  const prior = .75 / candidates.length;
+  const hypotheses: HypothesisDefinition[] = [...candidates.map((id) => ({ id, label: definitions[id]!.cause, prior })), { id: 'unknown', label: 'Causa ainda não discriminada', prior: .25 }];
+  const evidence: EvidenceDefinition[] = [];
+  const observed: string[] = [];
+  for (const pattern of candidates) {
+    const definition = definitions[pattern]!;
+    const related = signals.filter((signal) => definition.evidencePatterns.includes(signal.pattern));
+    if (related.length) {
+      const supporters = new Set(related.map((signal) => signal.participantId)).size;
+      const layers = new Set(related.map((signal) => signal.layer)).size;
+      const profiles = new Set(related.flatMap((signal) => signal.profile ? [signal.profile] : [])).size;
+      const reliability = Math.min(.95, .55 + .25 * Math.min(1, supporters / Math.max(1, population)) + .05 * Math.min(2, layers - 1) + .05 * Math.min(2, profiles - 1) + (related.some((signal) => signal.layer === 'outcome') ? .05 : 0));
+      const evidencePattern = `supports:${pattern}`;
+      evidence.push({ pattern: evidencePattern, group: `support:${pattern}`, likelihoods: Object.fromEntries(hypotheses.map((hypothesis) => [hypothesis.id, hypothesis.id === pattern ? reliability : hypothesis.id === 'unknown' ? .4 : .3])) });
+      observed.push(evidencePattern);
+    }
+    const contradicted = signals.some((signal) => definition.contradictionPatterns.includes(signal.pattern));
+    if (contradicted) {
+      const evidencePattern = `contradicts:${pattern}`;
+      evidence.push({ pattern: evidencePattern, group: `contradiction:${pattern}`, likelihoods: Object.fromEntries(hypotheses.map((hypothesis) => [hypothesis.id, hypothesis.id === pattern ? .1 : hypothesis.id === 'unknown' ? .4 : .65])) });
+      observed.push(evidencePattern);
+    }
+  }
+  const model = DiagnosticModel.create({ version: 'group-bayesian-v1', families: [{ id: signals[0]!.detailCapability, capability: signals[0]!.detailCapability, hypotheses, evidence }] });
+  const result = new BayesianInferenceEngine().infer(model, observed)[0]!;
+  return new Map(result.hypotheses.map((item) => [item.id, item.probability]));
 }
 
 function experimentDefaults(constraint: ConstraintKind, pattern = ''): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
@@ -94,3 +121,5 @@ function groupBy<T, K>(values: T[], keyOf: (value: T) => K): Map<K, T[]> { const
 function unique<T>(values: T[]): T[] { return [...new Set(values)]; }
 function roundConfidence(value: number): number { return Math.round(clamp(value) * 20) / 20; }
 function clamp(value: number): number { return Math.max(0, Math.min(1, value)); }
+import { BayesianInferenceEngine } from './bayesian-inference-engine.js';
+import { DiagnosticModel, type EvidenceDefinition, type HypothesisDefinition } from './diagnostic-model.js';

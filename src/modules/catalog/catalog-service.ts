@@ -32,7 +32,39 @@ export class CatalogService {
         .run(GRAPH_VERSION, variant.nodeId, variant.profile, variant.title ?? null, variant.scenario, variant.prompt ?? null));
       edges.forEach((edge, position) => this.db.prepare('INSERT INTO assessment_edges (id, graph_version, from_node_key, option_key, to_node_key, priority, profile) VALUES (?, ?, ?, ?, ?, ?, ?)')
         .run(id(), GRAPH_VERSION, edge.from, edge.optionId ?? null, edge.to, position, edge.profile ?? null));
+      this.seedDiagnosticModel();
     });
+  }
+
+  private seedDiagnosticModel(): void {
+    const modelVersion = `${GRAPH_VERSION}-bayesian-v1`;
+    this.db.prepare('INSERT INTO inference_model_versions (version, graph_version, status, policy_json, published_at) VALUES (?, ?, ?, ?, ?)')
+      .run(modelVersion, GRAPH_VERSION, 'published', JSON.stringify({ informationGain: .5, coverage: .25, validation: .15, inverseCost: .1, recommendationThreshold: .7 }), new Date().toISOString());
+    const patternsByCapability = new Map<string, Set<string>>();
+    for (const node of graph) for (const option of node.options) for (const signal of option.signals) {
+      if (signal.weight >= 2) continue;
+      for (const capability of signal.details) {
+        const patterns = patternsByCapability.get(capability) ?? new Set<string>();
+        patterns.add(signal.pattern);
+        patternsByCapability.set(capability, patterns);
+      }
+    }
+    for (const [capability, patternSet] of patternsByCapability) {
+      const patterns = [...patternSet];
+      const prior = .75 / patterns.length;
+      for (const pattern of [...patterns, 'unknown']) this.db.prepare('INSERT INTO diagnostic_hypotheses (model_version, family_key, capability, hypothesis_key, label, prior) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(modelVersion, capability, capability, pattern, pattern === 'unknown' ? 'Causa ainda não discriminada' : pattern, pattern === 'unknown' ? .25 : prior);
+      for (const evidencePattern of patterns) for (const hypothesis of [...patterns, 'unknown']) this.db.prepare('INSERT INTO evidence_likelihoods (model_version, family_key, pattern, evidence_group, hypothesis_key, likelihood) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(modelVersion, capability, evidencePattern, evidencePattern, hypothesis, hypothesis === evidencePattern ? .85 : hypothesis === 'unknown' ? .4 : .3);
+    }
+    const allProfiles = ['management', 'product', 'quality', 'engineering', 'platform'];
+    for (const node of graph) {
+      const variantProfiles = nodeVariants.filter((variant) => variant.nodeId === node.id).map((variant) => variant.profile);
+      const incoming = edges.filter((edge) => edge.to === node.id && edge.optionId);
+      const applicabilityPatterns = [...new Set(incoming.flatMap((edge) => graph.find((candidate) => candidate.id === edge.from)?.options.find((option) => option.id === edge.optionId)?.signals.map((signal) => signal.pattern) ?? []))];
+      this.db.prepare('INSERT INTO question_observations (model_version, node_key, profiles_json, applicability_patterns_json, cost) VALUES (?, ?, ?, ?, ?)')
+        .run(modelVersion, node.id, JSON.stringify(variantProfiles.length ? variantProfiles : allProfiles), JSON.stringify(applicabilityPatterns), node.type === 'probe' ? .6 : .35);
+    }
   }
 
   entryNode(version = GRAPH_VERSION): string {

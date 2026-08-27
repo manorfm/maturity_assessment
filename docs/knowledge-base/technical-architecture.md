@@ -98,11 +98,13 @@ reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível 
 links nativos para abrir diagnóstico e próximos passos de cada eixo, sem framework
 de frontend ou duplicação da regra de inferência.
 
-O recomendador vigente é determinístico e especialista. Não existe rede bayesiana,
-treinamento estatístico nem seleção de perguntas por ganho de informação. A futura
-inferência probabilística continuará dentro do módulo `inference`, com modelo e
-parâmetros versionados no SQLite e sem serviço distribuído ou LLM. O roadmap está em
-[`docs/backlog/probabilistic-inference-roadmap.md`](../backlog/probabilistic-inference-roadmap.md).
+O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
+serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
+das perguntas e política são publicados com versão imutável no SQLite. A atualização
+bayesiana ocorre em log-espaço e consome uma única evidência por grupo correlacionado.
+O módulo `assessments` pede ao seletor adaptativo um aprofundamento somente depois
+do tronco obrigatório; no máximo cinco probes adicionais são escolhidos por entropia,
+cobertura, validação e custo. Snapshots dessa decisão permanecem privados.
 
 `CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos. O radar
 superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula

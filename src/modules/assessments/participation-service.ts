@@ -2,12 +2,14 @@ import { inTransaction, type Database } from '../../shared/database.js';
 import { hashSecret, id } from '../../shared/ids.js';
 import { CatalogService } from '../catalog/catalog-service.js';
 import { AssessmentProfile } from './domain/invitation.js';
+import { AdaptiveJourneyService } from './adaptive-journey-service.js';
 
 type Participation = { id: string; profile: string; status: string; current_node: string; graph_version: string };
 
 export class ParticipationService {
   private readonly catalog: CatalogService;
-  constructor(private readonly db: Database) { this.catalog = new CatalogService(db); }
+  private readonly adaptiveJourney: AdaptiveJourneyService;
+  constructor(private readonly db: Database) { this.catalog = new CatalogService(db); this.adaptiveJourney = new AdaptiveJourneyService(db); }
 
   find(resumeToken: string): Participation | undefined {
     return this.db.prepare('SELECT id, profile, status, current_node, graph_version FROM participations WHERE resume_hash = ?')
@@ -33,7 +35,10 @@ export class ParticipationService {
         this.db.prepare('UPDATE participations SET profile = ? WHERE id = ?').run(profile.value, participation.id);
       }
       const effectiveProfile = node.id === 'respondent-context' ? option.id : participation.profile;
-      const next = this.catalog.nextNode(participation.graph_version, node.id, option.id, effectiveProfile);
+      const declarativeNext = this.catalog.nextNode(participation.graph_version, node.id, option.id, effectiveProfile);
+      const next = declarativeNext && !this.hasAnswered(participation.id, declarativeNext)
+        ? declarativeNext
+        : this.adaptiveJourney.selectAfterTerminal(participation.id, effectiveProfile, participation.graph_version);
       if (next) {
         this.db.prepare('UPDATE participations SET current_node = ? WHERE id = ?').run(next, participation.id);
       } else {
@@ -41,5 +46,9 @@ export class ParticipationService {
       }
       return next ? 'next' : 'complete';
     }, 'IMMEDIATE');
+  }
+
+  private hasAnswered(participationId: string, nodeId: string): boolean {
+    return Boolean(this.db.prepare('SELECT 1 FROM responses WHERE participation_id = ? AND node_id = ?').get(participationId, nodeId));
   }
 }

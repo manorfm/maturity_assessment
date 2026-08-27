@@ -63,9 +63,18 @@ perspectivas e contradições específicas para priorizar experimentos. Cada sug
 informa causa, ação, responsável provável, métrica, revisão e critério de sucesso.
 Grupos com a mesma nota podem receber recomendações diferentes.
 
-O percentual é uma confiança heurística arredondada, não uma probabilidade
-calibrada. O motor ainda não aprende com dados reais nem escolhe perguntas por ganho
-de informação. A próxima evolução aprovada está detalhada no
+A versão 0.14 publica um modelo causal versionado no SQLite, atualiza hipóteses
+concorrentes em log-espaço, evita dupla contagem de evidências correlacionadas e
+mostra posteriores explicáveis no relatório. Ao terminar o percurso obrigatório,
+o motor pode acrescentar até cinco probes observáveis pelo perfil, escolhidos por
+ganho esperado de informação, cobertura, validação e custo; cada decisão fica em
+snapshot privado e nunca é exposta pela API administrativa. Recomendações continuam
+sem LLM, são ligadas à causa e acompanhadas de experimento verificável.
+
+Os percentuais são posteriores provisórios baseados em probabilidades especialistas,
+não precisão empírica. Brier score, erro de calibração, precisão e recall já possuem
+implementação offline, mas só poderão ser interpretados após revisão externa e massa
+real rotulada. O trabalho de piloto está no
 [`roadmap probabilístico`](docs/backlog/probabilistic-inference-roadmap.md).
 
 ## Executar localmente
@@ -107,6 +116,7 @@ preparação manual do banco. `npm run showcase` permanece como alias compatíve
 - A jornada comum é complementada por ramos próprios de gestão, produto, qualidade,
   engenharia e plataforma/operações; dados, design, arquitetura e segurança ainda
   usam o percurso comum e permanecem no backlog de calibração por disciplina.
-- A adaptação atual segue arestas declarativas do grafo. Ainda não há distribuição
-  probabilística de causas, seleção de perguntas por informação, calibração
-  empírica ou aprendizado automático.
+- A adaptação preserva o tronco declarativo e usa seleção probabilística somente no
+  aprofundamento terminal. Ainda não há calibração empírica nem aprendizado
+  supervisionado; respostas, cliques e aceitação de sugestões não são tratados como
+  rótulos de verdade.

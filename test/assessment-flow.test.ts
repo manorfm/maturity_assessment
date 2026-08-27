@@ -4,6 +4,7 @@ import { createDatabase } from '../src/shared/database.js';
 import { ProjectService } from '../src/modules/projects/project-service.js';
 import { InvitationService } from '../src/modules/assessments/invitation-service.js';
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
+import { AdaptiveJourneyService } from '../src/modules/assessments/adaptive-journey-service.js';
 import { InferenceService, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
 import { edges, graph, GRAPH_VERSION } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
@@ -108,6 +109,33 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   assert.equal(catalog.getNode(current.graph_version, current.current_node)?.type, 'probe');
 });
 
+test('seletor adaptativo escolhe aprofundamento aplicável e registra a decisão', () => {
+  const db = createDatabase(':memory:');
+  const projects = new ProjectService(db);
+  const invitations = new InvitationService(db);
+  const participations = new ParticipationService(db);
+  const catalog = new CatalogService(db);
+  const created = projects.create('Adaptativo', 'Empresa/Time A');
+  const project = projects.authorize(created.publicId, created.adminSecret)!;
+  const unit = projects.listUnits(String(project.id)).at(-1)!;
+  const [token] = invitations.createBatch(String(project.id), unit.id, 1).tokens;
+  const claimed = invitations.claim(token!) as { resumeToken: string };
+
+  while (participations.find(claimed.resumeToken)?.current_node !== 'integration-cadence') {
+    const current = participations.find(claimed.resumeToken)!;
+    const node = catalog.getNode(current.graph_version, current.current_node, current.profile)!;
+    participations.answer(claimed.resumeToken, node.id === 'respondent-context' ? 'engineering' : node.options[0]!.id);
+  }
+  participations.answer(claimed.resumeToken, 'isolated-days');
+  const participation = participations.find(claimed.resumeToken)!;
+  const selected = new AdaptiveJourneyService(db).selectAfterTerminal(participation.id, participation.profile, participation.graph_version);
+  assert.ok(selected);
+  const snapshots = db.prepare('SELECT selected_question_key, selection_reason, posterior_json FROM inference_snapshots WHERE participation_id = ?').all(participation.id) as unknown as Array<{ selected_question_key: string; selection_reason: string; posterior_json: string }>;
+  assert.equal(snapshots.length, 1);
+  assert.ok(snapshots.every((snapshot) => snapshot.selection_reason.includes('Ganho esperado')));
+  assert.ok(snapshots.every((snapshot) => JSON.parse(snapshot.posterior_json).length >= 2));
+});
+
 test('entrega aprofunda sinais maduros e investiga bloqueio após integração frágil', () => {
   const db = createDatabase(':memory:');
   const catalog = new CatalogService(db);
@@ -172,6 +200,13 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
   assert.ok(JSON.parse(signal.detail_capabilities).length > 0);
   assert.ok(signal.evidence_layer.length > 0);
   assert.ok(signal.constraint_kind.length > 0);
+  const model = db.prepare('SELECT version, policy_json FROM inference_model_versions LIMIT 1').get() as { version: string; policy_json: string };
+  assert.match(model.version, /bayesian-v1/);
+  assert.equal(JSON.parse(model.policy_json).recommendationThreshold, .7);
+  assert.ok(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_hypotheses').get() as { total: number }).total) > 0);
+  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM question_observations').get() as { total: number }).total), graph.length);
+  const deliveryApplicability = db.prepare("SELECT applicability_patterns_json FROM question_observations WHERE node_key = 'delivery-cause'").get() as { applicability_patterns_json: string };
+  assert.deepEqual(new Set(JSON.parse(deliveryApplicability.applicability_patterns_json) as string[]), new Set(['mudanca-isolada', 'integracao-por-janela']));
   const withoutCloudEfficiency = graph.map((node) => ({ ...node, options: node.options.map((option) => ({ ...option, signals: option.signals.filter((item) => !item.details?.includes('cloud-efficiency')) })) }));
   assert.throws(() => validateGraphDefinition(withoutCloudEfficiency, edges, graph[0]!.id), /cloud-efficiency/);
 });

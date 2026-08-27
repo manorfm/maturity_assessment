@@ -13,10 +13,10 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
-Os itens gerais estão em `future-evolution.md`. A evolução aprovada do diagnóstico
-está detalhada em `probabilistic-inference-roadmap.md`; ela permanece no backlog
-enquanto não for implementada e cada fase entregue deve migrar para a base de
-conhecimento e o histórico.
+Os itens gerais estão em `future-evolution.md`. O que ainda depende de massa real,
+revisão externa e governança do diagnóstico está em
+`probabilistic-inference-roadmap.md`; o motor necessário ao piloto já está descrito
+na base de conhecimento e não permanece duplicado como trabalho futuro.
 
 Itens concluídos não permanecem marcados como `done` neste diretório. Eles são
 removidos e recebem uma entrada resumida em `docs/history/completed.md`, enquanto a

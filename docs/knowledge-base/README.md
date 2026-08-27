@@ -28,9 +28,10 @@ Ideias ainda não incorporadas ao modelo vigente pertencem ao
 [`docs/backlog`](../backlog/README.md), para que hipótese futura e decisão atual não
 se confundam.
 
-O próximo ciclo aprovado está descrito no
-[`roadmap do motor probabilístico`](../backlog/probabilistic-inference-roadmap.md).
-Ele não descreve funcionalidade vigente até que cada fase seja entregue.
+O motor probabilístico vigente está consolidado em `recommendation-model.md` e
+`adaptive-assessment-graph.md`. O
+[`roadmap restante`](../backlog/probabilistic-inference-roadmap.md) contém somente
+piloto, calibração e aprendizado supervisionado que dependem de massa real.
 
 ## Princípio central
 

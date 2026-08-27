@@ -80,12 +80,18 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
   return {
     completed: report.completed,
     minimum: report.minimum,
+    modelVersion: report.modelVersion,
+    hypotheses: report.hypotheses.map(sanitizePosterior),
     classification: report.classification,
     findings: report.findings.map(finding),
     areas: report.areas,
     capabilities: report.capabilities,
     capabilityGroups: report.capabilityGroups,
     perspectiveGaps: report.perspectiveGaps,
-    scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, findings: scope.findings.map(finding), areas: scope.areas, capabilities: scope.capabilities, capabilityGroups: scope.capabilityGroups, perspectiveGaps: scope.perspectiveGaps })),
+    scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, hypotheses: scope.hypotheses.map(sanitizePosterior), findings: scope.findings.map(finding), areas: scope.areas, capabilities: scope.capabilities, capabilityGroups: scope.capabilityGroups, perspectiveGaps: scope.perspectiveGaps })),
   };
+}
+
+function sanitizePosterior(item: ReturnType<InferenceService['report']>['hypotheses'][number]) {
+  return { familyId: item.familyId, capability: item.capability, modelVersion: item.modelVersion, uncertainty: item.entropy, hypotheses: item.hypotheses.slice(0, 3), evidenceUsed: item.evidenceUsed, missingEvidence: item.hypotheses[0]?.id === 'unknown' ? ['Aprofundamento causal necessário'] : [] };
 }

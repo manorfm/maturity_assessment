@@ -1,56 +1,56 @@
-# Diagnóstico e recomendações
+# Diagnóstico probabilístico e recomendações
 
-## Semântica
+## Semântica vigente
 
-Uma recomendação é um experimento ligado a uma hipótese sustentada pelo conjunto de
-respostas. A porcentagem exibida é **confiança heurística na aderência da
-intervenção**: não representa maturidade, popularidade, prioridade nem probabilidade
-empiricamente calibrada.
+O diagnóstico compara hipóteses causais concorrentes dentro de cada capacidade.
+Cada família inclui `unknown`, priors especialistas provisórios e probabilidades
+condicionais versionadas. O resultado exibido é um **posterior provisório**: ele
+representa a crença do modelo diante das evidências declaradas, mas ainda não é uma
+probabilidade empiricamente calibrada.
 
-O cálculo usa apenas evidências declaradas para a intervenção: proporção das
-jornadas aplicáveis, confirmação por padrões relacionados, variedade de camadas e
-perspectivas, consequência observada e contradições semânticas específicas. Sinais
-positivos ou problemas apenas coexistentes na mesma capacidade não alteram a
-confiança. O resultado é arredondado em cinco pontos percentuais para não comunicar
-precisão inexistente antes do piloto.
+Maturidade, cobertura temática, posterior e prioridade são medidas diferentes.
+Uma nota baixa não escolhe uma solução sozinha; grupos com a mesma nota podem ter
+causas e experimentos diferentes.
 
-Prioridade é separada da confiança. Ela considera severidade e alcance; portanto,
-uma hipótese muito provável pode vir depois de um bloqueio mais crítico. Empates de
-confiança são legítimos somente quando os vetores de evidência forem equivalentes.
+## Atualização e explicação
 
-## Implementação vigente
-
-O motor é um sistema especialista determinístico, não um modelo estatístico ou de
-machine learning. Para cada intervenção ele combina suporte na população aplicável,
-padrões declarados, camadas, perspectivas, consequência e contradições específicas.
-Problemas apenas coexistentes não aumentam confiança e sinais positivos não
-relacionados não são tratados como contradição.
-
-As intervenções possuem catálogo versionado. O motor não aprende com respostas,
-cliques ou recomendações aceitas e não seleciona a próxima pergunta por ganho de
-informação. O grafo adapta o percurso por regras declarativas de resposta e perfil.
-
-## Cadeia explicável
+O cálculo usa log-espaço e normalização por softmax. Evidências que pertencem ao
+mesmo grupo causal são consumidas uma única vez, evitando premiar perguntas
+redundantes. Contradições alteram apenas as hipóteses às quais foram ligadas.
 
 O relatório preserva:
 
-`comportamento observado -> consequência -> causa sustentada -> restrição -> experimento`
+`comportamento -> evidência independente -> hipótese/alternativas -> restrição -> experimento`
 
-Cada experimento informa ação inicial, responsável provável, métrica, horizonte de
-revisão e critério de sucesso. Quando não existe sustentação coletiva suficiente,
-o sistema não inventa uma solução: informa que a próxima rodada deve discriminar
-evento, consequência e restrição.
+Para cada hipótese são apresentados posterior, incerteza em bits, grupos de
+evidência utilizados e alternativas principais. A versão exata do modelo acompanha
+o relatório. Snapshots individuais da entrevista nunca são publicados.
 
-## População e privacidade
+## Recomendações
 
-Suporte usa apenas pessoas que produziram evidência naquela capacidade. Perfis
-servem para triangulação agregada, nunca para atribuir respostas. A API publica a
-decomposição agregada e não inclui identificadores de participação.
+Uma recomendação exige suporte coletivo mínimo e hipótese causal correspondente.
+O motor suprime prescrições incompatíveis e sua entidade probabilística valida
+pré-requisitos antes de recomendar; entre 50% e 70% a ação permanece como hipótese
+a validar. O plano informa ação inicial, responsável provável, métrica, horizonte
+e critério de sucesso. Prioridade considera severidade e alcance sem alterar o
+posterior.
 
-## Calibração
+O catálogo diferencia correção de um padrão negativo e evolução de uma prática
+intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade abaixo
+de 4 pode receber evolução quando as respostas sustentam um passo concreto.
 
-Os pesos atuais são regras especialistas versionadas, não probabilidades. A
-interface deve usar `confiança heurística` até existir um modelo probabilístico
-comparado com casos rotulados, revisão multidisciplinar e entrevistas cognitivas.
-O plano aprovado está no
-[`roadmap probabilístico`](../backlog/probabilistic-inference-roadmap.md).
+## Seleção adaptativa
+
+O tronco comum garante cobertura básica. Ao fim dele, perguntas elegíveis são
+ordenadas por redução esperada de entropia, cobertura ausente, necessidade de
+validação e custo. Somente probes observáveis pela perspectiva, ainda não
+respondidos e relacionados à família incerta podem ser selecionados. O orçamento é
+de cinco perguntas adicionais e o limiar mínimo é 0,05 bit.
+
+## Calibração e aprendizado
+
+O sistema não usa LLM nem aprende silenciosamente com respostas, cliques ou
+aceitação da recomendação. Há cálculo offline de Brier score, erro esperado de
+calibração, precisão e recall, porém essas métricas só possuem significado com
+rótulos externos produzidos no piloto. Alterações futuras de priors ou likelihoods
+devem criar uma nova versão revisada e reproduzível.

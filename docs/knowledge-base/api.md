@@ -15,7 +15,7 @@ nível limitante, confiança, evidência, contradição e filhos observados.
 
 Cada finding também expõe `cause`, `priority`, `recommendationEvidence` e
 `experiment`. A evidência informa somente totais agregados, padrões, camadas e
-perspectivas; nunca IDs. `confidence` é confiança heurística na aderência da
+perspectivas; nunca IDs. `confidence` é o posterior provisório na aderência da
 intervenção e não deve ser interpretada como maturidade ou apoio popular.
 
 ## Autorização

@@ -30,9 +30,8 @@
 ## Modelo de inferência
 
 - executar o
-  [`roadmap do motor probabilístico`](probabilistic-inference-roadmap.md), que reúne
-  ontologia causal, inferência bayesiana, seleção de perguntas, recomendações,
-  instrumentação, piloto e calibração;
+  [`roadmap de piloto e calibração`](probabilistic-inference-roadmap.md), usando os
+  rótulos externos para medir e ajustar o motor probabilístico já entregue;
 - análise longitudinal para identificar mudança sustentada;
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;
 - revisão humana e contestação de findings;

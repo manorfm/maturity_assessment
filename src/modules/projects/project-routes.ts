@@ -4,6 +4,7 @@ import { InferenceService } from '../inference/inference-service.js';
 import { InvitationService } from '../assessments/invitation-service.js';
 import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
+import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
 import { DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
 
 type Params = { publicId: string; adminSecret: string };
@@ -120,6 +121,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const capabilityBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/capabilities`;
     const capabilityMap = renderCapabilityRadar(report.capabilityGroups, capabilityBase);
     const classification = report.classification ? renderClassification(report.classification) : '';
+    const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion);
     const scopeReports = report.scopes.map((scope) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification)}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
@@ -131,6 +133,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         <button type="submit">Gerar links</button></form></section>
       ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
       <section><h2>Mapa agregado</h2>${classification}${reportAvailability}${capabilityMap}</section>
+      ${probabilisticSummary}
       ${gaps ? `<section><h2>Perspectivas</h2>${gaps}</section>` : ''}
       ${scopeReports ? `<section><h2>Mapa por estrutura</h2><p class="muted">Somente partições que preservam o grupo mínimo aparecem. Contagens e alternativas individuais são suprimidas.</p>${scopeReports}</section>` : ''}
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
@@ -148,6 +151,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     if (!path) throw new ResourceNotFoundError('Capacidade não encontrada.');
     const selected = path.at(-1)!;
     const findings = source?.findings ?? report.findings;
+    const hypotheses = source?.hypotheses ?? report.hypotheses;
     const relevantIds = new Set(flattenCapabilityIds(selected));
     const relevant = findings.filter((finding) => relevantIds.has(finding.detailCapability));
     const base = `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`;
@@ -165,7 +169,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ? `<div class="classification-level">${formatMaturityLevel(selected.level)} / 4</div>${coverage}<p>Confiança ${Math.round(selected.confidence * 100)}% com ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p>`
       : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
     const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : renderCapabilityDiagnosis(relevant, selected);
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header><article class="classification">${status}</article>${diagnosis}`));
+    const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Hipóteses causais');
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header><article class="classification">${status}</article>${probabilisticDetail}${diagnosis}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -237,6 +242,18 @@ function flattenCapabilityIds(node: CapabilityRadarNode): string[] {
   return [node.id, ...node.children.flatMap(flattenCapabilityIds)];
 }
 
+function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVersion: string | null, title = 'Diagnóstico probabilístico'): string {
+  const relevant = posteriors.filter((item) => item.evidenceUsed.length > 0)
+    .sort((left, right) => left.entropy - right.entropy).slice(0, 6);
+  if (!relevant.length) return '';
+  const cards = relevant.map((posterior) => {
+    const leader = posterior.hypotheses[0]!;
+    const alternatives = posterior.hypotheses.slice(1, 3).map((item) => `<li>${escapeHtml(item.label)} · ${Math.round(item.probability * 100)}%</li>`).join('');
+    return `<article class="card diagnostic-hypothesis"><span class="tag">posterior provisório · ${Math.round(leader.probability * 100)}%</span><h3>${escapeHtml(leader.label)}</h3><p class="muted">Incerteza ${posterior.entropy.toFixed(2)} bit · ${posterior.evidenceUsed.length} grupo(s) de evidência independente.</p>${alternatives ? `<h4>Hipóteses alternativas</h4><ul>${alternatives}</ul>` : ''}${leader.id === 'unknown' ? '<p class="notice">A causa ainda não foi discriminada; a próxima pergunta deve reduzir esta incerteza antes de prescrever.</p>' : ''}</article>`;
+  }).join('');
+  return `<section><h2>${title}</h2><p class="muted">Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. Os percentuais são inferências especialistas ainda não calibradas com massa real.</p><div class="grid">${cards}</div></section>`;
+}
+
 type ReportFinding = {
   kind?: 'correction' | 'evolution'; title: string; cause?: string; intervention: string; confidence?: number; priority?: number;
   constraint?: string; reasons?: string[];
@@ -248,7 +265,7 @@ export function renderCapabilityDiagnosis(findings: ReportFinding[], capability:
     const onlyEvolution = findings.every((finding) => finding.kind === 'evolution');
     return `<section><h2>${onlyEvolution ? 'Evoluções recomendadas' : 'Problemas e experimentos priorizados'}</h2>${findings.map((finding) => {
       const experiment = finding.experiment;
-      return `<article class="card diagnostic-problem"><span class="tag">${finding.kind === 'evolution' ? 'evolução sugerida' : 'correção sugerida'} · ${Math.round((finding.confidence ?? 0) * 100)}% de confiança heurística</span><h3>${escapeHtml(finding.title)}</h3>${finding.cause ? `<h4>Causa sustentada</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p class="muted">Restrição observada: ${escapeHtml(finding.constraint)}</p>` : ''}<h4>Como a confiança foi formada</h4><ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul><h4>Menor experimento útil</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável provável</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Métrica</dt><dd>${escapeHtml(experiment.metric)}</dd><dt>Revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Critério de sucesso</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}</article>`;
+      return `<article class="card diagnostic-problem"><span class="tag">${finding.kind === 'evolution' ? 'evolução sugerida' : 'correção sugerida'} · posterior provisório ${Math.round((finding.confidence ?? 0) * 100)}%</span><h3>${escapeHtml(finding.title)}</h3>${finding.cause ? `<h4>Causa sustentada</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p class="muted">Restrição observada: ${escapeHtml(finding.constraint)}</p>` : ''}<h4>Como a confiança foi formada</h4><ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul><h4>Menor experimento útil</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável provável</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Métrica</dt><dd>${escapeHtml(experiment.metric)}</dd><dt>Revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Critério de sucesso</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}</article>`;
     }).join('')}</section>`;
   }
   if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';

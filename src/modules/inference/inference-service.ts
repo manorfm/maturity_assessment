@@ -4,6 +4,8 @@ import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed } from './domain/group-recommendation-engine.js';
+import { BayesianInferenceEngine, type DiagnosticPosterior } from './domain/bayesian-inference-engine.js';
+import { DiagnosticModel } from './domain/diagnostic-model.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -210,17 +212,20 @@ export class InferenceService {
 
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
-    if (completed < minimum) return { completed, minimum, classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
+    const modelVersion = this.modelVersion();
+    if (completed < minimum) return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
     const areas = this.diagnosticAreas(findings);
     const capabilities = this.capabilityDetails(projectId);
     const capabilityGroups = CapabilityTaxonomy.organize(capabilities);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
+    const hypotheses = this.diagnosticPosteriors(projectId);
     const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
       findings: this.findings(projectId, scope.completed, scope.id),
       capabilities: this.capabilityDetails(projectId, scope.id),
       perspectiveGaps: this.perspectiveGaps(projectId, minimum, scope.id),
+      hypotheses: this.diagnosticPosteriors(projectId, scope.id),
     }));
     const scopes: ScopeReport[] = rawScopes.map((scope) => {
       const local = TeamClassification.from(scope.capabilities);
@@ -232,7 +237,40 @@ export class InferenceService {
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
     );
-    return { completed, minimum, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, scopes };
+    return { completed, minimum, modelVersion, hypotheses, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, scopes };
+  }
+
+  private modelVersion(): string | null {
+    return (this.db.prepare("SELECT version FROM inference_model_versions WHERE status = 'published' ORDER BY published_at DESC LIMIT 1").get() as { version: string } | undefined)?.version ?? null;
+  }
+
+  private diagnosticPosteriors(projectId: string, unitId?: string): DiagnosticPosterior[] {
+    const version = this.modelVersion();
+    if (!version) return [];
+    const hypotheses = this.db.prepare('SELECT family_key, capability, hypothesis_key, label, prior FROM diagnostic_hypotheses WHERE model_version = ? ORDER BY family_key, hypothesis_key')
+      .all(version) as unknown as Array<{ family_key: string; capability: string; hypothesis_key: string; label: string; prior: number }>;
+    const likelihoods = this.db.prepare('SELECT family_key, pattern, evidence_group, hypothesis_key, likelihood FROM evidence_likelihoods WHERE model_version = ? ORDER BY family_key, pattern')
+      .all(version) as unknown as Array<{ family_key: string; pattern: string; evidence_group: string; hypothesis_key: string; likelihood: number }>;
+    const families = [...new Set(hypotheses.map((item) => item.family_key))].map((familyId) => {
+      const familyHypotheses = hypotheses.filter((item) => item.family_key === familyId);
+      const familyLikelihoods = likelihoods.filter((item) => item.family_key === familyId);
+      const patterns = [...new Set(familyLikelihoods.map((item) => item.pattern))];
+      return {
+        id: familyId, capability: familyHypotheses[0]!.capability,
+        hypotheses: familyHypotheses.map((item) => ({ id: item.hypothesis_key, label: item.label, prior: Number(item.prior) })),
+        evidence: patterns.map((pattern) => ({
+          pattern, group: familyLikelihoods.find((item) => item.pattern === pattern)!.evidence_group,
+          likelihoods: Object.fromEntries(familyLikelihoods.filter((item) => item.pattern === pattern).map((item) => [item.hypothesis_key, Number(item.likelihood)])),
+        })),
+      };
+    });
+    const scope = this.scope(projectId, unitId);
+    const observed = this.db.prepare(`SELECT DISTINCT s.pattern FROM responses r JOIN participations p ON p.id = r.participation_id JOIN assessment_signals s ON s.graph_version = p.graph_version AND s.node_key = r.node_id AND s.option_key = r.option_id WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}`)
+      .all(...scope.parameters) as unknown as Array<{ pattern: string }>;
+    return new BayesianInferenceEngine().infer(DiagnosticModel.create({ version, families }), observed.map((item) => item.pattern)).map((posterior) => ({
+      ...posterior,
+      hypotheses: posterior.hypotheses.map((hypothesis) => ({ ...hypothesis, label: hypothesis.id === 'unknown' ? hypothesis.label : interventionCatalog[hypothesis.id]?.title ?? evolutionCatalog[hypothesis.id]?.title ?? hypothesis.label })),
+    }));
   }
 
   private diagnosticAreas(findings: Finding[]): DiagnosticArea[] {
@@ -429,5 +467,5 @@ const rootCapabilityByDetail = Object.fromEntries([
   ['organizational-system', ['team-ownership', 'enabling-governance', 'leadership-management', 'collaboration', 'organizational-learning']],
 ].flatMap(([root, details]) => (details as string[]).map((detail) => [detail, root]))) as Record<string, string>;
 
-type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[] };
+type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[]; hypotheses: DiagnosticPosterior[] };
 type QueryScope = { sql: string; parameters: string[] };

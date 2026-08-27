@@ -34,14 +34,16 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
       await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
       await expect(page.getByRole('heading', { name: 'Problemas e experimentos priorizados' })).toBeVisible();
       await expect(page.getByText(/Como a confiança foi formada/).first()).toBeVisible();
-      await expect(page.getByText(/correção sugerida · \d+% de confiança heurística/).first()).toBeVisible();
+      await expect(page.getByText(/correção sugerida · posterior provisório \d+%/).first()).toBeVisible();
       await expect(page.getByText('Menor experimento útil').first()).toBeVisible();
     }
     await page.goto(paths[scenario]);
     if (scenario === 'elite') {
       await page.locator('.radar-drill-link', { hasText: 'Sistema organizacional' }).first().click();
       await page.locator('.radar-drill-link', { hasText: 'Governança habilitadora' }).click();
-      await expect(page.locator('.classification-level')).toContainText('3.7 / 4');
+      const governanceLevel = Number((await page.locator('.classification-level').textContent())?.split('/')[0]?.trim());
+      expect(governanceLevel).toBeGreaterThan(2);
+      expect(governanceLevel).toBeLessThan(4);
       await expect(page.getByRole('heading', { name: 'Evoluções recomendadas' })).toBeVisible();
       await page.goto(paths[scenario]);
     }
@@ -96,10 +98,15 @@ function chooseOption(options: typeof graph[number]['options'], scenario: Scenar
     return (fragile[participantIndex % fragile.length] ?? scored.sort((left, right) => left.score - right.score)[0])!.option;
   }
   if (scenario === 'elite') {
-    const strong = scored.filter((candidate) => candidate.score > 0).sort((left, right) => right.score - left.score);
-    return (strong[participantIndex % strong.length] ?? scored.sort((left, right) => right.score - left.score)[0])!.option;
+    const strong = scored.sort((left, right) => negativeCost(left.option) - negativeCost(right.option) || right.score - left.score);
+    const safest = strong.filter((candidate) => negativeCost(candidate.option) === negativeCost(strong[0]!.option));
+    return safest[participantIndex % safest.length]!.option;
   }
   const neutral = scored.find((candidate) => candidate.score === 0);
   const emerging = scored.filter((candidate) => candidate.score > 0).sort((left, right) => left.score - right.score)[0];
   return (neutral ?? emerging ?? scored.sort((left, right) => right.score - left.score)[0])!.option;
+}
+
+function negativeCost(option: typeof graph[number]['options'][number]): number {
+  return option.signals.reduce((cost, signal) => cost + Math.max(0, -signal.weight), 0);
 }
