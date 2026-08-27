@@ -3,9 +3,9 @@ import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
+import { GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal } from './domain/group-recommendation-engine.js';
 
-type AggregateResponse = { capability: string; pattern: string; weight: number; total: number };
-type Finding = { capability: string; detailCapability: string; pattern: string; title: string; evidence: number; intervention: string };
+export type Finding = { capability: string; detailCapability: string; pattern: string; title: string; evidence: number; intervention: string; confidence: number; constraint: ConstraintKind; reasons: string[] };
 type DiagnosticProblem = {
   pattern: string;
   diagnosis: string;
@@ -14,7 +14,7 @@ type DiagnosticProblem = {
   nature: 'behavior' | 'constraint';
 };
 type DiagnosticArea = { id: string; label: string; problems: DiagnosticProblem[] };
-type CapabilityLevel = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean };
+type CapabilityLevel = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; coverage?: number };
 type PerspectiveGap = {
   capability: string;
   title: string;
@@ -22,7 +22,7 @@ type PerspectiveGap = {
   constrainedProfiles: string[];
 };
 
-const recommendations: Record<string, { title: string; intervention: string }> = {
+export const interventionCatalog: Record<string, { title: string; intervention: string }> = {
   'sobrecarga-silenciosa': { title: 'Mudanças entram sem ajuste explícito de capacidade', intervention: 'Experimente tornar a troca de prioridade visível: para cada urgência, registre conjuntamente o que sai, o risco aceito e quando revisar o efeito.' },
   'coordenacao-centralizada': { title: 'O fluxo depende de coordenação central', intervention: 'Mapeie as decisões repetidamente escaladas e delegue uma delas com limites, informação e caminho de exceção claros.' },
   'decisao-opaca': { title: 'Decisões variam e o impacto aparece tarde', intervention: 'Reconstrua uma decisão recente com participantes e tempos de espera; defina um critério pequeno e observável para a próxima.' },
@@ -129,16 +129,43 @@ const recommendations: Record<string, { title: string; intervention: string }> =
   'estrutura-definida-centralmente': { title: 'A estrutura muda sem experimento conduzido pelo grupo', intervention: 'Inclua as pessoas afetadas, explicite hipótese de desenho e revise carga, fluxo e conflitos após a mudança.' },
   'coordenacao-compensa-carga': { title: 'Coordenação cresce no lugar de reduzir carga cognitiva', intervention: 'Identifique uma responsabilidade que pode sair, ser automatizada ou receber fronteira mais clara antes de adicionar papéis.' },
   'estrutura-implicita': { title: 'Responsabilidades mudam informalmente sob pressão', intervention: 'Torne explícito ownership, limites e modo de interação de uma jornada e revise-o após uma entrega real.' },
-};
-
-const capabilityLabels: Record<string, string> = {
-  fluxo: 'Fluxo e entrega', entrega: 'Fluxo e entrega',
-  engenharia: 'Engenharia e SDLC', qualidade: 'Engenharia e SDLC',
-  arquitetura: 'Arquitetura e evolução',
-  confiabilidade: 'Confiabilidade e observabilidade', observabilidade: 'Confiabilidade e observabilidade',
-  plataforma: 'Plataforma, cloud e segurança',
-  organizacao: 'Organização e interação', governanca: 'Governança e estratégia',
-  aprendizado: 'Aprendizado e adaptação',
+  'resultado-sem-repriorizacao': { title: 'Resultados são observados sem alterar prioridades', intervention: 'Escolha uma entrega recente, explicite a decisão que cada resultado pode mudar e revise o portfólio em uma data definida.' },
+  'entrega-substitui-resultado': { title: 'Aceite de escopo substitui evidência de valor', intervention: 'Defina antes da próxima construção um efeito observável e uma decisão que será tomada depois da entrega.' },
+  'portfolio-sem-feedback': { title: 'O portfólio avança sem fechar ciclos de resultado', intervention: 'Limite novas iniciativas até revisar evidência e continuidade de uma entrega anterior relevante.' },
+  'divida-sem-capacidade-continua': { title: 'Dívida técnica depende de uma iniciativa futura', intervention: 'Reserve uma melhoria proporcional na próxima mudança da área e acompanhe redução de defeitos, espera ou dependência.' },
+  'codigo-depende-de-especialista': { title: 'Código crítico depende de conhecimento concentrado', intervention: 'Faça a próxima mudança com colaboração e verificações reproduzíveis, medindo se outra pessoa consegue evoluir a área com segurança.' },
+  'sustentabilidade-em-grande-lote': { title: 'Sustentabilidade foi adiada para uma transformação ampla', intervention: 'Extraia uma melhoria reversível que reduza o custo da próxima mudança sem aguardar reescrita ou migração completa.' },
+  'migracao-coordenada-em-lote': { title: 'Evolução de dados exige janela coordenada', intervention: 'Teste uma alteração compatível em duas etapas e verifique consumidores antes de remover a estrutura anterior.' },
+  'contrato-implicito-fragil': { title: 'Consumidores compensam contratos implícitos', intervention: 'Formalize um contrato crítico, ownership e compatibilidade e execute a verificação durante a mudança do produtor.' },
+  'migracao-de-dados-contextual': { title: 'Migrações dependem do estado encontrado em execução', intervention: 'Transforme a correção recorrente em operação idempotente, verificável e reversível, com casos representativos antes da implantação.' },
+  'limites-escondem-distribuicao': { title: 'Limites agregados escondem parte da experiência', intervention: 'Analise distribuição e segmentos de uma jornada e conecte um percentil à decisão e ao impacto que pretende proteger.' },
+  'confiabilidade-reativa-a-incidente': { title: 'Confiabilidade recebe prioridade somente após incidentes', intervention: 'Defina um objetivo de serviço e um gatilho anterior ao incidente para negociar capacidade com produto.' },
+  'decisao-de-confiabilidade-concentrada': { title: 'Risco operacional depende do julgamento de especialistas', intervention: 'Torne objetivo, distribuição e trade-off visíveis e calibre uma decisão com produto, engenharia e operação.' },
+  'lideranca-coordena-handoffs': { title: 'Liderança compensa o sistema coordenando passagens', intervention: 'Escolha o handoff de maior espera e dê ownership ao resultado, com autonomia e condição de sucesso para removê-lo.' },
+  'otimizacao-local-pela-gestao': { title: 'Gestão otimiza áreas isoladas diante de um gargalo sistêmico', intervention: 'Meça o fluxo ponta a ponta e atribua ownership ao gargalo compartilhado, evitando metas locais conflitantes.' },
+  'mudanca-sistemica-em-grande-lote': { title: 'Mudança sistêmica depende de um projeto amplo', intervention: 'Proteja capacidade para um experimento pequeno no gargalo e revise seu efeito antes de ampliar governança e escopo.' },
+  'portfolio-por-prioridade-executiva': { title: 'O portfólio muda sem reconciliar capacidade', intervention: 'Torne explícitos objetivo, capacidade consumida, trabalho interrompido e data de revisão antes de incorporar a próxima prioridade.' },
+  'portfolio-paralelo-fragmenta-capacidade': { title: 'Demandas paralelas fragmentam capacidade e direção', intervention: 'Limite iniciativas simultâneas por resultado e reveja o portfólio com dados de fluxo, impacto esperado e custo de atraso.' },
+  'risco-visivel-sem-poder-de-decisao': { title: 'Riscos conhecidos não alteram decisões', intervention: 'Defina quem pode parar, reduzir ou reordenar uma iniciativa quando um limiar de risco observável for atingido.' },
+  'alerta-de-risco-depende-de-seguranca-pessoal': { title: 'Expor risco depende de segurança pessoal', intervention: 'Crie um mecanismo regular e não punitivo para registrar riscos, resposta esperada e retorno sobre a decisão tomada.' },
+  'discovery-refina-solucao-dada': { title: 'Discovery apenas detalha uma solução escolhida', intervention: 'Antes do próximo compromisso, compare hipóteses de problema e alternativas com pessoas afetadas e uma evidência de valor.' },
+  'discovery-substituida-por-patrocinio': { title: 'Patrocínio substitui validação', intervention: 'Separe urgência política de evidência e execute o menor teste reversível capaz de invalidar a hipótese principal.' },
+  'resultado-gera-ajuste-sem-revisar-direcao': { title: 'Resultados ajustam execução, mas não a direção', intervention: 'Estabeleça um ritual curto para manter, alterar ou encerrar a iniciativa a partir do efeito observado, não apenas do progresso.' },
+  'resultado-sem-efeito-no-portfolio': { title: 'Resultados não mudam investimento ou portfólio', intervention: 'Associe cada iniciativa a um resultado e a uma decisão possível de continuar, redirecionar ou encerrar em data definida.' },
+  'qualidade-por-suite-padrao': { title: 'A estratégia de qualidade não varia com o risco', intervention: 'Modele os riscos da próxima mudança e escolha verificações, ambientes e observações proporcionais às consequências.' },
+  'estrategia-de-qualidade-concentrada-no-qa': { title: 'A estratégia de qualidade está concentrada em uma função', intervention: 'Compartilhe risco e testabilidade desde o refinamento; mantenha QA como especialidade habilitadora, não como fila final.' },
+  'nao-funcionais-por-campanha': { title: 'Riscos não funcionais são avaliados em campanhas', intervention: 'Traga um risco relevante de desempenho, segurança ou resiliência para feedback contínuo na esteira e na operação.' },
+  'nao-funcionais-descobertos-em-producao': { title: 'Produção revela os limites não funcionais', intervention: 'Escolha uma jornada crítica, defina seu limite e valide carga ou falha representativa antes da próxima exposição relevante.' },
+  'seguranca-depende-de-reconhecimento-e-especialista': { title: 'Segurança depende de reconhecimento e especialista', intervention: 'Codifique o risco recorrente em orientação, verificação e caminho de consulta acessíveis no fluxo normal.' },
+  'mudanca-aguarda-especialista': { title: 'Mudanças aguardam competência concentrada', intervention: 'Combine colaboração temporária, documentação executável e capacitação até que outra pessoa conclua a mudança com segurança.' },
+  'aprendizado-tecnico-sem-caminho-repetivel': { title: 'Aprendizado técnico não vira capacidade repetível', intervention: 'Aplique o aprendizado a uma mudança real e registre exemplos, guardrails e feedback que outra pessoa consiga reutilizar.' },
+  'recuperacao-cloud-depende-de-runbook': { title: 'Recuperação cloud depende de execução contextual', intervention: 'Automatize e exercite o passo mais sensível da recuperação, verificando objetivo, dependências e retorno seguro.' },
+  'recuperacao-cloud-por-console': { title: 'Recuperação cloud depende de alteração manual', intervention: 'Modele uma recuperação declarativa, auditável e reversível; mantenha acesso emergencial com reconciliação obrigatória.' },
+  'incidente-e-unica-evidencia-de-resiliencia': { title: 'Incidentes são a única validação de resiliência', intervention: 'Execute um experimento controlado sobre a falha mais relevante e transforme o resultado em melhoria verificável.' },
+  'eficiencia-cloud-por-meta-de-custo': { title: 'Eficiência cloud é uma meta isolada de custo', intervention: 'Conecte custo e capacidade a jornada, resultado e risco para evitar otimização local que transfira impacto.' },
+  'eficiencia-cloud-reativa-a-fatura': { title: 'Eficiência cloud reage à fatura', intervention: 'Dê visibilidade contínua a ownership, unidade econômica e tendência antes de o desvio virar uma campanha urgente.' },
+  'eficiencia-cloud-por-campanha': { title: 'Eficiência cloud ocorre em campanhas', intervention: 'Inclua orçamento, capacidade e descarte no ciclo normal de mudança, com guardrails e revisão do efeito.' },
+  'eficiencia-cloud-sem-decisao-compartilhada': { title: 'Trade-offs de eficiência permanecem locais', intervention: 'Crie critérios compartilhados entre produto, engenharia e plataforma para decidir custo, desempenho, risco e sustentabilidade.' },
 };
 
 export class InferenceService {
@@ -149,13 +176,13 @@ export class InferenceService {
     if (completed < minimum) return { completed, minimum, classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
     const areas = this.diagnosticAreas(findings);
-    const capabilities = this.capabilities(projectId);
-    const capabilityGroups = CapabilityTaxonomy.organize([...capabilities, ...this.capabilityDetails(projectId)]);
+    const capabilities = this.capabilityDetails(projectId);
+    const capabilityGroups = CapabilityTaxonomy.organize(capabilities);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
       findings: this.findings(projectId, scope.completed, scope.id),
-      capabilities: this.capabilities(projectId, scope.id),
+      capabilities: this.capabilityDetails(projectId, scope.id),
       perspectiveGaps: this.perspectiveGaps(projectId, minimum, scope.id),
     }));
     const scopes: ScopeReport[] = rawScopes.map((scope) => {
@@ -163,7 +190,7 @@ export class InferenceService {
       const descendants = rawScopes
         .filter((candidate) => candidate.path.startsWith(`${scope.path}/`))
         .map((candidate) => TeamClassification.at(TeamClassification.from(candidate.capabilities).level, [candidate.path]));
-      return { ...scope, areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize([...scope.capabilities, ...this.capabilityDetails(projectId, scope.id)]), classification: local.constrainedBy(descendants) };
+      return { ...scope, areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize(scope.capabilities), classification: local.constrainedBy(descendants) };
     });
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
@@ -174,8 +201,8 @@ export class InferenceService {
   private diagnosticAreas(findings: Finding[]): DiagnosticArea[] {
     const grouped = new Map<string, DiagnosticArea>();
     for (const finding of findings) {
-      const id = capabilityGroup[finding.capability] ?? finding.capability;
-      const area = grouped.get(id) ?? { id, label: capabilityLabels[id] ?? id, problems: [] };
+      const id = rootCapabilityByDetail[finding.detailCapability] ?? 'organizational-system';
+      const area = grouped.get(id) ?? { id, label: rootCapabilityLabels[id]!, problems: [] };
       area.problems.push({
         pattern: finding.pattern,
         diagnosis: finding.title,
@@ -188,41 +215,31 @@ export class InferenceService {
     return [...grouped.values()].sort((left, right) => left.label.localeCompare(right.label));
   }
 
-  private capabilities(projectId: string, unitId?: string): CapabilityLevel[] {
-    const scope = this.scope(projectId, unitId);
-    const rows = this.db.prepare(`
-      SELECT s.capability, s.weight
-      FROM responses r JOIN participations p ON p.id = r.participation_id
-      JOIN assessment_signals s ON s.graph_version = p.graph_version
-        AND s.node_key = r.node_id AND s.option_key = r.option_id
-      WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-    `).all(...scope.parameters) as unknown as Array<{ capability: string; weight: number }>;
-    const grouped = new Map<string, number[]>();
-    for (const row of rows) {
-      const label = capabilityLabels[row.capability] ?? row.capability;
-      grouped.set(label, [...(grouped.get(label) ?? []), Number(row.weight)]);
-    }
-    return [...grouped.entries()].map(([label, weights]) => {
-      const assessment = CapabilityAssessment.from(weights);
-      return { id: Object.entries(capabilityLabels).find(([, candidate]) => candidate === label)?.[0] ?? label, label, ...assessment };
-    }).sort((left, right) => left.label.localeCompare(right.label));
-  }
-
   private capabilityDetails(projectId: string, unitId?: string): CapabilityLevel[] {
     const scope = this.scope(projectId, unitId);
     const rows = this.db.prepare(`
-      SELECT s.capability, s.pattern, s.weight
+      SELECT s.capability, s.pattern, s.weight, s.detail_capabilities
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-    `).all(...scope.parameters) as unknown as Array<{ capability: string; pattern: string; weight: number }>;
-    const grouped = new Map<string, number[]>();
+    `).all(...scope.parameters) as unknown as Array<{ capability: string; pattern: string; weight: number; detail_capabilities: string }>;
+    const grouped = new Map<string, { weights: number[]; patterns: Set<string> }>();
     for (const row of rows) {
-      const detail = detailCapability(row.capability, row.pattern);
-      if (detail) grouped.set(detail, [...(grouped.get(detail) ?? []), Number(row.weight)]);
+      const details = JSON.parse(row.detail_capabilities) as string[];
+      for (const detail of details) {
+        const current = grouped.get(detail) ?? { weights: [], patterns: new Set<string>() };
+        current.weights.push(Number(row.weight));
+        current.patterns.add(row.pattern);
+        grouped.set(detail, current);
+      }
     }
-    return [...grouped.entries()].map(([id, weights]) => ({ id, label: id, ...CapabilityAssessment.from(weights) }));
+    return [...grouped.entries()].map(([id, evidence]) => ({
+      id,
+      label: capabilityDetailLabels[id] ?? id,
+      ...CapabilityAssessment.from(evidence.weights),
+      coverage: Math.min(1, evidence.patterns.size / 2),
+    }));
   }
 
   private perspectiveGaps(projectId: string, minimum: number, unitId?: string): PerspectiveGap[] {
@@ -262,22 +279,32 @@ export class InferenceService {
   private findings(projectId: string, population: number, unitId?: string): Finding[] {
     const scope = this.scope(projectId, unitId);
     const rows = this.db.prepare(`
-      SELECT s.capability, s.pattern, s.weight, COUNT(*) total
+      SELECT p.id participant_id, s.capability, s.pattern, s.weight, s.detail_capabilities,
+        s.evidence_layer, s.constraint_kind
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-      GROUP BY s.capability, s.pattern, s.weight
-    `).all(...scope.parameters) as unknown as AggregateResponse[];
-    const patternCounts = new Map<string, { capability: string; evidence: number }>();
-    for (const row of rows) {
-      if (Number(row.weight) < 0) patternCounts.set(row.pattern, { capability: row.capability, evidence: (patternCounts.get(row.pattern)?.evidence ?? 0) + Number(row.total) });
-    }
-    return [...patternCounts.entries()]
-      .filter(([pattern, item]) => recommendations[pattern] && item.evidence >= Math.max(2, Math.ceil(population * 0.3)))
-      .sort((a, b) => b[1].evidence - a[1].evidence)
-      .slice(0, 8)
-      .map(([pattern, item]) => ({ pattern, ...item, detailCapability: detailCapability(item.capability, pattern) ?? capabilityGroup[item.capability] ?? item.capability, ...recommendations[pattern]! }));
+    `).all(...scope.parameters) as unknown as Array<{ participant_id: string; capability: string; pattern: string; weight: number; detail_capabilities: string; evidence_layer: EvidenceLayer; constraint_kind: ConstraintKind }>;
+    const signals: GroupSignal[] = rows.flatMap((row) => (JSON.parse(row.detail_capabilities) as string[]).map((detailCapability) => ({
+      participantId: row.participant_id,
+      detailCapability,
+      pattern: row.pattern,
+      weight: Number(row.weight),
+      layer: row.evidence_layer,
+      constraint: row.constraint_kind,
+    })));
+    return new GroupRecommendationEngine(interventionCatalog).rank(signals, population).map((ranked) => ({
+      capability: ranked.detailCapability,
+      detailCapability: ranked.detailCapability,
+      pattern: ranked.pattern,
+      title: ranked.title,
+      evidence: Math.round(ranked.support * population),
+      intervention: ranked.intervention,
+      confidence: ranked.confidence,
+      constraint: ranked.constraint,
+      reasons: ranked.reasons,
+    }));
   }
 
   private scope(projectId: string, unitId?: string): QueryScope {
@@ -329,33 +356,30 @@ export class InferenceService {
   }
 }
 
-const capabilityGroup: Record<string, string> = {
-  fluxo: 'fluxo', entrega: 'fluxo', engenharia: 'engenharia', qualidade: 'engenharia',
-  arquitetura: 'arquitetura', confiabilidade: 'confiabilidade', observabilidade: 'confiabilidade',
-  plataforma: 'plataforma', organizacao: 'organizacao', governanca: 'governanca', aprendizado: 'aprendizado',
+const capabilityDetailLabels: Record<string, string> = {
+  'product-direction': 'Direção e alinhamento', 'discovery-validation': 'Descoberta e validação', 'portfolio-management': 'Gestão de portfólio',
+  'planning-refinement': 'Planejamento e refinamento', 'work-management': 'Fluxo de trabalho', 'continuous-integration': 'Integração contínua', 'release-feedback': 'Release e feedback',
+  'sustainable-design': 'Design e sustentabilidade do código', 'quality-strategy': 'Estratégia de qualidade', 'sdlc-automation': 'Automação do SDLC', 'software-security': 'Segurança de software', 'technical-capability': 'Capacidade técnica',
+  'domain-alignment': 'Alinhamento ao domínio', 'architecture-decisions': 'Decisões arquiteturais', evolvability: 'Evolutibilidade', 'integration-data': 'Integração e dados',
+  'observability-practice': 'Observabilidade', 'reliability-practice': 'Confiabilidade', 'incident-management': 'Gestão de incidentes', 'platform-autonomy': 'Plataforma e autonomia',
+  'reproducible-infrastructure': 'Infraestrutura reproduzível', 'cloud-security': 'Segurança e identidade', 'cloud-reliability': 'Confiabilidade de infraestrutura', 'cloud-efficiency': 'Eficiência, custos e sustentabilidade',
+  'team-ownership': 'Estrutura e ownership', 'enabling-governance': 'Governança habilitadora', 'leadership-management': 'Liderança e gestão', collaboration: 'Colaboração', 'organizational-learning': 'Aprendizado e adaptação',
 };
 
-function detailCapability(capability: string, pattern: string): string | undefined {
-  if (capability === 'entrega') return 'delivery-release';
-  if (capability === 'qualidade') return 'continuous-quality';
-  if (capability === 'fluxo') {
-    if (/descoberta|feedback-tardio|cascata|prazo|solucao/.test(pattern)) return 'product-discovery';
-    if (/integracao|release|entrega|mudanca-sobrescrita/.test(pattern)) return 'delivery-release';
-    return 'work-flow';
-  }
-  if (capability === 'engenharia') {
-    if (/seguranca|privacidade|dado-pessoal/.test(pattern)) return 'secure-sdlc';
-    if (/qualidade|verificacao|teste|regressao|dados/.test(pattern)) return 'continuous-quality';
-    return 'integration-code';
-  }
-  if (capability === 'plataforma') {
-    if (/seguranca|privacidade|dado-pessoal/.test(pattern)) return 'cloud-security';
-    if (/reproduz|correcao|fonte|inconsistente|infraestrutura/.test(pattern)) return 'reproducible-infrastructure';
-    return 'platform-self-service';
-  }
-  if (capability === 'governanca' && /seguranca|privacidade/.test(pattern)) return 'secure-sdlc';
-  return undefined;
-}
+const rootCapabilityLabels: Record<string, string> = {
+  'product-value': 'Estratégia de produto e valor', 'delivery-flow': 'Fluxo de entrega',
+  'engineering-quality': 'Engenharia e qualidade', 'architecture-evolution': 'Arquitetura e evolução',
+  'operations-platform': 'Operação, confiabilidade e plataforma', 'organizational-system': 'Sistema organizacional',
+};
+
+const rootCapabilityByDetail = Object.fromEntries([
+  ['product-value', ['product-direction', 'discovery-validation', 'portfolio-management']],
+  ['delivery-flow', ['planning-refinement', 'work-management', 'continuous-integration', 'release-feedback']],
+  ['engineering-quality', ['sustainable-design', 'quality-strategy', 'sdlc-automation', 'software-security', 'technical-capability']],
+  ['architecture-evolution', ['domain-alignment', 'architecture-decisions', 'evolvability', 'integration-data']],
+  ['operations-platform', ['observability-practice', 'reliability-practice', 'incident-management', 'platform-autonomy', 'reproducible-infrastructure', 'cloud-security', 'cloud-reliability', 'cloud-efficiency']],
+  ['organizational-system', ['team-ownership', 'enabling-governance', 'leadership-management', 'collaboration', 'organizational-learning']],
+].flatMap(([root, details]) => (details as string[]).map((detail) => [detail, root]))) as Record<string, string>;
 
 type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[] };
 type QueryScope = { sql: string; parameters: string[] };

@@ -3,6 +3,39 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-26 — Largura mínima para notas agregadas
+
+- Ramos deixaram de publicar nível quando a evidência está concentrada em uma única
+  folha; agora exigem ao menos 50% de cobertura e maioria de filhos avaliados.
+- O relatório passou a informar quantas subcapacidades sustentam a publicação,
+  evitando apresentar confiança populacional como abrangência do pilar.
+
+## 2026-08-26 — Seis capacidades e cobertura temática
+
+- O radar foi migrado para a taxonomia aprovada de seis capacidades, com folhas
+  navegáveis e cloud aprofundada sob operação, confiabilidade e plataforma.
+- Sinais passaram a produzir efeitos em múltiplas práticas e cobertura temática foi
+  separada de confiança; folhas rasas não participam da classificação.
+- O grafo ganhou situações sobre resultado de produto, sustentabilidade do código,
+  contratos/dados, decisão de confiabilidade e liderança sistêmica, com variações
+  por perspectiva e nova versão imutável do catálogo.
+
+## 2026-08-26 — Taxonomia sociotécnica alvo aprovada
+
+- A direção do MVP passou a separar estratégia de produto e valor, fluxo de entrega,
+  engenharia e qualidade, arquitetura e evolução, operação/confiabilidade/plataforma
+  e sistema organizacional.
+- Foi explicitado que uma resposta pode gerar efeitos explicáveis em múltiplos ramos
+  e que folhas sem cobertura discriminativa permanecem não avaliadas.
+
+## 2026-08-26 — Navegação e diagnóstico do deep dive
+
+- O breadcrumb ganhou tratamento visual responsivo e retorno explícito ao nível
+  anterior, preservando o recorte organizacional durante o deep dive.
+- Capacidades em nível crítico com evidência convergente deixaram de usar a mensagem
+  de ausência de problema e passaram a indicar fragilidade confirmada e a próxima
+  discriminação causal necessária.
+
 ## 2026-08-26 — Drill-down por página e showcase contínuo
 
 - Os quatro eixos macro passaram a permanecer visíveis, com estados não avaliados
@@ -93,3 +126,11 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
 - Adicionados sinais entre capacidades, melhoria contínua, contexto de superfície
   compartilhada e classificação hierárquica limitada pelo elo mais frágil.
+- Entregue a versão 0.12 com projeções explícitas por folha, camada e restrição,
+  auditoria de cobertura completa, ramos por perspectiva e showcase multiperfil.
+- Corrigida a seleção de problemas por folha, incluindo efeitos cruzados, e separada
+  a comunicação de força sustentada da ausência de causa negativa recorrente.
+- Removidas migrações e leituras retrocompatíveis; bancos novos usam apenas o schema
+  vigente e o recomendador auditável foi inicialmente delimitado.
+- Entregue o recomendador simbólico de grupo sem LLM, sensível a coocorrência,
+  camadas, restrições e contradições, com justificativas no relatório e na API.

@@ -34,10 +34,10 @@ falhas inesperadas são registradas internamente sem apresentar stack, SQL ou se
 TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudanças de
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
-O schema evolui por migrações incrementais numeradas e transacionais registradas em
-`schema_migrations`. A migração de lotes preserva convites anteriores e os agrupa
-sem recriar tokens. Índices garantem que um lote de origem seja reemitido no máximo
-uma vez.
+O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
+o único schema vigente, registrado como versão 1; mudanças incompatíveis exigem
+recriação explícita da base. Colunas de projeção, camada e restrição são obrigatórias.
+Índices e constraints garantem que um lote de origem seja reemitido no máximo uma vez.
 
 A API administrativa usa bearer token apenas no header e compartilha os serviços
 das telas. Relatórios JSON passam por sanitização para remover contagem de padrões e
@@ -89,7 +89,7 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com trinta e três nós, aprofundamentos
+O corte vigente implementa esses cinco passos com 52 nós, aprofundamentos
 condicionais e perspectivas de gestão, produto, qualidade, engenharia e
 plataforma/operações escolhidas durante a entrevista.
 
@@ -102,10 +102,21 @@ de frontend ou duplicação da regra de inferência.
 superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula
 níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmente o
 escopo da unidade, permitindo navegação macro→micro sem perder o recorte. O showcase
-E2E cria cinco participações para cada cenário ruim, mediano e elite, percorre o
+E2E cria sete participações — qualidade, gestão, produto, três de engenharia e
+plataforma/operações — para cada cenário ruim, mediano e elite, percorre o
 grafo em Chromium, valida a ordenação, imprime os caminhos e deixa a mesma base
 servida para inspeção manual quando iniciado por `npm run demo`. O servidor interno
 usado pelo Playwright fica isolado em `demo:serve`, evitando recursão entre scripts.
+
+O serviço de inferência projeta sinais versionados do catálogo em uma ou mais folhas
+da taxonomia. Essa projeção preserva o padrão de origem e permite efeitos cruzados
+sem duplicar respostas. Cada folha calcula nível e confiança pelos pesos e cobertura
+pela quantidade de padrões distintos; a classificação ignora folhas que ainda não
+atingiram a cobertura mínima.
+
+Na versão vigente, cada sinal persistido contém obrigatoriamente as folhas afetadas,
+a camada de evidência e o tipo de restrição. A inferência não possui leitura ou
+backfill para formatos históricos.
 
 `TeamClassification` encapsula a escala e a regra de elo limitante. O serviço de
 inferência calcula classificações locais e aplica a menor classificação descendente

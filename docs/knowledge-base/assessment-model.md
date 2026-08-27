@@ -8,19 +8,33 @@ relações com outras capacidades.
 
 ## Árvore de capacidades
 
-Os eixos não são uma lista plana de frameworks. A visão superior vigente separa:
+Os eixos não são uma lista plana de frameworks. A taxonomia alvo aprovada para o
+MVP separa seis capacidades sociotécnicas:
 
-1. **Fluxo de valor e produto** — necessidade, lote, feedback, dependências e entrega de valor.
-2. **Excelência de engenharia** — design, qualidade, integração e SDLC sustentável.
-3. **Arquitetura e operação de produtos** — arquitetura de software; cloud, plataforma e
-   segurança; confiabilidade e observabilidade.
-4. **Organização, governança e aprendizado** — organização e interação; governança e estratégia;
-   aprendizado e adaptação.
+1. **Estratégia de produto e valor** — direção e alinhamento, descoberta e validação,
+   resultados e gestão de portfólio.
+2. **Fluxo de entrega** — planejamento, refinamento, fluxo de trabalho, integração,
+   release e feedback.
+3. **Engenharia e qualidade** — design sustentável, estratégia de qualidade,
+   automação do SDLC, segurança de software e capacidade técnica.
+4. **Arquitetura e evolução** — alinhamento ao domínio, decisões arquiteturais,
+   evolutibilidade, integração e dados.
+5. **Operação, confiabilidade e plataforma** — observabilidade, confiabilidade,
+   incidentes, plataforma/autonomia e cloud/infraestrutura.
+6. **Sistema organizacional** — estrutura e ownership, governança habilitadora,
+   liderança, colaboração, aprendizado e adaptação.
+
+Cada ramo segue, quando houver evidência suficiente, `capacidade → subcapacidade →
+prática → comportamento observado`. Comportamentos podem produzir sinais em vários
+ramos: uma integração tardia, por exemplo, pode afetar fluxo, engenharia, arquitetura
+e sistema organizacional. A pontuação é calculada separadamente em cada efeito e
+mantém a mesma resposta como origem explicável; não se duplica uma nota genérica.
 
 Cada nó pode possuir filhos e produzir outro radar. Seu nível é limitado pelo filho
 com evidência mais frágil. Cada clique abre uma página própria, preserva o recorte
 organizacional e apresenta um breadcrumb do macro ao micro; folhas mostram problemas
-e correções. Os quatro eixos macro permanecem visíveis, mas ausência de evidência é
+e correções. Os seis eixos macro permanecerão visíveis após a migração do catálogo,
+mas ausência de evidência é
 rotulada como “não avaliado”, nunca como nível zero. A taxonomia não duplica o mesmo
 sinal para preencher frameworks diferentes.
 
@@ -31,24 +45,12 @@ confiabilidade, eficiência de performance, otimização de custos e sustentabil
 Ferramentas como vault aparecem como possível intervenção para um problema de
 gestão de segredos demonstrado; sua presença nunca constitui um nível.
 
-As capacidades detalhadas atualmente são:
-
-1. **Fluxo e entrega** — tamanho de lote, feedback, dependências, previsibilidade,
-   trabalho não planejado e capacidade de concluir.
-2. **Engenharia e SDLC** — design, testes, revisão, integração, segurança,
-   implantação, manutenção e gestão de dívida.
-3. **Arquitetura e evolução** — limites, acoplamento, decisões, fitness functions,
-   alinhamento ao domínio e custo de mudança.
-4. **Confiabilidade e observabilidade** — sinais úteis, SLOs, resposta a incidentes,
-   aprendizado, capacidade e redução de toil.
-5. **Plataforma, cloud e segurança** — caminhos pavimentados, self-service,
-   guardrails, permissões, resiliência e responsabilidade compartilhada.
-6. **Organização e interação** — topologias de time, carga cognitiva, ownership,
-   conflitos, segurança psicológica, formação e coordenação.
-7. **Governança e estratégia** — clareza de decisão, risco, priorização, políticas,
-   arquitetura corporativa e alinhamento entre intenção e execução.
-8. **Aprendizado e adaptação** — experimentação, feedback do cliente, retrospectiva,
-   uso de dados, IA com supervisão e mudança sustentada.
+As folhas vigentes são direção/alinhamento, descoberta/validação, portfólio;
+planejamento/refinamento, fluxo, integração e release; design sustentável, qualidade,
+automação, segurança e capacidade técnica; domínio, decisões, evolutibilidade, dados;
+observabilidade, confiabilidade, incidentes, plataforma e cloud; ownership,
+governança habilitadora, liderança, colaboração e aprendizado. Cloud aprofunda
+infraestrutura reproduzível, segurança/identidade, confiabilidade e eficiência.
 
 Referenciais como DORA, SRE, Well-Architected, DDD, Team Topologies, Tuckman,
 TOGAF e práticas de engenharia alimentam capacidades; não viram pilares ou notas
@@ -104,7 +106,7 @@ limitantes, relações causais plausíveis e confiança. Uma nota agregada, se e
 será secundária e explicável.
 
 O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
-os quatro eixos macro e suas explosões. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
+os seis eixos macro e suas explosões. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
 dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
 evidência insuficiente, aparece como “não avaliado” e nunca é interpretado como zero. O radar não combina pilares
 em uma nota global e não substitui findings, bloqueios ou recomendações.
@@ -114,6 +116,23 @@ Evidências em direções opostas reduzem a confiança e são mostradas como con
 em vez de desaparecerem em uma média. Um comportamento positivo é aprofundado para
 verificar consistência sob urgência; um comportamento frágil abre discriminação de
 causas prováveis. O resultado continua sujeito a calibração empírica.
+
+Confiança e cobertura são dimensões diferentes. Confiança expressa convergência e
+volume populacional; cobertura expressa variedade de padrões independentes e de
+folhas examinadas. Repetir o mesmo padrão por várias pessoas não completa cobertura.
+Uma folha exige inicialmente dois padrões distintos para publicar nível; o ramo
+expõe a proporção de folhas cobertas e mantém as demais como não avaliadas. Um ramo
+só publica sua própria nota quando ao menos metade da cobertura temática e a maioria
+de seus filhos atingem cobertura completa; uma única prática forte nunca representa
+o pilar inteiro.
+
+Problemas recorrentes são selecionados dentro de cada folha, nunca por um limite
+global que permita a um pilar esconder outro. Um padrão negativo precisa aparecer
+em pelo menos duas participações e, em grupos maiores, em 20% da população elegível.
+Cada folha mostra no máximo três prioridades e um sinal cruzado pode sustentar um
+finding em todas as folhas que declara afetar. Nível alto sem finding é descrito
+como convergência positiva; nível crítico sem padrão recorrente explicita que as
+fragilidades estão dispersas e não inventa uma causa ou intervenção.
 
 ## Classificação sociotécnica
 

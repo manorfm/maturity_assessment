@@ -5,7 +5,7 @@ import { ProjectService } from '../src/modules/projects/project-service.js';
 import { InvitationService } from '../src/modules/assessments/invitation-service.js';
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
 import { InferenceService } from '../src/modules/inference/inference-service.js';
-import { graph, GRAPH_VERSION } from '../src/modules/catalog/assessment-graph.js';
+import { edges, graph, GRAPH_VERSION } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 
 test('convite é consumido uma vez e não mantém vínculo com a participação', () => {
@@ -67,14 +67,15 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   const report = inference.report(String(project.id), 5);
   assert.equal(report.completed, 5);
   assert.equal(report.findings.some((finding) => finding.pattern === 'integracao-tardia'), true);
-  assert.equal(report.capabilityGroups.some((group) => group.id === 'engineering-system'), true);
-  assert.equal(report.capabilityGroups.some((group) => group.id === 'architecture-runtime' && group.children.length > 0), true);
-  const engineeringArea = report.areas.find((area) => area.id === 'engenharia');
+  assert.equal(report.capabilityGroups.some((group) => group.id === 'engineering-quality'), true);
+  assert.equal(report.capabilityGroups.some((group) => group.id === 'architecture-evolution' && group.children.length > 0), true);
+  assert.equal(report.capabilityGroups.length, 6);
+  const engineeringArea = report.areas.find((area) => area.id === 'delivery-flow');
   assert.ok(engineeringArea);
-  assert.equal(engineeringArea.label, 'Engenharia e SDLC');
+  assert.equal(engineeringArea.label, 'Fluxo de entrega');
   assert.equal(engineeringArea.problems.some((problem) => problem.pattern === 'integracao-tardia'), true);
   assert.equal(engineeringArea.problems.every((problem) => problem.correction.length > 0), true);
-  assert.equal(report.capabilities.some((capability) => capability.id === 'engenharia' && capability.level >= 0 && capability.level <= 4), true);
+  assert.equal(report.capabilities.some((capability) => capability.id === 'continuous-integration' && capability.level >= 0 && capability.level <= 4), true);
   assert.equal(report.scopes.some((item) => item.path === 'Empresa/Time A'), true);
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.capabilities.length > 0);
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.areas.length > 0);
@@ -115,6 +116,9 @@ test('entrega aprofunda sinais maduros e investiga bloqueio após integração f
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'isolated-days'), 'delivery-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap'), 'release-control');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-validation', 'bypass-under-pressure'), 'degradation');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'management'), 'management-portfolio');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'quality'), 'quality-risk-strategy');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'platform'), 'platform-cloud-reliability');
 });
 
 test('incidente aprofunda roteamento diagnóstico e correção sem premiar ferramenta', () => {
@@ -161,6 +165,17 @@ test('validador rejeita ciclos e nós inalcançáveis antes da publicação', ()
   assert.throws(() => validateGraphDefinition([node('a'), node('b')], [], 'a'), /unreachable/);
 });
 
+test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobertura', () => {
+  const db = createDatabase(':memory:');
+  new CatalogService(db);
+  const signal = db.prepare("SELECT detail_capabilities, evidence_layer, constraint_kind FROM assessment_signals WHERE graph_version = ? LIMIT 1").get(GRAPH_VERSION) as { detail_capabilities: string; evidence_layer: string; constraint_kind: string };
+  assert.ok(JSON.parse(signal.detail_capabilities).length > 0);
+  assert.ok(signal.evidence_layer.length > 0);
+  assert.ok(signal.constraint_kind.length > 0);
+  const withoutCloudEfficiency = graph.map((node) => ({ ...node, options: node.options.map((option) => ({ ...option, signals: option.signals.filter((item) => !item.details?.includes('cloud-efficiency')) })) }));
+  assert.throws(() => validateGraphDefinition(withoutCloudEfficiency, edges, graph[0]!.id), /cloud-efficiency/);
+});
+
 test('catálogo adapta o cenário ao perfil sem alterar a capacidade avaliada', () => {
   const db = createDatabase(':memory:');
   const catalog = new CatalogService(db);
@@ -189,6 +204,8 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
         : node.id === 'recent-need' && firstOption === 'add-to-sprint' ? 'defined-then-built'
         : node.id === 'iteration-purpose' && firstOption === 'add-to-sprint' ? 'fill-capacity'
         : node.id === 'blocked-work' && firstOption === 'add-to-sprint' ? 'waiting-external'
+        : node.id === 'product-outcome-evidence' && firstOption === 'add-to-sprint' ? 'delivery-accepted'
+        : node.id === 'data-contract-change' && firstOption === 'add-to-sprint' ? 'coordinated-migration'
         : node.options[0]!.id;
       participations.answer(claimed.resumeToken, option);
     }

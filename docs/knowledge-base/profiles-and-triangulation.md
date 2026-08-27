@@ -54,11 +54,17 @@ disse X” quando isso puder identificar alguém.
 
 O convite é comum à unidade. Na primeira etapa, a pessoa seleciona a perspectiva
 que mais se aproxima de sua atuação cotidiana; a seleção não gera sinais nem mede
-conhecimento. O catálogo pode substituir cenário e pergunta por uma variante daquela
-perspectiva sem alterar a
-capacidade nem premiar o cargo. A publicação vigente possui variantes para
-urgências, degradação e entrada de incidentes, com perspectivas de gestão, produto,
-qualidade, engenharia e plataforma/operações sobre o mesmo evento.
+conhecimento. O catálogo roteia a entrevista pela perspectiva escolhida. Todos
+atravessam um tronco comportamental comum; gestão aprofunda portfólio, poder e
+segurança para expor risco; produto aprofunda discovery e efeito dos resultados;
+qualidade, estratégia de risco e não funcionais; engenharia, segurança e difusão de
+capacidade técnica; plataforma/operações, recuperação, resiliência e eficiência
+cloud. Um ramo pode produzir efeitos cruzados em várias capacidades sem premiar o
+cargo.
+
+O convite continua comum à squad. Uma composição multiperfil pode percorrer todos
+esses ramos, mas o relatório publica somente folhas efetivamente cobertas por padrões
+independentes. Ausência de uma perspectiva relevante é lacuna, não nota zero.
 
 A triangulação compara a média direcional dos sinais por capacidade somente entre
 perfis com pelo menos cinco participações concluídas no escopo. O relatório mostra

@@ -13,14 +13,14 @@ ficam separadas em [`docs/backlog`](docs/backlog/README.md).
 
 O primeiro corte vertical está executável. Ele permite criar um projeto, configurar
 uma hierarquia livre, gerar convites individuais, responder anonimamente a uma
-entrevista de trinta e três nós com aprofundamentos condicionais e liberar findings globais e hierárquicos
+entrevista de 52 nós com aprofundamentos condicionais e liberar findings globais e hierárquicos
 após cinco conclusões em partições seguras.
 
 A versão 0.3 adapta a linguagem de cenários ao perfil e apresenta divergências de
 perspectiva somente quando cada grupo comparado possui ao menos cinco respostas.
 
-A versão 0.4 conclui o [escopo do MVP](docs/knowledge-base/mvp-scope.md): adiciona
-lotes revogáveis/reemitíveis, migrações incrementais e uma
+A versão 0.4 concluiu o [escopo do MVP](docs/knowledge-base/mvp-scope.md): adicionou
+lotes revogáveis/reemitíveis e uma
 [API administrativa](docs/knowledge-base/api.md). O sistema está pronto para um
 piloto controlado; itens de escala, integração e calibração permanecem no backlog.
 
@@ -47,6 +47,19 @@ organizações sintéticas ruim, mediana e elite.
 A versão 0.10 mantém quatro capacidades macro sempre visíveis e move cada explosão
 para uma página própria, com breadcrumb, escopo organizacional preservado e
 diagnóstico coerente quando a evidência é insuficiente ou contraditória.
+
+A versão 0.11 migra o relatório para seis capacidades sociotécnicas, introduz
+cobertura temática distinta de confiança, redistribui uma resposta por múltiplas
+práticas quando seus efeitos atravessam o sistema e acrescenta situações sobre
+resultado, sustentabilidade técnica, dados, confiabilidade e liderança.
+
+A versão 0.12 torna os efeitos capacidade/camada/restrição explícitos no catálogo,
+audita cobertura independente de todas as folhas antes da publicação, abre ramos
+próprios para cinco perspectivas e exercita uma squad multiperfil no showcase.
+
+A versão 0.13 introduz um sistema especialista sem LLM para priorizar soluções pelo
+conjunto agregado de jornadas: recorrência, coocorrência, camadas, restrições e
+contradições. Grupos com a mesma nota podem receber recomendações diferentes.
 
 ## Executar localmente
 
@@ -84,5 +97,6 @@ preparação manual do banco. `npm run showcase` permanece como alias compatíve
   diferente do editor de hierarquia organizacional já entregue, continua no backlog.
 - Os recortes hierárquicos são suprimidos quando um grupo irmão pequeno permitiria
   inferência por subtração; filtros combináveis mais avançados ainda não existem.
-- Variantes por perspectiva cobrem inicialmente urgência e degradação; a expansão e a
-  calibração do catálogo continuam sendo trabalho incremental.
+- A jornada comum é complementada por ramos próprios de gestão, produto, qualidade,
+  engenharia e plataforma/operações; dados, design, arquitetura e segurança ainda
+  usam o percurso comum e permanecem no backlog de calibração por disciplina.

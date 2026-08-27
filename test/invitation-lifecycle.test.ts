@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
 import { test } from 'node:test';
 import { createDatabase } from '../src/shared/database.js';
 import { ProjectService } from '../src/modules/projects/project-service.js';
 import { InvitationService } from '../src/modules/assessments/invitation-service.js';
 import { ConflictError } from '../src/shared/errors.js';
+import { DatabaseSync } from 'node:sqlite';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 test('lote pode ser revogado e reemitido sem recuperar tokens antigos', () => {
   const db = createDatabase(':memory:');
@@ -30,33 +30,26 @@ test('lote pode ser revogado e reemitido sem recuperar tokens antigos', () => {
   assert.deepEqual(summary.map((batch) => batch.status), ['revoked', 'issued']);
 });
 
-test('migração incremental adiciona lotes sem destruir tabela existente', () => {
-  const directory = mkdtempSync(join(tmpdir(), 'maturity-migration-'));
-  const filename = join(directory, 'legacy.sqlite');
-  try {
-    const legacy = new DatabaseSync(filename);
-    legacy.exec(`
-      CREATE TABLE projects (id TEXT PRIMARY KEY, public_id TEXT UNIQUE NOT NULL, name TEXT NOT NULL, admin_secret_hash TEXT NOT NULL, minimum_group_size INTEGER NOT NULL DEFAULT 5, created_at TEXT NOT NULL);
-      CREATE TABLE organization_units (id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), parent_id TEXT, name TEXT NOT NULL, unit_type TEXT NOT NULL, path TEXT NOT NULL);
-      CREATE TABLE invitations (
-        id TEXT PRIMARY KEY, project_id TEXT NOT NULL, unit_id TEXT NOT NULL,
-        profile TEXT NOT NULL, token_hash TEXT NOT NULL, status TEXT NOT NULL,
-        expires_at TEXT NOT NULL, created_at TEXT NOT NULL, claimed_at TEXT
-      );
-      INSERT INTO projects VALUES ('p1','public','Legacy','admin',5,'2026-01-01');
-      INSERT INTO organization_units VALUES ('u1','p1',NULL,'Time','team','Time');
-    `);
-    legacy.prepare("INSERT INTO invitations VALUES ('i1','p1','u1','quality','hash','issued','2099-01-01','2026-01-01',NULL)").run();
-    legacy.close();
+test('banco novo nasce somente no esquema vigente', () => {
+  const db = createDatabase(':memory:');
+  const signals = db.prepare('PRAGMA table_info(assessment_signals)').all() as Array<{ name: string; notnull: number }>;
+  const invitations = db.prepare('PRAGMA table_info(invitations)').all() as Array<{ name: string; notnull: number }>;
+  assert.equal(signals.find((column) => column.name === 'detail_capabilities')?.notnull, 1);
+  assert.equal(signals.find((column) => column.name === 'evidence_layer')?.notnull, 1);
+  assert.equal(signals.find((column) => column.name === 'constraint_kind')?.notnull, 1);
+  assert.equal(invitations.find((column) => column.name === 'batch_id')?.notnull, 1);
+  assert.deepEqual([...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)), [1]);
+  db.close();
+});
 
-    const migrated = createDatabase(filename);
-    const columns = migrated.prepare('PRAGMA table_info(invitations)').all() as Array<{ name: string }>;
-    assert.equal(columns.some((column) => column.name === 'batch_id'), true);
-    assert.equal((migrated.prepare('SELECT COUNT(*) total FROM invitations').get() as { total: number }).total, 1);
-    assert.equal((migrated.prepare('SELECT COUNT(*) total FROM invitation_batches').get() as { total: number }).total, 1);
-    assert.ok((migrated.prepare('SELECT batch_id FROM invitations').get() as { batch_id: string }).batch_id);
-    assert.ok((migrated.prepare('SELECT COUNT(*) total FROM schema_migrations').get() as { total: number }).total >= 2);
-    migrated.close();
+test('banco de versão anterior é rejeitado em vez de migrado', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'maturity-obsolete-'));
+  const filename = join(directory, 'obsolete.sqlite');
+  try {
+    const obsolete = new DatabaseSync(filename);
+    obsolete.exec("CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL); INSERT INTO schema_migrations VALUES (4, '2026-01-01')");
+    obsolete.close();
+    assert.throws(() => createDatabase(filename), /Unsupported database schema/);
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }

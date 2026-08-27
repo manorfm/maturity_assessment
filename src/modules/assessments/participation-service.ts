@@ -32,7 +32,8 @@ export class ParticipationService {
         const profile = AssessmentProfile.create(option.id);
         this.db.prepare('UPDATE participations SET profile = ? WHERE id = ?').run(profile.value, participation.id);
       }
-      const next = this.catalog.nextNode(participation.graph_version, node.id, option.id);
+      const effectiveProfile = node.id === 'respondent-context' ? option.id : participation.profile;
+      const next = this.catalog.nextNode(participation.graph_version, node.id, option.id, effectiveProfile);
       if (next) {
         this.db.prepare('UPDATE participations SET current_node = ? WHERE id = ?').run(next, participation.id);
       } else {

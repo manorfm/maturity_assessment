@@ -6,7 +6,8 @@ Antes de planejar ou alterar este projeto, leia integralmente:
 
 1. `docs/knowledge-base/README.md` e os documentos que ele indexa;
 2. `docs/backlog/README.md` e os itens relevantes ao trabalho solicitado;
-3. `docs/history/completed.md` quando for necessário entender decisões anteriores.
+3. `docs/history/completed.md` somente quando for necessário entender a cronologia;
+   o histórico não é especificação e nunca prevalece sobre a base de conhecimento.
 
 A base de conhecimento é a fonte vigente do produto. Não implemente algo que a
 contradiga silenciosamente. Se uma solicitação mudar o modelo, atualize primeiro ou

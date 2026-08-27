@@ -18,7 +18,8 @@ completo sem acesso direto ao banco ou alteração de código.
 6. ✅ Produzir findings globais e hierárquicos com limiar e supressão de partições.
 7. ✅ Triangular perspectivas somente entre grupos elegíveis.
 8. ✅ Disponibilizar telas e API JSON para o fluxo administrativo principal.
-9. ✅ Aplicar migrações incrementais sem destruir bancos existentes.
+9. ✅ Criar diretamente o schema vigente e rejeitar bancos de versões anteriores;
+   durante o MVP não existe compromisso de migração ou preservação de dados locais.
 10. ✅ Passar por tipagem estrita, testes de domínio/integração/HTTP, build e revisão
     de vazamento de erros ou segredos.
 

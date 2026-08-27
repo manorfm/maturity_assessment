@@ -1,7 +1,9 @@
-export const GRAPH_VERSION = 'capability-drilldown-v7';
+export const GRAPH_VERSION = 'profile-routed-taxonomy-v10';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
-export type Signal = { capability: string; pattern: string; weight: number };
+export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
+export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
+export type Signal = { capability: string; pattern: string; weight: number; details?: string[]; layer?: EvidenceLayer; constraint?: ConstraintKind };
 export type Option = { id: string; label: string; signals: Signal[] };
 export type AssessmentNode = {
   id: string;
@@ -13,7 +15,7 @@ export type AssessmentNode = {
   next?: string;
 };
 
-export type AssessmentEdge = { from: string; to: string; optionId?: string };
+export type AssessmentEdge = { from: string; to: string; optionId?: string; profile?: Profile };
 export type NodeVariant = { nodeId: string; profile: Profile; title?: string; scenario: string; prompt?: string };
 
 export const profiles: Record<Profile, string> = {
@@ -440,11 +442,181 @@ export const graph: AssessmentNode[] = [
       { id: 'manager-reorganizes', label: 'A liderança reorganiza responsabilidades e pessoas usando desempenho, capacidade e prioridades disponíveis.', signals: [{ capability: 'organizacao', pattern: 'estrutura-definida-centralmente', weight: -1 }] },
       { id: 'add-coordination', label: 'Mantêm-se as fronteiras e adicionam-se alinhamentos, responsáveis ou especialistas para absorver a complexidade.', signals: [{ capability: 'organizacao', pattern: 'coordenacao-compensa-carga', weight: -1 }] },
       { id: 'individual-adaptation', label: 'As pessoas ajustam informalmente responsabilidades e buscam ajuda conforme a pressão aparece.', signals: [{ capability: 'organizacao', pattern: 'estrutura-implicita', weight: -2 }] },
+    ], next: 'product-outcome-evidence',
+  },
+  {
+    id: 'product-outcome-evidence', title: 'Da entrega ao resultado',
+    scenario: 'Uma funcionalidade relevante chegou às pessoas usuárias. Semanas depois, novas demandas competem por capacidade e é preciso decidir se o investimento produziu o efeito esperado.',
+    prompt: 'Como essa decisão costuma ser tomada no trabalho real?',
+    options: [
+      { id: 'outcome-reviewed', label: 'O resultado esperado foi definido antes da construção; produto, negócio e tecnologia revisam evidências e alteram prioridade ou solução quando necessário.', signals: [{ capability: 'fluxo', pattern: 'resultado-de-produto-revisado', weight: 2 }, { capability: 'aprendizado', pattern: 'hipotese-validada-por-resultado', weight: 2 }] },
+      { id: 'usage-reported', label: 'Acompanhamos uso e indicadores após a entrega, mas eles raramente mudam compromissos já assumidos ou a direção do portfólio.', signals: [{ capability: 'governanca', pattern: 'resultado-sem-repriorizacao', weight: -1 }] },
+      { id: 'delivery-accepted', label: 'A conclusão é validada principalmente por aceite e entrega do escopo; benefícios são acompanhados por negócio em outro momento.', signals: [{ capability: 'fluxo', pattern: 'entrega-substitui-resultado', weight: -2 }] },
+      { id: 'next-demand', label: 'O grupo segue para a próxima demanda e volta ao resultado anterior quando surge reclamação, cobrança ou nova iniciativa.', signals: [{ capability: 'governanca', pattern: 'portfolio-sem-feedback', weight: -2 }] },
+    ], next: 'technical-stewardship',
+  },
+  {
+    id: 'technical-stewardship', title: 'Sustentabilidade da mudança',
+    scenario: 'Uma área do código muda com frequência, concentra defeitos e exige conhecimento específico. Há pressão para continuar entregando sem interromper todo o roadmap.',
+    prompt: 'Como o grupo normalmente reduz esse custo ao longo das próximas mudanças?',
+    options: [
+      { id: 'incremental-improvement', label: 'Reserva melhoria proporcional em cada mudança, explicita o risco, acompanha escapes e reduz dependência de conhecimento concentrado.', signals: [{ capability: 'engenharia', pattern: 'design-sustentavel-incremental', weight: 2 }, { capability: 'aprendizado', pattern: 'divida-revista-por-efeito', weight: 1 }] },
+      { id: 'dedicated-backlog', label: 'Registra dívida em um backlog separado e tenta negociar uma iniciativa quando o impacto se torna grande o suficiente.', signals: [{ capability: 'governanca', pattern: 'divida-sem-capacidade-continua', weight: -1 }] },
+      { id: 'expert-ownership', label: 'Direciona mudanças para as pessoas que conhecem melhor a área, preservando velocidade apesar da concentração.', signals: [{ capability: 'engenharia', pattern: 'codigo-depende-de-especialista', weight: -2 }] },
+      { id: 'rewrite-later', label: 'Evita alterar além do necessário porque a solução definitiva depende de reescrita, migração ou projeto futuro.', signals: [{ capability: 'arquitetura', pattern: 'sustentabilidade-em-grande-lote', weight: -2 }] },
+    ], next: 'data-contract-change',
+  },
+  {
+    id: 'data-contract-change', title: 'Evolução de contratos e dados',
+    scenario: 'Uma mudança precisa alterar um contrato ou estrutura de dados consumida por outros componentes e times, sem interromper versões ainda em uso.',
+    prompt: 'Como a compatibilidade costuma ser preservada?',
+    options: [
+      { id: 'compatible-evolution', label: 'Consumidores e ownership são conhecidos; contrato e schema evoluem de forma compatível, verificável e com remoção planejada da versão anterior.', signals: [{ capability: 'arquitetura', pattern: 'contrato-e-dados-evoluem-compativeis', weight: 2 }, { capability: 'engenharia', pattern: 'compatibilidade-verificada', weight: 1 }] },
+      { id: 'coordinated-migration', label: 'Responsáveis combinam uma janela e sequência de migração; a segurança depende de todos executarem o plano na ordem.', signals: [{ capability: 'fluxo', pattern: 'migracao-coordenada-em-lote', weight: -1 }] },
+      { id: 'defensive-consumers', label: 'Cada consumidor trata variações conhecidas e corrige incompatibilidades conforme elas aparecem nos ambientes.', signals: [{ capability: 'arquitetura', pattern: 'contrato-implicito-fragil', weight: -2 }] },
+      { id: 'direct-data-fix', label: 'Scripts e ajustes de dados são preparados para reconciliar casos depois da implantação, conforme o estado encontrado.', signals: [{ capability: 'engenharia', pattern: 'migracao-de-dados-contextual', weight: -2 }] },
+    ], next: 'reliability-objective',
+  },
+  {
+    id: 'reliability-objective', title: 'Confiabilidade como decisão',
+    scenario: 'Uma jornada apresenta falhas e lentidão intermitentes. Melhorá-la compete com funcionalidades e os indicadores técnicos possuem distribuições diferentes ao longo do dia.',
+    prompt: 'Como o grupo decide quanto esforço investir e se a situação melhorou?',
+    options: [
+      { id: 'service-objective', label: 'Um objetivo ligado à experiência orienta prioridade; distribuições, orçamento de erro e impacto são revistos para equilibrar confiabilidade e mudança.', signals: [{ capability: 'confiabilidade', pattern: 'objetivo-de-confiabilidade-orienta-decisao', weight: 2 }, { capability: 'observabilidade', pattern: 'distribuicao-interpretada-no-contexto', weight: 2 }] },
+      { id: 'fixed-thresholds', label: 'Metas e limites fixos orientam alertas; quando voltam ao normal, o trabalho planejado segue mesmo que parte das pessoas ainda perceba impacto.', signals: [{ capability: 'observabilidade', pattern: 'limites-escondem-distribuicao', weight: -1 }] },
+      { id: 'incident-priority', label: 'O investimento cresce depois de incidentes e reclamações; fora desses períodos, funcionalidades recuperam prioridade.', signals: [{ capability: 'confiabilidade', pattern: 'confiabilidade-reativa-a-incidente', weight: -2 }] },
+      { id: 'specialist-judgment', label: 'Especialistas avaliam gráficos e histórico e negociam caso a caso quanto risco é aceitável.', signals: [{ capability: 'organizacao', pattern: 'decisao-de-confiabilidade-concentrada', weight: -1 }] },
+    ], next: 'leadership-enablement',
+  },
+  {
+    id: 'leadership-enablement', title: 'Liderança diante de um limite sistêmico',
+    scenario: 'O mesmo gargalo afeta entregas diferentes e não cabe na autonomia de uma única squad. Resolver exige capacidade, decisão e colaboração entre áreas.',
+    prompt: 'Como a liderança normalmente atua até produzir uma mudança sustentável?',
+    options: [
+      { id: 'system-owner', label: 'Torna impacto e espera visíveis, define ownership sistêmico, protege capacidade para um experimento e revisa o efeito com os times afetados.', signals: [{ capability: 'organizacao', pattern: 'lideranca-habilita-mudanca-sistemica', weight: 2 }, { capability: 'governanca', pattern: 'governanca-protege-capacidade-de-melhoria', weight: 2 }] },
+      { id: 'escalation-followup', label: 'Escala o tema, acompanha responsáveis e cobra planos até que cada área conclua sua parte.', signals: [{ capability: 'organizacao', pattern: 'lideranca-coordena-handoffs', weight: -1 }] },
+      { id: 'local-efficiency', label: 'Solicita que cada time melhore seus indicadores e processos dentro da autonomia disponível.', signals: [{ capability: 'organizacao', pattern: 'otimizacao-local-pela-gestao', weight: -2 }] },
+      { id: 'strategic-project', label: 'Transforma o problema em iniciativa estratégica com planejamento, orçamento e governança próprios.', signals: [{ capability: 'governanca', pattern: 'mudanca-sistemica-em-grande-lote', weight: -1 }] },
+    ],
+  },
+  {
+    id: 'management-portfolio', title: 'Decisão sobre capacidade organizacional',
+    scenario: 'Iniciativas novas competem com confiabilidade, dívida e melhorias estruturais que atravessam mais de um time.', prompt: 'Como a capacidade costuma ser redistribuída?',
+    options: [
+      { id: 'portfolio-tradeoffs', label: 'Resultados, riscos, dependências e custo de atraso são comparados; iniciar algo novo torna explícito o que será interrompido.', signals: [{ capability: 'governanca', pattern: 'portfolio-explicita-tradeoffs', weight: 2, details: ['portfolio-management', 'product-direction'], layer: 'practice' }] },
+      { id: 'executive-priority', label: 'Lideranças definem a ordem e as áreas reorganizam seus compromissos para absorver a decisão.', signals: [{ capability: 'governanca', pattern: 'portfolio-por-prioridade-executiva', weight: -1, details: ['portfolio-management', 'leadership-management'], layer: 'system', constraint: 'governance' }] },
+      { id: 'parallel-initiatives', label: 'As iniciativas seguem em paralelo e cada responsável negocia pessoas e dependências durante a execução.', signals: [{ capability: 'organizacao', pattern: 'portfolio-paralelo-fragmenta-capacidade', weight: -2, details: ['portfolio-management', 'work-management'], layer: 'system', constraint: 'organization' }] },
+    ], next: 'management-safety',
+  },
+  {
+    id: 'management-safety', title: 'Segurança para expor risco',
+    scenario: 'Uma decisão de prazo produziu risco conhecido e pessoas diferentes possuíam partes da informação antes da falha.', prompt: 'O que acontece quando alguém expõe esse tipo de risco?',
+    options: [
+      { id: 'risk-changes-decision', label: 'A informação pode mudar escopo, prazo ou apoio; quem trouxe o risco participa da revisão sem sofrer consequência punitiva.', signals: [{ capability: 'organizacao', pattern: 'lideranca-protege-alerta-de-risco', weight: 2, details: ['leadership-management', 'organizational-learning', 'collaboration'], layer: 'consistency' }] },
+      { id: 'risk-recorded', label: 'O risco é registrado e escalado, mas compromissos normalmente permanecem até existir evidência mais forte.', signals: [{ capability: 'organizacao', pattern: 'risco-visivel-sem-poder-de-decisao', weight: -1, details: ['leadership-management', 'enabling-governance'], layer: 'system', constraint: 'governance' }] },
+      { id: 'private-warning', label: 'Alertas sensíveis circulam em conversas privadas para evitar conflito, exposição ou interpretação de resistência.', signals: [{ capability: 'organizacao', pattern: 'alerta-de-risco-depende-de-seguranca-pessoal', weight: -2, details: ['leadership-management', 'collaboration'], layer: 'system', constraint: 'culture' }] },
+    ],
+  },
+  {
+    id: 'product-discovery-depth', title: 'Hipótese antes da solução',
+    scenario: 'Uma oportunidade relevante chega com uma solução sugerida e prazo desejado, mas comportamento e resultado ainda possuem incerteza.', prompt: 'Como produto costuma reduzir essa incerteza?',
+    options: [
+      { id: 'problem-evidence', label: 'Problema, público, hipótese e decisão são testados com negócio, tecnologia e pessoas usuárias antes de ampliar a solução.', signals: [{ capability: 'fluxo', pattern: 'discovery-testa-problema-e-decisao', weight: 2, details: ['discovery-validation', 'product-direction', 'planning-refinement', 'domain-alignment'], layer: 'practice' }] },
+      { id: 'solution-refinement', label: 'A solução é refinada com tecnologia e qualidade para reduzir risco de implementação e alinhar critérios.', signals: [{ capability: 'fluxo', pattern: 'discovery-refina-solucao-dada', weight: -1, details: ['discovery-validation', 'planning-refinement'], layer: 'practice', constraint: 'process' }] },
+      { id: 'business-request', label: 'A demanda segue porque possui patrocinador e urgência; aprendizado acontece com demonstração ou uso.', signals: [{ capability: 'governanca', pattern: 'discovery-substituida-por-patrocinio', weight: -2, details: ['discovery-validation', 'product-direction'], layer: 'system', constraint: 'governance' }] },
+    ], next: 'product-outcome-depth',
+  },
+  {
+    id: 'product-outcome-depth', title: 'Decisão depois do aprendizado',
+    scenario: 'A evidência mostra resultado abaixo do esperado, embora a entrega esteja tecnicamente concluída.', prompt: 'Qual consequência costuma ocorrer?',
+    options: [
+      { id: 'change-investment', label: 'Produto revisa hipótese e investimento, podendo interromper, reduzir ou mudar a solução.', signals: [{ capability: 'aprendizado', pattern: 'resultado-muda-investimento', weight: 2, details: ['product-direction', 'portfolio-management', 'organizational-learning'], layer: 'outcome' }] },
+      { id: 'optimize-feature', label: 'O time recebe ajustes para melhorar adoção, mantendo a direção e compromissos principais.', signals: [{ capability: 'fluxo', pattern: 'resultado-gera-ajuste-sem-revisar-direcao', weight: -1, details: ['product-direction', 'discovery-validation'], layer: 'outcome', constraint: 'process' }] },
+      { id: 'report-result', label: 'O resultado é comunicado; novas prioridades já ocupam a capacidade e a revisão não altera o portfólio.', signals: [{ capability: 'governanca', pattern: 'resultado-sem-efeito-no-portfolio', weight: -2, details: ['product-direction', 'portfolio-management'], layer: 'outcome', constraint: 'governance' }] },
+    ],
+  },
+  {
+    id: 'quality-risk-strategy', title: 'Estratégia de qualidade baseada em risco',
+    scenario: 'Uma mudança pequena afeta jornada crítica e outra mudança grande afeta área pouco utilizada.', prompt: 'Como as verificações costumam ser definidas?',
+    options: [
+      { id: 'risk-shaped', label: 'Risco, impacto e histórico definem combinações de prevenção, testes e observação depois da entrega.', signals: [{ capability: 'qualidade', pattern: 'qualidade-proporcional-ao-risco', weight: 2, details: ['quality-strategy', 'planning-refinement'], layer: 'practice' }] },
+      { id: 'standard-suite', label: 'Uma suíte e checklist comuns protegem todas as mudanças, com complementos quando alguém identifica risco especial.', signals: [{ capability: 'qualidade', pattern: 'qualidade-por-suite-padrao', weight: -1, details: ['quality-strategy', 'sdlc-automation'], layer: 'practice', constraint: 'process' }] },
+      { id: 'qa-judgment', label: 'QA define os casos usando experiência e tempo disponível quando recebe a versão.', signals: [{ capability: 'qualidade', pattern: 'estrategia-de-qualidade-concentrada-no-qa', weight: -2, details: ['quality-strategy', 'technical-capability'], layer: 'system', constraint: 'organization' }] },
+    ], next: 'quality-nonfunctional',
+  },
+  {
+    id: 'quality-nonfunctional', title: 'Riscos além do caminho funcional',
+    scenario: 'Volume, concorrência, acessibilidade ou falha de dependência podem comprometer a entrega sem quebrar o fluxo funcional principal.', prompt: 'Como esses riscos entram no cotidiano?',
+    options: [
+      { id: 'continuous-risk-evidence', label: 'Cenários prioritários possuem evidência repetível, limites e responsáveis; resultados alteram desenho e capacidade.', signals: [{ capability: 'qualidade', pattern: 'nao-funcionais-geram-feedback-continuo', weight: 2, details: ['quality-strategy', 'reliability-practice'], layer: 'consistency' }] },
+      { id: 'release-campaign', label: 'Testes especializados acontecem antes de grandes releases ou quando o risco é solicitado.', signals: [{ capability: 'qualidade', pattern: 'nao-funcionais-por-campanha', weight: -1, details: ['quality-strategy', 'release-feedback'], layer: 'practice', constraint: 'process' }] },
+      { id: 'incident-learning', label: 'Capacidade e resiliência são revistas principalmente depois de degradação ou incidente.', signals: [{ capability: 'confiabilidade', pattern: 'nao-funcionais-descobertos-em-producao', weight: -2, details: ['quality-strategy', 'reliability-practice'], layer: 'outcome', constraint: 'knowledge' }] },
+    ],
+  },
+  {
+    id: 'engineering-security-depth', title: 'Segurança durante a mudança',
+    scenario: 'Uma alteração manipula dado sensível e adiciona dependência externa. O prazo é comum, sem emergência.', prompt: 'Como riscos de segurança entram no fluxo?',
+    options: [
+      { id: 'threat-and-guardrails', label: 'Ameaças relevantes são discutidas cedo; dependências, segredos e dados recebem controles e feedback automatizado proporcionais.', signals: [{ capability: 'engenharia', pattern: 'seguranca-integrada-a-mudanca', weight: 2, details: ['software-security', 'sdlc-automation', 'technical-capability'], layer: 'practice' }] },
+      { id: 'pipeline-scans', label: 'Ferramentas analisam código e dependências; alertas relevantes são tratados antes da liberação.', signals: [{ capability: 'engenharia', pattern: 'seguranca-concentrada-em-scanners', weight: 0, details: ['software-security', 'sdlc-automation'], layer: 'practice' }] },
+      { id: 'specialist-review', label: 'O time implementa e aciona segurança quando reconhece sensibilidade ou quando o processo exige revisão.', signals: [{ capability: 'engenharia', pattern: 'seguranca-depende-de-reconhecimento-e-especialista', weight: -2, details: ['software-security', 'technical-capability'], layer: 'system', constraint: 'knowledge' }] },
+    ], next: 'engineering-knowledge-depth',
+  },
+  {
+    id: 'engineering-knowledge-depth', title: 'Capacidade para evoluir o sistema',
+    scenario: 'Uma mudança atravessa área pouco conhecida e a pessoa mais experiente não está disponível.', prompt: 'Como o trabalho normalmente avança?',
+    options: [
+      { id: 'shared-model', label: 'Limites, decisões, exemplos e verificações permitem formar hipótese; colaboração distribui conhecimento durante a mudança.', signals: [{ capability: 'engenharia', pattern: 'conhecimento-distribuido-por-modelo-e-feedback', weight: 2, details: ['technical-capability', 'sustainable-design', 'domain-alignment', 'evolvability', 'collaboration'], layer: 'knowledge' }] },
+      { id: 'wait-expert', label: 'O grupo aguarda ou consulta a referência para evitar decisão incompatível com detalhes históricos.', signals: [{ capability: 'engenharia', pattern: 'mudanca-aguarda-especialista', weight: -2, details: ['technical-capability', 'sustainable-design'], layer: 'system', constraint: 'knowledge' }] },
+      { id: 'learn-while-changing', label: 'A pessoa investiga e implementa com revisão posterior; qualidade depende do tempo e de quem estiver disponível.', signals: [{ capability: 'engenharia', pattern: 'aprendizado-tecnico-sem-caminho-repetivel', weight: -1, details: ['technical-capability', 'sustainable-design'], layer: 'knowledge', constraint: 'process' }] },
+    ],
+  },
+  {
+    id: 'platform-cloud-reliability', title: 'Falha de infraestrutura sem acesso artesanal',
+    scenario: 'Uma zona, serviço gerenciado ou componente de infraestrutura degrada enquanto a aplicação continua parcialmente disponível.', prompt: 'Como a recuperação costuma ocorrer?',
+    options: [
+      { id: 'designed-recovery', label: 'O desenho possui limites, redundância e recuperação testada; sinais mostram impacto e acionam resposta reproduzível.', signals: [{ capability: 'plataforma', pattern: 'infraestrutura-recupera-por-desenho-testado', weight: 2, details: ['cloud-reliability', 'reproducible-infrastructure', 'platform-autonomy', 'evolvability'], layer: 'consistency' }] },
+      { id: 'provider-runbook', label: 'Runbooks orientam especialistas a redirecionar, escalar ou recriar recursos conforme o evento.', signals: [{ capability: 'plataforma', pattern: 'recuperacao-cloud-depende-de-runbook', weight: -1, details: ['cloud-reliability', 'technical-capability'], layer: 'system', constraint: 'knowledge' }] },
+      { id: 'console-recovery', label: 'Pessoas com acesso ajustam capacidade, rede ou configuração no console até estabilizar.', signals: [{ capability: 'plataforma', pattern: 'recuperacao-cloud-por-console', weight: -2, details: ['cloud-reliability', 'reproducible-infrastructure'], layer: 'system', constraint: 'access' }] },
+    ], next: 'platform-cloud-resilience-validation',
+  },
+  {
+    id: 'platform-cloud-resilience-validation', title: 'Evidência de recuperação',
+    scenario: 'O desenho declara tolerância a falha e recuperação, mas dependências e tráfego mudaram desde a última revisão.', prompt: 'Como essa capacidade é validada?',
+    options: [
+      { id: 'failure-experiments', label: 'Experimentos proporcionais verificam hipóteses, tempo de recuperação e comportamento das dependências; resultados mudam o desenho.', signals: [{ capability: 'confiabilidade', pattern: 'resiliencia-cloud-validada-por-experimento', weight: 2, details: ['cloud-reliability', 'reliability-practice', 'integration-data', 'architecture-decisions'], layer: 'outcome' }] },
+      { id: 'documented-design', label: 'Arquitetura e procedimentos são revisados; testes completos ocorrem em exercícios ou auditorias periódicas.', signals: [{ capability: 'confiabilidade', pattern: 'resiliencia-cloud-validada-periodicamente', weight: -1, details: ['cloud-reliability', 'architecture-decisions'], layer: 'consistency', constraint: 'process' }] },
+      { id: 'incident-proof', label: 'A principal evidência é o comportamento observado nos últimos incidentes reais.', signals: [{ capability: 'confiabilidade', pattern: 'incidente-e-unica-evidencia-de-resiliencia', weight: -2, details: ['cloud-reliability', 'incident-management'], layer: 'outcome', constraint: 'process' }] },
+    ], next: 'platform-cloud-efficiency',
+  },
+  {
+    id: 'platform-cloud-efficiency', title: 'Eficiência como decisão arquitetural',
+    scenario: 'Custo e consumo cresceram, mas tráfego, criticidade e comportamento variam entre jornadas.', prompt: 'Como otimizações são priorizadas?',
+    options: [
+      { id: 'unit-economics', label: 'Custo, capacidade, impacto e resultado por jornada orientam trade-offs; otimização é validada sem transferir risco oculto.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-orientada-a-resultado', weight: 2, details: ['cloud-efficiency', 'product-direction'], layer: 'outcome' }] },
+      { id: 'cost-target', label: 'Metas de redução orientam áreas; especialistas encontram recursos ociosos e oportunidades de compromisso.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-por-meta-de-custo', weight: -1, details: ['cloud-efficiency', 'enabling-governance'], layer: 'system', constraint: 'governance' }] },
+      { id: 'after-bill', label: 'O tema ganha prioridade quando a fatura ou limite de capacidade chama atenção da liderança.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-reativa-a-fatura', weight: -2, details: ['cloud-efficiency', 'portfolio-management'], layer: 'outcome', constraint: 'process' }] },
+    ], next: 'platform-cloud-sustainability',
+  },
+  {
+    id: 'platform-cloud-sustainability', title: 'Eficiência sustentada no cotidiano',
+    scenario: 'Uma otimização reduziu consumo inicialmente, mas produtos, regiões e configurações continuam evoluindo.', prompt: 'Como o resultado permanece saudável?',
+    options: [
+      { id: 'continuous-guardrails', label: 'Ownership, orçamento, sinais e guardrails acompanham novas mudanças; capacidade e descarte são revistos continuamente.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-com-ciclo-continuo', weight: 2, details: ['cloud-efficiency', 'reproducible-infrastructure'], layer: 'consistency' }] },
+      { id: 'periodic-review', label: 'Relatórios periódicos geram campanhas de ajuste conduzidas por plataforma ou FinOps.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-por-campanha', weight: -1, details: ['cloud-efficiency', 'organizational-learning'], layer: 'consistency', constraint: 'process' }] },
+      { id: 'local-ownership', label: 'Cada time recebe visibilidade e decide quando otimizar conforme suas prioridades.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-sem-decisao-compartilhada', weight: -1, details: ['cloud-efficiency', 'team-ownership'], layer: 'system', constraint: 'organization' }] },
     ],
   },
 ];
 
 export const edges: AssessmentEdge[] = graph.flatMap((node) => {
+  if (node.id === 'leadership-enablement') return [
+    { from: node.id, to: 'management-portfolio', profile: 'management' },
+    { from: node.id, to: 'product-discovery-depth', profile: 'product' },
+    { from: node.id, to: 'quality-risk-strategy', profile: 'quality' },
+    { from: node.id, to: 'engineering-security-depth', profile: 'engineering' },
+    { from: node.id, to: 'platform-cloud-reliability', profile: 'platform' },
+  ];
   if (node.id === 'ready-to-release') return [
     { from: node.id, optionId: 'small-automated', to: 'integration-cadence' },
     { from: node.id, optionId: 'manual-package', to: 'deployment-probe' },
@@ -510,4 +682,19 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'incident-intake', profile: 'quality', scenario: 'Um comportamento crítico escapa das verificações e afeta parte dos clientes. É necessário entender abrangência, condições e quais riscos não estavam visíveis antes.', prompt: 'Como qualidade normalmente entra na detecção e na resposta?' },
   { nodeId: 'incident-intake', profile: 'engineering', scenario: 'Um comportamento crítico afeta parte dos clientes. Você precisa formar uma hipótese, conter impacto e mudar o sistema sem depender de alterar componentes vivos de modo irreproduzível.', prompt: 'Como o incidente normalmente chega ao time e começa a ser investigado?' },
   { nodeId: 'incident-intake', profile: 'platform', scenario: 'Um comportamento crítico atravessa aplicação, dados e infraestrutura. Sinais e responsabilidades estão distribuídos e a resposta precisa preservar segurança operacional.', prompt: 'Como o evento normalmente é detectado, correlacionado e direcionado?' },
+  { nodeId: 'product-outcome-evidence', profile: 'management', scenario: 'Uma entrega relevante consumiu capacidade de várias áreas. Agora você precisa decidir continuidade, expansão ou interrupção diante de novas prioridades.', prompt: 'Que evidência normalmente muda a decisão de investimento?' },
+  { nodeId: 'product-outcome-evidence', profile: 'product', scenario: 'Uma hipótese relevante foi entregue e já possui uso suficiente para revisar valor, comportamento e efeitos não esperados.', prompt: 'Como o aprendizado normalmente retorna ao portfólio?' },
+  { nodeId: 'product-outcome-evidence', profile: 'engineering', scenario: 'Uma funcionalidade relevante está em uso. Novas mudanças técnicas competem com ajustes necessários para produzir o resultado esperado.', prompt: 'Como evidência de resultado costuma alterar o trabalho técnico seguinte?' },
+  { nodeId: 'technical-stewardship', profile: 'quality', scenario: 'Uma área muda com frequência, concentra escapes e torna a regressão cada vez mais custosa. A próxima entrega tocará novamente esse código.', prompt: 'Como qualidade participa da redução sustentável desse risco?' },
+  { nodeId: 'technical-stewardship', profile: 'engineering', scenario: 'Uma área muda com frequência, concentra defeitos e depende de poucas pessoas. A próxima alteração precisa entregar valor sem ampliar o custo futuro.', prompt: 'Como o grupo normalmente trata essa condição durante a mudança?' },
+  { nodeId: 'data-contract-change', profile: 'product', scenario: 'Uma evolução de comportamento depende de dados e contratos usados por outras jornadas. Uma migração incompatível pode afetar clientes fora do escopo visível.', prompt: 'Como risco e sequência normalmente entram na decisão de produto?' },
+  { nodeId: 'data-contract-change', profile: 'engineering', scenario: 'Um contrato ou schema precisa evoluir enquanto consumidores e versões anteriores continuam ativos.', prompt: 'Como compatibilidade e remoção normalmente são conduzidas?' },
+  { nodeId: 'data-contract-change', profile: 'platform', scenario: 'Dados e contratos atravessam componentes com ciclos independentes, e a plataforma pode ou não oferecer verificação e migração reproduzíveis.', prompt: 'Como a mudança normalmente atravessa esses limites?' },
+  { nodeId: 'reliability-objective', profile: 'management', scenario: 'Confiabilidade compete com novas entregas e o impacto varia por horário e grupo de clientes. Você precisa decidir capacidade e risco aceitável.', prompt: 'Como a organização normalmente sustenta essa decisão?' },
+  { nodeId: 'reliability-objective', profile: 'product', scenario: 'Parte dos clientes percebe degradação intermitente enquanto a demanda por novas funcionalidades continua.', prompt: 'Como experiência, risco e prioridade normalmente são equilibrados?' },
+  { nodeId: 'reliability-objective', profile: 'engineering', scenario: 'Falhas e latência variam pela distribuição; médias parecem aceitáveis, mas uma parte da jornada continua degradada.', prompt: 'Como o time decide se deve mudar o sistema e se a mudança funcionou?' },
+  { nodeId: 'reliability-objective', profile: 'platform', scenario: 'Sinais de aplicação e infraestrutura possuem distribuições diferentes e precisam orientar capacidade, confiabilidade e ritmo de mudança.', prompt: 'Como esses sinais normalmente se tornam uma decisão compartilhada?' },
+  { nodeId: 'leadership-enablement', profile: 'management', scenario: 'Um gargalo sistêmico atravessa times e políticas e não pode ser resolvido pela otimização isolada de uma squad.', prompt: 'Como você normalmente cria ownership, capacidade e aprendizado para removê-lo?' },
+  { nodeId: 'leadership-enablement', profile: 'engineering', scenario: 'O time reconhece um gargalo recorrente, mas decisões e capacidade necessárias estão além da sua autonomia.', prompt: 'Como a liderança normalmente transforma essa evidência em mudança do sistema?' },
+  { nodeId: 'leadership-enablement', profile: 'platform', scenario: 'Vários times esbarram na mesma capacidade ausente e a plataforma precisa evoluir sem virar apenas uma fila central.', prompt: 'Como liderança e times normalmente convertem a demanda recorrente em capacidade compartilhada?' },
 ];

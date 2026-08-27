@@ -1,7 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import { graph } from '../../src/modules/catalog/assessment-graph.js';
+import type { Profile } from '../../src/modules/catalog/assessment-graph.js';
 
 type Scenario = 'poor' | 'medium' | 'elite';
+const squadProfiles: Profile[] = ['quality', 'management', 'product', 'engineering', 'engineering', 'engineering', 'platform'];
 
 test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page }) => {
   const paths: Record<Scenario, string> = { poor: '', medium: '', elite: '' };
@@ -9,17 +11,27 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
 
   for (const scenario of ['poor', 'medium', 'elite'] as const) {
     paths[scenario] = await createProject(page, scenario);
-    const invitationLinks = await createInvitations(page, 5);
-    for (const link of invitationLinks) await completeAssessment(page, link, scenario);
+    const invitationLinks = await createInvitations(page, squadProfiles.length);
+    for (const [index, link] of invitationLinks.entries()) await completeAssessment(page, link, scenario, squadProfiles[index]!, index);
     await page.goto(paths[scenario]);
     await expect(page.getByText('Classificação sociotécnica').first()).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Radar de capacidades' }).first()).toBeVisible();
-    await page.locator('.radar-drill-link', { hasText: 'Arquitetura e operação' }).first().click();
-    await expect(page.getByRole('heading', { name: 'Arquitetura e operação de produtos' })).toBeVisible();
-    await page.locator('.radar-drill-link', { hasText: 'Cloud e plataforma' }).click();
-    await expect(page.getByRole('heading', { name: 'Cloud e plataforma' })).toBeVisible();
-    await page.locator('.radar-drill-link', { hasText: 'Autosserviço' }).click();
-    await expect(page.getByRole('heading', { name: 'Autosserviço e experiência de plataforma' })).toBeVisible();
+    await page.locator('.radar-drill-link', { hasText: 'Operação, confiabilidade e plataforma' }).first().click();
+    await expect(page.getByRole('heading', { name: 'Operação, confiabilidade e plataforma' })).toBeVisible();
+    await page.locator('.radar-drill-link', { hasText: 'Cloud e infraestrutura' }).click();
+    await expect(page.getByRole('heading', { name: 'Cloud e infraestrutura' })).toBeVisible();
+    await page.locator('.radar-drill-link', { hasText: 'Infraestrutura reproduzível' }).click();
+    await expect(page.getByRole('heading', { name: 'Infraestrutura reproduzível' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Voltar' })).toBeVisible();
+    await expect(page.getByText(/Cobertura temática/)).toBeVisible();
+    if (scenario === 'poor') {
+      await expect(page.getByText(/variedade temática suficiente/)).toBeVisible();
+      await page.getByRole('link', { name: 'Operação, confiabilidade e plataforma' }).click();
+      await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
+      await expect(page.getByRole('heading', { name: 'Problemas e soluções priorizadas' })).toBeVisible();
+      await expect(page.getByText(/Por que esta prioridade/).first()).toBeVisible();
+      await expect(page.getByText(/solução sugerida · \d+% aderência/).first()).toBeVisible();
+    }
     await page.goto(paths[scenario]);
     const classification = await page.locator('.classification-level').first().textContent();
     classifications[scenario] = Number(classification?.split('·')[0]?.trim());
@@ -49,7 +61,7 @@ async function createInvitations(page: Page, quantity: number): Promise<string[]
   return links;
 }
 
-async function completeAssessment(page: Page, invitationLink: string, scenario: Scenario): Promise<void> {
+async function completeAssessment(page: Page, invitationLink: string, scenario: Scenario, profile: Profile, participantIndex: number): Promise<void> {
   await page.goto(invitationLink);
   while (await page.locator('form[data-assessment-node]').count()) {
     const form = page.locator('form[data-assessment-node]');
@@ -57,19 +69,25 @@ async function completeAssessment(page: Page, invitationLink: string, scenario: 
     const node = graph.find((candidate) => candidate.id === nodeId);
     if (!node) throw new Error(`Assessment node not found: ${nodeId}`);
     const available = await form.locator('input[name="optionId"]').evaluateAll((inputs) => inputs.map((input) => (input as HTMLInputElement).value));
-    const option = chooseOption(node.options.filter((candidate) => available.includes(candidate.id)), scenario, node.id);
+    const option = chooseOption(node.options.filter((candidate) => available.includes(candidate.id)), scenario, node.id, profile, participantIndex);
     await form.locator(`input[value="${option.id}"]`).check();
     await Promise.all([page.waitForLoadState('domcontentloaded'), form.getByRole('button', { name: 'Continuar' }).click()]);
   }
   await expect(page.getByRole('heading', { name: 'Obrigado pela participação' })).toBeVisible();
 }
 
-function chooseOption(options: typeof graph[number]['options'], scenario: Scenario, nodeId: string) {
-  if (nodeId === 'respondent-context') return options.find((option) => option.id === 'engineering')!;
-  if (scenario === 'medium' && nodeId === 'change-verification') return options.find((option) => option.id === 'slow-suite')!;
+function chooseOption(options: typeof graph[number]['options'], scenario: Scenario, nodeId: string, profile: Profile, participantIndex: number) {
+  if (nodeId === 'respondent-context') return options.find((option) => option.id === profile)!;
   const scored = options.map((option) => ({ option, score: option.signals.reduce((total, signal) => total + signal.weight, 0) }));
-  if (scenario === 'poor') return scored.sort((left, right) => left.score - right.score)[0]!.option;
-  if (scenario === 'elite') return scored.sort((left, right) => right.score - left.score)[0]!.option;
-  const fragilePositive = scored.filter((candidate) => candidate.score > 0).sort((left, right) => left.score - right.score)[0];
-  return fragilePositive?.option ?? scored.sort((left, right) => right.score - left.score)[0]!.option;
+  if (scenario === 'poor') {
+    const fragile = scored.filter((candidate) => candidate.score < 0).sort((left, right) => left.score - right.score);
+    return (fragile[participantIndex % fragile.length] ?? scored.sort((left, right) => left.score - right.score)[0])!.option;
+  }
+  if (scenario === 'elite') {
+    const strong = scored.filter((candidate) => candidate.score > 0).sort((left, right) => right.score - left.score);
+    return (strong[participantIndex % strong.length] ?? scored.sort((left, right) => right.score - left.score)[0])!.option;
+  }
+  const neutral = scored.find((candidate) => candidate.score === 0);
+  const emerging = scored.filter((candidate) => candidate.score > 0).sort((left, right) => left.score - right.score)[0];
+  return (neutral ?? emerging ?? scored.sort((left, right) => right.score - left.score)[0])!.option;
 }

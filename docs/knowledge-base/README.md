@@ -4,6 +4,11 @@ Esta pasta é a memória versionada do modelo de avaliação. Toda mudança rele
 no instrumento deve atualizar estes documentos junto com código, perguntas e
 regras de inferência.
 
+Estes arquivos descrevem exclusivamente o comportamento vigente e são a fonte
+normativa para novas implementações. Registro cronológico pertence a `docs/history`;
+ideias ainda não entregues pertencem a `docs/backlog`. Nenhum dos dois é especificação
+do comportamento atual.
+
 ## Documentos
 
 - `product-vision.md`: propósito, usuários e limites do produto.

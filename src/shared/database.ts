@@ -21,6 +21,15 @@ export function createDatabase(filename = process.env.DATABASE_PATH ?? 'data/app
   if (filename !== ':memory:') mkdirSync(dirname(filename), { recursive: true });
   const db = new DatabaseSync(filename);
   db.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;');
-  applyMigrations(db);
+  const initialized = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'schema_migrations'").get();
+  if (!initialized) {
+    applyMigrations(db);
+  } else {
+    const schema = db.prepare('SELECT MAX(version) version FROM schema_migrations').get() as { version: number | null };
+    if (Number(schema.version) !== 1) {
+      db.close();
+      throw new Error('Unsupported database schema; recreate the database');
+    }
+  }
   return db;
 }

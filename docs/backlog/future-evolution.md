@@ -16,13 +16,12 @@
 
 - simulações com consequências visíveis e ramificações com múltiplos checkpoints;
 - banco de cenários por papel, contexto, tamanho e tipo de organização;
-- ampliar variantes de perfil para todo o catálogo e validar linguagem com cada
-  disciplina antes da publicação;
+- criar ramos próprios para dados, design, arquitetura e segurança e validar a
+  linguagem de todos os ramos com cada disciplina antes da publicação;
 - modo facilitado para workshops, além da coleta individual;
 - entrevistas qualitativas associadas a uma campanha;
-- expandir o padrão de aprofundamento já aplicado à entrega, incidentes e fluxo de
-  trabalho para os pilares ainda rasos, com critérios transparentes de continuidade
-  e encerramento por confiança;
+- aprofundar folhas que ainda possuam apenas o mínimo publicável de dois padrões,
+  guiado por poder discriminativo e calibração empírica;
 - editor visual do grafo com simulação de percursos e validação antes de publicar;
 - versões multilíngues revisadas semanticamente, não apenas traduzidas;
 - acessibilidade validada com usuários e tecnologias assistivas;
@@ -35,9 +34,8 @@
 - calibrar os limiares direcionais usados para divergência entre perspectivas;
 - calibrar empiricamente a fórmula inicial de contradição e confiança por capacidade;
 - diferenciação mais precisa entre lacuna de conhecimento e bloqueio sistêmico;
-- formalizar em todo o catálogo a matriz capacidade × etapa do SDLC × perspectiva
-  × camada de evidência × causa (ferramenta, acesso, competência, prática, processo,
-  estrutura, governança, cultura, arquitetura e estratégia);
+- evoluir a matriz já explícita capacidade × perspectiva × camada × restrição para
+  também registrar etapa do SDLC e referências, sem inferência por nome de padrão;
 - relações causais apresentadas como hipóteses, nunca como causalidade comprovada;
 - análise longitudinal para identificar mudança sustentada;
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;
@@ -46,13 +44,16 @@
 
 ## Pilares e referências
 
+- definir para cada ramo pelo menos três camadas navegáveis — capacidade, prática e
+  comportamento/evidência — sem transformar frameworks ou ferramentas em nota;
+- calibrar empiricamente o mínimo vigente de dois padrões independentes por folha;
 - aprofundar DORA sem reduzir maturidade às quatro métricas;
 - incorporar as cinco métricas DORA vigentes como resultados por aplicação/serviço,
   sem derivar categoria DORA apenas de respostas comportamentais;
 - SRE: SLOs, error budgets, incidentes, toil, capacidade e aprendizado;
 - Well-Architected e cloud: trade-offs, resiliência, custo, segurança e operação;
-- expandir o ramo cloud para os seis pilares Well-Architected e seus tópicos somente
-  após criar sinais próprios que evitem replicar a mesma nota em vários eixos;
+- separar eficiência de performance, custo e sustentabilidade em folhas próprias
+  quando cada uma possuir sinais comportamentais independentes suficientes;
 - DDD e arquitetura evolutiva: limites, linguagem, acoplamento e fitness functions;
 - Team Topologies: carga cognitiva, modos de interação e plataforma como produto;
 - Tuckman e dinâmica de times sem transformar estágios em classificação rígida;
@@ -74,6 +75,12 @@
 
 ## Relatórios e recomendações
 
+- ampliar o sistema especialista vigente com pré-condições, custo, dependências,
+  impacto cruzado e reversibilidade declarados em cada intervenção;
+- persistir a versão do recomendador e todos os candidatos considerados, além dos
+  fatores já apresentados na justificativa, sem armazenar identificação individual;
+- calibrar o ranking com feedback explícito sobre adoção e efeito das intervenções,
+  evitando aprender por clique, popularidade ou correlação tratada como causalidade;
 - calibrar a classificação por elo limitante e a relação entre sinais cruzados,
   cobertura e confiança sem convertê-la em ranking de times;
 - cadeia de evidências navegável para cada finding;

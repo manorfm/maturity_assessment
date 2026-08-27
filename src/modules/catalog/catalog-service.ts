@@ -1,9 +1,11 @@
 import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { edges, graph, GRAPH_VERSION, nodeVariants, type AssessmentEdge, type AssessmentNode, type Option } from './assessment-graph.js';
+import { inferEvidenceLayer, resolveSignalDetails } from './signal-projection.js';
+import { capabilityLeafIds } from '../inference/domain/capability-taxonomy.js';
 
 type NodeRow = { node_key: string; node_type: 'context' | 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
-type OptionRow = { option_key: string; label: string; capability: string | null; pattern: string | null; weight: number | null };
+type OptionRow = { option_key: string; label: string; capability: string | null; pattern: string | null; weight: number | null; detail_capabilities: string | null; evidence_layer: string | null; constraint_kind: string | null };
 
 export class CatalogService {
   constructor(private readonly db: Database) { this.seed(); }
@@ -22,15 +24,15 @@ export class CatalogService {
           this.db.prepare('INSERT INTO assessment_options (graph_version, node_key, option_key, label, position) VALUES (?, ?, ?, ?, ?)')
             .run(GRAPH_VERSION, node.id, option.id, option.label, optionPosition);
           for (const signal of option.signals) {
-            this.db.prepare('INSERT INTO assessment_signals (id, graph_version, node_key, option_key, capability, pattern, weight) VALUES (?, ?, ?, ?, ?, ?, ?)')
-              .run(id(), GRAPH_VERSION, node.id, option.id, signal.capability, signal.pattern, signal.weight);
+            this.db.prepare('INSERT INTO assessment_signals (id, graph_version, node_key, option_key, capability, pattern, weight, detail_capabilities, evidence_layer, constraint_kind) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+              .run(id(), GRAPH_VERSION, node.id, option.id, signal.capability, signal.pattern, signal.weight, JSON.stringify(resolveSignalDetails(signal)), inferEvidenceLayer(signal), signal.constraint ?? 'none');
           }
         });
       });
       nodeVariants.forEach((variant) => this.db.prepare('INSERT INTO assessment_node_variants (graph_version, node_key, profile, title, scenario, prompt) VALUES (?, ?, ?, ?, ?, ?)')
         .run(GRAPH_VERSION, variant.nodeId, variant.profile, variant.title ?? null, variant.scenario, variant.prompt ?? null));
-      edges.forEach((edge, position) => this.db.prepare('INSERT INTO assessment_edges (id, graph_version, from_node_key, option_key, to_node_key, priority) VALUES (?, ?, ?, ?, ?, ?)')
-        .run(id(), GRAPH_VERSION, edge.from, edge.optionId ?? null, edge.to, position));
+      edges.forEach((edge, position) => this.db.prepare('INSERT INTO assessment_edges (id, graph_version, from_node_key, option_key, to_node_key, priority, profile) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(id(), GRAPH_VERSION, edge.from, edge.optionId ?? null, edge.to, position, edge.profile ?? null));
     });
   }
 
@@ -45,7 +47,7 @@ export class CatalogService {
       .get(version, nodeKey) as NodeRow | undefined;
     if (!row) return undefined;
     const optionRows = this.db.prepare(`
-      SELECT o.option_key, o.label, s.capability, s.pattern, s.weight
+      SELECT o.option_key, o.label, s.capability, s.pattern, s.weight, s.detail_capabilities, s.evidence_layer, s.constraint_kind
       FROM assessment_options o LEFT JOIN assessment_signals s
         ON s.graph_version = o.graph_version AND s.node_key = o.node_key AND s.option_key = o.option_key
       WHERE o.graph_version = ? AND o.node_key = ? ORDER BY o.position, s.id
@@ -53,7 +55,13 @@ export class CatalogService {
     const options = new Map<string, Option>();
     for (const option of optionRows) {
       const current = options.get(option.option_key) ?? { id: option.option_key, label: option.label, signals: [] };
-      if (option.pattern && option.capability && option.weight !== null) current.signals.push({ capability: option.capability, pattern: option.pattern, weight: Number(option.weight) });
+      if (option.pattern && option.capability && option.weight !== null) {
+        const storedSignal: Option['signals'][number] = { capability: option.capability, pattern: option.pattern, weight: Number(option.weight) };
+        if (option.detail_capabilities) storedSignal.details = JSON.parse(option.detail_capabilities) as string[];
+        if (option.evidence_layer) storedSignal.layer = option.evidence_layer as NonNullable<Option['signals'][number]['layer']>;
+        if (option.constraint_kind) storedSignal.constraint = option.constraint_kind as NonNullable<Option['signals'][number]['constraint']>;
+        current.signals.push(storedSignal);
+      }
       options.set(option.option_key, current);
     }
     const variant = profile ? this.db.prepare('SELECT title, scenario, prompt FROM assessment_node_variants WHERE graph_version = ? AND node_key = ? AND profile = ?')
@@ -68,12 +76,14 @@ export class CatalogService {
     };
   }
 
-  nextNode(version: string, nodeKey: string, optionKey: string): string | undefined {
+  nextNode(version: string, nodeKey: string, optionKey: string, profile?: string): string | undefined {
     const row = this.db.prepare(`
       SELECT to_node_key FROM assessment_edges
       WHERE graph_version = ? AND from_node_key = ? AND (option_key = ? OR option_key IS NULL)
-      ORDER BY CASE WHEN option_key = ? THEN 0 ELSE 1 END, priority LIMIT 1
-    `).get(version, nodeKey, optionKey, optionKey) as { to_node_key: string } | undefined;
+        AND (profile = ? OR profile IS NULL)
+      ORDER BY CASE WHEN profile = ? THEN 0 ELSE 1 END,
+        CASE WHEN option_key = ? THEN 0 ELSE 1 END, priority LIMIT 1
+    `).get(version, nodeKey, optionKey, profile ?? '', profile ?? '', optionKey) as { to_node_key: string } | undefined;
     return row?.to_node_key;
   }
 
@@ -109,4 +119,10 @@ export function validateGraphDefinition(nodes: AssessmentNode[], graphEdges: Ass
     const hasDefault = outgoing.some((edge) => !edge.optionId);
     if (!hasDefault && node.options.some((option) => !optionEdges.has(option.id))) throw new Error(`Graph node has options without an exit: ${node.id}`);
   }
+  const patternsByLeaf = new Map(capabilityLeafIds.map((leafId) => [leafId, new Set<string>()]));
+  for (const node of nodes) for (const option of node.options) for (const signal of option.signals) {
+    for (const detail of resolveSignalDetails(signal)) patternsByLeaf.get(detail)?.add(signal.pattern);
+  }
+  const insufficient = [...patternsByLeaf].filter(([, patterns]) => patterns.size < 2).map(([leafId, patterns]) => `${leafId} (${patterns.size})`);
+  if (insufficient.length) throw new Error(`Graph lacks independent evidence for capability leaves: ${insufficient.join(', ')}`);
 }

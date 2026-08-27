@@ -11,10 +11,11 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão `capability-drilldown-v7` começa por uma escolha neutra de perspectiva e também
-persiste variantes de texto por perfil.
-Elas alteram contexto e linguagem do nó, preservando opções e sinais compartilhados
-quando a capacidade observada é a mesma.
+A versão vigente `profile-routed-taxonomy-v10` começa por uma escolha neutra de
+perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
+consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia
+e plataforma/operações possuem aprofundamentos dedicados. Variantes de texto ficam
+restritas aos casos em que muda a linguagem, mas não a evidência procurada.
 
 ## Tipos de nó
 
@@ -37,7 +38,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O percurso-base atual contém trinta e três nós e cobre eventos de priorização, integração,
+O catálogo atual contém 52 nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura e aprendizado após falhas. Quantidade de perguntas
 não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
@@ -93,7 +94,9 @@ Esses conceitos podem surgir como interpretações internas ou opções posterio
 
 ## Inferência
 
-Respostas geram sinais tipados, nunca uma pontuação direta. Regras combinam sinais
+Respostas geram sinais tipados e versionados, nunca uma nota solta. Cada sinal novo
+declara explicitamente as folhas afetadas, a camada de evidência e a natureza da
+restrição observada. Regras combinam sinais
 convergentes, contraditórios e ausentes para produzir `ProblemPattern`s com:
 
 - capacidade afetada;
@@ -103,15 +106,26 @@ convergentes, contraditórios e ausentes para produzir `ProblemPattern`s com:
 - bloqueios concorrentes;
 - perguntas ainda necessárias.
 
+O catálogo só pode ser publicado quando toda folha possui ao menos dois padrões
+independentes. Repetir o mesmo padrão aumenta evidência, mas não cobertura. Folhas
+sem cobertura mínima aparecem como `não avaliado` e ficam fora da geometria do radar.
+
 Quando vários perfis observam o mesmo comportamento, o motor registra convergência,
 divergência e ausência de visibilidade. Divergência direciona novas perguntas e
 reduz confiança; não vira automaticamente um sinal negativo.
 
 ## Recomendações
 
-Cada recomendação declara quais padrões e pré-condições atende, seus custos, riscos
-e sinais de sucesso. O motor primeiro seleciona intervenções compatíveis e depois
-as ordena; não existe mapeamento “resposta X = compre ferramenta Y”.
+O recomendador vigente é um sistema especialista baseado em grafo de evidências e
+não usa LLM. Ele seleciona candidatos pelo padrão diagnosticado e os ordena dentro
+de cada capacidade considerando suporte no grupo, coocorrência de problemas na mesma
+jornada, variedade de camadas, restrição dominante e contradições positivas. A nota
+0–4 não participa do ranking. Cada sugestão expõe aderência e os fatores utilizados;
+identificadores internos de participação nunca aparecem no resultado.
+
+Não existe mapeamento “resposta X = compre ferramenta Y”. Duas populações com a
+mesma nota podem receber intervenções diferentes porque as combinações de causas,
+camadas e comportamentos são diferentes.
 
 Para integração tardia, por exemplo, opções podem incluir reduzir tamanho de lote,
 integração mais frequente, testes de contrato, clareza de ownership, modularização

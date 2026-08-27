@@ -1,6 +1,6 @@
 const labels = ['Opaco', 'Reativo', 'Repetível', 'Gerenciado', 'Adaptativo'] as const;
 
-type CapabilitySummary = { id?: string; label: string; level: number; confidence: number };
+type CapabilitySummary = { id?: string; label: string; level: number; confidence: number; coverage?: number };
 
 export class TeamClassification {
   private constructor(
@@ -10,7 +10,7 @@ export class TeamClassification {
   ) {}
 
   static from(capabilities: CapabilitySummary[]): TeamClassification {
-    const supported = capabilities.filter((capability) => capability.confidence >= .25);
+    const supported = capabilities.filter((capability) => capability.confidence >= .25 && (capability.coverage ?? 1) >= 1);
     if (!supported.length) return TeamClassification.at(0, ['Evidência insuficiente']);
     const level = Math.floor(Math.min(...supported.map((capability) => capability.level)));
     const limitingCapabilities = supported
