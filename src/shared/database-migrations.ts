@@ -12,7 +12,7 @@ export function applyMigrations(db: DatabaseSync): void {
     CREATE INDEX idx_invitations_batch ON invitations(batch_id);
     CREATE TABLE assessment_graph_versions (version TEXT PRIMARY KEY, title TEXT NOT NULL, status TEXT NOT NULL, entry_node_key TEXT NOT NULL, published_at TEXT NOT NULL);
     CREATE TABLE assessment_nodes (graph_version TEXT NOT NULL REFERENCES assessment_graph_versions(version), node_key TEXT NOT NULL, node_type TEXT NOT NULL, title TEXT NOT NULL, scenario TEXT NOT NULL, prompt TEXT NOT NULL, position INTEGER NOT NULL, PRIMARY KEY (graph_version, node_key));
-    CREATE TABLE assessment_options (graph_version TEXT NOT NULL, node_key TEXT NOT NULL, option_key TEXT NOT NULL, label TEXT NOT NULL, position INTEGER NOT NULL, PRIMARY KEY (graph_version, node_key, option_key), FOREIGN KEY (graph_version, node_key) REFERENCES assessment_nodes(graph_version, node_key));
+    CREATE TABLE assessment_options (graph_version TEXT NOT NULL, node_key TEXT NOT NULL, option_key TEXT NOT NULL, label TEXT NOT NULL, position INTEGER NOT NULL, observation_kind TEXT NOT NULL DEFAULT 'practice', PRIMARY KEY (graph_version, node_key, option_key), FOREIGN KEY (graph_version, node_key) REFERENCES assessment_nodes(graph_version, node_key));
     CREATE TABLE assessment_node_variants (graph_version TEXT NOT NULL, node_key TEXT NOT NULL, profile TEXT NOT NULL, title TEXT, scenario TEXT NOT NULL, prompt TEXT, PRIMARY KEY (graph_version, node_key, profile), FOREIGN KEY (graph_version, node_key) REFERENCES assessment_nodes(graph_version, node_key));
     CREATE TABLE assessment_edges (id TEXT PRIMARY KEY, graph_version TEXT NOT NULL, from_node_key TEXT NOT NULL, option_key TEXT, to_node_key TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 0, profile TEXT, FOREIGN KEY (graph_version, from_node_key) REFERENCES assessment_nodes(graph_version, node_key), FOREIGN KEY (graph_version, to_node_key) REFERENCES assessment_nodes(graph_version, node_key));
     CREATE TABLE assessment_signals (id TEXT PRIMARY KEY, graph_version TEXT NOT NULL, node_key TEXT NOT NULL, option_key TEXT NOT NULL, capability TEXT NOT NULL, pattern TEXT NOT NULL, weight INTEGER NOT NULL, detail_capabilities TEXT NOT NULL, evidence_layer TEXT NOT NULL, constraint_kind TEXT NOT NULL, FOREIGN KEY (graph_version, node_key, option_key) REFERENCES assessment_options(graph_version, node_key, option_key));
@@ -24,6 +24,17 @@ export function applyMigrations(db: DatabaseSync): void {
     CREATE TABLE participations (id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), unit_id TEXT NOT NULL REFERENCES organization_units(id), profile TEXT NOT NULL, resume_hash TEXT UNIQUE NOT NULL, graph_version TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'in_progress', current_node TEXT NOT NULL, created_at TEXT NOT NULL, completed_at TEXT);
     CREATE TABLE responses (id TEXT PRIMARY KEY, participation_id TEXT NOT NULL REFERENCES participations(id), node_id TEXT NOT NULL, option_id TEXT NOT NULL, created_at TEXT NOT NULL, UNIQUE(participation_id, node_id));
     CREATE TABLE inference_snapshots (id TEXT PRIMARY KEY, model_version TEXT NOT NULL REFERENCES inference_model_versions(version), participation_id TEXT NOT NULL REFERENCES participations(id), family_key TEXT NOT NULL, posterior_json TEXT NOT NULL, selected_question_key TEXT, selection_reason TEXT NOT NULL, created_at TEXT NOT NULL);
-    INSERT INTO schema_migrations (version, applied_at) VALUES (15, datetime('now'));
+    CREATE TABLE diagnostic_snapshots (
+      id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), unit_id TEXT,
+      completed INTEGER NOT NULL, captured_at TEXT NOT NULL, patterns_json TEXT NOT NULL
+    );
+    CREATE TABLE transformation_experiments (
+      id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), unit_id TEXT,
+      pattern TEXT NOT NULL, title TEXT NOT NULL, action TEXT NOT NULL, owner TEXT NOT NULL,
+      metric TEXT NOT NULL, review_horizon TEXT NOT NULL, success_criterion TEXT NOT NULL,
+      foundation_source TEXT, foundation_principle TEXT, foundation_why TEXT, created_at TEXT NOT NULL,
+      UNIQUE(project_id, unit_id, pattern)
+    );
+    INSERT INTO schema_migrations (version, applied_at) VALUES (16, datetime('now'));
   `);
 }

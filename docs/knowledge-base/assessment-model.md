@@ -150,6 +150,7 @@ principal limitador, risco e prioridade recomendada. Nota, confiança, populaç�
 incerteza e versão do modelo são informações secundárias e explicáveis, acessíveis
 sem competir com a decisão. Recomendações aparecem por urgência e conectam problema,
 impacto, ação, responsável provável, medida, prazo de revisão e resultado esperado.
+O fundamento da intervenção (fonte e princípio) fica sob demanda e não entra na nota.
 
 Níveis inteiros são exibidos sem decimal (`4/4`); decimais aparecem somente quando
 representam diferença real (`3.7/4`). Toda capacidade avaliada abaixo de 4 deve ter
@@ -250,3 +251,8 @@ Modelos como Tuckman e Team Topologies ajudam a interpretar comportamento de
 formação, conflito, autonomia, carga cognitiva e modos de interação. Não se pergunta
 se alguém conhece os modelos; observa-se como estrutura times, reage a conflitos,
 define responsabilidades e muda o desenho quando surgem sinais de sobrecarga.
+
+Identidade e proteção de credencial, resiliência de dependência e assistência por
+modelo são **contexto + cenário** sobre folhas já existentes (`cloud-security`,
+confiabilidade, qualidade, governança). Não há sétimo pilar nem inventário de
+ferramenta. Se o evento não ocorre no ambiente, a folha permanece não avaliada.

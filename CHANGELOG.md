@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.16.0
+
+- Distinguiu prática, “não observo” e “não se aplica”; só a prática pontua.
+- Publicou o grafo `evidence-anamnesis-v12` com contexto aplicável de identidade,
+  dependência, incentivo, assistência de modelo, complexidade acidental e leitura
+  de sinal, sem criar pilares nem perguntar ferramenta.
+- Ancorou recomendações em fundamento versionado e passou a persistir experimentos
+  e capturas agregadas para comparar reaplicações sem identificar pessoas.
+
 ## 0.15.0
 
 - Separou sintomas, causas e consequências no modelo causal.

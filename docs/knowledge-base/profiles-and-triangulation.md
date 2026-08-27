@@ -71,6 +71,11 @@ perfis com pelo menos cinco participações concluídas no escopo. O relatório 
 uma divergência de perspectiva, não uma nota do perfil. Se qualquer grupo estiver
 abaixo do limiar, ele não participa da comparação nem pode ser inferido pelo texto.
 
+“Não observo” agregado por perspectiva, quando o grupo atinge o limiar, aparece como
+lacuna de visibilidade — nunca como fragilidade daquela função. A comparação com
+outros perfis que observam o mesmo evento indica assimetria, fronteira ou poder,
+não maturidade individual.
+
 ## Modelos de referência
 
 Tuckman, Team Topologies, DORA, SRE, DDD, TOGAF, Well-Architected e conhecimento

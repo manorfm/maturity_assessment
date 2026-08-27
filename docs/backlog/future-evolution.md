@@ -11,36 +11,10 @@
   tempo ou outras dimensões; a hierarquia simples já usa supressão por partição;
 - política para texto livre, que permanece fora do primeiro corte;
 
-## Hipóteses da auditoria do instrumento (2026-08-27)
-
-Ainda não são compromisso. Surgiram da auditoria do modelo contra cobertura,
-qualidade das perguntas, estatística e ciclo de transformação.
-
-- Incluir opção de visibilidade (`não sei` / `não observo`) nas perguntas de
-  cenário. A base de conhecimento exige isso; o catálogo vigente força escolha
-  entre três ou quatro comportamentos e transforma ausência de visibilidade em
-  opinião.
-- Desempacotar opções “ouro” que concatenam várias práticas maduras num único
-  rótulo, para reduzir desejabilidade social e permitir inferência parcial.
-- Evitar nomear a prática-alvo nas opções (ex.: `orçamento de erro` em
-  `reliability-objective`); descrever a decisão e o efeito, não o vocabulário SRE.
-- Ancorar cada recomendação a um fundamento versionado (DORA, SRE, Team
-  Topologies, Lean, etc.) sem transformar a referência em nota.
-- Remover ou alinhar regras de intervenção que citam padrões inexistentes no grafo.
-- Calibrar priors (hoje `0,5/0,5`) e a função `nível = 2 + média dos pesos` com
-  rótulos externos; não tratar o posterior provisório como probabilidade empírica.
-- Aprofundar a folha `cloud-security` (Well-Architected: identidade, privilégio
-  mínimo, proteção de dados) com nó de aplicabilidade e cenário de credencial/
-  segredo, sem nomear Vault, IAM ou produto. Ferramenta só como intervenção
-  depois do problema demonstrado. Distinguir não se aplica, não observo e
-  prática frágil; cruzar visibilidade entre perfis.
-- O mesmo padrão para IA: contexto sem nota (usa no trabalho ou não) e sinais
-  nas capacidades já existentes (engenharia, segurança, governança, aprendizado,
-  arquitetura), nunca um pilar “IA”.
-- Padrões de resiliência (timeout, retry, isolamento) e sistemas de incentivo
-  só quando o problema for aplicável ao contexto — hoje ausentes ou só implícitos.
-- Fechar o ciclo de transformação: persistir experimento, data de revisão e
-  reaplicação comparável, sem análise longitudinal punitiva.
+A sequência pós-auditoria (higiene, três estados observacionais, conteúdo
+aplicável, piloto, ciclo de transformação) está no
+[`instrument-evolution-plan.md`](instrument-evolution-plan.md). Os itens abaixo
+permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 
 ## Instrumento e experiência
 
@@ -61,7 +35,9 @@ qualidade das perguntas, estatística e ciclo de transformação.
 ## Modelo de inferência
 
 - executar o
-  [`roadmap de piloto e calibração`](probabilistic-inference-roadmap.md), usando os
+  [`roadmap de piloto e calibração`](probabilistic-inference-roadmap.md) **depois**
+  das ondas 0 e 1 do
+  [`plano de evolução do instrumento`](instrument-evolution-plan.md), usando os
   rótulos externos para medir e ajustar o motor probabilístico já entregue;
 - análise longitudinal para identificar mudança sustentada;
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;

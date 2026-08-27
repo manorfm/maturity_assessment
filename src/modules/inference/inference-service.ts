@@ -1,4 +1,5 @@
 import type { Database } from '../../shared/database.js';
+import { id } from '../../shared/ids.js';
 import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { TeamClassification } from './domain/team-classification.js';
@@ -13,6 +14,7 @@ export type Finding = {
   constraint: ConstraintKind; reasons: string[];
   recommendationEvidence: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
   experiment: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
+  foundation: { source: string; principle: string; why: string };
 };
 type DiagnosticProblem = {
   kind: 'correction' | 'evolution';
@@ -30,6 +32,9 @@ type PerspectiveGap = {
   strongerProfiles: string[];
   constrainedProfiles: string[];
 };
+type VisibilityGap = { title: string; profiles: string[]; count: number };
+type MeasurementDelta = { previousCompleted: number; capturedAt: string; patternDeltas: Array<{ pattern: string; previous: number; current: number }> };
+type QueryScope = { sql: string; parameters: string[] };
 
 const interventionSeeds: Record<string, InterventionSeed> = {
   'sobrecarga-silenciosa': { title: 'Mudanças entram sem ajuste explícito de capacidade', intervention: 'Experimente tornar a troca de prioridade visível: para cada urgência, registre conjuntamente o que sai, o risco aceito e quando revisar o efeito.' },
@@ -176,21 +181,35 @@ const interventionSeeds: Record<string, InterventionSeed> = {
   'eficiencia-cloud-reativa-a-fatura': { title: 'Eficiência cloud reage à fatura', intervention: 'Dê visibilidade contínua a ownership, unidade econômica e tendência antes de o desvio virar uma campanha urgente.' },
   'eficiencia-cloud-por-campanha': { title: 'Eficiência cloud ocorre em campanhas', intervention: 'Inclua orçamento, capacidade e descarte no ciclo normal de mudança, com guardrails e revisão do efeito.' },
   'eficiencia-cloud-sem-decisao-compartilhada': { title: 'Trade-offs de eficiência permanecem locais', intervention: 'Crie critérios compartilhados entre produto, engenharia e plataforma para decidir custo, desempenho, risco e sustentabilidade.' },
+  'credencial-por-handoff': { title: 'Credencial depende de quem está disponível', intervention: 'Modele o acesso recorrente com identidade de carga ou de pessoa, escopo, expiração e trilha; não comece pelo produto de cofre.' },
+  'credencial-em-configuracao': { title: 'Segredo viaja em configuração para destravar a mudança', intervention: 'Tire o valor do artefato de configuração, registre o caminho seguro e meça se outra pessoa consegue autenticar sem herdar acesso permanente.' },
+  'identidade-compartilhada': { title: 'Conta ou chave compartilhada desbloqueia o fluxo', intervention: 'Substitua a identidade compartilhada por uma com dono, escopo e revogação; verifique que o trabalho continua sem a conta antiga.' },
+  'retry-amplia-falha': { title: 'A insistência automática amplia a falha da dependência', intervention: 'Torne explícitos espera, tentativas e isolamento da dependência mais lenta e valide o efeito com um ensaio pequeno.' },
+  'espera-sem-limite': { title: 'Requisições esperam até intervenção humana', intervention: 'Defina um limite de espera revisável e um comportamento de degradação para a dependência mais crítica.' },
+  'limite-cosmetico': { title: 'O limite existe no papel e não muda o comportamento', intervention: 'Revise o valor e o motivo do limite com o impacto real; remova ou ajuste o que não altera a falha.' },
+  'incentivo-segue-entrega': { title: 'Reconhecimento pesa entrega de itens, não efeito', intervention: 'Inclua um resultado observável no próximo ciclo de reconhecimento e compare com o que o grupo de fato priorizou.' },
+  'incentivo-opaco': { title: 'O critério de reconhecimento não é explicável', intervention: 'Torne público um critério pequeno, revisável e ligado a resultado; verifique se a próxima decisão muda com ele.' },
+  'ia-sombra-sem-politica': { title: 'Assistência de modelo entra sem política de dado ou risco', intervention: 'Defina o menor caminho suportado (dado permitido, revisão, modelo autorizado) e meça o uso fora dele.' },
+  'ia-substitui-entendimento': { title: 'A assistência acelera entrega e enfraquece entendimento', intervention: 'Exija que a próxima mudança assistida seja explicada e alterada por outra pessoa; acompanhe retrabalho e revisão.' },
+  'ia-diagnostico-como-fato': { title: 'Texto gerado é tratado como fato operacional', intervention: 'Trate a saída do modelo como hipótese: peça evidência independente antes de agir em incidente ou atendimento.' },
+  'camada-sem-revisao': { title: 'Complexidade extra permanece sem motivo revisado', intervention: 'Meça o custo da próxima mudança na camada e teste reduzir ou justificar o limite com um critério explícito.' },
+  'prestigio-tecnico': { title: 'A escolha de desenho se sustenta por prestígio', intervention: 'Reconstrua o problema original e compare uma alternativa mais simples com o mesmo resultado de negócio.' },
+  'celebra-media': { title: 'A média esconde a experiência da cauda', intervention: 'Antes de comunicar sucesso, revise distribuição, recorte e volume; só então decida se a mudança funcionou.' },
+  'ignora-base-pequena': { title: 'O gráfico é tratado como prova com base insuficiente', intervention: 'Exija denominador e tamanho da amostra na próxima decisão de “melhorou”; adie a conclusão se a mistura mudou.' },
 };
 
 export const interventionCatalog = defineInterventionCatalog(interventionSeeds, {
   'causa-ferramental-feedback': { evidencePatterns: ['causa-ferramental-feedback', 'automacao-sem-feedback'], contradictionPatterns: ['integracao-continua-validada', 'fluxo-seguro-sob-pressao'] },
   'causa-processo-lote': { evidencePatterns: ['causa-processo-lote', 'controle-indiferenciado'], contradictionPatterns: ['governanca-proporcional'] },
-  'causa-fronteira-times': { evidencePatterns: ['causa-fronteira-times', 'coordenacao-entre-times'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
+  'causa-fronteira-times': { evidencePatterns: ['causa-fronteira-times', 'coordenacao-centralizada'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
   'causa-acoplamento-entrega': { evidencePatterns: ['causa-acoplamento-entrega', 'acoplamento-coordenado'], contradictionPatterns: ['compatibilidade-verificada'] },
   'causa-lacuna-telemetria': { evidencePatterns: ['causa-lacuna-telemetria', 'telemetria-fragmentada'], contradictionPatterns: ['diagnostico-correlacionado'] },
   'causa-ferramenta-observabilidade': { evidencePatterns: ['causa-ferramenta-observabilidade', 'diagnostico-por-acesso-direto'], contradictionPatterns: ['diagnostico-correlacionado'] },
   'causa-correlacao-arquitetural': { evidencePatterns: ['causa-correlacao-arquitetural', 'telemetria-fragmentada'], contradictionPatterns: ['diagnostico-correlacionado'] },
   'causa-privacidade-operacional': { evidencePatterns: ['causa-privacidade-operacional', 'diagnostico-por-dado-pessoal'], contradictionPatterns: ['diagnostico-correlacionado'] },
-  'causa-permissao-bloqueante': { evidencePatterns: ['causa-permissao-bloqueante', 'acesso-artesanal'], contradictionPatterns: ['governanca-proporcional'] },
-  'causa-dependencia-externa': { evidencePatterns: ['causa-dependencia-externa', 'espera-por-dependencia'], contradictionPatterns: ['bloqueio-resolvido-em-conjunto'] },
-  'causa-acoplamento-bloqueio': { evidencePatterns: ['causa-acoplamento-bloqueio', 'dependencia-coordenada'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
-  'causa-limites-organizacionais': { evidencePatterns: ['causa-limites-organizacionais', 'ownership-fragmentado'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
+  'causa-permissao-sem-autonomia': { evidencePatterns: ['causa-permissao-sem-autonomia', 'acesso-artesanal'], contradictionPatterns: ['governanca-proporcional'] },
+  'causa-prioridade-entre-times': { evidencePatterns: ['causa-prioridade-entre-times', 'espera-normalizada'], contradictionPatterns: ['bloqueio-tratado-pelo-sistema'] },
+  'causa-dependencia-arquitetural': { evidencePatterns: ['causa-dependencia-arquitetural', 'dependencia-coordenada'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
 });
 
 const evolutionSeeds: Record<string, InterventionSeed> = {
@@ -213,12 +232,15 @@ export class InferenceService {
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
     const modelVersion = this.modelVersion();
-    if (completed < minimum) return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], scopes: [] as ScopeReport[] };
+    if (completed < minimum) return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, scopes: [] as ScopeReport[] };
     const findings = this.findings(projectId, completed);
+    this.persistTransformation(projectId, completed, findings);
     const areas = this.diagnosticAreas(findings);
     const capabilities = this.capabilityDetails(projectId);
     const capabilityGroups = CapabilityTaxonomy.organize(capabilities);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
+    const visibilityGaps = this.visibilityGaps(projectId, minimum);
+    const previousMeasurement = this.previousMeasurement(projectId);
     const hypotheses = this.diagnosticPosteriors(projectId);
     const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
@@ -237,7 +259,7 @@ export class InferenceService {
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
     );
-    return { completed, minimum, modelVersion, hypotheses, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, scopes };
+    return { completed, minimum, modelVersion, hypotheses, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, visibilityGaps, previousMeasurement, scopes };
   }
 
   private modelVersion(): string | null {
@@ -433,7 +455,65 @@ export class InferenceService {
       reasons: ranked.reasons,
       recommendationEvidence: ranked.evidence,
       experiment: ranked.experiment,
+      foundation: ranked.foundation,
     }));
+  }
+
+  private persistTransformation(projectId: string, completed: number, findings: Finding[]): void {
+    const now = new Date().toISOString();
+    const patterns = Object.fromEntries(findings.map((finding) => [finding.pattern, finding.evidence]));
+    const last = this.db.prepare('SELECT completed FROM diagnostic_snapshots WHERE project_id = ? AND unit_id IS NULL ORDER BY captured_at DESC LIMIT 1')
+      .get(projectId) as { completed: number } | undefined;
+    if (!last || Number(last.completed) !== completed) {
+      this.db.prepare('INSERT INTO diagnostic_snapshots (id, project_id, unit_id, completed, captured_at, patterns_json) VALUES (?, ?, NULL, ?, ?, ?)')
+        .run(id(), projectId, completed, now, JSON.stringify(patterns));
+    }
+    const existing = this.db.prepare('SELECT id FROM transformation_experiments WHERE project_id = ? AND unit_id IS NULL AND pattern = ?');
+    const insert = this.db.prepare(`INSERT INTO transformation_experiments
+      (id, project_id, unit_id, pattern, title, action, owner, metric, review_horizon, success_criterion, foundation_source, foundation_principle, foundation_why, created_at)
+      VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    const update = this.db.prepare(`UPDATE transformation_experiments SET title=?, action=?, owner=?, metric=?, review_horizon=?, success_criterion=?,
+      foundation_source=?, foundation_principle=?, foundation_why=? WHERE id=?`);
+    for (const finding of findings) {
+      const row = existing.get(projectId, finding.pattern) as { id: string } | undefined;
+      if (row) {
+        update.run(finding.title, finding.experiment.action, finding.experiment.owner, finding.experiment.metric, finding.experiment.reviewHorizon, finding.experiment.successCriterion, finding.foundation.source, finding.foundation.principle, finding.foundation.why, row.id);
+        continue;
+      }
+      insert.run(id(), projectId, finding.pattern, finding.title, finding.experiment.action, finding.experiment.owner, finding.experiment.metric, finding.experiment.reviewHorizon, finding.experiment.successCriterion, finding.foundation.source, finding.foundation.principle, finding.foundation.why, now);
+    }
+  }
+
+  private visibilityGaps(projectId: string, minimum: number, unitId?: string): VisibilityGap[] {
+    const scope = this.scope(projectId, unitId);
+    const rows = this.db.prepare(`
+      SELECT p.profile, COUNT(DISTINCT p.id) observers
+      FROM responses r JOIN participations p ON p.id = r.participation_id
+      JOIN assessment_options o ON o.graph_version = p.graph_version AND o.node_key = r.node_id AND o.option_key = r.option_id
+      WHERE p.project_id = ? AND p.status = 'completed' AND o.observation_kind = 'visibility' ${scope.sql}
+      GROUP BY p.profile HAVING COUNT(DISTINCT p.id) >= ?
+    `).all(...scope.parameters, minimum) as unknown as Array<{ profile: string; observers: number }>;
+    return rows.map((row) => ({
+      title: `Parte do fluxo não é observada na perspectiva ${row.profile}`,
+      profiles: [row.profile],
+      count: Number(row.observers),
+    }));
+  }
+
+  private previousMeasurement(projectId: string): MeasurementDelta | null {
+    const snapshots = this.db.prepare('SELECT completed, captured_at, patterns_json FROM diagnostic_snapshots WHERE project_id = ? AND unit_id IS NULL ORDER BY captured_at DESC LIMIT 2')
+      .all(projectId) as unknown as Array<{ completed: number; captured_at: string; patterns_json: string }>;
+    if (snapshots.length < 2) return null;
+    const current = JSON.parse(snapshots[0]!.patterns_json) as Record<string, number>;
+    const previous = JSON.parse(snapshots[1]!.patterns_json) as Record<string, number>;
+    const keys = [...new Set([...Object.keys(current), ...Object.keys(previous)])];
+    return {
+      previousCompleted: Number(snapshots[1]!.completed),
+      capturedAt: snapshots[1]!.captured_at,
+      patternDeltas: keys
+        .map((pattern) => ({ pattern, previous: previous[pattern] ?? 0, current: current[pattern] ?? 0 }))
+        .filter((delta) => delta.previous !== delta.current),
+    };
   }
 
   private scope(projectId: string, unitId?: string): QueryScope {
@@ -511,4 +591,3 @@ const rootCapabilityByDetail = Object.fromEntries([
 ].flatMap(([root, details]) => (details as string[]).map((detail) => [detail, root]))) as Record<string, string>;
 
 type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[]; hypotheses: DiagnosticPosterior[] };
-type QueryScope = { sql: string; parameters: string[] };

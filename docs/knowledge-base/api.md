@@ -13,10 +13,14 @@ restrição. O mesmo formato existe nos recortes hierárquicos elegíveis.
 `capabilityGroups` expõe a árvore recursiva usada pelos radares; cada ramo inclui
 nível limitante, confiança, evidência, contradição e filhos observados.
 
-Cada finding também expõe `cause`, `priority`, `recommendationEvidence` e
-`experiment`. A evidência informa somente totais agregados, padrões, camadas e
-perspectivas; nunca IDs. `confidence` é o posterior provisório na aderência da
+Cada finding também expõe `cause`, `priority`, `recommendationEvidence`,
+`experiment` e `foundation`. A evidência informa somente totais agregados, padrões,
+camadas e perspectivas; nunca IDs. `foundation` declara fonte e princípio da
+intervenção e não pontua. `confidence` é o posterior provisório na aderência da
 intervenção e não deve ser interpretada como maturidade ou apoio popular.
+O relatório sanitizado também inclui `visibilityGaps` (perspectivas que atingiram o
+limiar e relataram “não observo”) e `previousMeasurement` (delta de suporte de
+padrões entre capturas), sem identificação individual.
 
 Cada hipótese causal expõe `observability`, população agregada (`support`,
 `applicable`, quantidade de perspectivas e camadas) e `nextQuestion`. Este último é

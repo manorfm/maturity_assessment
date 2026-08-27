@@ -13,10 +13,16 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
-Os itens gerais estão em `future-evolution.md`. O que ainda depende de massa real,
-revisão externa e governança do diagnóstico está em
-`probabilistic-inference-roadmap.md`; o motor necessário ao piloto já está descrito
-na base de conhecimento e não permanece duplicado como trabalho futuro.
+O plano sequenciado após a auditoria do modelo está em
+[`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam piloto e
+calibração, novos ramos de perspectiva e evidência externa. Higiene observacional,
+conteúdo aplicável e persistência do experimento já estão na base de conhecimento.
+
+Hipóteses ainda não sequenciadas (plataforma, pesquisa, ramos extras) estão em
+`future-evolution.md`. O que depende de massa real e revisão externa está em
+`probabilistic-inference-roadmap.md` e só deve correr depois das ondas 0 e 1 do
+plano; o motor necessário ao piloto já está na base de conhecimento e não
+permanece duplicado como trabalho futuro.
 
 Itens concluídos não permanecem marcados como `done` neste diretório. Eles são
 removidos e recebem uma entrada resumida em `docs/history/completed.md`, enquanto a

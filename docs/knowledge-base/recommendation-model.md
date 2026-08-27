@@ -40,8 +40,11 @@ Uma recomendação exige suporte coletivo mínimo e hipótese causal corresponde
 O motor suprime prescrições incompatíveis e sua entidade probabilística valida
 pré-requisitos antes de recomendar; entre 50% e 70% a ação permanece como hipótese
 a validar. O plano informa ação inicial, responsável provável, métrica, horizonte
-e critério de sucesso. Prioridade considera severidade e alcance sem alterar o
-posterior.
+e critério de sucesso. Cada intervenção declara também um **fundamento** (fonte e
+princípio, por exemplo Well-Architected Security, Continuous Delivery, SRE ou Lean)
+que não pontua: explica por que a ação ataca o comportamento observado, sem
+recomendar ferramenta na ausência de problema. Prioridade considera severidade e
+alcance sem alterar o posterior.
 
 O catálogo diferencia correção de um padrão negativo e evolução de uma prática
 intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade abaixo
@@ -62,3 +65,11 @@ aceitação da recomendação. Há cálculo offline de Brier score, erro esperad
 calibração, precisão e recall, porém essas métricas só possuem significado com
 rótulos externos produzidos no piloto. Alterações futuras de priors ou likelihoods
 devem criar uma nova versão revisada e reproduzível.
+
+## Experimento e reaplicação
+
+Quando o recorte é elegível, o relatório persiste o experimento agregado (ação,
+responsável sugerido, métrica, horizonte, critério e fundamento) e uma captura de
+suporte por padrão. Uma segunda captura no mesmo projeto compara o suporte coletivo
+sem identificar pessoas nem ranquear times. Reaplicação mede se o padrão perdeu ou
+ganhou sustentação; não avalia indivíduos.

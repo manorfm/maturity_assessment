@@ -1,8 +1,9 @@
 export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
 export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
 export type GroupSignal = { participantId: string; profile?: string; detailCapability: string; pattern: string; weight: number; layer: EvidenceLayer; constraint: ConstraintKind };
-export type InterventionSeed = { title: string; intervention: string };
-export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[] };
+export type InterventionFoundation = { source: string; principle: string; why: string };
+export type InterventionSeed = { title: string; intervention: string; foundation?: InterventionFoundation };
+export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation };
 export type RecommendationPopulation = { total: number; applicableByCapability: Record<string, number> };
 export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
 export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; reasons: string[]; evidence: RecommendationEvidence; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
@@ -12,7 +13,7 @@ export function defineInterventionCatalog(seeds: Record<string, InterventionSeed
   return Object.fromEntries(Object.entries(seeds).map(([pattern, seed]) => {
     const rule = rules[pattern] ?? {};
     return [pattern, {
-      ...seed, cause: seed.title, action: seed.intervention, ...experimentDefaults('none', pattern), ...rule,
+      ...seed, cause: seed.title, action: seed.intervention, foundation: seed.foundation ?? foundationFor(pattern), ...experimentDefaults('none', pattern), ...rule,
       evidencePatterns: rule.evidencePatterns ?? [pattern], contradictionPatterns: rule.contradictionPatterns ?? [],
     }];
   }));
@@ -98,6 +99,45 @@ function posteriorByPattern(signals: GroupSignal[], candidates: string[], correc
   return probabilities;
 }
 
+export function foundationFor(pattern: string): InterventionFoundation {
+  if (/credencial|identidade|segredo|permissao|acesso-artesanal/.test(pattern)) {
+    return { source: 'Well-Architected — Security', principle: 'Identidade com privilégio mínimo e proteção de dados', why: 'O problema observado é credencial ou acesso, não a ausência de um produto de cofre.' };
+  }
+  if (/ia-|modelo/.test(pattern)) {
+    return { source: 'Uso responsável de assistência', principle: 'Supervisão proporcional, dados e entendimento', why: 'IA é contexto de trabalho; a capacidade avaliada continua sendo qualidade, segurança e aprendizado.' };
+  }
+  if (/retry|espera-sem-limite|limite-cosmetico|dependencia-com-limites/.test(pattern)) {
+    return { source: 'Resilience engineering / SRE', principle: 'Limites conscientes em dependências', why: 'A maturidade está em decidir espera, isolamento e falha, não em nomear uma biblioteca.' };
+  }
+  if (/incentivo|portfolio|resultado-sem|entrega-substitui|ocupacao-como/.test(pattern)) {
+    return { source: 'Lean / Accelerate', principle: 'Incentivo alinhado a resultado, não a ocupação', why: 'Cerimônia de OKR não mede maturidade; o que pesa na decisão sim.' };
+  }
+  if (/camada-sem-revisao|prestigio-tecnico|simplicidade/.test(pattern)) {
+    return { source: 'Arquitetura evolutiva', principle: 'Complexidade precisa de motivo revisável', why: 'Camada extra sem revisão é custo de mudança, não evidência de design maduro.' };
+  }
+  if (/celebra-media|ignora-base|distribuicao|limiar-sem-contexto|limites-escondem/.test(pattern)) {
+    return { source: 'Data literacy / SRE', principle: 'Decisão com denominador, cauda e incerteza', why: 'Dashboard sem interpretação gera falsa precisão.' };
+  }
+  if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) {
+    return { source: 'SRE / blameless postmortem', principle: 'Detectar, correlacionar e aprender sem culpa', why: 'A prática é o ciclo de incidente, não a ferramenta de observabilidade.' };
+  }
+  if (/integracao|release|deploy|entrega|empacotamento/.test(pattern)) {
+    return { source: 'Continuous Delivery', principle: 'Lote pequeno, feedback cedo, caminho reproduzível', why: 'Pipeline nominal não substitui o comportamento sob pressão.' };
+  }
+  if (/qualidade|teste|regressao|seguranca|vulnerab/.test(pattern)) {
+    return { source: 'Qualidade no fluxo', principle: 'Risco entra cedo; verificação é feedback, não fase', why: 'Suíte ou scanner presente não prova estratégia de qualidade.' };
+  }
+  if (/governanca|controle|aprovacao/.test(pattern)) {
+    return { source: 'Governança habilitadora', principle: 'Controle proporcional ao risco, com evidência que muda decisão', why: 'Aprovação que não distingue risco só adiciona espera.' };
+  }
+  if (/cloud|infraestrutura|plataforma|provisionamento/.test(pattern)) {
+    return { source: 'Well-Architected / platform engineering', principle: 'Caminho suportado com guardrails, não fila artesanal', why: 'Time de plataforma ou console não é maturidade operacional.' };
+  }
+  if (/ownership|fronteira|coordenacao|team/.test(pattern)) {
+    return { source: 'Team Topologies', principle: 'Fronteira e modo de interação alinhados ao fluxo', why: 'Mais coordenação costuma compensar limite ruim, não resolvê-lo.' };
+  }
+  return { source: 'Melhoria contínua', principle: 'Mudança pequena, dono, sinal de efeito', why: 'A intervenção ataca o comportamento observado, não um inventário de práticas.' };
+}
 function experimentDefaults(constraint: ConstraintKind, pattern = ''): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
   const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', knowledge: 'Liderança técnica com a disciplina habilitadora', process: 'Responsável pelo fluxo com as pessoas que executam o processo', tooling: 'Engenharia com plataforma', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado' };
   return { owner: owners[constraint], metric: metricFor(pattern), reviewHorizon: 'duas iterações ou 30 dias', successCriterion: successFor(pattern) };

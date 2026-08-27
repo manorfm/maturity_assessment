@@ -1,10 +1,37 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-v11';
+export const GRAPH_VERSION = 'evidence-anamnesis-v12';
+export const CANNOT_OBSERVE_ID = 'cannot-observe';
+export const NOT_APPLICABLE_ID = 'not-applicable';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform';
 export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
 export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
+export type ObservationKind = 'practice' | 'visibility' | 'not_applicable';
 export type Signal = { capability: string; pattern: string; weight: number; details: string[]; layer: EvidenceLayer; constraint: ConstraintKind };
-export type Option = { id: string; label: string; signals: Signal[] };
+export type Option = { id: string; label: string; signals: Signal[]; observation?: ObservationKind };
+
+export const cannotObserve: Option = {
+  id: CANNOT_OBSERVE_ID,
+  observation: 'visibility',
+  label: 'Não observo esse evento no meu trabalho cotidiano; outras pessoas do fluxo veriam melhor.',
+  signals: [],
+};
+
+export const notApplicableEvent: Option = {
+  id: NOT_APPLICABLE_ID,
+  observation: 'not_applicable',
+  label: 'Esse tipo de evento não ocorre neste ambiente.',
+  signals: [],
+};
+
+export function observationOf(option: Option): ObservationKind {
+  return option.observation ?? 'practice';
+}
+
+function attachObservationalExits(node: AssessmentNode): AssessmentNode {
+  if (node.id === 'respondent-context') return node;
+  if (node.options.some((option) => option.id === CANNOT_OBSERVE_ID)) return node;
+  return { ...node, options: [...node.options, cannotObserve] };
+}
 export type AssessmentNode = {
   id: string;
   type?: 'context' | 'scenario' | 'probe';
@@ -23,7 +50,7 @@ export const profiles: Record<Profile, string> = {
   engineering: 'Engenharia', platform: 'Plataforma / SRE / Infraestrutura',
 };
 
-export const graph: AssessmentNode[] = [
+const authoredNodes: AssessmentNode[] = [
   {
     id: 'respondent-context',
     title: 'Seu ponto de observação',
@@ -130,7 +157,7 @@ export const graph: AssessmentNode[] = [
     scenario: 'Uma alteração passou pelas verificações e pode chegar ao ambiente real, mas produto ainda quer controlar quando e para quem o comportamento ficará disponível.',
     prompt: 'Como essa separação costuma funcionar de verdade?',
     options: [
-      { id: 'decoupled-observed', label: 'A versão pode operar desativada ou com exposição gradual; há responsável, validade do controle, observação de impacto e remoção posterior.', signals: [{ capability: 'entrega', pattern: 'deploy-release-desacoplados', weight: 2 , details: ['release-feedback'], layer: 'practice', constraint: 'none' }] },
+      { id: 'decoupled-observed', label: 'A versão pode chegar ao ambiente sem expor o comportamento; produto decide depois para quem libera.', signals: [{ capability: 'entrega', pattern: 'deploy-release-desacoplados', weight: 2 , details: ['release-feedback'], layer: 'practice', constraint: 'none' }] },
       { id: 'toggle-permanent', label: 'É possível ativar separadamente, mas controles antigos, combinações e responsáveis tendem a se acumular.', signals: [{ capability: 'entrega', pattern: 'controles-de-release-acumulados', weight: 0 , details: ['release-feedback', 'enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'deploy-is-release', label: 'Colocar a versão no ambiente já disponibiliza o comportamento; risco é controlado principalmente antes desse momento.', signals: [{ capability: 'entrega', pattern: 'deploy-igual-release', weight: -1 , details: ['release-feedback'], layer: 'practice', constraint: 'none' }] },
       { id: 'release-train', label: 'Mudanças prontas aguardam uma versão ou janela conjunta para serem disponibilizadas.', signals: [{ capability: 'entrega', pattern: 'release-em-lote', weight: -2 , details: ['release-feedback'], layer: 'practice', constraint: 'none' }] },
@@ -198,7 +225,7 @@ export const graph: AssessmentNode[] = [
     scenario: 'O time assumiu o incidente. Há sinais em mais de um componente e é necessário localizar a transação afetada sem ampliar exposição de dados.',
     prompt: 'Como a investigação costuma avançar nos primeiros minutos?',
     options: [
-      { id: 'correlated-telemetry', label: 'Jornada, mudança recente, métricas, eventos e rastros podem ser correlacionados por identificadores técnicos, com acesso controlado e hipóteses compartilhadas.', signals: [{ capability: 'observabilidade', pattern: 'diagnostico-correlacionado', weight: 2 , details: ['incident-management'], layer: 'practice', constraint: 'none' }] },
+      { id: 'correlated-telemetry', label: 'A investigação começa por um identificador técnico da jornada e pela mudança recente, sem buscar dado pessoal.', signals: [{ capability: 'observabilidade', pattern: 'diagnostico-correlacionado', weight: 2 , details: ['incident-management'], layer: 'practice', constraint: 'none' }] },
       { id: 'separate-searches', label: 'Cada responsável consulta sua parte e combina horários e sintomas em uma conversa até formar a sequência provável.', signals: [{ capability: 'observabilidade', pattern: 'telemetria-fragmentada', weight: -1 , details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'direct-runtime-access', label: 'Pessoas acessam diretamente processos, máquinas ou componentes em execução para coletar arquivos, comandos e estado.', signals: [{ capability: 'plataforma', pattern: 'diagnostico-por-acesso-direto', weight: -2 , details: ['incident-management', 'platform-autonomy'], layer: 'practice', constraint: 'none' }] },
       { id: 'personal-data-search', label: 'A busca começa por um identificador pessoal ou dado do cliente porque é a forma mais rápida de encontrar o caso entre sistemas.', signals: [{ capability: 'plataforma', pattern: 'diagnostico-por-dado-pessoal', weight: -3 , details: ['software-security', 'incident-management'], layer: 'practice', constraint: 'none' }] },
@@ -354,7 +381,7 @@ export const graph: AssessmentNode[] = [
     scenario: 'Pense nas últimas vezes em que o grupo parou para revisar entrega, colaboração, incidentes ou forma de trabalhar. O encontro pode ter qualquer nome e frequência.',
     prompt: 'Qual consequência aparece com mais consistência nas semanas seguintes?',
     options: [
-      { id: 'owned-and-verified', label: 'Poucas mudanças são escolhidas pelo grupo, recebem responsável e condição de sucesso, voltam à pauta e são ajustadas até produzir efeito.', signals: [
+      { id: 'owned-and-verified', label: 'O grupo escolhe poucas mudanças, cada uma com responsável, e volta a elas até haver efeito observável.', signals: [
         { capability: 'aprendizado', pattern: 'melhoria-com-ciclo-fechado', weight: 2 , details: ['organizational-learning'], layer: 'practice', constraint: 'none' },
         { capability: 'organizacao', pattern: 'melhoria-com-ownership', weight: 2 , details: ['team-ownership', 'organizational-learning'], layer: 'practice', constraint: 'none' },
         { capability: 'fluxo', pattern: 'melhoria-protegida-no-fluxo', weight: 2 , details: ['organizational-learning'], layer: 'practice', constraint: 'none' },
@@ -482,10 +509,110 @@ export const graph: AssessmentNode[] = [
     scenario: 'Uma jornada apresenta falhas e lentidão intermitentes. Melhorá-la compete com funcionalidades e os indicadores técnicos possuem distribuições diferentes ao longo do dia.',
     prompt: 'Como o grupo decide quanto esforço investir e se a situação melhorou?',
     options: [
-      { id: 'service-objective', label: 'Um objetivo ligado à experiência orienta prioridade; distribuições, orçamento de erro e impacto são revistos para equilibrar confiabilidade e mudança.', signals: [{ capability: 'confiabilidade', pattern: 'objetivo-de-confiabilidade-orienta-decisao', weight: 2 , details: ['product-direction', 'architecture-decisions', 'reliability-practice'], layer: 'practice', constraint: 'none' }, { capability: 'observabilidade', pattern: 'distribuicao-interpretada-no-contexto', weight: 2 , details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'service-objective', label: 'Um objetivo ligado à experiência das pessoas usuárias orienta a prioridade; o grupo revisa a distribuição do impacto, não só a média, antes de decidir se a situação melhorou.', signals: [{ capability: 'confiabilidade', pattern: 'objetivo-de-confiabilidade-orienta-decisao', weight: 2 , details: ['product-direction', 'architecture-decisions', 'reliability-practice'], layer: 'practice', constraint: 'none' }, { capability: 'observabilidade', pattern: 'distribuicao-interpretada-no-contexto', weight: 2 , details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'fixed-thresholds', label: 'Metas e limites fixos orientam alertas; quando voltam ao normal, o trabalho planejado segue mesmo que parte das pessoas ainda perceba impacto.', signals: [{ capability: 'observabilidade', pattern: 'limites-escondem-distribuicao', weight: -1 , details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'incident-priority', label: 'O investimento cresce depois de incidentes e reclamações; fora desses períodos, funcionalidades recuperam prioridade.', signals: [{ capability: 'confiabilidade', pattern: 'confiabilidade-reativa-a-incidente', weight: -2 , details: ['reliability-practice', 'incident-management'], layer: 'practice', constraint: 'none' }] },
       { id: 'specialist-judgment', label: 'Especialistas avaliam gráficos e histórico e negociam caso a caso quanto risco é aceitável.', signals: [{ capability: 'organizacao', pattern: 'decisao-de-confiabilidade-concentrada', weight: -1 , details: ['architecture-decisions', 'reliability-practice'], layer: 'practice', constraint: 'none' }] },
+    ], next: 'credential-context',
+  },
+  {
+    id: 'credential-context', type: 'context', title: 'Autenticação entre partes do sistema',
+    scenario: 'Algumas mudanças precisam que um componente, pessoa ou carga se autentique em outro sistema. Outros ambientes não têm essa necessidade.',
+    prompt: 'No trabalho recente, esse tipo de evento ocorre?',
+    options: [
+      { id: 'occurs', label: 'Sim: mudanças recentes precisaram de credencial, identidade ou acesso entre componentes ou pessoas.', signals: [] },
+      { ...notApplicableEvent, label: 'Não: neste ambiente não há autenticação entre sistemas nem concessão recorrente de acesso.' },
+    ],
+  },
+  {
+    id: 'credential-practice', title: 'Como a credencial chega a quem precisa',
+    scenario: 'Uma mudança precisa que um componente fale com outro que já exige autenticação, ou que uma pessoa obtenha acesso mínimo para investigar.',
+    prompt: 'O que normalmente acontece até isso funcionar de ponta a ponta?',
+    options: [
+      { id: 'scoped-identity', label: 'Há um caminho repetível: a identidade tem escopo, expiração e trilha; outra pessoa consegue repetir sem herdar acesso permanente.', signals: [{ capability: 'plataforma', pattern: 'identidade-com-escopo-e-expiracao', weight: 2, details: ['cloud-security', 'software-security', 'platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'handoff-secret', label: 'Alguém com acesso coloca o valor e avisa por ticket, chat ou conversa; o tempo depende de quem está disponível.', signals: [{ capability: 'plataforma', pattern: 'credencial-por-handoff', weight: -2, details: ['cloud-security', 'platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'config-secret', label: 'O valor viaja em configuração, arquivo ou variável compartilhada para destravar a mudança.', signals: [{ capability: 'engenharia', pattern: 'credencial-em-configuracao', weight: -3, details: ['cloud-security', 'software-security'], layer: 'practice', constraint: 'none' }] },
+      { id: 'shared-identity', label: 'Usa-se uma conta ou chave já conhecida por várias pessoas, porque é o caminho mais rápido.', signals: [{ capability: 'plataforma', pattern: 'identidade-compartilhada', weight: -2, details: ['cloud-security', 'enabling-governance'], layer: 'practice', constraint: 'none' }] },
+    ], next: 'dependency-context',
+  },
+  {
+    id: 'dependency-context', type: 'context', title: 'Dependência que pode falhar ou atrasar',
+    scenario: 'O trabalho às vezes depende de outro serviço, parceiro ou fila cujo tempo de resposta não está sob controle do time.',
+    prompt: 'Esse tipo de dependência faz parte do cotidiano?',
+    options: [
+      { id: 'occurs', label: 'Sim: há serviços ou parceiros cujo atraso ou falha afeta o que entregamos.', signals: [] },
+      { ...notApplicableEvent, label: 'Não: o produto não depende de outro sistema que possa atrasar ou falhar de forma visível.' },
+    ],
+  },
+  {
+    id: 'dependency-practice', title: 'Quando a dependência fica lenta',
+    scenario: 'Um serviço de terceiro ou interno começa a responder muito mais devagar. O fluxo de usuários continua chegando.',
+    prompt: 'O que o sistema faz nos minutos seguintes, e como vocês sabem que isso foi uma decisão?',
+    options: [
+      { id: 'decided-limits', label: 'Há limites conscientes de espera e isolamento; o comportamento foi revisado e dá para explicar por que existe.', signals: [{ capability: 'arquitetura', pattern: 'dependencia-com-limites-decididos', weight: 2, details: ['evolvability', 'reliability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'retry-amplifies', label: 'O sistema insiste automaticamente e a fila ou a carga no dependente cresce.', signals: [{ capability: 'confiabilidade', pattern: 'retry-amplia-falha', weight: -2, details: ['reliability-practice', 'evolvability'], layer: 'practice', constraint: 'none' }] },
+      { id: 'wait-forever', label: 'As requisições esperam até alguém intervir ou o cliente desistir.', signals: [{ capability: 'confiabilidade', pattern: 'espera-sem-limite', weight: -2, details: ['reliability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'cosmetic-limit', label: 'Existe um limite configurado com valor tão alto ou tão genérico que, na prática, não muda o comportamento.', signals: [{ capability: 'arquitetura', pattern: 'limite-cosmetico', weight: -1, details: ['evolvability', 'reliability-practice'], layer: 'practice', constraint: 'none' }] },
+    ], next: 'incentive-context',
+  },
+  {
+    id: 'incentive-context', type: 'context', title: 'O que o sistema de reconhecimento premia',
+    scenario: 'Em algumas organizações há ciclo de avaliação, bônus, promoção ou reconhecimento público que as pessoas observam. Em outras, isso não existe ou fica invisível.',
+    prompt: 'Você observa um ciclo recente de reconhecimento, avaliação ou promoção?',
+    options: [
+      { id: 'occurs', label: 'Sim: houve avaliação, bônus, promoção ou reconhecimento que as pessoas comentam.', signals: [] },
+      { ...notApplicableEvent, label: 'Não: neste ambiente não há ciclo de avaliação, bônus ou promoção visível ao grupo.' },
+    ],
+  },
+  {
+    id: 'incentive-practice', title: 'O que pesou de fato',
+    scenario: 'Pense no último ciclo de avaliação, bônus ou promoção que o grupo comentou. Entregas, estabilidade e resultado de negócio competiam.',
+    prompt: 'O que de fato pesou para quem constrói e prioriza o produto?',
+    options: [
+      { id: 'outcome-weighted', label: 'Resultado observado (efeito em usuários, risco evitado, aprendizado) entrou na decisão, mesmo quando o escopo atrasou.', signals: [{ capability: 'governanca', pattern: 'incentivo-segue-resultado', weight: 2, details: ['portfolio-management', 'product-direction', 'leadership-management'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'delivery-weighted', label: 'O que pesou foi concluir itens, cumprir prazo ou volume de entrega, independentemente do efeito.', signals: [{ capability: 'governanca', pattern: 'incentivo-segue-entrega', weight: -2, details: ['portfolio-management', 'product-direction'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'opaque-reward', label: 'Ninguém sabe explicar o critério; o reconhecimento parece relacional ou opaco.', signals: [{ capability: 'organizacao', pattern: 'incentivo-opaco', weight: -2, details: ['leadership-management', 'enabling-governance'], layer: 'system', constraint: 'culture' }] },
+    ], next: 'ai-context',
+  },
+  {
+    id: 'ai-context', type: 'context', title: 'Saída assistida por modelo',
+    scenario: 'Em alguns fluxos, texto, código, teste, diagnóstico ou atendimento começa com uma saída gerada por um modelo. Em outros, isso ainda não entra no trabalho.',
+    prompt: 'No trabalho recente, uma saída gerada por modelo entra em decisão, código, teste, operação ou atendimento?',
+    options: [
+      { id: 'occurs', label: 'Sim: pessoas usam assistência de modelo em alguma etapa do trabalho real.', signals: [] },
+      { ...notApplicableEvent, label: 'Não: esse tipo de assistência não faz parte do trabalho cotidiano.' },
+    ],
+  },
+  {
+    id: 'ai-practice', title: 'Quando a assistência erra no risco',
+    scenario: 'Uma alteração ou resposta assistida por modelo chegou perto de produção ou de um cliente com um erro sutil de autorização, dado ou entendimento.',
+    prompt: 'Como o grupo descobre, contém e muda o modo de usar a assistência?',
+    options: [
+      { id: 'proportional-review', label: 'Há revisão proporcional ao risco, rastros do que foi assistido e um caminho suportado para o modelo autorizado.', signals: [{ capability: 'engenharia', pattern: 'ia-revisada-proporcional', weight: 2, details: ['quality-strategy', 'software-security', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
+      { id: 'shadow-model', label: 'Cada pessoa cola a ferramenta que tiver; não há política visível de dado, modelo ou segredo.', signals: [{ capability: 'governanca', pattern: 'ia-sombra-sem-politica', weight: -2, details: ['enabling-governance', 'software-security', 'cloud-security'], layer: 'system', constraint: 'governance' }] },
+      { id: 'understanding-drops', label: 'A entrega acelera, mas menos pessoas conseguem explicar o que foi feito ou revisar com segurança.', signals: [{ capability: 'engenharia', pattern: 'ia-substitui-entendimento', weight: -2, details: ['technical-capability', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'generated-as-fact', label: 'Diagnóstico ou texto gerado é tratado como fato até alguém desmentir na operação.', signals: [{ capability: 'confiabilidade', pattern: 'ia-diagnostico-como-fato', weight: -2, details: ['incident-management', 'observability-practice'], layer: 'practice', constraint: 'none' }] },
+    ], next: 'accidental-complexity',
+  },
+  {
+    id: 'accidental-complexity', title: 'Camada extra para um problema local',
+    scenario: 'Um problema que parecia caber em um módulo ganhou um novo serviço, fila ou camada de abstração. Duas entregas depois, o custo de mudança ainda é visível.',
+    prompt: 'Como essa decisão costuma ser revista?',
+    options: [
+      { id: 'simplicity-reviewed', label: 'O grupo revisa se a complexidade ainda se justifica e reduz ou mantém com um motivo explícito.', signals: [{ capability: 'arquitetura', pattern: 'simplicidade-revista', weight: 2, details: ['evolvability', 'architecture-decisions'], layer: 'practice', constraint: 'none' }] },
+      { id: 'layer-stays', label: 'A camada permanece porque já está lá; o custo é absorvido nas próximas mudanças.', signals: [{ capability: 'arquitetura', pattern: 'camada-sem-revisao', weight: -2, details: ['evolvability'], layer: 'practice', constraint: 'none' }] },
+      { id: 'prestige-design', label: 'A escolha se sustenta pelo prestígio técnico ou pela moda da solução, mais do que pelo problema atual.', signals: [{ capability: 'arquitetura', pattern: 'prestigio-tecnico', weight: -1, details: ['architecture-decisions', 'evolvability'], layer: 'practice', constraint: 'none' }] },
+      { ...notApplicableEvent, label: 'Não construímos software com limites técnicos que possam ganhar camadas extras.' },
+    ], next: 'noisy-signal',
+  },
+  {
+    id: 'noisy-signal', title: 'Um gráfico que parece ter melhorado',
+    scenario: 'Depois de um deploy, um gráfico de latência “melhorou”: a média caiu, um extremo piorou e o volume caiu cerca de 40%. Alguém pergunta se podem comunicar sucesso.',
+    prompt: 'Qual decisão o grupo toma com o que tem?',
+    options: [
+      { id: 'ask-denominator', label: 'Pedem o denominador, o recorte e o que aconteceu com a cauda antes de concluir; se a base ficou pequena, não celebram.', signals: [{ capability: 'observabilidade', pattern: 'recusa-concluir-sem-contexto', weight: 2, details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'celebrate-mean', label: 'Comunicam a melhoria da média e seguem o plano, porque o indicador principal desceu.', signals: [{ capability: 'observabilidade', pattern: 'celebra-media', weight: -2, details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ignore-sample', label: 'Tratam o gráfico como prova suficiente; tamanho da base e mudança de mistura não entram na conversa.', signals: [{ capability: 'observabilidade', pattern: 'ignora-base-pequena', weight: -1, details: ['observability-practice', 'product-direction'], layer: 'practice', constraint: 'none' }] },
     ], next: 'leadership-enablement',
   },
   {
@@ -493,7 +620,7 @@ export const graph: AssessmentNode[] = [
     scenario: 'O mesmo gargalo afeta entregas diferentes e não cabe na autonomia de uma única squad. Resolver exige capacidade, decisão e colaboração entre áreas.',
     prompt: 'Como a liderança normalmente atua até produzir uma mudança sustentável?',
     options: [
-      { id: 'system-owner', label: 'Torna impacto e espera visíveis, define ownership sistêmico, protege capacidade para um experimento e revisa o efeito com os times afetados.', signals: [{ capability: 'organizacao', pattern: 'lideranca-habilita-mudanca-sistemica', weight: 2 , details: ['leadership-management'], layer: 'practice', constraint: 'none' }, { capability: 'governanca', pattern: 'governanca-protege-capacidade-de-melhoria', weight: 2 , details: ['portfolio-management', 'enabling-governance', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
+      { id: 'system-owner', label: 'Torna o gargalo visível e atribui um responsável pelo resultado compartilhado, com capacidade protegida para um experimento.', signals: [{ capability: 'organizacao', pattern: 'lideranca-habilita-mudanca-sistemica', weight: 2 , details: ['leadership-management'], layer: 'practice', constraint: 'none' }, { capability: 'governanca', pattern: 'governanca-protege-capacidade-de-melhoria', weight: 2 , details: ['portfolio-management', 'enabling-governance', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
       { id: 'escalation-followup', label: 'Escala o tema, acompanha responsáveis e cobra planos até que cada área conclua sua parte.', signals: [{ capability: 'organizacao', pattern: 'lideranca-coordena-handoffs', weight: -1 , details: ['leadership-management', 'collaboration'], layer: 'practice', constraint: 'none' }] },
       { id: 'local-efficiency', label: 'Solicita que cada time melhore seus indicadores e processos dentro da autonomia disponível.', signals: [{ capability: 'organizacao', pattern: 'otimizacao-local-pela-gestao', weight: -2 , details: ['organizational-learning'], layer: 'practice', constraint: 'none' }] },
       { id: 'strategic-project', label: 'Transforma o problema em iniciativa estratégica com planejamento, orçamento e governança próprios.', signals: [{ capability: 'governanca', pattern: 'mudanca-sistemica-em-grande-lote', weight: -1 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
@@ -609,6 +736,25 @@ export const graph: AssessmentNode[] = [
   },
 ];
 
+export const graph: AssessmentNode[] = authoredNodes.map(attachObservationalExits);
+
+const skipObservational: Record<string, string> = {
+  'ready-to-release': 'integration-cadence',
+  'integration-cadence': 'release-control',
+  'incident-triage': 'incident-diagnosis',
+  'incident-diagnosis': 'incident-remediation',
+  'blocked-work': 'decision-context',
+  'improvement-loop': 'shared-surface-context',
+  'shared-surface-context': 'team-health',
+  'shared-surface-risk': 'team-health',
+};
+
+function skipEdges(node: AssessmentNode, to: string): AssessmentEdge[] {
+  return node.options
+    .filter((option) => option.id === CANNOT_OBSERVE_ID || option.id === NOT_APPLICABLE_ID)
+    .map((option) => ({ from: node.id, optionId: option.id, to }));
+}
+
 export const edges: AssessmentEdge[] = graph.flatMap((node) => {
   if (node.id === 'leadership-enablement') return [
     { from: node.id, to: 'management-portfolio', profile: 'management' },
@@ -617,53 +763,77 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: 'engineering-security-depth', profile: 'engineering' },
     { from: node.id, to: 'platform-cloud-reliability', profile: 'platform' },
   ];
+  if (node.id === 'credential-context') return [
+    { from: node.id, optionId: 'occurs', to: 'credential-practice' },
+    ...skipEdges(node, 'dependency-context'),
+  ];
+  if (node.id === 'dependency-context') return [
+    { from: node.id, optionId: 'occurs', to: 'dependency-practice' },
+    ...skipEdges(node, 'incentive-context'),
+  ];
+  if (node.id === 'incentive-context') return [
+    { from: node.id, optionId: 'occurs', to: 'incentive-practice' },
+    ...skipEdges(node, 'ai-context'),
+  ];
+  if (node.id === 'ai-context') return [
+    { from: node.id, optionId: 'occurs', to: 'ai-practice' },
+    ...skipEdges(node, 'accidental-complexity'),
+  ];
   if (node.id === 'ready-to-release') return [
     { from: node.id, optionId: 'small-automated', to: 'integration-cadence' },
     { from: node.id, optionId: 'manual-package', to: 'deployment-probe' },
     { from: node.id, optionId: 'test-queue', to: 'quality-probe' },
     { from: node.id, optionId: 'approval', to: 'governance-probe' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'integration-cadence') return [
     { from: node.id, optionId: 'integrated-daily', to: 'release-control' },
     { from: node.id, optionId: 'integrated-few-days', to: 'release-control' },
     { from: node.id, optionId: 'isolated-days', to: 'delivery-cause' },
     { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'incident-triage') return [
     { from: node.id, optionId: 'risk-classified', to: 'incident-diagnosis' },
     { from: node.id, optionId: 'fixed-labels', to: 'incident-diagnosis' },
     { from: node.id, optionId: 'relationship-escalation', to: 'incident-routing-cause' },
     { from: node.id, optionId: 'same-queue', to: 'incident-routing-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'incident-diagnosis') return [
     { from: node.id, optionId: 'correlated-telemetry', to: 'incident-remediation' },
     { from: node.id, optionId: 'separate-searches', to: 'diagnostic-cause' },
     { from: node.id, optionId: 'direct-runtime-access', to: 'diagnostic-cause' },
     { from: node.id, optionId: 'personal-data-search', to: 'diagnostic-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'blocked-work') return [
     { from: node.id, optionId: 'team-resolves', to: 'decision-context' },
     { from: node.id, optionId: 'facilitator-chases', to: 'blocked-cause' },
     { from: node.id, optionId: 'waiting-external', to: 'blocked-cause' },
     { from: node.id, optionId: 'local-workaround', to: 'blocked-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'improvement-loop') return [
     { from: node.id, optionId: 'owned-and-verified', to: 'shared-surface-context' },
     { from: node.id, optionId: 'action-list-fades', to: 'improvement-cause' },
     { from: node.id, optionId: 'ceremony-report', to: 'improvement-cause' },
     { from: node.id, optionId: 'only-after-crisis', to: 'improvement-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'shared-surface-context') return [
     { from: node.id, optionId: 'single-owner', to: 'team-health' },
     { from: node.id, optionId: 'multiple-teams', to: 'shared-surface-risk' },
     { from: node.id, optionId: 'mixed-boundaries', to: 'shared-surface-risk' },
     { from: node.id, optionId: 'unknown-ownership', to: 'shared-surface-risk' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'shared-surface-risk') return [
     { from: node.id, optionId: 'early-contract-feedback', to: 'team-health' },
     { from: node.id, optionId: 'overwritten-change', to: 'shared-surface-cause' },
     { from: node.id, optionId: 'late-integration-conflict', to: 'shared-surface-cause' },
     { from: node.id, optionId: 'manual-coordination', to: 'shared-surface-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
   ];
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });

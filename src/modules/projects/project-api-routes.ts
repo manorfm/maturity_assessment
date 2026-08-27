@@ -76,6 +76,7 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
     kind: item.kind, capability: item.capability, detailCapability: item.detailCapability, pattern: item.pattern,
     title: item.title, cause: item.cause, intervention: item.intervention, confidence: item.confidence, priority: item.priority,
     constraint: item.constraint, reasons: item.reasons, recommendationEvidence: item.recommendationEvidence, experiment: item.experiment,
+    foundation: item.foundation,
   });
   return {
     completed: report.completed,
@@ -88,6 +89,8 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
     capabilities: report.capabilities,
     capabilityGroups: report.capabilityGroups,
     perspectiveGaps: report.perspectiveGaps,
+    visibilityGaps: report.visibilityGaps,
+    previousMeasurement: report.previousMeasurement,
     scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, hypotheses: scope.hypotheses.map(sanitizePosterior), findings: scope.findings.map(finding), areas: scope.areas, capabilities: scope.capabilities, capabilityGroups: scope.capabilityGroups, perspectiveGaps: scope.perspectiveGaps })),
   };
 }

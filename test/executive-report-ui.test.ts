@@ -33,6 +33,6 @@ test('recomendação apresenta decisão executiva antes da metodologia', () => {
   assert.match(html, /Impacto no negócio/);
   assert.match(html, /Ação recomendada/);
   assert.match(html, /Como acompanhar/);
-  assert.match(html, /Ver diagnóstico e evidências/);
+  assert.match(html, /Ver diagnóstico, evidências e fundamento/);
   assert.doesNotMatch(html, /posterior provisório/);
 });

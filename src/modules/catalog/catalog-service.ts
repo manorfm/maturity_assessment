@@ -1,10 +1,10 @@
 import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
-import { edges, graph, GRAPH_VERSION, nodeVariants, type AssessmentEdge, type AssessmentNode, type Option } from './assessment-graph.js';
+import { edges, graph, GRAPH_VERSION, nodeVariants, observationOf, type AssessmentEdge, type AssessmentNode, type ObservationKind, type Option, type Signal } from './assessment-graph.js';
 import { capabilityLeafIds } from '../inference/domain/capability-taxonomy.js';
 
 type NodeRow = { node_key: string; node_type: 'context' | 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
-type OptionRow = { option_key: string; label: string; capability: string | null; pattern: string | null; weight: number | null; detail_capabilities: string | null; evidence_layer: string | null; constraint_kind: string | null };
+type OptionRow = { option_key: string; label: string; observation_kind: string | null; capability: string | null; pattern: string | null; weight: number | null; detail_capabilities: string | null; evidence_layer: string | null; constraint_kind: string | null };
 
 export class CatalogService {
   constructor(private readonly db: Database) { this.seed(); }
@@ -20,8 +20,8 @@ export class CatalogService {
         this.db.prepare('INSERT INTO assessment_nodes (graph_version, node_key, node_type, title, scenario, prompt, position) VALUES (?, ?, ?, ?, ?, ?, ?)')
           .run(GRAPH_VERSION, node.id, node.type ?? 'scenario', node.title, node.scenario, node.prompt, position);
         node.options.forEach((option, optionPosition) => {
-          this.db.prepare('INSERT INTO assessment_options (graph_version, node_key, option_key, label, position) VALUES (?, ?, ?, ?, ?)')
-            .run(GRAPH_VERSION, node.id, option.id, option.label, optionPosition);
+          this.db.prepare('INSERT INTO assessment_options (graph_version, node_key, option_key, label, position, observation_kind) VALUES (?, ?, ?, ?, ?, ?)')
+            .run(GRAPH_VERSION, node.id, option.id, option.label, optionPosition, observationOf(option));
           for (const signal of option.signals) {
             this.db.prepare('INSERT INTO assessment_signals (id, graph_version, node_key, option_key, capability, pattern, weight, detail_capabilities, evidence_layer, constraint_kind) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
               .run(id(), GRAPH_VERSION, node.id, option.id, signal.capability, signal.pattern, signal.weight, JSON.stringify(signal.details), signal.layer, signal.constraint);
@@ -91,14 +91,19 @@ export class CatalogService {
       .get(version, nodeKey) as NodeRow | undefined;
     if (!row) return undefined;
     const optionRows = this.db.prepare(`
-      SELECT o.option_key, o.label, s.capability, s.pattern, s.weight, s.detail_capabilities, s.evidence_layer, s.constraint_kind
+      SELECT o.option_key, o.label, o.observation_kind, s.capability, s.pattern, s.weight, s.detail_capabilities, s.evidence_layer, s.constraint_kind
       FROM assessment_options o LEFT JOIN assessment_signals s
         ON s.graph_version = o.graph_version AND s.node_key = o.node_key AND s.option_key = o.option_key
       WHERE o.graph_version = ? AND o.node_key = ? ORDER BY o.position, s.id
     `).all(version, nodeKey) as unknown as OptionRow[];
     const options = new Map<string, Option>();
     for (const option of optionRows) {
-      const current = options.get(option.option_key) ?? { id: option.option_key, label: option.label, signals: [] };
+      const current = options.get(option.option_key) ?? {
+        id: option.option_key,
+        label: option.label,
+        signals: [] as Signal[],
+        observation: (option.observation_kind === 'visibility' || option.observation_kind === 'not_applicable' ? option.observation_kind : 'practice') as ObservationKind,
+      };
       if (option.pattern && option.capability && option.weight !== null && option.detail_capabilities && option.evidence_layer && option.constraint_kind) {
         const storedSignal: Option['signals'][number] = {
           capability: option.capability, pattern: option.pattern, weight: Number(option.weight),
@@ -169,6 +174,13 @@ export function validateGraphDefinition(nodes: AssessmentNode[], graphEdges: Ass
     const optionEdges = new Set(outgoing.flatMap((edge) => edge.optionId ? [edge.optionId] : []));
     const hasDefault = outgoing.some((edge) => !edge.optionId);
     if (!hasDefault && node.options.some((option) => !optionEdges.has(option.id))) throw new Error(`Graph node has options without an exit: ${node.id}`);
+  }
+  for (const node of nodes) {
+    for (const option of node.options) {
+      if (observationOf(option) !== 'practice' && option.signals.length) {
+        throw new Error(`Non-practice option cannot carry maturity signals: ${node.id}/${option.id}`);
+      }
+    }
   }
   const patternsByLeaf = new Map(capabilityLeafIds.map((leafId) => [leafId, new Set<string>()]));
   for (const node of nodes) for (const option of node.options) for (const signal of option.signals) {

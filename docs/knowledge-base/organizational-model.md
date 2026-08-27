@@ -69,6 +69,10 @@ caminho hierárquico precisam atingir o mínimo. Um time com cinco respostas nã
 mostrado se seu irmão tiver apenas uma, pois a comparação com o ancestral revelaria
 informação sobre o grupo pequeno. Findings não exibem contagens por alternativa.
 
+Reaplicação e experimentos persistidos usam o recorte elegível, nunca a pessoa.
+O gestor vê se um padrão perdeu ou ganhou suporte coletivo; não vê quem respondeu
+nem ranking de times.
+
 ## Problemas transversais
 
 O motor agrega `ProblemPattern`s semelhantes por escopo e origem provável. Exemplos:

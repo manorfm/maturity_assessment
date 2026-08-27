@@ -99,7 +99,9 @@ async function completeAssessment(page: Page, invitationLink: string, scenario: 
 
 function chooseOption(options: typeof graph[number]['options'], scenario: Scenario, nodeId: string, profile: Profile, participantIndex: number) {
   if (nodeId === 'respondent-context') return options.find((option) => option.id === profile)!;
-  const scored = options.map((option) => ({ option, score: option.signals.reduce((total, signal) => total + signal.weight, 0) }));
+  const practice = options.filter((option) => (option.observation ?? 'practice') === 'practice');
+  const pool = practice.length ? practice : options;
+  const scored = pool.map((option) => ({ option, score: option.signals.reduce((total, signal) => total + signal.weight, 0) }));
   if (scenario === 'poor') {
     const fragile = scored.filter((candidate) => candidate.score < 0).sort((left, right) => left.score - right.score);
     return (fragile[participantIndex % fragile.length] ?? scored.sort((left, right) => left.score - right.score)[0])!.option;

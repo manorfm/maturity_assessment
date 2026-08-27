@@ -4,6 +4,10 @@ O motor probabilístico necessário ao piloto já foi implementado. Sua arquitet
 semântica vigentes estão na base de conhecimento. Este backlog contém apenas o que
 não pode ser concluído honestamente sem massa real e validação externa.
 
+Não executar este roadmap sobre o grafo anterior à higiene observacional e ao
+conteúdo aplicável já vigentes (`evidence-anamnesis-v12`). Calibrar opções ouro
+e jornadas sem “não observo” congelaria o viés.
+
 ## Preparação do piloto
 
 - Fazer entrevistas cognitivas, inicialmente 5–8 por perspectiva, para verificar

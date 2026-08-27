@@ -80,6 +80,17 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   assert.equal(report.scopes.some((item) => item.path === 'Empresa/Time A'), true);
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.capabilities.length > 0);
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.areas.length > 0);
+  assert.equal(report.findings.every((finding) => finding.foundation.source.length > 0 && finding.foundation.why.length > 0), true);
+  assert.equal(report.previousMeasurement, null);
+  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_snapshots WHERE project_id = ?').get(String(project.id)) as { total: number }).total), 1);
+  assert.ok(Number((db.prepare('SELECT COUNT(*) total FROM transformation_experiments WHERE project_id = ?').get(String(project.id)) as { total: number }).total) >= 1);
+  inference.report(String(project.id), 5);
+  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_snapshots WHERE project_id = ?').get(String(project.id)) as { total: number }).total), 1);
+  db.prepare('INSERT INTO diagnostic_snapshots (id, project_id, unit_id, completed, captured_at, patterns_json) VALUES (?, ?, NULL, ?, ?, ?)')
+    .run('previous-snapshot', String(project.id), 5, '2026-01-01T00:00:00.000Z', JSON.stringify({ 'integracao-tardia': 0 }));
+  const compared = inference.report(String(project.id), 5);
+  assert.ok(compared.previousMeasurement);
+  assert.equal(compared.previousMeasurement!.patternDeltas.some((delta) => delta.pattern === 'integracao-tardia' && delta.previous === 0 && delta.current > 0), true);
 });
 
 test('grafo publicado é persistido e ramifica conforme a resposta', () => {
@@ -214,7 +225,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 204);
+  assert.equal(signals.length, 225);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

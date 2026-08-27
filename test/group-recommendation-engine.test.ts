@@ -10,6 +10,7 @@ const tooling: InterventionDefinition = {
   metric: 'p95 do tempo até feedback e taxa de execuções instáveis', reviewHorizon: 'duas semanas',
   successCriterion: 'redução mensurável da espera sem aumento de escapes',
   evidencePatterns: ['tooling-gap', 'slow-feedback'], contradictionPatterns: ['fast-reliable-feedback'],
+  foundation: { source: 'Continuous Delivery', principle: 'Feedback cedo', why: 'A espera até o retorno interrompe a decisão.' },
 };
 const catalog: Record<string, InterventionDefinition> = {
   'tooling-gap': tooling,

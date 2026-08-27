@@ -6,10 +6,35 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-27 — Higiene observacional, conteúdo aplicável e ciclo mínimo
+
+- O grafo `evidence-anamnesis-v12` passou a oferecer três estados observacionais,
+  contexto antes de identidade/credencial, resiliência de dependência, incentivo,
+  assistência de modelo, complexidade acidental e sinal ruidoso, e recomendações
+  com fundamento. Experimentos e capturas agregadas persistem no recorte elegível.
+  A especificação vigente está em
+  [`question-design.md`](../knowledge-base/question-design.md),
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+  Restam piloto/calibração e ramos extras no
+  [`plano de evolução`](../backlog/instrument-evolution-plan.md).
+
+## 2026-08-27 — Plano de evolução do instrumento
+
+- A auditoria do modelo virou um plano sequenciado em seis ondas (higiene, conteúdo
+  aplicável, piloto, transformação, perspectivas, evidência externa), com recusa
+  explícita de ferramenta como tema e critério para declarar o instrumento robusto.
+  O plano está em
+  [`instrument-evolution-plan.md`](../backlog/instrument-evolution-plan.md); o
+  comportamento vigente não mudou.
+
 ## 2026-08-27 — README orientado ao produto
 
 - O README deixou de acumular notas de versão e passou a explicar objetivo, jornada,
   modelo de avaliação, técnicas implementadas, arquitetura, operação e limites.
+- A documentação principal detalha o cálculo direcional, inferência bayesiana,
+  entropia e ganho de informação, priorização, métricas de calibração e o ciclo
+  supervisionado necessário para aumentar robustez com massa real.
 - Os marcos funcionais por versão foram consolidados no
   [`CHANGELOG.md`](../../CHANGELOG.md), mantendo este arquivo como histórico técnico.
 

@@ -11,11 +11,18 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão vigente `evidence-anamnesis-v11` começa por uma escolha neutra de
+A versão vigente `evidence-anamnesis-v12` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia
 e plataforma/operações possuem aprofundamentos dedicados. Variantes de texto ficam
 restritas aos casos em que muda a linguagem, mas não a evidência procurada.
+
+Cenários e probes (exceto a escolha de perspectiva) oferecem “não observo”, sem
+sinal. Nós de contexto sobre credencial, dependência, reconhecimento e assistência
+de modelo roteiam para a prática somente quando o evento ocorre; caso contrário a
+folha permanece não avaliada. Identidade, resiliência de dependência, incentivo, uso
+de modelo, complexidade acidental e leitura de sinal ruidoso alimentam folhas já
+existentes da taxonomia — não criam pilares.
 
 ## Tipos de nó
 

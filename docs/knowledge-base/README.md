@@ -31,7 +31,9 @@ se confundam.
 O motor probabilístico vigente está consolidado em `recommendation-model.md` e
 `adaptive-assessment-graph.md`. O
 [`roadmap restante`](../backlog/probabilistic-inference-roadmap.md) contém somente
-piloto, calibração e aprendizado supervisionado que dependem de massa real.
+piloto, calibração e aprendizado supervisionado que dependem de massa real. O que
+ainda falta para declarar o instrumento robusto (calibração, ramos extras, evidência
+externa) está no [`plano de evolução`](../backlog/instrument-evolution-plan.md).
 
 ## Princípio central
 

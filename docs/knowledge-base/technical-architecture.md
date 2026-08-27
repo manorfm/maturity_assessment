@@ -35,8 +35,11 @@ TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudança
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
 O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
-o único schema vigente, registrado como versão 1; mudanças incompatíveis exigem
-recriação explícita da base. Colunas de projeção, camada e restrição são obrigatórias.
+o único schema vigente, registrado como versão 16; mudanças incompatíveis exigem
+recriação explícita da base. Opções carregam `observation_kind` (`practice`,
+`visibility` ou `not_applicable`). Capturas agregadas de diagnóstico e experimentos
+de transformação ficam em tabelas próprias, sem vínculo com pessoa. Colunas de
+projeção, camada e restrição são obrigatórias.
 Índices e constraints garantem que um lote de origem seja reemitido no máximo uma vez.
 
 A API administrativa usa bearer token apenas no header e compartilha os serviços

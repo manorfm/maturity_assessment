@@ -9,7 +9,10 @@
 - Combinar sinais; nenhuma pergunta isolada determina maturidade.
 - Incluir checagens de consistência sem repetir literalmente a questão.
 - Randomizar ordem quando ela puder induzir uma resposta “correta”.
-- Registrar “não sei” como informação sobre visibilidade, não como falha automática.
+- Registrar “não sei” / “não observo” como informação sobre visibilidade, não como
+  falha automática. “Não se aplica” é contexto: a folha permanece não avaliada.
+- Toda opção de prática pontua comportamento; saídas observacionais não carregam
+  sinal de maturidade.
 - Usar perguntas sobre ferramentas e estruturas apenas para aplicabilidade e
   roteamento; suas respostas não pontuam maturidade.
 - Formular cenários em torno de falhas, mudanças, decisões e consequências, de modo
@@ -28,6 +31,21 @@
 - selecionar evidências disponíveis;
 - comparar o que deveria ocorrer com o que ocorreu;
 - estimar frequência/confiança e depois informar um exemplo.
+
+## Três estados observacionais
+
+Cada pergunta de prática admite, além das alternativas de comportamento:
+
+1. **Prática** — o que ocorreu; pode ser forte, intermediário ou frágil e pontua.
+2. **Não observo** — a pessoa não vê o evento no cotidiano; registra visibilidade,
+   sem peso de maturidade para aquela jornada.
+3. **Não se aplica** — o evento não ocorre neste ambiente; a folha permanece não
+   avaliada, nunca zero.
+
+Nós de contexto (credencial entre sistemas, dependência que pode falhar, ciclo de
+reconhecimento, assistência de modelo) só abrem o cenário de prática quando o
+evento existe. Ferramenta, produto de cofre, IAM, Copilot ou OKR não aparecem na
+pergunta e não pontuam.
 
 ## Exemplo: observabilidade
 
@@ -225,4 +243,14 @@ Não perguntar se alguém “entende estatística”. Mostrar um dashboard, aler
 experimento com ruído, distribuição, sazonalidade, percentis, base pequena ou
 correlação enganosa e perguntar qual decisão tomaria, que informação falta e como
 validaria. A inferência observa raciocínio, incerteza e consequência, não vocabulário
-estatístico.
+estatístico. O tronco vigente inclui um cenário com média, cauda e base reduzida
+após um deploy; celebrar a média ou ignorar o denominador é prática frágil, não
+falta de vocabulário.
+
+### Identidade, dependência, incentivo e assistência
+
+Não perguntar se existe Vault, IAM, circuit breaker, OKR ou Copilot. Confirmar se
+o evento ocorre e, se ocorrer, o que acontece: como a credencial chega e expira;
+o que o sistema faz quando a dependência atrasa; o que pesou no último ciclo de
+reconhecimento; como uma saída assistida por modelo é revista quando erra no risco.
+Ausência do evento deixa a folha não avaliada.

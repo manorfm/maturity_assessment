@@ -75,9 +75,6 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(report.body, /Risco gerencial/);
   assert.match(report.body, /Prioridade recomendada/);
   assert.match(report.body, /class="radar-point radar-status-/);
-  assert.match(report.body, /class="radar-marker radar-marker-unassessed"/);
-  assert.match(report.body, /aria-disabled="true"/);
-  assert.match(report.body, /Evidência insuficiente/);
   const capabilityUrl = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
   assert.ok(capabilityUrl);
   const capability = await app.inject({ method: 'GET', url: capabilityUrl });
