@@ -84,6 +84,13 @@ população aplicável, perspectivas e camadas; ausência de resposta permanece 
 Inconclusões são agrupadas por capacidade e só indicam uma próxima pergunta quando
 existe um probe contextual elegível.
 
+O relatório vigente prioriza a leitura executiva: apresenta estágio sociotécnico,
+limitador, risco e prioridade antes da metodologia. O radar usa cores apenas para
+estados avaliados, reserva vermelho para fragilidade confirmada e representa
+evidência insuficiente por um marcador neutro e não navegável. Problemas são
+organizados por urgência e conectam impacto, ação, responsável, medida e resultado
+esperado; probabilidades e detalhes do modelo permanecem disponíveis sob demanda.
+
 ## Executar localmente
 
 Requer Node.js 22.13 ou superior.

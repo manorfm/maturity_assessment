@@ -167,10 +167,10 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const assessedChildren = selected.children.filter((child) => child.assessed).length;
     const breadth = selected.children.length ? ` ${assessedChildren} de ${selected.children.length} subcapacidades possuem cobertura suficiente.` : '';
     const status = selected.assessed
-      ? `<div class="classification-level">${formatMaturityLevel(selected.level)} / 4</div>${coverage}<p>Confiança da medição de maturidade ${Math.round(selected.confidence * 100)}% · ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p>`
+      ? `<div class="classification-level">${formatMaturityLevel(selected.level)} / 4</div>${coverage}<p class="executive-reading">${escapeHtml(capabilityReading(selected.level))}</p><details class="methodology"><summary>Ver evidências da avaliação</summary><p>Confiança da medição de maturidade ${Math.round(selected.confidence * 100)}% · ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p></details>`
       : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
     const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : renderCapabilityDiagnosis(relevant, selected);
-    const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Hipóteses causais');
+    const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas e pontos de atenção');
     return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header><article class="classification">${status}</article>${probabilisticDetail}${diagnosis}`));
   });
 
@@ -199,12 +199,29 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 }
 
 function renderClassification(classification: { level: number; label: string; limitingCapabilities: string[] }): string {
-  return `<article class="classification"><p class="eyebrow">Classificação sociotécnica</p><div class="classification-level">${classification.level} · ${escapeHtml(classification.label)}</div><p>Limitada por: ${escapeHtml(classification.limitingCapabilities.join(', '))}.</p><p class="muted">O nível representa o elo mais frágil com evidência suficiente; capacidades fortes não compensam gargalos nem unidades descendentes.</p></article>`;
+  const narrative = classificationNarrative(classification.level);
+  const limiter = summarizeLimiters(classification.limitingCapabilities);
+  return `<article class="classification executive-summary maturity-level-${classification.level}"><p class="eyebrow">Resumo executivo</p><div class="classification-level">${classification.level} · ${escapeHtml(classification.label)}</div><p class="executive-reading">${escapeHtml(narrative.reading)}</p><dl class="executive-facts"><div><dt>Principal limitador</dt><dd>${escapeHtml(limiter)}</dd></div><div><dt>Risco gerencial</dt><dd>${escapeHtml(narrative.risk)}</dd></div><div><dt>Prioridade recomendada</dt><dd>${escapeHtml(narrative.priority)}</dd></div></dl><details class="methodology"><summary>Como esta classificação é calculada</summary><p>Classificação sociotécnica baseada no elo mais frágil com evidência suficiente. Capacidades fortes não ocultam gargalos nem unidades descendentes.</p></details></article>`;
+}
+
+function summarizeLimiters(limiters: string[]): string {
+  if (!limiters.length) return 'Nenhum limitador recorrente confirmado';
+  const visible = limiters.slice(0, 3).join(', ');
+  const remaining = limiters.length - 3;
+  return remaining > 0 ? `${visible} e mais ${remaining} capacidade(s)` : visible;
+}
+
+function classificationNarrative(level: number): { reading: string; risk: string; priority: string } {
+  if (level <= 0) return { reading: 'O trabalho ainda não produz evidência suficiente de uma prática estável.', risk: 'Decisões dependem de reação e conhecimento individual.', priority: 'Tornar o fluxo visível e estabilizar controles básicos.' };
+  if (level === 1) return { reading: 'A entrega acontece, mas perde previsibilidade quando surgem pressão, incidentes ou dependências.', risk: 'Atrasos, retrabalho e exposição operacional variam conforme o contexto.', priority: 'Remover o principal gargalo e criar uma rotina repetível.' };
+  if (level === 2) return { reading: 'Há práticas repetíveis, porém elas ainda dependem de condições favoráveis e não cobrem todo o sistema.', risk: 'O desempenho pode regredir entre equipes, mudanças ou períodos de maior demanda.', priority: 'Ampliar consistência, feedback e autonomia com controles incorporados.' };
+  if (level === 3) return { reading: 'O sistema é gerenciado por evidências e apresenta boa previsibilidade na maior parte das situações.', risk: 'Pontos isolados ainda podem limitar escala, adaptação ou resposta sob pressão.', priority: 'Fechar os limitadores restantes e validar resiliência em contextos diferentes.' };
+  return { reading: 'As práticas observadas se adaptam com segurança e aprendizado contínuo.', risk: 'A principal ameaça é a perda gradual de disciplina ou visibilidade.', priority: 'Preservar os mecanismos e testar se resistem a mudanças de contexto.' };
 }
 
 type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; assessed: boolean; coverage: number; children: CapabilityRadarNode[] };
 
-function renderCapabilityRadar(
+export function renderCapabilityRadar(
   capabilities: CapabilityRadarNode[],
   baseUrl: string,
   scopeId?: string,
@@ -222,12 +239,36 @@ function renderCapabilityRadar(
   const capabilityUrl = (id: string) => `${baseUrl}/${id}${scopeId ? `?scope=${encodeURIComponent(scopeId)}` : ''}`;
   const points = capabilities.map((capability, index) => {
     const [labelX, labelY] = point(index, 1.14).split(',');
-    if (!capability.assessed) return `<a href="${capabilityUrl(capability.id)}" class="radar-unassessed"><text x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}<tspan x="${labelX}" dy="12">não avaliado</tspan></text></a>`;
+    if (!capability.assessed) {
+      const [x, y] = point(index, .12).split(',');
+      return `<g class="radar-marker radar-marker-unassessed" tabindex="0" role="img" aria-label="${escapeHtml(capability.label)}: evidência insuficiente; detalhe indisponível"><circle cx="${x}" cy="${y}" r="9"/><text class="radar-question" x="${x}" y="${Number(y) + 4}">?</text>${radarTooltip(x!, y!, capability.label, 'Evidência insuficiente', 'Aguarde mais respostas para detalhar.')}</g><text class="radar-axis-label radar-axis-unassessed" x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}<tspan x="${labelX}" dy="12">evidência insuficiente</tspan></text>`;
+    }
     const [x, y] = point(index, Math.max(.12, capability.level / 4)).split(',');
-    return `<a href="${capabilityUrl(capability.id)}" class="radar-point"><circle cx="${x}" cy="${y}" r="8"><title>${escapeHtml(capability.label)}: ${capability.assessed ? `${formatMaturityLevel(capability.level)} de 4` : 'não avaliado'}, cobertura ${Math.round(capability.coverage * 100)}%</title></circle><text x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}</text></a>`;
+    const status = radarStatus(capability.level);
+    return `<a href="${capabilityUrl(capability.id)}" class="radar-point radar-status-${status.id}" aria-label="${escapeHtml(capability.label)}: ${formatMaturityLevel(capability.level)} de 4. ${escapeHtml(status.summary)}"><circle cx="${x}" cy="${y}" r="8"/>${radarTooltip(x!, y!, capability.label, `${formatMaturityLevel(capability.level)} de 4`, status.summary)}<text class="radar-axis-label" x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}</text></a>`;
   }).join('');
-  const drillNavigation = capabilities.map((capability) => `<a class="radar-drill-link" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${capability.assessed ? formatMaturityLevel(capability.level) : 'não avaliado'} · ${Math.round(capability.coverage * 100)}%</span></a>`).join('');
-  return `<article class="card radar-card"><h3>Radar de capacidades</h3><p class="muted">Selecione uma capacidade para abrir uma página de análise. Eixos não avaliados são excluídos da geometria, pois ausência de cobertura não representa nível zero.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}${points}</svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
+  const drillNavigation = capabilities.map((capability) => capability.assessed
+    ? `<a class="radar-drill-link radar-status-${radarStatus(capability.level).id}" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${formatMaturityLevel(capability.level)} · ${Math.round(capability.coverage * 100)}%</span></a>`
+    : `<span class="radar-drill-link disabled" aria-disabled="true">${escapeHtml(capability.label)} <span>Evidência insuficiente</span></span>`).join('');
+  return `<article class="card radar-card"><h3>Radar de capacidades</h3><p class="muted">Passe sobre um ponto para uma leitura rápida ou selecione-o para aprofundar. O marcador cinza com “?” indica evidência insuficiente e não representa baixa maturidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}${points}</svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
+}
+
+function radarStatus(level: number): { id: string; summary: string } {
+  if (level < 1) return { id: 'critical', summary: 'Fragilidade confirmada; exige ação imediata.' };
+  if (level < 2) return { id: 'reactive', summary: 'Prática reativa; prioridade para estabilização.' };
+  if (level < 3) return { id: 'repeatable', summary: 'Prática repetível, ainda sensível ao contexto.' };
+  if (level < 4) return { id: 'managed', summary: 'Prática gerenciada; há espaço para ganhar resiliência.' };
+  return { id: 'adaptive', summary: 'Prática adaptativa; preserve e monitore sua consistência.' };
+}
+
+function radarTooltip(x: string, y: string, label: string, value: string, summary: string): string {
+  const tooltipX = Math.min(325, Math.max(95, Number(x)));
+  const tooltipY = Math.max(72, Number(y) - 20);
+  return `<g class="radar-tooltip" transform="translate(${tooltipX} ${tooltipY})" aria-hidden="true"><rect x="-92" y="-58" width="184" height="52" rx="8"/><text x="0" y="-40"><tspan class="tooltip-title" x="0">${escapeHtml(label)} · ${escapeHtml(value)}</tspan><tspan x="0" dy="16">${escapeHtml(summary)}</tspan></text></g>`;
+}
+
+function capabilityReading(level: number): string {
+  return radarStatus(level).summary;
 }
 
 function findCapabilityPath(nodes: CapabilityRadarNode[], id: string, ancestors: CapabilityRadarNode[] = []): CapabilityRadarNode[] | undefined {
@@ -243,7 +284,7 @@ function flattenCapabilityIds(node: CapabilityRadarNode): string[] {
   return [node.id, ...node.children.flatMap(flattenCapabilityIds)];
 }
 
-function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVersion: string | null, title = 'Diagnóstico probabilístico'): string {
+function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVersion: string | null, title = 'Causas e pontos de atenção'): string {
   const relevant = posteriors.filter((item) => item.evidenceUsed.length > 0);
   if (!relevant.length) return '';
   const byCapability = new Map<string, DiagnosticPosterior[]>();
@@ -254,14 +295,18 @@ function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVers
     const inconclusive = items.filter((item) => !isConfirmed(item));
     const findings = confirmed.slice(0, 3).map((posterior) => {
       const leader = posterior.hypotheses[0]!;
-      const population = posterior.population ? `${posterior.population.support} de ${posterior.population.applicable} jornadas aplicáveis · ${posterior.population.profiles} perspectiva(s) · ${posterior.population.layers} camada(s)` : 'População não informada';
-      return `<li><strong>${escapeHtml(leader.label)} · ${Math.round(leader.probability * 100)}%</strong><br><span class="muted">${escapeHtml(population)}; incerteza ${posterior.entropy.toFixed(2)} bit.</span></li>`;
+      const population = posterior.population ? `${posterior.population.support} de ${posterior.population.applicable} jornadas aplicáveis, em ${posterior.population.profiles} perspectiva(s)` : 'Base de observação não informada';
+      return `<li><strong>${escapeHtml(leader.label)}</strong><br><span class="muted">Força do diagnóstico: ${Math.round(leader.probability * 100)}% · ${escapeHtml(population)}.</span></li>`;
     }).join('');
     const discriminators = [...new Map(inconclusive.flatMap((item) => item.nextQuestionKey && item.nextQuestionLabel ? [[item.nextQuestionKey, item.nextQuestionLabel] as const] : [])).values()];
-    const gap = inconclusive.length ? `<p class="notice">${inconclusive.length} hipótese(s) permaneceram inconclusivas.${discriminators.length ? ` Próximo discriminador disponível: ${escapeHtml(discriminators[0]!)}.` : ' O instrumento vigente não possui outro discriminador elegível para estas evidências; amplie o catálogo antes de prescrever.'}</p>` : '';
-    return `<article class="card diagnostic-hypothesis"><span class="tag">capacidade diagnóstica</span><h3>${escapeHtml(CapabilityTaxonomy.labelFor(capability))}</h3>${findings ? `<ul>${findings}</ul>` : '<p>Nenhuma causa atingiu sustentação suficiente.</p>'}${gap}</article>`;
-  }).join('');
-  return `<section><h2>${title}</h2><p class="muted">Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. Os percentuais são inferências especialistas ainda não calibradas com massa real.</p><div class="grid">${cards}</div></section>`;
+    const gap = inconclusive.length ? `<p class="notice">Ainda faltam evidências para concluir ${inconclusive.length} ponto(s).${discriminators.length ? ` A próxima entrevista deve explorar: ${escapeHtml(discriminators[0]!)}.` : ' Amplie as situações observadas antes de definir uma intervenção.'}</p>` : '';
+    const technical = items.map((item) => `<li>${escapeHtml(item.capability)} · incerteza ${item.entropy.toFixed(2)} bit · ${item.evidenceUsed.length} evidência(s)</li>`).join('');
+    const score = Math.max(0, ...confirmed.map((item) => item.hypotheses[0]?.probability ?? 0));
+    return { score, html: `<article class="card diagnostic-hypothesis"><span class="tag">leitura das causas</span><h3>${escapeHtml(CapabilityTaxonomy.labelFor(capability))}</h3>${findings ? `<ul>${findings}</ul>` : '<p>Nenhuma causa recorrente foi confirmada para orientar uma decisão.</p>'}${gap}<details class="methodology"><summary>Ver detalhes do modelo</summary><ul>${technical}</ul></details></article>` };
+  }).sort((left, right) => right.score - left.score);
+  const featured = cards.slice(0, 6).map((card) => card.html).join('');
+  const additional = cards.slice(6).map((card) => card.html).join('');
+  return `<section><h2>${title}</h2><p class="muted">Leitura das causas mais consistentes no conjunto de respostas. Use-a para orientar a próxima decisão, não para avaliar pessoas.</p><div class="grid">${featured}</div>${additional ? `<details class="methodology additional-analysis"><summary>Ver outras ${cards.length - 6} áreas analisadas</summary><div class="grid">${additional}</div></details>` : ''}<details class="methodology"><summary>Sobre a precisão desta análise</summary><p>Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. Os percentuais indicam força relativa das hipóteses e ainda serão calibrados com massa real.</p></details></section>`;
 }
 
 type ReportFinding = {
@@ -272,11 +317,16 @@ type ReportFinding = {
 
 export function renderCapabilityDiagnosis(findings: ReportFinding[], capability: CapabilityRadarNode): string {
   if (findings.length) {
-    const onlyEvolution = findings.every((finding) => finding.kind === 'evolution');
-    return `<section><h2>${onlyEvolution ? 'Evoluções recomendadas' : 'Problemas e experimentos priorizados'}</h2>${findings.map((finding) => {
+    const grouped = [
+      { title: 'Ações imediatas', items: findings.filter((finding) => finding.kind !== 'evolution' && (finding.priority ?? 0) >= .7) },
+      { title: 'Melhorias de curto prazo', items: findings.filter((finding) => finding.kind !== 'evolution' && (finding.priority ?? 0) < .7) },
+      { title: 'Evoluções recomendadas', items: findings.filter((finding) => finding.kind === 'evolution') },
+    ].filter((group) => group.items.length);
+    return `<section><h2>Prioridades e próximos passos</h2>${grouped.map((group) => `<div class="diagnostic-group"><h3>${group.title}</h3>${group.items.map((finding) => {
       const experiment = finding.experiment;
-      return `<article class="card diagnostic-problem"><span class="tag">${finding.kind === 'evolution' ? 'evolução sugerida' : 'correção sugerida'} · posterior provisório ${Math.round((finding.confidence ?? 0) * 100)}%</span><h3>${escapeHtml(finding.title)}</h3>${finding.cause ? `<h4>Causa sustentada</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p class="muted">Restrição observada: ${escapeHtml(finding.constraint)}</p>` : ''}<h4>Como a confiança foi formada</h4><ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul><h4>Menor experimento útil</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável provável</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Métrica</dt><dd>${escapeHtml(experiment.metric)}</dd><dt>Revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Critério de sucesso</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}</article>`;
-    }).join('')}</section>`;
+      const urgency = finding.kind === 'evolution' ? 'Próximo passo de evolução' : (finding.priority ?? 0) >= .7 ? 'Atenção imediata' : 'Melhoria de curto prazo';
+      return `<article class="card diagnostic-problem"><span class="tag">${urgency} · força do diagnóstico ${Math.round((finding.confidence ?? 0) * 100)}%</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico e evidências</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
+    }).join('')}</div>`).join('')}</section>`;
   }
   if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';
   if (capability.confidence < .5) return '<p class="notice">A evidência ainda é insuficiente para afirmar ausência de problema ou recomendar preservação da prática.</p>';
@@ -284,6 +334,21 @@ export function renderCapabilityDiagnosis(findings: ReportFinding[], capability:
   if (capability.level < 2) return '<p class="notice">A capacidade apresenta comportamento predominantemente reativo. A evidência confirma fragilidade, mas ainda não isolou uma causa recorrente para orientar uma correção específica.</p>';
   if (capability.level < 4) return '<p class="notice">A capacidade ainda não atingiu o estado adaptativo, mas as evidências coletadas não discriminam uma intervenção com confiança suficiente. A próxima rodada deve reconstruir um evento recente, sua consequência e a restrição que impediu a prática de avançar.</p>';
   return '<p class="notice positive-evidence">As evidências convergem para uma prática adaptativa. Nenhuma intervenção é adicionada apenas para preencher o relatório.</p>';
+}
+
+function executiveImpact(finding: ReportFinding): string {
+  if (finding.kind === 'evolution') return 'A prática atual funciona, mas pode perder consistência ao mudar de escala, equipe ou contexto.';
+  const impacts: Record<string, string> = {
+    access: 'Filas de permissão aumentam o tempo de resposta e concentram risco em poucas pessoas.',
+    tooling: 'Feedback tardio amplia retrabalho, tempo de entrega e chance de falhas chegarem ao cliente.',
+    process: 'Variação no processo reduz previsibilidade e faz problemas semelhantes reaparecerem.',
+    organization: 'Dependências entre equipes elevam espera, conflitos de prioridade e perda de responsabilidade ponta a ponta.',
+    governance: 'Controles manuais atrasam decisões sem garantir segurança de forma consistente.',
+    architecture: 'Mudanças ficam maiores e mais arriscadas, dificultando entrega frequente e recuperação rápida.',
+    knowledge: 'Decisões dependem de conhecimento individual e variam entre pessoas ou situações.',
+    culture: 'Riscos permanecem ocultos por mais tempo e o aprendizado tende a virar ação pontual.',
+  };
+  return impacts[finding.constraint ?? ''] ?? 'A limitação aumenta espera, retrabalho ou exposição operacional no fluxo de entrega.';
 }
 
 export function formatMaturityLevel(level: number): string {

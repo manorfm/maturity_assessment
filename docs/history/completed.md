@@ -3,6 +3,15 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+## 2026-08-27 — Relatório executivo e radar semântico
+
+- A apresentação passou a destacar estágio, risco, prioridade, impacto e ações;
+  detalhes probabilísticos ficaram sob demanda, e o radar ganhou estados visuais,
+  resumo em hover/foco e marcador neutro não navegável para evidência insuficiente.
+  A semântica vigente está em
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-08-26 — Largura mínima para notas agregadas
 
 - Ramos deixaram de publicar nível quando a evidência está concentrada em uma única

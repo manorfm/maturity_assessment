@@ -94,9 +94,16 @@ condicionais e perspectivas de gestão, produto, qualidade, engenharia e
 plataforma/operações escolhidas durante a entrevista.
 
 O cálculo de nível e confiança vive no domínio de inferência. Sinais contraditórios
-reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível e
-links nativos para abrir diagnóstico e próximos passos de cada eixo, sem framework
-de frontend ou duplicação da regra de inferência.
+reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível,
+marcadores focáveis, resumos em hover/foco e links nativos somente para capacidades
+avaliadas. Capacidades sem cobertura usam marcador neutro, ficam fora da geometria
+e não oferecem navegação. A apresentação não recalcula a inferência nem depende de
+framework de frontend.
+
+O HTML renderizado no servidor segue divulgação progressiva: interpretação,
+impacto, prioridade, ação e medida aparecem primeiro; probabilidades, população,
+incerteza, versão e evidências ficam em elementos `details`. Essa separação muda a
+linguagem e a hierarquia visual, não os contratos ou regras do motor.
 
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade

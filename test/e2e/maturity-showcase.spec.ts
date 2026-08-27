@@ -14,14 +14,21 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
     const invitationLinks = await createInvitations(page, squadProfiles.length);
     for (const [index, link] of invitationLinks.entries()) await completeAssessment(page, link, scenario, squadProfiles[index]!, index);
     await page.goto(paths[scenario]);
-    await expect(page.getByText('Classificação sociotécnica').first()).toBeVisible();
+    await expect(page.getByText('Resumo executivo').first()).toBeVisible();
+    await expect(page.getByText('Risco gerencial').first()).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Radar de capacidades' }).first()).toBeVisible();
     await page.locator('.radar-drill-link', { hasText: 'Operação, confiabilidade e plataforma' }).first().click();
     await expect(page.getByRole('heading', { name: 'Operação, confiabilidade e plataforma' })).toBeVisible();
     await page.locator('.radar-drill-link', { hasText: 'Cloud e infraestrutura' }).click();
     await expect(page.getByRole('heading', { name: 'Cloud e infraestrutura' })).toBeVisible();
-    await page.locator('.radar-drill-link', { hasText: 'Infraestrutura reproduzível' }).click();
-    await expect(page.getByRole('heading', { level: 1, name: 'Infraestrutura reproduzível' })).toBeVisible();
+    const infrastructure = page.locator('.radar-drill-link', { hasText: 'Infraestrutura reproduzível' });
+    if (await infrastructure.evaluate((element) => element.tagName === 'A')) {
+      await infrastructure.click();
+      await expect(page.getByRole('heading', { level: 1, name: 'Infraestrutura reproduzível' })).toBeVisible();
+    } else {
+      await expect(infrastructure).toHaveAttribute('aria-disabled', 'true');
+      await expect(infrastructure).not.toHaveAttribute('href', /.+/);
+    }
     await expect(page.getByRole('link', { name: 'Voltar' })).toBeVisible();
     await expect(page.getByText(/Cobertura temática/)).toBeVisible();
     if (scenario === 'elite') {
@@ -29,13 +36,13 @@ test('gera projetos ruim, mediano e elite para inspeção manual', async ({ page
       await expect(page.locator('.classification-level')).not.toContainText('4.0 / 4');
     }
     if (scenario === 'poor') {
-      await expect(page.getByText(/variedade temática suficiente/)).toBeVisible();
+      await expect(page.getByText(/Evidência insuficiente/).first()).toBeVisible();
       await page.getByRole('link', { name: 'Operação, confiabilidade e plataforma' }).click();
       await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
-      await expect(page.getByRole('heading', { name: 'Problemas e experimentos priorizados' })).toBeVisible();
-      await expect(page.getByText(/Como a confiança foi formada/).first()).toBeVisible();
-      await expect(page.getByText(/correção sugerida · posterior provisório \d+%/).first()).toBeVisible();
-      await expect(page.getByText('Menor experimento útil').first()).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Prioridades e próximos passos' })).toBeVisible();
+      await expect(page.getByText('Impacto no negócio').first()).toBeVisible();
+      await expect(page.getByText(/força do diagnóstico \d+%/).first()).toBeVisible();
+      await expect(page.getByText('Ação recomendada').first()).toBeVisible();
     }
     await page.goto(paths[scenario]);
     if (scenario === 'elite') {

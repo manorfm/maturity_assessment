@@ -108,7 +108,9 @@ será secundária e explicável.
 O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
 os seis eixos macro e suas explosões. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
 dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
-evidência insuficiente, aparece como “não avaliado” e nunca é interpretado como zero. O radar não combina pilares
+evidência insuficiente, aparece com marcador neutro “?” e nunca é interpretado como
+zero ou fragilidade. Esse estado não permite aprofundamento até atingir cobertura;
+vermelho é reservado a uma fragilidade efetivamente avaliada. O radar não combina pilares
 em uma nota global e não substitui findings, bloqueios ou recomendações.
 
 O cálculo vigente combina sinais comportamentais convergentes dentro da capacidade.
@@ -142,6 +144,12 @@ média. Ao consolidar a hierarquia, uma unidade ancestral também é limitada pe
 classificação mais baixa entre descendentes publicáveis. O relatório preserva as
 capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
 isso evita que uma squad forte esconda outra bloqueada.
+
+Na interface gerencial, a classificação abre com uma interpretação do estágio,
+principal limitador, risco e prioridade recomendada. Nota, confiança, população,
+incerteza e versão do modelo são informações secundárias e explicáveis, acessíveis
+sem competir com a decisão. Recomendações aparecem por urgência e conectam problema,
+impacto, ação, responsável provável, medida, prazo de revisão e resultado esperado.
 
 Níveis inteiros são exibidos sem decimal (`4/4`); decimais aparecem somente quando
 representam diferença real (`3.7/4`). Toda capacidade avaliada abaixo de 4 deve ter
