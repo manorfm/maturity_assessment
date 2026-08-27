@@ -98,6 +98,12 @@ reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível 
 links nativos para abrir diagnóstico e próximos passos de cada eixo, sem framework
 de frontend ou duplicação da regra de inferência.
 
+O recomendador vigente é determinístico e especialista. Não existe rede bayesiana,
+treinamento estatístico nem seleção de perguntas por ganho de informação. A futura
+inferência probabilística continuará dentro do módulo `inference`, com modelo e
+parâmetros versionados no SQLite e sem serviço distribuído ou LLM. O roadmap está em
+[`docs/backlog/probabilistic-inference-roadmap.md`](../backlog/probabilistic-inference-roadmap.md).
+
 `CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos. O radar
 superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula
 níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmente o

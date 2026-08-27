@@ -4,7 +4,6 @@
 
 - autenticação do criador, recuperação de acesso e eventual SSO;
 - política definitiva de retenção e exclusão de respostas;
-- revisão humana responsável pela calibração inicial e processo de contestação;
 - configuração do limiar de anonimato sem permitir redução insegura;
 - editor administrativo ou continuidade da autoria por arquivos versionados;
 - envio de convites por e-mail/identidade versus distribuição manual;
@@ -30,13 +29,10 @@
 
 ## Modelo de inferência
 
-- calibração empírica de perguntas e pesos;
-- calibrar os limiares direcionais usados para divergência entre perspectivas;
-- calibrar empiricamente a fórmula inicial de contradição e confiança por capacidade;
-- diferenciação mais precisa entre lacuna de conhecimento e bloqueio sistêmico;
-- registrar etapa do SDLC e referências em cada sinal, além da matriz explícita de
-  capacidade, perspectiva, camada e restrição já vigente;
-- relações causais apresentadas como hipóteses, nunca como causalidade comprovada;
+- executar o
+  [`roadmap do motor probabilístico`](probabilistic-inference-roadmap.md), que reúne
+  ontologia causal, inferência bayesiana, seleção de perguntas, recomendações,
+  instrumentação, piloto e calibração;
 - análise longitudinal para identificar mudança sustentada;
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;
 - revisão humana e contestação de findings;
@@ -62,7 +58,10 @@
 - produto, discovery, experimentação e conexão entre resultados técnicos e cliente;
 - sustentabilidade, FinOps e eficiência de recursos quando forem relevantes.
 
-## IA no ciclo de trabalho
+## IA como objeto avaliado
+
+Este tópico trata de comportamentos da organização avaliada. Não descreve o motor
+de inferência do produto.
 
 - onde IA participa de discovery, código, revisão, testes, operação e incidentes;
 - qualidade da supervisão, rastreabilidade e validação de saídas;
@@ -79,8 +78,6 @@
   incompatibilidades de contexto e reversibilidade específicos por intervenção;
 - persistir a versão do recomendador e todos os candidatos considerados, além dos
   fatores já apresentados na justificativa, sem armazenar identificação individual;
-- calibrar o ranking com feedback explícito sobre adoção e efeito das intervenções,
-  evitando aprender por clique, popularidade ou correlação tratada como causalidade;
 - calibrar a classificação por elo limitante e a relação entre sinais cruzados,
   cobertura e confiança sem convertê-la em ranking de times;
 - aprofundar a cadeia de evidências vigente até as perguntas agregadas sem permitir

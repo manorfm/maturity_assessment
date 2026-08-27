@@ -18,6 +18,18 @@ Prioridade é separada da confiança. Ela considera severidade e alcance; portan
 uma hipótese muito provável pode vir depois de um bloqueio mais crítico. Empates de
 confiança são legítimos somente quando os vetores de evidência forem equivalentes.
 
+## Implementação vigente
+
+O motor é um sistema especialista determinístico, não um modelo estatístico ou de
+machine learning. Para cada intervenção ele combina suporte na população aplicável,
+padrões declarados, camadas, perspectivas, consequência e contradições específicas.
+Problemas apenas coexistentes não aumentam confiança e sinais positivos não
+relacionados não são tratados como contradição.
+
+As intervenções possuem catálogo versionado. O motor não aprende com respostas,
+cliques ou recomendações aceitas e não seleciona a próxima pergunta por ganho de
+informação. O grafo adapta o percurso por regras declarativas de resposta e perfil.
+
 ## Cadeia explicável
 
 O relatório preserva:
@@ -37,8 +49,8 @@ decomposição agregada e não inclui identificadores de participação.
 
 ## Calibração
 
-As probabilidades iniciais são regras especialistas versionadas. A interface deve
-usar o termo `confiança heurística` até comparar os resultados com casos rotulados,
-revisão multidisciplinar e entrevistas cognitivas. O piloto deverá medir falsos
-positivos, falsos negativos e calibração por faixa antes de qualquer interpretação
-probabilística.
+Os pesos atuais são regras especialistas versionadas, não probabilidades. A
+interface deve usar `confiança heurística` até existir um modelo probabilístico
+comparado com casos rotulados, revisão multidisciplinar e entrevistas cognitivas.
+O plano aprovado está no
+[`roadmap probabilístico`](../backlog/probabilistic-inference-roadmap.md).

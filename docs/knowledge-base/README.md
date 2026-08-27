@@ -28,6 +28,10 @@ Ideias ainda não incorporadas ao modelo vigente pertencem ao
 [`docs/backlog`](../backlog/README.md), para que hipótese futura e decisão atual não
 se confundam.
 
+O próximo ciclo aprovado está descrito no
+[`roadmap do motor probabilístico`](../backlog/probabilistic-inference-roadmap.md).
+Ele não descreve funcionalidade vigente até que cada fase seja entregue.
+
 ## Princípio central
 
 Uma capacidade não é madura porque existe nominalmente. A avaliação procura a

@@ -57,9 +57,16 @@ A versão 0.12 torna os efeitos capacidade/camada/restrição explícitos no cat
 audita cobertura independente de todas as folhas antes da publicação, abre ramos
 próprios para cinco perspectivas e exercita uma squad multiperfil no showcase.
 
-A versão 0.13 introduz um sistema especialista sem LLM para priorizar soluções pelo
-conjunto agregado de jornadas: recorrência, coocorrência, camadas, restrições e
-contradições. Grupos com a mesma nota podem receber recomendações diferentes.
+A versão 0.13 introduziu um sistema especialista sem LLM. O estado vigente remove
+coocorrência genérica e usa população aplicável, evidências relacionadas, camadas,
+perspectivas e contradições específicas para priorizar experimentos. Cada sugestão
+informa causa, ação, responsável provável, métrica, revisão e critério de sucesso.
+Grupos com a mesma nota podem receber recomendações diferentes.
+
+O percentual é uma confiança heurística arredondada, não uma probabilidade
+calibrada. O motor ainda não aprende com dados reais nem escolhe perguntas por ganho
+de informação. A próxima evolução aprovada está detalhada no
+[`roadmap probabilístico`](docs/backlog/probabilistic-inference-roadmap.md).
 
 ## Executar localmente
 
@@ -100,3 +107,6 @@ preparação manual do banco. `npm run showcase` permanece como alias compatíve
 - A jornada comum é complementada por ramos próprios de gestão, produto, qualidade,
   engenharia e plataforma/operações; dados, design, arquitetura e segurança ainda
   usam o percurso comum e permanecem no backlog de calibração por disciplina.
+- A adaptação atual segue arestas declarativas do grafo. Ainda não há distribuição
+  probabilística de causas, seleção de perguntas por informação, calibração
+  empírica ou aprendizado automático.

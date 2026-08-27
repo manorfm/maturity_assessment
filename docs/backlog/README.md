@@ -13,8 +13,10 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
-Os itens estão em `future-evolution.md`. Quando uma ideia for aceita, ela deve sair
-do backlog e atualizar o modelo, a arquitetura ou um ADR correspondente.
+Os itens gerais estão em `future-evolution.md`. A evolução aprovada do diagnóstico
+está detalhada em `probabilistic-inference-roadmap.md`; ela permanece no backlog
+enquanto não for implementada e cada fase entregue deve migrar para a base de
+conhecimento e o histórico.
 
 Itens concluídos não permanecem marcados como `done` neste diretório. Eles são
 removidos e recebem uma entrada resumida em `docs/history/completed.md`, enquanto a
