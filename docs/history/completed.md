@@ -3,6 +3,16 @@
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 
+Para uma visão resumida dos marcos por versão, consulte o
+[`CHANGELOG.md`](../../CHANGELOG.md).
+
+## 2026-08-27 — README orientado ao produto
+
+- O README deixou de acumular notas de versão e passou a explicar objetivo, jornada,
+  modelo de avaliação, técnicas implementadas, arquitetura, operação e limites.
+- Os marcos funcionais por versão foram consolidados no
+  [`CHANGELOG.md`](../../CHANGELOG.md), mantendo este arquivo como histórico técnico.
+
 ## 2026-08-27 — Relatório executivo e radar semântico
 
 - A apresentação passou a destacar estágio, risco, prioridade, impacto e ações;
