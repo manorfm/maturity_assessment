@@ -3,7 +3,7 @@ export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'acc
 export type GroupSignal = { participantId: string; profile?: string; detailCapability: string; pattern: string; weight: number; layer: EvidenceLayer; constraint: ConstraintKind };
 export type InterventionFoundation = { source: string; principle: string; why: string };
 export type InterventionSeed = { title: string; intervention: string; foundation?: InterventionFoundation };
-export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation };
+export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation; guidance?: SolutionGuidance };
 export type RecommendationPopulation = { total: number; applicableByCapability: Record<string, number> };
 export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
 export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; reasons: string[]; evidence: RecommendationEvidence; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
@@ -14,8 +14,9 @@ export function defineInterventionCatalog(seeds: Record<string, InterventionSeed
     const rule = rules[pattern] ?? {};
     const baseFoundation = seed.foundation ?? foundationFor(pattern);
     const foundation = { ...baseFoundation, why: specificFoundationWhy(baseFoundation, seed.title) };
+    const guidance = guidanceFor(pattern, foundation, seed.title);
     return [pattern, {
-      ...seed, cause: causeFor(foundation, seed.title), action: seed.intervention, foundation, ...experimentDefaults('none', pattern, seed.title, foundation), ...rule,
+      ...seed, cause: causeFromGuidance(guidance, seed.title), action: seed.intervention, foundation, guidance, ...experimentDefaults('none', pattern, foundation, guidance), ...rule,
       evidencePatterns: rule.evidencePatterns ?? [pattern], contradictionPatterns: rule.contradictionPatterns ?? [],
     }];
   }));
@@ -56,7 +57,7 @@ export class GroupRecommendationEngine {
       const confidence = roundConfidence(posterior.get(pattern) ?? 0);
       if (confidence < .5) return [];
       const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
-      const contextualDefaults = experimentDefaults(constraint, pattern, definition.title, definition.foundation);
+      const contextualDefaults = experimentDefaults(constraint, pattern, definition.foundation, definition.guidance);
       const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
       const reasons = [
         `Padrão sustentado por ${supporters.size} de ${applicablePopulation} jornadas aplicáveis.`,
@@ -106,9 +107,9 @@ export function foundationFor(pattern: string): InterventionFoundation {
   if (!foundation) throw new Error(`Intervention foundation is missing: ${pattern}`);
   return foundation;
 }
-function experimentDefaults(constraint: ConstraintKind, pattern = '', title = pattern, foundation?: InterventionFoundation): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
+function experimentDefaults(constraint: ConstraintKind, pattern = '', foundation?: InterventionFoundation, guidance?: SolutionGuidance): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
   const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', knowledge: 'Liderança técnica com a disciplina habilitadora', process: 'Responsável pelo fluxo com as pessoas que executam o processo', tooling: 'Engenharia com plataforma', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado' };
-  return { owner: constraint === 'none' ? ownerFor(foundation?.source) : owners[constraint], metric: specificMetric(metricFor(pattern), title), reviewHorizon: horizonFor(pattern), successCriterion: specificSuccess(successFor(pattern), title) };
+  return { owner: constraint === 'none' ? ownerFor(foundation?.source) : owners[constraint], metric: hasExplicitGuidance(pattern) && guidance?.metric ? guidance.metric : metricFor(pattern), reviewHorizon: horizonFor(pattern), successCriterion: hasExplicitGuidance(pattern) && guidance?.successCriterion ? guidance.successCriterion : specificSuccess(successFor(pattern)) };
 }
 function ownerFor(source?: string): string {
   const owners: Record<string, string> = {
@@ -123,37 +124,12 @@ function ownerFor(source?: string): string {
   };
   return owners[source ?? ''] ?? 'Liderança do fluxo e pessoas afetadas pelo problema';
 }
-function specificMetric(metric: string, title: string): string { return `${metric}; registre a recorrência de “${lowerFirst(title)}”`; }
-function specificSuccess(criterion: string, title: string): string {
-  const specific = /a métrica escolhida melhora/i.test(criterion) ? 'o comportamento deixa de se repetir no recorte acompanhado sem deslocar risco ou espera para outra etapa' : criterion;
-  return `${specific}; confirme isso no caso “${lowerFirst(title)}” antes de ampliar a mudança`;
+function specificSuccess(criterion: string): string {
+  return /a métrica escolhida melhora/i.test(criterion) ? 'o comportamento deixa de se repetir no recorte acompanhado sem deslocar risco ou espera para outra etapa' : criterion;
 }
 function specificFoundationWhy(foundation: InterventionFoundation, title: string): string {
   if (foundation.why !== 'A intervenção ataca o comportamento observado, não um inventário de práticas.') return foundation.why;
   return `O princípio orienta um experimento para reduzir “${lowerFirst(title)}” e verificar o efeito antes de institucionalizar a solução.`;
-}
-function causeFor(foundation: InterventionFoundation, observedEffect: string): string {
-  const causes: Record<string, string> = {
-    'Continuous Delivery': 'O caminho de mudança não produz feedback pequeno, frequente e reproduzível sob as condições observadas.',
-    'Qualidade no fluxo': 'O risco entra tarde ou depende de uma etapa especializada, impedindo feedback durante a construção.',
-    'SRE / blameless postmortem': 'Impacto, responsabilidade, diagnóstico e aprendizado não formam um ciclo operacional contínuo.',
-    'Team Topologies': 'Fronteiras, prioridades ou carga cognitiva exigem coordenação fora do fluxo para concluir o trabalho.',
-    'Governança habilitadora': 'O controle não diferencia risco com evidências capazes de mudar o caminho ou a decisão.',
-    'Well-Architected / platform engineering': 'A capacidade depende de intervenção especializada em vez de um caminho suportado e repetível.',
-    'Well-Architected — Security': 'Identidade ou acesso dependem de concessão artesanal sem escopo, validade e trilha adequados.',
-    'Lean / Accelerate': 'Incentivos e capacidade favorecem iniciar ou concluir trabalho, sem reconciliar resultado e custo de atraso.',
-    'Arquitetura evolutiva / DDD': 'O limite ou significado compartilhado permanece implícito e transfere custo para coordenação e mudanças futuras.',
-    'Dados como produto': 'O significado ou contrato do dado muda sem ownership e compatibilidade visíveis aos consumidores.',
-    'Discovery e evidência de uso': 'A experiência entra depois da decisão e não possui evidência com poder para reabrir o investimento.',
-    'Data literacy / SRE': 'A decisão usa um agregado sem considerar denominador, distribuição e incerteza do recorte.',
-    'Resilience engineering / SRE': 'Espera, repetição e isolamento da dependência não foram definidos pelo impacto aceitável.',
-    'Uso responsável de assistência': 'A assistência entra no fluxo sem supervisão, rastreabilidade ou proteção proporcional ao risco.',
-    'Melhoria contínua': 'O problema é reconhecido, mas não recebe ownership, capacidade e revisão de efeito suficientes para mudar o sistema.',
-  };
-  const mechanism = causes[foundation.source] ?? 'A condição observada permanece sem um mecanismo estável de feedback e revisão de efeito.';
-  const effect = lowerFirst(observedEffect);
-  if (foundation.source === 'Melhoria contínua') return `“${effect}” se repete porque o ciclo de melhoria não reserva dono, capacidade e revisão de efeito para essa classe de problema.`;
-  return `${mechanism} Neste recorte, o efeito observado é: ${effect}.`;
 }
 function metricFor(pattern: string): string {
   if (/reconhecimento|incentivo/.test(pattern)) return 'decisões de reconhecimento que citam efeito observado e diferença entre trabalho iniciado e resultado alcançado';
@@ -169,7 +145,7 @@ function metricFor(pattern: string): string {
   if (/aprend|melhoria|acao|cerimonia|recorrencia/.test(pattern)) return 'ações com efeito revisado, recorrência do padrão e tempo até incorporar o aprendizado';
   if (isAssistancePattern(pattern)) return 'retrabalho, achados de revisão e mudanças assistidas explicáveis por outra pessoa';
   if (/carga|heroi|ownership|coordenacao|dependencia/.test(pattern)) return 'tempo bloqueado, trocas de contexto e intervenções externas para concluir o fluxo';
-  return 'tempo de espera, recorrência e efeito observado na capacidade afetada';
+  return 'tempo de espera, recorrência e efeito observado na capacidade afetada, no recorte acompanhado';
 }
 function successFor(pattern: string): string {
   if (/reconhecimento|incentivo/.test(pattern)) return 'o próximo ciclo de reconhecimento usa evidência de efeito sem premiar volume, heroísmo ou risco oculto';
@@ -205,3 +181,4 @@ function clamp(value: number): number { return Math.max(0, Math.min(1, value)); 
 import { BayesianInferenceEngine } from './bayesian-inference-engine.js';
 import { DiagnosticModel, type EvidenceDefinition, type HypothesisDefinition } from './diagnostic-model.js';
 import { interventionFoundations } from './intervention-foundations.js';
+import { causeFromGuidance, guidanceFor, hasExplicitGuidance, type SolutionGuidance } from './solution-guidance.js';

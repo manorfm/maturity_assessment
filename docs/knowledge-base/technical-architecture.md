@@ -107,12 +107,15 @@ avaliadas. Capacidades sem cobertura usam marcador neutro, ficam fora da geometr
 e não oferecem navegação. A apresentação não recalcula a inferência nem depende de
 framework de frontend.
 
-O HTML renderizado no servidor segue divulgação progressiva: cada página fecha
-com um limitador, um desfecho e um próximo passo; radar e recortes estruturais
-orientam a navegação sem reabrir a decisão. Probabilidades, população, incerteza,
-versão, evidências, calibração e revisão cognitiva ficam em elementos `details`.
+O HTML renderizado no servidor segue divulgação progressiva: um cartão de decisão
+(efeito, restrição, classe de solução, experimento da semana); radar e recortes
+estruturais orientam a navegação sem reabrir a decisão. O limitador de palco
+exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam
+amarradas ao limitador. Probabilidades, população, incerteza, versão, evidências,
+calibração e revisão cognitiva ficam em elementos `details`.
 Essa separação muda a linguagem e a hierarquia visual, não os contratos ou regras
-do motor.
+do motor. O catálogo de orientação vive em `solution-guidance.ts`; a composição
+do desfecho em `report-outcome.ts`.
 
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
@@ -130,7 +133,8 @@ E2E gera quatro casos inspecionáveis: linha sob pressão (com partição irmã 
 grupo mínimo), prática local intermediária, operação adaptativa com as nove lentes e
 divergência triangulada entre gestão e engenharia. Percorre o grafo em Chromium,
 grava um índice com histórias, trechos observados e convites ociosos, valida a
-ordenação, um único limitador e a tag de divergência, e deixa a mesma base servida em `3217` — inclusive
+ordenação, um único limitador (sem cloud por default), homes distintos entre
+frágil e emergente, preservação do ramo 4/4 e a tag de divergência, e deixa a mesma base servida em `3217` — inclusive
 em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 `demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
 3217, evitando recursão entre scripts.

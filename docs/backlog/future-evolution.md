@@ -20,6 +20,10 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 
 - simulações com consequências visíveis e ramificações com múltiplos checkpoints;
 - banco de cenários por papel, contexto, tamanho e tipo de organização;
+- alinhar rótulos das folhas e classes de solução ao vocabulário que Continuous
+  Delivery, Team Topologies, SRE, DDD, Lean e Well-Architected realmente
+  propagam (tronco, paved path, SLO, bounded context, custo de atraso), sem
+  transformar a entrevista em prova de jargão; hipótese, ainda não compromisso;
 - validar a linguagem dos ramos de dados, design, arquitetura e segurança com cada
   disciplina antes de aplicar o instrumento em organização real;
 - modo facilitado para workshops, além da coleta individual;

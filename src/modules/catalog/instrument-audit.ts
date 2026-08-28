@@ -1,5 +1,6 @@
 import type { AssessmentNode } from './assessment-graph.js';
 import type { InterventionDefinition } from '../inference/domain/group-recommendation-engine.js';
+import { allowsImprovementFoundation } from '../inference/domain/solution-guidance.js';
 
 export type InstrumentIssue = {
   severity: 'error' | 'warning';
@@ -40,6 +41,10 @@ function auditInterventions(interventions: Record<string, InterventionDefinition
     if (item.metric === 'tempo de espera, recorrência e efeito observado na capacidade afetada') issues.push(issue('error', 'generic-metric', pattern, 'A métrica não identifica o fenômeno específico a acompanhar.'));
     if (item.owner === 'Responsável pela capacidade com o time') issues.push(issue('warning', 'generic-owner', pattern, 'O responsável ainda depende de contextualização no diagnóstico.'));
     if (item.foundation.why === 'A intervenção ataca o comportamento observado, não um inventário de práticas.') issues.push(issue('warning', 'generic-foundation', pattern, 'O fundamento não explica por que a intervenção atua neste mecanismo.'));
+    if (/registre a recorrência de/i.test(item.metric)) issues.push(issue('error', 'title-reciting-metric', pattern, 'A métrica recita o título em vez de nomear o comportamento a acompanhar.'));
+    if (item.foundation.source === 'Melhoria contínua' && !allowsImprovementFoundation(pattern)) {
+      issues.push(issue('error', 'misplaced-improvement-foundation', pattern, 'Melhoria contínua só cabe quando o mecanismo é ciclo de melhoria sem dono, capacidade ou revisão de efeito.'));
+    }
     return issues;
   });
 }

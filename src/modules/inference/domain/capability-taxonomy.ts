@@ -17,7 +17,7 @@ const taxonomy: TaxonomyNode[] = [
     leaf('planning-refinement', 'Planejamento e refinamento'), leaf('work-management', 'Fluxo de trabalho'), leaf('continuous-integration', 'Integração contínua'), leaf('release-feedback', 'Release e feedback'),
   ] },
   { id: 'engineering-quality', label: 'Engenharia e qualidade', children: [
-    leaf('sustainable-design', 'Design e sustentabilidade do código'), leaf('quality-strategy', 'Estratégia de qualidade'), leaf('sdlc-automation', 'Automação do SDLC'), leaf('software-security', 'Segurança de software'), leaf('technical-capability', 'Capacidade técnica'),
+    leaf('sustainable-design', 'Design e sustentabilidade do código'), leaf('quality-strategy', 'Estratégia de qualidade'), leaf('sdlc-automation', 'Feedback técnico repetível'), leaf('software-security', 'Segurança de software'), leaf('technical-capability', 'Capacidade técnica'),
   ] },
   { id: 'architecture-evolution', label: 'Arquitetura e evolução', children: [
     leaf('domain-alignment', 'Alinhamento ao domínio'), leaf('architecture-decisions', 'Decisões arquiteturais'), leaf('evolvability', 'Evolutibilidade'), leaf('integration-data', 'Integração e dados'),
@@ -34,6 +34,10 @@ const taxonomy: TaxonomyNode[] = [
 ];
 
 export const capabilityLeafIds = collectLeaves(taxonomy);
+
+export const cloudCapabilityIds = new Set([
+  'cloud-infrastructure', 'reproducible-infrastructure', 'cloud-security', 'cloud-reliability', 'cloud-efficiency',
+]);
 
 function collectLeaves(nodes: TaxonomyNode[]): string[] {
   return nodes.flatMap((node) => node.children?.length ? collectLeaves(node.children) : [node.id]);

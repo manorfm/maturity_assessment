@@ -1,4 +1,4 @@
-import type { CapabilityBranch } from './capability-taxonomy.js';
+import { cloudCapabilityIds, type CapabilityBranch } from './capability-taxonomy.js';
 
 export type ReportOutcomeKind = 'insufficient' | 'preserve' | 'correct' | 'evolve' | 'discriminate';
 
@@ -13,6 +13,7 @@ export type OutcomeFinding = {
   priority: number;
   experiment?: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   affectedCapabilities?: string[];
+  foundation?: { source: string; principle: string; why: string };
 };
 
 export type ConfirmedCause = {
@@ -44,6 +45,8 @@ const kindLabels: Record<ReportOutcomeKind, string> = {
   evolve: 'Evoluir a prática',
   discriminate: 'Discriminar antes de intervir',
 };
+
+const stageLabels = ['Opaco', 'Reativo', 'Repetível', 'Gerenciado', 'Adaptativo'] as const;
 
 export function flattenAssessedLeaves(nodes: CapabilityBranch[]): CapabilityBranch[] {
   return nodes.flatMap((node) => (node.children.length ? flattenAssessedLeaves(node.children) : node.assessed ? [node] : []));
@@ -82,54 +85,84 @@ export function decideReportOutcome(input: {
   classification: { level: number; label: string; limitingCapabilities: string[] } | null;
   branches: CapabilityBranch[];
   findings: OutcomeFinding[];
-  perspectiveGaps?: Array<{ title: string }>;
+  perspectiveGaps?: Array<{ title: string; capability?: string }>;
   focusId?: string;
 }): ReportOutcome {
   if (!input.classification || input.classification.limitingCapabilities.includes('Evidência insuficiente')) {
     return outcome('insufficient', 'Nenhuma capacidade com cobertura suficiente', 'Ainda não há dado agregado para publicar uma nota ou uma ação.', 'Aguardar o grupo mínimo', 'O relatório será conclusivo quando houver evidência coletiva suficiente, sem inventar causa ou intervenção.');
   }
   const focus = input.focusId ? findNode(input.branches, input.focusId) : undefined;
+  const stageLevel = focus ? Math.max(0, Math.min(4, Math.floor(focus.level))) : input.classification.level;
+  const stageLabel = focus ? stageLabels[stageLevel]! : input.classification.label;
+  const uniqueFindings = uniqueFindingsByPattern(input.findings);
   const leaves = flattenAssessedLeaves(focus ? [focus] : input.branches);
   const limiter = focus && !focus.children.length && focus.assessed
     ? focus
-    : primaryLimiter(leaves.length ? leaves : flattenAssessedLeaves(input.branches), input.classification);
-  const limiterLabel = limiter?.label ?? input.classification.limitingCapabilities[0] ?? input.classification.label;
-  const uniqueFindings = uniqueFindingsByPattern(input.findings);
+    : decisionLimiter(leaves.length ? leaves : flattenAssessedLeaves(input.branches), stageLevel, uniqueFindings);
+  const limiterLabel = limiter?.label ?? (focus?.label ?? input.classification.limitingCapabilities[0] ?? input.classification.label);
   const bound = limiter ? uniqueFindings.filter((finding) => finding.detailCapability === limiter.id || finding.affectedCapabilities?.includes(limiter.id)) : uniqueFindings;
   const leading = bound[0];
   const mixed = Boolean(limiter?.hasContradiction || (limiter && limiter.confidence < .5));
   const gap = input.focusId ? undefined : input.perspectiveGaps?.[0];
 
-  if (mixed || gap) {
-    const title = gap ? 'Triangular a divergência observada' : 'Discriminar a restrição do limitador';
-    const body = gap
-      ? `${gap.title}. Trate a diferença de perspectiva como finding do sistema: visibilidade, fronteira ou poder — não como nota baixa automática.`
-      : `${limiterLabel} mistura evidências. A próxima rodada deve reconstruir um evento recente e isolar se a restrição é capacidade, autonomia, processo ou estrutura — sem abrir várias frentes.`;
-    return { ...outcome('discriminate', limiterLabel, `${limiterLabel} está em ${input.classification.label.toLowerCase()}, mas a evidência ainda não escolhe uma intervenção segura.`, title, body), ...limiterId(limiter) };
+  if (gap) {
+    return {
+      ...outcome(
+        'discriminate',
+        gap.title,
+        'As perspectivas não descrevem o mesmo sistema de trabalho. A diferença é o finding: visibilidade, fronteira ou poder — não uma nota baixa automática.',
+        'Triangular a divergência observada',
+        `${gap.title}. Reconstrua um evento recente com as lentes que divergem antes de prescrever processo, ferramenta ou reestruturação.`,
+      ),
+      ...limiterId(limiter),
+    };
   }
-  if (leading && !mixed) {
+  if (focus?.children.length && focus.level >= 4 && (!limiter || cloudCapabilityIds.has(limiter.id) || limiter.level >= 4)) {
+    return { ...outcome('preserve', focus.label, 'As evidências convergem para uma prática sustentada neste recorte.', 'Não iniciar transformação aqui', 'Preserve a prática, acompanhe consistência sob pressão e não acrescente intervenção só para preencher o relatório.'), limiterId: focus.id };
+  }
+  if (mixed) {
+    return {
+      ...outcome('discriminate', limiterLabel, `${limiterLabel} está em ${stageLabel.toLowerCase()}, mas as evidências deste elo ainda se misturam.`, 'Discriminar a restrição do limitador', `${limiterLabel} mistura evidências. A próxima rodada deve reconstruir um evento recente e isolar se a restrição é capacidade, autonomia, processo ou estrutura — sem abrir várias frentes.`),
+      ...limiterId(limiter),
+    };
+  }
+  if (leading) {
     const kind = leading.kind === 'evolution' ? 'evolve' : 'correct';
     const action = leading.experiment?.action ?? leading.intervention;
     return {
-      ...outcome(kind, limiterLabel, `${limiterLabel} limita o recorte em ${input.classification.label.toLowerCase()}. A evidência aponta um experimento compatível com o efeito observado.`, leading.title, action),
+      ...outcome(kind, limiterLabel, `${leading.title}. Isso aparece em ${limiterLabel} (${stageLabel.toLowerCase()}).`, leading.title, action),
       ...limiterId(limiter),
       finding: leading,
     };
   }
-  if (input.classification.level >= 4 || (limiter && limiter.level >= 4 && !mixed)) {
+  if (stageLevel >= 4 || (limiter && limiter.level >= 4)) {
     return { ...outcome('preserve', limiterLabel, 'As evidências convergem para uma prática sustentada neste recorte.', 'Não iniciar transformação aqui', 'Preserve a prática, acompanhe consistência sob pressão e não acrescente intervenção só para preencher o relatório.'), ...limiterId(limiter) };
   }
   return {
-    ...outcome('discriminate', limiterLabel, `${limiterLabel} está abaixo do estado adaptativo e nenhuma causa recorrente foi isolada.`, 'Observar um evento recente', `Reconstrua a última ocorrência visível em ${limiterLabel} com as perspectivas que faltam. O passo é evidência, não um playbook de processo.`),
+    ...outcome('discriminate', limiterLabel, `${limiterLabel} está em ${stageLabel.toLowerCase()} e nenhuma causa recorrente foi isolada.`, 'Observar um evento recente', `Reconstrua a última ocorrência visível em ${limiterLabel} com as perspectivas que faltam. O passo é evidência, não um playbook.`),
     ...limiterId(limiter),
   };
 }
 
-function primaryLimiter(leaves: CapabilityBranch[], classification: { level: number; limitingCapabilities: string[] }): CapabilityBranch | undefined {
-  const atFloor = leaves.filter((leaf) => Math.floor(leaf.level) === classification.level);
-  const named = atFloor.filter((leaf) => classification.limitingCapabilities.includes(leaf.label));
-  const pool = (named.length ? named : atFloor.length ? atFloor : leaves);
-  return [...pool].sort((left, right) => left.level - right.level || left.confidence - right.confidence)[0];
+function decisionLimiter(leaves: CapabilityBranch[], stageLevel: number, findings: OutcomeFinding[]): CapabilityBranch | undefined {
+  const atFloor = leaves.filter((leaf) => Math.floor(leaf.level) === stageLevel);
+  const pool = atFloor.length ? atFloor : leaves;
+  const boundTo = (leaf: CapabilityBranch) => findings.some((finding) => finding.detailCapability === leaf.id || finding.affectedCapabilities?.includes(leaf.id));
+  const notCloud = (items: CapabilityBranch[]) => items.filter((item) => !cloudCapabilityIds.has(item.id));
+  const coherent = (items: CapabilityBranch[]) => items.filter((item) => !item.hasContradiction && item.confidence >= .5);
+  const withFinding = pool.filter(boundTo);
+  const ranked = pick(coherent(notCloud(withFinding)))
+    ?? pick(notCloud(withFinding))
+    ?? pick(withFinding)
+    ?? pick(coherent(notCloud(pool)))
+    ?? pick(notCloud(pool))
+    ?? pick(pool);
+  return ranked;
+}
+
+function pick(items: CapabilityBranch[]): CapabilityBranch | undefined {
+  if (!items.length) return undefined;
+  return [...items].sort((left, right) => left.level - right.level || right.confidence - left.confidence)[0];
 }
 
 function findNode(nodes: CapabilityBranch[], id: string): CapabilityBranch | undefined {

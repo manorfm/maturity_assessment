@@ -604,7 +604,7 @@ export class InferenceService {
 const capabilityDetailLabels: Record<string, string> = {
   'product-direction': 'Direção e alinhamento', 'discovery-validation': 'Descoberta e validação', 'portfolio-management': 'Gestão de portfólio',
   'planning-refinement': 'Planejamento e refinamento', 'work-management': 'Fluxo de trabalho', 'continuous-integration': 'Integração contínua', 'release-feedback': 'Release e feedback',
-  'sustainable-design': 'Design e sustentabilidade do código', 'quality-strategy': 'Estratégia de qualidade', 'sdlc-automation': 'Automação do SDLC', 'software-security': 'Segurança de software', 'technical-capability': 'Capacidade técnica',
+  'sustainable-design': 'Design e sustentabilidade do código', 'quality-strategy': 'Estratégia de qualidade', 'sdlc-automation': 'Feedback técnico repetível', 'software-security': 'Segurança de software', 'technical-capability': 'Capacidade técnica',
   'domain-alignment': 'Alinhamento ao domínio', 'architecture-decisions': 'Decisões arquiteturais', evolvability: 'Evolutibilidade', 'integration-data': 'Integração e dados',
   'observability-practice': 'Observabilidade', 'reliability-practice': 'Confiabilidade', 'incident-management': 'Gestão de incidentes', 'platform-autonomy': 'Plataforma e autonomia',
   'reproducible-infrastructure': 'Infraestrutura reproduzível', 'cloud-security': 'Segurança e identidade', 'cloud-reliability': 'Confiabilidade de infraestrutura', 'cloud-efficiency': 'Eficiência, custos e sustentabilidade',

@@ -20,6 +20,12 @@ test('gera casos inspecionáveis com textos, resultados e convites manuais', asy
 
   expect(levels.fragile!).toBeLessThan(levels.emerging!);
   expect(levels.emerging!).toBeLessThan(levels.adaptive!);
+  const fragileHome = collected[0];
+  const emergingHome = collected[1];
+  if (!fragileHome?.observed || !emergingHome?.observed) throw new Error('casos frágil e emergente ausentes');
+  expect(fragileHome.observed.limiter ?? '').not.toMatch(/infraestrutura|Cloud/i);
+  expect(emergingHome.observed.limiter ?? '').not.toMatch(/infraestrutura|Cloud/i);
+  expect(`${fragileHome.observed.limiter}|${fragileHome.observed.reading}`).not.toBe(`${emergingHome.observed.limiter}|${emergingHome.observed.reading}`);
 
   writeFileSync(SHOWCASE_GUIDE_PATH, buildShowcaseGuide(collected));
   await page.goto('/showcase');
@@ -44,20 +50,14 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(page.getByText('Resumo executivo').first()).toBeVisible();
   await expect(page.getByText('Próxima decisão')).toBeVisible();
   await expect(page.locator('.executive-facts dd').first()).not.toContainText('e mais');
+  await expect(page.locator('.executive-facts dd').first()).not.toContainText('Confiabilidade de infraestrutura');
+  await expect(page.locator('.executive-facts dd').first()).not.toContainText('Infraestrutura reproduzível');
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
   await expect(page.getByRole('heading', { name: 'Mapa por estrutura' })).toHaveCount(0);
   await page.locator('.radar-drill-link', { hasText: 'Operação, confiabilidade e plataforma' }).first().click();
   await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
   await expect(page.getByText('Próxima decisão')).toBeVisible();
-  const priorities = page.getByRole('heading', { name: 'Prioridades e próximos passos' });
-  if (await priorities.count()) {
-    await expect(priorities).toBeVisible();
-    await expect(page.getByText('Impacto no negócio').first()).toBeVisible();
-    await expect(page.getByText(/Hipótese (fortemente|bem) sustentada/).first()).toBeVisible();
-    await expect(page.getByText('Ação recomendada').first()).toBeVisible();
-  } else {
-    await expect(page.getByRole('heading', { name: 'Discriminar antes de intervir' })).toBeVisible();
-  }
+  await expect(page.locator('.outcome-card .tag')).toHaveText(/Corrigir o limitador|Evoluir a prática|Discriminar antes de intervir|Preservar a prática/);
   await page.goto(adminUrl);
   const observed = await observeReport(page);
   levels.fragile = Number(observed.classification.split('·')[0]?.trim());
@@ -67,8 +67,8 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
     title: 'Frágil — linha sob pressão',
     story: 'Sete pessoas do Squad Alfa descrevem absorção silenciosa de demanda. O Squad Beta tem só duas jornadas concluídas, abaixo do grupo mínimo de cinco, então o mapa por estrutura permanece oculto em toda a cadeia irmã.',
     lookFor: [
-      'Uma próxima decisão (corrigir, evoluir, discriminar ou preservar) e um único limitador.',
-      'Radar de operação até plataforma: o recorte fecha com o mesmo ato de fala, sem três frentes.',
+      'Uma próxima decisão e um único limitador — não cloud aninhada por default.',
+      'Cartão com o problema, a restrição e a classe de solução; radar em segundo plano.',
       'Mapa por estrutura ausente enquanto o Squad Beta não atingir cinco respostas.',
       'Complete os três convites restantes do Squad Beta para ver o recorte por unidade aparecer.',
     ],
@@ -121,6 +121,7 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
   await expect(page.getByRole('heading', { name: 'Radar de capacidades' }).first()).toBeVisible();
   await page.locator('.radar-drill-link', { hasText: 'Operação, confiabilidade e plataforma' }).first().click();
   await expect(page.getByRole('heading', { name: 'Operação, confiabilidade e plataforma' })).toBeVisible();
+  await expect(page.locator('.outcome-card .tag')).toHaveText('Preservar a prática');
   await page.locator('.radar-drill-link', { hasText: 'Cloud e infraestrutura' }).click();
   await expect(page.getByRole('heading', { name: 'Cloud e infraestrutura' })).toBeVisible();
   const infrastructure = page.locator('.radar-drill-link', { hasText: 'Infraestrutura reproduzível' });
@@ -142,7 +143,7 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
   expect(governanceLevel).toBeGreaterThan(2);
   expect(governanceLevel).toBeLessThan(4);
   await expect(page.getByText('Próxima decisão')).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Evoluir a prática|Corrigir o limitador|Discriminar antes de intervir|Preservar a prática/ })).toBeVisible();
+  await expect(page.locator('.outcome-card .tag')).toHaveText(/Evoluir a prática|Corrigir o limitador|Discriminar antes de intervir|Preservar a prática/);
   await page.goto(adminUrl);
   const observed = await observeReport(page);
   levels.adaptive = Number(observed.classification.split('·')[0]?.trim());
@@ -177,6 +178,7 @@ async function buildDivergenceCase(page: Page): Promise<ShowcaseGuideCase> {
   }
   await page.goto(adminUrl);
   await expect(page.getByText('divergência agregada').first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Triangular a divergência/i })).toBeVisible();
   const observed = await observeReport(page);
   return {
     id: 'divergencia',

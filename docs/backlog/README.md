@@ -13,6 +13,12 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
+O plano para o relatório passar a fechar decisão (limitador útil, um cartão,
+orientação por classe de solução) está em
+[`decision-report-plan.md`](decision-report-plan.md). As ondas 0, 1 e 3 já estão
+na base de conhecimento (0.24.0). Restam o restante das folhas e o piloto
+cognitivo dos novos textos.
+
 O plano sequenciado após a auditoria do modelo está em
 [`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam o trabalho
 humano do piloto, validação de linguagem com as disciplinas, separação de

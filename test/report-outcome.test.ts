@@ -84,3 +84,57 @@ test('causa no limitador vira um experimento', () => {
   assert.equal(outcome.finding?.pattern, 'causa-melhoria-sem-capacidade');
   assert.match(outcome.nextStepBody, /Pare uma iniciativa pequena/);
 });
+
+test('folha de cloud contraditória não vence integração com finding no mesmo piso', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Confiabilidade de infraestrutura', 'Integração contínua'] },
+    branches: [
+      leaf('continuous-integration', 'Integração contínua', 0),
+      leaf('cloud-reliability', 'Confiabilidade de infraestrutura', 0, { hasContradiction: true, confidence: .3 }),
+    ],
+    findings: [{ kind: 'correction', pattern: 'mudanca-isolada', detailCapability: 'continuous-integration', title: 'Mudanças permanecem isoladas', cause: '', intervention: 'Integre no mesmo dia', confidence: .9, priority: .9 }],
+  });
+  assert.equal(outcome.limiterLabel, 'Integração contínua');
+  assert.equal(outcome.kind, 'correct');
+});
+
+test('divergência de perspectiva é o finding do home, não uma folha aleatória', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Capacidade técnica'] },
+    branches: [leaf('technical-capability', 'Capacidade técnica', 0.4)],
+    findings: [{ kind: 'correction', pattern: 'seguranca-depende-de-reconhecimento-e-especialista', detailCapability: 'technical-capability', title: 'Segurança depende de especialista', cause: '', intervention: 'Codifique o risco', confidence: .9, priority: .9 }],
+    perspectiveGaps: [{ title: 'Perspectivas divergem sobre aprendizado', capability: 'aprendizado' }],
+  });
+  assert.equal(outcome.kind, 'discriminate');
+  assert.match(outcome.nextStepTitle, /divergência/i);
+  assert.match(outcome.nextStepBody, /lentes|perspectiva/i);
+  assert.equal(outcome.finding, undefined);
+});
+
+test('ramo adaptativo não herda discriminar de um neto de cloud', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 3, label: 'Gerenciado', limitingCapabilities: ['Governança habilitadora'] },
+    branches: [{
+      ...leaf('operations-platform', 'Operação, confiabilidade e plataforma', 4),
+      children: [
+        leaf('reliability-practice', 'Confiabilidade', 4),
+        leaf('cloud-reliability', 'Confiabilidade de infraestrutura', 4, { hasContradiction: true, confidence: .3 }),
+      ],
+    }],
+    findings: [],
+    focusId: 'operations-platform',
+  });
+  assert.equal(outcome.kind, 'preserve');
+});
+
+test('página da folha usa o estágio da folha, não o rótulo global', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Integração contínua'] },
+    branches: [leaf('sdlc-automation', 'Feedback técnico repetível', 1)],
+    findings: [{ kind: 'correction', pattern: 'causa-ferramental-feedback', detailCapability: 'sdlc-automation', title: 'O retorno não sustenta integração', cause: '', intervention: 'Meça o retorno', confidence: .9, priority: .9 }],
+    focusId: 'sdlc-automation',
+  });
+  assert.equal(outcome.kind, 'correct');
+  assert.match(outcome.reading, /reativo/i);
+  assert.doesNotMatch(outcome.reading, /opaco/i);
+});

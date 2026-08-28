@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.24.0
+
+- O relatório passou a escolher um limitador de decisão (folha útil no piso, com
+  finding; cloud aninhada fora do palco por default) e a fechar um cartão: efeito,
+  restrição, classe de solução e menor passo da semana.
+- O catálogo do tronco ganhou orientação tipada; Melhoria contínua deixou de ser
+  o balde padrão de causa. A folha `sdlc-automation` passou a chamar-se Feedback
+  técnico repetível. Tooltip do radar não fica sob o rótulo do eixo.
+
 ## 0.23.0
 
 - O relatório gerencial passou a fechar um desfecho por página: um limitador, um

@@ -47,6 +47,27 @@ test('impacto executivo acompanha a capacidade avaliada', () => {
   assert.doesNotMatch(html, /exposição operacional no fluxo de entrega/);
 });
 
+test('cartão de correção mostra o universo da solução', () => {
+  const html = renderOutcome({
+    kind: 'correct',
+    kindLabel: 'Corrigir o limitador',
+    limiterLabel: 'Integração contínua',
+    reading: 'Integração contínua está em opaco.',
+    nextStepTitle: 'Mudanças permanecem isoladas',
+    nextStepBody: 'Integre no mesmo dia.',
+    finding: {
+      kind: 'correction', pattern: 'mudanca-isolada', detailCapability: 'continuous-integration',
+      title: 'Mudanças permanecem isoladas e encontram o sistema tarde', cause: '', intervention: 'Integre no mesmo dia',
+      confidence: .9, priority: .9,
+      experiment: { action: 'Reduza uma mudança até integrá-la no mesmo dia', owner: 'Fluxo', metric: 'espera até a junta', reviewHorizon: '30 dias', successCriterion: 'encontro no mesmo dia' },
+    },
+  });
+  assert.match(html, /Universo da solução/);
+  assert.match(html, /Integração em tronco/);
+  assert.match(html, /Menor passo desta semana/);
+  assert.doesNotMatch(html, /ciclo de melhoria/);
+});
+
 test('resumo executivo mostra um limitador e a próxima decisão, sem lista aberta', () => {
   const outcome = {
     kind: 'correct' as const,
@@ -61,10 +82,11 @@ test('resumo executivo mostra um limitador e a próxima decisão, sem lista aber
     limitingCapabilities: ['Descoberta e validação', 'Aprendizado e adaptação', 'Fluxo de trabalho', 'Integração contínua'],
   }, outcome);
   assert.match(html, /Descoberta e validação/);
-  assert.match(html, /Hipóteses permanecem em execução/);
   assert.doesNotMatch(html, /e mais/);
+  assert.doesNotMatch(html, /Hipóteses permanecem em execução/);
   assert.match(renderOutcome(outcome), /Próxima decisão/);
   assert.match(renderOutcome(outcome), /Corrigir o limitador/);
+  assert.match(renderOutcome(outcome), /Hipóteses permanecem em execução/);
 });
 
 test('relatório pré-piloto usa faixas verbais em vez de percentuais causais', () => {

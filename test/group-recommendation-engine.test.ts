@@ -31,6 +31,16 @@ test('padrões de melhoria contínua não compartilham o mesmo parágrafo de cau
   assert.match(catalog['entregas-consomem']!.cause, /entregas consomem melhoria/i);
 });
 
+test('padrão de integração descreve a restrição, não o balde de melhoria contínua', () => {
+  const catalog = defineInterventionCatalog({
+    'mudanca-isolada': { title: 'Mudanças permanecem isoladas', intervention: 'Integre no mesmo dia.', foundation: { source: 'Continuous Delivery', principle: 'Lote pequeno', why: 'x' } },
+  });
+  assert.doesNotMatch(catalog['mudanca-isolada']!.cause, /ciclo de melhoria/);
+  assert.equal(catalog['mudanca-isolada']!.guidance?.solutionKind, 'practice');
+  assert.match(catalog['mudanca-isolada']!.guidance?.solutionClass ?? '', /tronco/i);
+  assert.doesNotMatch(catalog['mudanca-isolada']!.metric, /registre a recorrência/);
+});
+
 test('usa somente a população capaz de observar a intervenção', () => {
   const recommendation = new GroupRecommendationEngine(catalog).rank([
     evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b'), evidence('tooling-gap', 'c'),

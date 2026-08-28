@@ -16,7 +16,7 @@ MVP separa seis capacidades sociotécnicas:
 2. **Fluxo de entrega** — planejamento, refinamento, fluxo de trabalho, integração,
    release e feedback.
 3. **Engenharia e qualidade** — design sustentável, estratégia de qualidade,
-   automação do SDLC, segurança de software e capacidade técnica.
+   feedback técnico repetível, segurança de software e capacidade técnica.
 4. **Arquitetura e evolução** — alinhamento ao domínio, decisões arquiteturais,
    evolutibilidade, integração e dados.
 5. **Operação, confiabilidade e plataforma** — observabilidade, confiabilidade,
@@ -150,19 +150,20 @@ classificação mais baixa entre descendentes publicáveis. O relatório preserv
 capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
 isso evita que uma squad forte esconda outra bloqueada.
 
-Na interface gerencial, cada página fecha um único ato de fala: um limitador (a
-folha avaliada mais frágil do recorte, nunca “e mais N”), um desfecho
-(preservar, corrigir, evoluir, discriminar ou evidência insuficiente) e um
-próximo passo amarrado a esse limitador. Divergência de perspectiva e
-contradição no limitador são desfechos de discriminação — não abrem várias
-frentes de intervenção. Radar, mapa por estrutura, calibração e revisão cognitiva
-permanecem visíveis, mas não competem com a decisão: o instrumento fica em
-`details` no rodapé; o mapa por estrutura omite recortes que só duplicam o
+Na interface gerencial, cada página fecha um único cartão de decisão: o efeito
+observado, por que o sistema o reproduz, a classe de solução (prática, política,
+desenho organizacional, capacidade de plataforma ou família de ferramenta — nunca
+uma marca que pontue), o menor passo da semana e como saber se parou. O limitador
+é o elo útil no piso da classificação, com finding amarrado; folhas de cloud
+aninhadas não ocupam o palco só porque a nota foi baixa. A página da folha usa o
+estágio daquela folha, não o rótulo global. Divergência de perspectiva no home é
+o finding (as lentes não veem o mesmo sistema); contradição só discrimina quando
+está no limitador escolhido. Radar, mapa por estrutura, calibração e revisão
+cognitiva permanecem visíveis, mas não competem com a decisão: o instrumento fica
+em `details` no rodapé; o mapa por estrutura omite recortes que só duplicam o
 diagnóstico global. Nota, confiança, população, incerteza e versão do modelo são
-informações secundárias e explicáveis. Quando há experimento, ele conecta
-problema, impacto, ação, responsável provável, medida, prazo de revisão e
-resultado esperado. O fundamento da intervenção (fonte e princípio) fica sob
-demanda e não entra na nota.
+informações secundárias e explicáveis. Ferramenta, framework e nome de time
+continuam sem pontuar.
 
 Níveis inteiros são exibidos sem decimal (`4/4`); decimais aparecem somente quando
 representam diferença real (`3.7/4`). Toda capacidade avaliada abaixo de 4 deve ter

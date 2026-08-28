@@ -6,6 +6,16 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-28 — Relatório que fecha decisão
+
+- O painel escolhe um limitador útil, não a folha de cloud mais frágil; o home
+  da divergência triangular as lentes; um ramo 4/4 não herda discriminar de um
+  neto. O cartão mostra classe de solução (prática, política, desenho, plataforma
+  ou família de ferramenta) sem pontuar marca. A especificação vigente está em
+  [`assessment-model.md`](../knowledge-base/assessment-model.md),
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-08-28 — Relatório conclusivo por desfecho
 
 - O painel passou a publicar um limitador, um desfecho e um próximo passo por

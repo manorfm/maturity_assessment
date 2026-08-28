@@ -2,9 +2,9 @@ export type ExplicitFoundation = { source: string; principle: string; why: strin
 
 export const interventionFoundations: Record<string, ExplicitFoundation> = {
   "sobrecarga-silenciosa": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Fluxo, limite de trabalho e custo de atraso visíveis",
+    "why": "Ocupação individual não mede o sistema; iniciar mais trabalho esconde a espera."
   },
   "coordenacao-centralizada": {
     "source": "Team Topologies",
@@ -27,9 +27,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "feedback-em-producao": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Lote pequeno, feedback cedo, caminho reproduzível",
+    "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "empacotamento-manual": {
     "source": "Continuous Delivery",
@@ -52,9 +52,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Dashboard sem interpretação gera falsa precisão."
   },
   "dependencia-de-heroi": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "SRE / blameless postmortem",
+    "principle": "Detectar, correlacionar e aprender sem culpa",
+    "why": "A prática é o ciclo de incidente, não a ferramenta de observabilidade."
   },
   "deteccao-tardia": {
     "source": "SRE / blameless postmortem",
@@ -117,9 +117,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "feedback-tardio": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Discovery e evidência de uso",
+    "principle": "Evidência de uso com poder de reabrir o investimento",
+    "why": "Aceite de escopo não substitui a prova de que a hipótese vale o lote."
   },
   "prazo-sem-aprendizado": {
     "source": "Melhoria contínua",
@@ -137,9 +137,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "automacao-sem-feedback": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Lote pequeno, feedback cedo, caminho reproduzível",
+    "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "provisionamento-em-fila": {
     "source": "Well-Architected / platform engineering",
@@ -197,9 +197,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A prática é o ciclo de incidente, não a ferramenta de observabilidade."
   },
   "mudanca-isolada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Lote pequeno, feedback cedo, caminho reproduzível",
+    "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "integracao-por-janela": {
     "source": "Continuous Delivery",
@@ -207,14 +207,14 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "causa-ferramental-feedback": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Lote pequeno, feedback cedo, caminho reproduzível",
+    "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "causa-processo-lote": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Governança habilitadora",
+    "principle": "Controle proporcional ao risco, com evidência que muda decisão",
+    "why": "Aprovação que não distingue risco só adiciona espera."
   },
   "causa-fronteira-times": {
     "source": "Team Topologies",
@@ -367,9 +367,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "espera-normalizada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Fluxo, limite de trabalho e custo de atraso visíveis",
+    "why": "Ocupação individual não mede o sistema; iniciar mais trabalho esconde a espera."
   },
   "contorno-acumula-divida": {
     "source": "Melhoria contínua",
@@ -467,9 +467,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "fonte-nao-confiavel": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Lote pequeno, feedback cedo, caminho reproduzível",
+    "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "comunicacao-de-mudanca-fragil": {
     "source": "Melhoria contínua",
@@ -497,9 +497,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "causa-multiplas-fontes": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Lote pequeno, feedback cedo, caminho reproduzível",
+    "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "causa-limites-sem-ownership": {
     "source": "Team Topologies",
@@ -512,9 +512,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "causa-verificacao-concorrente": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Lote pequeno, feedback cedo, caminho reproduzível",
+    "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "estrutura-definida-centralmente": {
     "source": "Melhoria contínua",

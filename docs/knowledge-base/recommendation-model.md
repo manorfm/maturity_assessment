@@ -57,29 +57,33 @@ intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade
 de 4 pode receber evolução quando as respostas sustentam um passo concreto.
 
 Título, mecanismo causal e ação são campos distintos. O título descreve o efeito
-observado; a causa explica por que o sistema tende a reproduzi-lo; a ação propõe o
-menor teste compatível com a restrição. Quando o fundamento é Melhoria contínua,
-a causa nomeia o efeito daquele padrão — três títulos não compartilham o mesmo
-parágrafo do balde. Cada padrão publicado referencia explicitamente um fundamento
-do catálogo — sem classificação por coincidência de palavras — e a ausência desse
-vínculo impede a inicialização do recomendador.
+observado; a causa explica por que **este** padrão se reproduz; a ação propõe o
+menor teste compatível com a restrição. Cada padrão do tronco declara orientação
+tipada: restrição, explicação cotidiana, classe de solução, o que a classe não
+resolve, exemplos de família (não de marca) e antipadrão de comprar ferramenta
+sem o problema. Melhoria contínua só é fundamento quando o mecanismo **é** ciclo
+de melhoria sem dono, capacidade ou revisão de efeito. A métrica nomeia o
+comportamento a acompanhar; não recita o título. Cada padrão publicado
+referencia explicitamente um fundamento do catálogo — sem classificação por
+coincidência de palavras — e a ausência desse vínculo impede a inicialização do
+recomendador.
 
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
-corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando há
-contradição, lacuna de perspectiva ou nota baixa sem causa isolada; ou declarar
-evidência insuficiente. Discriminar pede observação de um evento recente, não um
-playbook.
+corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
+limitador mistura evidência, quando o finding **é** a divergência de perspectiva,
+ou quando a nota é baixa sem causa isolada; ou declarar evidência insuficiente.
+Discriminar pede observação de um evento recente, não um playbook. Um ramo em 4
+não herda discriminação de um neto de cloud.
 
 Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
 expressa força da hipótese; prioridade combina alcance e severidade. Métrica,
-horizonte e critério de sucesso variam por família do problema (incidente, entrega,
-dados, arquitetura, experiência, aprendizagem, governança ou assistência) e devem
-permitir verificar melhoria sem deslocar risco ou espera para outra etapa.
+horizonte e critério de sucesso variam por família do problema e, no tronco,
+pela orientação do padrão. Devem permitir verificar se o comportamento parou
+sem deslocar risco ou espera para outra etapa.
 
-No corte pré-piloto, toda métrica nomeia também o comportamento diagnosticado, o
-critério exige confirmar sua redução antes de ampliar a mudança e o responsável é
-derivado da disciplina e do tipo de restrição. A auditoria executável bloqueia
-métrica, critério, fundamento ou responsável puramente genéricos.
+No corte vigente, a auditoria executável bloqueia métrica que recita o título,
+critério genérico, fundamento vazio e Melhoria contínua fora do mecanismo de
+ciclo de melhoria. O responsável deriva da disciplina e do tipo de restrição.
 
 ## Seleção adaptativa
 
