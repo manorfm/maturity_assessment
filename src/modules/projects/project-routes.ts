@@ -179,7 +179,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const assessedChildren = selected.children.filter((child) => child.assessed).length;
     const breadth = selected.children.length ? ` ${assessedChildren} de ${selected.children.length} subcapacidades possuem cobertura suficiente.` : '';
     const status = selected.assessed
-      ? `<div class="classification-level">${formatMaturityLevel(selected.level)} / 4</div>${coverage}<p class="executive-reading">${escapeHtml(capabilityReading(selected.level))}</p><details class="methodology"><summary>Ver evidências da avaliação</summary><p>Confiança da medição de maturidade ${Math.round(selected.confidence * 100)}% · ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p></details>`
+      ? `<div class="classification-level">${formatMaturityLevel(selected.level)} / 4</div>${coverage}<p class="executive-reading">${escapeHtml(capabilityReading(selected.level))}</p><details class="methodology"><summary>Ver evidências da avaliação</summary><p>Faixa compatível com as evidências: ${formatMaturityLevel(selected.interval?.lower ?? selected.level)} a ${formatMaturityLevel(selected.interval?.upper ?? selected.level)} · ${selected.observers ?? 0} pessoas e ${selected.evidence} sinais agregados.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p></details>`
       : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
     const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : renderCapabilityDiagnosis(relevant, selected);
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas e pontos de atenção');
@@ -211,13 +211,16 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.post('/projects/:publicId/manage/:adminSecret/item-reviews', async (request, reply) => {
     const auth = requireProject(request.params as Params);
-    const body = (request.body ?? {}) as { nodeKey?: string; profile?: string; comprehensionOk?: string; goldOptionBias?: string; visibilityExitUsed?: string };
+    const body = (request.body ?? {}) as { nodeKey?: string; profile?: string; comprehensionOk?: string; interpretationMatch?: string; optionFit?: string; optionOverlap?: string; retrievalDifficulty?: string; goldOptionBias?: string; visibilityExitUsed?: string; confusingTerm?: string };
     pilot.recordCognitiveReview({
       nodeKey: body.nodeKey ?? '',
       profile: body.profile ?? '',
       comprehensionOk: body.comprehensionOk === 'yes',
+      interpretationMatch: body.interpretationMatch === 'yes', optionFit: body.optionFit === 'yes',
+      optionOverlap: body.optionOverlap === 'yes', retrievalDifficulty: body.retrievalDifficulty === 'yes',
       goldOptionBias: body.goldOptionBias === 'yes',
       visibilityExitUsed: body.visibilityExitUsed === 'yes',
+      ...(body.confusingTerm?.trim() ? { confusingTerm: body.confusingTerm } : {}),
     });
     return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
   });
@@ -240,12 +243,18 @@ function renderCognitiveReview(calibration: PilotReport, params: Params): string
   }).join('');
   const nodes = graph.map((node) => `<option value="${escapeHtml(node.id)}">${escapeHtml(node.title)}</option>`).join('');
   const profileOptions = Object.entries(profiles).map(([id, label]) => `<option value="${escapeHtml(id)}">${escapeHtml(label)}</option>`).join('');
-  return `<section class="card"><h2>Revisão cognitiva do instrumento</h2><p class="muted">Use este registro depois de ler um cenário com alguém da disciplina. Não identifique pessoas e não vincule a uma participação. Isso não calibra o posterior sozinho.</p><ul>${coverage}</ul><form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/item-reviews">
+  const issues = calibration.cognitiveIssues;
+  return `<section class="card"><h2>Revisão cognitiva do instrumento</h2><p class="muted">Use este registro depois de ler um cenário com alguém da disciplina. Não identifique pessoas e não vincule a uma participação. Isso não calibra o posterior sozinho.</p><ul>${coverage}</ul><p class="muted">Problemas observados: compreensão ${issues.comprehension ?? 0}, interpretação ${issues.interpretation ?? 0}, alternativa ausente ${issues.optionFit ?? 0}, alternativas sobrepostas ${issues.optionOverlap ?? 0}, dificuldade de lembrar ${issues.retrieval ?? 0}, resposta desejável evidente ${issues.desirability ?? 0}.</p><form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/item-reviews">
     <label for="nodeKey">Cenário revisado</label><select id="nodeKey" name="nodeKey" required>${nodes}</select>
     <label for="reviewProfile">Perspectiva de quem revisou a linguagem</label><select id="reviewProfile" name="profile" required>${profileOptions}</select>
     <label for="comprehensionOk">O cenário foi compreendido sem jargão?</label><select id="comprehensionOk" name="comprehensionOk" required><option value="yes">Sim</option><option value="no">Não</option></select>
+    <label for="interpretationMatch">A pessoa explicou a intenção esperada com as próprias palavras?</label><select id="interpretationMatch" name="interpretationMatch" required><option value="yes">Sim</option><option value="no">Não</option></select>
+    <label for="optionFit">Uma alternativa representou o caso lembrado?</label><select id="optionFit" name="optionFit" required><option value="yes">Sim</option><option value="no">Não</option></select>
+    <label for="optionOverlap">Duas ou mais alternativas pareceram igualmente válidas?</label><select id="optionOverlap" name="optionOverlap" required><option value="no">Não</option><option value="yes">Sim</option></select>
+    <label for="retrievalDifficulty">Foi difícil lembrar uma situação concreta?</label><select id="retrievalDifficulty" name="retrievalDifficulty" required><option value="no">Não</option><option value="yes">Sim</option></select>
     <label for="goldOptionBias">Alguma opção revela a resposta desejada?</label><select id="goldOptionBias" name="goldOptionBias" required><option value="no">Não</option><option value="yes">Sim</option></select>
     <label for="visibilityExitUsed">A pessoa usou ou considerou “não observo”?</label><select id="visibilityExitUsed" name="visibilityExitUsed" required><option value="no">Não</option><option value="yes">Sim</option></select>
+    <label for="confusingTerm">Palavra ou expressão confusa (opcional, sem identificar a pessoa)</label><input id="confusingTerm" name="confusingTerm" maxlength="120">
     <button type="submit">Registrar revisão</button></form></section>`;
 }
 
@@ -270,7 +279,7 @@ function classificationNarrative(level: number): { reading: string; risk: string
   return { reading: 'As práticas observadas se adaptam com segurança e aprendizado contínuo.', risk: 'A principal ameaça é a perda gradual de disciplina ou visibilidade.', priority: 'Preservar os mecanismos e testar se resistem a mudanças de contexto.' };
 }
 
-type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; assessed: boolean; coverage: number; children: CapabilityRadarNode[] };
+type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; observers?: number; interval?: { lower: number; upper: number }; hasContradiction: boolean; assessed: boolean; coverage: number; children: CapabilityRadarNode[] };
 
 export function renderCapabilityRadar(
   capabilities: CapabilityRadarNode[],
@@ -347,7 +356,7 @@ function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVers
     const findings = confirmed.slice(0, 3).map((posterior) => {
       const leader = posterior.hypotheses[0]!;
       const population = posterior.population ? `${posterior.population.support} de ${posterior.population.applicable} jornadas aplicáveis, em ${posterior.population.profiles} perspectiva(s)` : 'Base de observação não informada';
-      return `<li><strong>${escapeHtml(leader.label)}</strong><br><span class="muted">Força do diagnóstico: ${Math.round(leader.probability * 100)}% · ${escapeHtml(population)}.</span></li>`;
+      return `<li><strong>${escapeHtml(leader.label)}</strong><br><span class="muted">${escapeHtml(diagnosticStrength(leader.probability))} · ${escapeHtml(population)}.</span></li>`;
     }).join('');
     const discriminators = [...new Map(inconclusive.flatMap((item) => item.nextQuestionKey && item.nextQuestionLabel ? [[item.nextQuestionKey, item.nextQuestionLabel] as const] : [])).values()];
     const gap = inconclusive.length ? `<p class="notice">Ainda faltam evidências para concluir ${inconclusive.length} ponto(s).${discriminators.length ? ` A próxima entrevista deve explorar: ${escapeHtml(discriminators[0]!)}.` : ' Amplie as situações observadas antes de definir uma intervenção.'}</p>` : '';
@@ -357,7 +366,7 @@ function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVers
   }).sort((left, right) => right.score - left.score);
   const featured = cards.slice(0, 6).map((card) => card.html).join('');
   const additional = cards.slice(6).map((card) => card.html).join('');
-  return `<section><h2>${title}</h2><p class="muted">Leitura das causas mais consistentes no conjunto de respostas. Use-a para orientar a próxima decisão, não para avaliar pessoas.</p><div class="grid">${featured}</div>${additional ? `<details class="methodology additional-analysis"><summary>Ver outras ${cards.length - 6} áreas analisadas</summary><div class="grid">${additional}</div></details>` : ''}<details class="methodology"><summary>Sobre a precisão desta análise</summary><p>Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. Os percentuais indicam força relativa das hipóteses e ainda serão calibrados com massa real.</p></details></section>`;
+  return `<section><h2>${title}</h2><p class="muted">Leitura das causas mais consistentes no conjunto de respostas. Use-a para orientar a próxima decisão, não para avaliar pessoas.</p><div class="grid">${featured}</div>${additional ? `<details class="methodology additional-analysis"><summary>Ver outras ${cards.length - 6} áreas analisadas</summary><div class="grid">${additional}</div></details>` : ''}<details class="methodology"><summary>Sobre a precisão desta análise</summary><p>Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. As faixas são julgamentos especialistas apoiados pelas evidências; não representam probabilidade calibrada até o piloto produzir massa revisada.</p></details></section>`;
 }
 
 type ReportFinding = {
@@ -377,7 +386,7 @@ export function renderCapabilityDiagnosis(findings: ReportFinding[], capability:
     return `<section><h2>Prioridades e próximos passos</h2>${grouped.map((group) => `<div class="diagnostic-group"><h3>${group.title}</h3>${group.items.map((finding) => {
       const experiment = finding.experiment;
       const urgency = finding.kind === 'evolution' ? 'Próximo passo de evolução' : (finding.priority ?? 0) >= .7 ? 'Atenção imediata' : 'Melhoria de curto prazo';
-      return `<article class="card diagnostic-problem"><span class="tag">${urgency} · força do diagnóstico ${Math.round((finding.confidence ?? 0) * 100)}%</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico, evidências e fundamento</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.foundation ? `<h4>Fundamento</h4><p>${escapeHtml(finding.foundation.source)} — ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
+      return `<article class="card diagnostic-problem"><span class="tag">${urgency} · ${escapeHtml(diagnosticStrength(finding.confidence ?? 0))}</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico, evidências e fundamento</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.foundation ? `<h4>Fundamento</h4><p>${escapeHtml(finding.foundation.source)} — ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
     }).join('')}</div>`).join('')}</section>`;
   }
   if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';
@@ -416,6 +425,13 @@ function executiveImpact(finding: ReportFinding): string {
 
 export function formatMaturityLevel(level: number): string {
   return Number.isInteger(level) ? String(level) : level.toFixed(1);
+}
+
+export function diagnosticStrength(probability: number): string {
+  if (probability >= .85) return 'Hipótese fortemente sustentada';
+  if (probability >= .7) return 'Hipótese bem sustentada';
+  if (probability >= .5) return 'Hipótese possível; valide antes de ampliar';
+  return 'Hipótese fraca; faltam evidências';
 }
 
 function invitationLinksPage(protocol: string, host: string, tokens: string[], params: Params): string {

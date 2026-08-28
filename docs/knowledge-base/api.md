@@ -4,20 +4,27 @@ A API JSON reutiliza os mesmos serviços de aplicação das telas. Ela não exp�
 respostas individuais, hashes, tokens antigos ou contagens por alternativa. O
 relatório inclui capacidades direcionais globais e por recorte elegível, sempre
 submetidas ao mesmo limiar e à supressão hierárquica das telas. Cada capacidade
-inclui nível, confiança, volume agregado de sinais e indicação de contradição.
+inclui nível, intervalo compatível com as evidências, quantidade agregada de
+observadores e sinais e indicação de contradição. O campo numérico de confiança
+permanece na API para diagnóstico e pesquisa, mas a interface o traduz em
+diversidade de perspectivas, precisão do intervalo e concordância; ele não é
+apresentado como probabilidade de a nota estar correta.
 O relatório também inclui classificação sociotécnica global e por unidade elegível,
 com nível, rótulo e capacidades ou unidades limitantes.
 O objeto `areas` agrupa os problemas por capacidade e informa `diagnosis`,
 `correction`, evidência agregada e se o padrão representa comportamento ou
 restrição. O mesmo formato existe nos recortes hierárquicos elegíveis.
 `capabilityGroups` expõe a árvore recursiva usada pelos radares; cada ramo inclui
-nível limitante, confiança, evidência, contradição e filhos observados.
+nível limitante, intervalo, observadores, evidência, contradição e filhos
+observados.
 
 Cada finding também expõe `cause`, `priority`, `recommendationEvidence`,
 `experiment` e `foundation`. A evidência informa somente totais agregados, padrões,
 camadas e perspectivas; nunca IDs. `foundation` declara fonte e princípio da
-intervenção e não pontua. `confidence` é o posterior provisório na aderência da
-intervenção e não deve ser interpretada como maturidade ou apoio popular.
+intervenção e não pontua. `confidence` é um valor interno do posterior especialista
+na aderência da intervenção e não deve ser interpretado como maturidade, apoio
+popular ou probabilidade calibrada. A interface publica somente uma força
+qualitativa da hipótese até existir calibração empírica suficiente.
 O relatório sanitizado também inclui `visibilityGaps` (perspectivas que atingiram o
 limiar e relataram “não observo”), `previousMeasurement` (delta de suporte de
 padrões entre capturas) e `calibration` (limiares pré-declarados, contagem de

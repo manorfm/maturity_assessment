@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.22.0
+
+- Publicou o instrumento pré-piloto `evidence-anamnesis-pilot-v1`, ancorado em
+  eventos recentes e protegido por auditoria editorial executável.
+- Substituiu confiança por volume de sinais por agregação ordinal por pessoa,
+  partial pooling fraco e intervalo beta-binomial de 90%.
+- Removeu percentuais causais da interface, contextualizou experimentos e ampliou
+  o protocolo de entrevista cognitiva. O schema 18 substitui diretamente o anterior.
+
 ## 0.21.0
 
 - Publicou o grafo `evidence-anamnesis-v14` com alternativas comportamentais em

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { graph } from '../src/modules/catalog/assessment-graph.js';
-import { evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
+import { causalKnowledgeGraph, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
 
 const recommendations = { ...interventionCatalog, ...evolutionCatalog };
 
@@ -51,4 +51,12 @@ test('palavras incidentais não deslocam o experimento para outra família', () 
   const portfolio = recommendations['portfolio-sem-feedback']!;
   assert.match(portfolio.metric, /evidência/);
   assert.match(portfolio.successCriterion, /continuidade/);
+});
+
+test('rede especialista explicita comportamento, efeito, causa, ação e fundamento', () => {
+  assert.equal(causalKnowledgeGraph.size, Object.keys(recommendations).length);
+  for (const pattern of Object.keys(recommendations)) {
+    const path = causalKnowledgeGraph.pathFor(pattern)!;
+    assert.deepEqual(path.edges.map((edge) => edge.relation), ['observed_as', 'explained_by', 'addressed_by', 'grounded_in']);
+  }
 });

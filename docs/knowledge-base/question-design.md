@@ -29,6 +29,10 @@
 - Preferir linguagem cotidiana compartilhada. Variantes por perspectiva adaptam
   cenário e poder de decisão; as alternativas só permanecem comuns quando todas as
   perspectivas conseguem reconhecer o mesmo comportamento sem traduzir jargão.
+- Antes do piloto, executar `npm run audit:instrument`. O comando percorre todas as
+  perguntas e intervenções e bloqueia alternativas compostas, pistas julgadoras e
+  experimentos genéricos; avisos de evento ausente ou abstração também devem chegar
+  a zero na versão publicada para entrevista cognitiva.
 
 ## Formatos
 

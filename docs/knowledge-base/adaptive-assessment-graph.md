@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão vigente `evidence-anamnesis-v14` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v1` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos
@@ -149,8 +149,8 @@ observou a capacidade, triangulação específica por camada e perspectiva,
 consequência e contradição pareada. Prioridade permanece separada da confiança. A
 nota 0–4 não participa do ranking e identificadores internos nunca aparecem.
 
-Enquanto não houver piloto, o percentual é denominado posterior provisório e
-arredondado em intervalos de cinco pontos. Sua decomposição acompanha o experimento,
+Enquanto não houver piloto, o posterior numérico permanece interno. A interface usa
+faixas verbais de sustentação para não simular probabilidade calibrada. Sua decomposição acompanha o experimento,
 que explicita ação, responsável provável, métrica, revisão e critério de sucesso.
 
 Após uma saída declarativa, o motor compara probes ainda não respondidos, visíveis

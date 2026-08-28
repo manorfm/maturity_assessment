@@ -12,9 +12,10 @@ export type InterventionEvidenceRule = { evidencePatterns?: string[]; contradict
 export function defineInterventionCatalog(seeds: Record<string, InterventionSeed>, rules: Record<string, InterventionEvidenceRule> = {}): Record<string, InterventionDefinition> {
   return Object.fromEntries(Object.entries(seeds).map(([pattern, seed]) => {
     const rule = rules[pattern] ?? {};
-    const foundation = seed.foundation ?? foundationFor(pattern);
+    const baseFoundation = seed.foundation ?? foundationFor(pattern);
+    const foundation = { ...baseFoundation, why: specificFoundationWhy(baseFoundation, seed.title) };
     return [pattern, {
-      ...seed, cause: causeFor(foundation, seed.title), action: seed.intervention, foundation, ...experimentDefaults('none', pattern), ...rule,
+      ...seed, cause: causeFor(foundation, seed.title), action: seed.intervention, foundation, ...experimentDefaults('none', pattern, seed.title, foundation), ...rule,
       evidencePatterns: rule.evidencePatterns ?? [pattern], contradictionPatterns: rule.contradictionPatterns ?? [],
     }];
   }));
@@ -55,7 +56,7 @@ export class GroupRecommendationEngine {
       const confidence = roundConfidence(posterior.get(pattern) ?? 0);
       if (confidence < .5) return [];
       const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
-      const contextualDefaults = experimentDefaults(constraint, pattern);
+      const contextualDefaults = experimentDefaults(constraint, pattern, definition.title, definition.foundation);
       const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
       const reasons = [
         `Padrão sustentado por ${supporters.size} de ${applicablePopulation} jornadas aplicáveis.`,
@@ -105,9 +106,31 @@ export function foundationFor(pattern: string): InterventionFoundation {
   if (!foundation) throw new Error(`Intervention foundation is missing: ${pattern}`);
   return foundation;
 }
-function experimentDefaults(constraint: ConstraintKind, pattern = ''): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
+function experimentDefaults(constraint: ConstraintKind, pattern = '', title = pattern, foundation?: InterventionFoundation): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
   const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', knowledge: 'Liderança técnica com a disciplina habilitadora', process: 'Responsável pelo fluxo com as pessoas que executam o processo', tooling: 'Engenharia com plataforma', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado' };
-  return { owner: owners[constraint], metric: metricFor(pattern), reviewHorizon: horizonFor(pattern), successCriterion: successFor(pattern) };
+  return { owner: constraint === 'none' ? ownerFor(foundation?.source) : owners[constraint], metric: specificMetric(metricFor(pattern), title), reviewHorizon: horizonFor(pattern), successCriterion: specificSuccess(successFor(pattern), title) };
+}
+function ownerFor(source?: string): string {
+  const owners: Record<string, string> = {
+    'Continuous Delivery': 'Liderança de engenharia e pessoas que operam o fluxo', 'Qualidade no fluxo': 'Engenharia e qualidade com produto',
+    'SRE / blameless postmortem': 'Responsáveis pelo serviço com operação', 'Team Topologies': 'Liderança organizacional e times afetados',
+    'Governança habilitadora': 'Responsável pelo controle e pessoas que percorrem o fluxo', 'Well-Architected / platform engineering': 'Plataforma com os times consumidores',
+    'Well-Architected — Security': 'Segurança, plataforma e responsáveis pelo serviço', 'Lean / Accelerate': 'Liderança de produto e engenharia',
+    'Arquitetura evolutiva / DDD': 'Times responsáveis e liderança de arquitetura', 'Dados como produto': 'Responsáveis pelo dado e consumidores afetados',
+    'Discovery e evidência de uso': 'Produto, design e engenharia', 'Data literacy / SRE': 'Responsável pela decisão e pela medição',
+    'Resilience engineering / SRE': 'Responsáveis pelo serviço e suas dependências', 'Uso responsável de assistência': 'Responsável pelo fluxo com segurança e engenharia',
+    'Melhoria contínua': 'Liderança do fluxo e pessoas afetadas pelo problema',
+  };
+  return owners[source ?? ''] ?? 'Liderança do fluxo e pessoas afetadas pelo problema';
+}
+function specificMetric(metric: string, title: string): string { return `${metric}; registre a recorrência de “${lowerFirst(title)}”`; }
+function specificSuccess(criterion: string, title: string): string {
+  const specific = /a métrica escolhida melhora/i.test(criterion) ? 'o comportamento deixa de se repetir no recorte acompanhado sem deslocar risco ou espera para outra etapa' : criterion;
+  return `${specific}; confirme isso no caso “${lowerFirst(title)}” antes de ampliar a mudança`;
+}
+function specificFoundationWhy(foundation: InterventionFoundation, title: string): string {
+  if (foundation.why !== 'A intervenção ataca o comportamento observado, não um inventário de práticas.') return foundation.why;
+  return `O princípio orienta um experimento para reduzir “${lowerFirst(title)}” e verificar o efeito antes de institucionalizar a solução.`;
 }
 function causeFor(foundation: InterventionFoundation, observedEffect: string): string {
   const causes: Record<string, string> = {

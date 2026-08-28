@@ -94,11 +94,14 @@ sinais. Esse cálculo determinístico foi escolhido porque é simples, auditáve
 permite reconstruir quais comportamentos deslocaram o nível.
 
 ```text
-nível = limitar(2 + média dos pesos, 0, 4)
-confiança = mínimo(1, quantidade de sinais / 4) × concordância direcional
+nível local = média ordinal por pessoa, com cada pessoa contribuindo uma vez
+nível do recorte pequeno = evidência local + prior organizacional fraco
+incerteza = intervalo beta-binomial de 90%
+confiança = diversidade de pessoas e padrões × precisão × concordância
 ```
 
-A confiança dessa nota cresce até quatro sinais e é reduzida pelo desacordo entre
+A confiança não chega a 100% apenas pela repetição de quatro sinais. Ela cresce com
+pessoas e padrões independentes, considera a largura do intervalo e é reduzida pelo desacordo entre
 evidências positivas e negativas. A cobertura é calculada separadamente pela
 variedade de padrões independentes: repetir muitas vezes o mesmo comportamento não
 faz uma folha parecer completa. Ramos superiores herdam o menor nível e a menor
@@ -142,9 +145,10 @@ Ausência de resposta é neutra. Uma pessoa que não poderia observar provisiona
 por exemplo, não conta contra uma hipótese sobre plataforma. Como consequência,
 duas squads com a mesma nota podem receber diagnósticos e intervenções diferentes.
 
-O percentual apresentado é o posterior provisório: a força relativa da hipótese
+O valor interno é um posterior provisório: a força relativa da hipótese
 diante das premissas e evidências da versão atual. Antes da calibração com casos
-reais, ele não deve ser lido como “há 80% de certeza objetiva de que esta é a causa”.
+reais, ele não deve ser lido como probabilidade objetiva. A interface pré-piloto
+publica faixas verbais de sustentação e mantém o número apenas para avaliação offline.
 
 #### Entropia e seleção da próxima pergunta
 
@@ -361,11 +365,15 @@ npm run demo
 ```
 
 O comando recria somente o SQLite temporário do showcase, percorre as jornadas em
-Chromium, grava o índice em `/private/tmp/maturity-assessment-showcase.html`,
+Chromium, grava o índice em `/private/tmp/maturity-assessment-showcase-pilot-v1.html`,
 imprime os links e mantém a aplicação na porta `3217`. Abra
 `http://127.0.0.1:3217/showcase` para as histórias, o que procurar, trechos
 observados e convites ociosos (entrevista à mão e o experimento do mapa por
 estrutura). `npm run showcase` é um alias do mesmo fluxo.
+
+Para uma execução paralela, `E2E_DATABASE_PATH`, `E2E_SHOWCASE_GUIDE`, `E2E_PORT`
+e `SHOWCASE_PUBLIC_URL` isolam banco, guia e portas sem apagar um showcase que já
+esteja aberto.
 
 ## Estado e limites atuais
 

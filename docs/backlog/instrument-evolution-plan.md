@@ -13,7 +13,7 @@ recalibrar o modelo publicado sozinho, ramos de arquitetura, segurança, dados e
 design, carga cognitiva, linguagem na mudança e caminho até capacidade de
 plataforma, higiene de linguagem, ordem determinística por participação, separação
 entre título e mecanismo causal, fundamentos explícitos por padrão e experimentos
-contextuais. Grafo vigente: `evidence-anamnesis-v14`.
+contextuais. Grafo pré-piloto vigente: `evidence-anamnesis-pilot-v1`.
 
 Itens de plataforma (SSO, editor, PostgreSQL) e pesquisa de longo prazo continuam
 em [`future-evolution.md`](future-evolution.md). Calibração que depende de massa
@@ -37,12 +37,12 @@ real continua em
 ## Dependência entre o que resta
 
 ```text
-Onda 2  piloto e calibração   (roadmap probabilístico, sobre v14)
+Onda 2  piloto e calibração   (roadmap probabilístico, sobre pilot-v1)
    └─► Onda 5  evidência externa e plataforma
 ```
 
 Não misturar versões depois que entrevistas cognitivas e revisão cega tiverem
-começado sobre `evidence-anamnesis-v14`.
+começado sobre `evidence-anamnesis-pilot-v1`.
 
 ---
 
@@ -51,7 +51,7 @@ começado sobre `evidence-anamnesis-v14`.
 A infraestrutura está no produto. Falta o trabalho com pessoas reais descrito em
 [`probabilistic-inference-roadmap.md`](probabilistic-inference-roadmap.md):
 entrevistas cognitivas, revisão cega e piloto diverso **sobre o grafo
-`evidence-anamnesis-v14`**, incluindo as nove perspectivas.
+`evidence-anamnesis-pilot-v1`**, incluindo as nove perspectivas.
 
 Não tratar clique nem aceitação de recomendação como rótulo. Não publicar o
 posterior como probabilidade empírica até o gate abrir e uma versão draft ser
@@ -65,7 +65,7 @@ atendidos com massa rotulada, ou o grafo volta de versão.
 ## Onda 4 — Perspectivas e profundidade
 
 Itens 1–5 e a higiene de linguagem entregues no grafo
-`evidence-anamnesis-v14`. Resta:
+`evidence-anamnesis-pilot-v1`. Resta:
 
 - Validar a linguagem dos ramos novos com cada disciplina (arquitetura, segurança,
   dados, design, plataforma) antes de aplicar em organização real; o painel já

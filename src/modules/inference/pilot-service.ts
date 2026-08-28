@@ -25,22 +25,26 @@ export class PilotService {
   recordCognitiveReview(input: CognitiveReview): void {
     if (!input.nodeKey.trim() || !graph.some((node) => node.id === input.nodeKey)) throw new DomainValidationError();
     if (!allowedProfiles.has(input.profile)) throw new DomainValidationError();
-    this.db.prepare('INSERT INTO item_reviews (id, node_key, profile, comprehension_ok, gold_option_bias, visibility_exit_used, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run(id(), input.nodeKey, input.profile, input.comprehensionOk ? 1 : 0, input.goldOptionBias ? 1 : 0, input.visibilityExitUsed ? 1 : 0, new Date().toISOString());
+    const confusingTerm = input.confusingTerm?.trim().slice(0, 120) || null;
+    this.db.prepare('INSERT INTO item_reviews (id, node_key, profile, comprehension_ok, interpretation_match, option_fit, option_overlap, retrieval_difficulty, gold_option_bias, visibility_exit_used, confusing_term, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(id(), input.nodeKey, input.profile, input.comprehensionOk ? 1 : 0, input.interpretationMatch ? 1 : 0, input.optionFit ? 1 : 0, input.optionOverlap ? 1 : 0, input.retrievalDifficulty ? 1 : 0, input.goldOptionBias ? 1 : 0, input.visibilityExitUsed ? 1 : 0, confusingTerm, new Date().toISOString());
   }
 
   summarize(modelVersion: string): PilotReport {
     const labels = this.db.prepare('SELECT case_key, family_key, predicted_hypothesis, predicted_confidence, labeled_hypothesis, stopped_without_cause, reviewer_discipline FROM pilot_labels WHERE model_version = ?')
       .all(modelVersion) as unknown as Array<{ case_key: string; family_key: string; predicted_hypothesis: string; predicted_confidence: number; labeled_hypothesis: string; stopped_without_cause: number; reviewer_discipline: string }>;
-    const reviews = this.db.prepare('SELECT node_key, profile, comprehension_ok, gold_option_bias, visibility_exit_used FROM item_reviews')
-      .all() as unknown as Array<{ node_key: string; profile: string; comprehension_ok: number; gold_option_bias: number; visibility_exit_used: number }>;
+    const reviews = this.db.prepare('SELECT node_key, profile, comprehension_ok, interpretation_match, option_fit, option_overlap, retrieval_difficulty, gold_option_bias, visibility_exit_used, confusing_term FROM item_reviews')
+      .all() as unknown as Array<{ node_key: string; profile: string; comprehension_ok: number; interpretation_match: number; option_fit: number; option_overlap: number; retrieval_difficulty: number; gold_option_bias: number; visibility_exit_used: number; confusing_term: string | null }>;
     return PilotEvaluation.from(labels.map((row) => ({
       caseKey: row.case_key, familyKey: row.family_key, predictedHypothesis: row.predicted_hypothesis,
       predictedConfidence: Number(row.predicted_confidence), labeledHypothesis: row.labeled_hypothesis,
       stoppedWithoutCause: Number(row.stopped_without_cause) === 1, reviewerDiscipline: row.reviewer_discipline,
     })), reviews.map((row) => ({
       nodeKey: row.node_key, profile: row.profile, comprehensionOk: Number(row.comprehension_ok) === 1,
+      interpretationMatch: Number(row.interpretation_match) === 1, optionFit: Number(row.option_fit) === 1,
+      optionOverlap: Number(row.option_overlap) === 1, retrievalDifficulty: Number(row.retrieval_difficulty) === 1,
       goldOptionBias: Number(row.gold_option_bias) === 1, visibilityExitUsed: Number(row.visibility_exit_used) === 1,
+      ...(row.confusing_term ? { confusingTerm: row.confusing_term } : {}),
     })), this.policy(modelVersion));
   }
 

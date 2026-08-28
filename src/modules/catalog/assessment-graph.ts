@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-v14';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v1';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -31,6 +31,11 @@ function attachObservationalExits(node: AssessmentNode): AssessmentNode {
   if (node.id === 'respondent-context') return node;
   if (node.options.some((option) => option.id === CANNOT_OBSERVE_ID)) return node;
   return { ...node, options: [...node.options, cannotObserve] };
+}
+function anchorRecentObservation(scenario: string): string {
+  return /(últim[oa]|últimas?|recent[ea]|nesta semana|neste ciclo|depois de|quando|durante)/i.test(scenario)
+    ? scenario
+    : `Pense no último caso semelhante que você acompanhou. ${scenario}`;
 }
 export type AssessmentNode = {
   id: string;
@@ -237,7 +242,7 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'diagnostic-cause', type: 'probe', title: 'O que impede diagnóstico seguro?',
     scenario: 'O acesso direto ou a combinação manual reaparece em incidentes diferentes, apesar do risco e do tempo consumido.',
-    prompt: 'Na última investigação que dependeu desse caminho, o que impediu formar a hipótese antes?',
+    prompt: 'Na última investigação, o que mais atrasou a primeira explicação verificável para o problema?',
     options: [
       { id: 'telemetry-gap', label: 'Sinais necessários não são coletados, indexados ou correlacionados de ponta a ponta.', signals: [{ capability: 'observabilidade', pattern: 'causa-lacuna-telemetria', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
       { id: 'tool-access-gap', label: 'A informação existe, mas ferramentas homologadas, licenças, acesso ou experiência não permitem usá-la no tempo do incidente.', signals: [{ capability: 'plataforma', pattern: 'causa-ferramenta-observabilidade', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
@@ -316,7 +321,7 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'decision-context', type: 'probe', title: 'Como uma decisão chega para construção?',
     scenario: 'Uma necessidade relevante permite caminhos com custos, riscos e reversibilidade diferentes. O prazo pressiona por uma escolha rápida.',
-    prompt: 'Como a opção que será construída normalmente ganha contexto e compromisso?',
+    prompt: 'No último trabalho iniciado, como as pessoas decidiram o que construir e quais consequências aceitar?',
     options: [
       { id: 'options-recorded', label: 'Negócio, produto e competências necessárias comparam opções e restrições; decisões relevantes registram contexto, consequências e sinais para revisão.', signals: [{ capability: 'arquitetura', pattern: 'decisao-intencional-revisavel', weight: 2 , details: ['architecture-decisions'], layer: 'practice', constraint: 'none' }] },
       { id: 'design-handed-off', label: 'A solução chega definida e o time detalha implementação; dúvidas relevantes retornam aos responsáveis pela concepção.', signals: [{ capability: 'fluxo', pattern: 'solucao-entregue-pronta', weight: -2 , details: ['discovery-validation', 'planning-refinement', 'architecture-decisions'], layer: 'practice', constraint: 'none' }] },
@@ -631,7 +636,7 @@ const authoredNodes: AssessmentNode[] = [
   },
   {
     id: 'management-portfolio', title: 'Decisão sobre capacidade organizacional',
-    scenario: 'Iniciativas novas competem com confiabilidade, dívida e melhorias estruturais que atravessam mais de um time.', prompt: 'Como a capacidade costuma ser redistribuída?',
+    scenario: 'Iniciativas novas competem com confiabilidade, dívida e melhorias estruturais que atravessam mais de um time.', prompt: 'Na última disputa por pessoas e tempo, o que determinou qual trabalho continuaria?',
     options: [
       { id: 'portfolio-tradeoffs', label: 'Resultados, riscos, dependências e custo de atraso são comparados; iniciar algo novo torna explícito o que será interrompido.', signals: [{ capability: 'governanca', pattern: 'portfolio-explicita-tradeoffs', weight: 2, details: ['portfolio-management', 'product-direction'], layer: 'practice' , constraint: 'none' }] },
       { id: 'executive-priority', label: 'Lideranças definem a ordem e as áreas reorganizam seus compromissos para absorver a decisão.', signals: [{ capability: 'governanca', pattern: 'portfolio-por-prioridade-executiva', weight: -1, details: ['portfolio-management', 'leadership-management'], layer: 'system', constraint: 'governance'  }] },
@@ -712,7 +717,7 @@ const authoredNodes: AssessmentNode[] = [
   },
   {
     id: 'platform-cloud-resilience-validation', title: 'Evidência de recuperação',
-    scenario: 'O desenho declara tolerância a falha e recuperação, mas dependências e tráfego mudaram desde a última revisão.', prompt: 'Como essa capacidade é validada?',
+    scenario: 'O desenho declara tolerância a falha e recuperação, mas dependências e tráfego mudaram desde a última revisão.', prompt: 'Na última verificação, como o time confirmou que conseguiria recuperar o serviço?',
     options: [
       { id: 'failure-experiments', label: 'Experimentos proporcionais verificam hipóteses, tempo de recuperação e comportamento das dependências; resultados mudam o desenho.', signals: [{ capability: 'confiabilidade', pattern: 'resiliencia-cloud-validada-por-experimento', weight: 2, details: ['cloud-reliability', 'reliability-practice', 'integration-data', 'architecture-decisions'], layer: 'outcome' , constraint: 'none' }] },
       { id: 'documented-design', label: 'Arquitetura e procedimentos são revisados; testes completos ocorrem em exercícios ou auditorias periódicas.', signals: [{ capability: 'confiabilidade', pattern: 'resiliencia-cloud-validada-periodicamente', weight: -1, details: ['cloud-reliability', 'architecture-decisions'], layer: 'consistency', constraint: 'process'  }] },
@@ -839,7 +844,7 @@ const authoredNodes: AssessmentNode[] = [
   },
 ];
 
-export const graph: AssessmentNode[] = authoredNodes.map(attachObservationalExits);
+export const graph: AssessmentNode[] = authoredNodes.map((node) => ({ ...attachObservationalExits(node), scenario: anchorRecentObservation(node.scenario) }));
 
 const skipObservational: Record<string, string> = {
   'ready-to-release': 'integration-cadence',
@@ -945,7 +950,7 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });
 
-export const nodeVariants: NodeVariant[] = [
+const authoredNodeVariants: NodeVariant[] = [
   { nodeId: 'urgent-change', profile: 'management', scenario: 'Uma necessidade importante surge no meio do ciclo. Pessoas de produto, engenharia e qualidade já assumiram outros compromissos, e as dependências atravessam mais de um time.', prompt: 'Como você normalmente estrutura a decisão e acompanha seu impacto?' },
   { nodeId: 'urgent-change', profile: 'product', scenario: 'Uma necessidade importante surge no meio do ciclo. Ela promete valor, mas compete com hipóteses e entregas já comunicadas; engenharia e qualidade ainda não avaliaram todo o impacto.', prompt: 'Qual descrição mais se aproxima de como a prioridade normalmente muda?' },
   { nodeId: 'urgent-change', profile: 'quality', scenario: 'Uma necessidade importante surge no meio do ciclo. A implementação começa rapidamente, enquanto critérios de risco, dados e regressão ainda precisam ser entendidos.', prompt: 'Como qualidade normalmente entra nessa mudança?' },
@@ -987,6 +992,8 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'leadership-enablement', profile: 'data', scenario: 'Números e contratos divergem entre produtos e a correção exige dono, capacidade e acordo além de um time.', prompt: 'Como a liderança normalmente converte o desencontro em significado compartilhado?' },
   { nodeId: 'leadership-enablement', profile: 'design', scenario: 'A experiência das pessoas usuárias piora em um fluxo que atravessa produto, engenharia e operação, e nenhuma squad resolve sozinha.', prompt: 'Como a liderança normalmente define responsabilidade para mudar a jornada?' },
 ];
+
+export const nodeVariants: NodeVariant[] = authoredNodeVariants.map((variant) => ({ ...variant, scenario: anchorRecentObservation(variant.scenario) }));
 
 export const SECONDS_PER_SCENARIO = 45;
 

@@ -43,8 +43,10 @@ export function applyMigrations(db: DatabaseSync): void {
     );
     CREATE TABLE item_reviews (
       id TEXT PRIMARY KEY, node_key TEXT NOT NULL, profile TEXT NOT NULL, comprehension_ok INTEGER NOT NULL,
-      gold_option_bias INTEGER NOT NULL, visibility_exit_used INTEGER NOT NULL, created_at TEXT NOT NULL
+      interpretation_match INTEGER NOT NULL, option_fit INTEGER NOT NULL, option_overlap INTEGER NOT NULL,
+      retrieval_difficulty INTEGER NOT NULL, gold_option_bias INTEGER NOT NULL, visibility_exit_used INTEGER NOT NULL,
+      confusing_term TEXT, created_at TEXT NOT NULL
     );
-    INSERT INTO schema_migrations (version, applied_at) VALUES (17, datetime('now'));
+    INSERT INTO schema_migrations (version, applied_at) VALUES (18, datetime('now'));
   `);
 }

@@ -27,6 +27,11 @@ O relatório preserva:
 
 `comportamento -> evidência independente -> hipótese/alternativas -> restrição -> experimento`
 
+O catálogo materializa essa cadeia em uma rede especialista tipada com relações
+`observed_as`, `explained_by`, `addressed_by` e `grounded_in`. Toda intervenção
+publicada precisa possuir o caminho completo; a rede é explicável e não aprende
+silenciosamente com cliques ou respostas.
+
 O prior de evidência insuficiente varia com a observabilidade, sem uma reserva fixa
 que cresça artificialmente com a quantidade de causas. O relatório agrupa causas
 por capacidade e apresenta posterior, suporte/população, perspectivas, camadas e
@@ -62,11 +67,17 @@ horizonte e critério de sucesso variam por família do problema (incidente, ent
 dados, arquitetura, experiência, aprendizagem, governança ou assistência) e devem
 permitir verificar melhoria sem deslocar risco ou espera para outra etapa.
 
+No corte pré-piloto, toda métrica nomeia também o comportamento diagnosticado, o
+critério exige confirmar sua redução antes de ampliar a mudança e o responsável é
+derivado da disciplina e do tipo de restrição. A auditoria executável bloqueia
+métrica, critério, fundamento ou responsável puramente genéricos.
+
 ## Seleção adaptativa
 
 O tronco comum garante cobertura básica. Ao fim dele, perguntas elegíveis são
 ordenadas por redução esperada de entropia, cobertura ausente, necessidade de
-validação e custo. Somente probes observáveis pela perspectiva, ainda não
+validação, valor causal, equilíbrio entre perspectivas, repetição semântica e custo.
+Somente probes observáveis pela perspectiva, ainda não
 respondidos e relacionados à família incerta podem ser selecionados. O orçamento é
 de cinco perguntas adicionais e o limiar especialista vigente é 0,01 bit.
 

@@ -6,6 +6,18 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-28 — Instrumento preparado para piloto cognitivo
+
+- O grafo `evidence-anamnesis-pilot-v1` passou a ancorar cenários em eventos
+  recuperáveis e ganhou auditoria completa de perguntas e intervenções. A medição
+  agrega primeiro por pessoa, apresenta intervalo de incerteza e usa prior
+  organizacional fraco em recortes pequenos. A interface remove falsa precisão
+  causal e o painel registra interpretação, encaixe, sobreposição e recuperação de
+  eventos nas entrevistas cognitivas. A especificação vigente está em
+  [`assessment-model.md`](../knowledge-base/assessment-model.md),
+  [`question-design.md`](../knowledge-base/question-design.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-08-27 — Higiene de linguagem e intervenções verificáveis
 
 - O grafo `evidence-anamnesis-v14` passou a variar a ordem das alternativas por

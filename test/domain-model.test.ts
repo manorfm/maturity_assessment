@@ -23,6 +23,34 @@ test('avaliação de capacidade reduz confiança quando evidências se contradiz
   assert.ok(consistent.confidence > contradictory.confidence);
   assert.equal(contradictory.hasContradiction, true);
   assert.ok(consistent.level >= 0 && consistent.level <= 4);
+  assert.ok(consistent.interval.lower < consistent.level);
+  assert.ok(consistent.interval.upper > consistent.level);
+});
+
+test('avaliação não transforma respostas correlacionadas da mesma pessoa em consenso', () => {
+  const repeated = CapabilityAssessment.fromEvidence([
+    { participantId: 'one', pattern: 'a', weight: 2 },
+    { participantId: 'one', pattern: 'b', weight: 2 },
+    { participantId: 'one', pattern: 'c', weight: 2 },
+    { participantId: 'one', pattern: 'd', weight: 2 },
+  ]);
+  const independent = CapabilityAssessment.fromEvidence([
+    { participantId: 'one', pattern: 'a', weight: 2 },
+    { participantId: 'two', pattern: 'a', weight: 2 },
+    { participantId: 'three', pattern: 'a', weight: 2 },
+    { participantId: 'four', pattern: 'a', weight: 2 },
+  ]);
+  assert.ok(repeated.confidence < independent.confidence);
+  assert.equal(repeated.observers, 1);
+  assert.equal(independent.observers, 4);
+});
+
+test('recorte pequeno usa evidência organizacional como prior fraco sem esconder o resultado local', () => {
+  const local = CapabilityAssessment.fromEvidence([{ participantId: 'one', pattern: 'fragile', weight: -2 }]);
+  const pooled = CapabilityAssessment.fromEvidence([{ participantId: 'one', pattern: 'fragile', weight: -2 }], { level: 3, strength: 1 });
+  assert.ok(pooled.level > local.level);
+  assert.ok(pooled.level < 3);
+  assert.equal(pooled.observers, 1);
 });
 
 test('classificação sociotécnica é limitada pela capacidade e unidade mais frágeis', () => {

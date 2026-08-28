@@ -16,7 +16,7 @@ const label = (overrides: Partial<ExternalLabel> = {}): ExternalLabel => ({
 function enoughReviews(): CognitiveReview[] {
   return Object.keys(profiles).flatMap((profile) =>
     Array.from({ length: PILOT_THRESHOLDS.minCognitiveReviewsPerProfile }, () => ({
-      nodeKey: 'urgent-change', profile, comprehensionOk: true, goldOptionBias: false, visibilityExitUsed: false,
+      nodeKey: 'urgent-change', profile, comprehensionOk: true, interpretationMatch: true, optionFit: true, optionOverlap: false, retrievalDifficulty: false, goldOptionBias: false, visibilityExitUsed: false,
     })));
 }
 
@@ -107,7 +107,7 @@ test('revisão cognitiva rejeita nó inexistente e não guarda participação', 
   new CatalogService(db);
   const pilot = new PilotService(db);
   assert.throws(() => pilot.recordCognitiveReview({
-    nodeKey: 'missing-node', profile: 'engineering', comprehensionOk: true, goldOptionBias: false, visibilityExitUsed: false,
+    nodeKey: 'missing-node', profile: 'engineering', comprehensionOk: true, interpretationMatch: true, optionFit: true, optionOverlap: false, retrievalDifficulty: false, goldOptionBias: false, visibilityExitUsed: false,
   }));
 });
 

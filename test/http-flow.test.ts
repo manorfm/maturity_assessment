@@ -51,7 +51,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(dashboard.body, /Revisão cognitiva do instrumento/);
   const review = await app.inject({
     method: 'POST', url: `${managementUrl}/item-reviews`,
-    payload: { nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', goldOptionBias: 'no', visibilityExitUsed: 'yes' },
+    payload: { nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', interpretationMatch: 'yes', optionFit: 'yes', optionOverlap: 'no', retrievalDifficulty: 'no', goldOptionBias: 'no', visibilityExitUsed: 'yes' },
   });
   assert.equal(review.statusCode, 302);
   assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM item_reviews').get() as { total: number }).total), 1);
@@ -94,7 +94,8 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const capabilityUrl = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
   assert.ok(capabilityUrl);
   const capability = await app.inject({ method: 'GET', url: capabilityUrl });
-  assert.match(capability.body, /Confiança da medição de maturidade \d+%/);
+  assert.match(capability.body, /Faixa compatível com as evidências/);
+  assert.match(capability.body, /pessoas e \d+ sinais agregados/);
   assert.match(capability.body, /Ver evidências da avaliação/);
   assert.match(capability.body, /Aprofundar|Problemas e correções|evidência/i);
   assert.match(capability.body, /aria-label="Navegação da capacidade"/);

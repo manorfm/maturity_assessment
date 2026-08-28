@@ -1,6 +1,8 @@
 import { escapeHtml, layout } from '../../src/shared/html.js';
 
-export const SHOWCASE_GUIDE_PATH = process.env.SHOWCASE_GUIDE ?? '/private/tmp/maturity-assessment-showcase-v14.html';
+export const SHOWCASE_GUIDE_PATH = process.env.E2E_SHOWCASE_GUIDE
+  ?? process.env.SHOWCASE_GUIDE
+  ?? '/private/tmp/maturity-assessment-showcase-pilot-v1.html';
 
 export type ShowcaseGuideCase = {
   id: string;

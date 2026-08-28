@@ -12,13 +12,14 @@ export type ExternalLabel = {
   reviewerDiscipline: string;
 };
 
-export type CognitiveReview = { nodeKey: string; profile: string; comprehensionOk: boolean; goldOptionBias: boolean; visibilityExitUsed: boolean };
+export type CognitiveReview = { nodeKey: string; profile: string; comprehensionOk: boolean; interpretationMatch: boolean; optionFit: boolean; optionOverlap: boolean; retrievalDifficulty: boolean; goldOptionBias: boolean; visibilityExitUsed: boolean; confusingTerm?: string };
 export type PilotGate = 'blocked' | 'ready_for_revision';
 export type PilotReport = {
   policy: PilotThresholds;
   labeledCases: number;
   cognitiveReviews: number;
   cognitiveCoverage: Record<string, number>;
+  cognitiveIssues: Record<string, number>;
   raterDisagreement: number | null;
   falsePositiveRate: number | null;
   incorrectStopRate: number | null;
@@ -41,6 +42,14 @@ export class PilotEvaluation {
     const incorrectStopRate = labels.length ? incorrectStops.length / labels.length : null;
     const raterDisagreement = disagreementRate(labels);
     const cognitiveCoverage = countBy(reviews.map((item) => item.profile));
+    const cognitiveIssues = {
+      comprehension: reviews.filter((item) => !item.comprehensionOk).length,
+      interpretation: reviews.filter((item) => !item.interpretationMatch).length,
+      optionFit: reviews.filter((item) => !item.optionFit).length,
+      optionOverlap: reviews.filter((item) => item.optionOverlap).length,
+      retrieval: reviews.filter((item) => item.retrievalDifficulty).length,
+      desirability: reviews.filter((item) => item.goldOptionBias).length,
+    };
     const blockers = [
       ...(cases.length < thresholds.minLabeledCases ? [`Revisão cega insuficiente: ${cases.length} de ${thresholds.minLabeledCases} jornadas rotuladas.`] : []),
       ...missingCognitiveProfiles(cognitiveCoverage, thresholds.minCognitiveReviewsPerProfile),
@@ -55,6 +64,7 @@ export class PilotEvaluation {
       labeledCases: cases.length,
       cognitiveReviews: reviews.length,
       cognitiveCoverage,
+      cognitiveIssues,
       raterDisagreement,
       falsePositiveRate,
       incorrectStopRate,

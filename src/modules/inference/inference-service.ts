@@ -2,6 +2,7 @@ import type { Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
+import { CausalKnowledgeGraph } from './domain/causal-knowledge-graph.js';
 import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed } from './domain/group-recommendation-engine.js';
@@ -247,6 +248,7 @@ const evolutionSeeds: Record<string, InterventionSeed> = {
 };
 
 export const evolutionCatalog = defineInterventionCatalog(evolutionSeeds);
+export const causalKnowledgeGraph = CausalKnowledgeGraph.from({ ...interventionCatalog, ...evolutionCatalog });
 
 export class InferenceService {
   constructor(private readonly db: Database) {}
@@ -259,6 +261,7 @@ export class InferenceService {
     this.persistTransformation(projectId, completed, findings);
     const areas = this.diagnosticAreas(findings);
     const capabilities = this.capabilityDetails(projectId);
+    const organizationalPrior = new Map(capabilities.map((capability) => [capability.id, capability.level]));
     const capabilityGroups = CapabilityTaxonomy.organize(capabilities);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const visibilityGaps = this.visibilityGaps(projectId, minimum);
@@ -267,7 +270,7 @@ export class InferenceService {
     const rawScopes = this.eligibleScopes(projectId, minimum).map((scope) => ({
       ...scope,
       findings: this.findings(projectId, scope.completed, scope.id),
-      capabilities: this.capabilityDetails(projectId, scope.id),
+      capabilities: this.capabilityDetails(projectId, scope.id, organizationalPrior),
       perspectiveGaps: this.perspectiveGaps(projectId, minimum, scope.id),
       hypotheses: this.diagnosticPosteriors(projectId, scope.id),
     }));
@@ -382,21 +385,21 @@ export class InferenceService {
     return [...grouped.values()].sort((left, right) => left.label.localeCompare(right.label));
   }
 
-  private capabilityDetails(projectId: string, unitId?: string): CapabilityLevel[] {
+  private capabilityDetails(projectId: string, unitId?: string, organizationalPrior?: Map<string, number>): CapabilityLevel[] {
     const scope = this.scope(projectId, unitId);
     const rows = this.db.prepare(`
-      SELECT s.capability, s.pattern, s.weight, s.detail_capabilities
+      SELECT p.id participant_id, s.capability, s.pattern, s.weight, s.detail_capabilities
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-    `).all(...scope.parameters) as unknown as Array<{ capability: string; pattern: string; weight: number; detail_capabilities: string }>;
-    const grouped = new Map<string, { weights: number[]; patterns: Set<string> }>();
+    `).all(...scope.parameters) as unknown as Array<{ participant_id: string; capability: string; pattern: string; weight: number; detail_capabilities: string }>;
+    const grouped = new Map<string, { evidence: Array<{ participantId: string; pattern: string; weight: number }>; patterns: Set<string> }>();
     for (const row of rows) {
       const details = JSON.parse(row.detail_capabilities) as string[];
       for (const detail of details) {
-        const current = grouped.get(detail) ?? { weights: [], patterns: new Set<string>() };
-        current.weights.push(Number(row.weight));
+        const current = grouped.get(detail) ?? { evidence: [], patterns: new Set<string>() };
+        current.evidence.push({ participantId: row.participant_id, pattern: row.pattern, weight: Number(row.weight) });
         current.patterns.add(row.pattern);
         grouped.set(detail, current);
       }
@@ -404,7 +407,7 @@ export class InferenceService {
     return [...grouped.entries()].map(([id, evidence]) => ({
       id,
       label: capabilityDetailLabels[id] ?? id,
-      ...CapabilityAssessment.from(evidence.weights),
+      ...CapabilityAssessment.fromEvidence(evidence.evidence, organizationalPrior?.has(id) ? { level: organizationalPrior.get(id)!, strength: 1 } : undefined),
       coverage: Math.min(1, evidence.patterns.size / 2),
     }));
   }

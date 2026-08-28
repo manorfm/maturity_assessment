@@ -79,6 +79,16 @@ test('seleciona a pergunta com maior ganho esperado de informação', () => {
   assert.ok(selected!.informationGain > 0);
 });
 
+test('seleção pré-piloto evita repetição quando o ganho causal é equivalente', () => {
+  const posterior = new BayesianInferenceEngine().infer(model, [])[0]!;
+  const outcome = [{ probability: 1, likelihoods: { tooling: .5, process: .5 } }];
+  const selected = new AdaptiveQuestionSelector().select(posterior, [
+    { id: 'repeated', cost: .2, coverage: .5, validationNeed: .5, causalValue: .5, perspectiveBalance: .5, repetitionRisk: 1, outcomes: outcome },
+    { id: 'fresh', cost: .2, coverage: .5, validationNeed: .5, causalValue: .5, perspectiveBalance: .5, repetitionRisk: 0, outcomes: outcome },
+  ]);
+  assert.equal(selected?.id, 'fresh');
+});
+
 test('prescreve somente com posterior e pré-requisitos suficientes', () => {
   const recommender = new ProbabilisticRecommendationEngine([{
     id: 'stabilize-pipeline', hypothesisId: 'tooling', title: 'Estabilizar feedback', action: 'Corrigir a verificação mais instável.',

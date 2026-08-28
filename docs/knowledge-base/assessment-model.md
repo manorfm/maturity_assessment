@@ -113,7 +113,11 @@ zero ou fragilidade. Esse estado não permite aprofundamento até atingir cobert
 vermelho é reservado a uma fragilidade efetivamente avaliada. O radar não combina pilares
 em uma nota global e não substitui findings, bloqueios ou recomendações.
 
-O cálculo vigente combina sinais comportamentais convergentes dentro da capacidade.
+O cálculo pré-piloto converte pesos em níveis ordinais, agrega primeiro por pessoa e
+só então estima o recorte. Isso impede que várias respostas correlacionadas da mesma
+pessoa simulem consenso. Recortes pequenos recebem um prior organizacional fraco,
+sem ocultar o resultado local, e publicam um intervalo beta-binomial de 90%.
+O cálculo combina sinais comportamentais convergentes dentro da capacidade.
 Evidências em direções opostas reduzem a confiança e são mostradas como contradição,
 em vez de desaparecerem em uma média. Um comportamento positivo é aprofundado para
 verificar consistência sob urgência; um comportamento frágil abre discriminação de

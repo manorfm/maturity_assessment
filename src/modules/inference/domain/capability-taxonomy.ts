@@ -1,5 +1,6 @@
 export type CapabilityMeasure = {
   id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; coverage?: number;
+  observers?: number; interval?: { lower: number; upper: number };
 };
 
 export type CapabilityBranch = CapabilityMeasure & { assessed: boolean; coverage: number; children: CapabilityBranch[] };
@@ -60,6 +61,8 @@ export class CapabilityTaxonomy {
         level: assessed ? Math.min(...measures.map((measure) => measure.level)) : 0,
         confidence: assessed ? Math.min(...measures.map((measure) => measure.confidence)) : 0,
         evidence: measures.reduce((total, measure) => total + measure.evidence, 0),
+        observers: Math.max(0, ...measures.map((measure) => measure.observers ?? 0)),
+        interval: measures.length ? { lower: Math.min(...measures.map((measure) => measure.interval?.lower ?? measure.level)), upper: Math.max(...measures.map((measure) => measure.interval?.upper ?? measure.level)) } : { lower: 0, upper: 4 },
         hasContradiction: measures.some((measure) => measure.hasContradiction),
         assessed,
         coverage: Number(coverage.toFixed(2)),

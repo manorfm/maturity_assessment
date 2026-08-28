@@ -35,7 +35,7 @@ TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudança
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
 O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
-o único schema vigente, registrado como versão 17; mudanças incompatíveis exigem
+o único schema vigente, registrado como versão 18; mudanças incompatíveis exigem
 recriação explícita da base. Opções carregam `observation_kind` (`practice`,
 `visibility` ou `not_applicable`). Capturas agregadas de diagnóstico, experimentos
 de transformação, rótulos cegos do piloto e entrevistas cognitivas ficam em tabelas
@@ -99,7 +99,8 @@ condicionais e nove perspectivas — gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design — escolhidas durante
 a entrevista.
 
-O cálculo de nível e confiança vive no domínio de inferência. Sinais contraditórios
+O cálculo ordinal agrega primeiro por pessoa, aplica partial pooling fraco em
+recortes pequenos e publica intervalo beta-binomial de 90%. Sinais contraditórios
 reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível,
 marcadores focáveis, resumos em hover/foco e links nativos somente para capacidades
 avaliadas. Capacidades sem cobertura usam marcador neutro, ficam fora da geometria
@@ -132,10 +133,16 @@ em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 `demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
 3217, evitando recursão entre scripts.
 
+Banco, guia e porta do E2E podem ser isolados com `E2E_DATABASE_PATH`,
+`E2E_SHOWCASE_GUIDE` e `E2E_PORT`; `SHOWCASE_PUBLIC_URL` define a origem gravada
+nos links preservados para inspeção. Assim uma nova execução não precisa tocar em
+um showcase manual já aberto.
+
 O serviço de inferência projeta sinais versionados do catálogo em uma ou mais folhas
 da taxonomia. Essa projeção preserva o padrão de origem e permite efeitos cruzados
-sem duplicar respostas. Cada folha calcula nível e confiança pelos pesos e cobertura
-pela quantidade de padrões distintos; a classificação ignora folhas que ainda não
+sem duplicar respostas. Cada folha calcula nível pela evidência ordinal independente,
+confiança por pessoas, padrões, precisão e concordância, e cobertura pela quantidade
+de padrões distintos; a classificação ignora folhas que ainda não
 atingiram a cobertura mínima.
 
 Na versão vigente, cada sinal do próprio catálogo contém obrigatoriamente as folhas

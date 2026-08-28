@@ -6,7 +6,7 @@ import { buildShowcaseGuide, SHOWCASE_GUIDE_PATH, type ShowcaseGuideCase } from 
 type Stance = 'fragile' | 'emerging' | 'adaptive';
 
 const mixedSquad: Profile[] = ['quality', 'management', 'product', 'engineering', 'platform', 'architecture', 'design'];
-const inspectHost = 'http://127.0.0.1:3217';
+const inspectHost = process.env.SHOWCASE_PUBLIC_URL ?? 'http://127.0.0.1:3217';
 
 test('gera casos inspecionáveis com textos, resultados e convites manuais', async ({ page }) => {
   test.setTimeout(420_000);
@@ -48,7 +48,7 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
   await expect(page.getByRole('heading', { name: 'Prioridades e próximos passos' })).toBeVisible();
   await expect(page.getByText('Impacto no negócio').first()).toBeVisible();
-  await expect(page.getByText(/força do diagnóstico \d+%/).first()).toBeVisible();
+  await expect(page.getByText(/Hipótese (fortemente|bem) sustentada/).first()).toBeVisible();
   await expect(page.getByText('Ação recomendada').first()).toBeVisible();
   await page.goto(adminUrl);
   const observed = await observeReport(page);
@@ -258,7 +258,8 @@ function negativeCost(option: typeof graph[number]['options'][number]): number {
 }
 
 function toInspectUrl(url: string): string {
-  return url.replace(/https?:\/\/127\.0\.0\.1:3218/, inspectHost).replace(/https?:\/\/localhost:3218/, inspectHost);
+  const parsed = new URL(url);
+  return `${inspectHost}${parsed.pathname}${parsed.search}${parsed.hash}`;
 }
 
 function publicUrlFromAdmin(adminUrl: string): string {

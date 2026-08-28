@@ -1,7 +1,7 @@
 import { entropy, type DiagnosticPosterior } from './bayesian-inference-engine.js';
 
 export type QuestionOutcome = { probability: number; likelihoods: Record<string, number> };
-export type QuestionCandidate = { id: string; cost: number; coverage: number; validationNeed: number; outcomes: QuestionOutcome[] };
+export type QuestionCandidate = { id: string; cost: number; coverage: number; validationNeed: number; causalValue?: number; perspectiveBalance?: number; repetitionRisk?: number; outcomes: QuestionOutcome[] };
 export type RankedQuestion = QuestionCandidate & { informationGain: number; score: number; reasons: string[] };
 
 export class AdaptiveQuestionSelector {
@@ -19,8 +19,12 @@ export class AdaptiveQuestionSelector {
     const maximumEntropy = Math.log2(Math.max(2, posterior.hypotheses.length));
     const informationGain = Math.max(0, posterior.entropy - expectedEntropy);
     const normalizedGain = informationGain / maximumEntropy;
-    const score = .5 * normalizedGain + .25 * bounded(candidate.coverage) + .15 * bounded(candidate.validationNeed) + .1 * (1 - bounded(candidate.cost));
-    return { ...candidate, informationGain, score, reasons: [`Ganho esperado de ${informationGain.toFixed(3)} bit.`, `Cobertura ${percent(candidate.coverage)}, validação ${percent(candidate.validationNeed)} e custo ${percent(candidate.cost)}.`] };
+    const causalValue = bounded(candidate.causalValue ?? candidate.validationNeed);
+    const perspectiveBalance = bounded(candidate.perspectiveBalance ?? 0);
+    const repetitionPenalty = bounded(candidate.repetitionRisk ?? 0);
+    const score = .4 * normalizedGain + .2 * bounded(candidate.coverage) + .15 * bounded(candidate.validationNeed)
+      + .1 * causalValue + .1 * perspectiveBalance + .05 * (1 - bounded(candidate.cost)) - .1 * repetitionPenalty;
+    return { ...candidate, informationGain, score, reasons: [`Ganho esperado de ${informationGain.toFixed(3)} bit.`, `Cobertura ${percent(candidate.coverage)}, validação ${percent(candidate.validationNeed)}, valor causal ${percent(causalValue)}, equilíbrio de perspectiva ${percent(perspectiveBalance)}, repetição ${percent(repetitionPenalty)} e custo ${percent(candidate.cost)}.`] };
   }
 }
 function bounded(value: number): number { return Math.max(0, Math.min(1, value)); }
