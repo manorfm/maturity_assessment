@@ -33,11 +33,12 @@ publicada precisa possuir o caminho completo; a rede é explicável e não apren
 silenciosamente com cliques ou respostas.
 
 O prior de evidência insuficiente varia com a observabilidade, sem uma reserva fixa
-que cresça artificialmente com a quantidade de causas. O relatório agrupa causas
-por capacidade e apresenta posterior, suporte/população, perspectivas, camadas e
-incerteza. “Próximo discriminador” só aparece quando há pergunta contextual ainda
-elegível; caso contrário, declara uma lacuna do instrumento. Snapshots individuais
-nunca são publicados.
+que cresça artificialmente com a quantidade de causas. O suporte publicado de uma
+causa usa a opção escolhida da hipótese, não o sintoma do nó pai: uma família cujo
+identificador coincide com um padrão de evidência conta somente essas observações.
+O relatório lista no máximo três causas distintas por padrão, sem repetir o mesmo
+texto em cada folha afetada. Incerteza e discriminadores ficam sob demanda.
+Snapshots individuais nunca são publicados.
 
 ## Recomendações
 
@@ -57,9 +58,17 @@ de 4 pode receber evolução quando as respostas sustentam um passo concreto.
 
 Título, mecanismo causal e ação são campos distintos. O título descreve o efeito
 observado; a causa explica por que o sistema tende a reproduzi-lo; a ação propõe o
-menor teste compatível com a restrição. Cada padrão publicado referencia
-explicitamente um fundamento do catálogo — sem classificação por coincidência de
-palavras — e a ausência desse vínculo impede a inicialização do recomendador.
+menor teste compatível com a restrição. Quando o fundamento é Melhoria contínua,
+a causa nomeia o efeito daquele padrão — três títulos não compartilham o mesmo
+parágrafo do balde. Cada padrão publicado referencia explicitamente um fundamento
+do catálogo — sem classificação por coincidência de palavras — e a ausência desse
+vínculo impede a inicialização do recomendador.
+
+Cada página do relatório escolhe um desfecho: preservar prática sustentada;
+corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando há
+contradição, lacuna de perspectiva ou nota baixa sem causa isolada; ou declarar
+evidência insuficiente. Discriminar pede observação de um evento recente, não um
+playbook.
 
 Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
 expressa força da hipótese; prioridade combina alcance e severidade. Métrica,

@@ -151,7 +151,9 @@ function causeFor(foundation: InterventionFoundation, observedEffect: string): s
     'Melhoria contínua': 'O problema é reconhecido, mas não recebe ownership, capacidade e revisão de efeito suficientes para mudar o sistema.',
   };
   const mechanism = causes[foundation.source] ?? 'A condição observada permanece sem um mecanismo estável de feedback e revisão de efeito.';
-  return `${mechanism} Neste recorte, o efeito observado é: ${lowerFirst(observedEffect)}.`;
+  const effect = lowerFirst(observedEffect);
+  if (foundation.source === 'Melhoria contínua') return `“${effect}” se repete porque o ciclo de melhoria não reserva dono, capacidade e revisão de efeito para essa classe de problema.`;
+  return `${mechanism} Neste recorte, o efeito observado é: ${effect}.`;
 }
 function metricFor(pattern: string): string {
   if (/reconhecimento|incentivo/.test(pattern)) return 'decisões de reconhecimento que citam efeito observado e diferença entre trabalho iniciado e resultado alcançado';

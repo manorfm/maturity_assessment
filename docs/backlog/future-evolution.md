@@ -33,6 +33,10 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 
 ## Modelo de inferência
 
+- hipótese ainda não comprometida: no recorte global, qualquer gap de perspectiva
+  força desfecho “discriminar”. Validar no piloto se isso esconde um experimento
+  já isolado no limitador ou se triangular a divergência deve mesmo preceder a
+  correção;
 - executar o
   [`roadmap de piloto`](probabilistic-inference-roadmap.md) com entrevistas e
   rótulos reais; o gate e as métricas já estão no produto;

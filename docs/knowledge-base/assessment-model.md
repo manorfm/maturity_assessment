@@ -135,10 +135,11 @@ o pilar inteiro.
 Problemas recorrentes são selecionados dentro de cada folha, nunca por um limite
 global que permita a um pilar esconder outro. Um padrão negativo precisa aparecer
 em pelo menos duas participações e, em grupos maiores, em 20% da população elegível.
-Cada folha mostra no máximo três prioridades e um sinal cruzado pode sustentar um
-finding em todas as folhas que declara afetar. Nível alto sem finding é descrito
-como convergência positiva; nível crítico sem padrão recorrente explicita que as
-fragilidades estão dispersas e não inventa uma causa ou intervenção.
+Cada folha pode sustentar findings; o relatório publicado agrupa o mesmo padrão
+uma única vez e lista as folhas afetadas. Um sinal cruzado não vira três
+prioridades com o mesmo texto. Nível alto sem finding é descrito como convergência
+positiva; nível crítico sem padrão recorrente explicita que as fragilidades estão
+dispersas e não inventa uma causa ou intervenção.
 
 ## Classificação sociotécnica
 
@@ -149,12 +150,19 @@ classificação mais baixa entre descendentes publicáveis. O relatório preserv
 capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
 isso evita que uma squad forte esconda outra bloqueada.
 
-Na interface gerencial, a classificação abre com uma interpretação do estágio,
-principal limitador, risco e prioridade recomendada. Nota, confiança, população,
-incerteza e versão do modelo são informações secundárias e explicáveis, acessíveis
-sem competir com a decisão. Recomendações aparecem por urgência e conectam problema,
-impacto, ação, responsável provável, medida, prazo de revisão e resultado esperado.
-O fundamento da intervenção (fonte e princípio) fica sob demanda e não entra na nota.
+Na interface gerencial, cada página fecha um único ato de fala: um limitador (a
+folha avaliada mais frágil do recorte, nunca “e mais N”), um desfecho
+(preservar, corrigir, evoluir, discriminar ou evidência insuficiente) e um
+próximo passo amarrado a esse limitador. Divergência de perspectiva e
+contradição no limitador são desfechos de discriminação — não abrem várias
+frentes de intervenção. Radar, mapa por estrutura, calibração e revisão cognitiva
+permanecem visíveis, mas não competem com a decisão: o instrumento fica em
+`details` no rodapé; o mapa por estrutura omite recortes que só duplicam o
+diagnóstico global. Nota, confiança, população, incerteza e versão do modelo são
+informações secundárias e explicáveis. Quando há experimento, ele conecta
+problema, impacto, ação, responsável provável, medida, prazo de revisão e
+resultado esperado. O fundamento da intervenção (fonte e princípio) fica sob
+demanda e não entra na nota.
 
 Níveis inteiros são exibidos sem decimal (`4/4`); decimais aparecem somente quando
 representam diferença real (`3.7/4`). Toda capacidade avaliada abaixo de 4 deve ter

@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.23.0
+
+- O relatório gerencial passou a fechar um desfecho por página: um limitador, um
+  próximo passo e uma decisão (preservar, corrigir, evoluir, discriminar ou
+  evidência insuficiente), sem listar “e mais N” capacidades.
+- Causas e findings deixaram de se repetir por folha; o suporte publicado usa a
+  opção da causa, não o sintoma do nó pai. Calibração e revisão cognitiva ficam
+  no rodapé do instrumento.
+
 ## 0.22.0
 
 - Publicou o instrumento pré-piloto `evidence-anamnesis-pilot-v1`, ancorado em

@@ -42,14 +42,22 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
 
   await page.goto(adminUrl);
   await expect(page.getByText('Resumo executivo').first()).toBeVisible();
+  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  await expect(page.locator('.executive-facts dd').first()).not.toContainText('e mais');
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
   await expect(page.getByRole('heading', { name: 'Mapa por estrutura' })).toHaveCount(0);
   await page.locator('.radar-drill-link', { hasText: 'Operação, confiabilidade e plataforma' }).first().click();
   await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
-  await expect(page.getByRole('heading', { name: 'Prioridades e próximos passos' })).toBeVisible();
-  await expect(page.getByText('Impacto no negócio').first()).toBeVisible();
-  await expect(page.getByText(/Hipótese (fortemente|bem) sustentada/).first()).toBeVisible();
-  await expect(page.getByText('Ação recomendada').first()).toBeVisible();
+  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  const priorities = page.getByRole('heading', { name: 'Prioridades e próximos passos' });
+  if (await priorities.count()) {
+    await expect(priorities).toBeVisible();
+    await expect(page.getByText('Impacto no negócio').first()).toBeVisible();
+    await expect(page.getByText(/Hipótese (fortemente|bem) sustentada/).first()).toBeVisible();
+    await expect(page.getByText('Ação recomendada').first()).toBeVisible();
+  } else {
+    await expect(page.getByRole('heading', { name: 'Discriminar antes de intervir' })).toBeVisible();
+  }
   await page.goto(adminUrl);
   const observed = await observeReport(page);
   levels.fragile = Number(observed.classification.split('·')[0]?.trim());
@@ -59,8 +67,8 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
     title: 'Frágil — linha sob pressão',
     story: 'Sete pessoas do Squad Alfa descrevem absorção silenciosa de demanda. O Squad Beta tem só duas jornadas concluídas, abaixo do grupo mínimo de cinco, então o mapa por estrutura permanece oculto em toda a cadeia irmã.',
     lookFor: [
-      'Classificação baixa e recomendações com impacto, ação e medida.',
-      'Radar de operação até plataforma: prioridades aparecem com força do diagnóstico.',
+      'Uma próxima decisão (corrigir, evoluir, discriminar ou preservar) e um único limitador.',
+      'Radar de operação até plataforma: o recorte fecha com o mesmo ato de fala, sem três frentes.',
       'Mapa por estrutura ausente enquanto o Squad Beta não atingir cinco respostas.',
       'Complete os três convites restantes do Squad Beta para ver o recorte por unidade aparecer.',
     ],
@@ -81,6 +89,8 @@ async function buildEmergingCase(page: Page, levels: Record<string, number>): Pr
   for (const [index, link] of links.entries()) await completeAssessment(page, link, 'emerging', mixedSquad[index]!, index);
   await page.goto(adminUrl);
   await expect(page.getByText('Resumo executivo').first()).toBeVisible();
+  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  await expect(page.locator('.executive-facts dd').first()).not.toContainText('e mais');
   const observed = await observeReport(page);
   levels.emerging = Number(observed.classification.split('·')[0]?.trim());
   return {
@@ -89,8 +99,8 @@ async function buildEmergingCase(page: Page, levels: Record<string, number>): Pr
     story: 'Sete perspectivas descrevem rotina intermediária: há acordo local, mas ainda falta evidência de sistema. Serve para comparar a leitura executiva e as evoluções recomendadas com os extremos frágil e adaptativo.',
     lookFor: [
       'Classificação entre o caso frágil e o adaptativo.',
-      'Leitura executiva, limitador e prioridade — não apenas o número da escala.',
-      'Detalhes metodológicos (“Como esta classificação é calculada”) e experimentos sugeridos.',
+      'Um limitador, um desfecho e um próximo passo — sem “e mais N” nem três prioridades do mesmo texto.',
+      'Instrumento e calibração no rodapé, sem competir com a decisão.',
     ],
     adminUrl: toInspectUrl(adminUrl),
     publicUrl: publicUrlFromAdmin(adminUrl),
@@ -131,7 +141,8 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
   const governanceLevel = Number((await page.locator('.classification-level').textContent())?.split('/')[0]?.trim());
   expect(governanceLevel).toBeGreaterThan(2);
   expect(governanceLevel).toBeLessThan(4);
-  await expect(page.getByRole('heading', { name: 'Evoluções recomendadas' })).toBeVisible();
+  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Evoluir a prática|Corrigir o limitador|Discriminar antes de intervir|Preservar a prática/ })).toBeVisible();
   await page.goto(adminUrl);
   const observed = await observeReport(page);
   levels.adaptive = Number(observed.classification.split('·')[0]?.trim());
@@ -143,7 +154,7 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
     lookFor: [
       'Nas páginas de capacidade, o nível inteiro aparece como 4 / 4, sem decimal.',
       'O resumo executivo pode ficar em Gerenciado: o elo limitante não é inflado pelas folhas altas.',
-      'Governança habilitadora abaixo de 4 no drill de sistema organizacional.',
+      'Governança habilitadora abaixo de 4 fecha com uma próxima decisão, não com uma lista de evoluções genéricas.',
       'Use um convite ocioso, escolha Arquitetura, Segurança, Dados ou Design na primeira pergunta e leia o texto do ramo.',
     ],
     adminUrl: toInspectUrl(adminUrl),
@@ -173,7 +184,7 @@ async function buildDivergenceCase(page: Page): Promise<ShowcaseGuideCase> {
     story: 'Cinco jornadas de gestão descrevem prática sustentável no mesmo fluxo em que cinco de engenharia descrevem restrição. A triangulação atinge o grupo mínimo nas duas lentes; a divergência não deve ser lida automaticamente como baixa maturidade.',
     lookFor: [
       'Tag “divergência agregada” e o texto que pede investigar visibilidade, fronteiras e autonomia.',
-      'Hipóteses e leitura executiva: diferença de perspectiva não vira nota baixa por si só.',
+      'Próxima decisão de discriminar: diferença de perspectiva é o finding, não uma nota baixa automática.',
       'Compare com o caso adaptativo homogêneo e com o frágil homogêneo.',
     ],
     adminUrl: toInspectUrl(adminUrl),

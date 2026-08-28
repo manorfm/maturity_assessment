@@ -6,6 +6,17 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-28 — Relatório conclusivo por desfecho
+
+- O painel passou a publicar um limitador, um desfecho e um próximo passo por
+  página; padrões cruzados aparecem uma vez; o suporte da causa usa a opção
+  observada. Calibração e revisão cognitiva saíram do centro da decisão. A
+  especificação vigente está em
+  [`assessment-model.md`](../knowledge-base/assessment-model.md),
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+  Os casos do showcase continuam sintéticos e não substituem calibração.
+
 ## 2026-08-28 — Instrumento preparado para piloto cognitivo
 
 - O grafo `evidence-anamnesis-pilot-v1` passou a ancorar cenários em eventos

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { diagnosticStrength, renderCapabilityDiagnosis, renderCapabilityRadar } from '../src/modules/projects/project-routes.js';
+import { diagnosticStrength, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderOutcome } from '../src/modules/projects/project-routes.js';
 
 const leaf = (overrides: Partial<Parameters<typeof renderCapabilityRadar>[0][number]> = {}) => ({
   id: 'delivery', label: 'Entrega', level: 2.4, confidence: .8, evidence: 8,
@@ -45,6 +45,26 @@ test('impacto executivo acompanha a capacidade avaliada', () => {
 
   assert.match(html, /Novas iniciativas disputam capacidade/);
   assert.doesNotMatch(html, /exposição operacional no fluxo de entrega/);
+});
+
+test('resumo executivo mostra um limitador e a próxima decisão, sem lista aberta', () => {
+  const outcome = {
+    kind: 'correct' as const,
+    kindLabel: 'Corrigir o limitador',
+    limiterLabel: 'Descoberta e validação',
+    reading: 'Descoberta e validação limita o recorte em reativo.',
+    nextStepTitle: 'Hipóteses permanecem em execução',
+    nextStepBody: 'Reconstrua a última hipótese que avançou sem evidência de uso.',
+  };
+  const html = renderClassification({
+    level: 1, label: 'Reativo',
+    limitingCapabilities: ['Descoberta e validação', 'Aprendizado e adaptação', 'Fluxo de trabalho', 'Integração contínua'],
+  }, outcome);
+  assert.match(html, /Descoberta e validação/);
+  assert.match(html, /Hipóteses permanecem em execução/);
+  assert.doesNotMatch(html, /e mais/);
+  assert.match(renderOutcome(outcome), /Próxima decisão/);
+  assert.match(renderOutcome(outcome), /Corrigir o limitador/);
 });
 
 test('relatório pré-piloto usa faixas verbais em vez de percentuais causais', () => {

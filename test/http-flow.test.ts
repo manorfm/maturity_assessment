@@ -48,6 +48,8 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(firstRespond.body, /minuto/);
   assert.match(firstRespond.body, /Guarde este endereço para retomar/);
   assert.match(invitationPage.body, /guarde o endereço depois do primeiro acesso/);
+  assert.match(dashboard.body, /Próxima decisão/);
+  assert.match(dashboard.body, /Instrumento e calibração/);
   assert.match(dashboard.body, /Revisão cognitiva do instrumento/);
   const review = await app.inject({
     method: 'POST', url: `${managementUrl}/item-reviews`,
@@ -85,11 +87,13 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const report = await app.inject({ method: 'GET', url: managementUrl });
   assert.match(report.body, /Radar interativo das capacidades observadas/);
   assert.match(report.body, /Resumo executivo/);
+  assert.match(report.body, /Próxima decisão/);
+  assert.match(report.body, /Instrumento e calibração/);
   assert.match(report.body, /Calibração do modelo/);
   assert.match(report.body, /posterior exibido permanece provisório/);
   assert.match(report.body, /Principal limitador/);
   assert.match(report.body, /Risco gerencial/);
-  assert.match(report.body, /Prioridade recomendada/);
+  assert.match(report.body, /Próximo passo/);
   assert.match(report.body, /class="radar-point radar-status-/);
   const capabilityUrl = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
   assert.ok(capabilityUrl);

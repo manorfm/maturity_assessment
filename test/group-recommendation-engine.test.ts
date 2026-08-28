@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { GroupRecommendationEngine, type GroupSignal, type InterventionDefinition } from '../src/modules/inference/domain/group-recommendation-engine.js';
+import { defineInterventionCatalog, GroupRecommendationEngine, type GroupSignal, type InterventionDefinition } from '../src/modules/inference/domain/group-recommendation-engine.js';
 
 const tooling: InterventionDefinition = {
   title: 'Feedback técnico insuficiente', intervention: 'Reduza duração e instabilidade do feedback.',
@@ -20,6 +20,16 @@ const catalog: Record<string, InterventionDefinition> = {
 function evidence(pattern: string, participantId: string, overrides: Partial<GroupSignal> = {}): GroupSignal {
   return { participantId, profile: 'engineering', detailCapability: 'continuous-integration', pattern, weight: -1, layer: 'system', constraint: 'tooling', ...overrides };
 }
+
+test('padrões de melhoria contínua não compartilham o mesmo parágrafo de causa', () => {
+  const catalog = defineInterventionCatalog({
+    'acoes-perdem-dono': { title: 'Ações perdem dono', intervention: 'Limite a retro.', foundation: { source: 'Melhoria contínua', principle: 'Dono e efeito', why: 'x' } },
+    'entregas-consomem': { title: 'Entregas consomem melhoria', intervention: 'Pare uma iniciativa.', foundation: { source: 'Melhoria contínua', principle: 'Dono e efeito', why: 'x' } },
+  });
+  assert.notEqual(catalog['acoes-perdem-dono']!.cause, catalog['entregas-consomem']!.cause);
+  assert.match(catalog['acoes-perdem-dono']!.cause, /ações perdem dono/i);
+  assert.match(catalog['entregas-consomem']!.cause, /entregas consomem melhoria/i);
+});
 
 test('usa somente a população capaz de observar a intervenção', () => {
   const recommendation = new GroupRecommendationEngine(catalog).rank([

@@ -52,6 +52,29 @@ test('posterior populacional distingue ocorrência isolada de comportamento reco
   assert.ok(recurrent.observability > isolated.observability);
 });
 
+test('suporte publicado usa a opção da causa, não o sintoma do nó pai', () => {
+  const catalogFamily = DiagnosticModel.create({
+    version: 'cause-population',
+    families: [{
+      id: 'learning:causa-melhoria-sem-capacidade', capability: 'organizational-learning',
+      hypotheses: [
+        { id: 'causa-melhoria-sem-capacidade', label: 'Sem capacidade', prior: .5 },
+        { id: 'unknown', label: 'Evidência insuficiente', prior: .5 },
+      ],
+      evidence: [
+        { pattern: 'causa-melhoria-sem-capacidade', group: 'cause:causa-melhoria-sem-capacidade', likelihoods: { 'causa-melhoria-sem-capacidade': .9, unknown: .25 } },
+        { pattern: 'retrospectiva-sem-fechamento', group: 'symptom:parent', likelihoods: { 'causa-melhoria-sem-capacidade': .6, unknown: .45 } },
+      ],
+    }],
+  });
+  const result = new BayesianInferenceEngine().infer(catalogFamily, [
+    { pattern: 'retrospectiva-sem-fechamento', support: 7, applicablePopulation: 7, profiles: ['a', 'b', 'c', 'd', 'e', 'f', 'g'], layers: ['practice'] },
+    { pattern: 'causa-melhoria-sem-capacidade', support: 2, applicablePopulation: 7, profiles: ['a', 'b'], layers: ['system'] },
+  ])[0]!;
+  assert.equal(result.population?.support, 2);
+  assert.equal(result.population?.applicable, 7);
+});
+
 test('ausência de uma evidência não é convertida em evidência negativa', () => {
   const withoutObservation = new BayesianInferenceEngine().infer(model, [])[0]!;
   assert.deepEqual(withoutObservation.hypotheses.map((item) => item.probability), model.families[0]!.hypotheses.map((item) => item.prior).sort((left, right) => right - left));

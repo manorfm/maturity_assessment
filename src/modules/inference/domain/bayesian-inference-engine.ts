@@ -34,7 +34,7 @@ export class BayesianInferenceEngine {
       const probabilities = softmax(logs);
       const hypotheses = family.hypotheses.map((hypothesis, index) => posterior(hypothesis, probabilities[index]!))
         .sort((left, right) => right.probability - left.probability);
-      const population = populationOf(selected.map((item) => item.observation));
+      const population = populationOf(selected.map((item) => item.observation), family);
       return {
         familyId: family.id, capability: family.capability, modelVersion: model.version, hypotheses,
         entropy: entropy(hypotheses.map((item) => item.probability)), evidenceUsed, ignoredEvidence, observability,
@@ -66,9 +66,12 @@ function adaptivePriors(hypotheses: HypothesisDefinition[], observability: numbe
   return new Map([...known.map((item) => [item.id, (1 - unknownPrior) * item.prior / knownTotal] as const), ['unknown', unknownPrior]]);
 }
 
-function populationOf(observations: EvidenceObservation[]): DiagnosticPosterior['population'] {
+function populationOf(observations: EvidenceObservation[], family?: { hypotheses: HypothesisDefinition[]; evidence: Array<{ pattern: string }> }): DiagnosticPosterior['population'] {
   if (!observations.length) return undefined;
-  const strongest = [...observations].sort((left, right) => right.support - left.support)[0]!;
+  const causeIds = new Set((family?.hypotheses ?? []).filter((item) => item.id !== 'unknown' && (family?.evidence.some((evidence) => evidence.pattern === item.id) ?? false)).map((item) => item.id));
+  const causal = causeIds.size ? observations.filter((item) => causeIds.has(item.pattern)) : observations;
+  if (!causal.length) return undefined;
+  const strongest = [...causal].sort((left, right) => right.support - left.support)[0]!;
   return { support: strongest.support, applicable: strongest.applicablePopulation, profiles: strongest.profiles.length, layers: strongest.layers.length };
 }
 
