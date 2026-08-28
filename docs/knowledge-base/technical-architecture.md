@@ -108,11 +108,14 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva: um cartão de decisão
-(efeito, restrição, classe de solução, experimento da semana); radar e recortes
+(efeito, evidência agregada, prontidão, incerteza e autorização do experimento);
+radar e recortes
 estruturais orientam a navegação sem reabrir a decisão. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam
-amarradas ao limitador. Probabilidades, população, incerteza, versão, evidências,
-calibração e revisão cognitiva ficam em elementos `details`.
+amarradas ao limitador. Probabilidades, ordinal exato, cobertura percentual, versão,
+calibração e revisão cognitiva ficam em elementos `details`. O home coloca decisão
+e mapa antes da administração de convites, também recolhida. Divergências correlatas
+são compostas num único resumo de fronteira.
 Essa separação muda a linguagem e a hierarquia visual, não os contratos ou regras
 do motor. O catálogo de orientação vive em `solution-guidance.ts`; a composição
 do desfecho em `report-outcome.ts`.

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { diagnosticStrength, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderOutcome } from '../src/modules/projects/project-routes.js';
+import { diagnosticStrength, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderOutcome, renderPerspectiveSynthesis } from '../src/modules/projects/project-routes.js';
 
 const leaf = (overrides: Partial<Parameters<typeof renderCapabilityRadar>[0][number]> = {}) => ({
   id: 'delivery', label: 'Entrega', level: 2.4, confidence: .8, evidence: 8,
@@ -64,6 +64,7 @@ test('cartão de correção mostra o universo da solução', () => {
       title: 'Mudanças permanecem isoladas e encontram o sistema tarde', cause: '', intervention: 'Integre no mesmo dia',
       confidence: .9, priority: .9,
       affectedCapabilities: ['continuous-integration', 'evolvability'],
+      recommendationEvidence: { supportingParticipants: 5, applicablePopulation: 9, contradictingParticipants: 1, patterns: ['mudanca-isolada', 'integracao-por-janela'], layers: ['practice', 'system'], profiles: ['engineering', 'quality'] },
       solutionCapability: 'Integrar mudanças enquanto ainda são pequenas',
       solutionReadiness: { stage: 'local', label: 'Local e dependente do contexto', explanation: 'A capacidade aparece na prática, mas não foi difundida.', evidence: 2 },
       experiment: { action: 'Reduza uma mudança até integrá-la no mesmo dia', owner: 'Fluxo', metric: 'espera até a junta', reviewHorizon: '30 dias', successCriterion: 'encontro no mesmo dia' },
@@ -71,10 +72,27 @@ test('cartão de correção mostra o universo da solução', () => {
   });
   assert.match(html, /Universo da solução/);
   assert.match(html, /Integração em tronco/);
-  assert.match(html, /Menor passo desta semana/);
+  assert.match(html, /Decisão solicitada/);
   assert.match(html, /Capacidade para resolver/);
   assert.match(html, /Integração contínua · Evolutibilidade/);
+  assert.match(html, /Decisão solicitada/);
+  assert.match(html, /5 de 9 jornadas aplicáveis/);
+  assert.match(html, /2 padrões independentes/);
+  assert.match(html, /1 jornada contradiz/);
+  assert.match(html, /Incerteza que permanece/);
   assert.doesNotMatch(html, /ciclo de melhoria/);
+});
+
+test('radar executivo mostra estado e suficiência de evidência sem decimal ou porcentagem', () => {
+  const html = renderCapabilityRadar([
+    leaf({ label: 'Entrega', level: 2.4, coverage: 1 }),
+    leaf({ id: 'partial', label: 'Plataforma', level: 1.2, coverage: .67 }),
+  ], '/capabilities');
+
+  assert.match(html, /Entrega <span>Repetível · evidência ampla<\/span>/);
+  assert.match(html, /Plataforma <span>Reativo · evidência parcial<\/span>/);
+  assert.doesNotMatch(html, />2\.4 · 100%</);
+  assert.doesNotMatch(html, />1\.2 · 67%</);
 });
 
 test('resumo executivo mostra um limitador e a próxima decisão, sem lista aberta', () => {
@@ -105,4 +123,18 @@ test('relatório pré-piloto usa faixas verbais em vez de percentuais causais', 
   }], leaf());
   assert.match(html, /Hipótese fortemente sustentada/);
   assert.doesNotMatch(html, /90%/);
+});
+
+test('divergências são condensadas em uma hipótese de fronteira, não repetidas por capacidade', () => {
+  const html = renderPerspectiveSynthesis([
+    { title: 'Perspectivas divergem sobre aprendizado', capability: 'aprendizado', strongerProfiles: ['Gestão'], constrainedProfiles: ['Engenharia'] },
+    { title: 'Perspectivas divergem sobre fluxo', capability: 'fluxo', strongerProfiles: ['Gestão'], constrainedProfiles: ['Engenharia'] },
+    { title: 'Perspectivas divergem sobre arquitetura', capability: 'arquitetura', strongerProfiles: ['Gestão'], constrainedProfiles: ['Engenharia'] },
+  ], []);
+
+  assert.equal((html.match(/divergência agregada/g) ?? []).length, 1);
+  assert.match(html, /3 capacidades/);
+  assert.match(html, /Gestão/);
+  assert.match(html, /Engenharia/);
+  assert.match(html, /evento recente compartilhado/);
 });

@@ -1,6 +1,6 @@
 # Plano restante: relatório que fecha decisão
 
-O comportamento das ondas 0, 1 e 3 está na base de conhecimento (versão 0.25.0):
+O comportamento das ondas 0, 1 e 3 está na base de conhecimento (versão 0.26.0):
 limitador útil, cartão único, orientação do tronco, rename da folha de feedback
 técnico. Isto aqui é só o que ainda não foi incorporado.
 

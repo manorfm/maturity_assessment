@@ -136,15 +136,14 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
     await expect(infrastructure).not.toHaveAttribute('href', /.+/);
   }
   await expect(page.getByRole('link', { name: 'Voltar' })).toBeVisible();
-  await expect(page.getByText(/Cobertura temática/)).toBeVisible();
-  await expect(page.locator('.classification-level')).toContainText('4 / 4');
-  await expect(page.locator('.classification-level')).not.toContainText('4.0 / 4');
+  await expect(page.locator('.classification-level')).toContainText('Adaptativo');
+  await expect(page.locator('.classification-level')).not.toContainText('/ 4');
+  await page.getByText('Ver evidências da avaliação', { exact: true }).click();
+  await expect(page.getByText(/cobertura temática/i)).toBeVisible();
   await page.goto(adminUrl);
   await page.locator('.radar-drill-link', { hasText: 'Sistema organizacional' }).first().click();
   await page.locator('.radar-drill-link', { hasText: 'Governança habilitadora' }).click();
-  const governanceLevel = Number((await page.locator('.classification-level').textContent())?.split('/')[0]?.trim());
-  expect(governanceLevel).toBeGreaterThan(2);
-  expect(governanceLevel).toBeLessThan(4);
+  await expect(page.locator('.classification-level')).toContainText('Gerenciado');
   await expect(page.getByText('Próxima decisão')).toBeVisible();
   await expect(page.locator('.outcome-card .tag')).toHaveText(/Evoluir a prática|Corrigir o limitador|Discriminar antes de intervir|Preservar a prática/);
   await page.goto(adminUrl);
@@ -156,7 +155,7 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
     title: 'Adaptativo — nove perspectivas',
     story: 'As nove lentes descrevem replanejamento conjunto, evidência e aprendizado. Três convites permanecem abertos para percorrer à mão os ramos de arquitetura, segurança, dados e design.',
     lookFor: [
-      'Nas páginas de capacidade, o nível inteiro aparece como 4 / 4, sem decimal.',
+      'Nas páginas de capacidade, a leitura executiva usa estágios qualitativos; o ordinal permanece auditável nos detalhes.',
       'O resumo executivo pode ficar em Gerenciado: o elo limitante não é inflado pelas folhas altas.',
       'Governança habilitadora abaixo de 4 fecha com uma próxima decisão, não com uma lista de evoluções genéricas.',
       'Use um convite ocioso, escolha Arquitetura, Segurança, Dados ou Design na primeira pergunta e leia o texto do ramo.',
@@ -214,6 +213,10 @@ async function createProject(page: Page, name: string, orgName: string, teams: s
 }
 
 async function createInvitations(page: Page, quantity: number, unitPath?: string): Promise<string[]> {
+  const administration = page.locator('details', { hasText: 'Administrar aplicação' });
+  if (await administration.count() && !(await administration.evaluate((element) => element.hasAttribute('open')))) {
+    await administration.getByText('Administrar aplicação', { exact: true }).click();
+  }
   if (unitPath) await page.getByLabel('Unidade final').selectOption({ label: unitPath });
   await page.getByLabel('Quantidade').fill(String(quantity));
   await page.getByRole('button', { name: 'Gerar links' }).click();

@@ -6,6 +6,16 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-28 — Leitura executiva orientada à autorização
+
+- O primeiro plano passou a mostrar evidência aplicável, prontidão, incerteza e a
+  decisão solicitada; radar e páginas de capacidade usam estágios qualitativos.
+  Divergências foram condensadas e a administração deixou de competir com o mapa.
+  A especificação vigente está em
+  [`assessment-model.md`](../knowledge-base/assessment-model.md),
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-08-28 — Relatório que fecha decisão
 
 - O painel escolhe um limitador útil, não a folha de cloud mais frágil; o home

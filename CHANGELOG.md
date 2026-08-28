@@ -5,6 +5,18 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.26.0
+
+- Reorganizou o relatório para uma mesa executiva: evidência observada, capacidade
+  de execução, incerteza e decisão solicitada antecedem método e administração.
+- Substituiu decimal e cobertura percentual do primeiro plano por estágio
+  qualitativo e suficiência; agregou divergências relacionadas numa hipótese.
+
+## 0.25.0
+
+- Publicou oito pilares sociotécnicos e separou capacidade observada de solução e
+  prontidão para executá-la, sem pontuar ferramentas ou práticas pela presença.
+
 ## 0.24.0
 
 - O relatório passou a escolher um limitador de decisão (folha útil no piso, com

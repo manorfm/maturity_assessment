@@ -155,23 +155,27 @@ classificação mais baixa entre descendentes publicáveis. O relatório preserv
 capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
 isso evita que uma squad forte esconda outra bloqueada.
 
-Na interface gerencial, cada página fecha um único cartão de decisão: o efeito
-observado, por que o sistema o reproduz, a classe de solução (prática, política,
-desenho organizacional, capacidade de plataforma ou família de ferramenta — nunca
-uma marca que pontue), o menor passo da semana e como saber se parou. O limitador
+Na interface gerencial, cada página fecha um único cartão de decisão. O primeiro
+plano mostra efeito observado, capacidades afetadas, base agregada aplicável,
+contradição, capacidade disponível para resolver, incerteza remanescente e a
+autorização solicitada: experimento, responsável, horizonte, indicador e critério.
+Mecanismo detalhado, classe de solução (prática, política, desenho organizacional,
+capacidade de plataforma ou família de ferramenta — nunca uma marca que pontue) e
+fundamentos ficam disponíveis sob demanda. O limitador
 é o elo útil no piso da classificação, com finding amarrado; folhas de cloud
 aninhadas não ocupam o palco só porque a nota foi baixa. A página da folha usa o
 estágio daquela folha, não o rótulo global. Divergência de perspectiva no home é
 o finding (as lentes não veem o mesmo sistema); contradição só discrimina quando
 está no limitador escolhido. Radar, mapa por estrutura, calibração e revisão
-cognitiva permanecem visíveis, mas não competem com a decisão: o instrumento fica
-em `details` no rodapé; o mapa por estrutura omite recortes que só duplicam o
+cognitiva permanecem visíveis, mas não competem com a decisão: administração e
+instrumento ficam em `details`; o mapa por estrutura omite recortes que só duplicam o
 diagnóstico global. Nota, confiança, população, incerteza e versão do modelo são
 informações secundárias e explicáveis. Ferramenta, framework e nome de time
 continuam sem pontuar.
 
-Níveis inteiros são exibidos sem decimal (`4/4`); decimais aparecem somente quando
-representam diferença real (`3.7/4`). Toda capacidade avaliada abaixo de 4 deve ter
+O radar e o cabeçalho das capacidades usam estágios qualitativos e suficiência de
+evidência, sem decimal ou percentual no primeiro plano. Ordinal, intervalo e
+cobertura exata permanecem auditáveis nos detalhes. Toda capacidade avaliada abaixo de 4 deve ter
 uma correção de fragilidade ou uma evolução recomendada sustentada pelo grupo. Uma
 evolução não reclassifica prática forte como problema: identifica o comportamento
 de peso intermediário — exceção, coordenação ou capacidade ainda local — que impede

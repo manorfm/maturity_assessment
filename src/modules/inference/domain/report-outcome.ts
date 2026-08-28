@@ -16,6 +16,7 @@ export type OutcomeFinding = {
   foundation?: { source: string; principle: string; why: string };
   solutionCapability?: string;
   solutionReadiness?: import('./solution-readiness.js').SolutionReadiness;
+  recommendationEvidence?: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: string[]; profiles: string[] };
 };
 
 export type ConfirmedCause = {

@@ -21,6 +21,11 @@ Ausência de evidência nunca é apresentada como prova de inexistência. Esse e
 condiciona o tamanho do experimento: uma solução estrutural não é recomendada como
 primeiro passo quando ainda falta execução, alcance ou aprendizado para sustentá-la.
 
+No contrato executivo, a recomendação carrega também a proveniência agregada que
+sustenta a decisão: jornadas aplicáveis e favoráveis, padrões independentes,
+perspectivas e contradições. Esses números descrevem a base observada; não são
+convertidos em porcentagem causal nem escondem a incerteza remanescente.
+
 ## Atualização e explicação
 
 O cálculo usa log-espaço e normalização por softmax. A força considera suporte sobre
@@ -81,6 +86,12 @@ limitador mistura evidência, quando o finding **é** a divergência de perspect
 ou quando a nota é baixa sem causa isolada; ou declarar evidência insuficiente.
 Discriminar pede observação de um evento recente, não um playbook. Um ramo em 4
 não herda discriminação de um neto de cloud.
+
+O cartão formula explicitamente a decisão solicitada. Autorizar o experimento vem
+antes do catálogo de alternativas, acompanhado por responsável, horizonte,
+indicador e critério. Divergências de várias capacidades são condensadas numa única
+hipótese de fronteira e pedem a reconstrução conjunta de um evento recente; não se
+repetem como uma lista de déficits.
 
 Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
 expressa força da hipótese; prioridade combina alcance e severidade. Métrica,

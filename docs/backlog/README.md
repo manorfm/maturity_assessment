@@ -16,7 +16,7 @@ Antes de promover um item, registrar:
 O plano para o relatório passar a fechar decisão (limitador útil, um cartão,
 orientação por classe de solução) está em
 [`decision-report-plan.md`](decision-report-plan.md). As ondas 0, 1 e 3 já estão
-na base de conhecimento (0.25.0). Restam o restante das folhas e o piloto
+na base de conhecimento (0.26.0). Restam o restante das folhas e o piloto
 cognitivo dos novos textos.
 
 O plano sequenciado após a auditoria do modelo está em
