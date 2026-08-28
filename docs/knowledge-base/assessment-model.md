@@ -8,20 +8,24 @@ relações com outras capacidades.
 
 ## Árvore de capacidades
 
-Os eixos não são uma lista plana de frameworks. A taxonomia alvo aprovada para o
-MVP separa seis capacidades sociotécnicas:
+Os eixos não são uma lista plana de frameworks. A taxonomia vigente separa oito
+capacidades sociotécnicas:
 
 1. **Estratégia de produto e valor** — direção e alinhamento, descoberta e validação,
    resultados e gestão de portfólio.
 2. **Fluxo de entrega** — planejamento, refinamento, fluxo de trabalho, integração,
    release e feedback.
-3. **Engenharia e qualidade** — design sustentável, estratégia de qualidade,
-   feedback técnico repetível, segurança de software e capacidade técnica.
+3. **Engenharia e qualidade** — sustentabilidade da mudança, proteção contínua de
+   riscos, feedback técnico repetível e competências acessíveis ao fluxo.
 4. **Arquitetura e evolução** — alinhamento ao domínio, decisões arquiteturais,
    evolutibilidade, integração e dados.
-5. **Operação, confiabilidade e plataforma** — observabilidade, confiabilidade,
-   incidentes, plataforma/autonomia e cloud/infraestrutura.
-6. **Sistema organizacional** — estrutura e ownership, governança habilitadora,
+5. **Operação e confiabilidade** — investigabilidade, objetivos de confiabilidade,
+   incidentes e recuperação demonstrável.
+6. **Plataforma e experiência de engenharia** — autonomia com limites seguros,
+   infraestrutura reproduzível e eficiência operacional.
+7. **Segurança e gestão de risco** — risco na entrega, identidade, acesso e
+   rastreabilidade.
+8. **Sistema organizacional** — estrutura e ownership, governança habilitadora,
    liderança, colaboração, aprendizado e adaptação.
 
 Cada ramo segue, quando houver evidência suficiente, `capacidade → subcapacidade →
@@ -33,7 +37,7 @@ mantém a mesma resposta como origem explicável; não se duplica uma nota gené
 Cada nó pode possuir filhos e produzir outro radar. Seu nível é limitado pelo filho
 com evidência mais frágil. Cada clique abre uma página própria, preserva o recorte
 organizacional e apresenta um breadcrumb do macro ao micro; folhas mostram problemas
-e correções. Os seis eixos macro permanecerão visíveis após a migração do catálogo,
+e correções. Os oito eixos macro permanecem visíveis,
 mas ausência de evidência é
 rotulada como “não avaliado”, nunca como nível zero. A taxonomia não duplica o mesmo
 sinal para preencher frameworks diferentes.
@@ -46,11 +50,12 @@ Ferramentas como vault aparecem como possível intervenção para um problema de
 gestão de segredos demonstrado; sua presença nunca constitui um nível.
 
 As folhas vigentes são direção/alinhamento, descoberta/validação, portfólio;
-planejamento/refinamento, fluxo, integração e release; design sustentável, qualidade,
-automação, segurança e capacidade técnica; domínio, decisões, evolutibilidade, dados;
-observabilidade, confiabilidade, incidentes, plataforma e cloud; ownership,
-governança habilitadora, liderança, colaboração e aprendizado. Cloud aprofunda
-infraestrutura reproduzível, segurança/identidade, confiabilidade e eficiência.
+planejamento/refinamento, fluxo, feedback de integração e release; mudança sustentável,
+proteção contínua de riscos, feedback técnico e competência acessível; domínio,
+decisões, evolutibilidade e dados; impacto investigável, confiabilidade, incidentes e
+recuperação; autonomia de plataforma, infraestrutura reproduzível e eficiência;
+risco na entrega e identidade/acesso; ownership, governança habilitadora, liderança,
+colaboração e aprendizado.
 
 Referenciais como DORA, SRE, Well-Architected, DDD, Team Topologies, Tuckman,
 TOGAF e práticas de engenharia alimentam capacidades; não viram pilares ou notas
@@ -106,7 +111,7 @@ limitantes, relações causais plausíveis e confiança. Uma nota agregada, se e
 será secundária e explicável.
 
 O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
-os seis eixos macro e suas explosões. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
+os oito eixos macro e suas explosões. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
 dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
 evidência insuficiente, aparece com marcador neutro “?” e nunca é interpretado como
 zero ou fragilidade. Esse estado não permite aprofundamento até atingir cobertura;
@@ -223,6 +228,28 @@ sinais -> sintoma -> capacidade afetada -> bloqueios/causas prováveis
        -> impacto e abrangência -> opções de intervenção
 ```
 
+Um problema pode afetar várias folhas e pilares ao mesmo tempo. Ele é publicado uma
+única vez, com todas as capacidades afetadas; não se replica a mesma prioridade em
+cada ramo. Depois de discriminar a causa, o recomendador também identifica a
+**capacidade de solução** necessária e estima sua prontidão com evidência positiva
+do mesmo recorte:
+
+1. **Não demonstrada:** a entrevista não encontrou execução; isso não prova
+   inexistência.
+2. **Declarada, ainda não executada:** há conhecimento, intenção ou mecanismo
+   habilitador, sem prática coletiva observável.
+3. **Local:** a capacidade aparece na prática, mas depende do contexto ou de poucas
+   pessoas.
+4. **Operacional:** execução repetível aparece em alcance relevante e em mais de uma
+   camada de evidência.
+5. **Adaptativa:** prática, consistência e consequência convergem entre perspectivas
+   e modificam o sistema.
+
+Prontidão para solucionar não é a nota da capacidade afetada. Ela impede que uma
+intervenção estrutural seja prescrita como se a organização já possuísse autoridade,
+competência e mecanismo para executá-la. Quando a prontidão não foi demonstrada, o
+menor experimento deve primeiro criar ou testar essa capacidade.
+
 Uma mesma baixa frequência de deploy pode resultar de empacotamento manual,
 aprovações externas, branches longevas, regressão custosa, ambientes indisponíveis
 ou alto acoplamento. Cada origem pede intervenções diferentes. GitOps, CI/CD ou uma
@@ -267,5 +294,5 @@ define responsabilidades e muda o desenho quando surgem sinais de sobrecarga.
 
 Identidade e proteção de credencial, resiliência de dependência e assistência por
 modelo são **contexto + cenário** sobre folhas já existentes (`cloud-security`,
-confiabilidade, qualidade, governança). Não há sétimo pilar nem inventário de
+confiabilidade, qualidade, governança). Não criam pilares por inventário de
 ferramenta. Se o evento não ocorre no ambiente, a folha permanece não avaliada.

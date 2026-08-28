@@ -51,8 +51,9 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 
 ## Pilares e referências
 
-- definir para cada ramo pelo menos três camadas navegáveis — capacidade, prática e
-  comportamento/evidência — sem transformar frameworks ou ferramentas em nota;
+- aprofundar cada ramo com subcapacidades navegáveis somente quando houver sinais
+  independentes, sem transformar práticas, frameworks ou ferramentas em nota; a
+  taxonomia executiva de oito pilares e a prontidão de solução já são vigentes;
 - calibrar empiricamente o mínimo vigente de dois padrões independentes por folha;
 - aprofundar DORA sem reduzir maturidade às quatro métricas;
 - incorporar as cinco métricas DORA vigentes como resultados por aplicação/serviço,

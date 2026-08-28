@@ -128,8 +128,16 @@ cobertura, validação e custo. Snapshots dessa decisão permanecem privados.
 `CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos. O radar
 superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula
 níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmente o
-escopo da unidade, permitindo navegação macro→micro sem perder o recorte. O showcase
-E2E gera quatro casos inspecionáveis: linha sob pressão (com partição irmã abaixo do
+escopo da unidade, permitindo navegação macro→micro sem perder o recorte.
+
+A taxonomia executiva possui oito pilares. Operação/confiabilidade,
+plataforma/experiência de engenharia e segurança/risco são ramos separados, embora
+um mesmo sinal possa afetar folhas de todos eles. `SolutionReadiness` é derivado de
+evidência positiva agregada do recorte; não altera a nota da capacidade nem o
+posterior causal. O finding sanitizado carrega capacidade de solução e prontidão
+junto ao experimento.
+
+O showcase E2E gera quatro casos inspecionáveis: linha sob pressão (com partição irmã abaixo do
 grupo mínimo), prática local intermediária, operação adaptativa com as nove lentes e
 divergência triangulada entre gestão e engenharia. Percorre o grafo em Chromium,
 grava um índice com histórias, trechos observados e convites ociosos, valida a

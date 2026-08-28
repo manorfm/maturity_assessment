@@ -26,6 +26,8 @@ test('recomendação apresenta decisão executiva antes da metodologia', () => {
     kind: 'correction', title: 'Mudanças aguardam filas externas',
     cause: 'Acesso depende de aprovações manuais.', intervention: 'Criar um caminho automatizado com controles embutidos.',
     confidence: .82, priority: .9, constraint: 'access', reasons: ['A espera apareceu em três jornadas.'],
+    solutionCapability: 'Disponibilizar acesso seguro sem coordenação artesanal.',
+    solutionReadiness: { stage: 'declared', label: 'Declarada, ainda não executada', explanation: 'Há conhecimento ou mecanismo declarado, sem execução coletiva observável.', evidence: 1 },
     experiment: { action: 'Automatizar um fluxo frequente.', owner: 'Plataforma', metric: 'Tempo de espera', reviewHorizon: '30 dias', successCriterion: 'Reduzir espera pela metade' },
   }], leaf());
 
@@ -33,6 +35,8 @@ test('recomendação apresenta decisão executiva antes da metodologia', () => {
   assert.match(html, /Impacto no negócio/);
   assert.match(html, /Ação recomendada/);
   assert.match(html, /Como acompanhar/);
+  assert.match(html, /Capacidade necessária para resolver/);
+  assert.match(html, /Declarada, ainda não executada/);
   assert.match(html, /Ver diagnóstico, evidências e fundamento/);
   assert.doesNotMatch(html, /posterior provisório/);
 });
@@ -59,12 +63,17 @@ test('cartão de correção mostra o universo da solução', () => {
       kind: 'correction', pattern: 'mudanca-isolada', detailCapability: 'continuous-integration',
       title: 'Mudanças permanecem isoladas e encontram o sistema tarde', cause: '', intervention: 'Integre no mesmo dia',
       confidence: .9, priority: .9,
+      affectedCapabilities: ['continuous-integration', 'evolvability'],
+      solutionCapability: 'Integrar mudanças enquanto ainda são pequenas',
+      solutionReadiness: { stage: 'local', label: 'Local e dependente do contexto', explanation: 'A capacidade aparece na prática, mas não foi difundida.', evidence: 2 },
       experiment: { action: 'Reduza uma mudança até integrá-la no mesmo dia', owner: 'Fluxo', metric: 'espera até a junta', reviewHorizon: '30 dias', successCriterion: 'encontro no mesmo dia' },
     },
   });
   assert.match(html, /Universo da solução/);
   assert.match(html, /Integração em tronco/);
   assert.match(html, /Menor passo desta semana/);
+  assert.match(html, /Capacidade para resolver/);
+  assert.match(html, /Integração contínua · Evolutibilidade/);
   assert.doesNotMatch(html, /ciclo de melhoria/);
 });
 

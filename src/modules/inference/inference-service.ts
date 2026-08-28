@@ -7,6 +7,7 @@ import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 import { decideReportOutcome, uniqueFindingsByPattern } from './domain/report-outcome.js';
 import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed } from './domain/group-recommendation-engine.js';
+import type { SolutionReadiness } from './domain/solution-readiness.js';
 import { BayesianInferenceEngine, type DiagnosticPosterior } from './domain/bayesian-inference-engine.js';
 import { DiagnosticModel } from './domain/diagnostic-model.js';
 import { PilotEvaluation, type PilotReport } from './domain/pilot-evaluation.js';
@@ -19,6 +20,8 @@ export type Finding = {
   recommendationEvidence: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
   experiment: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   foundation: { source: string; principle: string; why: string };
+  solutionCapability: string;
+  solutionReadiness: SolutionReadiness;
   affectedCapabilities?: string[];
 };
 type DiagnosticProblem = {
@@ -28,6 +31,9 @@ type DiagnosticProblem = {
   correction: string;
   evidence: number;
   nature: 'behavior' | 'constraint';
+  affectedCapabilities: string[];
+  solutionCapability: string;
+  solutionReadiness: SolutionReadiness;
 };
 type DiagnosticArea = { id: string; label: string; problems: DiagnosticProblem[] };
 type CapabilityLevel = { id: string; label: string; level: number; confidence: number; evidence: number; hasContradiction: boolean; coverage?: number };
@@ -385,6 +391,9 @@ export class InferenceService {
           correction: finding.intervention,
           evidence: finding.evidence,
           nature: finding.pattern.startsWith('causa-') ? 'constraint' : 'behavior',
+          affectedCapabilities: finding.affectedCapabilities ?? [finding.detailCapability],
+          solutionCapability: finding.solutionCapability,
+          solutionReadiness: finding.solutionReadiness,
         });
         grouped.set(id, area);
       }
@@ -492,6 +501,8 @@ export class InferenceService {
       recommendationEvidence: ranked.evidence,
       experiment: ranked.experiment,
       foundation: ranked.foundation,
+      solutionCapability: ranked.solutionCapability,
+      solutionReadiness: ranked.solutionReadiness,
     }));
   }
 
@@ -614,15 +625,18 @@ const capabilityDetailLabels: Record<string, string> = {
 const rootCapabilityLabels: Record<string, string> = {
   'product-value': 'Estratégia de produto e valor', 'delivery-flow': 'Fluxo de entrega',
   'engineering-quality': 'Engenharia e qualidade', 'architecture-evolution': 'Arquitetura e evolução',
-  'operations-platform': 'Operação, confiabilidade e plataforma', 'organizational-system': 'Sistema organizacional',
+  'operations-reliability': 'Operação e confiabilidade', 'platform-experience': 'Plataforma e experiência de engenharia',
+  'security-risk': 'Segurança e gestão de risco', 'organizational-system': 'Sistema organizacional',
 };
 
 const rootCapabilityByDetail = Object.fromEntries([
   ['product-value', ['product-direction', 'discovery-validation', 'portfolio-management']],
   ['delivery-flow', ['planning-refinement', 'work-management', 'continuous-integration', 'release-feedback']],
-  ['engineering-quality', ['sustainable-design', 'quality-strategy', 'sdlc-automation', 'software-security', 'technical-capability']],
+  ['engineering-quality', ['sustainable-design', 'quality-strategy', 'sdlc-automation', 'technical-capability']],
   ['architecture-evolution', ['domain-alignment', 'architecture-decisions', 'evolvability', 'integration-data']],
-  ['operations-platform', ['observability-practice', 'reliability-practice', 'incident-management', 'platform-autonomy', 'reproducible-infrastructure', 'cloud-security', 'cloud-reliability', 'cloud-efficiency']],
+  ['operations-reliability', ['observability-practice', 'reliability-practice', 'incident-management', 'cloud-reliability']],
+  ['platform-experience', ['platform-autonomy', 'reproducible-infrastructure', 'cloud-efficiency']],
+  ['security-risk', ['software-security', 'cloud-security']],
   ['organizational-system', ['team-ownership', 'enabling-governance', 'leadership-management', 'collaboration', 'organizational-learning']],
 ].flatMap(([root, details]) => (details as string[]).map((detail) => [detail, root]))) as Record<string, string>;
 

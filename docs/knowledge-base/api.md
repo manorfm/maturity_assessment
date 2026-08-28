@@ -19,7 +19,10 @@ nível limitante, intervalo, observadores, evidência, contradição e filhos
 observados.
 
 Cada finding também expõe `cause`, `priority`, `recommendationEvidence`,
-`experiment` e `foundation`. A evidência informa somente totais agregados, padrões,
+`experiment`, `foundation`, `affectedCapabilities`, `solutionCapability` e
+`solutionReadiness`. A prontidão diferencia capacidade não demonstrada, apenas
+declarada, local, operacional e adaptativa sem afirmar inexistência a partir de
+silêncio. A evidência informa somente totais agregados, padrões,
 camadas e perspectivas; nunca IDs. `foundation` declara fonte e princípio da
 intervenção e não pontua. `confidence` é um valor interno do posterior especialista
 na aderência da intervenção e não deve ser interpretado como maturidade, apoio

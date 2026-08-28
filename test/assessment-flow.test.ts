@@ -72,7 +72,7 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   assert.equal(report.findings.some((finding) => finding.pattern === 'integracao-tardia'), true);
   assert.equal(report.capabilityGroups.some((group) => group.id === 'engineering-quality'), true);
   assert.equal(report.capabilityGroups.some((group) => group.id === 'architecture-evolution' && group.children.length > 0), true);
-  assert.equal(report.capabilityGroups.length, 6);
+  assert.equal(report.capabilityGroups.length, 8);
   const engineeringArea = report.areas.find((area) => area.id === 'delivery-flow');
   assert.ok(engineeringArea);
   assert.equal(engineeringArea.label, 'Fluxo de entrega');

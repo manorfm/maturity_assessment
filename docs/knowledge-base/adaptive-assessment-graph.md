@@ -164,6 +164,12 @@ Não existe mapeamento “resposta X = compre ferramenta Y”. Duas populações
 mesma nota podem receber intervenções diferentes porque as combinações de causas,
 camadas e comportamentos são diferentes.
 
+O mesmo padrão transversal é publicado uma única vez com todas as folhas afetadas.
+Depois de discriminar a causa, o motor declara a capacidade necessária para agir e
+estima se ela não foi demonstrada, está apenas declarada, funciona localmente, é
+operacional ou adaptativa. Essa leitura usa evidência coletiva positiva e não
+transforma silêncio em inexistência.
+
 O catálogo separa intervenções de `correction` e `evolution`. A primeira trata um
 padrão negativo; a segunda transforma uma evidência intermediária recorrente em
 capacidade adaptativa. Por isso uma folha com cobertura e confiança completas, mas

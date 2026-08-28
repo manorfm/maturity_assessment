@@ -23,7 +23,7 @@ real continua em
 ## O que este plano recusa
 
 - Perguntar se a organização usa Vault, IAM, Kubernetes, Copilot, Figma ou OKR.
-- Criar eixos “IAM”, “IA” ou “FinOps” desconectados da taxonomia de seis
+- Criar eixos “IAM”, “IA” ou “FinOps” desconectados da taxonomia de oito
   capacidades.
 - Calibrar priors em cima de um grafo anterior à higiene observacional.
 - Importar métricas DORA ou dashboards antes de o instrumento comportamental

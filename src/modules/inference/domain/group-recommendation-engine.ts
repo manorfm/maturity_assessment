@@ -1,3 +1,5 @@
+import { assessSolutionReadiness, type SolutionReadiness } from './solution-readiness.js';
+
 export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
 export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
 export type GroupSignal = { participantId: string; profile?: string; detailCapability: string; pattern: string; weight: number; layer: EvidenceLayer; constraint: ConstraintKind };
@@ -6,7 +8,7 @@ export type InterventionSeed = { title: string; intervention: string; foundation
 export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation; guidance?: SolutionGuidance };
 export type RecommendationPopulation = { total: number; applicableByCapability: Record<string, number> };
 export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
-export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; reasons: string[]; evidence: RecommendationEvidence; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
+export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; reasons: string[]; evidence: RecommendationEvidence; solutionCapability: string; solutionReadiness: SolutionReadiness; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
 export type InterventionEvidenceRule = { evidencePatterns?: string[]; contradictionPatterns?: string[]; owner?: string; metric?: string; reviewHorizon?: string; successCriterion?: string };
 
 export function defineInterventionCatalog(seeds: Record<string, InterventionSeed>, rules: Record<string, InterventionEvidenceRule> = {}): Record<string, InterventionDefinition> {
@@ -58,6 +60,8 @@ export class GroupRecommendationEngine {
       if (confidence < .5) return [];
       const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
       const contextualDefaults = experimentDefaults(constraint, pattern, definition.foundation, definition.guidance);
+      const solutionReadiness = assessSolutionReadiness(signals, applicablePopulation);
+      const solutionCapability = definition.guidance?.solutionClass ?? `Capacidade coletiva para reduzir ${definition.title.toLocaleLowerCase('pt-BR')}`;
       const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
       const reasons = [
         `Padrão sustentado por ${supporters.size} de ${applicablePopulation} jornadas aplicáveis.`,
@@ -65,7 +69,7 @@ export class GroupRecommendationEngine {
         ...(contradictors.size ? [`Contradição específica em ${contradictors.size} jornada(s).`] : []),
         ...(constraint !== 'none' ? [`Restrição observada: ${constraint}.`] : []),
       ];
-      return [{ ...definition, kind, detailCapability: capability, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(sourceSignals, support), reasons, evidence, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualDefaults.owner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
+      return [{ ...definition, kind, detailCapability: capability, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(sourceSignals, support), reasons, evidence, solutionCapability, solutionReadiness, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualDefaults.owner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
     }).sort((left, right) => right.priority - left.priority || right.confidence - left.confidence || right.support - left.support).slice(0, 3);
   }
 }

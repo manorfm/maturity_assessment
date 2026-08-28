@@ -98,4 +98,6 @@ test('publica experimento executável e confiança sem falsa precisão', () => {
   assert.equal(recommendation.experiment.metric, tooling.metric);
   assert.equal(recommendation.experiment.reviewHorizon, tooling.reviewHorizon);
   assert.equal(recommendation.experiment.successCriterion, tooling.successCriterion);
+  assert.equal(recommendation.solutionCapability, 'Capacidade coletiva para reduzir feedback técnico insuficiente');
+  assert.equal(recommendation.solutionReadiness.stage, 'not-demonstrated');
 });

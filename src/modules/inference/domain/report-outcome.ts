@@ -14,6 +14,8 @@ export type OutcomeFinding = {
   experiment?: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   affectedCapabilities?: string[];
   foundation?: { source: string; principle: string; why: string };
+  solutionCapability?: string;
+  solutionReadiness?: import('./solution-readiness.js').SolutionReadiness;
 };
 
 export type ConfirmedCause = {

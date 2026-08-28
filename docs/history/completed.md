@@ -287,3 +287,11 @@ Para uma visão resumida dos marcos por versão, consulte o
   prevalência e observabilidade, ausência neutra e lacunas agrupadas por capacidade.
 - Removidas sugestões genéricas de aprofundamento quando não existe probe elegível
   e diferenciada a confiança da maturidade do posterior causal.
+
+## 2026-08-28
+
+- Separada a taxonomia executiva em oito pilares e adicionada prontidão de solução
+  aos findings transversais, distinguindo capacidade não demonstrada, declarada,
+  local, operacional e adaptativa; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).

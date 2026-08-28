@@ -54,8 +54,10 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(page.locator('.executive-facts dd').first()).not.toContainText('Infraestrutura reproduzível');
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
   await expect(page.getByRole('heading', { name: 'Mapa por estrutura' })).toHaveCount(0);
-  await page.locator('.radar-drill-link', { hasText: 'Operação, confiabilidade e plataforma' }).first().click();
-  await page.locator('.radar-drill-link', { hasText: 'Plataforma e autonomia' }).click();
+  await page.locator('.radar-drill-link', { hasText: 'Operação e confiabilidade' }).first().click();
+  await page.goto(adminUrl);
+  await page.locator('.radar-drill-link', { hasText: 'Plataforma e experiência de engenharia' }).first().click();
+  await page.locator('.radar-drill-link', { hasText: 'Capacidades chegam com autonomia' }).click();
   await expect(page.getByText('Próxima decisão')).toBeVisible();
   await expect(page.locator('.outcome-card .tag')).toHaveText(/Corrigir o limitador|Evoluir a prática|Discriminar antes de intervir|Preservar a prática/);
   await page.goto(adminUrl);
@@ -119,15 +121,16 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
   await page.goto(adminUrl);
   await expect(page.getByText('Resumo executivo').first()).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Radar de capacidades' }).first()).toBeVisible();
-  await page.locator('.radar-drill-link', { hasText: 'Operação, confiabilidade e plataforma' }).first().click();
-  await expect(page.getByRole('heading', { name: 'Operação, confiabilidade e plataforma' })).toBeVisible();
+  await page.locator('.radar-drill-link', { hasText: 'Operação e confiabilidade' }).first().click();
+  await expect(page.getByRole('heading', { name: 'Operação e confiabilidade' })).toBeVisible();
   await expect(page.locator('.outcome-card .tag')).toHaveText('Preservar a prática');
-  await page.locator('.radar-drill-link', { hasText: 'Cloud e infraestrutura' }).click();
-  await expect(page.getByRole('heading', { name: 'Cloud e infraestrutura' })).toBeVisible();
-  const infrastructure = page.locator('.radar-drill-link', { hasText: 'Infraestrutura reproduzível' });
+  await page.goto(adminUrl);
+  await page.locator('.radar-drill-link', { hasText: 'Plataforma e experiência de engenharia' }).first().click();
+  await expect(page.getByRole('heading', { name: 'Plataforma e experiência de engenharia' })).toBeVisible();
+  const infrastructure = page.locator('.radar-drill-link', { hasText: 'Infraestrutura pode ser reproduzida' });
   if (await infrastructure.evaluate((element) => element.tagName === 'A')) {
     await infrastructure.click();
-    await expect(page.getByRole('heading', { level: 1, name: 'Infraestrutura reproduzível' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Infraestrutura pode ser reproduzida' })).toBeVisible();
   } else {
     await expect(infrastructure).toHaveAttribute('aria-disabled', 'true');
     await expect(infrastructure).not.toHaveAttribute('href', /.+/);

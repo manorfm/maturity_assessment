@@ -283,13 +283,17 @@ const solutionKindLabels: Record<SolutionGuidance['solutionKind'], string> = {
 export function renderOutcome(outcome: ReportOutcome): string {
   const guidance = outcome.finding ? guidanceFor(outcome.finding.pattern, outcome.finding.foundation, outcome.finding.title) : undefined;
   const experiment = outcome.finding?.experiment;
+  const readiness = outcome.finding?.solutionReadiness;
+  const readinessBlock = readiness ? `<h3>Capacidade para resolver</h3><p><strong>${escapeHtml(outcome.finding?.solutionCapability ?? 'Capacidade coletiva compatível com a causa.')}</strong></p><p>${escapeHtml(readiness.label)} — ${escapeHtml(readiness.explanation)}</p>` : '';
+  const affected = outcome.finding?.affectedCapabilities?.length
+    ? `<p class="muted">Capacidades afetadas: ${outcome.finding.affectedCapabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')}</p>` : '';
   const briefing = guidance && (outcome.kind === 'correct' || outcome.kind === 'evolve')
     ? `<p class="executive-reading">${escapeHtml(guidance.plainExplanation)}</p>
       <h3>Por que isso se reproduz</h3><p>${escapeHtml(guidance.mechanism)}</p>
       <h3>Universo da solução</h3><p><strong>${escapeHtml(guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[guidance.solutionKind])}). ${escapeHtml(guidance.whyItWorks)}</p>
       <p class="muted">Referência: ${escapeHtml(guidance.matureReference)}. ${escapeHtml(guidance.examples)} Ferramenta não pontua maturidade.</p>
       <p>Isso não resolve: ${escapeHtml(guidance.doesNotSolve)}</p>
-      <h3>Menor passo desta semana</h3><p>${escapeHtml(experiment?.action ?? outcome.nextStepBody)}</p>
+      ${readinessBlock}${affected}<h3>Menor passo desta semana</h3><p>${escapeHtml(experiment?.action ?? outcome.nextStepBody)}</p>
       <dl class="diagnostic-experiment"><dt>Quem</dt><dd>${escapeHtml(experiment?.owner ?? 'Responsável pelo recorte com o grupo afetado')}</dd><dt>Como saber se parou</dt><dd>${escapeHtml(experiment?.metric ?? guidance.metric)}</dd><dt>Critério</dt><dd>${escapeHtml(experiment?.successCriterion ?? guidance.successCriterion)}</dd></dl>
       <p class="notice">Não faça: ${escapeHtml(guidance.antiPattern)}</p>`
     : `<p class="executive-reading">${escapeHtml(outcome.reading)}</p><p>${escapeHtml(outcome.nextStepBody)}</p>`;
@@ -390,6 +394,8 @@ type ReportFinding = {
   detailCapability?: string; constraint?: string; reasons?: string[];
   experiment?: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   foundation?: { source: string; principle: string; why: string };
+  solutionCapability?: string;
+  solutionReadiness?: { stage: string; label: string; explanation: string; evidence: number };
 };
 
 export function renderCapabilityDiagnosis(findings: ReportFinding[], capability: CapabilityRadarNode): string {
@@ -402,7 +408,8 @@ export function renderCapabilityDiagnosis(findings: ReportFinding[], capability:
     return `<section><h2>Prioridades e próximos passos</h2>${grouped.map((group) => `<div class="diagnostic-group"><h3>${group.title}</h3>${group.items.map((finding) => {
       const experiment = finding.experiment;
       const urgency = finding.kind === 'evolution' ? 'Próximo passo de evolução' : (finding.priority ?? 0) >= .7 ? 'Atenção imediata' : 'Melhoria de curto prazo';
-      return `<article class="card diagnostic-problem"><span class="tag">${urgency} · ${escapeHtml(diagnosticStrength(finding.confidence ?? 0))}</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico, evidências e fundamento</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.foundation ? `<h4>Fundamento</h4><p>${escapeHtml(finding.foundation.source)} — ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
+      const readiness = finding.solutionReadiness ? `<div class="solution-readiness"><h4>Capacidade necessária para resolver</h4><p>${escapeHtml(finding.solutionCapability ?? 'Capacidade coletiva compatível com a causa observada.')}</p><p><strong>${escapeHtml(finding.solutionReadiness.label)}</strong> — ${escapeHtml(finding.solutionReadiness.explanation)}</p></div>` : '';
+      return `<article class="card diagnostic-problem"><span class="tag">${urgency} · ${escapeHtml(diagnosticStrength(finding.confidence ?? 0))}</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${readiness}${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico, evidências e fundamento</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.foundation ? `<h4>Fundamento</h4><p>${escapeHtml(finding.foundation.source)} — ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
     }).join('')}</div>`).join('')}</section>`;
   }
   if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';

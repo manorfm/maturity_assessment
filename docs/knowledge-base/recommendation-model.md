@@ -14,6 +14,13 @@ Maturidade, cobertura temática, posterior e prioridade são medidas diferentes.
 Uma nota baixa não escolhe uma solução sozinha; grupos com a mesma nota podem ter
 causas e experimentos diferentes.
 
+O finding separa ainda problema, capacidades afetadas e capacidade necessária para
+resolver a causa. A prontidão dessa capacidade usa evidências positivas do recorte e
+é classificada como não demonstrada, declarada, local, operacional ou adaptativa.
+Ausência de evidência nunca é apresentada como prova de inexistência. Esse estado
+condiciona o tamanho do experimento: uma solução estrutural não é recomendada como
+primeiro passo quando ainda falta execução, alcance ou aprendizado para sustentá-la.
+
 ## Atualização e explicação
 
 O cálculo usa log-espaço e normalização por softmax. A força considera suporte sobre

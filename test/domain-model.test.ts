@@ -65,7 +65,7 @@ test('classificação sociotécnica é limitada pela capacidade e unidade mais f
   assert.deepEqual(rolledUp.limitingCapabilities, ['Time B']);
 });
 
-test('taxonomia separa seis capacidades e explicita cobertura temática', () => {
+test('taxonomia separa oito capacidades e explicita cobertura temática', () => {
   const measure = (id: string, label: string, level: number, coverage = 1) => ({ id, label, level, confidence: 1, evidence: 5, hasContradiction: false, coverage });
   const branches = CapabilityTaxonomy.organize([
     measure('product-direction', 'Direção e alinhamento', 4), measure('discovery-validation', 'Descoberta e validação', 3),
@@ -73,20 +73,22 @@ test('taxonomia separa seis capacidades e explicita cobertura temática', () => 
     measure('architecture-decisions', 'Decisões arquiteturais', 4), measure('evolvability', 'Evolutibilidade', 4),
     measure('platform-autonomy', 'Plataforma e autonomia', 1), measure('observability-practice', 'Observabilidade', 2), measure('incident-management', 'Gestão de incidentes', 2),
   ]);
-  assert.deepEqual(branches.map((branch) => branch.id), ['product-value', 'delivery-flow', 'engineering-quality', 'architecture-evolution', 'operations-platform', 'organizational-system']);
+  assert.deepEqual(branches.map((branch) => branch.id), ['product-value', 'delivery-flow', 'engineering-quality', 'architecture-evolution', 'operations-reliability', 'platform-experience', 'security-risk', 'organizational-system']);
   assert.equal(branches.find((branch) => branch.id === 'product-value')?.level, 3);
   assert.equal(branches.find((branch) => branch.id === 'delivery-flow')?.level, 2);
   assert.equal(branches.find((branch) => branch.id === 'architecture-evolution')?.level, 4);
-  assert.equal(branches.find((branch) => branch.id === 'operations-platform')?.level, 1);
+  assert.equal(branches.find((branch) => branch.id === 'operations-reliability')?.level, 2);
+  assert.equal(branches.find((branch) => branch.id === 'platform-experience')?.level, 0);
+  assert.equal(branches.find((branch) => branch.id === 'platform-experience')?.assessed, false);
   assert.ok((branches.find((branch) => branch.id === 'product-value')?.coverage ?? 1) < 1);
 });
 
 test('ramo não publica nota sustentada por uma única folha', () => {
   const measure = (id: string, coverage: number) => ({ id, label: id, level: 3.5, confidence: 1, evidence: 20, hasContradiction: false, coverage });
   const engineering = CapabilityTaxonomy.organize([
-    measure('sustainable-design', 1), measure('sdlc-automation', .5), measure('software-security', .5),
+    measure('sustainable-design', 1), measure('sdlc-automation', .5), measure('technical-capability', .5),
   ]).find((branch) => branch.id === 'engineering-quality')!;
-  assert.equal(engineering.coverage, .4);
+  assert.equal(engineering.coverage, .5);
   assert.equal(engineering.assessed, false);
   assert.equal(engineering.level, 0);
 });
