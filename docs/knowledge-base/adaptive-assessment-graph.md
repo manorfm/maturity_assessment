@@ -45,7 +45,10 @@ desses ramos pergunta o nome de um modelo, ferramenta ou cargo.
 
 As arestas usam condições declarativas sobre respostas e sinais já observados. Não
 executam código arbitrário. Cada percurso tem limites de tamanho, detecção de ciclo
-e uma saída segura.
+e uma saída segura. A tela da entrevista mostra a etapa corrente, uma estimativa de
+minutos restantes no caminho declarativo típico e pede que a pessoa guarde o
+endereço de retomada: o convite original não reabre o percurso. No fim podem
+entrar até cinco probes extras; eles não entram na estimativa do tronco.
 
 O grafo vigente possui três ramificações de discriminação após a espera para
 entregar: empacotamento manual, fila de qualidade ou aprovação/governança. Uma

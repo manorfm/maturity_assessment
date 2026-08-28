@@ -15,8 +15,8 @@ const label = (overrides: Partial<ExternalLabel> = {}): ExternalLabel => ({
 
 function enoughReviews(): CognitiveReview[] {
   return Object.keys(profiles).flatMap((profile) =>
-    Array.from({ length: PILOT_THRESHOLDS.minCognitiveReviewsPerProfile }, (_, index) => ({
-      nodeKey: `node-${index}`, profile, comprehensionOk: true, goldOptionBias: false, visibilityExitUsed: false,
+    Array.from({ length: PILOT_THRESHOLDS.minCognitiveReviewsPerProfile }, () => ({
+      nodeKey: 'urgent-change', profile, comprehensionOk: true, goldOptionBias: false, visibilityExitUsed: false,
     })));
 }
 
@@ -100,6 +100,15 @@ test('mesmo com métricas suficientes o modelo publicado não muda sozinho', () 
   assert.notEqual(draft.version, published.version);
   assert.equal((db.prepare("SELECT status FROM inference_model_versions WHERE version = ?").get(published.version) as { status: string }).status, 'published');
   assert.equal((db.prepare("SELECT COUNT(*) total FROM inference_model_versions WHERE status = 'published'").get() as { total: number }).total, 1);
+});
+
+test('revisão cognitiva rejeita nó inexistente e não guarda participação', () => {
+  const db = createDatabase(':memory:');
+  new CatalogService(db);
+  const pilot = new PilotService(db);
+  assert.throws(() => pilot.recordCognitiveReview({
+    nodeKey: 'missing-node', profile: 'engineering', comprehensionOk: true, goldOptionBias: false, visibilityExitUsed: false,
+  }));
 });
 
 test('sem limiar atendido não propõe revisão de priors', () => {

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { writeFileSync, rmSync } from 'node:fs';
 import { test } from 'node:test';
 import vm from 'node:vm';
 import { createApp } from '../src/app/create-app.js';
@@ -42,6 +43,19 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.equal(first.statusCode, 302);
   assert.match(first.headers.location!, /^\/respond\//);
   const resumeToken = first.headers.location!.split('/').at(-1)!;
+  const firstRespond = await app.inject({ method: 'GET', url: `/respond/${resumeToken}` });
+  assert.equal(firstRespond.statusCode, 200);
+  assert.match(firstRespond.body, /minuto/);
+  assert.match(firstRespond.body, /Guarde este endereço para retomar/);
+  assert.match(invitationPage.body, /guarde o endereço depois do primeiro acesso/);
+  assert.match(dashboard.body, /Revisão cognitiva do instrumento/);
+  const review = await app.inject({
+    method: 'POST', url: `${managementUrl}/item-reviews`,
+    payload: { nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', goldOptionBias: 'no', visibilityExitUsed: 'yes' },
+  });
+  assert.equal(review.statusCode, 302);
+  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM item_reviews').get() as { total: number }).total), 1);
+  assert.equal((db.prepare('PRAGMA table_info(item_reviews)').all() as Array<{ name: string }>).some((column) => column.name === 'participation_id'), false);
   const batch = db.prepare('SELECT id FROM invitation_batches ORDER BY rowid DESC LIMIT 1').get() as { id: string };
   const batchDashboard = await app.inject({ method: 'GET', url: managementUrl });
   assert.match(batchDashboard.body, /Lotes de convites/);
@@ -86,6 +100,31 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(capability.body, /aria-label="Navegação da capacidade"/);
   assert.match(capability.body, /Voltar<\/a>/);
   await app.close();
+});
+
+test('índice do showcase só existe quando o guia gerado está disponível', async () => {
+  const previous = process.env.SHOWCASE_GUIDE;
+  const guidePath = '/private/tmp/maturity-assessment-showcase-http.html';
+  try {
+    delete process.env.SHOWCASE_GUIDE;
+    const app = await createApp(createDatabase(':memory:'));
+    const missing = await app.inject({ method: 'GET', url: '/showcase' });
+    assert.equal(missing.statusCode, 404);
+    await app.close();
+
+    writeFileSync(guidePath, '<html lang="pt-BR"><body><h1>Índice de inspeção</h1></body></html>');
+    process.env.SHOWCASE_GUIDE = guidePath;
+    const withGuide = await createApp(createDatabase(':memory:'));
+    const served = await withGuide.inject({ method: 'GET', url: '/showcase' });
+    assert.equal(served.statusCode, 200);
+    assert.match(served.headers['content-type'] ?? '', /text\/html/);
+    assert.match(served.body, /Índice de inspeção/);
+    await withGuide.close();
+  } finally {
+    rmSync(guidePath, { force: true });
+    if (previous === undefined) delete process.env.SHOWCASE_GUIDE;
+    else process.env.SHOWCASE_GUIDE = previous;
+  }
 });
 
 test('erros de validação usam resposta universal sem detalhes internos', async () => {

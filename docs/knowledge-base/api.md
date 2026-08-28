@@ -21,7 +21,9 @@ intervenção e não deve ser interpretada como maturidade ou apoio popular.
 O relatório sanitizado também inclui `visibilityGaps` (perspectivas que atingiram o
 limiar e relataram “não observo”), `previousMeasurement` (delta de suporte de
 padrões entre capturas) e `calibration` (limiares pré-declarados, contagem de
-rótulos cegos, gate e bloqueios), sem identificação individual.
+rótulos cegos, gate e bloqueios), sem identificação individual. Entrevistas
+cognitivas do instrumento são registradas nas telas administrativas, sem
+participação ou identidade, e só aparecem em `calibration` como contagem.
 
 Cada hipótese causal expõe `observability`, população agregada (`support`,
 `applicable`, quantidade de perspectivas e camadas) e `nextQuestion`. Este último é

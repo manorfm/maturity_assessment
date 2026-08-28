@@ -987,3 +987,39 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'leadership-enablement', profile: 'data', scenario: 'Números e contratos divergem entre produtos e a correção exige dono, capacidade e acordo além de um time.', prompt: 'Como a liderança normalmente converte o desencontro em significado compartilhado?' },
   { nodeId: 'leadership-enablement', profile: 'design', scenario: 'A experiência das pessoas usuárias piora em um fluxo que atravessa produto, engenharia e operação, e nenhuma squad resolve sozinha.', prompt: 'Como a liderança normalmente cria ownership para mudar a jornada?' },
 ];
+
+export const SECONDS_PER_SCENARIO = 45;
+
+export function typicalSuccessor(from: string, profile?: string): string | undefined {
+  const outgoing = edges.filter((edge) => edge.from === from);
+  if (profile && Object.hasOwn(profiles, profile)) {
+    const byProfile = outgoing.find((edge) => edge.profile === profile && !edge.optionId);
+    if (byProfile) return byProfile.to;
+  }
+  const unscoped = outgoing.find((edge) => !edge.optionId && !edge.profile);
+  if (unscoped) return unscoped.to;
+  const practice = outgoing.find((edge) => edge.optionId && edge.optionId !== CANNOT_OBSERVE_ID && edge.optionId !== NOT_APPLICABLE_ID);
+  return practice?.to;
+}
+
+export function estimateRemainingScenarios(fromNodeId: string, profile?: string): number {
+  const seen = new Set<string>();
+  let current: string | undefined = fromNodeId;
+  const walkProfile = profile && Object.hasOwn(profiles, profile) ? profile : undefined;
+  while (current && !seen.has(current)) {
+    seen.add(current);
+    current = typicalSuccessor(current, walkProfile);
+  }
+  if (!walkProfile) {
+    let extra: string | undefined = typicalSuccessor('leadership-enablement', 'engineering');
+    while (extra && !seen.has(extra)) {
+      seen.add(extra);
+      extra = typicalSuccessor(extra, 'engineering');
+    }
+  }
+  return seen.size;
+}
+
+export function estimateRemainingMinutes(fromNodeId: string, profile?: string): number {
+  return Math.max(1, Math.ceil((estimateRemainingScenarios(fromNodeId, profile) * SECONDS_PER_SCENARIO) / 60));
+}

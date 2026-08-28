@@ -65,8 +65,8 @@ atendidos com massa rotulada, ou o grafo volta de versão.
 Itens 1–5 entregues no grafo `evidence-anamnesis-v13`. Resta:
 
 - Validar a linguagem dos ramos novos com cada disciplina (arquitetura, segurança,
-  dados, design, plataforma) antes de aplicar em organização real; isso é revisão
-  humana, não código.
+  dados, design, plataforma) antes de aplicar em organização real; o painel já
+  registra a entrevista cognitiva, o trabalho restante é humano.
 - Separar performance, custo e sustentabilidade quando cada uma tiver sinais
   independentes suficientes (Well-Architected + FinOps como lentes).
 

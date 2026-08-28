@@ -6,7 +6,7 @@ import { InvitationService } from '../src/modules/assessments/invitation-service
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
 import { AdaptiveJourneyService } from '../src/modules/assessments/adaptive-journey-service.js';
 import { InferenceService, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
-import { edges, graph, GRAPH_VERSION, profileIds } from '../src/modules/catalog/assessment-graph.js';
+import { edges, graph, GRAPH_VERSION, profileIds, estimateRemainingMinutes, estimateRemainingScenarios } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 
 test('convite é consumido uma vez e não mantém vínculo com a participação', () => {
@@ -166,6 +166,15 @@ test('entrega aprofunda sinais maduros e investiga bloqueio após integração f
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'management-safety', 'risk-changes-decision'), 'management-cognitive-load');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'architecture-language', 'shared-language'), 'architecture-wait');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'platform-cloud-sustainability', 'continuous-guardrails'), 'platform-path-to-capability');
+});
+
+test('estima o restante da entrevista sem contar probes opcionais', () => {
+  assert.equal(estimateRemainingScenarios('platform-path-to-capability', 'platform'), 1);
+  assert.equal(estimateRemainingScenarios('architecture-wait', 'architecture'), 1);
+  assert.ok(estimateRemainingScenarios('leadership-enablement', 'architecture') >= 3);
+  assert.ok(estimateRemainingScenarios('respondent-context') >= 40);
+  assert.ok(estimateRemainingMinutes('respondent-context') >= 25);
+  assert.ok(estimateRemainingScenarios('respondent-context', 'architecture') > estimateRemainingScenarios('leadership-enablement', 'architecture'));
 });
 
 test('incidente aprofunda roteamento diagnóstico e correção sem premiar ferramenta', () => {

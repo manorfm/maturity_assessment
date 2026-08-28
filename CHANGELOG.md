@@ -5,6 +5,21 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.20.0
+
+- O showcase passou a gerar casos inspecionáveis (frágil com partição oculta,
+  prática local, adaptativo com nove lentes e divergência triangulada), um índice
+  com textos observados e convites ociosos para percorrer a entrevista à mão.
+
+## 0.19.0
+
+- Passou a mostrar tempo restante aproximado na entrevista e a pedir que a
+  pessoa guarde o endereço de retomada; o convite original continua sem reabrir
+  o percurso.
+- O painel administrativo passou a registrar entrevistas cognitivas do
+  instrumento, sem participação ou identidade, para a revisão de linguagem com
+  cada disciplina.
+
 ## 0.18.0
 
 - Publicou o grafo `evidence-anamnesis-v13` com perspectivas de arquitetura,

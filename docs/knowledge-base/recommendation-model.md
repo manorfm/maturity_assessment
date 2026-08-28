@@ -68,7 +68,9 @@ parada incorreta ≤ 25%, ECE ≤ 0,15, Brier ≤ 0,25 e discordância entre ava
 ≤ 30%. Rótulos externos não guardam participação, convite ou resposta. Sem essa
 massa, o gate permanece bloqueado e o posterior exibido continua provisório.
 Mesmo quando o gate abre, uma revisão de priors nasce como versão `draft` e não
-substitui sozinha o modelo publicado.
+substitui sozinha o modelo publicado. O painel administrativo registra entrevistas
+cognitivas por cenário e perspectiva, sem participação, convite ou resposta; o
+registro não abre o gate sozinho e não identifica pessoas.
 
 ## Experimento e reaplicação
 

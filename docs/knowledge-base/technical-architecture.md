@@ -39,7 +39,8 @@ o único schema vigente, registrado como versão 17; mudanças incompatíveis ex
 recriação explícita da base. Opções carregam `observation_kind` (`practice`,
 `visibility` ou `not_applicable`). Capturas agregadas de diagnóstico, experimentos
 de transformação, rótulos cegos do piloto e entrevistas cognitivas ficam em tabelas
-próprias, sem vínculo com pessoa. Colunas de
+próprias, sem vínculo com pessoa. O painel administrativo registra entrevistas
+cognitivas nessas tabelas. Colunas de
 projeção, camada e restrição são obrigatórias.
 Índices e constraints garantem que um lote de origem seja reemitido no máximo uma vez.
 
@@ -122,11 +123,14 @@ cobertura, validação e custo. Snapshots dessa decisão permanecem privados.
 superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula
 níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmente o
 escopo da unidade, permitindo navegação macro→micro sem perder o recorte. O showcase
-E2E cria sete participações — qualidade, gestão, produto, três de engenharia e
-plataforma/operações — para cada cenário ruim, mediano e elite, percorre o
-grafo em Chromium, valida a ordenação, imprime os caminhos e deixa a mesma base
-servida para inspeção manual quando iniciado por `npm run demo`. O servidor interno
-usado pelo Playwright fica isolado em `demo:serve`, evitando recursão entre scripts.
+E2E gera quatro casos inspecionáveis: linha sob pressão (com partição irmã abaixo do
+grupo mínimo), prática local intermediária, operação adaptativa com as nove lentes e
+divergência triangulada entre gestão e engenharia. Percorre o grafo em Chromium,
+grava um índice com histórias, trechos observados e convites ociosos, valida a
+ordenação e a tag de divergência, e deixa a mesma base servida em `3217` — inclusive
+em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
+`demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
+3217, evitando recursão entre scripts.
 
 O serviço de inferência projeta sinais versionados do catálogo em uma ou mais folhas
 da taxonomia. Essa projeção preserva o padrão de origem e permite efeitos cruzados

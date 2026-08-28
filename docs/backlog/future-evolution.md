@@ -29,7 +29,6 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 - editor visual do grafo com simulação de percursos e validação antes de publicar;
 - versões multilíngues revisadas semanticamente, não apenas traduzidas;
 - acessibilidade validada com usuários e tecnologias assistivas;
-- estimativa de tempo, salvamento parcial e retomada segura;
 - feedback ao respondente sem revelar alternativas supostamente “certas”.
 
 ## Modelo de inferência

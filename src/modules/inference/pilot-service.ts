@@ -1,7 +1,7 @@
 import type { Database } from '../../shared/database.js';
 import { DomainValidationError } from '../../shared/errors.js';
 import { id } from '../../shared/ids.js';
-import { profiles as catalogProfiles } from '../catalog/assessment-graph.js';
+import { graph, profiles as catalogProfiles } from '../catalog/assessment-graph.js';
 import { PilotEvaluation, type CognitiveReview, type ExternalLabel, type PilotReport } from './domain/pilot-evaluation.js';
 import { PILOT_THRESHOLDS } from './domain/pilot-policy.js';
 
@@ -23,7 +23,7 @@ export class PilotService {
   }
 
   recordCognitiveReview(input: CognitiveReview): void {
-    if (!input.nodeKey.trim()) throw new DomainValidationError();
+    if (!input.nodeKey.trim() || !graph.some((node) => node.id === input.nodeKey)) throw new DomainValidationError();
     if (!allowedProfiles.has(input.profile)) throw new DomainValidationError();
     this.db.prepare('INSERT INTO item_reviews (id, node_key, profile, comprehension_ok, gold_option_bias, visibility_exit_used, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
       .run(id(), input.nodeKey, input.profile, input.comprehensionOk ? 1 : 0, input.goldOptionBias ? 1 : 0, input.visibilityExitUsed ? 1 : 0, new Date().toISOString());

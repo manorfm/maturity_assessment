@@ -11,7 +11,7 @@ Este backlog contém somente o trabalho humano que o código não pode inventar.
 ## Trabalho restante
 
 - Entrevistas cognitivas reais, 5–8 por perspectiva, incluindo saídas de
-  visibilidade, registradas como `item_reviews`.
+  visibilidade, registradas no painel administrativo como `item_reviews`.
 - Revisão cega de 50–100 jornadas com especialistas de disciplinas diferentes,
   gravada em `pilot_labels` com `case_key` opaco.
 - Piloto controlado com diversidade de organização, perspectiva e contexto;

@@ -1,6 +1,9 @@
 import type { FastifyInstance } from 'fastify';
 import { escapeHtml, layout } from '../../shared/html.js';
+import { profiles, graph } from '../catalog/assessment-graph.js';
 import { InferenceService } from '../inference/inference-service.js';
+import { PilotService } from '../inference/pilot-service.js';
+import { PILOT_THRESHOLDS } from '../inference/domain/pilot-policy.js';
 import { InvitationService } from '../assessments/invitation-service.js';
 import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
@@ -79,6 +82,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
   const projects = new ProjectService(db);
   const invitations = new InvitationService(db);
   const inference = new InferenceService(db);
+  const pilot = new PilotService(db);
 
   app.get('/', async (_request, reply) => reply.type('text/html').send(projectForm()));
   app.get('/projects/new', async (_request, reply) => reply.type('text/html').send(projectForm()));
@@ -140,6 +144,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
       <section><h2>Mapa agregado</h2>${classification}${reportAvailability}${capabilityMap}</section>
       ${renderPilotStatus(report.calibration)}
+      ${renderCognitiveReview(report.calibration, auth.params)}
       ${probabilisticSummary}
       ${previous}
       ${gaps || visibility ? `<section><h2>Perspectivas</h2>${gaps}${visibility}</section>` : ''}
@@ -203,6 +208,19 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const batch = invitations.reissueBatch(String(auth.project.id), batchId);
     return reply.type('text/html').send(invitationLinksPage(request.protocol, request.host, batch.tokens, auth.params));
   });
+
+  app.post('/projects/:publicId/manage/:adminSecret/item-reviews', async (request, reply) => {
+    const auth = requireProject(request.params as Params);
+    const body = (request.body ?? {}) as { nodeKey?: string; profile?: string; comprehensionOk?: string; goldOptionBias?: string; visibilityExitUsed?: string };
+    pilot.recordCognitiveReview({
+      nodeKey: body.nodeKey ?? '',
+      profile: body.profile ?? '',
+      comprehensionOk: body.comprehensionOk === 'yes',
+      goldOptionBias: body.goldOptionBias === 'yes',
+      visibilityExitUsed: body.visibilityExitUsed === 'yes',
+    });
+    return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
+  });
 }
 
 function renderPilotStatus(calibration: PilotReport): string {
@@ -212,6 +230,23 @@ function renderPilotStatus(calibration: PilotReport): string {
     : 'Calibração bloqueada. O posterior exibido permanece provisório.';
   const blockers = calibration.blockers.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   return `<details class="methodology"><summary>Calibração do modelo</summary><p>${escapeHtml(gate)}</p><p>Rótulos cegos: ${calibration.labeledCases} / ${policy.minLabeledCases}. Entrevistas cognitivas: ${calibration.cognitiveReviews}.</p><p>Limiares pré-declarados antes da análise: falso positivo ≤ ${Math.round(policy.maxFalsePositiveRate * 100)}%, parada incorreta ≤ ${Math.round(policy.maxIncorrectStopRate * 100)}%, ECE ≤ ${policy.maxExpectedCalibrationError}, Brier ≤ ${policy.maxBrierScore}, discordância entre avaliadores ≤ ${Math.round(policy.maxRaterDisagreement * 100)}%.</p>${blockers ? `<ul>${blockers}</ul>` : ''}<p>Clique, frequência de resposta e aceitação de recomendação não são rótulos. O modelo publicado não se atualiza sozinho.</p></details>`;
+}
+
+function renderCognitiveReview(calibration: PilotReport, params: Params): string {
+  const minimum = PILOT_THRESHOLDS.minCognitiveReviewsPerProfile;
+  const coverage = Object.keys(profiles).map((profile) => {
+    const count = calibration.cognitiveCoverage[profile] ?? 0;
+    return `<li>${escapeHtml(profiles[profile as keyof typeof profiles])}: ${count} de ${minimum}</li>`;
+  }).join('');
+  const nodes = graph.map((node) => `<option value="${escapeHtml(node.id)}">${escapeHtml(node.title)}</option>`).join('');
+  const profileOptions = Object.entries(profiles).map(([id, label]) => `<option value="${escapeHtml(id)}">${escapeHtml(label)}</option>`).join('');
+  return `<section class="card"><h2>Revisão cognitiva do instrumento</h2><p class="muted">Use este registro depois de ler um cenário com alguém da disciplina. Não identifique pessoas e não vincule a uma participação. Isso não calibra o posterior sozinho.</p><ul>${coverage}</ul><form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/item-reviews">
+    <label for="nodeKey">Cenário revisado</label><select id="nodeKey" name="nodeKey" required>${nodes}</select>
+    <label for="reviewProfile">Perspectiva de quem revisou a linguagem</label><select id="reviewProfile" name="profile" required>${profileOptions}</select>
+    <label for="comprehensionOk">O cenário foi compreendido sem jargão?</label><select id="comprehensionOk" name="comprehensionOk" required><option value="yes">Sim</option><option value="no">Não</option></select>
+    <label for="goldOptionBias">Alguma opção revela a resposta desejada?</label><select id="goldOptionBias" name="goldOptionBias" required><option value="no">Não</option><option value="yes">Sim</option></select>
+    <label for="visibilityExitUsed">A pessoa usou ou considerou “não observo”?</label><select id="visibilityExitUsed" name="visibilityExitUsed" required><option value="no">Não</option><option value="yes">Sim</option></select>
+    <button type="submit">Registrar revisão</button></form></section>`;
 }
 
 function renderClassification(classification: { level: number; label: string; limitingCapabilities: string[] }): string {
@@ -375,5 +410,5 @@ export function formatMaturityLevel(level: number): string {
 function invitationLinksPage(protocol: string, host: string, tokens: string[], params: Params): string {
   const origin = `${protocol}://${host}`;
   const links = tokens.map((token) => `${origin}/invite/${token}`);
-  return layout('Convites gerados', `<header><p class="eyebrow">Convites únicos</p><h1>Distribua um link por pessoa</h1><p class="lead">Esta é a única vez em que os tokens aparecem juntos. Não associe nomes aos links na plataforma.</p></header><div class="card"><ol id="invitation-links">${links.map((link) => `<li><code>${escapeHtml(link)}</code></li>`).join('')}</ol><button type="button" data-copy-links>Copiar todos os links</button><p class="muted" role="status" data-copy-status></p></div><a class="button" href="/projects/${params.publicId}/manage/${params.adminSecret}">Voltar ao painel</a><script>document.querySelector('[data-copy-links]')?.addEventListener('click',async()=>{const status=document.querySelector('[data-copy-status]');try{const links=[...document.querySelectorAll('#invitation-links code')].map(element=>element.textContent).join('\\n');await navigator.clipboard.writeText(links);status.textContent='Links copiados.'}catch{status.textContent='Não foi possível copiar. Selecione os links manualmente.'}})</script>`);
+  return layout('Convites gerados', `<header><p class="eyebrow">Convites únicos</p><h1>Distribua um link por pessoa</h1><p class="lead">Esta é a única vez em que os tokens aparecem juntos. Não associe nomes aos links na plataforma.</p></header><p class="notice">Peça que cada pessoa guarde o endereço depois do primeiro acesso para retomar. O convite original não reabre a entrevista.</p><div class="card"><ol id="invitation-links">${links.map((link) => `<li><code>${escapeHtml(link)}</code></li>`).join('')}</ol><button type="button" data-copy-links>Copiar todos os links</button><p class="muted" role="status" data-copy-status></p></div><a class="button" href="/projects/${params.publicId}/manage/${params.adminSecret}">Voltar ao painel</a><script>document.querySelector('[data-copy-links]')?.addEventListener('click',async()=>{const status=document.querySelector('[data-copy-status]');try{const links=[...document.querySelectorAll('#invitation-links code')].map(element=>element.textContent).join('\\n');await navigator.clipboard.writeText(links);status.textContent='Links copiados.'}catch{status.textContent='Não foi possível copiar. Selecione os links manualmente.'}})</script>`);
 }

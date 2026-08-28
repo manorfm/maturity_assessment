@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../shared/database.js';
 import { escapeHtml, layout } from '../../shared/html.js';
-import { profiles, type Profile } from '../catalog/assessment-graph.js';
+import { profiles, type Profile, estimateRemainingMinutes } from '../catalog/assessment-graph.js';
 import { CatalogService } from '../catalog/catalog-service.js';
 import { InvitationService } from './invitation-service.js';
 import { ParticipationService } from './participation-service.js';
@@ -28,9 +28,13 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
     const node = catalog.getNode(participation.graph_version, participation.current_node, participation.profile);
     if (!node) throw new Error('Published assessment node was not found');
     const answered = participations.answeredCount(participation.id);
+    const remainingMinutes = estimateRemainingMinutes(node.id, participation.profile);
     const choices = node.options.map((option) => `<label class="choice"><input type="radio" name="optionId" value="${escapeHtml(option.id)}" required><span>${escapeHtml(option.label)}</span></label>`).join('');
     const profile = profiles[participation.profile as Profile] ?? 'Participante';
-    return reply.type('text/html').send(layout(node.title, `<header><p class="eyebrow">${escapeHtml(profile)} · ${node.type === 'probe' ? `aprofundamento após ${answered} cenários` : `etapa ${answered + 1}`}</p><h1>${escapeHtml(node.title)}</h1><p class="lead">${escapeHtml(node.scenario)}</p></header><form class="card" data-assessment-node="${escapeHtml(node.id)}" method="post" action="/respond/${resumeToken}"><h2>${escapeHtml(node.prompt)}</h2>${choices}<button type="submit">Continuar</button></form><p class="muted"><small>Responda pelo que normalmente acontece, não pelo processo ideal. Não existe alternativa ligada a uma ferramenta específica.</small></p>`));
+    const progress = node.type === 'probe'
+      ? `aprofundamento após ${answered} cenários`
+      : `etapa ${answered + 1} · cerca de ${remainingMinutes} minuto${remainingMinutes === 1 ? '' : 's'} restante${remainingMinutes === 1 ? '' : 's'}`;
+    return reply.type('text/html').send(layout(node.title, `<header><p class="eyebrow">${escapeHtml(profile)} · ${progress}</p><h1>${escapeHtml(node.title)}</h1><p class="lead">${escapeHtml(node.scenario)}</p></header><form class="card" data-assessment-node="${escapeHtml(node.id)}" method="post" action="/respond/${resumeToken}"><h2>${escapeHtml(node.prompt)}</h2>${choices}<button type="submit">Continuar</button></form><p class="notice">Guarde este endereço para retomar se precisar pausar. O convite original não reabre a entrevista.</p><p class="muted"><small>Responda pelo que normalmente acontece, não pelo processo ideal. Não existe alternativa ligada a uma ferramenta específica. No fim podem aparecer até cinco perguntas extras para esclarecer uma causa.</small></p>`));
   });
 
   app.post('/respond/:resumeToken', async (request, reply) => {

@@ -6,6 +6,26 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-27 — Showcase inspecionável
+
+- O E2E passou a montar quatro organizações sintéticas com história, trechos do
+  relatório, convites ociosos e um índice em `/showcase`, para investigar textos,
+  classificação, divergência e supressão de partição à mão. A especificação vigente
+  está em
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+  Os casos não substituem calibração empírica.
+
+## 2026-08-27 — Jornada aplicável e registro cognitivo no painel
+
+- A entrevista passou a estimar minutos restantes e a lembrar o endereço de
+  retomada; o painel registra revisões cognitivas por cenário e perspectiva sem
+  identificar pessoas. A especificação vigente está em
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md). Restam
+  entrevistas e rótulos reais, validação de linguagem com as disciplinas e a
+  separação de performance, custo e sustentabilidade no
+  [`plano de evolução`](../backlog/instrument-evolution-plan.md).
+
 ## 2026-08-27 — Perspectivas de arquitetura, segurança, dados e design
 
 - O grafo `evidence-anamnesis-v13` passou a oferecer nove lentes e ramos próprios

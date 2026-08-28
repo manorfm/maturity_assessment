@@ -308,7 +308,7 @@ times, avaliar desempenho individual ou prescrever uma solução.
 - entidades e value objects nas fronteiras com invariantes;
 - schema vigente sem camada de retrocompatibilidade legada;
 - testes de domínio, integração, HTTP e jornada completa com Playwright;
-- showcase automatizado com organizações ruim, mediana e elite.
+- showcase automatizado com casos inspecionáveis (frágil, emergente, adaptativo e divergência).
 
 ## Arquitetura
 
@@ -353,24 +353,27 @@ npm run build
 npm run test:e2e
 ```
 
-Para executar o Playwright, gerar três projetos sintéticos e manter os relatórios
-abertos para inspeção manual:
+Para gerar casos sintéticos, um índice de inspeção e manter os relatórios
+abertos para investigação manual de textos e resultados:
 
 ```bash
 npm run demo
 ```
 
 O comando recria somente o SQLite temporário do showcase, percorre as jornadas em
-Chromium, imprime os links administrativos e mantém a aplicação na porta `3217`.
-`npm run showcase` é um alias do mesmo fluxo.
+Chromium, grava o índice em `/private/tmp/maturity-assessment-showcase.html`,
+imprime os links e mantém a aplicação na porta `3217`. Abra
+`http://127.0.0.1:3217/showcase` para as histórias, o que procurar, trechos
+observados e convites ociosos (entrevista à mão e o experimento do mapa por
+estrutura). `npm run showcase` é um alias do mesmo fluxo.
 
 ## Estado e limites atuais
 
 - O MVP está concluído e suporta um piloto controlado.
 - O acesso administrativo usa o segredo entregue na criação; ainda não há conta,
   recuperação ou SSO.
-- Dados, design, arquitetura e segurança usam o percurso comum; ramos próprios por
-  disciplina ainda precisam de validação antes da publicação.
+- Os ramos de dados, design, arquitetura e segurança já existem no grafo; a
+  linguagem ainda precisa de validação com cada disciplina antes de um piloto real.
 - A adaptação probabilística complementa o tronco declarativo somente no
   aprofundamento terminal.
 - Não há calibração empírica, aprendizado automático em produção ou atualização
