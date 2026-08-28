@@ -362,7 +362,7 @@ function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVers
 
 type ReportFinding = {
   kind?: 'correction' | 'evolution'; title: string; cause?: string; intervention: string; confidence?: number; priority?: number;
-  constraint?: string; reasons?: string[];
+  detailCapability?: string; constraint?: string; reasons?: string[];
   experiment?: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   foundation?: { source: string; principle: string; why: string };
 };
@@ -389,6 +389,17 @@ export function renderCapabilityDiagnosis(findings: ReportFinding[], capability:
 }
 
 function executiveImpact(finding: ReportFinding): string {
+  const capabilityImpacts: Record<string, string> = {
+    'product-direction': 'Decisões podem consumir investimento sem manter alinhamento com o resultado que justificou o trabalho.',
+    'discovery-validation': 'Hipóteses permanecem em execução por mais tempo antes que evidências de uso permitam corrigir a direção.',
+    'portfolio-management': 'Novas iniciativas disputam capacidade sem reconciliar resultados anteriores, custo de atraso e trabalho já iniciado.',
+    'planning-refinement': 'Riscos e dependências aparecem depois do compromisso, ampliando espera, mudança de escopo e retrabalho.',
+    'work-management': 'Trabalho simultâneo e bloqueios alongam o tempo até valor e reduzem a previsibilidade do compromisso.',
+    'continuous-integration': 'Mudanças se encontram tarde, tornando incompatibilidades maiores e mais caras de diagnosticar.',
+    'release-feedback': 'A organização demora mais para aprender com uma mudança e acumula risco antes de chegar às pessoas usuárias.',
+  };
+  const contextualImpact = finding.detailCapability ? capabilityImpacts[finding.detailCapability] : undefined;
+  if (contextualImpact) return contextualImpact;
   if (finding.kind === 'evolution') return 'A prática atual funciona, mas pode perder consistência ao mudar de escala, equipe ou contexto.';
   const impacts: Record<string, string> = {
     access: 'Filas de permissão aumentam o tempo de resposta e concentram risco em poucas pessoas.',

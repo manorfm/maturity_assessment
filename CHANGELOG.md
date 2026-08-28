@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.21.0
+
+- Publicou o grafo `evidence-anamnesis-v14` com alternativas comportamentais em
+  ordem estável por participação, mantendo saídas observacionais no fim.
+- Substituiu autodiagnóstico causal e termos julgadores por eventos reconhecíveis
+  do cotidiano e adicionou auditorias de qualidade do instrumento.
+- Separou título, mecanismo causal e ação; tornou fundamentos explícitos por padrão
+  e contextualizou métrica, horizonte e critério dos experimentos.
+
 ## 0.20.0
 
 - O showcase passou a gerar casos inspecionáveis (frágil com partição oculta,

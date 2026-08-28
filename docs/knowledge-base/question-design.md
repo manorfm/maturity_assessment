@@ -8,7 +8,9 @@
 - Separar preferência pessoal, comportamento real e restrição externa.
 - Combinar sinais; nenhuma pergunta isolada determina maturidade.
 - Incluir checagens de consistência sem repetir literalmente a questão.
-- Randomizar ordem quando ela puder induzir uma resposta “correta”.
+- Randomizar alternativas comportamentais quando a posição puder induzir uma
+  resposta “correta”. A ordem é determinística por participação e pergunta para
+  não mudar ao retomar; “não observo” e “não se aplica” permanecem no fim.
 - Registrar “não sei” / “não observo” como informação sobre visibilidade, não como
   falha automática. “Não se aplica” é contexto: a folha permanece não avaliada.
 - Toda opção de prática pontua comportamento; saídas observacionais não carregam
@@ -20,6 +22,13 @@
 - Depois de um sinal positivo, mudar contexto ou pressão para verificar se a prática
   é consistente; depois de um sinal negativo, discriminar ferramenta, processo,
   comunicação, desenho de times, arquitetura, governança e conhecimento.
+- Pedir que a pessoa reconheça o que ocorreu no último caso comparável; não pedir
+  que escolha diretamente a causa, a prática ideal ou um adjetivo sobre o time.
+- Manter cada alternativa centrada em uma decisão ou efeito observável. Quando uma
+  cadeia reunir comportamentos separáveis, aprofundá-la em outro nó do grafo.
+- Preferir linguagem cotidiana compartilhada. Variantes por perspectiva adaptam
+  cenário e poder de decisão; as alternativas só permanecem comuns quando todas as
+  perspectivas conseguem reconhecer o mesmo comportamento sem traduzir jargão.
 
 ## Formatos
 

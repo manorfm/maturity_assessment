@@ -50,6 +50,18 @@ O catálogo diferencia correção de um padrão negativo e evolução de uma pr�
 intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade abaixo
 de 4 pode receber evolução quando as respostas sustentam um passo concreto.
 
+Título, mecanismo causal e ação são campos distintos. O título descreve o efeito
+observado; a causa explica por que o sistema tende a reproduzi-lo; a ação propõe o
+menor teste compatível com a restrição. Cada padrão publicado referencia
+explicitamente um fundamento do catálogo — sem classificação por coincidência de
+palavras — e a ausência desse vínculo impede a inicialização do recomendador.
+
+Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
+expressa força da hipótese; prioridade combina alcance e severidade. Métrica,
+horizonte e critério de sucesso variam por família do problema (incidente, entrega,
+dados, arquitetura, experiência, aprendizagem, governança ou assistência) e devem
+permitir verificar melhoria sem deslocar risco ou espera para outra etapa.
+
 ## Seleção adaptativa
 
 O tronco comum garante cobertura básica. Ao fim dele, perguntas elegíveis são

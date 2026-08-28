@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão vigente `evidence-anamnesis-v13` começa por uma escolha neutra de
+A versão vigente `evidence-anamnesis-v14` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos
@@ -63,6 +63,12 @@ entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
 com base em lacunas de evidência e sinais anteriores, como uma entrevista.
+
+As alternativas de prática são apresentadas em ordem determinística por
+participação e nó. Isso reduz a pista recorrente de desejabilidade sem fazer a
+ordem saltar durante uma retomada. Saídas observacionais continuam no fim e não
+pontuam. A publicação também audita perguntas causais diretas, termos julgadores,
+jargão exposto e alternativas excessivamente compostas.
 
 O ramo de entrega aprofunda tanto sinais frágeis quanto maduros. Integração tardia
 discrimina quatro causas prováveis — feedback ferramental, processo/política, fronteira

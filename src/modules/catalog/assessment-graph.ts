@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-v13';
+export const GRAPH_VERSION = 'evidence-anamnesis-v14';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -12,7 +12,7 @@ export type Option = { id: string; label: string; signals: Signal[]; observation
 export const cannotObserve: Option = {
   id: CANNOT_OBSERVE_ID,
   observation: 'visibility',
-  label: 'Não observo esse evento no meu trabalho cotidiano; outras pessoas do fluxo veriam melhor.',
+  label: 'Não acompanho esse tipo de situação o suficiente para responder.',
   signals: [],
 };
 
@@ -71,7 +71,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'replan-together', label: 'As pessoas afetadas reavaliam risco, capacidade e escopo juntas; algo explícito deixa de ser feito.', signals: [{ capability: 'fluxo', pattern: 'feedback-integrado', weight: 2 , details: ['work-management'], layer: 'practice', constraint: 'none' }] },
       { id: 'add-to-sprint', label: 'O trabalho entra como prioridade adicional e cada etapa tenta absorvê-lo sem alterar o compromisso anterior.', signals: [{ capability: 'fluxo', pattern: 'sobrecarga-silenciosa', weight: -2 , details: ['portfolio-management', 'work-management', 'team-ownership'], layer: 'practice', constraint: 'none' }] },
       { id: 'manager-coordinates', label: 'Uma liderança reorganiza a sequência e negocia separadamente com cada área para viabilizar a entrega.', signals: [{ capability: 'organizacao', pattern: 'coordenacao-centralizada', weight: -1 , details: ['work-management', 'leadership-management', 'collaboration', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
-      { id: 'depends', label: 'Varia muito; não há um modo previsível de decidir e normalmente descobrimos o impacto durante a execução.', signals: [{ capability: 'governanca', pattern: 'decisao-opaca', weight: -2 , details: ['architecture-decisions'], layer: 'practice', constraint: 'none' }] },
+      { id: 'depends', label: 'A decisão é tomada caso a caso para preservar flexibilidade; impactos entre áreas costumam aparecer durante a execução.', signals: [{ capability: 'governanca', pattern: 'decisao-opaca', weight: -2 , details: ['architecture-decisions'], layer: 'practice', constraint: 'none' }] },
     ],
     next: 'shared-change',
   },
@@ -127,7 +127,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Uma entrega de baixo impacto aguarda a mesma aprovação aplicada a mudanças críticas. Uma exceção exigiria outra cadeia de decisão.',
     prompt: 'Como o controle costuma reagir a evidências de risco diferentes?',
     options: [
-      { id: 'proportional', label: 'Critérios explícitos mudam o caminho; casos seguros fluem com guardrails e exceções deixam trilha.', signals: [{ capability: 'governanca', pattern: 'governanca-proporcional', weight: 2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
+      { id: 'proportional', label: 'Critérios explícitos mudam o caminho; casos seguros usam controles automáticos e exceções deixam registro.', signals: [{ capability: 'governanca', pattern: 'governanca-proporcional', weight: 2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'same-flow', label: 'O caminho é praticamente igual para todos; isso simplifica a política, embora gere espera.', signals: [{ capability: 'governanca', pattern: 'controle-indiferenciado', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'relationship', label: 'A velocidade depende de conhecer responsáveis, explicar urgência e conseguir prioridade.', signals: [{ capability: 'governanca', pattern: 'governanca-relacional', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'unclear', label: 'É difícil explicar qual risco cada aprovação reduz ou quais evidências mudariam a decisão.', signals: [{ capability: 'governanca', pattern: 'controle-sem-proposito', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
@@ -147,11 +147,11 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'delivery-cause', type: 'probe', title: 'O que mantém a mudança isolada?',
     scenario: 'A integração tardia reaparece mesmo quando as pessoas tentam antecipá-la. Considere o impedimento que permanece após uma tentativa concreta de reduzir o intervalo.',
-    prompt: 'Qual causa provável explica melhor a recorrência?',
+    prompt: 'Na última tentativa de integrar mais cedo, qual impedimento permaneceu?',
     options: [
       { id: 'tooling-gap', label: 'O retorno automatizado é lento, instável ou incompleto; integrar cedo interrompe o trabalho sem produzir confiança.', signals: [{ capability: 'engenharia', pattern: 'causa-ferramental-feedback', weight: -1 , details: ['sdlc-automation'], layer: 'system', constraint: 'none' }] },
       { id: 'process-policy', label: 'Política, revisão ou processo exige acumular escopo ou aguardar uma etapa antes de compartilhar a mudança.', signals: [{ capability: 'governanca', pattern: 'causa-processo-lote', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'none' }] },
-      { id: 'team-boundary', label: 'Responsabilidades e prioridades atravessam times; ninguém consegue concluir a integração sem coordenar agendas.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-times', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'none' }] },
+      { id: 'team-boundary', label: 'Responsabilidades e prioridades atravessam times; concluir a integração exige combinar agendas e decisões de vários responsáveis.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-times', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'none' }] },
       { id: 'architecture-coupling', label: 'O sistema exige alterar e validar muitas partes juntas; uma mudança pequena não permanece pequena.', signals: [{ capability: 'arquitetura', pattern: 'causa-acoplamento-entrega', weight: -1 , details: ['release-feedback', 'evolvability'], layer: 'system', constraint: 'none' }] },
     ], next: 'release-control',
   },
@@ -215,7 +215,7 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'incident-routing-cause', type: 'probe', title: 'Por que o roteamento depende de pessoas?',
     scenario: 'Casos semelhantes percorrem caminhos diferentes e consomem tempo até encontrar quem consegue agir.',
-    prompt: 'Qual condição mais sustenta essa variação?',
+    prompt: 'No último caso que demorou a chegar ao responsável, o que manteve a espera?',
     options: [
       { id: 'unclear-ownership', label: 'Serviços e jornadas não possuem responsabilidade operacional clara ou atualizada.', signals: [{ capability: 'organizacao', pattern: 'causa-ownership-operacional', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'none' }] },
       { id: 'impact-unknown', label: 'Não há informação suficiente para relacionar sintomas técnicos, clientes afetados e criticidade.', signals: [{ capability: 'observabilidade', pattern: 'causa-impacto-invisivel', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
@@ -237,7 +237,7 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'diagnostic-cause', type: 'probe', title: 'O que impede diagnóstico seguro?',
     scenario: 'O acesso direto ou a combinação manual reaparece em incidentes diferentes, apesar do risco e do tempo consumido.',
-    prompt: 'Qual causa provável melhor explica essa dependência?',
+    prompt: 'Na última investigação que dependeu desse caminho, o que impediu formar a hipótese antes?',
     options: [
       { id: 'telemetry-gap', label: 'Sinais necessários não são coletados, indexados ou correlacionados de ponta a ponta.', signals: [{ capability: 'observabilidade', pattern: 'causa-lacuna-telemetria', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
       { id: 'tool-access-gap', label: 'A informação existe, mas ferramentas homologadas, licenças, acesso ou experiência não permitem usá-la no tempo do incidente.', signals: [{ capability: 'plataforma', pattern: 'causa-ferramenta-observabilidade', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
@@ -250,7 +250,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'A hipótese aponta para código, configuração, dado ou recurso de infraestrutura. Mitigar rápido importa, mas o estado precisa continuar reproduzível depois.',
     prompt: 'Como a mudança corretiva normalmente chega ao ambiente afetado?',
     options: [
-      { id: 'reproducible-change', label: 'A menor correção percorre um caminho rápido e verificável; código, configuração, schema ou infraestrutura mantêm uma fonte reproduzível e observada após aplicação.', signals: [{ capability: 'confiabilidade', pattern: 'correcao-reproduzivel', weight: 2 , details: ['incident-management', 'reproducible-infrastructure'], layer: 'practice', constraint: 'none' }] },
+      { id: 'reproducible-change', label: 'A menor correção percorre um caminho verificável; código, configuração, estrutura de dados e infraestrutura mantêm uma origem que outra pessoa consegue reproduzir e observar.', signals: [{ capability: 'confiabilidade', pattern: 'correcao-reproduzivel', weight: 2 , details: ['incident-management', 'reproducible-infrastructure'], layer: 'practice', constraint: 'none' }] },
       { id: 'controlled-emergency', label: 'Uma alteração emergencial é feita com dupla verificação e trilha; logo depois é reconciliada na fonte e validada contra divergência.', signals: [{ capability: 'governanca', pattern: 'mudanca-emergencial-reconciliada', weight: 1 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'live-console-change', label: 'Uma pessoa experiente altera configuração ou recurso diretamente e depois documenta ou tenta reproduzir a correção.', signals: [{ capability: 'plataforma', pattern: 'correcao-direta-na-producao', weight: -2 , details: ['incident-management'], layer: 'practice', constraint: 'none' }] },
       { id: 'live-data-change', label: 'Dados ou estruturas são ajustados diretamente para recuperar o serviço; validação e reconciliação dependem do contexto de quem executa.', signals: [{ capability: 'engenharia', pattern: 'correcao-manual-de-dados', weight: -2 , details: ['sustainable-design', 'integration-data', 'incident-management'], layer: 'practice', constraint: 'none' }] },
@@ -305,9 +305,9 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'blocked-cause', type: 'probe', title: 'O que torna a espera recorrente?',
     scenario: 'Bloqueios semelhantes aparecem em atividades diferentes e o simples escalonamento não reduz o tempo total.',
-    prompt: 'Qual condição mais mantém esse padrão?',
+    prompt: 'No bloqueio mais recente, o que continuou impedindo o trabalho de avançar?',
     options: [
-      { id: 'permission-policy', label: 'Permissões e controles não distinguem riscos nem oferecem um caminho seguro de autosserviço.', signals: [{ capability: 'governanca', pattern: 'causa-permissao-sem-autonomia', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'none' }] },
+      { id: 'permission-policy', label: 'Permissões e controles não distinguem riscos nem oferecem um caminho seguro que o próprio time consiga executar.', signals: [{ capability: 'governanca', pattern: 'causa-permissao-sem-autonomia', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'none' }] },
       { id: 'dependency-priority', label: 'A dependência pertence a outro grupo com prioridades e tempos que não são negociados pelo resultado compartilhado.', signals: [{ capability: 'organizacao', pattern: 'causa-prioridade-entre-times', weight: -1 , details: ['product-direction'], layer: 'system', constraint: 'none' }] },
       { id: 'missing-capability', label: 'Conhecimento necessário não está acessível no time, na plataforma ou em uma colaboração com tempo definido.', signals: [{ capability: 'organizacao', pattern: 'causa-competencia-inacessivel', weight: -1 , details: ['technical-capability'], layer: 'system', constraint: 'none' }] },
       { id: 'architecture-dependency', label: 'O desenho técnico exige alterar ou consultar muitos responsáveis para uma mudança comum.', signals: [{ capability: 'arquitetura', pattern: 'causa-dependencia-arquitetural', weight: -1 , details: ['evolvability'], layer: 'system', constraint: 'none' }] },
@@ -318,7 +318,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Uma necessidade relevante permite caminhos com custos, riscos e reversibilidade diferentes. O prazo pressiona por uma escolha rápida.',
     prompt: 'Como a opção que será construída normalmente ganha contexto e compromisso?',
     options: [
-      { id: 'options-recorded', label: 'Negócio, produto e competências técnicas necessárias avaliam opções e restrições; decisões relevantes registram contexto, trade-offs e sinais para revisão.', signals: [{ capability: 'arquitetura', pattern: 'decisao-intencional-revisavel', weight: 2 , details: ['architecture-decisions'], layer: 'practice', constraint: 'none' }] },
+      { id: 'options-recorded', label: 'Negócio, produto e competências necessárias comparam opções e restrições; decisões relevantes registram contexto, consequências e sinais para revisão.', signals: [{ capability: 'arquitetura', pattern: 'decisao-intencional-revisavel', weight: 2 , details: ['architecture-decisions'], layer: 'practice', constraint: 'none' }] },
       { id: 'design-handed-off', label: 'A solução chega definida e o time detalha implementação; dúvidas relevantes retornam aos responsáveis pela concepção.', signals: [{ capability: 'fluxo', pattern: 'solucao-entregue-pronta', weight: -2 , details: ['discovery-validation', 'planning-refinement', 'architecture-decisions'], layer: 'practice', constraint: 'none' }] },
       { id: 'expert-decides', label: 'Uma referência técnica escolhe o caminho usando experiência e comunica o necessário para o restante do grupo executar.', signals: [{ capability: 'arquitetura', pattern: 'decisao-concentrada', weight: -1 , details: ['architecture-decisions'], layer: 'practice', constraint: 'none' }] },
       { id: 'local-convention', label: 'O grupo segue o padrão habitual; alternativas são discutidas principalmente quando o padrão deixa de funcionar.', signals: [{ capability: 'aprendizado', pattern: 'decisao-por-inercia', weight: -1 , details: ['architecture-decisions'], layer: 'practice', constraint: 'none' }] },
@@ -374,7 +374,7 @@ const authoredNodes: AssessmentNode[] = [
     prompt: 'Como a organização costuma conduzir os dias seguintes?',
     options: [
       { id: 'system-learning', label: 'Reconstrói condições e decisões sem buscar culpado, protege relatos difíceis e muda o sistema com responsáveis e sinais de efeito.', signals: [{ capability: 'organizacao', pattern: 'aprendizado-blameless', weight: 2 , details: ['organizational-learning'], layer: 'outcome', constraint: 'none' }] },
-      { id: 'accountability-person', label: 'Identifica quem deveria ter evitado a falha e reforça revisão, atenção ou aprovação nessa etapa.', signals: [{ capability: 'organizacao', pattern: 'culpa-e-controle', weight: -2 , details: ['enabling-governance', 'leadership-management'], layer: 'practice', constraint: 'none' }] },
+      { id: 'accountability-person', label: 'Concentra a análise na etapa em que a falha escapou e acrescenta revisão, orientação ou aprovação para reduzir nova ocorrência.', signals: [{ capability: 'organizacao', pattern: 'culpa-e-controle', weight: -2 , details: ['enabling-governance', 'leadership-management'], layer: 'practice', constraint: 'none' }] },
       { id: 'private-resolution', label: 'Lideranças e especialistas resolvem o caso em um grupo pequeno para reduzir exposição e recuperar a entrega.', signals: [{ capability: 'aprendizado', pattern: 'aprendizado-restrito', weight: -2 , details: ['organizational-learning'], layer: 'outcome', constraint: 'none' }] },
       { id: 'move-on', label: 'Corrige o efeito imediato; com a pressão seguinte, a análise mais ampla perde prioridade.', signals: [{ capability: 'confiabilidade', pattern: 'incidente-sem-aprendizado', weight: -2 , details: ['incident-management', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
     ], next: 'improvement-loop',
@@ -406,7 +406,7 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'improvement-cause', type: 'probe', title: 'O que impede a melhoria de fechar o ciclo?',
     scenario: 'Os mesmos temas retornam em encontros diferentes sem mudança sustentada, mesmo quando o grupo reconhece o impacto.',
-    prompt: 'Qual condição mais mantém esse padrão?',
+    prompt: 'Na última ação que perdeu continuidade, o que impediu sua revisão?',
     options: [
       { id: 'no-capacity', label: 'Toda a capacidade é consumida por entregas e urgências; melhorar o sistema não compete de forma explícita na priorização.', signals: [{ capability: 'governanca', pattern: 'causa-melhoria-sem-capacidade', weight: -1 , details: ['portfolio-management', 'organizational-learning'], layer: 'system', constraint: 'none' }] },
       { id: 'no-autonomy', label: 'As causas dependem de decisões, políticas ou estruturas fora da autonomia do grupo e não há caminho efetivo de escalada.', signals: [{ capability: 'organizacao', pattern: 'causa-melhoria-sem-autonomia', weight: -1 , details: ['organizational-learning'], layer: 'system', constraint: 'none' }] },
@@ -420,8 +420,8 @@ const authoredNodes: AssessmentNode[] = [
     prompt: 'Quem normalmente altera essa mesma superfície?',
     options: [
       { id: 'single-owner', label: 'Um único time mantém a maior parte dessa superfície; outros colaboram por interfaces ou pedidos explícitos.', signals: [] },
-      { id: 'multiple-teams', label: 'Vários times alteram diretamente a mesma base, configuração ou pipeline ao longo do mesmo período.', signals: [] },
-      { id: 'mixed-boundaries', label: 'Há áreas com ownership claro e outras compartilhadas conforme produto, prazo ou especialidade.', signals: [] },
+      { id: 'multiple-teams', label: 'Vários times alteram diretamente a mesma base, configuração ou fluxo automatizado ao longo do mesmo período.', signals: [] },
+      { id: 'mixed-boundaries', label: 'Há áreas com responsabilidade clara e outras compartilhadas conforme produto, prazo ou especialidade.', signals: [] },
       { id: 'unknown-ownership', label: 'Não consigo identificar com segurança quem pode alterar ou quem responde por todas as partes relevantes.', signals: [] },
     ],
   },
@@ -430,7 +430,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Dois grupos preparam mudanças próximas na mesma base. Uma delas altera comportamento, configuração ou sequência esperada pela outra.',
     prompt: 'Como esse conflito normalmente se torna visível?',
     options: [
-      { id: 'early-contract-feedback', label: 'Ownership e mudanças em curso são visíveis; integração e verificações encontram incompatibilidades enquanto os lotes ainda são pequenos.', signals: [
+      { id: 'early-contract-feedback', label: 'Responsabilidades e mudanças em curso são visíveis; integração e verificações encontram incompatibilidades enquanto os lotes ainda são pequenos.', signals: [
         { capability: 'engenharia', pattern: 'concorrencia-detectada-cedo', weight: 2 , details: ['sustainable-design'], layer: 'practice', constraint: 'none' },
         { capability: 'organizacao', pattern: 'ownership-compartilhado-explicito', weight: 1 , details: ['team-ownership'], layer: 'practice', constraint: 'none' },
       ] },
@@ -452,10 +452,10 @@ const authoredNodes: AssessmentNode[] = [
   {
     id: 'shared-surface-cause', type: 'probe', title: 'Por que a colisão continua possível?',
     scenario: 'Problemas de concorrência reaparecem apesar de mais comunicação, revisão e cuidado das pessoas envolvidas.',
-    prompt: 'Qual causa provável melhor explica a recorrência?',
+    prompt: 'Na última colisão entre mudanças, qual condição permaneceu depois do alinhamento?',
     options: [
       { id: 'ambiguous-source', label: 'Há mais de uma origem ou processo capaz de produzir a versão considerada válida.', signals: [{ capability: 'engenharia', pattern: 'causa-multiplas-fontes', weight: -1 , details: ['sdlc-automation'], layer: 'system', constraint: 'none' }] },
-      { id: 'weak-boundaries', label: 'Os limites do sistema não acompanham ownership; mudanças locais exigem compreender uma área extensa compartilhada.', signals: [{ capability: 'arquitetura', pattern: 'causa-limites-sem-ownership', weight: -1 , details: ['domain-alignment', 'team-ownership'], layer: 'system', constraint: 'none' }] },
+      { id: 'weak-boundaries', label: 'Os limites do sistema não acompanham as responsabilidades; mudanças locais exigem compreender uma área extensa compartilhada.', signals: [{ capability: 'arquitetura', pattern: 'causa-limites-sem-ownership', weight: -1 , details: ['domain-alignment', 'team-ownership'], layer: 'system', constraint: 'none' }] },
       { id: 'independent-priorities', label: 'Times compartilham a superfície, mas objetivos, prazos e decisões são independentes.', signals: [{ capability: 'governanca', pattern: 'causa-prioridades-na-superficie', weight: -1 , details: ['product-direction', 'team-ownership'], layer: 'system', constraint: 'none' }] },
       { id: 'missing-verification', label: 'Contratos, configuração e integração não possuem feedback repetível antes da composição final.', signals: [{ capability: 'engenharia', pattern: 'causa-verificacao-concorrente', weight: -1 , details: ['continuous-integration', 'quality-strategy', 'organizational-learning'], layer: 'system', constraint: 'none' }] },
     ], next: 'team-health',
@@ -501,7 +501,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Uma mudança precisa alterar um contrato ou estrutura de dados consumida por outros componentes e times, sem interromper versões ainda em uso.',
     prompt: 'Como a compatibilidade costuma ser preservada?',
     options: [
-      { id: 'compatible-evolution', label: 'Consumidores e ownership são conhecidos; contrato e schema evoluem de forma compatível, verificável e com remoção planejada da versão anterior.', signals: [{ capability: 'arquitetura', pattern: 'contrato-e-dados-evoluem-compativeis', weight: 2 , details: ['sustainable-design', 'integration-data'], layer: 'practice', constraint: 'none' }, { capability: 'engenharia', pattern: 'compatibilidade-verificada', weight: 1 , details: ['sustainable-design'], layer: 'practice', constraint: 'none' }] },
+      { id: 'compatible-evolution', label: 'Consumidores e responsáveis são conhecidos; contrato e estrutura de dados evoluem de forma compatível, verificável e com remoção planejada da versão anterior.', signals: [{ capability: 'arquitetura', pattern: 'contrato-e-dados-evoluem-compativeis', weight: 2 , details: ['sustainable-design', 'integration-data'], layer: 'practice', constraint: 'none' }, { capability: 'engenharia', pattern: 'compatibilidade-verificada', weight: 1 , details: ['sustainable-design'], layer: 'practice', constraint: 'none' }] },
       { id: 'coordinated-migration', label: 'Responsáveis combinam uma janela e sequência de migração; a segurança depende de todos executarem o plano na ordem.', signals: [{ capability: 'fluxo', pattern: 'migracao-coordenada-em-lote', weight: -1 , details: ['organizational-learning'], layer: 'practice', constraint: 'none' }] },
       { id: 'defensive-consumers', label: 'Cada consumidor trata variações conhecidas e corrige incompatibilidades conforme elas aparecem nos ambientes.', signals: [{ capability: 'arquitetura', pattern: 'contrato-implicito-fragil', weight: -2 , details: ['integration-data'], layer: 'practice', constraint: 'none' }] },
       { id: 'direct-data-fix', label: 'Scripts e ajustes de dados são preparados para reconciliar casos depois da implantação, conforme o estado encontrado.', signals: [{ capability: 'engenharia', pattern: 'migracao-de-dados-contextual', weight: -2 , details: ['sustainable-design', 'integration-data', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
@@ -512,7 +512,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Uma jornada apresenta falhas e lentidão intermitentes. Melhorá-la compete com funcionalidades e os indicadores técnicos possuem distribuições diferentes ao longo do dia.',
     prompt: 'Como o grupo decide quanto esforço investir e se a situação melhorou?',
     options: [
-      { id: 'service-objective', label: 'Um objetivo ligado à experiência das pessoas usuárias orienta a prioridade; o grupo revisa a distribuição do impacto, não só a média, antes de decidir se a situação melhorou.', signals: [{ capability: 'confiabilidade', pattern: 'objetivo-de-confiabilidade-orienta-decisao', weight: 2 , details: ['product-direction', 'architecture-decisions', 'reliability-practice'], layer: 'practice', constraint: 'none' }, { capability: 'observabilidade', pattern: 'distribuicao-interpretada-no-contexto', weight: 2 , details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'service-objective', label: 'Um objetivo ligado à experiência orienta a prioridade; antes de concluir melhora, o grupo verifica se algum segmento continua afetado.', signals: [{ capability: 'confiabilidade', pattern: 'objetivo-de-confiabilidade-orienta-decisao', weight: 2 , details: ['product-direction', 'architecture-decisions', 'reliability-practice'], layer: 'practice', constraint: 'none' }, { capability: 'observabilidade', pattern: 'distribuicao-interpretada-no-contexto', weight: 2 , details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'fixed-thresholds', label: 'Metas e limites fixos orientam alertas; quando voltam ao normal, o trabalho planejado segue mesmo que parte das pessoas ainda perceba impacto.', signals: [{ capability: 'observabilidade', pattern: 'limites-escondem-distribuicao', weight: -1 , details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'incident-priority', label: 'O investimento cresce depois de incidentes e reclamações; fora desses períodos, funcionalidades recuperam prioridade.', signals: [{ capability: 'confiabilidade', pattern: 'confiabilidade-reativa-a-incidente', weight: -2 , details: ['reliability-practice', 'incident-management'], layer: 'practice', constraint: 'none' }] },
       { id: 'specialist-judgment', label: 'Especialistas avaliam gráficos e histórico e negociam caso a caso quanto risco é aceitável.', signals: [{ capability: 'organizacao', pattern: 'decisao-de-confiabilidade-concentrada', weight: -1 , details: ['architecture-decisions', 'reliability-practice'], layer: 'practice', constraint: 'none' }] },
@@ -554,7 +554,7 @@ const authoredNodes: AssessmentNode[] = [
     options: [
       { id: 'decided-limits', label: 'Há limites conscientes de espera e isolamento; o comportamento foi revisado e dá para explicar por que existe.', signals: [{ capability: 'arquitetura', pattern: 'dependencia-com-limites-decididos', weight: 2, details: ['evolvability', 'reliability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'retry-amplifies', label: 'O sistema insiste automaticamente e a fila ou a carga no dependente cresce.', signals: [{ capability: 'confiabilidade', pattern: 'retry-amplia-falha', weight: -2, details: ['reliability-practice', 'evolvability'], layer: 'practice', constraint: 'none' }] },
-      { id: 'wait-forever', label: 'As requisições esperam até alguém intervir ou o cliente desistir.', signals: [{ capability: 'confiabilidade', pattern: 'espera-sem-limite', weight: -2, details: ['reliability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'wait-forever', label: 'As requisições preservam a espera para evitar uma falha imediata; a recuperação depende de intervenção ou de o cliente encerrar a tentativa.', signals: [{ capability: 'confiabilidade', pattern: 'espera-sem-limite', weight: -2, details: ['reliability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'cosmetic-limit', label: 'Existe um limite configurado com valor tão alto ou tão genérico que, na prática, não muda o comportamento.', signals: [{ capability: 'arquitetura', pattern: 'limite-cosmetico', weight: -1, details: ['evolvability', 'reliability-practice'], layer: 'practice', constraint: 'none' }] },
     ], next: 'incentive-context',
   },
@@ -594,7 +594,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'proportional-review', label: 'Há revisão proporcional ao risco, rastros do que foi assistido e um caminho suportado para o modelo autorizado.', signals: [{ capability: 'engenharia', pattern: 'ia-revisada-proporcional', weight: 2, details: ['quality-strategy', 'software-security', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
       { id: 'shadow-model', label: 'Cada pessoa cola a ferramenta que tiver; não há política visível de dado, modelo ou segredo.', signals: [{ capability: 'governanca', pattern: 'ia-sombra-sem-politica', weight: -2, details: ['enabling-governance', 'software-security', 'cloud-security'], layer: 'system', constraint: 'governance' }] },
       { id: 'understanding-drops', label: 'A entrega acelera, mas menos pessoas conseguem explicar o que foi feito ou revisar com segurança.', signals: [{ capability: 'engenharia', pattern: 'ia-substitui-entendimento', weight: -2, details: ['technical-capability', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
-      { id: 'generated-as-fact', label: 'Diagnóstico ou texto gerado é tratado como fato até alguém desmentir na operação.', signals: [{ capability: 'confiabilidade', pattern: 'ia-diagnostico-como-fato', weight: -2, details: ['incident-management', 'observability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'generated-as-fact', label: 'Diagnóstico ou texto gerado acelera a decisão e segue como hipótese principal; a validação independente costuma ocorrer somente quando aparece divergência.', signals: [{ capability: 'confiabilidade', pattern: 'ia-diagnostico-como-fato', weight: -2, details: ['incident-management', 'observability-practice'], layer: 'practice', constraint: 'none' }] },
     ], next: 'accidental-complexity',
   },
   {
@@ -604,7 +604,7 @@ const authoredNodes: AssessmentNode[] = [
     options: [
       { id: 'simplicity-reviewed', label: 'O grupo revisa se a complexidade ainda se justifica e reduz ou mantém com um motivo explícito.', signals: [{ capability: 'arquitetura', pattern: 'simplicidade-revista', weight: 2, details: ['evolvability', 'architecture-decisions'], layer: 'practice', constraint: 'none' }] },
       { id: 'layer-stays', label: 'A camada permanece porque já está lá; o custo é absorvido nas próximas mudanças.', signals: [{ capability: 'arquitetura', pattern: 'camada-sem-revisao', weight: -2, details: ['evolvability'], layer: 'practice', constraint: 'none' }] },
-      { id: 'prestige-design', label: 'A escolha se sustenta pelo prestígio técnico ou pela moda da solução, mais do que pelo problema atual.', signals: [{ capability: 'arquitetura', pattern: 'prestigio-tecnico', weight: -1, details: ['architecture-decisions', 'evolvability'], layer: 'practice', constraint: 'none' }] },
+      { id: 'prestige-design', label: 'A solução permanece por ser conhecida e aceita pelo grupo; comparar uma alternativa mais simples competiria com entregas já assumidas.', signals: [{ capability: 'arquitetura', pattern: 'prestigio-tecnico', weight: -1, details: ['architecture-decisions', 'evolvability'], layer: 'practice', constraint: 'none' }] },
       { ...notApplicableEvent, label: 'Não construímos software com limites técnicos que possam ganhar camadas extras.' },
     ], next: 'noisy-signal',
   },
@@ -613,9 +613,9 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Depois de um deploy, um gráfico de latência “melhorou”: a média caiu, um extremo piorou e o volume caiu cerca de 40%. Alguém pergunta se podem comunicar sucesso.',
     prompt: 'Qual decisão o grupo toma com o que tem?',
     options: [
-      { id: 'ask-denominator', label: 'Pedem o denominador, o recorte e o que aconteceu com a cauda antes de concluir; se a base ficou pequena, não celebram.', signals: [{ capability: 'observabilidade', pattern: 'recusa-concluir-sem-contexto', weight: 2, details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ask-denominator', label: 'Verificam quantos casos formam o indicador e quais grupos foram afetados. Com poucos casos, esperam mais evidência antes de concluir.', signals: [{ capability: 'observabilidade', pattern: 'recusa-concluir-sem-contexto', weight: 2, details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
       { id: 'celebrate-mean', label: 'Comunicam a melhoria da média e seguem o plano, porque o indicador principal desceu.', signals: [{ capability: 'observabilidade', pattern: 'celebra-media', weight: -2, details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },
-      { id: 'ignore-sample', label: 'Tratam o gráfico como prova suficiente; tamanho da base e mudança de mistura não entram na conversa.', signals: [{ capability: 'observabilidade', pattern: 'ignora-base-pequena', weight: -1, details: ['observability-practice', 'product-direction'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ignore-sample', label: 'Usam o gráfico principal para decidir com rapidez; tamanho da base e mudança na composição são investigados somente quando aparece uma divergência.', signals: [{ capability: 'observabilidade', pattern: 'ignora-base-pequena', weight: -1, details: ['observability-practice', 'product-direction'], layer: 'practice', constraint: 'none' }] },
     ], next: 'leadership-enablement',
   },
   {
@@ -706,7 +706,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Uma zona, serviço gerenciado ou componente de infraestrutura degrada enquanto a aplicação continua parcialmente disponível.', prompt: 'Como a recuperação costuma ocorrer?',
     options: [
       { id: 'designed-recovery', label: 'O desenho possui limites, redundância e recuperação testada; sinais mostram impacto e acionam resposta reproduzível.', signals: [{ capability: 'plataforma', pattern: 'infraestrutura-recupera-por-desenho-testado', weight: 2, details: ['cloud-reliability', 'reproducible-infrastructure', 'platform-autonomy', 'evolvability'], layer: 'consistency' , constraint: 'none' }] },
-      { id: 'provider-runbook', label: 'Runbooks orientam especialistas a redirecionar, escalar ou recriar recursos conforme o evento.', signals: [{ capability: 'plataforma', pattern: 'recuperacao-cloud-depende-de-runbook', weight: -1, details: ['cloud-reliability', 'technical-capability'], layer: 'system', constraint: 'knowledge'  }] },
+      { id: 'provider-runbook', label: 'Instruções testadas orientam especialistas a redirecionar, escalar ou recriar recursos conforme o evento.', signals: [{ capability: 'plataforma', pattern: 'recuperacao-cloud-depende-de-runbook', weight: -1, details: ['cloud-reliability', 'technical-capability'], layer: 'system', constraint: 'knowledge'  }] },
       { id: 'console-recovery', label: 'Pessoas com acesso ajustam capacidade, rede ou configuração no console até estabilizar.', signals: [{ capability: 'plataforma', pattern: 'recuperacao-cloud-por-console', weight: -2, details: ['cloud-reliability', 'reproducible-infrastructure'], layer: 'system', constraint: 'access'  }] },
     ], next: 'platform-cloud-resilience-validation',
   },
@@ -723,7 +723,7 @@ const authoredNodes: AssessmentNode[] = [
     id: 'platform-cloud-efficiency', title: 'Eficiência como decisão arquitetural',
     scenario: 'Custo e consumo cresceram, mas tráfego, criticidade e comportamento variam entre jornadas.', prompt: 'Como otimizações são priorizadas?',
     options: [
-      { id: 'unit-economics', label: 'Custo, capacidade, impacto e resultado por jornada orientam trade-offs; otimização é validada sem transferir risco oculto.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-orientada-a-resultado', weight: 2, details: ['cloud-efficiency', 'product-direction'], layer: 'outcome' , constraint: 'none' }] },
+      { id: 'unit-economics', label: 'Custo, capacidade, impacto e resultado por jornada orientam escolhas; a otimização é validada sem transferir risco para outra parte.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-orientada-a-resultado', weight: 2, details: ['cloud-efficiency', 'product-direction'], layer: 'outcome' , constraint: 'none' }] },
       { id: 'cost-target', label: 'Metas de redução orientam áreas; especialistas encontram recursos ociosos e oportunidades de compromisso.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-por-meta-de-custo', weight: -1, details: ['cloud-efficiency', 'enabling-governance'], layer: 'system', constraint: 'governance'  }] },
       { id: 'after-bill', label: 'O tema ganha prioridade quando a fatura ou limite de capacidade chama atenção da liderança.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-reativa-a-fatura', weight: -2, details: ['cloud-efficiency', 'portfolio-management'], layer: 'outcome', constraint: 'process'  }] },
     ], next: 'platform-cloud-sustainability',
@@ -732,8 +732,8 @@ const authoredNodes: AssessmentNode[] = [
     id: 'platform-cloud-sustainability', title: 'Eficiência sustentada no cotidiano',
     scenario: 'Uma otimização reduziu consumo inicialmente, mas produtos, regiões e configurações continuam evoluindo.', prompt: 'Como o resultado permanece saudável?',
     options: [
-      { id: 'continuous-guardrails', label: 'Ownership, orçamento, sinais e guardrails acompanham novas mudanças; capacidade e descarte são revistos continuamente.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-com-ciclo-continuo', weight: 2, details: ['cloud-efficiency', 'reproducible-infrastructure'], layer: 'consistency' , constraint: 'none' }] },
-      { id: 'periodic-review', label: 'Relatórios periódicos geram campanhas de ajuste conduzidas por plataforma ou FinOps.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-por-campanha', weight: -1, details: ['cloud-efficiency', 'organizational-learning'], layer: 'consistency', constraint: 'process'  }] },
+      { id: 'continuous-guardrails', label: 'Responsabilidade, orçamento, sinais e controles automáticos acompanham novas mudanças; capacidade e descarte são revistos continuamente.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-com-ciclo-continuo', weight: 2, details: ['cloud-efficiency', 'reproducible-infrastructure'], layer: 'consistency' , constraint: 'none' }] },
+      { id: 'periodic-review', label: 'Relatórios periódicos geram campanhas de ajuste conduzidas por plataforma ou especialistas em custos.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-por-campanha', weight: -1, details: ['cloud-efficiency', 'organizational-learning'], layer: 'consistency', constraint: 'process'  }] },
       { id: 'local-ownership', label: 'Cada time recebe visibilidade e decide quando otimizar conforme suas prioridades.', signals: [{ capability: 'plataforma', pattern: 'eficiencia-cloud-sem-decisao-compartilhada', weight: -1, details: ['cloud-efficiency', 'team-ownership'], layer: 'system', constraint: 'organization'  }] },
     ], next: 'platform-path-to-capability',
   },
@@ -743,7 +743,7 @@ const authoredNodes: AssessmentNode[] = [
     prompt: 'Como essa carga costuma ser tratada?',
     options: [
       { id: 'load-visible', label: 'Os tipos de trabalho são visíveis e alguém decide o que o grupo deixa de absorver nesta semana.', signals: [{ capability: 'organizacao', pattern: 'carga-cognitiva-negociada', weight: 2, details: ['team-ownership', 'leadership-management'], layer: 'practice', constraint: 'none' }] },
-      { id: 'silent-accumulation', label: 'Tudo entra; o grupo dá um jeito e a espera ou o erro aparecem depois.', signals: [{ capability: 'organizacao', pattern: 'acumulo-silencioso-de-tipos', weight: -2, details: ['team-ownership', 'leadership-management'], layer: 'system', constraint: 'organization' }] },
+      { id: 'silent-accumulation', label: 'O grupo absorve os diferentes tipos de trabalho para manter os compromissos; espera e erros ficam visíveis posteriormente.', signals: [{ capability: 'organizacao', pattern: 'acumulo-silencioso-de-tipos', weight: -2, details: ['team-ownership', 'leadership-management'], layer: 'system', constraint: 'organization' }] },
       { id: 'hero-switch', label: 'Depende de quem consegue trocar de contexto mais rápido quando a fila aperta.', signals: [{ capability: 'organizacao', pattern: 'heroi-troca-contexto', weight: -1, details: ['team-ownership'], layer: 'practice', constraint: 'organization' }] },
     ],
   },
@@ -772,7 +772,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Uma alteração de prazo normal passa a manipular dado que identifica pessoas ou abre um caminho novo entre sistemas. Não há incidente em curso.',
     prompt: 'Como o risco entra nessa mudança?',
     options: [
-      { id: 'threat-in-design', label: 'O grupo descreve o que pode dar errado — quem acessa, o que vaza, o que falha — e isso muda desenho, teste e evidência antes de liberar.', signals: [{ capability: 'engenharia', pattern: 'ameaca-modelada-na-mudanca', weight: 2, details: ['software-security', 'cloud-security'], layer: 'practice', constraint: 'none' }] },
+      { id: 'threat-in-design', label: 'O grupo descreve como acesso, dado ou confiança podem falhar; riscos relevantes mudam desenho e verificação antes da liberação.', signals: [{ capability: 'engenharia', pattern: 'ameaca-modelada-na-mudanca', weight: 2, details: ['software-security', 'cloud-security'], layer: 'practice', constraint: 'none' }] },
       { id: 'checklist-security', label: 'Uma lista ou verificação automática cobre o tema; o julgamento sobre o novo caminho fica para depois da implementação.', signals: [{ capability: 'engenharia', pattern: 'ameaca-so-em-checklist', weight: -1, details: ['software-security'], layer: 'practice', constraint: 'process' }] },
       { id: 'after-incident-security', label: 'O tema só ganha atenção se alguém lembrar de um incidente parecido ou se segurança for acionada no fim.', signals: [{ capability: 'engenharia', pattern: 'ameaca-depois-do-incidente', weight: -2, details: ['software-security', 'technical-capability'], layer: 'system', constraint: 'knowledge' }] },
     ], next: 'security-after-finding',
@@ -792,7 +792,7 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Dois produtos mostram o mesmo indicador com valores diferentes. Cada um jura que a fonte está certa. Uma decisão de negócio precisa escolher um.',
     prompt: 'Como o desencontro normalmente é tratado?',
     options: [
-      { id: 'agreed-meaning', label: 'Alguém com ownership do significado reconcilia definição, recorte e tempo; a decisão espera esse acordo.', signals: [{ capability: 'arquitetura', pattern: 'significado-de-dado-acordado', weight: 2, details: ['integration-data', 'product-direction'], layer: 'practice', constraint: 'none' }] },
+      { id: 'agreed-meaning', label: 'Uma pessoa responsável pelo significado reconcilia definição, recorte e tempo; a decisão espera esse acordo.', signals: [{ capability: 'arquitetura', pattern: 'significado-de-dado-acordado', weight: 2, details: ['integration-data', 'product-direction'], layer: 'practice', constraint: 'none' }] },
       { id: 'number-without-owner', label: 'Cada produto defende o próprio número; a decisão usa o gráfico mais convincente da reunião.', signals: [{ capability: 'arquitetura', pattern: 'numero-diverge-sem-dono', weight: -2, details: ['integration-data'], layer: 'practice', constraint: 'organization' }] },
       { id: 'manual-reconcile', label: 'Alguém monta uma planilha pontual para a reunião e o conflito volta na semana seguinte.', signals: [{ capability: 'arquitetura', pattern: 'reconciliacao-artesanal-de-dado', weight: -1, details: ['integration-data'], layer: 'practice', constraint: 'process' }] },
     ], next: 'data-reconciliation',
@@ -973,19 +973,19 @@ export const nodeVariants: NodeVariant[] = [
   { nodeId: 'technical-stewardship', profile: 'quality', scenario: 'Uma área muda com frequência, concentra escapes e torna a regressão cada vez mais custosa. A próxima entrega tocará novamente esse código.', prompt: 'Como qualidade participa da redução sustentável desse risco?' },
   { nodeId: 'technical-stewardship', profile: 'engineering', scenario: 'Uma área muda com frequência, concentra defeitos e depende de poucas pessoas. A próxima alteração precisa entregar valor sem ampliar o custo futuro.', prompt: 'Como o grupo normalmente trata essa condição durante a mudança?' },
   { nodeId: 'data-contract-change', profile: 'product', scenario: 'Uma evolução de comportamento depende de dados e contratos usados por outras jornadas. Uma migração incompatível pode afetar clientes fora do escopo visível.', prompt: 'Como risco e sequência normalmente entram na decisão de produto?' },
-  { nodeId: 'data-contract-change', profile: 'engineering', scenario: 'Um contrato ou schema precisa evoluir enquanto consumidores e versões anteriores continuam ativos.', prompt: 'Como compatibilidade e remoção normalmente são conduzidas?' },
+  { nodeId: 'data-contract-change', profile: 'engineering', scenario: 'Uma estrutura de dados compartilhada precisa evoluir enquanto consumidores e versões anteriores continuam ativos.', prompt: 'Como compatibilidade e remoção normalmente são conduzidas?' },
   { nodeId: 'data-contract-change', profile: 'platform', scenario: 'Dados e contratos atravessam componentes com ciclos independentes, e a plataforma pode ou não oferecer verificação e migração reproduzíveis.', prompt: 'Como a mudança normalmente atravessa esses limites?' },
   { nodeId: 'reliability-objective', profile: 'management', scenario: 'Confiabilidade compete com novas entregas e o impacto varia por horário e grupo de clientes. Você precisa decidir capacidade e risco aceitável.', prompt: 'Como a organização normalmente sustenta essa decisão?' },
   { nodeId: 'reliability-objective', profile: 'product', scenario: 'Parte dos clientes percebe degradação intermitente enquanto a demanda por novas funcionalidades continua.', prompt: 'Como experiência, risco e prioridade normalmente são equilibrados?' },
   { nodeId: 'reliability-objective', profile: 'engineering', scenario: 'Falhas e latência variam pela distribuição; médias parecem aceitáveis, mas uma parte da jornada continua degradada.', prompt: 'Como o time decide se deve mudar o sistema e se a mudança funcionou?' },
   { nodeId: 'reliability-objective', profile: 'platform', scenario: 'Sinais de aplicação e infraestrutura possuem distribuições diferentes e precisam orientar capacidade, confiabilidade e ritmo de mudança.', prompt: 'Como esses sinais normalmente se tornam uma decisão compartilhada?' },
-  { nodeId: 'leadership-enablement', profile: 'management', scenario: 'Um gargalo sistêmico atravessa times e políticas e não pode ser resolvido pela otimização isolada de uma squad.', prompt: 'Como você normalmente cria ownership, capacidade e aprendizado para removê-lo?' },
+  { nodeId: 'leadership-enablement', profile: 'management', scenario: 'Um gargalo sistêmico atravessa times e políticas e não pode ser resolvido pela otimização isolada de uma squad.', prompt: 'Como você normalmente define responsabilidade, reserva capacidade e promove aprendizado para removê-lo?' },
   { nodeId: 'leadership-enablement', profile: 'engineering', scenario: 'O time reconhece um gargalo recorrente, mas decisões e capacidade necessárias estão além da sua autonomia.', prompt: 'Como a liderança normalmente transforma essa evidência em mudança do sistema?' },
   { nodeId: 'leadership-enablement', profile: 'platform', scenario: 'Vários times esbarram na mesma capacidade ausente e a plataforma precisa evoluir sem virar apenas uma fila central.', prompt: 'Como liderança e times normalmente convertem a demanda recorrente em capacidade compartilhada?' },
   { nodeId: 'leadership-enablement', profile: 'architecture', scenario: 'O mesmo limite ruim gera coordenação crescente entre grupos. Resolver exige capacidade e decisão além de um time.', prompt: 'Como a liderança normalmente transforma essa evidência em mudança de fronteira?' },
-  { nodeId: 'leadership-enablement', profile: 'security', scenario: 'O mesmo risco de dado ou confiança reaparece em mudanças comuns e não cabe na revisão de uma única squad.', prompt: 'Como a liderança normalmente cria ownership e capacidade para mudar o sistema?' },
+  { nodeId: 'leadership-enablement', profile: 'security', scenario: 'O mesmo risco de dado ou confiança reaparece em mudanças comuns e não cabe na revisão de uma única squad.', prompt: 'Como a liderança normalmente define responsabilidade e reserva capacidade para mudar o sistema?' },
   { nodeId: 'leadership-enablement', profile: 'data', scenario: 'Números e contratos divergem entre produtos e a correção exige dono, capacidade e acordo além de um time.', prompt: 'Como a liderança normalmente converte o desencontro em significado compartilhado?' },
-  { nodeId: 'leadership-enablement', profile: 'design', scenario: 'A experiência das pessoas usuárias piora em um fluxo que atravessa produto, engenharia e operação, e nenhuma squad resolve sozinha.', prompt: 'Como a liderança normalmente cria ownership para mudar a jornada?' },
+  { nodeId: 'leadership-enablement', profile: 'design', scenario: 'A experiência das pessoas usuárias piora em um fluxo que atravessa produto, engenharia e operação, e nenhuma squad resolve sozinha.', prompt: 'Como a liderança normalmente define responsabilidade para mudar a jornada?' },
 ];
 
 export const SECONDS_PER_SCENARIO = 45;

@@ -12,8 +12,9 @@ export type InterventionEvidenceRule = { evidencePatterns?: string[]; contradict
 export function defineInterventionCatalog(seeds: Record<string, InterventionSeed>, rules: Record<string, InterventionEvidenceRule> = {}): Record<string, InterventionDefinition> {
   return Object.fromEntries(Object.entries(seeds).map(([pattern, seed]) => {
     const rule = rules[pattern] ?? {};
+    const foundation = seed.foundation ?? foundationFor(pattern);
     return [pattern, {
-      ...seed, cause: seed.title, action: seed.intervention, foundation: seed.foundation ?? foundationFor(pattern), ...experimentDefaults('none', pattern), ...rule,
+      ...seed, cause: causeFor(foundation, seed.title), action: seed.intervention, foundation, ...experimentDefaults('none', pattern), ...rule,
       evidencePatterns: rule.evidencePatterns ?? [pattern], contradictionPatterns: rule.contradictionPatterns ?? [],
     }];
   }));
@@ -100,68 +101,75 @@ function posteriorByPattern(signals: GroupSignal[], candidates: string[], correc
 }
 
 export function foundationFor(pattern: string): InterventionFoundation {
-  if (/credencial|identidade|segredo|permissao|acesso-artesanal/.test(pattern)) {
-    return { source: 'Well-Architected — Security', principle: 'Identidade com privilégio mínimo e proteção de dados', why: 'O problema observado é credencial ou acesso, não a ausência de um produto de cofre.' };
-  }
-  if (/ia-|modelo/.test(pattern)) {
-    return { source: 'Uso responsável de assistência', principle: 'Supervisão proporcional, dados e entendimento', why: 'IA é contexto de trabalho; a capacidade avaliada continua sendo qualidade, segurança e aprendizado.' };
-  }
-  if (/retry|espera-sem-limite|limite-cosmetico|dependencia-com-limites/.test(pattern)) {
-    return { source: 'Resilience engineering / SRE', principle: 'Limites conscientes em dependências', why: 'A maturidade está em decidir espera, isolamento e falha, não em nomear uma biblioteca.' };
-  }
-  if (/incentivo|portfolio|resultado-sem|entrega-substitui|ocupacao-como/.test(pattern)) {
-    return { source: 'Lean / Accelerate', principle: 'Incentivo alinhado a resultado, não a ocupação', why: 'Cerimônia de OKR não mede maturidade; o que pesa na decisão sim.' };
-  }
-  if (/camada-sem-revisao|prestigio-tecnico|simplicidade|termo-diverge|glossario-adia|linguagem-compartilhada/.test(pattern)) {
-    return { source: 'Arquitetura evolutiva / DDD', principle: 'Linguagem e limite visíveis na mudança', why: 'Glossário ou framework não medem maturidade; o termo que atravessa a entrega sim.' };
-  }
-  if (/significado-de-dado|numero-diverge|reconciliacao-artesanal|redefinicao-silenciosa|dado-espera|contrato-de-dado/.test(pattern)) {
-    return { source: 'Dados como produto', principle: 'Significado com dono, recorte e evolução visível aos consumidores', why: 'Ferramenta de dados não pontua; o desencontro de número e a mudança silenciosa de definição sim.' };
-  }
-  if (/experiencia-entra|design-chega|design-como|interface-sem|aprovacao-visual/.test(pattern)) {
-    return { source: 'Discovery e evidência de uso', principle: 'Experiência entra na decisão e volta com evidência', why: 'Ferramenta de design não pontua; handoff tardio e aprovação visual sem uso sim.' };
-  }
-  if (/celebra-media|ignora-base|distribuicao|limiar-sem-contexto|limites-escondem/.test(pattern)) {
-    return { source: 'Data literacy / SRE', principle: 'Decisão com denominador, cauda e incerteza', why: 'Dashboard sem interpretação gera falsa precisão.' };
-  }
-  if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) {
-    return { source: 'SRE / blameless postmortem', principle: 'Detectar, correlacionar e aprender sem culpa', why: 'A prática é o ciclo de incidente, não a ferramenta de observabilidade.' };
-  }
-  if (/integracao|release|deploy|entrega|empacotamento/.test(pattern)) {
-    return { source: 'Continuous Delivery', principle: 'Lote pequeno, feedback cedo, caminho reproduzível', why: 'Pipeline nominal não substitui o comportamento sob pressão.' };
-  }
-  if (/qualidade|teste|regressao|seguranca|vulnerab|ameaca-|achado-/.test(pattern)) {
-    return { source: 'Qualidade no fluxo', principle: 'Risco entra cedo; verificação é feedback, não fase', why: 'Suíte ou scanner presente não prova estratégia de qualidade.' };
-  }
-  if (/governanca|controle|aprovacao/.test(pattern)) {
-    return { source: 'Governança habilitadora', principle: 'Controle proporcional ao risco, com evidência que muda decisão', why: 'Aprovação que não distingue risco só adiciona espera.' };
-  }
-  if (/cloud|infraestrutura|plataforma|provisionamento|caminho-suportado|ticket-heroi|documentacao-substitui/.test(pattern)) {
-    return { source: 'Well-Architected / platform engineering', principle: 'Caminho suportado com guardrails, não fila artesanal', why: 'Time de plataforma, IDP ou console não é maturidade operacional.' };
-  }
-  if (/ownership|fronteira|coordenacao|team|carga-cognitiva|acumulo-silencioso|heroi-troca|modo-implicito|contorno-para-nao|modo-de-interacao/.test(pattern)) {
-    return { source: 'Team Topologies', principle: 'Fronteira, carga e modo de interação alinhados ao fluxo', why: 'Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo.' };
-  }
-  return { source: 'Melhoria contínua', principle: 'Mudança pequena, dono, sinal de efeito', why: 'A intervenção ataca o comportamento observado, não um inventário de práticas.' };
+  const foundation = interventionFoundations[pattern];
+  if (!foundation) throw new Error(`Intervention foundation is missing: ${pattern}`);
+  return foundation;
 }
 function experimentDefaults(constraint: ConstraintKind, pattern = ''): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
   const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', knowledge: 'Liderança técnica com a disciplina habilitadora', process: 'Responsável pelo fluxo com as pessoas que executam o processo', tooling: 'Engenharia com plataforma', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado' };
-  return { owner: owners[constraint], metric: metricFor(pattern), reviewHorizon: 'duas iterações ou 30 dias', successCriterion: successFor(pattern) };
+  return { owner: owners[constraint], metric: metricFor(pattern), reviewHorizon: horizonFor(pattern), successCriterion: successFor(pattern) };
+}
+function causeFor(foundation: InterventionFoundation, observedEffect: string): string {
+  const causes: Record<string, string> = {
+    'Continuous Delivery': 'O caminho de mudança não produz feedback pequeno, frequente e reproduzível sob as condições observadas.',
+    'Qualidade no fluxo': 'O risco entra tarde ou depende de uma etapa especializada, impedindo feedback durante a construção.',
+    'SRE / blameless postmortem': 'Impacto, responsabilidade, diagnóstico e aprendizado não formam um ciclo operacional contínuo.',
+    'Team Topologies': 'Fronteiras, prioridades ou carga cognitiva exigem coordenação fora do fluxo para concluir o trabalho.',
+    'Governança habilitadora': 'O controle não diferencia risco com evidências capazes de mudar o caminho ou a decisão.',
+    'Well-Architected / platform engineering': 'A capacidade depende de intervenção especializada em vez de um caminho suportado e repetível.',
+    'Well-Architected — Security': 'Identidade ou acesso dependem de concessão artesanal sem escopo, validade e trilha adequados.',
+    'Lean / Accelerate': 'Incentivos e capacidade favorecem iniciar ou concluir trabalho, sem reconciliar resultado e custo de atraso.',
+    'Arquitetura evolutiva / DDD': 'O limite ou significado compartilhado permanece implícito e transfere custo para coordenação e mudanças futuras.',
+    'Dados como produto': 'O significado ou contrato do dado muda sem ownership e compatibilidade visíveis aos consumidores.',
+    'Discovery e evidência de uso': 'A experiência entra depois da decisão e não possui evidência com poder para reabrir o investimento.',
+    'Data literacy / SRE': 'A decisão usa um agregado sem considerar denominador, distribuição e incerteza do recorte.',
+    'Resilience engineering / SRE': 'Espera, repetição e isolamento da dependência não foram definidos pelo impacto aceitável.',
+    'Uso responsável de assistência': 'A assistência entra no fluxo sem supervisão, rastreabilidade ou proteção proporcional ao risco.',
+    'Melhoria contínua': 'O problema é reconhecido, mas não recebe ownership, capacidade e revisão de efeito suficientes para mudar o sistema.',
+  };
+  const mechanism = causes[foundation.source] ?? 'A condição observada permanece sem um mecanismo estável de feedback e revisão de efeito.';
+  return `${mechanism} Neste recorte, o efeito observado é: ${lowerFirst(observedEffect)}.`;
 }
 function metricFor(pattern: string): string {
+  if (/reconhecimento|incentivo/.test(pattern)) return 'decisões de reconhecimento que citam efeito observado e diferença entre trabalho iniciado e resultado alcançado';
   if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) return 'tempo até detectar, formar hipótese e mitigar; recorrência da mesma classe de falha';
   if (/integracao|release|deploy|entrega|empacotamento/.test(pattern)) return 'lead time, espera até feedback e taxa de falha ou retrabalho da mudança';
   if (/qualidade|teste|regressao|seguranca|vulnerab/.test(pattern)) return 'tempo de feedback, escapes por risco e retrabalho após a verificação';
   if (/produto|discovery|resultado|portfolio|prioridade/.test(pattern)) return 'tempo até evidência, decisões alteradas e trabalho interrompido por hipótese invalidada';
   if (/governanca|controle|permissao|acesso|aprovacao/.test(pattern)) return 'tempo de espera, exceções e proporção de decisões realmente alteradas pelo controle';
   if (/cloud|infraestrutura|plataforma|provisionamento/.test(pattern)) return 'tempo de provisão ou recuperação, falhas manuais e adoção do caminho suportado';
+  if (/dado|contrato|schema|significado|numero|reconciliacao/.test(pattern)) return 'consumidores impactados, divergências de definição e tempo até reconciliar o significado';
+  if (/design|interface|experiencia|jornada/.test(pattern)) return 'conclusão da jornada, abandono e retrabalho de interface após evidência de uso';
+  if (/arquitet|acoplamento|fronteira|termo|glossario|complexidade|camada/.test(pattern)) return 'grupos envolvidos, espera de coordenação e esforço da próxima mudança equivalente';
+  if (/aprend|melhoria|acao|cerimonia|recorrencia/.test(pattern)) return 'ações com efeito revisado, recorrência do padrão e tempo até incorporar o aprendizado';
+  if (isAssistancePattern(pattern)) return 'retrabalho, achados de revisão e mudanças assistidas explicáveis por outra pessoa';
+  if (/carga|heroi|ownership|coordenacao|dependencia/.test(pattern)) return 'tempo bloqueado, trocas de contexto e intervenções externas para concluir o fluxo';
   return 'tempo de espera, recorrência e efeito observado na capacidade afetada';
 }
 function successFor(pattern: string): string {
+  if (/reconhecimento|incentivo/.test(pattern)) return 'o próximo ciclo de reconhecimento usa evidência de efeito sem premiar volume, heroísmo ou risco oculto';
   if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) return 'o próximo evento é detectado e mitigado mais cedo sem ampliar acesso ou exposição de dados';
+  if (/produto|discovery|resultado|portfolio|prioridade/.test(pattern)) return 'a próxima revisão altera continuidade, escopo ou capacidade a partir de evidência do resultado, não apenas do plano concluído';
   if (/integracao|release|deploy|entrega/.test(pattern)) return 'a próxima mudança atravessa o fluxo em lote menor, com feedback mais cedo e sem aumento de falhas';
   if (/governanca|controle|permissao|aprovacao/.test(pattern)) return 'casos de baixo risco fluem mais rápido e decisões de alto risco preservam evidência e auditoria';
+  if (/dado|contrato|schema|significado|numero/.test(pattern)) return 'a próxima mudança preserva significado e compatibilidade sem reconciliação posterior dos consumidores';
+  if (/design|interface|experiencia|jornada/.test(pattern)) return 'evidência de uso altera a próxima decisão e reduz abandono ou retrabalho sem ocultar outro segmento';
+  if (/arquitet|acoplamento|fronteira|termo|complexidade|camada/.test(pattern)) return 'a próxima mudança equivalente envolve menos coordenação sem deslocar acoplamento para outro limite';
+  if (/aprend|melhoria|acao|cerimonia|recorrencia/.test(pattern)) return 'a ação é revisada por efeito e reduz a recorrência observada, não apenas concluída';
+  if (isAssistancePattern(pattern)) return 'outra pessoa explica e revisa a próxima mudança assistida sem ampliar retrabalho ou exposição de dados';
   return 'a métrica escolhida melhora no período sem deslocar risco ou espera para outra etapa';
+}
+function horizonFor(pattern: string): string {
+  if (/incidente|diagnostico|telemetria|deteccao|resilien/.test(pattern)) return 'no próximo exercício controlado ou incidente equivalente';
+  if (/portfolio|incentivo|lideranca|resultado/.test(pattern)) return 'no próximo ciclo de decisão de investimento';
+  if (/cloud|plataforma|provisionamento|credencial|acesso/.test(pattern)) return 'nas próximas cinco utilizações do caminho';
+  return 'na próxima mudança equivalente, com revisão em até 30 dias';
+}
+function isAssistancePattern(pattern: string): boolean {
+  return pattern.startsWith('ia-') || pattern.includes('assistencia-de-modelo');
+}
+function lowerFirst(value: string): string {
+  return value.charAt(0).toLocaleLowerCase('pt-BR') + value.slice(1).replace(/[.]$/, '');
 }
 function priorityOf(signals: GroupSignal[], support: number): number { const severity = Math.min(1, Math.abs(Math.min(...signals.map((signal) => signal.weight))) / 3); return Number((.65 * severity + .35 * Math.min(1, support)).toFixed(2)); }
 function mode<T extends string>(values: T[]): T | undefined { const counts = new Map<T, number>(); for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1); return [...counts].sort((left, right) => right[1] - left[1])[0]?.[0]; }
@@ -171,3 +179,4 @@ function roundConfidence(value: number): number { return Math.round(clamp(value)
 function clamp(value: number): number { return Math.max(0, Math.min(1, value)); }
 import { BayesianInferenceEngine } from './bayesian-inference-engine.js';
 import { DiagnosticModel, type EvidenceDefinition, type HypothesisDefinition } from './diagnostic-model.js';
+import { interventionFoundations } from './intervention-foundations.js';

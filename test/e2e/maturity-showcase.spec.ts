@@ -18,8 +18,8 @@ test('gera casos inspecionáveis com textos, resultados e convites manuais', asy
   collected.push(await buildAdaptiveCase(page, levels));
   collected.push(await buildDivergenceCase(page));
 
-  expect(levels.fragile).toBeLessThan(levels.emerging);
-  expect(levels.emerging).toBeLessThan(levels.adaptive);
+  expect(levels.fragile!).toBeLessThan(levels.emerging!);
+  expect(levels.emerging!).toBeLessThan(levels.adaptive!);
 
   writeFileSync(SHOWCASE_GUIDE_PATH, buildShowcaseGuide(collected));
   await page.goto('/showcase');

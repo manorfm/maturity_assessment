@@ -6,6 +6,7 @@ import { CatalogService } from '../catalog/catalog-service.js';
 import { InvitationService } from './invitation-service.js';
 import { ParticipationService } from './participation-service.js';
 import { ResourceNotFoundError } from '../../shared/errors.js';
+import { orderAssessmentOptions } from './answer-order.js';
 
 export function registerAssessmentRoutes(app: FastifyInstance, db: Database): void {
   const invitations = new InvitationService(db);
@@ -29,7 +30,7 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
     if (!node) throw new Error('Published assessment node was not found');
     const answered = participations.answeredCount(participation.id);
     const remainingMinutes = estimateRemainingMinutes(node.id, participation.profile);
-    const choices = node.options.map((option) => `<label class="choice"><input type="radio" name="optionId" value="${escapeHtml(option.id)}" required><span>${escapeHtml(option.label)}</span></label>`).join('');
+    const choices = orderAssessmentOptions(node.options, resumeToken, node.id).map((option) => `<label class="choice"><input type="radio" name="optionId" value="${escapeHtml(option.id)}" required><span>${escapeHtml(option.label)}</span></label>`).join('');
     const profile = profiles[participation.profile as Profile] ?? 'Participante';
     const progress = node.type === 'probe'
       ? `aprofundamento após ${answered} cenários`

@@ -6,6 +6,17 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-27 — Higiene de linguagem e intervenções verificáveis
+
+- O grafo `evidence-anamnesis-v14` passou a variar a ordem das alternativas por
+  participação, perguntar por casos observados em vez de autodiagnóstico causal e
+  bloquear pistas julgadoras, jargão e alternativas compostas. O recomendador
+  separa efeito, mecanismo e ação, exige fundamento explícito por padrão e usa
+  métricas, horizontes e critérios contextualizados. A especificação vigente está
+  em [`question-design.md`](../knowledge-base/question-design.md),
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-08-27 — Showcase inspecionável
 
 - O E2E passou a montar quatro organizações sintéticas com história, trechos do

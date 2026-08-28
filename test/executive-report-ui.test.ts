@@ -36,3 +36,13 @@ test('recomendação apresenta decisão executiva antes da metodologia', () => {
   assert.match(html, /Ver diagnóstico, evidências e fundamento/);
   assert.doesNotMatch(html, /posterior provisório/);
 });
+
+test('impacto executivo acompanha a capacidade avaliada', () => {
+  const html = renderCapabilityDiagnosis([{
+    kind: 'correction', detailCapability: 'portfolio-management', title: 'Portfólio sem ciclo de resultado',
+    intervention: 'Revisar uma iniciativa antes de começar outra.', confidence: .85, priority: .7,
+  }], leaf());
+
+  assert.match(html, /Novas iniciativas disputam capacidade/);
+  assert.doesNotMatch(html, /exposição operacional no fluxo de entrega/);
+});
