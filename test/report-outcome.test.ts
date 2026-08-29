@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { CapabilityBranch } from '../src/modules/inference/domain/capability-taxonomy.js';
-import { decideReportOutcome, distinctiveScopes, uniqueConfirmedCauses, uniqueFindingsByPattern } from '../src/modules/inference/domain/report-outcome.js';
+import { decideReportOutcome, distinctiveScopes, findingScopeOccurrences, uniqueConfirmedCauses, uniqueFindingsByPattern } from '../src/modules/inference/domain/report-outcome.js';
 
 const leaf = (id: string, label: string, level: number, extras: Partial<CapabilityBranch> = {}): CapabilityBranch => ({
   id, label, level, confidence: extras.confidence ?? .8, evidence: 8, hasContradiction: extras.hasContradiction ?? false,
@@ -33,6 +33,18 @@ test('mapa por estrutura omite o pai que só duplica o filho único', () => {
     { path: 'Produto/Time', classification: { level: 1 } },
   ], 1);
   assert.equal(scopes.length, 0);
+});
+
+test('escopo do finding considera somente unidades finais elegíveis', () => {
+  const finding = (pattern: string) => ({ kind: 'correction' as const, pattern, detailCapability: 'collaboration', title: pattern, cause: '', intervention: '', confidence: .9, priority: .9 });
+  const occurrences = findingScopeOccurrences([
+    { path: 'Empresa', findings: [finding('transversal'), finding('somente-pai')] },
+    { path: 'Empresa/Squad Alfa', findings: [finding('transversal'), finding('local')] },
+    { path: 'Empresa/Squad Beta', findings: [finding('transversal')] },
+  ]);
+  assert.deepEqual(occurrences.find((item) => item.pattern === 'local')?.scopePaths, ['Empresa/Squad Alfa']);
+  assert.equal(occurrences.find((item) => item.pattern === 'transversal')?.eligibleScopeCount, 2);
+  assert.equal(occurrences.some((item) => item.pattern === 'somente-pai'), false);
 });
 
 test('nota alta e coerente preserva a prática', () => {
@@ -109,6 +121,60 @@ test('divergência de perspectiva é o finding do home, não uma folha aleatóri
   assert.match(outcome.nextStepTitle, /divergência/i);
   assert.match(outcome.nextStepBody, /lentes|perspectiva/i);
   assert.equal(outcome.finding, undefined);
+});
+
+test('divergência suspende prescrição no detalhamento afetado', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Competência técnica'] },
+    branches: [leaf('technical-capability', 'Competência técnica', 0.4)],
+    findings: [{ kind: 'correction', pattern: 'seguranca-depende-de-reconhecimento-e-especialista', detailCapability: 'technical-capability', title: 'Segurança depende de especialista', cause: '', intervention: 'Codifique o risco', confidence: .9, priority: .9 }],
+    perspectiveGaps: [{ title: 'Perspectivas divergem sobre competência técnica', capability: 'technical-capability' }],
+    focusId: 'technical-capability',
+  });
+  assert.equal(outcome.kind, 'discriminate');
+  assert.equal(outcome.finding, undefined);
+  assert.match(outcome.reading, /hipótese candidata/i);
+});
+
+test('divergência de outra capacidade não contamina o detalhamento', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Competência técnica'] },
+    branches: [
+      leaf('technical-capability', 'Competências necessárias entram no fluxo', 1),
+      leaf('organizational-learning', 'Aprendizado e adaptação', 1),
+    ],
+    findings: [{ kind: 'correction', pattern: 'seguranca-depende-de-reconhecimento-e-especialista', detailCapability: 'technical-capability', title: 'Segurança depende de especialista', cause: '', intervention: 'Codifique o risco', confidence: .9, priority: .9 }],
+    perspectiveGaps: [{ title: 'Perspectivas divergem sobre aprendizado', capability: 'organizational-learning' }],
+    focusId: 'technical-capability',
+  });
+  assert.equal(outcome.kind, 'correct');
+  assert.equal(outcome.finding?.detailCapability, 'technical-capability');
+});
+
+test('investigação sem causa descreve incerteza sem encaixar o nome em frase artificial', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Impacto pode ser investigado'] },
+    branches: [leaf('observability-practice', 'Impacto pode ser investigado', 1)],
+    findings: [],
+    focusId: 'observability-practice',
+  });
+  assert.equal(outcome.kind, 'discriminate');
+  assert.match(outcome.reading, /as respostas|os relatos/i);
+  assert.match(outcome.reading, /telemetria|acesso|conhecimento/i);
+  assert.doesNotMatch(outcome.reading, /Impacto pode ser investigado está em/i);
+  assert.match(outcome.nextStepBody, /incidente|mudança|evento/i);
+});
+
+test('preservação nomeia comportamento e sinal de regressão do recorte', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 4, label: 'Adaptativo', limitingCapabilities: ['Operação e confiabilidade'] },
+    branches: [leaf('reliability-practice', 'Confiabilidade altera decisões', 4)],
+    findings: [],
+    focusId: 'reliability-practice',
+  });
+  assert.equal(outcome.kind, 'preserve');
+  assert.match(outcome.reading, /Confiabilidade altera decisões/);
+  assert.match(outcome.nextStepBody, /regressão|deixar de|voltar/i);
 });
 
 test('ramo adaptativo não herda discriminar de um neto de cloud', () => {

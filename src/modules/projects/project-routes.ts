@@ -9,7 +9,7 @@ import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
 import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
 import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
-import { decideReportOutcome, distinctiveScopes, uniqueConfirmedCauses, type ConfirmedCause, type ReportOutcome } from '../inference/domain/report-outcome.js';
+import { decideReportOutcome, distinctiveScopes, findingScopeOccurrences, uniqueConfirmedCauses, uniqueFindingsByPattern, type ConfirmedCause, type FindingScopeOccurrence, type OutcomeFinding, type ReportOutcome } from '../inference/domain/report-outcome.js';
 import { guidanceFor, type SolutionGuidance } from '../inference/domain/solution-guidance.js';
 import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
 import { DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
@@ -132,14 +132,17 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const capabilityBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/capabilities`;
     const capabilityMap = renderCapabilityRadar(report.capabilityGroups, capabilityBase);
     const classification = report.classification ? renderClassification(report.classification, report.outcome) : '';
-    const nextDecision = renderOutcome(report.outcome);
+    const scopeOccurrences = findingScopeOccurrences(report.scopes);
+    const primaryOccurrence = scopeOccurrences.find((item) => item.pattern === report.outcome.finding?.pattern);
+    const nextDecision = renderOutcome(report.outcome, { confirmedProblemCount: uniqueFindingsByPattern(report.findings).length, ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}) });
+    const problemPortfolio = renderFindingPortfolio(report.findings, report.outcome.finding?.pattern, scopeOccurrences);
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
-    const scopeReports = distinctive.map((scope) => `<details class="card"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification)}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>'}${scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('')}</details>`).join('');
+    const scopeReports = distinctive.map((scope) => renderScopeReport(scope, capabilityBase)).join('');
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
-      <section><h2>Decisão do recorte</h2>${classification}${nextDecision}${reportAvailability}${perspectives}</section>
+      <section><h2>Decisão do recorte</h2>${classification}${nextDecision}${problemPortfolio}${reportAvailability}${perspectives}</section>
       <section><h2>Mapa agregado</h2>${capabilityMap}</section>
       <details class="methodology"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
@@ -173,6 +176,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       classification: source?.classification ?? report.classification,
       branches: groups,
       findings: relevant,
+      perspectiveGaps: source?.perspectiveGaps ?? report.perspectiveGaps,
       focusId: selected.id,
     });
     const base = `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`;
@@ -268,7 +272,15 @@ function renderCognitiveReview(calibration: PilotReport, params: Params): string
 
 export function renderClassification(classification: { level: number; label: string; limitingCapabilities: string[] }, outcome?: ReportOutcome): string {
   const limiter = outcome?.limiterLabel ?? summarizeLimiters(classification.limitingCapabilities);
-  return `<article class="classification executive-summary maturity-level-${classification.level}"><p class="eyebrow">Resumo executivo</p><div class="classification-level">${classification.level} · ${escapeHtml(classification.label)}</div><dl class="executive-facts"><div><dt>Principal limitador</dt><dd>${escapeHtml(limiter)}</dd></div></dl><details class="methodology"><summary>Como esta classificação é calculada</summary><p>Classificação sociotécnica baseada no elo mais frágil com evidência suficiente. Capacidades fortes não ocultam gargalos nem unidades descendentes. Cloud e infraestrutura aninhadas só ocupam o palco quando o finding é desse recorte.</p></details></article>`;
+  const divergent = outcome?.kind === 'discriminate' && /^Perspectivas divergem/i.test(outcome.limiterLabel);
+  const label = divergent ? 'Inconclusivo' : `${classification.level} · ${classification.label}`;
+  const explanation = divergent
+    ? 'A divergência de perspectivas suspende a classificação ordinal: primeiro é necessário distinguir visibilidade, fronteira e poder de decisão.'
+    : 'Classificação sociotécnica baseada no elo mais frágil com evidência suficiente. Capacidades fortes não ocultam gargalos nem unidades descendentes. Cloud e infraestrutura aninhadas só ocupam o palco quando o finding é desse recorte.';
+  const reading = divergent
+    ? 'Não há uma classificação única segura enquanto as perspectivas descrevem sistemas diferentes.'
+    : `Este estágio descreve o elo que limita o sistema, não a organização inteira. Os demais pilares podem estar em estágios diferentes.`;
+  return `<article class="classification executive-summary ${divergent ? 'maturity-inconclusive' : `maturity-level-${classification.level}`}"><p class="eyebrow">Resumo executivo</p><div class="classification-level">${escapeHtml(label)}</div><p class="executive-reading">${escapeHtml(reading)}</p><dl class="executive-facts"><div><dt>Principal limitador</dt><dd>${escapeHtml(limiter)}</dd></div></dl><details class="methodology"><summary>Como esta classificação é calculada</summary><p>${escapeHtml(explanation)}</p></details></article>`;
 }
 
 type PerspectiveGapView = { title: string; capability: string; strongerProfiles: string[]; constrainedProfiles: string[] };
@@ -302,27 +314,88 @@ const solutionKindLabels: Record<SolutionGuidance['solutionKind'], string> = {
   'tool-class': 'família de ferramenta',
 };
 
-export function renderOutcome(outcome: ReportOutcome): string {
+export function renderOutcome(outcome: ReportOutcome, context: { confirmedProblemCount?: number; occurrence?: FindingScopeOccurrence } = {}): string {
   const guidance = outcome.finding ? guidanceFor(outcome.finding.pattern, outcome.finding.foundation, outcome.finding.title) : undefined;
   const experiment = outcome.finding?.experiment;
+  const foundation = outcome.finding?.foundation;
   const readiness = outcome.finding?.solutionReadiness;
   const evidence = outcome.finding?.recommendationEvidence;
-  const evidenceBlock = evidence ? `<div><h3>Evidência agregada</h3><p><strong>${evidence.supportingParticipants} de ${evidence.applicablePopulation} jornadas aplicáveis</strong> sustentam ${evidence.patterns.length} ${evidence.patterns.length === 1 ? 'padrão independente' : 'padrões independentes'} em ${evidence.profiles.length || 1} ${evidence.profiles.length === 1 ? 'perspectiva' : 'perspectivas'}.</p></div>` : '';
-  const contradiction = evidence?.contradictingParticipants ? `${evidence.contradictingParticipants} ${evidence.contradictingParticipants === 1 ? 'jornada contradiz' : 'jornadas contradizem'} a hipótese. ` : '';
-  const uncertainty = readiness?.stage === 'not-demonstrated'
-    ? `${contradiction}A execução da capacidade de solução ainda não foi demonstrada; valide a pré-condição antes de ampliar investimento.`
-    : `${contradiction}${guidance?.doesNotSolve ?? 'O recorte ainda não elimina explicações alternativas.'}`;
-  const readinessBlock = readiness ? `<div><h3>Capacidade para resolver</h3><p><strong>${escapeHtml(outcome.finding?.solutionCapability ?? 'Capacidade coletiva compatível com a causa.')}</strong><br>${escapeHtml(readiness.label)} — ${escapeHtml(readiness.explanation)}</p></div>` : '';
-  const affected = outcome.finding?.affectedCapabilities?.length
-    ? `<p class="muted">Capacidades afetadas: ${outcome.finding.affectedCapabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')}</p>` : '';
+  const patternCount = evidence?.patterns.length ?? 0;
+  const perspectiveLabels = evidence?.profiles.map(profileLabel).join(' · ') ?? '';
+  const evidenceBlock = evidence ? `<section><h3>O que as entrevistas mostraram</h3><p><strong>${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas que poderiam observar essa situação</strong> relataram ${patternCount} ${patternCount === 1 ? 'padrão de resposta' : 'padrões de resposta'}.</p><p>Perspectivas que sustentam a leitura: ${escapeHtml(perspectiveLabels || 'não diferenciadas')}.</p>${evidence.contradictingParticipants ? `<p>${evidence.contradictingParticipants} ${evidence.contradictingParticipants === 1 ? 'pessoa relatou' : 'pessoas relataram'} uma situação que contradiz essa leitura.</p>` : '<p>Nenhum relato contraditório suficiente foi agregado para esta hipótese.</p>'}</section>` : '';
+  const readinessText = readiness?.stage === 'not-demonstrated'
+    ? `As entrevistas ainda não mostraram esse caminho funcionando. Isso não significa que ele não exista.`
+    : readiness ? `${readiness.label}: ${readiness.explanation}` : '';
+  const readinessBlock = readiness ? `<section><h3>A organização já consegue fazer isso?</h3><p><strong>${escapeHtml(outcome.finding?.solutionCapability ?? 'Capacidade coletiva compatível com a causa.')}</strong></p><p>${escapeHtml(readinessText)}</p></section>` : '';
+  const relatedCapabilities = outcome.finding?.affectedCapabilities?.filter((id) => id !== outcome.finding?.detailCapability) ?? [];
+  const affected = outcome.finding
+    ? `<p class="muted"><strong>Capacidade principal:</strong> ${escapeHtml(CapabilityTaxonomy.labelFor(outcome.finding.detailCapability))}.${relatedCapabilities.length ? ` <strong>Efeitos relacionados:</strong> ${relatedCapabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')}.` : ''}</p>` : '';
+  const priority = outcome.finding && context.confirmedProblemCount
+    ? `<section class="priority-rationale"><h3>Por que vem primeiro</h3><p>Esta é a prioridade 1 de ${context.confirmedProblemCount} ${context.confirmedProblemCount === 1 ? 'problema confirmado' : 'problemas confirmados'}. O motor a colocou primeiro pela combinação de alcance e severidade; os demais continuam no panorama para sequenciamento.</p>${context.occurrence ? `<p class="muted">${renderFindingScope(context.occurrence).trim()}</p>` : ''}</section>`
+    : '';
   const briefing = guidance && (outcome.kind === 'correct' || outcome.kind === 'evolve')
-    ? `<p class="executive-reading">${escapeHtml(guidance.plainExplanation)}</p>${affected}
-      <div class="decision-grid">${evidenceBlock}<div><h3>Impacto decisório</h3><p>${escapeHtml(guidance.mechanism)}</p></div>${readinessBlock}<div><h3>Incerteza que permanece</h3><p>${escapeHtml(uncertainty)}</p></div></div>
-      <section class="decision-request"><p class="eyebrow">Decisão solicitada</p><p><strong>Aprovar o seguinte experimento: ${escapeHtml(experiment?.action ?? outcome.nextStepBody)}</strong></p><p>Responsável: ${escapeHtml(experiment?.owner ?? 'Responsável pelo recorte com o grupo afetado')} · revisão ${escapeHtml(experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p></section>
-      <dl class="diagnostic-experiment"><dt>Indicador</dt><dd>${escapeHtml(experiment?.metric ?? guidance.metric)}</dd><dt>Critério</dt><dd>${escapeHtml(experiment?.successCriterion ?? guidance.successCriterion)}</dd></dl>
-      <details class="methodology"><summary>Diagnóstico, opções e fundamento</summary><h3>Por que isso se reproduz</h3><p>${escapeHtml(guidance.mechanism)}</p><h3>Universo da solução</h3><p><strong>${escapeHtml(guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[guidance.solutionKind])}). ${escapeHtml(guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(guidance.matureReference)}. ${escapeHtml(guidance.examples)}</p><p>Isso não resolve: ${escapeHtml(guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(guidance.antiPattern)}</p></details>`
-    : `<p class="executive-reading">${escapeHtml(outcome.reading)}</p><p>${escapeHtml(outcome.nextStepBody)}</p>`;
+    ? `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(guidance.plainExplanation)}</p><p>${escapeHtml(guidance.mechanism)}</p></section>${affected}${priority}${evidenceBlock}${readinessBlock}
+      <section class="decision-request"><p class="eyebrow">Decisão solicitada</p><h3>O que recomendamos testar</h3><p><strong>${escapeHtml(experiment?.action ?? outcome.nextStepBody)}</strong></p><p>Responsável: ${escapeHtml(experiment?.owner ?? 'Responsável pelo recorte com o grupo afetado')} · revisão ${escapeHtml(experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p></section>
+      <section><h3>Como saber se funcionou</h3><p>Observe: ${escapeHtml(experiment?.metric ?? guidance.metric)}.</p><p>Critério de sucesso: ${escapeHtml(experiment?.successCriterion ?? guidance.successCriterion)}.</p></section>
+      <section><h3>O que esta decisão não resolve</h3><p>${escapeHtml(guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(guidance.antiPattern)}</p></section>
+      <details class="methodology"><summary>Fundamento técnico e opções</summary><p><strong>${escapeHtml(guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[guidance.solutionKind])}). ${escapeHtml(guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(foundation?.source ?? guidance.matureReference)}.</p>${foundation ? `<p><strong>Princípio aplicado:</strong> ${escapeHtml(foundation.principle)}. ${escapeHtml(foundation.why)}</p>` : ''}<p>Exemplo de mecanismo: ${escapeHtml(guidance.examples)}</p></details>`
+    : outcome.kind === 'discriminate'
+      ? `<section><h3>Por que ainda não há recomendação</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section><section><h3>O que investigar agora</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>`
+      : outcome.kind === 'preserve'
+        ? `<section><h3>O que deve ser preservado</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p><p>${escapeHtml(outcome.nextStepBody)}</p></section>`
+        : `<p class="executive-reading">${escapeHtml(outcome.reading)}</p><p>${escapeHtml(outcome.nextStepBody)}</p>`;
   return `<article class="card outcome-card"><p class="eyebrow">Próxima decisão</p><p class="tag">${escapeHtml(outcome.kindLabel)}</p><h2>${escapeHtml(outcome.finding?.title ?? outcome.nextStepTitle)}</h2>${briefing}<p class="muted outcome-scope">Onde aparece: ${escapeHtml(outcome.limiterLabel)}</p></article>`;
+}
+
+export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPattern?: string, occurrences: FindingScopeOccurrence[] = []): string {
+  const allSecondary = uniqueFindingsByPattern(findings).filter((finding) => finding.pattern !== primaryPattern);
+  const visible = allSecondary.slice(0, 4);
+  if (!visible.length) return '';
+  const total = allSecondary.length;
+  const items = visible.map((finding) => {
+    const evidence = finding.recommendationEvidence;
+    const capabilities = finding.affectedCapabilities?.length ? finding.affectedCapabilities : [finding.detailCapability];
+    const support = evidence ? `${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas sustentam esta leitura` : 'Evidência agregada disponível no detalhamento';
+    const scope = occurrences.find((candidate) => candidate.pattern === finding.pattern);
+    const scopeText = scope ? renderFindingScope(scope) : '';
+    return `<li><strong>${escapeHtml(finding.title)}</strong><br><span class="muted">${capabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')} · ${escapeHtml(support)}.${scopeText}</span></li>`;
+  }).join('');
+  const noun = primaryPattern ? (total === 1 ? 'outro padrão' : 'outros padrões confirmados') : (total === 1 ? 'padrão confirmado' : 'padrões confirmados');
+  const truncation = total > visible.length ? ` O relatório está mostrando os ${visible.length} mais prioritários.` : '';
+  return `<section class="card finding-portfolio"><p class="eyebrow">${primaryPattern ? 'Além da decisão principal' : 'Problemas observados'}</p><h2>Panorama de problemas confirmados</h2><p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation} O panorama orienta o sequenciamento; não significa abrir todas as frentes ao mesmo tempo.</p><ol>${items}</ol></section>`;
+}
+
+type ScopeReportView = {
+  id: string;
+  path: string;
+  classification: { level: number; label: string; limitingCapabilities: string[] };
+  capabilityGroups: Parameters<typeof renderCapabilityRadar>[0];
+  findings: OutcomeFinding[];
+  perspectiveGaps: Array<{ title: string; capability?: string }>;
+};
+
+export function renderScopeReport(scope: ScopeReportView, capabilityBase: string): string {
+  const outcome = decideReportOutcome({ classification: scope.classification, branches: scope.capabilityGroups, findings: scope.findings, perspectiveGaps: scope.perspectiveGaps });
+  const portfolio = renderFindingPortfolio(scope.findings, outcome.finding?.pattern);
+  const empty = scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>';
+  const gaps = scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('');
+  return `<details class="card scope-report"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification, outcome)}${renderOutcome(outcome, { confirmedProblemCount: uniqueFindingsByPattern(scope.findings).length })}${portfolio}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${empty}${gaps}</details>`;
+}
+
+function renderFindingScope(scope: FindingScopeOccurrence): string {
+  const names = scope.scopePaths.map((path) => path.split('/').at(-1) ?? path);
+  if (scope.eligibleScopeCount <= 1) return ` <strong>Escopo observado:</strong> ${escapeHtml(names.join(' · '))}.`;
+  if (scope.scopePaths.length === 1) {
+    const absent = (scope.eligibleScopePaths ?? []).filter((path) => !scope.scopePaths.includes(path)).map((path) => path.split('/').at(-1) ?? path);
+    const absence = absent.length ? `na ${escapeHtml(absent.join(' · '))}` : (scope.eligibleScopeCount === 2 ? 'na outra unidade elegível' : `nas outras ${scope.eligibleScopeCount - 1} unidades elegíveis`);
+    return ` <strong>Escopo local:</strong> ${escapeHtml(names[0]!)}; não foi demonstrado ${absence}.`;
+  }
+  if (scope.scopePaths.length === scope.eligibleScopeCount) return ` <strong>Escopo transversal:</strong> apareceu em todas as ${scope.eligibleScopeCount} unidades elegíveis.`;
+  return ` <strong>Escopo compartilhado:</strong> ${escapeHtml(names.join(' · '))}; ${scope.eligibleScopeCount - scope.scopePaths.length} ${scope.eligibleScopeCount - scope.scopePaths.length === 1 ? 'unidade elegível não sustentou' : 'unidades elegíveis não sustentaram'} o padrão.`;
+}
+
+function profileLabel(id: string): string {
+  return profiles[id as keyof typeof profiles] ?? id;
 }
 
 function summarizeLimiters(limiters: string[]): string {
@@ -367,7 +440,7 @@ export function renderCapabilityRadar(
   const drillNavigation = capabilities.map((capability) => capability.assessed
     ? `<a class="radar-drill-link radar-status-${radarStatus(capability.level).id}" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${executiveStage(capability.level)} · ${coverageLabel(capability.coverage)}</span></a>`
     : `<span class="radar-drill-link disabled" aria-disabled="true">${escapeHtml(capability.label)} <span>Evidência insuficiente</span></span>`).join('');
-  return `<article class="card radar-card"><h3>Radar de capacidades</h3><p class="muted">Use o radar para localizar contraste e aprofundar, não para comparar décimos. Os rótulos mostram estágio e suficiência temática; “?” significa evidência insuficiente, não baixa maturidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
+  return `<article class="card radar-card"><h3>Radar de capacidades</h3><p class="muted">Use o radar para localizar contraste e aprofundar, não para comparar décimos. Os rótulos mostram estágio e cobertura temática; “?” significa evidência insuficiente, não baixa maturidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
 }
 
 function radarStatus(level: number): { id: string; summary: string } {
@@ -393,9 +466,9 @@ function executiveStage(level: number): string {
 }
 
 function coverageLabel(coverage: number): string {
-  if (coverage >= .85) return 'evidência ampla';
-  if (coverage >= .5) return 'evidência parcial';
-  return 'evidência inicial';
+  if (coverage >= .85) return 'cobertura temática ampla';
+  if (coverage >= .5) return 'cobertura temática parcial';
+  return 'cobertura temática inicial';
 }
 
 function findCapabilityPath(nodes: CapabilityRadarNode[], id: string, ancestors: CapabilityRadarNode[] = []): CapabilityRadarNode[] | undefined {
@@ -420,7 +493,7 @@ function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVers
   });
   const unique = uniqueConfirmedCauses(confirmed);
   if (!unique.length) return '';
-  const items = unique.map((cause) => `<li><strong>${escapeHtml(cause.label)}</strong><br><span class="muted">${escapeHtml(diagnosticStrength(cause.probability))} · ${cause.support} de ${cause.applicable} jornadas aplicáveis, em ${cause.profiles} perspectiva(s) · ${escapeHtml(CapabilityTaxonomy.labelFor(cause.capability))}.</span></li>`).join('');
+  const items = unique.map((cause) => `<li><strong>${escapeHtml(cause.label)}</strong><br><span class="muted">${escapeHtml(diagnosticStrength(cause.probability))} · ${cause.support} de ${cause.applicable} pessoas que poderiam observar a situação, em ${cause.profiles} perspectiva(s) · ${escapeHtml(CapabilityTaxonomy.labelFor(cause.capability))}.</span></li>`).join('');
   return `<section><h2>${title}</h2><p class="muted">Hipóteses distintas com suporte da opção observada. Cada padrão aparece uma vez. Use-as para entender o recorte, não para avaliar pessoas.</p><article class="card diagnostic-hypothesis"><span class="tag">leitura das causas</span><ul>${items}</ul></article><details class="methodology"><summary>Sobre a precisão desta análise</summary><p>Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. As faixas são julgamentos especialistas apoiados pelas evidências; não representam probabilidade calibrada até o piloto produzir massa revisada.</p></details></section>`;
 }
 

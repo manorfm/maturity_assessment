@@ -6,6 +6,16 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-28 — Gate causal de recomendações
+
+- O recomendador deixou de escolher métricas por palavras do identificador e passou
+  a prescrever somente contratos causais explícitos. Padrões críticos do showcase
+  receberam mecanismo, fundamento e medida próprios; divergência suspende a nota
+  executiva como `Inconclusivo`. A especificação vigente está em
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md),
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-08-28 — Leitura executiva orientada à autorização
 
 - O primeiro plano passou a mostrar evidência aplicável, prontidão, incerteza e a
@@ -305,3 +315,22 @@ Para uma visão resumida dos marcos por versão, consulte o
   local, operacional e adaptativa; ver
   [`assessment-model.md`](../knowledge-base/assessment-model.md) e
   [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+- Entregue a versão 0.28 com narrativa executiva operacional, números nomeados por
+  sua semântica e divergência propagada aos detalhamentos; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+- Entregue a versão 0.29 com divergência localizada por folha, investigação e
+  preservação específicas, papéis de capacidade explícitos e remoção de inferência
+  contraditória; ver [`assessment-model.md`](../knowledge-base/assessment-model.md)
+  e [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+- Entregue a versão 0.30 com panorama de problemas confirmados, leitura explícita
+  do elo limitante e showcase de dois times com histórias sociotécnicas distintas;
+  ver [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
+## 2026-08-29
+
+- Entregue a versão 0.31 com total explícito de problemas, prioridade explicada e
+  diagnósticos locais navegáveis por squad, sem generalizar abrangência em causa;
+  ver [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).

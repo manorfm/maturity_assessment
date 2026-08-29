@@ -12,7 +12,7 @@ do comportamento atual.
 ## Documentos
 
 - `product-vision.md`: propósito, usuários e limites do produto.
-- `assessment-model.md`: pilares, evidências, inferências e pontuação.
+- `assessment-model.md`: pilares, evidências, inferências e estágio auxiliar.
 - `question-design.md`: como criar cenários capazes de reduzir vieses.
 - `recommendation-model.md`: cadeia diagnóstica, confiança, prioridade e experimentos.
 - `domain-model.md`: conceitos centrais e fronteiras do monólito modular.
@@ -34,11 +34,14 @@ O motor probabilístico vigente está consolidado em `recommendation-model.md` e
 entrevistas, revisão cega e piloto com pessoas reais. O gate de calibração já está
 no produto. O que ainda falta para declarar o instrumento robusto (massa rotulada,
 validação de linguagem com as disciplinas, evidência externa) está no
-[`plano de evolução`](../backlog/instrument-evolution-plan.md).
+[`plano de evolução`](../backlog/instrument-evolution-plan.md). A decisão de
+apresentar o produto como diagnóstico de engenharia — e não como framework de
+maturidade — está no
+[`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
 
 ## Princípio central
 
-Uma capacidade não é madura porque existe nominalmente. A avaliação procura a
+Uma capacidade não é sustentada porque existe nominalmente. O diagnóstico procura a
 cadeia completa:
 
 `contexto -> decisão -> comportamento -> evidência -> resultado -> aprendizado`

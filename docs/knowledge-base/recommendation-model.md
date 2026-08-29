@@ -10,7 +10,7 @@ versionadas. O resultado exibido é um **posterior provisório**: ele
 representa a crença do modelo diante das evidências declaradas, mas ainda não é uma
 probabilidade empiricamente calibrada.
 
-Maturidade, cobertura temática, posterior e prioridade são medidas diferentes.
+Estágio do comportamento, cobertura temática, posterior e prioridade são medidas diferentes.
 Uma nota baixa não escolhe uma solução sozinha; grupos com a mesma nota podem ter
 causas e experimentos diferentes.
 
@@ -22,9 +22,11 @@ condiciona o tamanho do experimento: uma solução estrutural não é recomendad
 primeiro passo quando ainda falta execução, alcance ou aprendizado para sustentá-la.
 
 No contrato executivo, a recomendação carrega também a proveniência agregada que
-sustenta a decisão: jornadas aplicáveis e favoráveis, padrões independentes,
-perspectivas e contradições. Esses números descrevem a base observada; não são
-convertidos em porcentagem causal nem escondem a incerteza remanescente.
+sustenta a decisão: pessoas que podiam observar a situação, pessoas favoráveis,
+padrões de resposta, perspectivas e contradições. Esses números descrevem a base
+observada; não são chamados de evidência ampla, não são convertidos em porcentagem
+causal e não escondem a incerteza remanescente. Cobertura temática, suporte coletivo,
+posterior causal e prontidão da solução permanecem medidas separadas.
 
 ## Atualização e explicação
 
@@ -87,17 +89,45 @@ ou quando a nota é baixa sem causa isolada; ou declarar evidência insuficiente
 Discriminar pede observação de um evento recente, não um playbook. Um ramo em 4
 não herda discriminação de um neto de cloud.
 
+Discriminação sem causa isolada usa um contrato narrativo da capacidade: declara o
+sinal observado, as explicações que ainda competem e o evento que precisa ser
+reconstruído. O nome da capacidade nunca é encaixado mecanicamente em uma frase.
+Preservação também nomeia o comportamento sustentado e um sinal de regressão; não é
+um elogio genérico nem autoriza intervenção para preencher o relatório.
+
 O cartão formula explicitamente a decisão solicitada. Autorizar o experimento vem
 antes do catálogo de alternativas, acompanhado por responsável, horizonte,
 indicador e critério. Divergências de várias capacidades são condensadas numa única
 hipótese de fronteira e pedem a reconstrução conjunta de um evento recente; não se
 repetem como uma lista de déficits.
 
+A decisão principal explicita que é a primeira entre `N` problemas confirmados e
+que a ordenação combina alcance e severidade. Os demais não desaparecem: o panorama
+mantém o total real e mostra até quatro próximos candidatos. A abrangência por
+unidade é uma projeção da mesma evidência agregada, não um segundo recomendador.
+
+A apresentação é uma projeção determinística do mesmo finding, não um segundo motor
+de recomendação. Ela traduz o contrato para linguagem operacional nesta ordem:
+situação observada, base das entrevistas, capacidade atual para agir, teste proposto,
+critério de sucesso e limite da decisão. Classe de solução, referência e opções ficam
+sob demanda. Quando a prontidão não foi demonstrada, o texto diz apenas que as
+entrevistas ainda não mostraram o caminho funcionando; nunca conclui inexistência.
+As perspectivas que sustentam a leitura são nomeadas, contradição zero é explícita e
+capacidade principal fica separada dos efeitos relacionados. O fundamento mostra
+fonte, princípio aplicado e vínculo com a evidência, além da classe de solução.
+
 Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
 expressa força da hipótese; prioridade combina alcance e severidade. Métrica,
 horizonte e critério de sucesso variam por família do problema e, no tronco,
 pela orientação do padrão. Devem permitir verificar se o comportamento parou
 sem deslocar risco ou espera para outra etapa.
+
+Somente contratos causais explícitos podem gerar prescrição. Cada contrato reúne
+mecanismo, classe de solução, fundamento, métrica e critério; identificadores e
+palavras incidentais nunca selecionam experimento por regex. Padrões ainda cobertos
+apenas por orientação de fonte permanecem disponíveis ao diagnóstico, mas são
+suprimidos pelo recomendador até receberem contrato específico. Não existe segundo
+caminho de fallback capaz de publicar uma ação genérica.
 
 No corte vigente, a auditoria executável bloqueia métrica que recita o título,
 critério genérico, fundamento vazio e Melhoria contínua fora do mecanismo de

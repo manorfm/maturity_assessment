@@ -41,6 +41,32 @@ test('padrão de integração descreve a restrição, não o balde de melhoria c
   assert.doesNotMatch(catalog['mudanca-isolada']!.metric, /registre a recorrência/);
 });
 
+test('palavra incidental não escolhe métrica de outra família', () => {
+  const catalog = defineInterventionCatalog({
+    'seguranca-depende-de-reconhecimento-e-especialista': {
+      title: 'Segurança depende de reconhecimento e especialista',
+      intervention: 'Torne orientação e verificação acessíveis no fluxo.',
+      foundation: { source: 'Qualidade no fluxo', principle: 'Risco entra cedo', why: 'O risco precisa alterar a construção.' },
+    },
+  });
+  const item = catalog['seguranca-depende-de-reconhecimento-e-especialista']!;
+  assert.doesNotMatch(item.metric, /decisões de reconhecimento|ciclo de reconhecimento/);
+  assert.match(item.metric, /feedback|risco|verificação/);
+});
+
+test('catálogo não publica recomendação sem contrato causal explícito', () => {
+  const incomplete = defineInterventionCatalog({
+    'padrao-sem-contrato': {
+      title: 'Um efeito foi observado', intervention: 'Faça alguma coisa.',
+      foundation: { source: 'Melhoria contínua', principle: 'Revisar', why: 'Ainda genérico.' },
+    },
+  });
+  const engine = new GroupRecommendationEngine(incomplete);
+  assert.deepEqual(engine.rank([
+    evidence('padrao-sem-contrato', 'a'), evidence('padrao-sem-contrato', 'b'), evidence('padrao-sem-contrato', 'c'),
+  ], 3), []);
+});
+
 test('usa somente a população capaz de observar a intervenção', () => {
   const recommendation = new GroupRecommendationEngine(catalog).rank([
     evidence('tooling-gap', 'a'), evidence('tooling-gap', 'b'), evidence('tooling-gap', 'c'),

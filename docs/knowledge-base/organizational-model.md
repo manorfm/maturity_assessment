@@ -60,6 +60,14 @@ Abaixo dele:
 - o gestor não recebe exceção nem acesso às respostas brutas;
 - contagens podem ser arredondadas ou suprimidas quando revelarem indivíduos.
 
+O mínimo vigente de cinco protege anonimato e libera agregação; ele não garante
+representatividade nem precisão estatística. Dez respostas em um time permitem um
+recorte local mais estável e comparação de padrões recorrentes, mas diferenças entre
+perspectivas só são publicadas quando cada perspectiva comparada possui cinco
+participações no mesmo escopo. Portanto, dois times de dez podem orientar hipóteses
+por time, porém não validam sozinhos todas as comparações entre SRE, QA, produto,
+arquitetura, gestão e engenharia.
+
 Comparações entre papel, senioridade ou disciplina só aparecem se cada grupo
 comparado cumprir o limiar. O sistema deve testar ataques por interseção, como
 deduzir uma pessoa subtraindo o resultado de um time do resultado do cluster.
@@ -74,6 +82,19 @@ O gestor vê se um padrão perdeu ou ganhou suporte coletivo; não vê quem resp
 nem ranking de times.
 
 ## Problemas transversais
+
+Cada recorte elegível abre sua própria classificação, decisão prioritária, panorama
+de padrões e radar. No resumo global, a ocorrência nas unidades finais distingue:
+
+- **local**, quando apenas uma unidade sustenta o padrão;
+- **compartilhada**, quando mais de uma, mas não todas, sustentam o padrão;
+- **transversal**, quando todas as unidades finais elegíveis o sustentam;
+- **observada**, quando existe somente um recorte elegível e não há comparação.
+
+Esses rótulos descrevem abrangência observada, não causa. Um padrão transversal não
+é automaticamente organizacional, e dependência só pode ser atribuída quando a
+evidência identifica a fronteira ou política externa. Ausência em outro recorte
+significa “não demonstrado nesse recorte”, nunca prova de inexistência.
 
 O motor agrega `ProblemPattern`s semelhantes por escopo e origem provável. Exemplos:
 

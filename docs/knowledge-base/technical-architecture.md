@@ -108,7 +108,8 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva: um cartão de decisão
-(efeito, evidência agregada, prontidão, incerteza e autorização do experimento);
+em linguagem operacional (situação, observação das entrevistas, prontidão, teste,
+critério e limite da decisão);
 radar e recortes
 estruturais orientam a navegação sem reabrir a decisão. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam
@@ -117,8 +118,17 @@ calibração e revisão cognitiva ficam em elementos `details`. O home coloca de
 e mapa antes da administração de convites, também recolhida. Divergências correlatas
 são compostas num único resumo de fronteira.
 Essa separação muda a linguagem e a hierarquia visual, não os contratos ou regras
-do motor. O catálogo de orientação vive em `solution-guidance.ts`; a composição
-do desfecho em `report-outcome.ts`.
+do motor. A rota apenas projeta o desfecho já decidido; não infere causa nem escolhe
+solução por texto. O catálogo de orientação vive em `solution-guidance.ts`; a
+composição do desfecho em `report-outcome.ts`.
+Contratos de investigação e preservação ficam em `capability-narrative.ts`. A
+triangulação agrega sinais por perfil e folha declarada em `detail_capabilities`;
+não tenta converter capacidades amplas em folhas por nome ou regex.
+
+`guidanceStatus` separa contratos causais explícitos de orientação de fonte ainda
+incompleta. `GroupRecommendationEngine` considera somente os explícitos e consome
+métrica e critério do mesmo contrato; o roteamento histórico por regex foi removido.
+Assim autoria de conteúdo não cria uma segunda regra escondida dentro do ranqueador.
 
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
@@ -149,6 +159,13 @@ frágil e emergente, preservação do ramo 4/4 e a tag de divergência, e deixa 
 em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 `demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
 3217, evitando recursão entre scripts.
+O caso principal possui dois times de dez pessoas cada: um SRE, quatro pessoas de
+engenharia, uma de QA, duas de produto, uma de arquitetura e uma de gestão. Os casos
+fixam escolhas narrativas somente nos eventos que definem sua história central. Um
+time concentra esteira, regressão e ambiente; o outro, dependências, ownership e
+coordenação. As demais respostas ficam em faixas intermediárias e variam por
+perspectiva. Assim o showcase valida coerência entre resposta e diagnóstico, sem
+reutilizar o recomendador para fabricar a própria expectativa.
 
 Banco, guia e porta do E2E podem ser isolados com `E2E_DATABASE_PATH`,
 `E2E_SHOWCASE_GUIDE` e `E2E_PORT`; `SHOWCASE_PUBLIC_URL` define a origem gravada

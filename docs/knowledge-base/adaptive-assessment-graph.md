@@ -36,7 +36,7 @@ desses ramos pergunta o nome de um modelo, ferramenta ou cargo.
 
 ## Tipos de nó
 
-- `context`: identifica aplicabilidade sem produzir maturidade;
+- `context`: identifica aplicabilidade sem produzir evidência de capacidade;
 - `scenario`: apresenta um evento ou problema concreto;
 - `question`: escolha, ordenação, frequência, linha do tempo ou evidência;
 - `probe`: aprofunda contradição, impacto, frequência, causa ou bloqueio;
@@ -55,13 +55,13 @@ entregar: empacotamento manual, fila de qualidade ou aprovação/governança. Um
 resposta de fluxo curto segue diretamente ao cenário seguinte.
 
 Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não geram
-sinais de maturidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
+sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
 O catálogo atual contém 72 nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
-não é meta de maturidade: novas versões devem ampliar profundidade e discriminação
+não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
 com base em lacunas de evidência e sinais anteriores, como uma entrevista.
 
 As alternativas de prática são apresentadas em ordem determinística por

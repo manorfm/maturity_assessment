@@ -13,10 +13,16 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
+A decisão de deixar de se apresentar como framework de maturidade e passar a
+ser um diagnóstico de engenharia está em
+[`engineering-diagnostic-plan.md`](engineering-diagnostic-plan.md). A onda 0
+(vocabulário) entra com este índice; apresentação, autoria e contrato do
+finding ainda não estão na base de conhecimento.
+
 O plano para o relatório passar a fechar decisão (limitador útil, um cartão,
 orientação por classe de solução) está em
 [`decision-report-plan.md`](decision-report-plan.md). As ondas 0, 1 e 3 já estão
-na base de conhecimento (0.26.0). Restam o restante das folhas e o piloto
+na base de conhecimento (0.31.0). Restam os contratos causais das demais folhas e o piloto
 cognitivo dos novos textos.
 
 O plano sequenciado após a auditoria do modelo está em

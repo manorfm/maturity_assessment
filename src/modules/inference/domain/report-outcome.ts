@@ -1,4 +1,5 @@
 import { cloudCapabilityIds, type CapabilityBranch } from './capability-taxonomy.js';
+import { investigationFor, preservationFor } from './capability-narrative.js';
 
 export type ReportOutcomeKind = 'insufficient' | 'preserve' | 'correct' | 'evolve' | 'discriminate';
 
@@ -28,6 +29,13 @@ export type ConfirmedCause = {
   applicable: number;
   profiles: number;
   nextQuestionLabel?: string;
+};
+
+export type FindingScopeOccurrence = {
+  pattern: string;
+  scopePaths: string[];
+  eligibleScopePaths?: string[];
+  eligibleScopeCount: number;
 };
 
 export type ReportOutcome = {
@@ -84,6 +92,17 @@ export function distinctiveScopes<T extends { path: string; classification: { le
   });
 }
 
+export function findingScopeOccurrences<T extends { path: string; findings: OutcomeFinding[] }>(scopes: T[]): FindingScopeOccurrence[] {
+  const leaves = scopes.filter((scope) => !scopes.some((candidate) => candidate.path.startsWith(`${scope.path}/`)));
+  const byPattern = new Map<string, string[]>();
+  for (const scope of leaves) {
+    for (const finding of uniqueFindingsByPattern(scope.findings)) {
+      byPattern.set(finding.pattern, [...(byPattern.get(finding.pattern) ?? []), scope.path]);
+    }
+  }
+  return [...byPattern].map(([pattern, scopePaths]) => ({ pattern, scopePaths, eligibleScopePaths: leaves.map((scope) => scope.path), eligibleScopeCount: leaves.length }));
+}
+
 export function decideReportOutcome(input: {
   classification: { level: number; label: string; limitingCapabilities: string[] } | null;
   branches: CapabilityBranch[];
@@ -106,14 +125,19 @@ export function decideReportOutcome(input: {
   const bound = limiter ? uniqueFindings.filter((finding) => finding.detailCapability === limiter.id || finding.affectedCapabilities?.includes(limiter.id)) : uniqueFindings;
   const leading = bound[0];
   const mixed = Boolean(limiter?.hasContradiction || (limiter && limiter.confidence < .5));
-  const gap = input.focusId ? undefined : input.perspectiveGaps?.[0];
+  const focusCapabilityIds = new Set(focus ? flattenNodeIds(focus) : []);
+  const gap = input.focusId
+    ? input.perspectiveGaps?.find((candidate) => focusCapabilityIds.has(candidate.capability ?? ''))
+    : input.perspectiveGaps?.[0];
 
   if (gap) {
     return {
       ...outcome(
         'discriminate',
         gap.title,
-        'As perspectivas não descrevem o mesmo sistema de trabalho. A diferença é o finding: visibilidade, fronteira ou poder — não uma nota baixa automática.',
+        input.focusId
+          ? 'Há uma hipótese candidata neste detalhamento, mas as perspectivas não descrevem o mesmo sistema. Não autorize intervenção antes de triangular visibilidade, fronteira e poder de decisão.'
+          : 'As perspectivas não descrevem o mesmo sistema de trabalho. A diferença é o finding: visibilidade, fronteira ou poder — não uma nota baixa automática.',
         'Triangular a divergência observada',
         `${gap.title}. Reconstrua um evento recente com as lentes que divergem antes de prescrever processo, ferramenta ou reestruturação.`,
       ),
@@ -121,7 +145,8 @@ export function decideReportOutcome(input: {
     };
   }
   if (focus?.children.length && focus.level >= 4 && (!limiter || cloudCapabilityIds.has(limiter.id) || limiter.level >= 4)) {
-    return { ...outcome('preserve', focus.label, 'As evidências convergem para uma prática sustentada neste recorte.', 'Não iniciar transformação aqui', 'Preserve a prática, acompanhe consistência sob pressão e não acrescente intervenção só para preencher o relatório.'), limiterId: focus.id };
+    const preservation = preservationFor(focus.label);
+    return { ...outcome('preserve', focus.label, preservation.reading, 'Não iniciar transformação aqui', preservation.nextStep), limiterId: focus.id };
   }
   if (mixed) {
     return {
@@ -139,12 +164,18 @@ export function decideReportOutcome(input: {
     };
   }
   if (stageLevel >= 4 || (limiter && limiter.level >= 4)) {
-    return { ...outcome('preserve', limiterLabel, 'As evidências convergem para uma prática sustentada neste recorte.', 'Não iniciar transformação aqui', 'Preserve a prática, acompanhe consistência sob pressão e não acrescente intervenção só para preencher o relatório.'), ...limiterId(limiter) };
+    const preservation = preservationFor(limiterLabel);
+    return { ...outcome('preserve', limiterLabel, preservation.reading, 'Não iniciar transformação aqui', preservation.nextStep), ...limiterId(limiter) };
   }
+  const investigation = investigationFor(limiter?.id ?? focus?.id ?? '', limiterLabel);
   return {
-    ...outcome('discriminate', limiterLabel, `${limiterLabel} está em ${stageLabel.toLowerCase()} e nenhuma causa recorrente foi isolada.`, 'Observar um evento recente', `Reconstrua a última ocorrência visível em ${limiterLabel} com as perspectivas que faltam. O passo é evidência, não um playbook.`),
+    ...outcome('discriminate', limiterLabel, investigation.uncertainty, 'Distinguir as explicações concorrentes', investigation.nextObservation),
     ...limiterId(limiter),
   };
+}
+
+function flattenNodeIds(node: CapabilityBranch): string[] {
+  return [node.id, ...node.children.flatMap(flattenNodeIds)];
 }
 
 function decisionLimiter(leaves: CapabilityBranch[], stageLevel: number, findings: OutcomeFinding[]): CapabilityBranch | undefined {

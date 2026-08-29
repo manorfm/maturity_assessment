@@ -42,7 +42,7 @@ mas ausência de evidência é
 rotulada como “não avaliado”, nunca como nível zero. A taxonomia não duplica o mesmo
 sinal para preencher frameworks diferentes.
 
-Cloud é contexto de arquitetura e operação, não maturidade autônoma. Quando o
+Cloud é contexto de arquitetura e operação, não um diagnóstico autônomo. Quando o
 catálogo possuir evidência discriminativa suficiente, workloads cloud poderão
 aprofundar os seis pilares Well-Architected — excelência operacional, segurança,
 confiabilidade, eficiência de performance, otimização de custos e sustentabilidade.
@@ -70,7 +70,7 @@ falha, taxa de falha e taxa de retrabalho — sem inferi-las apenas da entrevist
 
 Perguntas como “usa Kafka?”, “usa Kubernetes?” ou “possui time de plataforma?” só
 podem atuar como filtros de aplicabilidade ou roteamento. Elas não produzem sinal
-positivo ou negativo de maturidade.
+positivo ou negativo de capacidade.
 
 Depois do filtro, o instrumento apresenta um problema compatível com o contexto.
 Por exemplo, se existe mensageria, investiga perda, duplicidade, evolução de
@@ -96,9 +96,10 @@ Cada resposta pode gerar sinais em camadas diferentes:
 Isso permite distinguir “não sabe fazer”, “sabe mas está bloqueado” e “faz de
 forma sustentável”.
 
-## Maturidade por capacidade
+## Estágio do comportamento por capacidade
 
-Uma escala inicial, sujeita a calibração empírica:
+Uma escala inicial de consistência do comportamento, sujeita a calibração
+empírica. Não é o diagnóstico nem uma nota de framework:
 
 0. **Opaco:** decisões e resultados não são observáveis.
 1. **Reativo:** resposta depende de urgência e esforço individual.
@@ -110,8 +111,11 @@ Não haverá média simples entre pilares. O relatório deve destacar capacidade
 limitantes, relações causais plausíveis e confiança. Uma nota agregada, se existir,
 será secundária e explicável.
 
-O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
-os oito eixos macro e suas explosões. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
+O relatório vigente (0.31.0) ainda apresenta, no mapa global e nos recortes
+hierárquicos seguros, os oito eixos macro, uma classificação ordinal e o radar.
+Essa apresentação é auxiliar: o produto é o diagnóstico, não o estágio. A
+decisão de rebaixá-los no primeiro plano está em
+`docs/backlog/engineering-diagnostic-plan.md`. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
 dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
 evidência insuficiente, aparece com marcador neutro “?” e nunca é interpretado como
 zero ou fragilidade. Esse estado não permite aprofundamento até atingir cobertura;
@@ -154,11 +158,36 @@ média. Ao consolidar a hierarquia, uma unidade ancestral também é limitada pe
 classificação mais baixa entre descendentes publicáveis. O relatório preserva as
 capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
 isso evita que uma squad forte esconda outra bloqueada.
+O primeiro plano explicita que o estágio descreve o elo limitante, não a organização
+inteira. O radar continua sendo a leitura da distribuição entre pilares.
 
-Na interface gerencial, cada página fecha um único cartão de decisão. O primeiro
-plano mostra efeito observado, capacidades afetadas, base agregada aplicável,
-contradição, capacidade disponível para resolver, incerteza remanescente e a
+Quando perspectivas elegíveis descrevem sistemas incompatíveis, o primeiro plano
+fica `Inconclusivo`: a divergência suspende a classificação ordinal até distinguir
+visibilidade, fronteira e poder de decisão. Os níveis internos continuam disponíveis
+para investigação, mas não são apresentados como diagnóstico executivo do recorte.
+Cada divergência é calculada e publicada na folha observada. No detalhamento, ela
+suspende somente a folha ou o ramo que a contém; uma divergência de aprendizado não
+substitui o diagnóstico de arquitetura, segurança ou fluxo. O resumo global continua
+inconclusivo quando qualquer divergência elegível impede uma leitura única do sistema.
+
+Na interface gerencial, cada página fecha um único cartão de decisão. A leitura
+começa em linguagem cotidiana por quatro perguntas: o que está acontecendo, o que
+as entrevistas mostraram, o que testar e como saber se funcionou. O primeiro plano
+mostra capacidades afetadas, pessoas que podiam observar a situação, padrões de
+resposta, perspectivas, contradições, capacidade disponível para resolver e a
 autorização solicitada: experimento, responsável, horizonte, indicador e critério.
+Termos metodológicos como posterior, população aplicável, mecanismo causal e classe
+de solução ficam na explicação sob demanda; não substituem a descrição concreta do
+trabalho, da espera, da decisão ou do risco observado.
+No resumo global, a decisão prioritária declara sua posição entre todos os padrões
+confirmados e é seguida por um panorama dos quatro seguintes, com o total real,
+capacidade, sustentação agregada e distribuição entre unidades elegíveis. Limitar a
+lista não reduz a contagem nem permite interpretar `Opaco` como “um único problema”.
+O panorama não prescreve transformações simultâneas: torna o sistema de problemas
+visível para sequenciamento sem competir com o menor experimento prioritário.
+O relatório distingue a capacidade principal do finding de seus efeitos relacionados.
+A primeira localiza onde a evidência e o tratamento se ligam; os demais mostram
+impacto transversal sem transformar todo pilar afetado em dono da intervenção.
 Mecanismo detalhado, classe de solução (prática, política, desenho organizacional,
 capacidade de plataforma ou família de ferramenta — nunca uma marca que pontue) e
 fundamentos ficam disponíveis sob demanda. O limitador
@@ -166,15 +195,19 @@ fundamentos ficam disponíveis sob demanda. O limitador
 aninhadas não ocupam o palco só porque a nota foi baixa. A página da folha usa o
 estágio daquela folha, não o rótulo global. Divergência de perspectiva no home é
 o finding (as lentes não veem o mesmo sistema); contradição só discrimina quando
-está no limitador escolhido. Radar, mapa por estrutura, calibração e revisão
+está no limitador escolhido. A mesma suspensão vale no detalhamento: uma hipótese
+candidata pode ser mostrada para investigação, mas não autoriza intervenção antes
+da triangulação. Radar, mapa por estrutura, calibração e revisão
 cognitiva permanecem visíveis, mas não competem com a decisão: administração e
 instrumento ficam em `details`; o mapa por estrutura omite recortes que só duplicam o
 diagnóstico global. Nota, confiança, população, incerteza e versão do modelo são
 informações secundárias e explicáveis. Ferramenta, framework e nome de time
 continuam sem pontuar.
 
-O radar e o cabeçalho das capacidades usam estágios qualitativos e suficiência de
-evidência, sem decimal ou percentual no primeiro plano. Ordinal, intervalo e
+O radar e o cabeçalho das capacidades usam estágios qualitativos e **cobertura
+temática**, sem decimal ou percentual no primeiro plano. Cobertura informa quantos
+aspectos do tema foram observados; não significa força causal, consenso nem tamanho
+da amostra. Ordinal, intervalo e
 cobertura exata permanecem auditáveis nos detalhes. Toda capacidade avaliada abaixo de 4 deve ter
 uma correção de fragilidade ou uma evolução recomendada sustentada pelo grupo. Uma
 evolução não reclassifica prática forte como problema: identifica o comportamento
@@ -208,7 +241,7 @@ Todo comportamento ausente pode ser relacionado a um ou mais bloqueios:
 - confiança, comunicação ou segurança psicológica.
 
 A existência de QA, SRE, plataforma ou outra função especializada não altera o
-nível por si só. A ausência de um título também não reduz automaticamente maturidade:
+nível por si só. A ausência de um título também não reduz automaticamente a capacidade inferida:
 o instrumento verifica se a competência necessária entra cedo no fluxo, por pessoas,
 colaboração ou guardrails. Quando não entra, registra lacuna de competência acessível;
 quando a especialidade vira handoff ou fila, registra o bloqueio organizacional.
@@ -264,7 +297,7 @@ Também não se exige que o respondente conheça nomes como trunk-based developm
 golden source, shift-left ou platform engineering. Pergunta-se como o trabalho
 acontece, quanto espera, onde diverge, como falha e como se recupera.
 
-## Maturidade local e maturidade do sistema
+## Capacidade local e capacidade do sistema
 
 O modelo mantém separadas:
 
@@ -279,7 +312,7 @@ também revelar ausência de uma capacidade organizacional reutilizável. O time
 deve ser penalizado pela restrição como se fosse falta de conhecimento; a
 organização, porém, deve enxergar o gargalo transversal.
 
-## Maturidade como propriedade sociotécnica
+## Capacidade como propriedade sociotécnica
 
 Entrega não pertence apenas a desenvolvimento. Produto, gestão, QA, mobile, web,
 dados, segurança, operações, arquitetura e outras disciplinas moldam o mesmo SDLC.
@@ -289,7 +322,7 @@ decisões atravessam fronteiras.
 Uma capacidade pode receber sinais de vários perfis. Por exemplo, feedback rápido
 pode ser observado no modo como PM reduz incerteza, QA participa da definição,
 engenharia integra mudanças e gestão trata dependências. O finding final combina
-essas evidências sem calcular “maturidade do cargo” nem expor respostas individuais.
+essas evidências sem calcular “capacidade do cargo” nem expor respostas individuais.
 
 Modelos como Tuckman e Team Topologies ajudam a interpretar comportamento de
 formação, conflito, autonomia, carga cognitiva e modos de interação. Não se pergunta

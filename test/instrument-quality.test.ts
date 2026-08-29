@@ -53,6 +53,23 @@ test('palavras incidentais não deslocam o experimento para outra família', () 
   assert.match(portfolio.successCriterion, /continuidade/);
 });
 
+test('padrões apresentados no showcase possuem contrato causal específico', () => {
+  const required = [
+    'solucao-entregue-pronta', 'correcao-direta-na-producao', 'contorno-acumula-divida',
+    'concorrencia-coordenada-manualmente', 'credencial-em-configuracao',
+    'seguranca-depende-de-reconhecimento-e-especialista', 'prestigio-tecnico',
+    'mudanca-emergencial-reconciliada',
+  ];
+  for (const pattern of required) assert.equal(recommendations[pattern]?.guidanceStatus, 'explicit', pattern);
+});
+
+test('contrato já compatível não gera recomendação contraditória de compatibilidade', () => {
+  const node = graph.find((candidate) => candidate.id === 'data-contract-change');
+  const option = node?.options.find((candidate) => candidate.id === 'compatible-evolution');
+  assert.deepEqual(option?.signals.map((signal) => signal.pattern), ['contrato-e-dados-evoluem-compativeis']);
+  assert.deepEqual(option?.signals[0]?.details, ['integration-data']);
+});
+
 test('rede especialista explicita comportamento, efeito, causa, ação e fundamento', () => {
   assert.equal(causalKnowledgeGraph.size, Object.keys(recommendations).length);
   for (const pattern of Object.keys(recommendations)) {

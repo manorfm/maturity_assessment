@@ -5,7 +5,7 @@ export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'acc
 export type GroupSignal = { participantId: string; profile?: string; detailCapability: string; pattern: string; weight: number; layer: EvidenceLayer; constraint: ConstraintKind };
 export type InterventionFoundation = { source: string; principle: string; why: string };
 export type InterventionSeed = { title: string; intervention: string; foundation?: InterventionFoundation };
-export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation; guidance?: SolutionGuidance };
+export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation; guidance?: SolutionGuidance; guidanceStatus?: 'explicit' | 'fallback' };
 export type RecommendationPopulation = { total: number; applicableByCapability: Record<string, number> };
 export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
 export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; reasons: string[]; evidence: RecommendationEvidence; solutionCapability: string; solutionReadiness: SolutionReadiness; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
@@ -18,7 +18,9 @@ export function defineInterventionCatalog(seeds: Record<string, InterventionSeed
     const foundation = { ...baseFoundation, why: specificFoundationWhy(baseFoundation, seed.title) };
     const guidance = guidanceFor(pattern, foundation, seed.title);
     return [pattern, {
-      ...seed, cause: causeFromGuidance(guidance, seed.title), action: seed.intervention, foundation, guidance, ...experimentDefaults('none', pattern, foundation, guidance), ...rule,
+      ...seed, cause: causeFromGuidance(guidance, seed.title), action: seed.intervention, foundation, guidance,
+      guidanceStatus: hasExplicitGuidance(pattern) ? 'explicit' : 'fallback',
+      ...experimentDefaults('none', pattern, foundation, guidance), ...rule,
       evidencePatterns: rule.evidencePatterns ?? [pattern], contradictionPatterns: rule.contradictionPatterns ?? [],
     }];
   }));
@@ -40,7 +42,8 @@ export class GroupRecommendationEngine {
     const minimumSupport = Math.max(2, Math.ceil(applicablePopulation * .2));
     const candidates = unique(signals.flatMap((signal) => {
       const catalog = signal.weight < 0 ? this.correctionCatalog : signal.weight < 2 ? this.evolutionCatalog : {};
-      return catalog[signal.pattern] ? [signal.pattern] : [];
+      const definition = catalog[signal.pattern];
+      return definition && definition.guidanceStatus !== 'fallback' ? [signal.pattern] : [];
     }));
     const posterior = posteriorByPattern(signals, candidates, this.correctionCatalog, this.evolutionCatalog, applicablePopulation);
     return candidates.flatMap((pattern) => {
@@ -59,7 +62,7 @@ export class GroupRecommendationEngine {
       const confidence = roundConfidence(posterior.get(pattern) ?? 0);
       if (confidence < .5) return [];
       const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
-      const contextualDefaults = experimentDefaults(constraint, pattern, definition.foundation, definition.guidance);
+      const contextualOwner = ownerForConstraint(constraint, definition.foundation);
       const solutionReadiness = assessSolutionReadiness(signals, applicablePopulation);
       const solutionCapability = definition.guidance?.solutionClass ?? `Capacidade coletiva para reduzir ${definition.title.toLocaleLowerCase('pt-BR')}`;
       const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
@@ -69,7 +72,7 @@ export class GroupRecommendationEngine {
         ...(contradictors.size ? [`Contradição específica em ${contradictors.size} jornada(s).`] : []),
         ...(constraint !== 'none' ? [`Restrição observada: ${constraint}.`] : []),
       ];
-      return [{ ...definition, kind, detailCapability: capability, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(sourceSignals, support), reasons, evidence, solutionCapability, solutionReadiness, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualDefaults.owner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
+      return [{ ...definition, kind, detailCapability: capability, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(sourceSignals, support), reasons, evidence, solutionCapability, solutionReadiness, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualOwner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
     }).sort((left, right) => right.priority - left.priority || right.confidence - left.confidence || right.support - left.support).slice(0, 3);
   }
 }
@@ -112,8 +115,12 @@ export function foundationFor(pattern: string): InterventionFoundation {
   return foundation;
 }
 function experimentDefaults(constraint: ConstraintKind, pattern = '', foundation?: InterventionFoundation, guidance?: SolutionGuidance): Pick<InterventionDefinition, 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> {
+  if (!guidance) throw new Error(`Solution guidance is missing: ${pattern}`);
+  return { owner: ownerForConstraint(constraint, foundation), metric: guidance.metric, reviewHorizon: horizonFor(pattern), successCriterion: guidance.successCriterion };
+}
+function ownerForConstraint(constraint: ConstraintKind, foundation?: InterventionFoundation): string {
   const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', knowledge: 'Liderança técnica com a disciplina habilitadora', process: 'Responsável pelo fluxo com as pessoas que executam o processo', tooling: 'Engenharia com plataforma', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado' };
-  return { owner: constraint === 'none' ? ownerFor(foundation?.source) : owners[constraint], metric: hasExplicitGuidance(pattern) && guidance?.metric ? guidance.metric : metricFor(pattern), reviewHorizon: horizonFor(pattern), successCriterion: hasExplicitGuidance(pattern) && guidance?.successCriterion ? guidance.successCriterion : specificSuccess(successFor(pattern)) };
+  return constraint === 'none' ? ownerFor(foundation?.source) : owners[constraint];
 }
 function ownerFor(source?: string): string {
   const owners: Record<string, string> = {
@@ -128,50 +135,15 @@ function ownerFor(source?: string): string {
   };
   return owners[source ?? ''] ?? 'Liderança do fluxo e pessoas afetadas pelo problema';
 }
-function specificSuccess(criterion: string): string {
-  return /a métrica escolhida melhora/i.test(criterion) ? 'o comportamento deixa de se repetir no recorte acompanhado sem deslocar risco ou espera para outra etapa' : criterion;
-}
 function specificFoundationWhy(foundation: InterventionFoundation, title: string): string {
   if (foundation.why !== 'A intervenção ataca o comportamento observado, não um inventário de práticas.') return foundation.why;
   return `O princípio orienta um experimento para reduzir “${lowerFirst(title)}” e verificar o efeito antes de institucionalizar a solução.`;
-}
-function metricFor(pattern: string): string {
-  if (/reconhecimento|incentivo/.test(pattern)) return 'decisões de reconhecimento que citam efeito observado e diferença entre trabalho iniciado e resultado alcançado';
-  if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) return 'tempo até detectar, formar hipótese e mitigar; recorrência da mesma classe de falha';
-  if (/integracao|release|deploy|entrega|empacotamento/.test(pattern)) return 'lead time, espera até feedback e taxa de falha ou retrabalho da mudança';
-  if (/qualidade|teste|regressao|seguranca|vulnerab/.test(pattern)) return 'tempo de feedback, escapes por risco e retrabalho após a verificação';
-  if (/produto|discovery|resultado|portfolio|prioridade/.test(pattern)) return 'tempo até evidência, decisões alteradas e trabalho interrompido por hipótese invalidada';
-  if (/governanca|controle|permissao|acesso|aprovacao/.test(pattern)) return 'tempo de espera, exceções e proporção de decisões realmente alteradas pelo controle';
-  if (/cloud|infraestrutura|plataforma|provisionamento/.test(pattern)) return 'tempo de provisão ou recuperação, falhas manuais e adoção do caminho suportado';
-  if (/dado|contrato|schema|significado|numero|reconciliacao/.test(pattern)) return 'consumidores impactados, divergências de definição e tempo até reconciliar o significado';
-  if (/design|interface|experiencia|jornada/.test(pattern)) return 'conclusão da jornada, abandono e retrabalho de interface após evidência de uso';
-  if (/arquitet|acoplamento|fronteira|termo|glossario|complexidade|camada/.test(pattern)) return 'grupos envolvidos, espera de coordenação e esforço da próxima mudança equivalente';
-  if (/aprend|melhoria|acao|cerimonia|recorrencia/.test(pattern)) return 'ações com efeito revisado, recorrência do padrão e tempo até incorporar o aprendizado';
-  if (isAssistancePattern(pattern)) return 'retrabalho, achados de revisão e mudanças assistidas explicáveis por outra pessoa';
-  if (/carga|heroi|ownership|coordenacao|dependencia/.test(pattern)) return 'tempo bloqueado, trocas de contexto e intervenções externas para concluir o fluxo';
-  return 'tempo de espera, recorrência e efeito observado na capacidade afetada, no recorte acompanhado';
-}
-function successFor(pattern: string): string {
-  if (/reconhecimento|incentivo/.test(pattern)) return 'o próximo ciclo de reconhecimento usa evidência de efeito sem premiar volume, heroísmo ou risco oculto';
-  if (/incidente|diagnostico|telemetria|observ|deteccao/.test(pattern)) return 'o próximo evento é detectado e mitigado mais cedo sem ampliar acesso ou exposição de dados';
-  if (/produto|discovery|resultado|portfolio|prioridade/.test(pattern)) return 'a próxima revisão altera continuidade, escopo ou capacidade a partir de evidência do resultado, não apenas do plano concluído';
-  if (/integracao|release|deploy|entrega/.test(pattern)) return 'a próxima mudança atravessa o fluxo em lote menor, com feedback mais cedo e sem aumento de falhas';
-  if (/governanca|controle|permissao|aprovacao/.test(pattern)) return 'casos de baixo risco fluem mais rápido e decisões de alto risco preservam evidência e auditoria';
-  if (/dado|contrato|schema|significado|numero/.test(pattern)) return 'a próxima mudança preserva significado e compatibilidade sem reconciliação posterior dos consumidores';
-  if (/design|interface|experiencia|jornada/.test(pattern)) return 'evidência de uso altera a próxima decisão e reduz abandono ou retrabalho sem ocultar outro segmento';
-  if (/arquitet|acoplamento|fronteira|termo|complexidade|camada/.test(pattern)) return 'a próxima mudança equivalente envolve menos coordenação sem deslocar acoplamento para outro limite';
-  if (/aprend|melhoria|acao|cerimonia|recorrencia/.test(pattern)) return 'a ação é revisada por efeito e reduz a recorrência observada, não apenas concluída';
-  if (isAssistancePattern(pattern)) return 'outra pessoa explica e revisa a próxima mudança assistida sem ampliar retrabalho ou exposição de dados';
-  return 'a métrica escolhida melhora no período sem deslocar risco ou espera para outra etapa';
 }
 function horizonFor(pattern: string): string {
   if (/incidente|diagnostico|telemetria|deteccao|resilien/.test(pattern)) return 'no próximo exercício controlado ou incidente equivalente';
   if (/portfolio|incentivo|lideranca|resultado/.test(pattern)) return 'no próximo ciclo de decisão de investimento';
   if (/cloud|plataforma|provisionamento|credencial|acesso/.test(pattern)) return 'nas próximas cinco utilizações do caminho';
   return 'na próxima mudança equivalente, com revisão em até 30 dias';
-}
-function isAssistancePattern(pattern: string): boolean {
-  return pattern.startsWith('ia-') || pattern.includes('assistencia-de-modelo');
 }
 function lowerFirst(value: string): string {
   return value.charAt(0).toLocaleLowerCase('pt-BR') + value.slice(1).replace(/[.]$/, '');

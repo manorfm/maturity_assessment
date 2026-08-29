@@ -243,7 +243,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 255);
+  assert.equal(signals.length, 254);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);
@@ -293,7 +293,8 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
 
   invitations.createBatch(String(project.id), unit.id, 1).tokens.forEach((token) => complete(token, 'add-to-sprint', 'engineering'));
   const gaps = inference.report(String(project.id), 5).perspectiveGaps;
-  assert.equal(gaps.some((gap) => gap.capability === 'fluxo'), true);
+  assert.equal(gaps.some((gap) => gap.capability === 'work-management'), true);
+  assert.equal(gaps.some((gap) => /capacidade “Fluxo de trabalho”/.test(gap.title)), true);
 });
 
 test('suprime toda a cadeia quando uma partição irmã é pequena', () => {

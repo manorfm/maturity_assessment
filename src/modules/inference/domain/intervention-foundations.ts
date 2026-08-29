@@ -337,9 +337,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "correcao-direta-na-producao": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Infrastructure as Code / SRE",
+    "principle": "Uma única origem reproduzível também no caminho emergencial",
+    "why": "Reconciliação e detecção de divergência impedem que console e fonte definam estados concorrentes."
   },
   "correcao-manual-de-dados": {
     "source": "Melhoria contínua",
@@ -372,9 +372,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Ocupação individual não mede o sistema; iniciar mais trabalho esconde a espera."
   },
   "contorno-acumula-divida": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / arquitetura evolutiva",
+    "principle": "Exceção reversível com validade e condição de remoção",
+    "why": "O contorno só preserva fluxo sem acumular divergência quando sua reconciliação faz parte da decisão."
   },
   "causa-permissao-sem-autonomia": {
     "source": "Well-Architected — Security",
@@ -397,9 +397,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "solucao-entregue-pronta": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Discovery e evidência de uso",
+    "principle": "Restrições e hipóteses alteram a decisão antes do investimento",
+    "why": "Comparar opções cedo permite que negócio, produto e competências técnicas mudem o desenho."
   },
   "decisao-concentrada": {
     "source": "Melhoria contínua",
@@ -487,9 +487,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo."
   },
   "concorrencia-coordenada-manualmente": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Composição e contrato recebem feedback antecipado",
+    "why": "Uma prova reproduzível substitui coordenação recorrente como detector principal de colisões."
   },
   "planejamento-compensa-acoplamento": {
     "source": "Melhoria contínua",
@@ -912,9 +912,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "mudanca-emergencial-reconciliada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Infrastructure as Code / SRE",
+    "principle": "O caminho emergencial preserva fonte, validação e auditoria",
+    "why": "Reconciliação automática remove o trabalho posterior sujeito a memória e pressão."
   },
   "ownership-compartilhado-explicito": {
     "source": "Team Topologies",
@@ -922,11 +922,6 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo."
   },
   "divida-revista-por-efeito": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
-  },
-  "compatibilidade-verificada": {
     "source": "Melhoria contínua",
     "principle": "Mudança pequena, dono, sinal de efeito",
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."

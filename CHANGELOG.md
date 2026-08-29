@@ -5,6 +5,47 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.31.0
+
+- Separou decisão prioritária da quantidade total de problemas confirmados, evitando
+  que uma classificação opaca pareça significar um único problema.
+- Classificou a abrangência observada dos findings como local, compartilhada,
+  transversal ou recorte único, sem inferir causa organizacional automaticamente.
+- Tornou cada squad navegável com classificação, próxima decisão, panorama de
+  problemas e radar próprios.
+
+## 0.30.0
+
+- Acrescentou ao resumo um panorama dos demais problemas confirmados, mantendo um
+  único experimento prioritário.
+- Reconstruiu o showcase principal com dois times de dez pessoas e histórias
+  distintas de esteira versus coordenação, sem tornar toda resposta frágil.
+- Explicitou que a classificação descreve o elo limitante e que o mínimo de cinco
+  protege anonimato, mas não garante representatividade estatística.
+
+## 0.29.0
+
+- Localizou divergências por folha, impedindo que uma assimetria substitua o
+  diagnóstico de pilares não relacionados.
+- Introduziu contratos narrativos para investigação e preservação, separou
+  capacidade principal de efeitos e tornou evidência e fundamento auditáveis.
+- Removeu a recomendação contraditória gerada por uma resposta que já declarava
+  evolução compatível de contratos e retirada planejada.
+
+## 0.28.0
+
+- Reescreveu o cartão executivo em linguagem cotidiana: situação, observação das
+  entrevistas, capacidade atual, teste, critério de sucesso e limite da decisão.
+- Separou cobertura temática, pessoas observadoras, padrões de resposta e prontidão
+  da solução, e suspendeu prescrições divergentes também nos detalhamentos.
+
+## 0.27.0
+
+- Bloqueou prescrições sem contrato causal explícito e removeu a seleção heurística
+  de métricas por identificador; nove padrões do showcase ganharam cadeia própria.
+- Divergência de perspectivas passou a suspender a classificação executiva como
+  `Inconclusivo`, sem converter desacordo automaticamente em nível baixo.
+
 ## 0.26.0
 
 - Reorganizou o relatório para uma mesa executiva: evidência observada, capacidade

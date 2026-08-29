@@ -48,6 +48,10 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 - benchmarks apenas com amostras comparáveis e proteção contra ranking simplista;
 - revisão humana e contestação de findings;
 - detecção de questões com baixo poder discriminativo ou viés por grupo/contexto.
+- hipótese ainda não comprometida: comparar famílias observacionais pré-declaradas
+  (por exemplo, construção, produto e habilitação) quando perfis raros não atingirem
+  cinco respostas individualmente. Validar utilidade e risco de reidentificação antes
+  de substituir ou complementar a triangulação por perfil.
 
 ## Pilares e referências
 

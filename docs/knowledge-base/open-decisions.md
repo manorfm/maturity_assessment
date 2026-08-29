@@ -22,5 +22,10 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   mínimo de cobertura, perfil observador, anonimato e limite de jornada.
 - Tratar confiança probabilística como não calibrada até piloto com rótulos externos;
   clique ou aceitação de recomendação não constituem verdade de treinamento.
+- O produto é um diagnóstico de engenharia do sistema sociotécnico de entrega,
+  não um framework de maturidade. Os oito pilares indexam o mapa de problemas;
+  estágio ordinal e radar são leituras auxiliares. A sequência está em
+  `docs/backlog/engineering-diagnostic-plan.md`. Ferramenta, framework e cargo
+  continuam sem pontuar.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

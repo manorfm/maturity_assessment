@@ -6,7 +6,7 @@
 - Evitar mencionar a prática cuja presença está sendo inferida.
 - Oferecer opções plausíveis, todas com algum custo ou benefício.
 - Separar preferência pessoal, comportamento real e restrição externa.
-- Combinar sinais; nenhuma pergunta isolada determina maturidade.
+- Combinar sinais; nenhuma pergunta isolada determina o diagnóstico.
 - Incluir checagens de consistência sem repetir literalmente a questão.
 - Randomizar alternativas comportamentais quando a posição puder induzir uma
   resposta “correta”. A ordem é determinística por participação e pergunta para
@@ -14,9 +14,9 @@
 - Registrar “não sei” / “não observo” como informação sobre visibilidade, não como
   falha automática. “Não se aplica” é contexto: a folha permanece não avaliada.
 - Toda opção de prática pontua comportamento; saídas observacionais não carregam
-  sinal de maturidade.
+  sinal de capacidade.
 - Usar perguntas sobre ferramentas e estruturas apenas para aplicabilidade e
-  roteamento; suas respostas não pontuam maturidade.
+  roteamento; suas respostas não pontuam o diagnóstico.
 - Formular cenários em torno de falhas, mudanças, decisões e consequências, de modo
   que diferentes soluções técnicas possam demonstrar a mesma capacidade.
 - Depois de um sinal positivo, mudar contexto ou pressão para verificar se a prática
@@ -51,7 +51,7 @@ Cada pergunta de prática admite, além das alternativas de comportamento:
 
 1. **Prática** — o que ocorreu; pode ser forte, intermediário ou frágil e pontua.
 2. **Não observo** — a pessoa não vê o evento no cotidiano; registra visibilidade,
-   sem peso de maturidade para aquela jornada.
+   sem peso de capacidade para aquela jornada.
 3. **Não se aplica** — o evento não ocorre neste ambiente; a folha permanece não
    avaliada, nunca zero.
 
@@ -197,7 +197,7 @@ necessárias; ADR é uma possível evidência, não um requisito nominal.
 
 ### Especialistas, generalistas e lacunas de disciplina
 
-Não inferir maturidade por títulos como SRE, QA ou full-stack. Usar cenários que
+Não inferir capacidade por títulos como SRE, QA ou full-stack. Usar cenários que
 revelem se conhecimentos necessários entram na decisão, seja por integrantes do
 time, colaboração temporária, plataforma ou padrões automatizados. Avaliar o
 resultado e o acesso à competência, não a existência de um cargo.

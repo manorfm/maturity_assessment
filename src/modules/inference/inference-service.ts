@@ -233,7 +233,7 @@ export const interventionCatalog = defineInterventionCatalog(interventionSeeds, 
   'causa-ferramental-feedback': { evidencePatterns: ['causa-ferramental-feedback', 'automacao-sem-feedback'], contradictionPatterns: ['integracao-continua-validada', 'fluxo-seguro-sob-pressao'] },
   'causa-processo-lote': { evidencePatterns: ['causa-processo-lote', 'controle-indiferenciado'], contradictionPatterns: ['governanca-proporcional'] },
   'causa-fronteira-times': { evidencePatterns: ['causa-fronteira-times', 'coordenacao-centralizada'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
-  'causa-acoplamento-entrega': { evidencePatterns: ['causa-acoplamento-entrega', 'acoplamento-coordenado'], contradictionPatterns: ['compatibilidade-verificada'] },
+  'causa-acoplamento-entrega': { evidencePatterns: ['causa-acoplamento-entrega', 'acoplamento-coordenado'], contradictionPatterns: ['contrato-e-dados-evoluem-compativeis'] },
   'causa-lacuna-telemetria': { evidencePatterns: ['causa-lacuna-telemetria', 'telemetria-fragmentada'], contradictionPatterns: ['diagnostico-correlacionado'] },
   'causa-ferramenta-observabilidade': { evidencePatterns: ['causa-ferramenta-observabilidade', 'diagnostico-por-acesso-direto'], contradictionPatterns: ['diagnostico-correlacionado'] },
   'causa-correlacao-arquitetural': { evidencePatterns: ['causa-correlacao-arquitetural', 'telemetria-fragmentada'], contradictionPatterns: ['diagnostico-correlacionado'] },
@@ -251,7 +251,6 @@ const evolutionSeeds: Record<string, InterventionSeed> = {
   'mudanca-emergencial-reconciliada': { title: 'A emergência é reconciliada, mas ainda exige trabalho posterior', intervention: 'Automatize a reconciliação e exercite o caminho emergencial para que fonte declarativa, validações e auditoria permaneçam íntegras sob pressão.' },
   'ownership-compartilhado-explicito': { title: 'Ownership compartilhado ainda exige coordenação', intervention: 'Reduza uma passagem recorrente com contrato, limite ou modo de colaboração explícito e valide autonomia ponta a ponta.' },
   'divida-revista-por-efeito': { title: 'Dívida é gerida, mas a prevenção ainda não é sistêmica', intervention: 'Converta a causa mais recorrente em guardrail, teste arquitetural ou padrão de design e acompanhe redução de reincidência.' },
-  'compatibilidade-verificada': { title: 'Compatibilidade é verificada, mas a evolução ainda pode depender de coordenação', intervention: 'Automatize contratos e políticas de evolução, incluindo remoção segura de versões e feedback antecipado aos consumidores.' },
   'seguranca-concentrada-em-scanners': { title: 'Segurança ainda está concentrada na detecção automatizada', intervention: 'Acrescente modelagem proporcional de ameaça, ownership e validação de desenho para riscos que scanners não conseguem interpretar.' },
 };
 
@@ -438,15 +437,25 @@ export class InferenceService {
     if (eligible.length < 2) return [];
     const profileValues = eligible.map((item) => item.profile);
     const placeholders = profileValues.map(() => '?').join(',');
-    const scores = this.db.prepare(`
-      SELECT p.profile, s.capability, AVG(s.weight) score
+    const rows = this.db.prepare(`
+      SELECT p.profile, s.detail_capabilities, s.weight
       FROM responses r JOIN participations p ON p.id = r.participation_id
       JOIN assessment_signals s ON s.graph_version = p.graph_version
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
         AND p.profile IN (${placeholders})
-      GROUP BY p.profile, s.capability
-    `).all(...[...scope.parameters, ...profileValues]) as unknown as Array<{ profile: Profile; capability: string; score: number }>;
+    `).all(...[...scope.parameters, ...profileValues]) as unknown as Array<{ profile: Profile; detail_capabilities: string; weight: number }>;
+    const aggregates = new Map<string, { profile: Profile; capability: string; total: number; count: number }>();
+    for (const row of rows) {
+      for (const capability of JSON.parse(row.detail_capabilities) as string[]) {
+        const key = `${row.profile}:${capability}`;
+        const current = aggregates.get(key) ?? { profile: row.profile, capability, total: 0, count: 0 };
+        current.total += Number(row.weight);
+        current.count += 1;
+        aggregates.set(key, current);
+      }
+    }
+    const scores = [...aggregates.values()].map((item) => ({ profile: item.profile, capability: item.capability, score: item.total / item.count }));
     const capabilities = [...new Set(scores.map((score) => score.capability))];
     return capabilities.flatMap((capability) => {
       const comparable = scores.filter((score) => score.capability === capability);
@@ -455,7 +464,7 @@ export class InferenceService {
       if (!stronger.length || !constrained.length) return [];
       return [{
         capability,
-        title: `Perspectivas divergem sobre ${capability}`,
+        title: `Perspectivas divergem na capacidade “${CapabilityTaxonomy.labelFor(capability)}”`,
         strongerProfiles: stronger,
         constrainedProfiles: constrained,
       }];

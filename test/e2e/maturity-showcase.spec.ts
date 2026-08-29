@@ -3,10 +3,28 @@ import { expect, test, type Page } from '@playwright/test';
 import { graph, profileIds, type Profile } from '../../src/modules/catalog/assessment-graph.js';
 import { buildShowcaseGuide, SHOWCASE_GUIDE_PATH, type ShowcaseGuideCase } from './showcase-guide.js';
 
-type Stance = 'fragile' | 'emerging' | 'adaptive';
+type Stance = 'fragile' | 'emerging' | 'adaptive' | 'pipeline-fragile' | 'coordination-fragile';
 
 const mixedSquad: Profile[] = ['quality', 'management', 'product', 'engineering', 'platform', 'architecture', 'design'];
+const tenPersonTeam: Profile[] = ['platform', 'engineering', 'engineering', 'engineering', 'engineering', 'quality', 'product', 'architecture', 'product', 'management'];
 const inspectHost = process.env.SHOWCASE_PUBLIC_URL ?? 'http://127.0.0.1:3217';
+const narrativeChoices: Partial<Record<Stance, Record<string, string>>> = {
+  fragile: { 'integration-cadence': 'isolated-days' },
+  'pipeline-fragile': {
+    'shared-change': 'before-release', 'ready-to-release': 'manual-package', 'deployment-probe': 'local-script',
+    'quality-probe': 'regression', 'integration-cadence': 'isolated-days', 'delivery-cause': 'tooling-gap',
+    'change-verification': 'slow-suite', 'environment-access': 'ticket-queue', 'incident-diagnosis': 'separate-searches',
+  },
+  'coordination-fragile': {
+    'urgent-change': 'manager-coordinates', 'shared-change': 'coordination', 'integration-cadence': 'coordinated-window',
+    'delivery-cause': 'team-boundary', 'blocked-work': 'waiting-external', 'blocked-cause': 'dependency-priority',
+    'decision-context': 'expert-decides', 'architecture-pressure': 'ownership-dispute', 'team-pressure': 'private-resolution',
+    'improvement-loop': 'action-list-fades', 'shared-surface-risk': 'manual-coordination',
+    'leadership-enablement': 'escalation-followup', 'management-portfolio': 'parallel-initiatives',
+  },
+  emerging: { 'integration-cadence': 'integrated-few-days' },
+  adaptive: { 'integration-cadence': 'integrated-daily' },
+};
 
 test('gera casos inspecionáveis com textos, resultados e convites manuais', async ({ page }) => {
   test.setTimeout(420_000);
@@ -40,25 +58,37 @@ test('gera casos inspecionáveis com textos, resultados e convites manuais', asy
 async function buildFragileCase(page: Page, levels: Record<string, number>): Promise<ShowcaseGuideCase> {
   const org = 'Linha de produto sob pressão';
   const adminUrl = await createProject(page, 'Frágil — linha sob pressão', org, ['Squad Alfa', 'Squad Beta']);
-  const alfa = await createInvitations(page, mixedSquad.length, `${org}/Squad Alfa`);
+  const alfa = await createInvitations(page, tenPersonTeam.length, `${org}/Squad Alfa`);
   await page.getByRole('link', { name: 'Voltar ao painel' }).click();
-  const beta = await createInvitations(page, 5, `${org}/Squad Beta`);
-  for (const [index, link] of alfa.entries()) await completeAssessment(page, link, 'fragile', mixedSquad[index]!, index);
-  for (const [index, link] of beta.slice(0, 2).entries()) await completeAssessment(page, link, 'fragile', mixedSquad[index]!, index);
+  const beta = await createInvitations(page, tenPersonTeam.length, `${org}/Squad Beta`);
+  for (const [index, link] of alfa.entries()) await completeAssessment(page, link, 'pipeline-fragile', tenPersonTeam[index]!, index);
+  for (const [index, link] of beta.entries()) await completeAssessment(page, link, 'coordination-fragile', tenPersonTeam[index]!, index);
 
   await page.goto(adminUrl);
   await expect(page.getByText('Resumo executivo').first()).toBeVisible();
-  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
   await expect(page.locator('.executive-facts dd').first()).not.toContainText('e mais');
   await expect(page.locator('.executive-facts dd').first()).not.toContainText('Confiabilidade de infraestrutura');
   await expect(page.locator('.executive-facts dd').first()).not.toContainText('Infraestrutura reproduzível');
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
-  await expect(page.getByRole('heading', { name: 'Mapa por estrutura' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
+  await expect(page.getByText(/prioridade 1 de \d+ problemas confirmados/i).first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Mapa por estrutura' })).toBeVisible();
+  const alfaReport = page.locator('details.scope-report', { hasText: 'Squad Alfa' });
+  const betaReport = page.locator('details.scope-report', { hasText: 'Squad Beta' });
+  await expect(alfaReport.locator(':scope > summary')).toBeVisible();
+  await expect(betaReport.locator(':scope > summary')).toBeVisible();
+  await alfaReport.locator(':scope > summary').click();
+  await expect(alfaReport.getByText('Próxima decisão')).toBeVisible();
+  await expect(alfaReport.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
+  await betaReport.locator(':scope > summary').click();
+  await expect(betaReport.getByText('Próxima decisão')).toBeVisible();
+  await expect(betaReport.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
   await page.locator('.radar-drill-link', { hasText: 'Operação e confiabilidade' }).first().click();
   await page.goto(adminUrl);
   await page.locator('.radar-drill-link', { hasText: 'Plataforma e experiência de engenharia' }).first().click();
   await page.locator('.radar-drill-link', { hasText: 'Capacidades chegam com autonomia' }).click();
-  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
   await expect(page.locator('.outcome-card .tag')).toHaveText(/Corrigir o limitador|Evoluir a prática|Discriminar antes de intervir|Preservar a prática/);
   await page.goto(adminUrl);
   const observed = await observeReport(page);
@@ -67,20 +97,16 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   return {
     id: 'fragil',
     title: 'Frágil — linha sob pressão',
-    story: 'Sete pessoas do Squad Alfa descrevem absorção silenciosa de demanda. O Squad Beta tem só duas jornadas concluídas, abaixo do grupo mínimo de cinco, então o mapa por estrutura permanece oculto em toda a cadeia irmã.',
+    story: 'Dois times de dez pessoas compartilham a mesma linha de produto. No Squad Alfa, a esteira, a regressão e os ambientes atrasam o feedback. No Squad Beta, dependências, ownership e decisões centralizadas exigem coordenação constante.',
     lookFor: [
       'Uma próxima decisão e um único limitador — não cloud aninhada por default.',
       'Cartão com o problema, a restrição e a classe de solução; radar em segundo plano.',
-      'Mapa por estrutura ausente enquanto o Squad Beta não atingir cinco respostas.',
-      'Complete os três convites restantes do Squad Beta para ver o recorte por unidade aparecer.',
+      'Panorama visível com problemas de esteira, comunicação, gestão e fronteiras além da decisão principal.',
+      'Mapa por estrutura compara os dois times sem expor respostas individuais.',
     ],
     adminUrl: toInspectUrl(adminUrl),
     publicUrl: publicUrlFromAdmin(adminUrl),
     observed,
-    unusedInvites: beta.slice(2).map((url, index) => ({
-      label: `Squad Beta · convite ${index + 1} de 3. Conclua como qualidade ou engenharia para liberar o mapa por estrutura.`,
-      url: toInspectUrl(url),
-    })),
   };
 }
 
@@ -91,7 +117,7 @@ async function buildEmergingCase(page: Page, levels: Record<string, number>): Pr
   for (const [index, link] of links.entries()) await completeAssessment(page, link, 'emerging', mixedSquad[index]!, index);
   await page.goto(adminUrl);
   await expect(page.getByText('Resumo executivo').first()).toBeVisible();
-  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
   await expect(page.locator('.executive-facts dd').first()).not.toContainText('e mais');
   const observed = await observeReport(page);
   levels.emerging = Number(observed.classification.split('·')[0]?.trim());
@@ -139,12 +165,12 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
   await expect(page.locator('.classification-level')).toContainText('Adaptativo');
   await expect(page.locator('.classification-level')).not.toContainText('/ 4');
   await page.getByText('Ver evidências da avaliação', { exact: true }).click();
-  await expect(page.getByText(/cobertura temática/i)).toBeVisible();
+  await expect(page.locator('details.methodology[open]').getByText(/cobertura temática/i)).toBeVisible();
   await page.goto(adminUrl);
   await page.locator('.radar-drill-link', { hasText: 'Sistema organizacional' }).first().click();
   await page.locator('.radar-drill-link', { hasText: 'Governança habilitadora' }).click();
   await expect(page.locator('.classification-level')).toContainText('Gerenciado');
-  await expect(page.getByText('Próxima decisão')).toBeVisible();
+  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
   await expect(page.locator('.outcome-card .tag')).toHaveText(/Evoluir a prática|Corrigir o limitador|Discriminar antes de intervir|Preservar a prática/);
   await page.goto(adminUrl);
   const observed = await observeReport(page);
@@ -255,6 +281,11 @@ async function observeReport(page: Page) {
 
 function chooseOption(options: typeof graph[number]['options'], stance: Stance, nodeId: string, profile: Profile, participantIndex: number) {
   if (nodeId === 'respondent-context') return options.find((option) => option.id === profile)!;
+  const narrativeChoice = narrativeChoices[stance]?.[nodeId];
+  if (narrativeChoice) {
+    const selected = options.find((option) => option.id === narrativeChoice);
+    if (selected) return selected;
+  }
   const practice = options.filter((option) => (option.observation ?? 'practice') === 'practice');
   const pool = practice.length ? practice : options;
   const scored = pool.map((option) => ({ option, score: option.signals.reduce((total, signal) => total + signal.weight, 0) }));

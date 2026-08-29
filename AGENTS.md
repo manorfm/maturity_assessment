@@ -16,7 +16,8 @@ junto a documentação correspondente.
 ## Princípios que não podem ser perdidos
 
 - Avaliar comportamentos, decisões, restrições, efeitos e aprendizado; nunca
-  atribuir maturidade pela presença de ferramenta, framework, cargo ou cerimônia.
+  atribuir capacidade ou diagnóstico pela presença de ferramenta, framework,
+  cargo ou cerimônia.
 - Perguntas de tecnologia ou estrutura servem somente para contexto e roteamento.
 - Usar cenários por perfil para observar o mesmo sistema sociotécnico sob lentes
   diferentes; não transformar o assessment em prova de conhecimento teórico.
@@ -53,7 +54,7 @@ entregues e a base de conhecimento descreve o estado atual.
   capacidades avaliadas.
 - Evite perguntas que revelem a resposta desejada ou dependam de jargão.
 - Triangule capacidades com sinais de perfis distintos e eventos recentes.
-- Nunca interprete divergência automaticamente como baixa maturidade; ela pode
+- Nunca interprete divergência automaticamente como comportamento frágil; ela pode
   revelar baixa visibilidade, fronteira de responsabilidade ou assimetria de poder.
 - Recomendações devem atacar causas plausíveis e considerar pré-condições, custo,
   risco e menor experimento útil.
