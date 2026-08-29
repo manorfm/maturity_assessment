@@ -1,14 +1,21 @@
-# Maturity Assessment
+# Diagnóstico de engenharia
 
-Aplicação web para avaliar a maturidade sociotécnica de organizações que criam e
-operam produtos digitais. O assessment observa como o trabalho realmente acontece:
-decisões, comportamentos, restrições, consequências e aprendizado. Ferramentas,
-cargos, cerimônias e frameworks fornecem contexto, mas não geram maturidade por
-existirem nominalmente.
+Aplicação web para diagnosticar o sistema sociotécnico de entrega de organizações
+que criam e operam produtos digitais. A entrevista observa como o trabalho
+realmente acontece: decisões, comportamentos, restrições, consequências e
+aprendizado. Ferramentas, cargos, cerimônias e frameworks fornecem contexto, mas
+não geram evidência de capacidade por existirem nominalmente.
 
-O MVP está concluído e pronto para piloto controlado. A próxima meta é validar o
-instrumento com jornadas reais, revisar as inferências com especialistas e calibrar
-o modelo sem transformar o resultado em ranking de pessoas ou times.
+O produto não é um framework de maturidade. O resultado esperado é um diagnóstico
+explicável — comportamento, hipóteses de causa, confiança e menor experimento —
+não um nível. O repositório ainda se chama `maturity_assessment`; isso não define
+o propósito.
+
+O MVP está concluído e pronto para piloto controlado. A próxima meta de produto é
+rebaixar estágio e radar no primeiro plano do relatório
+([plano](docs/backlog/engineering-diagnostic-plan.md)). Em paralelo, o instrumento
+ainda precisa de jornadas reais, revisão com especialistas e calibração, sem
+transformar o resultado em ranking de pessoas ou times.
 
 ## Objetivo
 
@@ -79,13 +86,14 @@ Um comportamento pode afetar mais de uma capacidade. Integração tardia, por ex
 pode produzir evidências em fluxo, engenharia, arquitetura e organização sem
 duplicar uma pontuação genérica.
 
-### 6. Inferência de maturidade e causas
+### 6. Estimativa de consistência e diagnóstico causal
 
-O produto usa modelos diferentes para perguntas diferentes. Nota de maturidade,
-cobertura, confiança da nota, probabilidade de uma causa e prioridade de uma ação
-não são o mesmo número e não são combinadas como se fossem uma única certeza.
+O produto usa modelos diferentes para perguntas diferentes. Estágio do
+comportamento, cobertura, confiança dessa leitura, probabilidade de uma causa e
+prioridade de uma ação não são o mesmo número e não são combinadas como se fossem
+uma única certeza. O estágio é auxiliar; o diagnóstico causal é o produto.
 
-#### Estimativa direcional de maturidade
+#### Estimativa direcional de consistência
 
 Cada evidência comportamental possui peso entre fragilidade e prática adaptativa.
 Para uma folha da taxonomia, o motor calcula uma média direcional sobre a escala
@@ -226,7 +234,7 @@ melhoria: sem revisão externa, os dados representam percepções, não a verdad
 
 O relatório não calcula uma média que permita a uma capacidade forte esconder um
 gargalo. A classificação global e a de cada unidade são limitadas pelo elo confiável
-mais frágil, inclusive entre descendentes publicáveis. Assim, duas squads maduras
+mais frágil, inclusive entre descendentes publicáveis. Assim, duas squads com comportamento sustentado
 não mascaram uma terceira squad crítica dentro da mesma área.
 
 ### 8. Relatório e plano de melhoria
@@ -243,30 +251,38 @@ e evidências. Cada diagnóstico recomendado apresenta:
 
 Recomendações são classificadas como correção ou evolução. Uma ferramenta só pode
 ser sugerida quando resolve uma causa sustentada e é compatível com o contexto; sua
-simples presença nunca é tratada como maturidade.
+simples presença nunca é tratada como evidência de capacidade.
 
-## Capacidades avaliadas
+## Capacidades observadas
 
-O radar superior organiza seis capacidades sociotécnicas:
+Os oito pilares indexam o mapa de problemas; não são notas de um framework:
 
 1. **Estratégia de produto e valor** — direção, descoberta, resultados e portfólio.
-2. **Fluxo de entrega** — planejamento, refinamento, trabalho, integração, release
+2. **Fluxo de entrega** — planejamento, refinamento, fluxo, integração, release
    e feedback.
-3. **Engenharia e qualidade** — design sustentável, estratégia de qualidade,
-   automação do SDLC, segurança e capacidade técnica.
+3. **Engenharia e qualidade** — mudança sustentável, proteção contínua de riscos,
+   feedback técnico e competência acessível.
 4. **Arquitetura e evolução** — domínio, decisões, evolutibilidade, integração e dados.
-5. **Operação, confiabilidade e plataforma** — observabilidade, confiabilidade,
-   incidentes, autonomia e infraestrutura/cloud.
-6. **Sistema organizacional** — ownership, governança, liderança, colaboração e
-   aprendizado.
+5. **Operação e confiabilidade** — investigabilidade, objetivos, incidentes e
+   recuperação.
+6. **Plataforma e experiência de engenharia** — autonomia com limites, infraestrutura
+   reproduzível e eficiência.
+7. **Segurança e gestão de risco** — risco na entrega, identidade, acesso e
+   rastreabilidade.
+8. **Sistema organizacional** — ownership, governança, liderança, colaboração e
+   aprendizado. Este pilar é um meta-sistema: explica restrições que aparecem nos
+   demais; não é o oitavo eixo “técnico”.
 
 DDD, Team Topologies, Tuckman, TOGAF, SRE, Well-Architected, DevOps, agilidade,
 DORA e práticas de engenharia orientam a autoria e a interpretação. Eles não viram
 checklists nem concedem pontos pelo nome.
 
-## Escala de maturidade
+## Estágio do comportamento (leitura auxiliar)
 
-| Nível | Estado | Interpretação |
+O relatório vigente ainda publica esta escala no radar e na classificação. Ela
+descreve consistência do comportamento no elo limitante, não o diagnóstico.
+
+| Estágio | Estado | Interpretação |
 |---:|---|---|
 | 0 | Opaco | Decisões e resultados não são observáveis. |
 | 1 | Reativo | A resposta depende de urgência e esforço individual. |
@@ -274,8 +290,10 @@ checklists nem concedem pontos pelo nome.
 | 3 | Gerenciado | O comportamento é consistente, observável e possui ownership. |
 | 4 | Adaptativo | Feedback modifica ativamente políticas, produto e plataforma. |
 
-O nível é direcional e explicável. Não deve ser usado isoladamente para comparar
-times, avaliar desempenho individual ou prescrever uma solução.
+O estágio é direcional e explicável. Não deve ser usado isoladamente para comparar
+times, avaliar desempenho individual ou prescrever uma solução. A sequência para
+tirá-lo do primeiro plano está no
+[plano de diagnóstico](docs/backlog/engineering-diagnostic-plan.md).
 
 ## Técnicas implementadas
 
@@ -391,6 +409,7 @@ esteja aberto.
 ## Documentação
 
 - [Base de conhecimento vigente](docs/knowledge-base/README.md)
+- [Plano: diagnóstico de engenharia](docs/backlog/engineering-diagnostic-plan.md)
 - [Modelo de avaliação](docs/knowledge-base/assessment-model.md)
 - [Desenho das perguntas](docs/knowledge-base/question-design.md)
 - [Diagnóstico e recomendações](docs/knowledge-base/recommendation-model.md)

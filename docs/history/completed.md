@@ -6,6 +6,15 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-29 — Diagnóstico de engenharia como propósito
+
+- A visão e o vocabulário vigente deixaram de vender framework de maturidade.
+  Estágio ordinal e radar permanecem no relatório 0.31.0 como leitura auxiliar;
+  a sequência para torná-los secundários na interface está em
+  [`engineering-diagnostic-plan.md`](../backlog/engineering-diagnostic-plan.md).
+  A especificação de propósito está em
+  [`product-vision.md`](../knowledge-base/product-vision.md).
+
 ## 2026-08-28 — Gate causal de recomendações
 
 - O recomendador deixou de escolher métricas por palavras do identificador e passou

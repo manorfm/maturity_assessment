@@ -3,7 +3,7 @@
 ## Princípio
 
 O assessment adapta linguagem e cenários ao que cada perfil observa, decide ou
-influencia. Ele não aplica a mesma prova a todos e não calcula maturidade individual
+influencia. Ele não aplica a mesma prova a todos e não calcula diagnóstico individual
 ou por profissão. O objeto avaliado continua sendo a capacidade do sistema de
 trabalho em um escopo organizacional.
 
@@ -94,7 +94,7 @@ abaixo do limiar, ele não participa da comparação nem pode ser inferido pelo 
 “Não observo” agregado por perspectiva, quando o grupo atinge o limiar, aparece como
 lacuna de visibilidade — nunca como fragilidade daquela função. A comparação com
 outros perfis que observam o mesmo evento indica assimetria, fronteira ou poder,
-não maturidade individual.
+não diagnóstico individual.
 
 ## Modelos de referência
 

@@ -216,4 +216,4 @@ correspondente.
 Cookies, IP e fingerprint de navegador não serão usados como controle principal:
 são frágeis, podem bloquear pessoas legítimas e criam riscos de privacidade. Como
 defesa complementar, poderão existir rate limit e detecção agregada de abuso sem
-compor qualquer inferência de maturidade.
+compor qualquer inferência de capacidade.

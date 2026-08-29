@@ -59,7 +59,7 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
   independentes, sem transformar práticas, frameworks ou ferramentas em nota; a
   taxonomia executiva de oito pilares e a prontidão de solução já são vigentes;
 - calibrar empiricamente o mínimo vigente de dois padrões independentes por folha;
-- aprofundar DORA sem reduzir maturidade às quatro métricas;
+- aprofundar DORA sem reduzir o diagnóstico às quatro métricas;
 - incorporar as cinco métricas DORA vigentes como resultados por aplicação/serviço,
   sem derivar categoria DORA apenas de respostas comportamentais;
 - SRE: SLOs, error budgets, incidentes, toil, capacidade e aprendizado;

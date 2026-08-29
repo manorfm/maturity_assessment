@@ -15,6 +15,11 @@ plataforma, higiene de linguagem, ordem determinística por participação, sepa
 entre título e mecanismo causal, fundamentos explícitos por padrão e experimentos
 contextuais. Grafo pré-piloto vigente: `evidence-anamnesis-pilot-v1`.
 
+A decisão de apresentar o produto como diagnóstico de engenharia — sem expandir
+a árvore nem pontuar prática — está em
+[`engineering-diagnostic-plan.md`](engineering-diagnostic-plan.md). Este plano
+continua dono do piloto humano e da calibração.
+
 Itens de plataforma (SSO, editor, PostgreSQL) e pesquisa de longo prazo continuam
 em [`future-evolution.md`](future-evolution.md). Calibração que depende de massa
 real continua em

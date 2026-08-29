@@ -22,7 +22,7 @@
 - **Participation:** sessão anônima associada a um convite, separada das respostas.
 - **RespondentContext:** papel, escopo e contexto relevantes, com minimização de PII.
 - **Profile:** lente configurável sobre responsabilidades, visibilidade e decisões;
-  seleciona cenários, mas não cria uma escala de maturidade por cargo.
+  seleciona cenários, mas não cria uma escala de capacidade por cargo.
 - **Response:** resposta bruta e metadados consentidos.
 - **Finding:** hipótese explicável, evidências, contradições e confiança.
 - **Recommendation:** experimento ou ação ligada a um finding e suas dependências.
@@ -84,7 +84,7 @@ Convites são emitidos em lotes. O criador vê unidade, quantidade e estado
 do lote, nunca a relação entre link e resposta. Revogar afeta somente links ainda
 não usados; participações iniciadas permanecem anônimas e válidas. Cada participante
 escolhe uma perspectiva ampla na primeira etapa; essa resposta apenas roteia a
-entrevista e não gera sinal de maturidade. Reemissão cria
+entrevista e não gera sinal de capacidade. Reemissão cria
 novos segredos, ocorre no máximo uma vez por lote de origem e não recupera tokens.
 
 ## Requisitos de explicabilidade

@@ -17,4 +17,5 @@ Isto aqui é só o que ainda não foi incorporado.
    e reformulam com as próprias palavras). Calibração empírica continua depois.
 
 Não entra: recalibrar priors, LLM, novo radar, mais perguntas no tronco, vender
-ferramenta ou avaliar pessoas.
+ferramenta ou avaliar pessoas. O recorte de apresentação (tirar estágio e radar
+do first screen) está em [`engineering-diagnostic-plan.md`](engineering-diagnostic-plan.md).

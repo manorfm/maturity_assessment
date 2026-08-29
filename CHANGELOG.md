@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## Unreleased
+
+- Registrou a decisão de apresentar o produto como diagnóstico de engenharia, não
+  como framework de maturidade, e alinhou o vocabulário da documentação vigente.
+  O relatório 0.31.0 ainda abre com classificação e radar; a sequência para
+  rebaixá-los está no plano de evolução.
+
 ## 0.31.0
 
 - Separou decisão prioritária da quantidade total de problemas confirmados, evitando
