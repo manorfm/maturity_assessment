@@ -27,8 +27,11 @@
 - **Finding:** hipótese explicável, evidências, contradições e confiança.
 - **DiagnosticContext:** mecanismo de restrição, contenção, evidência faltante,
   impactos e severidade qualitativa associados ao finding.
-- **DiagnosticSystem:** agrupamento explicável de padrões relacionados, sem
-  substituir os padrões nem afirmar causa comum.
+- **DiagnosticSystem:** biblioteca versionada que distingue sintomas, hipóteses
+  causais e amplificadores relacionados, sem substituir os padrões nem afirmar
+  causa comum.
+- **CausalAnalysis:** projeção pública da hipótese mais sustentada, alternativas,
+  evidência favorável e contrária, lacuna, limitação e versão do conhecimento.
 - **Recommendation:** experimento ou ação ligada a um finding e suas dependências.
 - **AssessmentNode/Edge:** grafo versionado de cenários, perguntas, condições e
   encerramentos possíveis.
@@ -103,6 +106,8 @@ Todo finding precisa informar:
 - capacidade principal e capacidades afetadas;
 - mecanismo, contenção, autoridade decisória, impactos, severidade e evidência ainda faltante;
 - estado da prescrição: pronta para experimento ou suspensa para investigação.
+- hipóteses concorrentes, evidência favorável e contrária, limitação e versão da
+  biblioteca causal, sem expor identificadores internos.
 
 Recorrência e contenção são invariantes diferentes. A primeira informa onde o
 padrão apareceu; a segunda informa onde a restrição pode ser removida. O domínio

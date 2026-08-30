@@ -163,6 +163,8 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.capabilities.length > 0);
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.areas.length > 0);
   assert.equal(report.findings.every((finding) => finding.foundation.source.length > 0 && finding.foundation.why.length > 0), true);
+  assert.equal(report.findings.every((finding) => finding.causalAnalysis.knowledgeVersion.length > 0), true);
+  assert.equal(report.findings.every((finding) => finding.causalAnalysis.evidenceFor.length > 0), true);
   assert.equal(report.previousMeasurement, null);
   assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_snapshots WHERE project_id = ?').get(String(project.id)) as { total: number }).total), 1);
   assert.ok(Number((db.prepare('SELECT COUNT(*) total FROM transformation_experiments WHERE project_id = ?').get(String(project.id)) as { total: number }).total) >= 1);

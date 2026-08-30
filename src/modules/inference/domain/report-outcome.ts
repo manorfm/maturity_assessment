@@ -26,6 +26,15 @@ export type OutcomeFinding = {
   solutionCapability?: string;
   solutionReadiness?: import('./solution-readiness.js').SolutionReadiness;
   recommendationEvidence?: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: string[]; profiles: string[]; strength?: import('./group-recommendation-engine.js').EvidenceStrength };
+  causalAnalysis?: {
+    knowledgeVersion: string;
+    hypothesis: string;
+    alternatives: string[];
+    evidenceFor: string[];
+    evidenceAgainst: string[];
+    missingEvidence: string;
+    limitations: string;
+  };
 };
 
 export type ConfirmedCause = {

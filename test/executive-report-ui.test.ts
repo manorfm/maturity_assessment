@@ -160,6 +160,24 @@ test('prioridade compara a decisão principal com o próximo problema', () => {
   assert.match(html, /intensidade mais alta do sinal/i);
 });
 
+test('detalhe causal mostra alternativas, evidência contrária e limite do conhecimento', () => {
+  const finding = {
+    kind: 'correction' as const, pattern: 'causa-ferramental-feedback', detailCapability: 'continuous-integration',
+    title: 'O retorno técnico chega tarde', cause: 'A verificação não orienta a decisão.', intervention: 'Teste a verificação crítica.', confidence: .8, priority: .8,
+    causalAnalysis: {
+      knowledgeVersion: 'causal-catalog-v1', hypothesis: 'A verificação não orienta a decisão.',
+      alternatives: ['Uma política exige acumular mudanças.', 'A fronteira exige coordenação.'],
+      evidenceFor: ['Retorno automatizado lento'], evidenceAgainst: ['Integração segura sob pressão'],
+      missingEvidence: 'Confirmar se a política obriga o lote.', limitations: 'Não corrige uma política externa.',
+    },
+  };
+  const html = renderOutcome({ kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '', finding });
+  assert.match(html, /Outras explicações que ainda competem/);
+  assert.match(html, /Evidência que contraria/);
+  assert.match(html, /causal-catalog-v1/);
+  assert.match(html, /Não corrige uma política externa/);
+});
+
 test('evidência mostra convergência, amplitude e diversidade como medidas diferentes', () => {
   const html = renderOutcome({
     kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '',

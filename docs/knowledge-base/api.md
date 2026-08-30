@@ -22,6 +22,9 @@ Cada finding também expõe `cause`, `priority`, `recommendationEvidence`,
 `experiment`, `foundation`, `affectedCapabilities`, `solutionCapability` e
 `solutionReadiness`, além de `priorityFactors` (`intensity` e `reach`), `mechanism`, `containment`,
 `missingEvidence`, `impacts`, `severity`, `decisionAuthority` e `prescription`.
+Também expõe `causalAnalysis`, com versão do conhecimento, hipótese em linguagem
+natural, alternativas concorrentes, evidências favoráveis e contrárias agregadas,
+lacuna e limitação. Identificadores internos de padrões não aparecem nessa projeção.
 `prescription.status` informa se uma intervenção condicionada está pronta ou se o
 finding exige investigação causal. A prontidão diferencia capacidade não demonstrada, apenas
 declarada, local, operacional e adaptativa sem afirmar inexistência a partir de

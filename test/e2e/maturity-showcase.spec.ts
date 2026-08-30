@@ -75,6 +75,11 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
   await expect(page.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
   await expect(page.getByText(/prioridade 1 de \d+ problemas confirmados/i).first()).toBeVisible();
+  const causal = page.locator('details.causal-analysis').first();
+  await expect(causal.locator(':scope > summary')).toBeVisible();
+  await causal.locator(':scope > summary').click();
+  await expect(causal.getByText('Hipótese mais sustentada:')).toBeVisible();
+  await expect(causal.getByText(/Versão do conhecimento: causal-catalog-v1/)).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Mapa por estrutura' })).toBeVisible();
   const alfaReport = page.locator('details.scope-report', { hasText: 'Squad Alfa' });
   const betaReport = page.locator('details.scope-report', { hasText: 'Squad Beta' });

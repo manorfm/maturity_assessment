@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Grafo causal e sistemas de problemas
+
+- Entregue a versão 0.41 com hipóteses concorrentes, evidências favoráveis e
+  contrárias, limitações versionadas e bibliotecas declarativas de sintomas,
+  causas e amplificadores; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`domain-model.md`](../knowledge-base/domain-model.md).
+
 ## 2026-08-30 — Legado, ownership e continuidade
 
 - Entregue a versão 0.40 com distinção entre responsabilidade de serviço,

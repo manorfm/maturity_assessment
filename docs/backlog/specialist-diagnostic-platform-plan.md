@@ -264,13 +264,6 @@ paralelos por público.
 - revisar o conteúdo somente a partir dessa evidência, sem tratar teste automatizado
   como substituto da validação humana.
 
-### Onda D — Grafo causal e bibliotecas
-
-- materializar relações concorrentes e evidência contrária;
-- completar sistemas de problemas;
-- versionar fundamentos e limitações;
-- testar o mesmo sintoma com causas e soluções diferentes.
-
 ### Onda E — Portfólio de intervenção
 
 - modelar pré-condições, incompatibilidades e risco deslocado;
@@ -306,7 +299,6 @@ paralelos por público.
 ```text
 validação humana de linguagem
   -> C jornadas
-  -> D grafo causal
   -> E intervenções
   -> F relatórios
   -> G showcase

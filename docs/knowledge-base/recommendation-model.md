@@ -47,9 +47,17 @@ O relatório preserva:
 `comportamento -> evidência independente -> hipótese/alternativas -> restrição -> experimento`
 
 O catálogo materializa essa cadeia em uma rede especialista tipada com relações
-`observed_as`, `explained_by`, `addressed_by` e `grounded_in`. Toda intervenção
+`observed_as`, `may_be_explained_by`, `supported_by`, `contradicted_by`,
+`addressed_by` e `grounded_in`. Toda intervenção
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
+
+A versão causal vigente `causal-catalog-v1` projeta no mesmo finding a hipótese
+mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
+a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
+orientação. Ausência de contradição observada é declarada como ausência de evidência
+contrária agregada, nunca como confirmação da hipótese. Sintoma, hipótese e
+amplificador continuam papéis diferentes dentro da biblioteca.
 
 O prior de evidência insuficiente varia com a observabilidade, sem uma reserva fixa
 que cresça artificialmente com a quantidade de causas. O suporte publicado de uma
@@ -166,6 +174,11 @@ explica por que a frente venceu o próximo candidato; confiança não entra ness
 ordenação. Padrões preservados individualmente podem ser agrupados em **frentes
 diagnósticas** por relações explícitas do catálogo. O agrupamento organiza sintomas
 que merecem uma decisão coordenada, mas nunca declara causa comum comprovada.
+As bibliotecas vigentes cobrem integração, ownership, fechamento de aprendizado,
+produto/funding, adoção de plataforma, governança/confiança, workforce, legado,
+resposta operacional, qualidade no fluxo e carga cognitiva. Padrões ainda sem
+relação explícita permanecem organizados apenas pela capacidade e não ganham uma
+causa por proximidade temática.
 
 Além de abrangência, o contrato publicado inclui mecanismo de restrição, contenção,
 impactos, severidade e evidência faltante. Severidade permanece indeterminada até

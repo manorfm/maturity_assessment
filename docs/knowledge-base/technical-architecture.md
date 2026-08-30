@@ -130,6 +130,13 @@ incompleta. `GroupRecommendationEngine` considera somente os explícitos e conso
 métrica e critério do mesmo contrato; o roteamento histórico por regex foi removido.
 Assim autoria de conteúdo não cria uma segunda regra escondida dentro do ranqueador.
 
+`CausalKnowledgeGraph` é a única composição entre comportamento, efeito, hipótese,
+evidência, contradição, intervenção e fundamento. `problem-system.ts` mantém
+bibliotecas declarativas com os papéis `symptoms`, `hypotheses` e `amplifiers`;
+elas alimentam tanto o agrupamento do panorama quanto as alternativas do finding.
+A projeção pública remove identificadores internos, preserva a versão
+`causal-catalog-v1` e aparece no cartão e no detalhe sem recalcular o posterior.
+
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
 das perguntas e política são publicados com versão imutável no SQLite. A atualização

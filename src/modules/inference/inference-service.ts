@@ -2,7 +2,7 @@ import type { Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
-import { CausalKnowledgeGraph } from './domain/causal-knowledge-graph.js';
+import { CausalKnowledgeGraph, type CausalPath } from './domain/causal-knowledge-graph.js';
 import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 import { decideReportOutcome, uniqueFindingsByPattern } from './domain/report-outcome.js';
@@ -25,6 +25,15 @@ export type Finding = {
   solutionCapability: string;
   solutionReadiness: SolutionReadiness;
   affectedCapabilities?: string[];
+  causalAnalysis: {
+    knowledgeVersion: string;
+    hypothesis: string;
+    alternatives: string[];
+    evidenceFor: string[];
+    evidenceAgainst: string[];
+    missingEvidence: string;
+    limitations: string;
+  };
 } & DiagnosticContext;
 type DiagnosticProblem = {
   kind: 'correction' | 'evolution';
@@ -559,6 +568,7 @@ export class InferenceService {
       solutionReadiness: ranked.solutionReadiness,
       affectedCapabilities: ranked.affectedCapabilities,
       priorityFactors: ranked.priorityFactors,
+      causalAnalysis: causalAnalysisFor(causalKnowledgeGraph.pathFor(ranked.pattern)!, ranked.evidence, buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }).missingEvidence),
       ...buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }),
     }));
   }
@@ -667,6 +677,22 @@ export class InferenceService {
     return rows.filter((unit) => Number(unit.subtree_count) >= minimum && chainIsSafe(unit))
       .map((unit) => ({ id: unit.id, path: unit.path, completed: Number(unit.subtree_count) }));
   }
+}
+
+function causalAnalysisFor(path: CausalPath, evidence: RecommendationEvidence, missingEvidence: string): Finding['causalAnalysis'] {
+  const catalog = { ...interventionCatalog, ...evolutionCatalog };
+  const labelFor = (pattern: string, fallback: string) => catalog[pattern]?.title ?? fallback;
+  return {
+    knowledgeVersion: path.knowledgeVersion,
+    hypothesis: path.cause,
+    alternatives: path.competingHypotheses.map((pattern) => catalog[pattern]!.cause),
+    evidenceFor: path.evidenceFor.map((pattern) => labelFor(pattern, 'Evidência comportamental agregada relacionada à hipótese')),
+    evidenceAgainst: evidence.contradictingParticipants > 0
+      ? path.evidenceAgainst.map((pattern) => labelFor(pattern, 'Comportamento sustentado que contradiz esta hipótese'))
+      : [],
+    missingEvidence,
+    limitations: path.limitations,
+  };
 }
 
 const capabilityDetailLabels: Record<string, string> = {

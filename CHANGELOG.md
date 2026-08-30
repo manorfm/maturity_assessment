@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.41.0
+
+- Materializou hipóteses concorrentes, evidências favoráveis e contrárias,
+  lacunas e limitações na mesma rede causal dos findings.
+- Versionou o conhecimento causal e passou a expor seus limites no cartão
+  executivo e no detalhamento técnico.
+- Estruturou bibliotecas de sistemas para integração, ownership, produto,
+  plataforma, governança, workforce, legado, operação, qualidade e carga cognitiva.
+
 ## 0.40.0
 
 - Separou responsabilidade ponta a ponta, responsabilidade limitada ao código,

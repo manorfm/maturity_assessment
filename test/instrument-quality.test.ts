@@ -114,10 +114,15 @@ test('contrato já compatível não gera recomendação contraditória de compat
   assert.deepEqual(option?.signals[0]?.details, ['integration-data']);
 });
 
-test('rede especialista explicita comportamento, efeito, causa, ação e fundamento', () => {
+test('rede especialista explicita hipótese concorrente, evidência contrária e limitação versionada', () => {
   assert.equal(causalKnowledgeGraph.size, Object.keys(recommendations).length);
-  for (const pattern of Object.keys(recommendations)) {
-    const path = causalKnowledgeGraph.pathFor(pattern)!;
-    assert.deepEqual(path.edges.map((edge) => edge.relation), ['observed_as', 'explained_by', 'addressed_by', 'grounded_in']);
-  }
+  const path = causalKnowledgeGraph.pathFor('causa-ferramental-feedback')!;
+  assert.ok(path.competingHypotheses.includes('causa-processo-lote'));
+  assert.ok(path.evidenceFor.includes('causa-ferramental-feedback'));
+  assert.ok(path.evidenceAgainst.includes('integracao-continua-validada'));
+  assert.match(path.limitations, /não/i);
+  assert.match(path.knowledgeVersion, /^causal-catalog-v\d+$/);
+  assert.ok(path.edges.some((edge) => edge.relation === 'may_be_explained_by'));
+  assert.ok(path.edges.some((edge) => edge.relation === 'supported_by'));
+  assert.ok(path.edges.some((edge) => edge.relation === 'contradicted_by'));
 });

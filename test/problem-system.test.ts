@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { groupFindingsByDiagnosticSystem } from '../src/modules/inference/domain/problem-system.js';
+import { diagnosticSystemFor, groupFindingsByDiagnosticSystem } from '../src/modules/inference/domain/problem-system.js';
 
 test('agrupa sintomas de integração em uma frente sem apagar os padrões', () => {
   const findings = [
@@ -12,4 +12,20 @@ test('agrupa sintomas de integração em uma frente sem apagar os padrões', () 
   assert.equal(systems.length, 1);
   assert.equal(systems[0]?.id, 'integration-feedback');
   assert.equal(systems[0]?.findings.length, 3);
+});
+
+test('sistema de integração preserva sintomas, hipóteses e amplificadores', () => {
+  const system = diagnosticSystemFor('mudanca-isolada')!;
+  assert.equal(system.id, 'integration-feedback');
+  assert.ok(system.symptoms.includes('mudanca-isolada'));
+  assert.ok(system.hypotheses.includes('causa-ferramental-feedback'));
+  assert.ok(system.hypotheses.includes('causa-processo-lote'));
+  assert.ok(system.amplifiers.includes('automacao-sem-feedback'));
+});
+
+test('bibliotecas organizacionais cobrem plataforma, governança, workforce e legado', () => {
+  assert.equal(diagnosticSystemFor('caminho-inadequado-ao-caso')?.id, 'platform-adoption');
+  assert.equal(diagnosticSystemFor('governanca-compensa-feedback-tecnico')?.id, 'governance-trust');
+  assert.equal(diagnosticSystemFor('competencia-concentrada')?.id, 'workforce-capability');
+  assert.equal(diagnosticSystemFor('legado-sem-modelo-recuperavel')?.id, 'legacy-continuity');
 });
