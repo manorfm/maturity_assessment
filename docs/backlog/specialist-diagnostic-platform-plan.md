@@ -264,13 +264,6 @@ paralelos por público.
 - revisar o conteúdo somente a partir dessa evidência, sem tratar teste automatizado
   como substituto da validação humana.
 
-### Onda F — Relatórios por público
-
-- diretoria;
-- liderança de tecnologia;
-- gerência local;
-- especialistas e times.
-
 ### Onda G — Showcase controlado
 
 - um caso por mecanismo isolado;
@@ -292,7 +285,6 @@ paralelos por público.
 
 ```text
 validação humana de linguagem
-  -> F relatórios
   -> G showcase
   -> H validação e calibração
 ```

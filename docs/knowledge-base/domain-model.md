@@ -120,3 +120,10 @@ fase, dependências, pré-condições, incompatibilidades, custo, risco,
 reversibilidade e possível deslocamento de risco. Findings com prescrição
 investigativa ficam em `conditioned`: o problema continua visível, mas não entra na
 sequência até que mecanismo, contenção e autoridade sejam discriminados.
+
+`AudienceReportProjector` produz `audience-report-v1` a partir dos mesmos findings
+e do mesmo `TransformationPortfolio`. A projeção organizacional separa decisões e
+restrições compartilhadas; a técnica seleciona restrições sistêmicas; a local
+separa ação própria, restrição recebida e escalada; a especialista preserva o
+contrato completo. Projeções carregam referências sem criar uma nova identidade de
+problema ou uma regra alternativa de recomendação.

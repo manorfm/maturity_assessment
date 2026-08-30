@@ -16,8 +16,23 @@ import { DomainValidationError, ResourceNotFoundError } from '../../shared/error
 import { groupFindingsByDiagnosticSystem } from '../inference/domain/problem-system.js';
 import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../inference/domain/diagnostic-portfolio.js';
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
+import { AudienceReportProjector, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
 
 type Params = { publicId: string; adminSecret: string };
+
+export function renderAudienceNavigation(counts: { executiveDecisions: number; technologyConstraints: number; localReports: number; specialistFindings: number }): string {
+  return `<section class="card audience-navigation"><p class="eyebrow">Leitura por autoridade</p><h2>Visões para decisão</h2><p>As quatro leituras projetam os mesmos diagnósticos e portfólio; muda apenas o que cada público precisa decidir.</p><div class="grid"><article><h3>Diretoria</h3><p>${counts.executiveDecisions} ${counts.executiveDecisions === 1 ? 'decisão organizacional' : 'decisões organizacionais'} sobre política, estrutura ou investimento.</p></article><article><h3>Liderança de tecnologia</h3><p>${counts.technologyConstraints} ${counts.technologyConstraints === 1 ? 'restrição sistêmica' : 'restrições sistêmicas'} de arquitetura, plataforma, segurança, fluxo ou confiabilidade.</p></article><article><h3>Gerência local</h3><p>${counts.localReports} ${counts.localReports === 1 ? 'recorte' : 'recortes'} com ações próprias, dependências recebidas e escaladas.</p></article><article><h3>Especialistas e times</h3><p>${counts.specialistFindings} ${counts.specialistFindings === 1 ? 'diagnóstico explicável' : 'diagnósticos explicáveis'} com evidências, hipóteses e experimentos.</p></article></div></section>`;
+}
+
+export function renderAudienceBriefs(reports: AudienceReports, capabilityBase: string): string {
+  const list = (findings: OutcomeFinding[]) => findings.length
+    ? `<ol>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a><br><span class="muted">Decisão: ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))} · efeitos: ${escapeHtml((finding.impacts ?? []).map(impactLabel).join(' · ') || 'a confirmar')}</span></li>`).join('')}</ol>`
+    : '<p class="muted">Nenhuma decisão confirmada para esta autoridade.</p>';
+  const outcomes = reports.executive.threatenedOutcomes.length
+    ? `<p><strong>Resultados ameaçados:</strong> ${reports.executive.threatenedOutcomes.map(impactLabel).map(escapeHtml).join(' · ')}.</p>`
+    : '<p class="muted">Nenhum impacto organizacional foi demonstrado com evidência suficiente.</p>';
+  return `<section class="audience-briefs"><article class="card" id="report-executive"><p class="eyebrow">Decisões de política, estrutura e investimento</p><h2>Briefing para diretoria</h2>${outcomes}<h3>Decisões organizacionais</h3>${list(reports.executive.decisions)}<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${list(reports.executive.sharedConstraints)}</article><article class="card" id="report-technology"><p class="eyebrow">Restrições técnicas compartilhadas</p><h2>Briefing para liderança de tecnologia</h2>${list(reports.technology.systemicConstraints)}</article></section>`;
+}
 
 const projectForm = () => layout('Novo projeto', `
   <header><p class="eyebrow">Diagnóstico de engenharia</p><h1>Crie um mapa do sistema de trabalho</h1>
@@ -136,6 +151,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const capabilityMap = renderCapabilityRadar(report.capabilityGroups, capabilityBase);
     const scopeOccurrences = findingScopeOccurrences(report.scopes);
     const primaryOccurrence = scopeOccurrences.find((item) => item.pattern === report.outcome.finding?.pattern);
+    const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
     const firstPlane = report.classification
       ? renderDiagnosticFirstPlane({
         classification: report.classification,
@@ -148,12 +164,14 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       })
       : renderOutcome(report.outcome);
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
-    const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
     const scopeReports = distinctive.map((scope) => renderScopeReport(scope, capabilityBase)).join('');
+    const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
+    const audienceBriefs = renderAudienceBriefs(report.audienceReports, capabilityBase);
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
       <section><h2>Diagnóstico</h2>${firstPlane}${reportAvailability}${perspectives}</section>
+      ${audienceNavigation}${audienceBriefs}
       <section><h2>Mapa de contraste</h2>${capabilityMap}</section>
       <details class="methodology"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
@@ -522,13 +540,26 @@ type ScopeReportView = {
   capabilityGroups: Parameters<typeof renderCapabilityRadar>[0];
   findings: OutcomeFinding[];
   perspectiveGaps: Array<{ title: string; capability?: string }>;
+  audienceReport?: UnitManagementReport;
 };
 
 export function renderScopeReport(scope: ScopeReportView, capabilityBase: string): string {
   const outcome = decideReportOutcome({ classification: scope.classification, branches: scope.capabilityGroups, findings: scope.findings, perspectiveGaps: scope.perspectiveGaps });
+  const audienceReport = scope.audienceReport ?? AudienceReportProjector.projectUnit({ id: scope.id, path: scope.path, findings: scope.findings, portfolio: TransformationPortfolioPlanner.plan(scope.findings) });
   const empty = scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>';
   const gaps = scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('');
-  return `<details class="card scope-report"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderDiagnosticFirstPlane({ classification: scope.classification, outcome, findings: scope.findings, confirmedProblemCount: uniqueFindingsByPattern(scope.findings).length, capabilityBase, scopeId: scope.id })}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${empty}${gaps}</details>`;
+  const managerReading = renderUnitManagementReport(audienceReport, capabilityBase);
+  return `<details class="card scope-report"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${managerReading}${renderDiagnosticFirstPlane({ classification: scope.classification, outcome, findings: scope.findings, confirmedProblemCount: uniqueFindingsByPattern(scope.findings).length, capabilityBase, scopeId: scope.id })}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${empty}${gaps}</details>`;
+}
+
+function renderUnitManagementReport(report: UnitManagementReport, capabilityBase: string): string {
+  const list = (findings: OutcomeFinding[], empty: string) => findings.length
+    ? `<ul>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding, report.id))}">${escapeHtml(finding.title)}</a></li>`).join('')}</ul>`
+    : `<p class="muted">${escapeHtml(empty)}</p>`;
+  const escalation = report.escalations.length
+    ? `<ul>${report.escalations.map((step) => `<li>${escapeHtml(step.title)} — escalar para ${escapeHtml(authorityLabel(step.authority))}</li>`).join('')}</ul>`
+    : '<p class="muted">Nenhuma escalada confirmada para este recorte.</p>';
+  return `<section class="unit-management-report"><p class="eyebrow">Leitura da gerência local</p><h3>O que a unidade pode mudar</h3>${list(report.localActions, 'Nenhuma ação local foi confirmada.')}<h3>Restrições que a unidade recebe</h3>${list(report.receivedConstraints, 'Nenhuma restrição externa à autoridade da unidade foi confirmada.')}<h3>O que precisa ser escalado</h3>${escalation}</section>`;
 }
 
 function renderFindingScope(scope: FindingScopeOccurrence): string {

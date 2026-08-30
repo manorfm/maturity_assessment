@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.43.0
+
+- Criou projeções versionadas do mesmo diagnóstico para diretoria, liderança de
+  tecnologia, gerência local e especialistas.
+- Separou, em cada recorte gerencial, ações sob autoridade da unidade, restrições
+  recebidas e decisões que precisam ser escaladas.
+- Publicou briefings organizacional e técnico no painel e `audienceReports` na API
+  global e nos recortes elegíveis, sem criar recomendadores paralelos.
+
 ## 0.42.0
 
 - Transformou findings prontos em uma sequência versionada por dependência,

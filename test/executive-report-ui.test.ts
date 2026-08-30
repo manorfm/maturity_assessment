@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { diagnosticStrength, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderDiagnosticFirstPlane, renderFindingPortfolio, renderOutcome, renderPerspectiveSynthesis, renderScopeReport } from '../src/modules/projects/project-routes.js';
+import { diagnosticStrength, renderAudienceBriefs, renderAudienceNavigation, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderDiagnosticFirstPlane, renderFindingPortfolio, renderOutcome, renderPerspectiveSynthesis, renderScopeReport } from '../src/modules/projects/project-routes.js';
+import { AudienceReportProjector } from '../src/modules/inference/domain/audience-report.js';
+import { TransformationPortfolioPlanner } from '../src/modules/inference/domain/transformation-portfolio.js';
 
 const leaf = (overrides: Partial<Parameters<typeof renderCapabilityRadar>[0][number]> = {}) => ({
   id: 'delivery', label: 'Entrega', level: 2.4, confidence: .8, evidence: 8,
@@ -264,6 +266,30 @@ test('panorama apresenta uma sequência de transformação em vez de uma lista s
   assert.match(html, /Localize a restrição antes de escolher a solução/);
 });
 
+test('navegação por público explica a decisão de cada leitura sem duplicar motores', () => {
+  const html = renderAudienceNavigation({ executiveDecisions: 2, technologyConstraints: 3, localReports: 2, specialistFindings: 6 });
+  assert.match(html, /Visões para decisão/);
+  assert.match(html, /Diretoria.*2 decisões organizacionais/s);
+  assert.match(html, /Liderança de tecnologia.*3 restrições sistêmicas/s);
+  assert.match(html, /Gerência local.*2 recortes/s);
+  assert.match(html, /Especialistas e times.*6 diagnósticos explicáveis/s);
+  assert.match(html, /mesmos diagnósticos e portfólio/i);
+});
+
+test('briefings de diretoria e tecnologia mostram somente decisões da sua autoridade', () => {
+  const findings = [
+    { kind: 'correction' as const, pattern: 'policy', detailCapability: 'enabling-governance', title: 'Política acumula mudanças pequenas', cause: '', intervention: '', confidence: .9, priority: .9, mechanism: 'policy' as const, containment: 'organizational-policy' as const, decisionAuthority: 'organizational-governance' as const, impacts: ['delivery-speed' as const], prescription: { status: 'ready' as const, reason: 'confirmado' } },
+    { kind: 'correction' as const, pattern: 'pipeline', detailCapability: 'continuous-integration', title: 'Feedback técnico chega tarde', cause: '', intervention: '', confidence: .8, priority: .8, mechanism: 'tooling' as const, containment: 'shared-service' as const, decisionAuthority: 'platform' as const, prescription: { status: 'ready' as const, reason: 'confirmado' } },
+  ];
+  const reports = AudienceReportProjector.project({ findings, portfolio: TransformationPortfolioPlanner.plan(findings) });
+  const html = renderAudienceBriefs(reports, '/capabilities');
+  assert.match(html, /Briefing para diretoria/);
+  assert.match(html, /Política acumula mudanças pequenas/);
+  assert.match(html, /Briefing para liderança de tecnologia/);
+  assert.match(html, /Feedback técnico chega tarde/);
+  assert.match(html, /Velocidade de entrega/);
+});
+
 test('diagnóstico condicionado explica autoridade e motivo da investigação', () => {
   const html = renderOutcome({
     kind: 'discriminate', kindLabel: 'Discriminar a causa', limiterLabel: 'Integração contínua', reading: 'Mudanças permanecem isoladas.', nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua a última mudança.',
@@ -310,6 +336,21 @@ test('recorte de squad apresenta decisão e problemas próprios', () => {
   assert.match(html, /Ambientes chegam por fila/);
   assert.ok(html.indexOf('Próxima decisão') < html.indexOf('Consistência do comportamento no elo limitante'));
   assert.ok(html.indexOf('Consistência do comportamento no elo limitante') < html.indexOf('Mapa de contraste e cobertura'));
+});
+
+test('recorte gerencial separa o que a squad muda, recebe e precisa escalar', () => {
+  const findings = [
+    { kind: 'correction' as const, pattern: 'local', detailCapability: 'work-management', title: 'A squad acumula mudanças', cause: '', intervention: '', confidence: .9, priority: .9, mechanism: 'process' as const, containment: 'team' as const, decisionAuthority: 'team' as const, prescription: { status: 'ready' as const, reason: 'confirmado' } },
+    { kind: 'correction' as const, pattern: 'shared', detailCapability: 'platform-autonomy', title: 'Ambientes chegam por fila', cause: '', intervention: '', confidence: .8, priority: .8, mechanism: 'platform' as const, containment: 'shared-service' as const, decisionAuthority: 'platform' as const, prescription: { status: 'ready' as const, reason: 'confirmado' } },
+  ];
+  const html = renderScopeReport({
+    id: 'alfa', path: 'Empresa/Squad Alfa', classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Fluxo'] },
+    capabilityGroups: [leaf({ id: 'work-management', label: 'Fluxo', level: 1 })], findings, perspectiveGaps: [],
+  }, '/capabilities');
+  assert.match(html, /Leitura da gerência local/);
+  assert.match(html, /O que a unidade pode mudar.*A squad acumula mudanças/s);
+  assert.match(html, /Restrições que a unidade recebe.*Ambientes chegam por fila/s);
+  assert.match(html, /O que precisa ser escalado.*plataforma/s);
 });
 
 test('radar executivo mostra estado e suficiência de evidência sem decimal ou porcentagem', () => {

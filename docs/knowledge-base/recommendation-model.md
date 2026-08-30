@@ -103,6 +103,14 @@ atributos são qualitativos e condicionais: não formam score nem alegam previs�
 retorno. Prescrição suspensa aparece separadamente como investigação necessária e
 não recebe posição artificial no plano.
 
+O projetor de audiência `audience-report-v1` não ranqueia novamente. Ele filtra o
+portfólio já ordenado por contenção, autoridade e capacidade observada. Diretoria e
+liderança técnica podem enxergar a mesma restrição compartilhada por razões de
+decisão diferentes; a posição, o padrão e a intervenção continuam únicos. No
+recorte local, autoridade de time produz ação local e as demais autoridades
+produzem dependência recebida e escalada. Achados ainda investigativos permanecem
+no detalhe especialista e não são promovidos a decisão executiva.
+
 Título, mecanismo causal e ação são campos distintos. O título descreve o efeito
 observado; a causa explica por que **este** padrão se reproduz; a ação propõe o
 menor teste compatível com a restrição. Cada padrão do tronco declara orientação

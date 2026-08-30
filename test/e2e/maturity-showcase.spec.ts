@@ -74,6 +74,9 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await revealConsistency(page);
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
   await expect(page.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Visões para decisão' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Briefing para liderança de tecnologia' })).toBeVisible();
   await expect(page.getByText(/prioridade 1 de \d+ problemas confirmados/i).first()).toBeVisible();
   const causal = page.locator('details.causal-analysis').first();
   await expect(causal.locator(':scope > summary')).toBeVisible();
@@ -86,6 +89,10 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(alfaReport.locator(':scope > summary')).toBeVisible();
   await expect(betaReport.locator(':scope > summary')).toBeVisible();
   await alfaReport.locator(':scope > summary').click();
+  await expect(alfaReport.getByText('Leitura da gerência local')).toBeVisible();
+  await expect(alfaReport.getByRole('heading', { name: 'O que a unidade pode mudar' })).toBeVisible();
+  await expect(alfaReport.getByRole('heading', { name: 'Restrições que a unidade recebe' })).toBeVisible();
+  await expect(alfaReport.getByRole('heading', { name: 'O que precisa ser escalado' })).toBeVisible();
   await expect(alfaReport.getByText('Próxima decisão')).toBeVisible();
   await expect(alfaReport.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
   await betaReport.locator(':scope > summary').click();

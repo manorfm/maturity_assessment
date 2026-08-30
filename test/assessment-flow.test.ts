@@ -147,6 +147,7 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
 
   const report = inference.report(String(project.id), 5);
   assert.equal(report.transformationPortfolio.version, 'transformation-portfolio-v1');
+  assert.equal(report.audienceReports.version, 'audience-report-v1');
   assert.ok(report.transformationPortfolio.sequence.length + report.transformationPortfolio.conditioned.length > 0);
   assert.equal(report.completed, 5);
   assert.equal(report.calibration.gate, 'blocked');
@@ -164,6 +165,7 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   assert.equal(report.scopes.some((item) => item.path === 'Empresa/Time A'), true);
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.capabilities.length > 0);
   assert.equal(report.scopes.find((item) => item.path === 'Empresa/Time A')!.transformationPortfolio.version, 'transformation-portfolio-v1');
+  assert.equal(report.scopes.find((item) => item.path === 'Empresa/Time A')!.audienceReport.audience, 'unit-management');
   assert.ok(report.scopes.find((item) => item.path === 'Empresa/Time A')!.areas.length > 0);
   assert.equal(report.findings.every((finding) => finding.foundation.source.length > 0 && finding.foundation.why.length > 0), true);
   assert.equal(report.findings.every((finding) => finding.causalAnalysis.knowledgeVersion.length > 0), true);

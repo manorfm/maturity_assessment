@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Relatórios por autoridade
+
+- Entregue a versão 0.43 com projeções do mesmo diagnóstico para diretoria,
+  liderança técnica, gerência local e especialistas, incluindo separação entre
+  ação própria, restrição recebida e escalada; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`api.md`](../knowledge-base/api.md).
+
 ## 2026-08-30 — Portfólio sequenciado de transformação
 
 - Entregue a versão 0.42 com intervenções ordenadas por dependência, autoridade e

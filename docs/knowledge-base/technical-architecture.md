@@ -144,6 +144,12 @@ a API não mantêm tabelas ou condicionais próprias de ordenação; achados
 investigativos são separados antes do ranqueamento e políticas de intervenção por
 mecanismo centralizam pré-condições e risco deslocado.
 
+`AudienceReportProjector` é a única projeção por autoridade. Ele vive no domínio de
+inferência, recebe findings e portfólio prontos e não depende de HTTP ou HTML. A API
+serializa suas projeções; as rotas apenas traduzem os mesmos objetos para briefings
+e leitura local. Não existem motores, catálogos ou prioridades específicos por
+público.
+
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
 das perguntas e política são publicados com versão imutável no SQLite. A atualização

@@ -259,6 +259,23 @@ item como diagnóstico e correção recomendada. Padrões de comportamento e pad
 de causa permanecem distinguíveis na API; ambos reutilizam a mesma evidência
 agregada e nunca expõem a resposta que os originou.
 
+## Leituras por autoridade
+
+O painel projeta o mesmo diagnóstico em quatro leituras. Diretoria recebe impactos,
+decisões de política, estrutura e investimento e restrições compartilhadas que
+podem exigir capacidade comum. Liderança de tecnologia recebe arquitetura,
+plataforma, segurança, fluxo, confiabilidade, ownership e demais dependências
+sistêmicas. Gerência local recebe ações sob autoridade da unidade, restrições
+recebidas e escaladas com o decisor provável. Especialistas e times preservam
+hipóteses concorrentes, evidência favorável e contrária, lacunas, fundamento e
+experimento completo.
+
+As leituras não recalculam causa, prioridade ou solução. O identificador do padrão,
+a contenção, a autoridade e o passo do portfólio permanecem os mesmos em todas as
+projeções. Uma restrição compartilhada pode aparecer para diretoria e liderança
+técnica porque ambas possuem decisões diferentes sobre o mesmo problema; isso não
+duplica o diagnóstico nem sua prioridade.
+
 ## Capacidade, sintoma, causa e solução
 
 O modelo não salta de uma resposta para uma ferramenta recomendada. Ele constrói

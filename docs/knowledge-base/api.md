@@ -50,6 +50,14 @@ incompatibilidades, custo, risco, reversibilidade e risco deslocado. `conditione
 preserva os problemas cuja intervenção depende de investigação adicional. Essa
 projeção deriva dos mesmos findings e não executa inferência paralela.
 
+`audienceReports.version` é `audience-report-v1`. No relatório global,
+`executive` contém decisões organizacionais, restrições compartilhadas, resultados
+ameaçados e os passos correspondentes; `technology` contém restrições sistêmicas,
+domínios técnicos e sua sequência; `specialist` preserva os findings e separa os
+que ainda exigem investigação. Cada item de `scopes` possui `audienceReport` com
+ações locais, restrições recebidas, escaladas e a sequência daquele recorte. Todos
+os itens reutilizam padrões e passos já publicados no relatório.
+
 Cada hipótese causal expõe `observability`, população agregada (`support`,
 `applicable`, quantidade de perspectivas e camadas) e `nextQuestion`. Este último é
 `null` quando não existe discriminador contextual elegível.
