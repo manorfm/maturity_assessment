@@ -6,12 +6,25 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-29 — Roadmap da plataforma especialista
+
+- Consolidado o objetivo futuro, as invariantes, os motores, as jornadas, a
+  sequência e os gates da plataforma especialista em
+  [`specialist-diagnostic-platform-plan.md`](../backlog/specialist-diagnostic-platform-plan.md),
+  sem promover hipóteses futuras à base de conhecimento vigente.
+
+## 2026-08-29 — Diagnóstico no first screen
+
+- O relatório passou a abrir pelo cartão de diagnóstico. Estágio e mapa de
+  contraste ficaram auxiliares; o mapa não publica “N de 4”. A especificação
+  vigente está em [`assessment-model.md`](../knowledge-base/assessment-model.md)
+  e [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+  Autoria e contrato do finding continuam em
+  [`engineering-diagnostic-plan.md`](../backlog/engineering-diagnostic-plan.md).
+
 ## 2026-08-29 — Diagnóstico de engenharia como propósito
 
 - A visão e o vocabulário vigente deixaram de vender framework de maturidade.
-  Estágio ordinal e radar permanecem no relatório 0.31.0 como leitura auxiliar;
-  a sequência para torná-los secundários na interface está em
-  [`engineering-diagnostic-plan.md`](../backlog/engineering-diagnostic-plan.md).
   A especificação de propósito está em
   [`product-vision.md`](../knowledge-base/product-vision.md).
 
@@ -339,7 +352,18 @@ Para uma visão resumida dos marcos por versão, consulte o
 
 ## 2026-08-29
 
+- Entregue a versão 0.34 com mecanismos causais auditados, autoridade decisória,
+  prescrição suspensa diante de causa ou contenção indeterminada e portfólio
+  navegável por responsabilidade; ver
+  [`domain-model.md`](../knowledge-base/domain-model.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 - Entregue a versão 0.31 com total explícito de problemas, prioridade explicada e
   diagnósticos locais navegáveis por squad, sem generalizar abrangência em causa;
   ver [`assessment-model.md`](../knowledge-base/assessment-model.md) e
   [`organizational-model.md`](../knowledge-base/organizational-model.md).
+- Entregue a versão 0.33 com autoria factual auditada, capacidade principal
+  canônica, força de evidência multidimensional, contrato diagnóstico e frentes de
+  padrões relacionados; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`question-design.md`](../knowledge-base/question-design.md).

@@ -12,12 +12,20 @@ export type OutcomeFinding = {
   intervention: string;
   confidence: number;
   priority: number;
+  priorityFactors?: { intensity: number; reach: number };
+  mechanism?: import('./group-recommendation-engine.js').ConstraintKind;
+  containment?: import('./diagnostic-contract.js').FindingContainment;
+  missingEvidence?: string;
+  impacts?: import('./diagnostic-contract.js').ImpactKind[];
+  severity?: import('./diagnostic-contract.js').FindingSeverity;
+  decisionAuthority?: import('./diagnostic-contract.js').DecisionAuthority;
+  prescription?: import('./diagnostic-contract.js').PrescriptionDecision;
   experiment?: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   affectedCapabilities?: string[];
   foundation?: { source: string; principle: string; why: string };
   solutionCapability?: string;
   solutionReadiness?: import('./solution-readiness.js').SolutionReadiness;
-  recommendationEvidence?: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: string[]; profiles: string[] };
+  recommendationEvidence?: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: string[]; profiles: string[]; strength?: import('./group-recommendation-engine.js').EvidenceStrength };
 };
 
 export type ConfirmedCause = {
@@ -83,7 +91,10 @@ export function uniqueConfirmedCauses(causes: ConfirmedCause[]): ConfirmedCause[
 
 export function distinctiveScopes<T extends { path: string; classification: { level: number } }>(scopes: T[], globalLevel: number): T[] {
   if (scopes.length <= 1) return [];
+  const roots = scopes.filter((scope) => !scopes.some((candidate) => scope.path.startsWith(`${candidate.path}/`)));
+  const duplicatedRoot = roots.length === 1 && scopes.some((scope) => scope.path.startsWith(`${roots[0]!.path}/`)) ? roots[0] : undefined;
   return scopes.filter((scope) => {
+    if (scope === duplicatedRoot) return false;
     const children = scopes.filter((candidate) => candidate.path.startsWith(`${scope.path}/`) && candidate.path !== scope.path);
     if (children.length === 1 && children[0]!.classification.level === scope.classification.level) return false;
     const leaves = scopes.filter((candidate) => !scopes.some((other) => other.path.startsWith(`${candidate.path}/`) && other.path !== candidate.path));
@@ -111,7 +122,7 @@ export function decideReportOutcome(input: {
   focusId?: string;
 }): ReportOutcome {
   if (!input.classification || input.classification.limitingCapabilities.includes('Evidência insuficiente')) {
-    return outcome('insufficient', 'Nenhuma capacidade com cobertura suficiente', 'Ainda não há dado agregado para publicar uma nota ou uma ação.', 'Aguardar o grupo mínimo', 'O relatório será conclusivo quando houver evidência coletiva suficiente, sem inventar causa ou intervenção.');
+    return outcome('insufficient', 'Nenhuma capacidade com cobertura suficiente', 'Ainda não há dado agregado para publicar um diagnóstico ou uma ação.', 'Aguardar o grupo mínimo', 'O relatório será conclusivo quando houver evidência coletiva suficiente, sem inventar causa ou intervenção.');
   }
   const focus = input.focusId ? findNode(input.branches, input.focusId) : undefined;
   const stageLevel = focus ? Math.max(0, Math.min(4, Math.floor(focus.level))) : input.classification.level;
@@ -155,6 +166,13 @@ export function decideReportOutcome(input: {
     };
   }
   if (leading) {
+    if (leading.prescription?.status === 'investigate') {
+      return {
+        ...outcome('discriminate', limiterLabel, `${leading.title}. O comportamento é recorrente, mas a causa ou a contenção ainda não foi discriminada.`, leading.title, leading.prescription.reason),
+        ...limiterId(limiter),
+        finding: leading,
+      };
+    }
     const kind = leading.kind === 'evolution' ? 'evolve' : 'correct';
     const action = leading.experiment?.action ?? leading.intervention;
     return {
@@ -168,6 +186,18 @@ export function decideReportOutcome(input: {
     return { ...outcome('preserve', limiterLabel, preservation.reading, 'Não iniciar transformação aqui', preservation.nextStep), ...limiterId(limiter) };
   }
   const investigation = investigationFor(limiter?.id ?? focus?.id ?? '', limiterLabel);
+  if (!input.focusId && uniqueFindings.length === 0 && stageLevel < 4) {
+    return {
+      ...outcome(
+        'discriminate',
+        limiterLabel,
+        `${limiterLabel} está em ${stageLabel.toLowerCase()} e as fragilidades observadas neste elo estão dispersas; o relatório não inventa uma causa.`,
+        'Distinguir as explicações concorrentes',
+        investigation.nextObservation,
+      ),
+      ...limiterId(limiter),
+    };
+  }
   return {
     ...outcome('discriminate', limiterLabel, investigation.uncertainty, 'Distinguir as explicações concorrentes', investigation.nextObservation),
     ...limiterId(limiter),

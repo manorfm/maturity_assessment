@@ -20,7 +20,10 @@ observados.
 
 Cada finding também expõe `cause`, `priority`, `recommendationEvidence`,
 `experiment`, `foundation`, `affectedCapabilities`, `solutionCapability` e
-`solutionReadiness`. A prontidão diferencia capacidade não demonstrada, apenas
+`solutionReadiness`, além de `priorityFactors` (`intensity` e `reach`), `mechanism`, `containment`,
+`missingEvidence`, `impacts`, `severity`, `decisionAuthority` e `prescription`.
+`prescription.status` informa se uma intervenção condicionada está pronta ou se o
+finding exige investigação causal. A prontidão diferencia capacidade não demonstrada, apenas
 declarada, local, operacional e adaptativa sem afirmar inexistência a partir de
 silêncio. A evidência informa somente totais agregados, padrões,
 camadas e perspectivas; nunca IDs. `foundation` declara fonte e princípio da
@@ -28,6 +31,8 @@ intervenção e não pontua. `confidence` é um valor interno do posterior espec
 na aderência da intervenção e não deve ser interpretado como estágio de capacidade, apoio
 popular ou probabilidade calibrada. A interface publica somente uma força
 qualitativa da hipótese até existir calibração empírica suficiente.
+`recommendationEvidence.strength` separa convergência, amplitude populacional,
+diversidade de perspectivas, cobertura causal e o estado executivo da evidência.
 O relatório sanitizado também inclui `visibilityGaps` (perspectivas que atingiram o
 limiar e relataram “não observo”), `previousMeasurement` (delta de suporte de
 padrões entre capturas) e `calibration` (limiares pré-declarados, contagem de

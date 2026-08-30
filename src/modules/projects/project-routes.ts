@@ -8,16 +8,18 @@ import { InvitationService } from '../assessments/invitation-service.js';
 import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
 import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
-import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
+import { CapabilityTaxonomy, organizationalCapabilityIds } from '../inference/domain/capability-taxonomy.js';
 import { decideReportOutcome, distinctiveScopes, findingScopeOccurrences, uniqueConfirmedCauses, uniqueFindingsByPattern, type ConfirmedCause, type FindingScopeOccurrence, type OutcomeFinding, type ReportOutcome } from '../inference/domain/report-outcome.js';
 import { guidanceFor, type SolutionGuidance } from '../inference/domain/solution-guidance.js';
 import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
 import { DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
+import { groupFindingsByDiagnosticSystem } from '../inference/domain/problem-system.js';
+import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../inference/domain/diagnostic-portfolio.js';
 
 type Params = { publicId: string; adminSecret: string };
 
 const projectForm = () => layout('Novo projeto', `
-  <header><p class="eyebrow">Assessment comportamental</p><h1>Crie um mapa do sistema de trabalho</h1>
+  <header><p class="eyebrow">Diagnóstico de engenharia</p><h1>Crie um mapa do sistema de trabalho</h1>
   <p class="lead">Configure a estrutura, distribua convites anônimos e observe gargalos sem avaliar pessoas ou premiar ferramentas.</p></header>
   <form class="card" method="post" action="/projects">
     <label for="name">Nome do projeto</label><input id="name" name="name" required maxlength="100" placeholder="Assessment da Tribo Digital">
@@ -106,7 +108,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const { publicId } = request.params as { publicId: string };
     const project = db.prepare('SELECT name FROM projects WHERE public_id = ?').get(publicId) as { name: string } | undefined;
     if (!project) throw new ResourceNotFoundError('Projeto não encontrado.');
-    return reply.type('text/html').send(layout(project.name, `<div class="card"><p class="eyebrow">${escapeHtml(project.name)}</p><h1>Assessment da organização</h1><p class="lead">Para responder, use seu convite individual. O link geral do projeto não registra participação.</p><p class="notice">As respostas são anônimas e só aparecem de forma agregada quando o grupo mínimo é atingido.</p></div>`));
+    return reply.type('text/html').send(layout(project.name, `<div class="card"><p class="eyebrow">${escapeHtml(project.name)}</p><h1>Diagnóstico da organização</h1><p class="lead">Para responder, use seu convite individual. O link geral do projeto não registra participação.</p><p class="notice">As respostas são anônimas e só aparecem de forma agregada quando o grupo mínimo é atingido.</p></div>`));
   });
 
   const requireProject = (params: Params) => {
@@ -131,19 +133,27 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       : '';
     const capabilityBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/capabilities`;
     const capabilityMap = renderCapabilityRadar(report.capabilityGroups, capabilityBase);
-    const classification = report.classification ? renderClassification(report.classification, report.outcome) : '';
     const scopeOccurrences = findingScopeOccurrences(report.scopes);
     const primaryOccurrence = scopeOccurrences.find((item) => item.pattern === report.outcome.finding?.pattern);
-    const nextDecision = renderOutcome(report.outcome, { confirmedProblemCount: uniqueFindingsByPattern(report.findings).length, ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}) });
-    const problemPortfolio = renderFindingPortfolio(report.findings, report.outcome.finding?.pattern, scopeOccurrences);
+    const firstPlane = report.classification
+      ? renderDiagnosticFirstPlane({
+        classification: report.classification,
+        outcome: report.outcome,
+        findings: report.findings,
+        confirmedProblemCount: uniqueFindingsByPattern(report.findings).length,
+        ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}),
+        occurrences: scopeOccurrences,
+        capabilityBase,
+      })
+      : renderOutcome(report.outcome);
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
     const scopeReports = distinctive.map((scope) => renderScopeReport(scope, capabilityBase)).join('');
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
-      <section><h2>Decisão do recorte</h2>${classification}${nextDecision}${problemPortfolio}${reportAvailability}${perspectives}</section>
-      <section><h2>Mapa agregado</h2>${capabilityMap}</section>
+      <section><h2>Diagnóstico</h2>${firstPlane}${reportAvailability}${perspectives}</section>
+      <section><h2>Mapa de contraste</h2>${capabilityMap}</section>
       <details class="methodology"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
         <label for="unitId">Unidade final</label><select id="unitId" name="unitId">${unitOptions}</select>
@@ -195,7 +205,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
     const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : '';
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header><article class="classification">${status}</article>${renderOutcome(outcome)}${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}`));
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOutcome(outcome)}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -276,11 +286,31 @@ export function renderClassification(classification: { level: number; label: str
   const label = divergent ? 'Inconclusivo' : `${classification.level} · ${classification.label}`;
   const explanation = divergent
     ? 'A divergência de perspectivas suspende a classificação ordinal: primeiro é necessário distinguir visibilidade, fronteira e poder de decisão.'
-    : 'Classificação sociotécnica baseada no elo mais frágil com evidência suficiente. Capacidades fortes não ocultam gargalos nem unidades descendentes. Cloud e infraestrutura aninhadas só ocupam o palco quando o finding é desse recorte.';
+    : 'Consistência do comportamento no elo mais frágil com evidência suficiente. Capacidades fortes não ocultam gargalos nem unidades descendentes. Cloud e infraestrutura aninhadas só ocupam o palco quando o finding é desse recorte.';
   const reading = divergent
-    ? 'Não há uma classificação única segura enquanto as perspectivas descrevem sistemas diferentes.'
-    : `Este estágio descreve o elo que limita o sistema, não a organização inteira. Os demais pilares podem estar em estágios diferentes.`;
-  return `<article class="classification executive-summary ${divergent ? 'maturity-inconclusive' : `maturity-level-${classification.level}`}"><p class="eyebrow">Resumo executivo</p><div class="classification-level">${escapeHtml(label)}</div><p class="executive-reading">${escapeHtml(reading)}</p><dl class="executive-facts"><div><dt>Principal limitador</dt><dd>${escapeHtml(limiter)}</dd></div></dl><details class="methodology"><summary>Como esta classificação é calculada</summary><p>${escapeHtml(explanation)}</p></details></article>`;
+    ? 'Não há uma leitura única segura enquanto as perspectivas descrevem sistemas diferentes.'
+    : 'Este estágio descreve o elo que limita o sistema, não a organização inteira. Os demais pilares podem estar em estágios diferentes.';
+  return `<details class="methodology consistency-detail ${divergent ? 'maturity-inconclusive' : `maturity-level-${classification.level}`}"><summary>Consistência do comportamento no elo limitante</summary><div class="classification-level">${escapeHtml(label)}</div><p>${escapeHtml(reading)}</p><dl class="executive-facts"><div><dt>Elo limitante</dt><dd>${escapeHtml(limiter)}</dd></div></dl><p class="muted">${escapeHtml(explanation)}</p></details>`;
+}
+
+export function renderDiagnosticFirstPlane(input: {
+  classification: { level: number; label: string; limitingCapabilities: string[] };
+  outcome: ReportOutcome;
+  findings: OutcomeFinding[];
+  confirmedProblemCount?: number;
+  occurrence?: FindingScopeOccurrence;
+  occurrences?: FindingScopeOccurrence[];
+  capabilityBase?: string;
+  scopeId?: string;
+}): string {
+  const ordered = uniqueFindingsByPattern(input.findings);
+  const competingFinding = ordered.find((finding) => finding.pattern !== input.outcome.finding?.pattern);
+  const context = {
+    ...(input.confirmedProblemCount !== undefined ? { confirmedProblemCount: input.confirmedProblemCount } : {}),
+    ...(input.occurrence ? { occurrence: input.occurrence } : {}),
+    ...(competingFinding ? { competingFinding } : {}),
+  };
+  return `${renderOutcome(input.outcome, context)}${renderFindingPortfolio(input.findings, input.outcome.finding?.pattern, input.occurrences ?? [], input.capabilityBase, input.scopeId)}${renderClassification(input.classification, input.outcome)}`;
 }
 
 type PerspectiveGapView = { title: string; capability: string; strongerProfiles: string[]; constrainedProfiles: string[] };
@@ -314,7 +344,7 @@ const solutionKindLabels: Record<SolutionGuidance['solutionKind'], string> = {
   'tool-class': 'família de ferramenta',
 };
 
-export function renderOutcome(outcome: ReportOutcome, context: { confirmedProblemCount?: number; occurrence?: FindingScopeOccurrence } = {}): string {
+export function renderOutcome(outcome: ReportOutcome, context: { confirmedProblemCount?: number; occurrence?: FindingScopeOccurrence; competingFinding?: OutcomeFinding } = {}): string {
   const guidance = outcome.finding ? guidanceFor(outcome.finding.pattern, outcome.finding.foundation, outcome.finding.title) : undefined;
   const experiment = outcome.finding?.experiment;
   const foundation = outcome.finding?.foundation;
@@ -322,7 +352,7 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
   const evidence = outcome.finding?.recommendationEvidence;
   const patternCount = evidence?.patterns.length ?? 0;
   const perspectiveLabels = evidence?.profiles.map(profileLabel).join(' · ') ?? '';
-  const evidenceBlock = evidence ? `<section><h3>O que as entrevistas mostraram</h3><p><strong>${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas que poderiam observar essa situação</strong> relataram ${patternCount} ${patternCount === 1 ? 'padrão de resposta' : 'padrões de resposta'}.</p><p>Perspectivas que sustentam a leitura: ${escapeHtml(perspectiveLabels || 'não diferenciadas')}.</p>${evidence.contradictingParticipants ? `<p>${evidence.contradictingParticipants} ${evidence.contradictingParticipants === 1 ? 'pessoa relatou' : 'pessoas relataram'} uma situação que contradiz essa leitura.</p>` : '<p>Nenhum relato contraditório suficiente foi agregado para esta hipótese.</p>'}</section>` : '';
+  const evidenceBlock = evidence ? `<section><h3>O que as entrevistas mostraram</h3><p><strong>${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas que poderiam observar essa situação</strong> relataram ${patternCount} ${patternCount === 1 ? 'padrão de resposta' : 'padrões de resposta'}.</p><p>Perspectivas que sustentam a leitura: ${escapeHtml(perspectiveLabels || 'não diferenciadas')}.</p>${evidence.contradictingParticipants ? `<p>${evidence.contradictingParticipants} ${evidence.contradictingParticipants === 1 ? 'pessoa relatou' : 'pessoas relataram'} uma situação que contradiz essa leitura.</p>` : '<p>Nenhum relato contraditório suficiente foi agregado para esta hipótese.</p>'}${evidence.strength ? renderEvidenceStrength(evidence.strength) : ''}</section>` : '';
   const readinessText = readiness?.stage === 'not-demonstrated'
     ? `As entrevistas ainda não mostraram esse caminho funcionando. Isso não significa que ele não exista.`
     : readiness ? `${readiness.label}: ${readiness.explanation}` : '';
@@ -330,39 +360,124 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
   const relatedCapabilities = outcome.finding?.affectedCapabilities?.filter((id) => id !== outcome.finding?.detailCapability) ?? [];
   const affected = outcome.finding
     ? `<p class="muted"><strong>Capacidade principal:</strong> ${escapeHtml(CapabilityTaxonomy.labelFor(outcome.finding.detailCapability))}.${relatedCapabilities.length ? ` <strong>Efeitos relacionados:</strong> ${relatedCapabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')}.` : ''}</p>` : '';
+  const diagnosticContext = outcome.finding?.mechanism
+    ? `<section><h3>O que pode estar restringindo o sistema</h3><dl class="diagnostic-context"><div><dt>Mecanismo observado</dt><dd>${escapeHtml(restrictionLabel(outcome.finding.mechanism))}</dd></div><div><dt>Contenção provável</dt><dd>${escapeHtml(containmentLabel(outcome.finding.containment ?? 'undetermined'))}</dd></div><div><dt>Autoridade para decidir</dt><dd>${escapeHtml(authorityLabel(outcome.finding.decisionAuthority ?? 'undetermined'))}</dd></div><div><dt>Severidade do impacto</dt><dd>${escapeHtml(severityLabel(outcome.finding.severity ?? 'undetermined'))}</dd></div><div><dt>Impactos</dt><dd>${escapeHtml((outcome.finding.impacts ?? []).map(impactLabel).join(' · ') || 'Ainda não discriminados')}</dd></div></dl><p><strong>Evidência que ainda falta:</strong> ${escapeHtml(outcome.finding.missingEvidence ?? 'Ainda falta confirmar onde a restrição é contida.')}</p>${outcome.finding.prescription ? `<p><strong>Estado da orientação:</strong> ${escapeHtml(outcome.finding.prescription.reason)}</p>` : ''}</section>`
+    : '';
   const priority = outcome.finding && context.confirmedProblemCount
-    ? `<section class="priority-rationale"><h3>Por que vem primeiro</h3><p>Esta é a prioridade 1 de ${context.confirmedProblemCount} ${context.confirmedProblemCount === 1 ? 'problema confirmado' : 'problemas confirmados'}. O motor a colocou primeiro pela combinação de alcance e severidade; os demais continuam no panorama para sequenciamento.</p>${context.occurrence ? `<p class="muted">${renderFindingScope(context.occurrence).trim()}</p>` : ''}</section>`
+    ? `<section class="priority-rationale"><h3>Por que vem primeiro</h3><p>Esta é a prioridade 1 de ${context.confirmedProblemCount} ${context.confirmedProblemCount === 1 ? 'problema confirmado' : 'problemas confirmados'}. O motor a colocou primeiro pela combinação de intensidade do sinal e alcance; os demais continuam no panorama para sequenciamento.</p>${outcome.finding.priorityFactors ? `<dl class="evidence-strength"><div><dt>Intensidade do sinal observado</dt><dd>${qualitativeFactor(outcome.finding.priorityFactors.intensity)}</dd></div><div><dt>Alcance entre pessoas aplicáveis</dt><dd>${qualitativeFactor(outcome.finding.priorityFactors.reach)}</dd></div></dl>` : ''}${priorityComparison(outcome.finding, context.competingFinding)}${context.occurrence ? `<p class="muted">${renderFindingScope(context.occurrence).trim()}</p>` : ''}</section>`
+    : '';
+  const metaSystem = organizationalCapabilityIds.has(outcome.limiterId ?? '')
+    ? '<p class="muted">O sistema organizacional é um meta-sistema: a restrição aqui explica espera, handoff ou decisão nos demais pilares, não um oitavo eixo técnico.</p>'
     : '';
   const briefing = guidance && (outcome.kind === 'correct' || outcome.kind === 'evolve')
-    ? `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(guidance.plainExplanation)}</p><p>${escapeHtml(guidance.mechanism)}</p></section>${affected}${priority}${evidenceBlock}${readinessBlock}
+    ? `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(guidance.plainExplanation)}</p><p>${escapeHtml(guidance.mechanism)}</p></section>${affected}${priority}${evidenceBlock}${diagnosticContext}${readinessBlock}${metaSystem}
       <section class="decision-request"><p class="eyebrow">Decisão solicitada</p><h3>O que recomendamos testar</h3><p><strong>${escapeHtml(experiment?.action ?? outcome.nextStepBody)}</strong></p><p>Responsável: ${escapeHtml(experiment?.owner ?? 'Responsável pelo recorte com o grupo afetado')} · revisão ${escapeHtml(experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p></section>
       <section><h3>Como saber se funcionou</h3><p>Observe: ${escapeHtml(experiment?.metric ?? guidance.metric)}.</p><p>Critério de sucesso: ${escapeHtml(experiment?.successCriterion ?? guidance.successCriterion)}.</p></section>
       <section><h3>O que esta decisão não resolve</h3><p>${escapeHtml(guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(guidance.antiPattern)}</p></section>
       <details class="methodology"><summary>Fundamento técnico e opções</summary><p><strong>${escapeHtml(guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[guidance.solutionKind])}). ${escapeHtml(guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(foundation?.source ?? guidance.matureReference)}.</p>${foundation ? `<p><strong>Princípio aplicado:</strong> ${escapeHtml(foundation.principle)}. ${escapeHtml(foundation.why)}</p>` : ''}<p>Exemplo de mecanismo: ${escapeHtml(guidance.examples)}</p></details>`
-    : outcome.kind === 'discriminate'
-      ? `<section><h3>Por que ainda não há recomendação</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section><section><h3>O que investigar agora</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>`
-      : outcome.kind === 'preserve'
-        ? `<section><h3>O que deve ser preservado</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p><p>${escapeHtml(outcome.nextStepBody)}</p></section>`
-        : `<p class="executive-reading">${escapeHtml(outcome.reading)}</p><p>${escapeHtml(outcome.nextStepBody)}</p>`;
+    : `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section>${affected}${priority}${evidenceBlock}${diagnosticContext}
+      ${evidenceBlock ? '' : `<section><h3>O que as entrevistas mostraram</h3><p>${escapeHtml(interviewReading(outcome))}</p></section>`}${metaSystem}
+      <section><h3>O que recomendamos testar</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>
+      <section><h3>Como saber se funcionou</h3><p>${escapeHtml(successReading(outcome))}</p></section>`;
   return `<article class="card outcome-card"><p class="eyebrow">Próxima decisão</p><p class="tag">${escapeHtml(outcome.kindLabel)}</p><h2>${escapeHtml(outcome.finding?.title ?? outcome.nextStepTitle)}</h2>${briefing}<p class="muted outcome-scope">Onde aparece: ${escapeHtml(outcome.limiterLabel)}</p></article>`;
 }
 
-export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPattern?: string, occurrences: FindingScopeOccurrence[] = []): string {
-  const allSecondary = uniqueFindingsByPattern(findings).filter((finding) => finding.pattern !== primaryPattern);
+function renderEvidenceStrength(strength: NonNullable<NonNullable<OutcomeFinding['recommendationEvidence']>['strength']>): string {
+  const label = (value: 'low' | 'medium' | 'high') => ({ low: 'Baixa', medium: 'Média', high: 'Alta' })[value];
+  const status = ({ 'local-hypothesis': 'Hipótese local para investigação', directional: 'Evidência direcional', triangulated: 'Evidência triangulada' })[strength.executiveStatus];
+  return `<div class="evidence-assessment"><p><strong>${status}.</strong> Convergência não substitui amplitude nem diversidade.</p><dl class="evidence-strength"><div><dt>Convergência</dt><dd>${label(strength.convergence)}</dd></div><div><dt>Amplitude</dt><dd>${label(strength.populationBreadth)}</dd></div><div><dt>Diversidade de perspectivas</dt><dd>${label(strength.perspectiveDiversity)}</dd></div><div><dt>Cobertura causal</dt><dd>${label(strength.causalCoverage)}</dd></div></dl></div>`;
+}
+
+function qualitativeFactor(value: number): string {
+  return value >= .8 ? 'Alta' : value >= .5 ? 'Moderada' : 'Baixa';
+}
+
+function priorityComparison(primary: OutcomeFinding, competing?: OutcomeFinding): string {
+  if (!competing) return '';
+  const primaryFactors = primary.priorityFactors;
+  const competingFactors = competing.priorityFactors;
+  if (!primaryFactors || !competingFactors) return `<p><strong>Comparação com a próxima frente:</strong> ${escapeHtml(competing.title)}. Consulte os fatores detalhados antes de ampliar a decisão.</p>`;
+  const reason = primaryFactors.intensity > competingFactors.intensity
+    ? 'A decisão principal venceu pela intensidade mais alta do sinal, embora a próxima frente possa ter maior alcance.'
+    : primaryFactors.reach > competingFactors.reach
+      ? 'A decisão principal venceu pelo alcance mais alto entre as pessoas que podiam observar.'
+      : 'A decisão principal venceu pela combinação dos dois fatores; a diferença é pequena e deve ser revista com evidência nova.';
+  return `<p><strong>Comparação com a próxima frente:</strong> ${escapeHtml(competing.title)}. ${escapeHtml(reason)}</p>`;
+}
+
+function restrictionLabel(value: string): string {
+  return ({ none: 'Nenhum mecanismo restritivo demonstrado', undetermined: 'Ainda não determinado', knowledge: 'Conhecimento', capacity: 'Capacidade disponível', process: 'Processo', policy: 'Política', tooling: 'Ferramenta', platform: 'Plataforma', access: 'Acesso', architecture: 'Arquitetura', organization: 'Estrutura organizacional', governance: 'Governança', culture: 'Cultura', incentive: 'Incentivo', priority: 'Prioridade ou alocação de capacidade', 'external-dependency': 'Dependência externa' } as Record<string, string>)[value] ?? value;
+}
+
+function containmentLabel(value: string): string {
+  return ({ team: 'Time', 'shared-service': 'Serviço compartilhado', 'organizational-policy': 'Política organizacional', 'organizational-structure': 'Estrutura organizacional', external: 'Fornecedor ou regulador externo', undetermined: 'Ainda não determinada' } as Record<string, string>)[value] ?? value;
+}
+
+function authorityLabel(value: string): string {
+  return ({ team: 'Liderança e pessoas do time', 'cross-team': 'Responsáveis dos times envolvidos', platform: 'Responsável pela capacidade compartilhada ou plataforma', architecture: 'Responsáveis pelas fronteiras e decisões arquiteturais', 'organizational-governance': 'Governança e liderança organizacional', 'portfolio-leadership': 'Liderança de produto, portfólio e orçamento', 'external-owner': 'Responsável pela relação externa', undetermined: 'Ainda não determinada' } as Record<string, string>)[value] ?? value;
+}
+
+function severityLabel(value: string): string { return ({ low: 'Baixa', moderate: 'Moderada', high: 'Alta', critical: 'Crítica', undetermined: 'Ainda não determinada pelas entrevistas' } as Record<string, string>)[value] ?? value; }
+function impactLabel(value: string): string { return ({ security: 'Segurança', reliability: 'Confiabilidade', 'delivery-speed': 'Velocidade de entrega', quality: 'Qualidade', cost: 'Custo', 'customer-experience': 'Experiência do cliente', 'engineering-experience': 'Experiência de engenharia', 'change-capability': 'Capacidade de mudança', predictability: 'Previsibilidade' } as Record<string, string>)[value] ?? value; }
+
+function interviewReading(outcome: ReportOutcome): string {
+  if (outcome.kind === 'insufficient') return 'Ainda não há evidência coletiva suficiente — variedade temática ou grupo mínimo — para publicar um diagnóstico.';
+  if (outcome.kind === 'preserve') return 'As entrevistas convergem para execução consistente, com revisão de efeito e adaptação do modo de trabalhar.';
+  if (/divergem|não descrevem o mesmo sistema/i.test(outcome.reading)) return 'As lentes descrevem sistemas diferentes. Isso é o finding, não uma fragilidade automática.';
+  if (/misturam/i.test(outcome.reading)) return 'Há relatos em direções opostas no mesmo elo; a contradição impede escolher uma causa.';
+  if (/dispersas/i.test(outcome.reading)) return 'Há sinais frágeis, mas nenhum padrão se repetiu o suficiente para amarrar uma causa. O relatório não inventa uma causa.';
+  return 'As entrevistas indicam fragilidade, mas ainda competem várias explicações.';
+}
+
+function successReading(outcome: ReportOutcome): string {
+  if (outcome.kind === 'insufficient') return 'O recorte fica conclusivo quando houver evidência coletiva suficiente, sem inventar causa ou intervenção.';
+  if (outcome.kind === 'preserve') return 'O sinal de regressão é decisões voltarem a depender de exceção, coordenação manual ou uma única pessoa.';
+  return 'A próxima rodada fecha quando uma restrição recorrente fica visível ou a hipótese é encerrada.';
+}
+
+export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPattern?: string, occurrences: FindingScopeOccurrence[] = [], capabilityBase?: string, scopeId?: string): string {
+  const uniqueFindings = uniqueFindingsByPattern(findings);
+  const systems = groupFindingsByDiagnosticSystem(uniqueFindings);
+  const allSecondary = uniqueFindings.filter((finding) => finding.pattern !== primaryPattern);
   const visible = allSecondary.slice(0, 4);
   if (!visible.length) return '';
   const total = allSecondary.length;
-  const items = visible.map((finding) => {
+  const item = (finding: OutcomeFinding) => {
     const evidence = finding.recommendationEvidence;
     const capabilities = finding.affectedCapabilities?.length ? finding.affectedCapabilities : [finding.detailCapability];
     const support = evidence ? `${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas sustentam esta leitura` : 'Evidência agregada disponível no detalhamento';
     const scope = occurrences.find((candidate) => candidate.pattern === finding.pattern);
     const scopeText = scope ? renderFindingScope(scope) : '';
-    return `<li><strong>${escapeHtml(finding.title)}</strong><br><span class="muted">${capabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')} · ${escapeHtml(support)}.${scopeText}</span></li>`;
+    const title = capabilityBase
+      ? `<a href="${escapeHtml(findingDetailHref(capabilityBase, finding, scopeId))}"><strong>${escapeHtml(finding.title)}</strong></a>`
+      : `<strong>${escapeHtml(finding.title)}</strong>`;
+    return `<li>${title}<br><span class="muted">${capabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')} · ${escapeHtml(support)}.${scopeText}</span></li>`;
+  };
+  const portfolioLabels: Record<DiagnosticPortfolioLevel, string> = {
+    organizational: 'Decisões organizacionais',
+    shared: 'Capacidades compartilhadas',
+    local: 'Problemas locais',
+    undetermined: 'Contenção ainda não determinada',
+  };
+  const groupedItems = (Object.keys(portfolioLabels) as DiagnosticPortfolioLevel[]).map((level) => {
+    const levelFindings = visible.filter((finding) => classifyPortfolioLevel(finding) === level);
+    return levelFindings.length ? `<section class="finding-portfolio-group"><h3>${portfolioLabels[level]}</h3><ol>${levelFindings.map(item).join('')}</ol></section>` : '';
   }).join('');
   const noun = primaryPattern ? (total === 1 ? 'outro padrão' : 'outros padrões confirmados') : (total === 1 ? 'padrão confirmado' : 'padrões confirmados');
   const truncation = total > visible.length ? ` O relatório está mostrando os ${visible.length} mais prioritários.` : '';
-  return `<section class="card finding-portfolio"><p class="eyebrow">${primaryPattern ? 'Além da decisão principal' : 'Problemas observados'}</p><h2>Panorama de problemas confirmados</h2><p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation} O panorama orienta o sequenciamento; não significa abrir todas as frentes ao mesmo tempo.</p><ol>${items}</ol></section>`;
+  const systemSummary = systems.length < uniqueFindings.length
+    ? `<p><strong>${uniqueFindings.length} padrões formam ${systems.length} ${systems.length === 1 ? 'frente diagnóstica' : 'frentes diagnósticas'}:</strong> ${systems.map((system) => `${escapeHtml(system.label)} (${system.findings.length})`).join(' · ')}. O agrupamento organiza padrões relacionados; não declara que uma causa única já foi comprovada.</p>`
+    : '';
+  return `<section class="card finding-portfolio"><p class="eyebrow">${primaryPattern ? 'Além da decisão principal' : 'Problemas observados'}</p><h2>Panorama de problemas confirmados</h2>${systemSummary}<p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation} O panorama orienta o sequenciamento; não significa abrir todas as frentes ao mesmo tempo.</p>${groupedItems}</section>`;
+}
+
+function findingAnchor(pattern: string | undefined): string {
+  return `finding-${(pattern ?? 'diagnostic').replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+}
+
+function findingDetailHref(capabilityBase: string, finding: OutcomeFinding, scopeId?: string): string {
+  const query = scopeId ? `?scope=${encodeURIComponent(scopeId)}` : '';
+  return `${capabilityBase}/${encodeURIComponent(finding.detailCapability)}${query}#${findingAnchor(finding.pattern)}`;
 }
 
 type ScopeReportView = {
@@ -376,10 +491,9 @@ type ScopeReportView = {
 
 export function renderScopeReport(scope: ScopeReportView, capabilityBase: string): string {
   const outcome = decideReportOutcome({ classification: scope.classification, branches: scope.capabilityGroups, findings: scope.findings, perspectiveGaps: scope.perspectiveGaps });
-  const portfolio = renderFindingPortfolio(scope.findings, outcome.finding?.pattern);
   const empty = scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>';
   const gaps = scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('');
-  return `<details class="card scope-report"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderClassification(scope.classification, outcome)}${renderOutcome(outcome, { confirmedProblemCount: uniqueFindingsByPattern(scope.findings).length })}${portfolio}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${empty}${gaps}</details>`;
+  return `<details class="card scope-report"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${renderDiagnosticFirstPlane({ classification: scope.classification, outcome, findings: scope.findings, confirmedProblemCount: uniqueFindingsByPattern(scope.findings).length, capabilityBase, scopeId: scope.id })}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${empty}${gaps}</details>`;
 }
 
 function renderFindingScope(scope: FindingScopeOccurrence): string {
@@ -435,12 +549,12 @@ export function renderCapabilityRadar(
     }
     const [x, y] = point(index, Math.max(.12, capability.level / 4)).split(',');
     const status = radarStatus(capability.level);
-    return `<a href="${capabilityUrl(capability.id)}" class="radar-point radar-status-${status.id}" aria-label="${escapeHtml(capability.label)}: ${formatMaturityLevel(capability.level)} de 4. ${escapeHtml(status.summary)}"><circle cx="${x}" cy="${y}" r="8"/>${radarTooltip(x!, y!, capability.label, `${formatMaturityLevel(capability.level)} de 4`, status.summary)}</a>`;
+    return `<a href="${capabilityUrl(capability.id)}" class="radar-point radar-status-${status.id}" aria-label="${escapeHtml(capability.label)}: ${executiveStage(capability.level)}. ${escapeHtml(status.summary)}"><circle cx="${x}" cy="${y}" r="8"/>${radarTooltip(x!, y!, capability.label, executiveStage(capability.level), status.summary)}</a>`;
   }).join('');
   const drillNavigation = capabilities.map((capability) => capability.assessed
     ? `<a class="radar-drill-link radar-status-${radarStatus(capability.level).id}" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${executiveStage(capability.level)} · ${coverageLabel(capability.coverage)}</span></a>`
     : `<span class="radar-drill-link disabled" aria-disabled="true">${escapeHtml(capability.label)} <span>Evidência insuficiente</span></span>`).join('');
-  return `<article class="card radar-card"><h3>Radar de capacidades</h3><p class="muted">Use o radar para localizar contraste e aprofundar, não para comparar décimos. Os rótulos mostram estágio e cobertura temática; “?” significa evidência insuficiente, não baixa maturidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Radar interativo das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
+  return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p class="muted">Use o mapa para localizar contraste e aprofundar, não para comparar décimos. Os rótulos mostram estágio e cobertura temática; “?” significa evidência insuficiente, não fragilidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Mapa de contraste das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
 }
 
 function radarStatus(level: number): { id: string; summary: string } {
@@ -493,12 +607,17 @@ function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVers
   });
   const unique = uniqueConfirmedCauses(confirmed);
   if (!unique.length) return '';
-  const items = unique.map((cause) => `<li><strong>${escapeHtml(cause.label)}</strong><br><span class="muted">${escapeHtml(diagnosticStrength(cause.probability))} · ${cause.support} de ${cause.applicable} pessoas que poderiam observar a situação, em ${cause.profiles} perspectiva(s) · ${escapeHtml(CapabilityTaxonomy.labelFor(cause.capability))}.</span></li>`).join('');
+  const items = unique.map((cause) => `<li><strong>${escapeHtml(cause.label)}</strong><br><span class="muted">${escapeHtml(causeEvidenceReading(cause))} · ${cause.support} de ${cause.applicable} pessoas que poderiam observar a situação, em ${cause.profiles} perspectiva(s) · ${escapeHtml(CapabilityTaxonomy.labelFor(cause.capability))}.</span></li>`).join('');
   return `<section><h2>${title}</h2><p class="muted">Hipóteses distintas com suporte da opção observada. Cada padrão aparece uma vez. Use-as para entender o recorte, não para avaliar pessoas.</p><article class="card diagnostic-hypothesis"><span class="tag">leitura das causas</span><ul>${items}</ul></article><details class="methodology"><summary>Sobre a precisão desta análise</summary><p>Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. As faixas são julgamentos especialistas apoiados pelas evidências; não representam probabilidade calibrada até o piloto produzir massa revisada.</p></details></section>`;
 }
 
+function causeEvidenceReading(cause: ConfirmedCause): string {
+  if (cause.support < 5 || cause.profiles < 2) return 'Hipótese local; amplitude ou diversidade limitada';
+  return diagnosticStrength(cause.probability);
+}
+
 type ReportFinding = {
-  kind?: 'correction' | 'evolution'; title: string; cause?: string; intervention: string; confidence?: number; priority?: number;
+  kind?: 'correction' | 'evolution'; pattern?: string; title: string; cause?: string; intervention: string; confidence?: number; priority?: number;
   detailCapability?: string; constraint?: string; reasons?: string[];
   experiment?: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   foundation?: { source: string; principle: string; why: string };
@@ -517,7 +636,7 @@ export function renderCapabilityDiagnosis(findings: ReportFinding[], capability:
       const experiment = finding.experiment;
       const urgency = finding.kind === 'evolution' ? 'Próximo passo de evolução' : (finding.priority ?? 0) >= .7 ? 'Atenção imediata' : 'Melhoria de curto prazo';
       const readiness = finding.solutionReadiness ? `<div class="solution-readiness"><h4>Capacidade necessária para resolver</h4><p>${escapeHtml(finding.solutionCapability ?? 'Capacidade coletiva compatível com a causa observada.')}</p><p><strong>${escapeHtml(finding.solutionReadiness.label)}</strong> — ${escapeHtml(finding.solutionReadiness.explanation)}</p></div>` : '';
-      return `<article class="card diagnostic-problem"><span class="tag">${urgency} · ${escapeHtml(diagnosticStrength(finding.confidence ?? 0))}</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${readiness}${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico, evidências e fundamento</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.foundation ? `<h4>Fundamento</h4><p>${escapeHtml(finding.foundation.source)} — ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
+      return `<article id="${findingAnchor(finding.pattern)}" class="card diagnostic-problem"><span class="tag">${urgency} · ${escapeHtml(diagnosticStrength(finding.confidence ?? 0))}</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${readiness}${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico, evidências e fundamento</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.foundation ? `<h4>Fundamento</h4><p>${escapeHtml(finding.foundation.source)} — ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
     }).join('')}</div>`).join('')}</section>`;
   }
   if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';

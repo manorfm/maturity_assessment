@@ -42,6 +42,10 @@ export const cloudCapabilityIds = new Set([
   'cloud-infrastructure', 'reproducible-infrastructure', 'cloud-security', 'cloud-reliability', 'cloud-efficiency',
 ]);
 
+export const organizationalCapabilityIds = new Set([
+  'organizational-system', 'team-ownership', 'enabling-governance', 'leadership-management', 'collaboration', 'organizational-learning',
+]);
+
 function collectLeaves(nodes: TaxonomyNode[]): string[] {
   return nodes.flatMap((node) => node.children?.length ? collectLeaves(node.children) : [node.id]);
 }

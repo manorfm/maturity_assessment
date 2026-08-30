@@ -6,24 +6,26 @@ import { CausalKnowledgeGraph } from './domain/causal-knowledge-graph.js';
 import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
 import { decideReportOutcome, uniqueFindingsByPattern } from './domain/report-outcome.js';
-import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed } from './domain/group-recommendation-engine.js';
+import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed, type RecommendationEvidence } from './domain/group-recommendation-engine.js';
 import type { SolutionReadiness } from './domain/solution-readiness.js';
 import { BayesianInferenceEngine, type DiagnosticPosterior } from './domain/bayesian-inference-engine.js';
 import { DiagnosticModel } from './domain/diagnostic-model.js';
 import { PilotEvaluation, type PilotReport } from './domain/pilot-evaluation.js';
 import { PilotService } from './pilot-service.js';
+import { buildDiagnosticContext, type DiagnosticContext } from './domain/diagnostic-contract.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
   title: string; cause: string; evidence: number; intervention: string; confidence: number; priority: number;
+  priorityFactors: { intensity: number; reach: number };
   constraint: ConstraintKind; reasons: string[];
-  recommendationEvidence: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
+  recommendationEvidence: RecommendationEvidence;
   experiment: { action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string };
   foundation: { source: string; principle: string; why: string };
   solutionCapability: string;
   solutionReadiness: SolutionReadiness;
   affectedCapabilities?: string[];
-};
+} & DiagnosticContext;
 type DiagnosticProblem = {
   kind: 'correction' | 'evolution';
   pattern: string;
@@ -481,15 +483,21 @@ export class InferenceService {
         AND s.node_key = r.node_id AND s.option_key = r.option_id
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
     `).all(...scope.parameters) as unknown as Array<{ participant_id: string; profile: string; capability: string; pattern: string; weight: number; detail_capabilities: string; evidence_layer: EvidenceLayer; constraint_kind: ConstraintKind }>;
-    const signals: GroupSignal[] = rows.flatMap((row) => (JSON.parse(row.detail_capabilities) as string[]).map((detailCapability) => ({
-      participantId: row.participant_id,
-      profile: row.profile,
-      detailCapability,
-      pattern: row.pattern,
-      weight: Number(row.weight),
-      layer: row.evidence_layer,
-      constraint: row.constraint_kind,
-    })));
+    const signals: GroupSignal[] = rows.flatMap((row) => {
+      const affectedCapabilities = JSON.parse(row.detail_capabilities) as string[];
+      const primaryDetailCapability = affectedCapabilities[0];
+      return affectedCapabilities.map((detailCapability) => ({
+        participantId: row.participant_id,
+        profile: row.profile,
+        detailCapability,
+        ...(primaryDetailCapability ? { primaryDetailCapability } : {}),
+        affectedCapabilities,
+        pattern: row.pattern,
+        weight: Number(row.weight),
+        layer: row.evidence_layer,
+        constraint: row.constraint_kind,
+      }));
+    });
     const applicableByCapability = Object.fromEntries([...new Set(signals.map((signal) => signal.detailCapability))].map((capability) => [
       capability,
       new Set(signals.filter((signal) => signal.detailCapability === capability).map((signal) => signal.participantId)).size,
@@ -512,6 +520,9 @@ export class InferenceService {
       foundation: ranked.foundation,
       solutionCapability: ranked.solutionCapability,
       solutionReadiness: ranked.solutionReadiness,
+      affectedCapabilities: ranked.affectedCapabilities,
+      priorityFactors: ranked.priorityFactors,
+      ...buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }),
     }));
   }
 

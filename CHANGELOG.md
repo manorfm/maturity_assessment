@@ -5,12 +5,36 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
-## Unreleased
+## 0.34.0
 
-- Registrou a decisão de apresentar o produto como diagnóstico de engenharia, não
-  como framework de maturidade, e alinhou o vocabulário da documentação vigente.
-  O relatório 0.31.0 ainda abre com classificação e radar; a sequência para
-  rebaixá-los está no plano de evolução.
+- Tornou mecanismo causal obrigatório nos probes e suspendeu prescrição quando
+  mecanismo ou contenção permanecem indeterminados.
+- Acrescentou autoridade decisória ao finding e à API sanitizada, sem inferir
+  responsabilidade organizacional apenas pela recorrência entre squads.
+- Separou o panorama em decisões organizacionais, capacidades compartilhadas,
+  problemas locais e contenção indeterminada, com navegação até cada achado.
+- Publicou a semântica como modelo de inferência `bayesian-v4`.
+
+## 0.33.0
+
+- Tornou capacidade principal canônica e preservou as demais como efeitos, sem
+  duplicar o mesmo problema por folha.
+- Separou convergência, amplitude populacional, diversidade de perspectivas e
+  cobertura causal; prioridade passou a explicar intensidade do sinal e alcance.
+- Acrescentou mecanismo de restrição, contenção, impacto, severidade e evidência
+  faltante ao finding, e agrupou padrões relacionados em frentes diagnósticas sem
+  presumir causa comum.
+- Bloqueou causas prematuras em alternativas de cenário e publicou a nova semântica
+  como modelo de inferência `bayesian-v3`.
+
+## 0.32.0
+
+- Apresentou o produto como diagnóstico de engenharia: o first screen do relatório
+  abre pelo cartão (o que aconteceu, o que as entrevistas mostraram, o que testar,
+  como saber se funcionou). Estágio ordinal e mapa de contraste ficam depois.
+- O mapa deixou de publicar “N de 4” no primeiro plano. Limitador organizacional
+  é lido como meta-sistema. Evidência insuficiente, contradição e fragilidade
+  dispersa ganharam textos distintos.
 
 ## 0.31.0
 

@@ -29,6 +29,12 @@ function auditQuestions(nodes: AssessmentNode[]): InstrumentIssue[] {
       if (clauses > 2) issues.push(issue('error', 'compound-option', subject, 'A alternativa reúne mais de dois comportamentos ou consequências.'));
       if (desirableLanguage.test(option.label)) issues.push(issue('error', 'desirability-cue', subject, 'A alternativa revela julgamento ou resposta socialmente desejável.'));
       if (option.signals.length > 4) issues.push(issue('warning', 'signal-overload', subject, 'Uma escolha produz sinais demais e pode preencher capacidades não observadas.'));
+      if (node.type === 'scenario' && option.signals.some((signal) => signal.pattern.startsWith('causa-'))) {
+        issues.push(issue('error', 'premature-causal-signal', subject, 'A alternativa do cenário deve registrar fato ou comportamento; hipótese causal pertence a um probe de discriminação.'));
+      }
+      if (node.type === 'probe' && option.signals.some((signal) => signal.pattern.startsWith('causa-') && (signal.constraint === 'none' || signal.constraint === 'undetermined'))) {
+        issues.push(issue('error', 'missing-causal-constraint', subject, 'Uma hipótese causal discriminada precisa declarar o mecanismo de restrição observado.'));
+      }
     }
     return issues;
   });

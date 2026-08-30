@@ -38,7 +38,7 @@ export class CatalogService {
   }
 
   private seedDiagnosticModel(): void {
-    const modelVersion = `${GRAPH_VERSION}-bayesian-v2`;
+    const modelVersion = `${GRAPH_VERSION}-bayesian-v4`;
     this.db.prepare('INSERT INTO inference_model_versions (version, graph_version, status, policy_json, published_at) VALUES (?, ?, ?, ?, ?)')
       .run(modelVersion, GRAPH_VERSION, 'published', JSON.stringify({
         informationGain: .5, coverage: .25, validation: .15, inverseCost: .1, minimumInformationGainBits: .01, recommendationThreshold: .7,

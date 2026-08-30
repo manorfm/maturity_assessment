@@ -18,8 +18,37 @@ const catalog: Record<string, InterventionDefinition> = {
 };
 
 function evidence(pattern: string, participantId: string, overrides: Partial<GroupSignal> = {}): GroupSignal {
-  return { participantId, profile: 'engineering', detailCapability: 'continuous-integration', pattern, weight: -1, layer: 'system', constraint: 'tooling', ...overrides };
+  return { participantId, profile: 'engineering', detailCapability: 'continuous-integration', primaryDetailCapability: 'continuous-integration', affectedCapabilities: ['continuous-integration'], pattern, weight: -1, layer: 'system', constraint: 'tooling', ...overrides };
 }
+
+test('publica o padrão somente na capacidade principal declarada e preserva os efeitos', () => {
+  const engine = new GroupRecommendationEngine(catalog);
+  const signals = [1, 2, 3, 4].flatMap((index) => [
+    evidence('tooling-gap', `p${index}`, { detailCapability: 'continuous-integration', primaryDetailCapability: 'continuous-integration', affectedCapabilities: ['continuous-integration', 'organizational-learning'] }),
+    evidence('tooling-gap', `p${index}`, { detailCapability: 'organizational-learning', primaryDetailCapability: 'continuous-integration', affectedCapabilities: ['continuous-integration', 'organizational-learning'] }),
+  ]);
+  const ranked = engine.rank(signals, { total: 4, applicableByCapability: { 'continuous-integration': 4, 'organizational-learning': 4 } });
+  assert.equal(ranked.length, 1);
+  assert.equal(ranked[0]?.detailCapability, 'continuous-integration');
+  assert.deepEqual(ranked[0]?.affectedCapabilities, ['continuous-integration', 'organizational-learning']);
+});
+
+test('separa convergência de amplitude em uma coorte pequena elegível', () => {
+  const ranked = new GroupRecommendationEngine(catalog).rank([
+    evidence('tooling-gap', 'p1'), evidence('tooling-gap', 'p2'), evidence('tooling-gap', 'p3'),
+  ], { total: 10, applicableByCapability: { 'continuous-integration': 3 } });
+  assert.equal(ranked[0]?.evidence.strength.convergence, 'high');
+  assert.equal(ranked[0]?.evidence.strength.populationBreadth, 'low');
+  assert.equal(ranked[0]?.evidence.strength.perspectiveDiversity, 'low');
+  assert.equal(ranked[0]?.evidence.strength.executiveStatus, 'local-hypothesis');
+});
+
+test('expõe os fatores usados na prioridade sem confundir confiança', () => {
+  const ranked = new GroupRecommendationEngine(catalog).rank(
+    [1, 2, 3, 4].map((index) => evidence('tooling-gap', `p${index}`, { weight: -2 })), 4,
+  );
+  assert.deepEqual(ranked[0]?.priorityFactors, { intensity: 2 / 3, reach: 1 });
+});
 
 test('padrões de melhoria contínua não compartilham o mesmo parágrafo de causa', () => {
   const catalog = defineInterventionCatalog({

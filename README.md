@@ -11,11 +11,10 @@ explicável — comportamento, hipóteses de causa, confiança e menor experimen
 não um nível. O repositório ainda se chama `maturity_assessment`; isso não define
 o propósito.
 
-O MVP está concluído e pronto para piloto controlado. A próxima meta de produto é
-rebaixar estágio e radar no primeiro plano do relatório
-([plano](docs/backlog/engineering-diagnostic-plan.md)). Em paralelo, o instrumento
-ainda precisa de jornadas reais, revisão com especialistas e calibração, sem
-transformar o resultado em ranking de pessoas ou times.
+O MVP está concluído e pronto para piloto controlado. O first screen do relatório já é o diagnóstico
+([plano](docs/backlog/engineering-diagnostic-plan.md)). O instrumento ainda precisa
+de jornadas reais, revisão com especialistas e calibração, sem transformar o
+resultado em ranking de pessoas ou times.
 
 ## Objetivo
 
@@ -239,9 +238,9 @@ não mascaram uma terceira squad crítica dentro da mesma área.
 
 ### 8. Relatório e plano de melhoria
 
-O painel oferece uma leitura executiva com estágio, principal limitador, risco e
-prioridade. O radar permite navegar da capacidade macro até subcapacidades, práticas
-e evidências. Cada diagnóstico recomendado apresenta:
+O painel abre pelo diagnóstico: o que está acontecendo, o que as entrevistas
+mostraram, o que testar e como saber se funcionou. Estágio e mapa de contraste
+ficam depois, para localizar cobertura. Cada diagnóstico recomendado apresenta:
 
 - problema observado e impacto esperado;
 - causa provável e força da hipótese;
@@ -279,8 +278,8 @@ checklists nem concedem pontos pelo nome.
 
 ## Estágio do comportamento (leitura auxiliar)
 
-O relatório vigente ainda publica esta escala no radar e na classificação. Ela
-descreve consistência do comportamento no elo limitante, não o diagnóstico.
+O relatório publica esta escala só como consistência do elo limitante, depois do
+cartão de diagnóstico. Ela não é o resultado.
 
 | Estágio | Estado | Interpretação |
 |---:|---|---|

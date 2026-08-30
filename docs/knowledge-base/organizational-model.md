@@ -96,6 +96,13 @@ Esses rótulos descrevem abrangência observada, não causa. Um padrão transver
 evidência identifica a fronteira ou política externa. Ausência em outro recorte
 significa “não demonstrado nesse recorte”, nunca prova de inexistência.
 
+**Contenção** é uma dimensão diferente: time, serviço compartilhado, política
+organizacional, estrutura organizacional, fornecedor/regulador ou indeterminada.
+Ela deriva do mecanismo sustentado, nunca da quantidade de squads afetadas. Uma
+restrição transversal pode continuar indeterminada; uma dependência externa local
+continua externa. Quando a raiz possui apenas recortes filhos elegíveis, o mapa por
+estrutura omite essa raiz porque ela duplicaria a visão global.
+
 O motor agrega `ProblemPattern`s semelhantes por escopo e origem provável. Exemplos:
 
 - muitos times aguardam o mesmo provisionamento: possível gargalo de plataforma ou

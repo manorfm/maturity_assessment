@@ -11,3 +11,15 @@ test('auditoria relata todos os problemas editoriais sem parar no primeiro', () 
   assert.ok(issues.length >= 6);
   assert.deepEqual(new Set(issues.map((item) => item.code)), new Set(['missing-observation-anchor', 'abstract-prompt', 'compound-option', 'desirability-cue', 'signal-overload', 'generic-success', 'generic-metric', 'generic-owner', 'generic-foundation']));
 });
+
+test('cenário publica fato e reserva padrão causal para probe', () => {
+  const scenario: AssessmentNode = { id: 'wait', type: 'scenario', title: 'Espera', scenario: 'Na última mudança.', prompt: 'O que ocorreu?', options: [{ id: 'ticket', label: 'Outro grupo executou depois do chamado.', signals: [{ capability: 'plataforma', pattern: 'causa-politica-espera', weight: -1, details: ['platform-autonomy'], layer: 'practice', constraint: 'governance' }] }] };
+  const probe: AssessmentNode = { ...scenario, id: 'wait-cause', type: 'probe' };
+  assert.ok(auditInstrument([scenario], {}).some((issue) => issue.code === 'premature-causal-signal'));
+  assert.equal(auditInstrument([probe], {}).some((issue) => issue.code === 'premature-causal-signal'), false);
+});
+
+test('probe causal precisa declarar o mecanismo em vez de none', () => {
+  const probe: AssessmentNode = { id: 'wait-cause', type: 'probe', title: 'Origem da espera', scenario: 'Na última mudança.', prompt: 'O que impediu o avanço?', options: [{ id: 'policy', label: 'Uma regra exigiu aguardar outra área.', signals: [{ capability: 'governanca', pattern: 'causa-politica-espera', weight: -1, details: ['enabling-governance'], layer: 'system', constraint: 'none' }] }] };
+  assert.ok(auditInstrument([probe], {}).some((issue) => issue.code === 'missing-causal-constraint'));
+});

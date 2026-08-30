@@ -26,7 +26,9 @@ capacidades sociotécnicas:
 7. **Segurança e gestão de risco** — risco na entrega, identidade, acesso e
    rastreabilidade.
 8. **Sistema organizacional** — estrutura e ownership, governança habilitadora,
-   liderança, colaboração, aprendizado e adaptação.
+   liderança, colaboração, aprendizado e adaptação. Na leitura executiva este
+   pilar é um meta-sistema: explica restrições que aparecem nos demais; não é
+   o oitavo eixo técnico.
 
 Cada ramo segue, quando houver evidência suficiente, `capacidade → subcapacidade →
 prática → comportamento observado`. Comportamentos podem produzir sinais em vários
@@ -111,11 +113,10 @@ Não haverá média simples entre pilares. O relatório deve destacar capacidade
 limitantes, relações causais plausíveis e confiança. Uma nota agregada, se existir,
 será secundária e explicável.
 
-O relatório vigente (0.31.0) ainda apresenta, no mapa global e nos recortes
-hierárquicos seguros, os oito eixos macro, uma classificação ordinal e o radar.
-Essa apresentação é auxiliar: o produto é o diagnóstico, não o estágio. A
-decisão de rebaixá-los no primeiro plano está em
-`docs/backlog/engineering-diagnostic-plan.md`. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
+O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
+os oito eixos macro. A leitura começa pelo cartão de diagnóstico. Estágio ordinal
+e mapa de contraste são auxiliares: o produto é o problema e o teste, não o
+nível. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
 dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
 evidência insuficiente, aparece com marcador neutro “?” e nunca é interpretado como
 zero ou fragilidade. Esse estado não permite aprofundamento até atingir cobertura;
@@ -158,8 +159,11 @@ média. Ao consolidar a hierarquia, uma unidade ancestral também é limitada pe
 classificação mais baixa entre descendentes publicáveis. O relatório preserva as
 capacidades fortes e identifica explicitamente capacidades ou unidades limitantes;
 isso evita que uma squad forte esconda outra bloqueada.
-O primeiro plano explicita que o estágio descreve o elo limitante, não a organização
-inteira. O radar continua sendo a leitura da distribuição entre pilares.
+O primeiro plano é o diagnóstico: o que está acontecendo, o que as entrevistas
+mostraram, o que testar e como saber se funcionou. O estágio ordinal descreve a
+consistência do comportamento no elo limitante e fica em detalhe, não no
+cabeçalho. O mapa de contraste (radar) localiza cobertura e diferença entre
+pilares; não publica “N de 4” no primeiro plano.
 
 Quando perspectivas elegíveis descrevem sistemas incompatíveis, o primeiro plano
 fica `Inconclusivo`: a divergência suspende a classificação ordinal até distinguir
@@ -204,8 +208,8 @@ diagnóstico global. Nota, confiança, população, incerteza e versão do model
 informações secundárias e explicáveis. Ferramenta, framework e nome de time
 continuam sem pontuar.
 
-O radar e o cabeçalho das capacidades usam estágios qualitativos e **cobertura
-temática**, sem decimal ou percentual no primeiro plano. Cobertura informa quantos
+O mapa de contraste e o detalhe das capacidades usam estágios qualitativos e **cobertura
+temática**, sem decimal, percentual ou “N de 4” no primeiro plano. Cobertura informa quantos
 aspectos do tema foram observados; não significa força causal, consenso nem tamanho
 da amostra. Ordinal, intervalo e
 cobertura exata permanecem auditáveis nos detalhes. Toda capacidade avaliada abaixo de 4 deve ter

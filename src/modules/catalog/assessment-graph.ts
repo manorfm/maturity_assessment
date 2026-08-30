@@ -4,7 +4,7 @@ export const NOT_APPLICABLE_ID = 'not-applicable';
 
 export type Profile = 'management' | 'product' | 'quality' | 'engineering' | 'platform' | 'architecture' | 'security' | 'data' | 'design';
 export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
-export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
+export type ConstraintKind = 'none' | 'undetermined' | 'knowledge' | 'capacity' | 'process' | 'policy' | 'tooling' | 'platform' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture' | 'incentive' | 'priority' | 'external-dependency';
 export type ObservationKind = 'practice' | 'visibility' | 'not_applicable';
 export type Signal = { capability: string; pattern: string; weight: number; details: string[]; layer: EvidenceLayer; constraint: ConstraintKind };
 export type Option = { id: string; label: string; signals: Signal[]; observation?: ObservationKind };
@@ -154,10 +154,10 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'A integração tardia reaparece mesmo quando as pessoas tentam antecipá-la. Considere o impedimento que permanece após uma tentativa concreta de reduzir o intervalo.',
     prompt: 'Na última tentativa de integrar mais cedo, qual impedimento permaneceu?',
     options: [
-      { id: 'tooling-gap', label: 'O retorno automatizado é lento, instável ou incompleto; integrar cedo interrompe o trabalho sem produzir confiança.', signals: [{ capability: 'engenharia', pattern: 'causa-ferramental-feedback', weight: -1 , details: ['sdlc-automation'], layer: 'system', constraint: 'none' }] },
-      { id: 'process-policy', label: 'Política, revisão ou processo exige acumular escopo ou aguardar uma etapa antes de compartilhar a mudança.', signals: [{ capability: 'governanca', pattern: 'causa-processo-lote', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'none' }] },
-      { id: 'team-boundary', label: 'Responsabilidades e prioridades atravessam times; concluir a integração exige combinar agendas e decisões de vários responsáveis.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-times', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'none' }] },
-      { id: 'architecture-coupling', label: 'O sistema exige alterar e validar muitas partes juntas; uma mudança pequena não permanece pequena.', signals: [{ capability: 'arquitetura', pattern: 'causa-acoplamento-entrega', weight: -1 , details: ['release-feedback', 'evolvability'], layer: 'system', constraint: 'none' }] },
+      { id: 'tooling-gap', label: 'O retorno automatizado é lento, instável ou incompleto; integrar cedo interrompe o trabalho sem produzir confiança.', signals: [{ capability: 'engenharia', pattern: 'causa-ferramental-feedback', weight: -1 , details: ['sdlc-automation'], layer: 'system', constraint: 'tooling' }] },
+      { id: 'process-policy', label: 'Política, revisão ou processo exige acumular escopo ou aguardar uma etapa antes de compartilhar a mudança.', signals: [{ capability: 'governanca', pattern: 'causa-processo-lote', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'policy' }] },
+      { id: 'team-boundary', label: 'Responsabilidades e prioridades atravessam times; concluir a integração exige combinar agendas e decisões de vários responsáveis.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-times', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'organization' }] },
+      { id: 'architecture-coupling', label: 'O sistema exige alterar e validar muitas partes juntas; uma mudança pequena não permanece pequena.', signals: [{ capability: 'arquitetura', pattern: 'causa-acoplamento-entrega', weight: -1 , details: ['release-feedback', 'evolvability'], layer: 'system', constraint: 'architecture' }] },
     ], next: 'release-control',
   },
   {
@@ -222,10 +222,10 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Casos semelhantes percorrem caminhos diferentes e consomem tempo até encontrar quem consegue agir.',
     prompt: 'No último caso que demorou a chegar ao responsável, o que manteve a espera?',
     options: [
-      { id: 'unclear-ownership', label: 'Serviços e jornadas não possuem responsabilidade operacional clara ou atualizada.', signals: [{ capability: 'organizacao', pattern: 'causa-ownership-operacional', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'none' }] },
-      { id: 'impact-unknown', label: 'Não há informação suficiente para relacionar sintomas técnicos, clientes afetados e criticidade.', signals: [{ capability: 'observabilidade', pattern: 'causa-impacto-invisivel', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
-      { id: 'support-boundary', label: 'A estrutura separa sustentação e desenvolvimento, mas transferência de contexto e autoridade é lenta.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-sustentacao', weight: -1 , details: ['organizational-learning'], layer: 'system', constraint: 'none' }] },
-      { id: 'classification-policy', label: 'A política existe, porém categorias e respostas não refletem o risco real dos produtos.', signals: [{ capability: 'governanca', pattern: 'causa-politica-incidente', weight: -1 , details: ['incident-management', 'enabling-governance'], layer: 'system', constraint: 'none' }] },
+      { id: 'unclear-ownership', label: 'Serviços e jornadas não possuem responsabilidade operacional clara ou atualizada.', signals: [{ capability: 'organizacao', pattern: 'causa-ownership-operacional', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'organization' }] },
+      { id: 'impact-unknown', label: 'Não há informação suficiente para relacionar sintomas técnicos, clientes afetados e criticidade.', signals: [{ capability: 'observabilidade', pattern: 'causa-impacto-invisivel', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'tooling' }] },
+      { id: 'support-boundary', label: 'A estrutura separa sustentação e desenvolvimento, mas transferência de contexto e autoridade é lenta.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-sustentacao', weight: -1 , details: ['organizational-learning'], layer: 'system', constraint: 'organization' }] },
+      { id: 'classification-policy', label: 'A política existe, porém categorias e respostas não refletem o risco real dos produtos.', signals: [{ capability: 'governanca', pattern: 'causa-politica-incidente', weight: -1 , details: ['incident-management', 'enabling-governance'], layer: 'system', constraint: 'policy' }] },
     ], next: 'incident-diagnosis',
   },
   {
@@ -244,10 +244,10 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'O acesso direto ou a combinação manual reaparece em incidentes diferentes, apesar do risco e do tempo consumido.',
     prompt: 'Na última investigação, o que mais atrasou a primeira explicação verificável para o problema?',
     options: [
-      { id: 'telemetry-gap', label: 'Sinais necessários não são coletados, indexados ou correlacionados de ponta a ponta.', signals: [{ capability: 'observabilidade', pattern: 'causa-lacuna-telemetria', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
-      { id: 'tool-access-gap', label: 'A informação existe, mas ferramentas homologadas, licenças, acesso ou experiência não permitem usá-la no tempo do incidente.', signals: [{ capability: 'plataforma', pattern: 'causa-ferramenta-observabilidade', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'none' }] },
-      { id: 'context-propagation-gap', label: 'Componentes não preservam um identificador técnico comum ou contratos de instrumentação.', signals: [{ capability: 'arquitetura', pattern: 'causa-correlacao-arquitetural', weight: -1 , details: ['integration-data', 'organizational-learning'], layer: 'system', constraint: 'none' }] },
-      { id: 'privacy-design-gap', label: 'O desenho não oferece busca operacional minimizada e empurra a investigação para dados pessoais.', signals: [{ capability: 'plataforma', pattern: 'causa-privacidade-operacional', weight: -2 , details: ['software-security', 'cloud-security'], layer: 'system', constraint: 'none' }] },
+      { id: 'telemetry-gap', label: 'Sinais necessários não são coletados, indexados ou correlacionados de ponta a ponta.', signals: [{ capability: 'observabilidade', pattern: 'causa-lacuna-telemetria', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'tooling' }] },
+      { id: 'tool-access-gap', label: 'A informação existe, mas ferramentas homologadas, licenças, acesso ou experiência não permitem usá-la no tempo do incidente.', signals: [{ capability: 'plataforma', pattern: 'causa-ferramenta-observabilidade', weight: -1 , details: ['observability-practice'], layer: 'system', constraint: 'access' }] },
+      { id: 'context-propagation-gap', label: 'Componentes não preservam um identificador técnico comum ou contratos de instrumentação.', signals: [{ capability: 'arquitetura', pattern: 'causa-correlacao-arquitetural', weight: -1 , details: ['integration-data', 'organizational-learning'], layer: 'system', constraint: 'architecture' }] },
+      { id: 'privacy-design-gap', label: 'O desenho não oferece busca operacional minimizada e empurra a investigação para dados pessoais.', signals: [{ capability: 'plataforma', pattern: 'causa-privacidade-operacional', weight: -2 , details: ['software-security', 'cloud-security'], layer: 'system', constraint: 'architecture' }] },
     ], next: 'incident-remediation',
   },
   {
@@ -312,10 +312,10 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Bloqueios semelhantes aparecem em atividades diferentes e o simples escalonamento não reduz o tempo total.',
     prompt: 'No bloqueio mais recente, o que continuou impedindo o trabalho de avançar?',
     options: [
-      { id: 'permission-policy', label: 'Permissões e controles não distinguem riscos nem oferecem um caminho seguro que o próprio time consiga executar.', signals: [{ capability: 'governanca', pattern: 'causa-permissao-sem-autonomia', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'none' }] },
-      { id: 'dependency-priority', label: 'A dependência pertence a outro grupo com prioridades e tempos que não são negociados pelo resultado compartilhado.', signals: [{ capability: 'organizacao', pattern: 'causa-prioridade-entre-times', weight: -1 , details: ['product-direction'], layer: 'system', constraint: 'none' }] },
-      { id: 'missing-capability', label: 'Conhecimento necessário não está acessível no time, na plataforma ou em uma colaboração com tempo definido.', signals: [{ capability: 'organizacao', pattern: 'causa-competencia-inacessivel', weight: -1 , details: ['technical-capability'], layer: 'system', constraint: 'none' }] },
-      { id: 'architecture-dependency', label: 'O desenho técnico exige alterar ou consultar muitos responsáveis para uma mudança comum.', signals: [{ capability: 'arquitetura', pattern: 'causa-dependencia-arquitetural', weight: -1 , details: ['evolvability'], layer: 'system', constraint: 'none' }] },
+      { id: 'permission-policy', label: 'Permissões e controles não distinguem riscos nem oferecem um caminho seguro que o próprio time consiga executar.', signals: [{ capability: 'governanca', pattern: 'causa-permissao-sem-autonomia', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'access' }] },
+      { id: 'dependency-priority', label: 'A dependência pertence a outro grupo com prioridades e tempos que não são negociados pelo resultado compartilhado.', signals: [{ capability: 'organizacao', pattern: 'causa-prioridade-entre-times', weight: -1 , details: ['product-direction'], layer: 'system', constraint: 'priority' }] },
+      { id: 'missing-capability', label: 'Conhecimento necessário não está acessível no time, na plataforma ou em uma colaboração com tempo definido.', signals: [{ capability: 'organizacao', pattern: 'causa-competencia-inacessivel', weight: -1 , details: ['technical-capability'], layer: 'system', constraint: 'knowledge' }] },
+      { id: 'architecture-dependency', label: 'O desenho técnico exige alterar ou consultar muitos responsáveis para uma mudança comum.', signals: [{ capability: 'arquitetura', pattern: 'causa-dependencia-arquitetural', weight: -1 , details: ['evolvability'], layer: 'system', constraint: 'architecture' }] },
     ], next: 'decision-context',
   },
   {
@@ -413,10 +413,10 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Os mesmos temas retornam em encontros diferentes sem mudança sustentada, mesmo quando o grupo reconhece o impacto.',
     prompt: 'Na última ação que perdeu continuidade, o que impediu sua revisão?',
     options: [
-      { id: 'no-capacity', label: 'Toda a capacidade é consumida por entregas e urgências; melhorar o sistema não compete de forma explícita na priorização.', signals: [{ capability: 'governanca', pattern: 'causa-melhoria-sem-capacidade', weight: -1 , details: ['portfolio-management', 'organizational-learning'], layer: 'system', constraint: 'none' }] },
-      { id: 'no-autonomy', label: 'As causas dependem de decisões, políticas ou estruturas fora da autonomia do grupo e não há caminho efetivo de escalada.', signals: [{ capability: 'organizacao', pattern: 'causa-melhoria-sem-autonomia', weight: -1 , details: ['organizational-learning'], layer: 'system', constraint: 'none' }] },
-      { id: 'too-many-actions', label: 'Muitas ações são abertas sem limite, evidência de sucesso ou encerramento explícito.', signals: [{ capability: 'aprendizado', pattern: 'causa-acoes-sem-foco', weight: -1 , details: ['product-direction'], layer: 'system', constraint: 'none' }] },
-      { id: 'unsafe-dialogue', label: 'Conflitos, erros e decisões difíceis são suavizados porque expô-los traz risco pessoal ou pouca mudança prática.', signals: [{ capability: 'organizacao', pattern: 'causa-baixa-seguranca-psicologica', weight: -2 , details: ['software-security'], layer: 'system', constraint: 'none' }] },
+      { id: 'no-capacity', label: 'Toda a capacidade é consumida por entregas e urgências; melhorar o sistema não compete de forma explícita na priorização.', signals: [{ capability: 'governanca', pattern: 'causa-melhoria-sem-capacidade', weight: -1 , details: ['portfolio-management', 'organizational-learning'], layer: 'system', constraint: 'capacity' }] },
+      { id: 'no-autonomy', label: 'As causas dependem de decisões, políticas ou estruturas fora da autonomia do grupo e não há caminho efetivo de escalada.', signals: [{ capability: 'organizacao', pattern: 'causa-melhoria-sem-autonomia', weight: -1 , details: ['organizational-learning'], layer: 'system', constraint: 'organization' }] },
+      { id: 'too-many-actions', label: 'Muitas ações são abertas sem limite, evidência de sucesso ou encerramento explícito.', signals: [{ capability: 'aprendizado', pattern: 'causa-acoes-sem-foco', weight: -1 , details: ['product-direction'], layer: 'system', constraint: 'process' }] },
+      { id: 'unsafe-dialogue', label: 'Conflitos, erros e decisões difíceis são suavizados porque expô-los traz risco pessoal ou pouca mudança prática.', signals: [{ capability: 'organizacao', pattern: 'causa-baixa-seguranca-psicologica', weight: -2 , details: ['software-security'], layer: 'system', constraint: 'culture' }] },
     ], next: 'shared-surface-context',
   },
   {
@@ -459,10 +459,10 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Problemas de concorrência reaparecem apesar de mais comunicação, revisão e cuidado das pessoas envolvidas.',
     prompt: 'Na última colisão entre mudanças, qual condição permaneceu depois do alinhamento?',
     options: [
-      { id: 'ambiguous-source', label: 'Há mais de uma origem ou processo capaz de produzir a versão considerada válida.', signals: [{ capability: 'engenharia', pattern: 'causa-multiplas-fontes', weight: -1 , details: ['sdlc-automation'], layer: 'system', constraint: 'none' }] },
-      { id: 'weak-boundaries', label: 'Os limites do sistema não acompanham as responsabilidades; mudanças locais exigem compreender uma área extensa compartilhada.', signals: [{ capability: 'arquitetura', pattern: 'causa-limites-sem-ownership', weight: -1 , details: ['domain-alignment', 'team-ownership'], layer: 'system', constraint: 'none' }] },
-      { id: 'independent-priorities', label: 'Times compartilham a superfície, mas objetivos, prazos e decisões são independentes.', signals: [{ capability: 'governanca', pattern: 'causa-prioridades-na-superficie', weight: -1 , details: ['product-direction', 'team-ownership'], layer: 'system', constraint: 'none' }] },
-      { id: 'missing-verification', label: 'Contratos, configuração e integração não possuem feedback repetível antes da composição final.', signals: [{ capability: 'engenharia', pattern: 'causa-verificacao-concorrente', weight: -1 , details: ['continuous-integration', 'quality-strategy', 'organizational-learning'], layer: 'system', constraint: 'none' }] },
+      { id: 'ambiguous-source', label: 'Há mais de uma origem ou processo capaz de produzir a versão considerada válida.', signals: [{ capability: 'engenharia', pattern: 'causa-multiplas-fontes', weight: -1 , details: ['sdlc-automation'], layer: 'system', constraint: 'process' }] },
+      { id: 'weak-boundaries', label: 'Os limites do sistema não acompanham as responsabilidades; mudanças locais exigem compreender uma área extensa compartilhada.', signals: [{ capability: 'arquitetura', pattern: 'causa-limites-sem-ownership', weight: -1 , details: ['domain-alignment', 'team-ownership'], layer: 'system', constraint: 'architecture' }] },
+      { id: 'independent-priorities', label: 'Times compartilham a superfície, mas objetivos, prazos e decisões são independentes.', signals: [{ capability: 'governanca', pattern: 'causa-prioridades-na-superficie', weight: -1 , details: ['product-direction', 'team-ownership'], layer: 'system', constraint: 'priority' }] },
+      { id: 'missing-verification', label: 'Contratos, configuração e integração não possuem feedback repetível antes da composição final.', signals: [{ capability: 'engenharia', pattern: 'causa-verificacao-concorrente', weight: -1 , details: ['continuous-integration', 'quality-strategy', 'organizational-learning'], layer: 'system', constraint: 'tooling' }] },
     ], next: 'team-health',
   },
   {

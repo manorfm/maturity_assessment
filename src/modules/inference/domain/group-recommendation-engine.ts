@@ -1,14 +1,16 @@
 import { assessSolutionReadiness, type SolutionReadiness } from './solution-readiness.js';
 
 export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' | 'outcome';
-export type ConstraintKind = 'none' | 'knowledge' | 'process' | 'tooling' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture';
-export type GroupSignal = { participantId: string; profile?: string; detailCapability: string; pattern: string; weight: number; layer: EvidenceLayer; constraint: ConstraintKind };
+export type ConstraintKind = 'none' | 'undetermined' | 'knowledge' | 'capacity' | 'process' | 'policy' | 'tooling' | 'platform' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture' | 'incentive' | 'priority' | 'external-dependency';
+export type EvidenceStrengthLevel = 'low' | 'medium' | 'high';
+export type EvidenceStrength = { convergence: EvidenceStrengthLevel; populationBreadth: EvidenceStrengthLevel; perspectiveDiversity: EvidenceStrengthLevel; causalCoverage: EvidenceStrengthLevel; executiveStatus: 'local-hypothesis' | 'directional' | 'triangulated' };
+export type GroupSignal = { participantId: string; profile?: string; detailCapability: string; primaryDetailCapability?: string; affectedCapabilities?: string[]; pattern: string; weight: number; layer: EvidenceLayer; constraint: ConstraintKind };
 export type InterventionFoundation = { source: string; principle: string; why: string };
 export type InterventionSeed = { title: string; intervention: string; foundation?: InterventionFoundation };
 export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation; guidance?: SolutionGuidance; guidanceStatus?: 'explicit' | 'fallback' };
 export type RecommendationPopulation = { total: number; applicableByCapability: Record<string, number> };
-export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[] };
-export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; reasons: string[]; evidence: RecommendationEvidence; solutionCapability: string; solutionReadiness: SolutionReadiness; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
+export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[]; strength: EvidenceStrength };
+export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; affectedCapabilities: string[]; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; priorityFactors: { intensity: number; reach: number }; reasons: string[]; evidence: RecommendationEvidence; solutionCapability: string; solutionReadiness: SolutionReadiness; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
 export type InterventionEvidenceRule = { evidencePatterns?: string[]; contradictionPatterns?: string[]; owner?: string; metric?: string; reviewHorizon?: string; successCriterion?: string };
 
 export function defineInterventionCatalog(seeds: Record<string, InterventionSeed>, rules: Record<string, InterventionEvidenceRule> = {}): Record<string, InterventionDefinition> {
@@ -41,6 +43,7 @@ export class GroupRecommendationEngine {
     if (applicablePopulation < 3) return [];
     const minimumSupport = Math.max(2, Math.ceil(applicablePopulation * .2));
     const candidates = unique(signals.flatMap((signal) => {
+      if ((signal.primaryDetailCapability ?? signal.detailCapability) !== capability) return [];
       const catalog = signal.weight < 0 ? this.correctionCatalog : signal.weight < 2 ? this.evolutionCatalog : {};
       const definition = catalog[signal.pattern];
       return definition && definition.guidanceStatus !== 'fallback' ? [signal.pattern] : [];
@@ -61,18 +64,21 @@ export class GroupRecommendationEngine {
       const support = supporters.size / Math.max(1, applicablePopulation);
       const confidence = roundConfidence(posterior.get(pattern) ?? 0);
       if (confidence < .5) return [];
-      const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none')) ?? 'none';
+      const constraint: ConstraintKind = mode(sourceSignals.map((signal) => signal.constraint).filter((item) => item !== 'none' && item !== 'undetermined')) ?? 'undetermined';
       const contextualOwner = ownerForConstraint(constraint, definition.foundation);
       const solutionReadiness = assessSolutionReadiness(signals, applicablePopulation);
       const solutionCapability = definition.guidance?.solutionClass ?? `Capacidade coletiva para reduzir ${definition.title.toLocaleLowerCase('pt-BR')}`;
-      const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles };
+      const strength = assessEvidenceStrength(supporters.size, applicablePopulation, profiles.length, layers.length, contradictors.size);
+      const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles, strength };
+      const affectedCapabilities = unique(sourceSignals.flatMap((signal) => signal.affectedCapabilities ?? [signal.detailCapability]));
+      const priorityFactors = priorityFactorsOf(sourceSignals, support);
       const reasons = [
         `Padrão sustentado por ${supporters.size} de ${applicablePopulation} jornadas aplicáveis.`,
         `Posterior bayesiano formado por ${patterns.length} evidência(s), ${layers.length} camada(s) e ${profiles.length || 1} perspectiva(s).`,
         ...(contradictors.size ? [`Contradição específica em ${contradictors.size} jornada(s).`] : []),
-        ...(constraint !== 'none' ? [`Restrição observada: ${constraint}.`] : []),
+        ...(constraint !== 'undetermined' ? [`Restrição observada: ${constraint}.`] : []),
       ];
-      return [{ ...definition, kind, detailCapability: capability, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(sourceSignals, support), reasons, evidence, solutionCapability, solutionReadiness, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualOwner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
+      return [{ ...definition, kind, detailCapability: capability, affectedCapabilities, pattern, constraint, support: clamp(support), confidence, priority: priorityOf(priorityFactors), priorityFactors, reasons, evidence, solutionCapability, solutionReadiness, experiment: { action: definition.action, owner: definition.owner === 'Responsável pela capacidade com o time' ? contextualOwner : definition.owner, metric: definition.metric, reviewHorizon: definition.reviewHorizon, successCriterion: definition.successCriterion } }];
     }).sort((left, right) => right.priority - left.priority || right.confidence - left.confidence || right.support - left.support).slice(0, 3);
   }
 }
@@ -102,7 +108,7 @@ function posteriorByPattern(signals: GroupSignal[], candidates: string[], correc
       evidence.push({ pattern: evidencePattern, group: `contradiction:${pattern}`, likelihoods: { [pattern]: .1, unknown: .75 } });
       observed.push(evidencePattern);
     }
-    const model = DiagnosticModel.create({ version: 'group-bayesian-v2', families: [{ id: `${signals[0]!.detailCapability}:${pattern}`, capability: signals[0]!.detailCapability, hypotheses, evidence }] });
+    const model = DiagnosticModel.create({ version: 'group-bayesian-v4', families: [{ id: `${signals[0]!.detailCapability}:${pattern}`, capability: signals[0]!.detailCapability, hypotheses, evidence }] });
     const result = new BayesianInferenceEngine().infer(model, observed)[0]!;
     probabilities.set(pattern, result.hypotheses.find((item) => item.id === pattern)!.probability);
   }
@@ -119,7 +125,7 @@ function experimentDefaults(constraint: ConstraintKind, pattern = '', foundation
   return { owner: ownerForConstraint(constraint, foundation), metric: guidance.metric, reviewHorizon: horizonFor(pattern), successCriterion: guidance.successCriterion };
 }
 function ownerForConstraint(constraint: ConstraintKind, foundation?: InterventionFoundation): string {
-  const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', knowledge: 'Liderança técnica com a disciplina habilitadora', process: 'Responsável pelo fluxo com as pessoas que executam o processo', tooling: 'Engenharia com plataforma', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado' };
+  const owners: Record<ConstraintKind, string> = { none: 'Responsável pela capacidade com o time', undetermined: 'Responsável pelo recorte com as pessoas que observam o evento', knowledge: 'Liderança técnica com a disciplina habilitadora', capacity: 'Liderança do fluxo com quem aloca capacidade', process: 'Responsável pelo fluxo com as pessoas que executam o processo', policy: 'Responsável pela política com executores do fluxo', tooling: 'Engenharia com plataforma', platform: 'Plataforma com times consumidores', access: 'Plataforma e segurança com representantes dos times', architecture: 'Times proprietários com liderança de arquitetura', organization: 'Liderança organizacional com os times afetados', governance: 'Responsável pela governança com executores do fluxo', culture: 'Liderança de pessoas com o grupo afetado', incentive: 'Liderança organizacional responsável pelos incentivos', priority: 'Liderança de produto e engenharia', 'external-dependency': 'Responsável pelo contrato externo com o time afetado' };
   return constraint === 'none' ? ownerFor(foundation?.source) : owners[constraint];
 }
 function ownerFor(source?: string): string {
@@ -148,7 +154,19 @@ function horizonFor(pattern: string): string {
 function lowerFirst(value: string): string {
   return value.charAt(0).toLocaleLowerCase('pt-BR') + value.slice(1).replace(/[.]$/, '');
 }
-function priorityOf(signals: GroupSignal[], support: number): number { const severity = Math.min(1, Math.abs(Math.min(...signals.map((signal) => signal.weight))) / 3); return Number((.65 * severity + .35 * Math.min(1, support)).toFixed(2)); }
+function priorityFactorsOf(signals: GroupSignal[], support: number): { intensity: number; reach: number } {
+  return { intensity: Math.min(1, Math.abs(Math.min(...signals.map((signal) => signal.weight))) / 3), reach: Math.min(1, support) };
+}
+function priorityOf(factors: { intensity: number; reach: number }): number { return Number((.65 * factors.intensity + .35 * factors.reach).toFixed(2)); }
+function assessEvidenceStrength(supporters: number, applicable: number, profiles: number, layers: number, contradictions: number): EvidenceStrength {
+  const convergenceRatio = supporters / Math.max(1, applicable);
+  const convergence: EvidenceStrengthLevel = contradictions > 0 || convergenceRatio < .5 ? 'low' : convergenceRatio < .8 ? 'medium' : 'high';
+  const populationBreadth: EvidenceStrengthLevel = supporters < 5 ? 'low' : supporters < 10 ? 'medium' : 'high';
+  const perspectiveDiversity: EvidenceStrengthLevel = profiles < 2 ? 'low' : profiles < 3 ? 'medium' : 'high';
+  const causalCoverage: EvidenceStrengthLevel = layers < 2 ? 'low' : layers < 3 ? 'medium' : 'high';
+  const executiveStatus = populationBreadth === 'low' || perspectiveDiversity === 'low' ? 'local-hypothesis' : perspectiveDiversity === 'high' && causalCoverage !== 'low' ? 'triangulated' : 'directional';
+  return { convergence, populationBreadth, perspectiveDiversity, causalCoverage, executiveStatus };
+}
 function mode<T extends string>(values: T[]): T | undefined { const counts = new Map<T, number>(); for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1); return [...counts].sort((left, right) => right[1] - left[1])[0]?.[0]; }
 function groupBy<T, K>(values: T[], keyOf: (value: T) => K): Map<K, T[]> { const grouped = new Map<K, T[]>(); for (const value of values) { const key = keyOf(value); grouped.set(key, [...(grouped.get(key) ?? []), value]); } return grouped; }
 function unique<T>(values: T[]): T[] { return [...new Set(values)]; }

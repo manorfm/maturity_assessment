@@ -27,10 +27,10 @@ export function buildShowcaseGuide(cases: ShowcaseGuideCase[]): string {
     <header>
       <p class="eyebrow">Showcase sintético</p>
       <h1>Índice de inspeção</h1>
-      <p class="lead">Casos sintéticos para inspecionar textos, classificações, recomendações e proteções de agregação. Eles não substituem calibração empírica; o posterior permanece provisório.</p>
+      <p class="lead">Casos sintéticos para inspecionar textos, diagnósticos, recomendações e proteções de agregação. Eles não substituem calibração empírica; o posterior permanece provisório.</p>
     </header>
     <div class="notice">
-      <p>Abra cada relatório administrativo, compare a leitura executiva com o radar e use os convites não consumidos para percorrer a entrevista à mão. A página pública do projeto não revela respostas.</p>
+      <p>Abra cada relatório administrativo, compare o cartão de diagnóstico com o mapa de contraste e use os convites não consumidos para percorrer a entrevista à mão. A página pública do projeto não revela respostas.</p>
     </div>
     ${index ? `<section class="card"><h2>Casos gerados</h2><ol>${index}</ol></section>` : '<p class="muted">Nenhum caso foi gerado nesta execução.</p>'}
     ${articles}
@@ -42,8 +42,8 @@ function renderCase(entry: ShowcaseGuideCase): string {
   const observed = entry.observed ? `
     <h3>O que esta execução observou</h3>
     <dl class="executive-facts">
-      ${entry.observed.classification ? `<div><dt>Classificação</dt><dd>${escapeHtml(entry.observed.classification)}</dd></div>` : ''}
-      ${entry.observed.limiter ? `<div><dt>Principal limitador</dt><dd>${escapeHtml(entry.observed.limiter)}</dd></div>` : ''}
+      ${entry.observed.classification ? `<div><dt>Consistência do elo</dt><dd>${escapeHtml(entry.observed.classification)}</dd></div>` : ''}
+      ${entry.observed.limiter ? `<div><dt>Onde aparece</dt><dd>${escapeHtml(entry.observed.limiter)}</dd></div>` : ''}
       ${entry.observed.highlights?.length ? `<div><dt>Destaques</dt><dd>${entry.observed.highlights.map((item) => `<span class="tag">${escapeHtml(item)}</span>`).join(' ')}</dd></div>` : ''}
     </dl>
     ${entry.observed.reading ? `<p class="executive-reading">${escapeHtml(entry.observed.reading)}</p>` : ''}

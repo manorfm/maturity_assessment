@@ -28,6 +28,11 @@ observada; não são chamados de evidência ampla, não são convertidos em porc
 causal e não escondem a incerteza remanescente. Cobertura temática, suporte coletivo,
 posterior causal e prontidão da solução permanecem medidas separadas.
 
+A força da evidência mantém quatro leituras independentes: convergência das
+respostas, amplitude na população aplicável, diversidade de perspectivas e
+cobertura causal. Alta convergência em uma única perspectiva continua sendo
+hipótese local, não evidência organizacional triangulada.
+
 ## Atualização e explicação
 
 O cálculo usa log-espaço e normalização por softmax. A força considera suporte sobre
@@ -66,6 +71,10 @@ que não pontua: explica por que a ação ataca o comportamento observado, sem
 recomendar ferramenta na ausência de problema. Prioridade considera severidade e
 alcance sem alterar o posterior.
 
+Cada finding possui uma única **capacidade principal**, onde o padrão e o contrato
+de intervenção são publicados. Outras capacidades aparecem como efeitos. O mesmo
+padrão não vira várias prioridades apenas porque atravessa pilares.
+
 O catálogo diferencia correção de um padrão negativo e evolução de uma prática
 intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade abaixo
 de 4 pode receber evolução quando as respostas sustentam um passo concreto.
@@ -85,9 +94,12 @@ recomendador.
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
 corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
 limitador mistura evidência, quando o finding **é** a divergência de perspectiva,
-ou quando a nota é baixa sem causa isolada; ou declarar evidência insuficiente.
-Discriminar pede observação de um evento recente, não um playbook. Um ramo em 4
-não herda discriminação de um neto de cloud.
+quando as fragilidades estão dispersas sem padrão recorrente, ou quando ainda
+competem várias explicações; ou declarar evidência insuficiente. Esses três
+vazios não se confundem: falta de amostra, contradição no mesmo elo e
+fragilidade sem causa amarrada pedem textos diferentes. Discriminar pede
+observação de um evento recente, não um playbook. Um ramo em 4 não herda
+discriminação de um neto de cloud.
 
 Discriminação sem causa isolada usa um contrato narrativo da capacidade: declara o
 sinal observado, as explicações que ainda competem e o evento que precisa ser
@@ -102,15 +114,36 @@ hipótese de fronteira e pedem a reconstrução conjunta de um evento recente; n
 repetem como uma lista de déficits.
 
 A decisão principal explicita que é a primeira entre `N` problemas confirmados e
-que a ordenação combina alcance e severidade. Os demais não desaparecem: o panorama
+que a ordenação combina alcance e intensidade do sinal. Os demais não desaparecem: o panorama
 mantém o total real e mostra até quatro próximos candidatos. A abrangência por
 unidade é uma projeção da mesma evidência agregada, não um segundo recomendador.
 
+O cartão mostra separadamente intensidade do sinal e alcance e
+explica por que a frente venceu o próximo candidato; confiança não entra nessa
+ordenação. Padrões preservados individualmente podem ser agrupados em **frentes
+diagnósticas** por relações explícitas do catálogo. O agrupamento organiza sintomas
+que merecem uma decisão coordenada, mas nunca declara causa comum comprovada.
+
+Além de abrangência, o contrato publicado inclui mecanismo de restrição, contenção,
+impactos, severidade e evidência faltante. Severidade permanece indeterminada até
+existir evidência própria de impacto; ela não deriva do peso da alternativa.
+Abrangência descreve onde o padrão foi
+observado; contenção descreve quem ou o que provavelmente consegue removê-lo. Se a
+entrevista não discriminou isso, o resultado permanece indeterminado.
+
+O contrato também declara a autoridade provável para agir. Sem mecanismo ou
+contenção discriminados, o problema continua publicado, porém a orientação muda
+para investigação e nenhuma solução específica é prescrita. O panorama separa
+decisões organizacionais, capacidades compartilhadas, problemas locais e contenção
+ainda indeterminada; cada item navega para o finding canônico no detalhamento.
+
 A apresentação é uma projeção determinística do mesmo finding, não um segundo motor
-de recomendação. Ela traduz o contrato para linguagem operacional nesta ordem:
+de recomendação. No first screen, o cartão vem antes do estágio e do mapa de
+contraste. Ele traduz o contrato para linguagem operacional nesta ordem:
 situação observada, base das entrevistas, capacidade atual para agir, teste proposto,
-critério de sucesso e limite da decisão. Classe de solução, referência e opções ficam
-sob demanda. Quando a prontidão não foi demonstrada, o texto diz apenas que as
+critério de sucesso e limite da decisão. Quando o limitador é do sistema
+organizacional, o texto lembra que aquele pilar é um meta-sistema, não um oitavo
+eixo técnico. Classe de solução, referência e opções ficam sob demanda. Quando a prontidão não foi demonstrada, o texto diz apenas que as
 entrevistas ainda não mostraram o caminho funcionando; nunca conclui inexistência.
 As perspectivas que sustentam a leitura são nomeadas, contradição zero é explícita e
 capacidade principal fica separada dos efeitos relacionados. O fundamento mostra

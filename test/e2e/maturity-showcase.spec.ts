@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { graph, profileIds, type Profile } from '../../src/modules/catalog/assessment-graph.js';
 import { buildShowcaseGuide, SHOWCASE_GUIDE_PATH, type ShowcaseGuideCase } from './showcase-guide.js';
 
-type Stance = 'fragile' | 'emerging' | 'adaptive' | 'pipeline-fragile' | 'coordination-fragile';
+type Stance = 'fragile' | 'emerging' | 'adaptive' | 'pipeline-fragile' | 'coordination-fragile' | 'divergence-strong' | 'divergence-constrained';
 
 const mixedSquad: Profile[] = ['quality', 'management', 'product', 'engineering', 'platform', 'architecture', 'design'];
 const tenPersonTeam: Profile[] = ['platform', 'engineering', 'engineering', 'engineering', 'engineering', 'quality', 'product', 'architecture', 'product', 'management'];
@@ -65,11 +65,12 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   for (const [index, link] of beta.entries()) await completeAssessment(page, link, 'coordination-fragile', tenPersonTeam[index]!, index);
 
   await page.goto(adminUrl);
-  await expect(page.getByText('Resumo executivo').first()).toBeVisible();
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();
-  await expect(page.locator('.executive-facts dd').first()).not.toContainText('e mais');
-  await expect(page.locator('.executive-facts dd').first()).not.toContainText('Confiabilidade de infraestrutura');
-  await expect(page.locator('.executive-facts dd').first()).not.toContainText('Infraestrutura reproduzível');
+  await expect(page.getByRole('heading', { name: 'O que está acontecendo' }).first()).toBeVisible();
+  await expect(page.locator('.outcome-scope').first()).not.toContainText('e mais');
+  await expect(page.locator('.outcome-scope').first()).not.toContainText('Confiabilidade de infraestrutura');
+  await expect(page.locator('.outcome-scope').first()).not.toContainText('Infraestrutura reproduzível');
+  await revealConsistency(page);
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
   await expect(page.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
   await expect(page.getByText(/prioridade 1 de \d+ problemas confirmados/i).first()).toBeVisible();
@@ -100,7 +101,7 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
     story: 'Dois times de dez pessoas compartilham a mesma linha de produto. No Squad Alfa, a esteira, a regressão e os ambientes atrasam o feedback. No Squad Beta, dependências, ownership e decisões centralizadas exigem coordenação constante.',
     lookFor: [
       'Uma próxima decisão e um único limitador — não cloud aninhada por default.',
-      'Cartão com o problema, a restrição e a classe de solução; radar em segundo plano.',
+      'Cartão com o problema, a restrição e o teste; estágio e mapa de contraste em segundo plano.',
       'Panorama visível com problemas de esteira, comunicação, gestão e fronteiras além da decisão principal.',
       'Mapa por estrutura compara os dois times sem expor respostas individuais.',
     ],
@@ -116,17 +117,17 @@ async function buildEmergingCase(page: Page, levels: Record<string, number>): Pr
   const links = await createInvitations(page, mixedSquad.length);
   for (const [index, link] of links.entries()) await completeAssessment(page, link, 'emerging', mixedSquad[index]!, index);
   await page.goto(adminUrl);
-  await expect(page.getByText('Resumo executivo').first()).toBeVisible();
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();
-  await expect(page.locator('.executive-facts dd').first()).not.toContainText('e mais');
+  await expect(page.getByRole('heading', { name: 'O que está acontecendo' }).first()).toBeVisible();
+  await expect(page.locator('.outcome-scope').first()).not.toContainText('e mais');
   const observed = await observeReport(page);
   levels.emerging = Number(observed.classification.split('·')[0]?.trim());
   return {
     id: 'emergente',
     title: 'Emergente — prática local',
-    story: 'Sete perspectivas descrevem rotina intermediária: há acordo local, mas ainda falta evidência de sistema. Serve para comparar a leitura executiva e as evoluções recomendadas com os extremos frágil e adaptativo.',
+    story: 'Sete perspectivas descrevem rotina intermediária: há acordo local, mas ainda falta evidência de sistema. Serve para comparar a leitura executiva e as evoluções recomendadas com os casos sob pressão e sustentável.',
     lookFor: [
-      'Classificação entre o caso frágil e o adaptativo.',
+      'Consistência do elo limitante entre o caso sob pressão e o sustentável.',
       'Um limitador, um desfecho e um próximo passo — sem “e mais N” nem três prioridades do mesmo texto.',
       'Instrumento e calibração no rodapé, sem competir com a decisão.',
     ],
@@ -138,15 +139,15 @@ async function buildEmergingCase(page: Page, levels: Record<string, number>): Pr
 
 async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Promise<ShowcaseGuideCase> {
   const org = 'Operação sustentável';
-  const adminUrl = await createProject(page, 'Adaptativo — nove perspectivas', org, ['Plataforma']);
+  const adminUrl = await createProject(page, 'Sustentável — práticas gerenciadas e adaptativas', org, ['Plataforma']);
   const completed = await createInvitations(page, profileIds.length);
   await page.getByRole('link', { name: 'Voltar ao painel' }).click();
   const unused = await createInvitations(page, 3);
   for (const [index, link] of completed.entries()) await completeAssessment(page, link, 'adaptive', profileIds[index]!, index);
 
   await page.goto(adminUrl);
-  await expect(page.getByText('Resumo executivo').first()).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Radar de capacidades' }).first()).toBeVisible();
+  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Mapa de contraste e cobertura' }).first()).toBeVisible();
   await page.locator('.radar-drill-link', { hasText: 'Operação e confiabilidade' }).first().click();
   await expect(page.getByRole('heading', { name: 'Operação e confiabilidade' })).toBeVisible();
   await expect(page.locator('.outcome-card .tag')).toHaveText('Preservar a prática');
@@ -162,13 +163,16 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
     await expect(infrastructure).not.toHaveAttribute('href', /.+/);
   }
   await expect(page.getByRole('link', { name: 'Voltar' })).toBeVisible();
+  await revealConsistency(page);
   await expect(page.locator('.classification-level')).toContainText('Adaptativo');
   await expect(page.locator('.classification-level')).not.toContainText('/ 4');
-  await page.getByText('Ver evidências da avaliação', { exact: true }).click();
-  await expect(page.locator('details.methodology[open]').getByText(/cobertura temática/i)).toBeVisible();
+  await page.locator('details.consistency-detail').first().getByText('Ver evidências da avaliação', { exact: true }).click();
+  await expect(page.getByText(/Estimativa ordinal interna/)).toBeVisible();
+  await expect(page.getByText(/cobertura temática/i).last()).toBeVisible();
   await page.goto(adminUrl);
   await page.locator('.radar-drill-link', { hasText: 'Sistema organizacional' }).first().click();
   await page.locator('.radar-drill-link', { hasText: 'Governança habilitadora' }).click();
+  await revealConsistency(page);
   await expect(page.locator('.classification-level')).toContainText('Gerenciado');
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();
   await expect(page.locator('.outcome-card .tag')).toHaveText(/Evoluir a prática|Corrigir o limitador|Discriminar antes de intervir|Preservar a prática/);
@@ -178,11 +182,11 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
 
   return {
     id: 'adaptativo',
-    title: 'Adaptativo — nove perspectivas',
+    title: 'Sustentável — práticas gerenciadas e adaptativas',
     story: 'As nove lentes descrevem replanejamento conjunto, evidência e aprendizado. Três convites permanecem abertos para percorrer à mão os ramos de arquitetura, segurança, dados e design.',
     lookFor: [
       'Nas páginas de capacidade, a leitura executiva usa estágios qualitativos; o ordinal permanece auditável nos detalhes.',
-      'O resumo executivo pode ficar em Gerenciado: o elo limitante não é inflado pelas folhas altas.',
+      'A consistência do elo limitante pode ficar em Gerenciado: não é inflada pelas folhas altas.',
       'Governança habilitadora abaixo de 4 fecha com uma próxima decisão, não com uma lista de evoluções genéricas.',
       'Use um convite ocioso, escolha Arquitetura, Segurança, Dados ou Design na primeira pergunta e leia o texto do ramo.',
     ],
@@ -202,7 +206,7 @@ async function buildDivergenceCase(page: Page): Promise<ShowcaseGuideCase> {
   const links = await createInvitations(page, 10);
   for (const [index, link] of links.entries()) {
     const profile: Profile = index < 5 ? 'management' : 'engineering';
-    await completeAssessment(page, link, index < 5 ? 'adaptive' : 'fragile', profile, index);
+    await completeAssessment(page, link, index < 5 ? 'divergence-strong' : 'divergence-constrained', profile, index);
   }
   await page.goto(adminUrl);
   await expect(page.getByText('divergência agregada').first()).toBeVisible();
@@ -211,11 +215,11 @@ async function buildDivergenceCase(page: Page): Promise<ShowcaseGuideCase> {
   return {
     id: 'divergencia',
     title: 'Divergência — gestão e engenharia',
-    story: 'Cinco jornadas de gestão descrevem prática sustentável no mesmo fluxo em que cinco de engenharia descrevem restrição. A triangulação atinge o grupo mínimo nas duas lentes; a divergência não deve ser lida automaticamente como baixa maturidade.',
+    story: 'Cinco jornadas de gestão descrevem prática sustentável no mesmo fluxo em que cinco de engenharia descrevem restrição. A triangulação atinge o grupo mínimo nas duas lentes; a divergência não deve ser lida automaticamente como comportamento frágil.',
     lookFor: [
       'Tag “divergência agregada” e o texto que pede investigar visibilidade, fronteiras e autonomia.',
       'Próxima decisão de discriminar: diferença de perspectiva é o finding, não uma nota baixa automática.',
-      'Compare com o caso adaptativo homogêneo e com o frágil homogêneo.',
+      'Compare com o caso sustentável e com o caso sob pressão.',
     ],
     adminUrl: toInspectUrl(adminUrl),
     publicUrl: publicUrlFromAdmin(adminUrl),
@@ -266,10 +270,15 @@ async function completeAssessment(page: Page, invitationLink: string, stance: St
   await expect(page.getByRole('heading', { name: 'Obrigado pela participação' })).toBeVisible();
 }
 
+async function revealConsistency(page: Page): Promise<void> {
+  const detail = page.locator('details.consistency-detail').first();
+  if (await detail.count() && !(await detail.getAttribute('open'))) await detail.locator(':scope > summary').click();
+}
+
 async function observeReport(page: Page) {
-  const classification = (await page.locator('.classification-level').first().textContent())?.trim() ?? '';
   const reading = (await page.locator('.executive-reading').first().textContent())?.trim() ?? '';
-  const limiter = (await page.locator('.executive-facts dd').first().textContent())?.trim() ?? '';
+  const limiter = (await page.locator('.outcome-scope').first().textContent())?.replace(/^Onde aparece:\s*/i, '').trim() ?? '';
+  const classification = await page.locator('.classification-level').first().evaluate((el) => el.textContent?.trim() ?? '');
   const ignoredTags = new Set(['claimed', 'issued', 'partially_used', 'revoked', 'expired']);
   const highlights = (await page.locator('.tag').allTextContents())
     .map((item) => item.trim())
@@ -289,11 +298,19 @@ function chooseOption(options: typeof graph[number]['options'], stance: Stance, 
   const practice = options.filter((option) => (option.observation ?? 'practice') === 'practice');
   const pool = practice.length ? practice : options;
   const scored = pool.map((option) => ({ option, score: option.signals.reduce((total, signal) => total + signal.weight, 0) }));
-  if (stance === 'fragile') {
+  const divergenceNodes = new Set(['shared-change', 'integration-cadence', 'architecture-pressure', 'blocked-work', 'decision-context']);
+  const effectiveStance: 'fragile' | 'emerging' | 'adaptive' = stance === 'pipeline-fragile' || stance === 'coordination-fragile'
+    ? 'adaptive'
+    : stance === 'divergence-strong'
+      ? divergenceNodes.has(nodeId) ? 'adaptive' : 'emerging'
+      : stance === 'divergence-constrained'
+        ? divergenceNodes.has(nodeId) ? 'fragile' : 'emerging'
+        : stance;
+  if (effectiveStance === 'fragile') {
     const fragile = scored.filter((candidate) => candidate.score < 0).sort((left, right) => left.score - right.score);
     return (fragile[participantIndex % fragile.length] ?? scored.sort((left, right) => left.score - right.score)[0])!.option;
   }
-  if (stance === 'adaptive') {
+  if (effectiveStance === 'adaptive') {
     const strong = scored.sort((left, right) => negativeCost(left.option) - negativeCost(right.option) || right.score - left.score);
     const safest = strong.filter((candidate) => negativeCost(candidate.option) === negativeCost(strong[0]!.option));
     return safest[participantIndex % safest.length]!.option;

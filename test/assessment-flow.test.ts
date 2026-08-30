@@ -229,7 +229,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
   assert.ok(signal.evidence_layer.length > 0);
   assert.ok(signal.constraint_kind.length > 0);
   const model = db.prepare('SELECT version, policy_json FROM inference_model_versions LIMIT 1').get() as { version: string; policy_json: string };
-  assert.match(model.version, /bayesian-v2/);
+  assert.match(model.version, /bayesian-v4/);
   assert.equal(JSON.parse(model.policy_json).recommendationThreshold, .7);
   assert.ok(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_hypotheses').get() as { total: number }).total) > 0);
   const oversizedFamily = db.prepare('SELECT family_key, COUNT(*) total FROM diagnostic_hypotheses GROUP BY family_key HAVING total > 2 LIMIT 1').get();

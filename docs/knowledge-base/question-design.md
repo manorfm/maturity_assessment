@@ -24,6 +24,11 @@
   comunicação, desenho de times, arquitetura, governança e conhecimento.
 - Pedir que a pessoa reconheça o que ocorreu no último caso comparável; não pedir
   que escolha diretamente a causa, a prática ideal ou um adjetivo sobre o time.
+- Alternativas de cenário registram fatos, comportamentos e consequências. Padrões
+  `causa-*` ficam reservados a probes de discriminação, depois que o sintoma abriu
+  hipóteses concorrentes. A auditoria bloqueia causa antecipada no cenário.
+- Quando a entrevista ainda não discriminou o mecanismo, registrar
+  `undetermined`; ausência de discriminação nunca vira `none` silencioso.
 - Manter cada alternativa centrada em uma decisão ou efeito observável. Quando uma
   cadeia reunir comportamentos separáveis, aprofundá-la em outro nó do grafo.
 - Preferir linguagem cotidiana compartilhada. Variantes por perspectiva adaptam

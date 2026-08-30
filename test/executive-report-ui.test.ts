@@ -1,10 +1,38 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { diagnosticStrength, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderFindingPortfolio, renderOutcome, renderPerspectiveSynthesis, renderScopeReport } from '../src/modules/projects/project-routes.js';
+import { diagnosticStrength, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderDiagnosticFirstPlane, renderFindingPortfolio, renderOutcome, renderPerspectiveSynthesis, renderScopeReport } from '../src/modules/projects/project-routes.js';
 
 const leaf = (overrides: Partial<Parameters<typeof renderCapabilityRadar>[0][number]> = {}) => ({
   id: 'delivery', label: 'Entrega', level: 2.4, confidence: .8, evidence: 8,
   hasContradiction: false, assessed: true, coverage: 1, children: [], ...overrides,
+});
+
+test('primeiro plano é o diagnóstico, não o estágio nem o radar', () => {
+  const outcome = {
+    kind: 'correct' as const, kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', limiterId: 'continuous-integration',
+    reading: 'Mudanças ficam isoladas.', nextStepTitle: 'Mudanças permanecem isoladas', nextStepBody: 'Integre no mesmo dia.',
+    finding: {
+      kind: 'correction' as const, pattern: 'mudanca-isolada', detailCapability: 'continuous-integration',
+      title: 'Mudanças permanecem isoladas', cause: '', intervention: 'Integre no mesmo dia.', confidence: .9, priority: .9,
+      recommendationEvidence: { supportingParticipants: 5, applicablePopulation: 9, contradictingParticipants: 0, patterns: ['mudanca-isolada'], layers: ['practice'], profiles: ['engineering'] },
+      experiment: { action: 'Integre no mesmo dia.', owner: 'Fluxo', metric: 'espera até a junta', reviewHorizon: '30 dias', successCriterion: 'encontro no mesmo dia' },
+    },
+  };
+  const html = renderDiagnosticFirstPlane({
+    classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Integração contínua'] },
+    outcome,
+    findings: [outcome.finding],
+    confirmedProblemCount: 2,
+  });
+  const diagnosis = html.indexOf('O que está acontecendo');
+  const interviews = html.indexOf('O que as entrevistas mostraram');
+  const test = html.indexOf('O que recomendamos testar');
+  const success = html.indexOf('Como saber se funcionou');
+  const consistency = html.indexOf('Consistência do comportamento no elo limitante');
+  assert.ok(diagnosis >= 0 && interviews > diagnosis && test > interviews && success > test);
+  assert.ok(consistency > success);
+  assert.doesNotMatch(html, /Resumo executivo/);
+  assert.match(html, /<details[^>]*>[\s\S]*0 · Opaco/);
 });
 
 test('radar diferencia fragilidade confirmada de ausência de evidência', () => {
@@ -118,9 +146,32 @@ test('decisão principal explica que é uma prioridade entre vários problemas',
     finding: { kind: 'correction', pattern: 'mudanca-isolada', detailCapability: 'continuous-integration', title: 'A esteira devolve feedback tarde', cause: '', intervention: '', confidence: .9, priority: .9 },
   }, { confirmedProblemCount: 5, occurrence: { pattern: 'mudanca-isolada', scopePaths: ['Empresa/Squad Alfa'], eligibleScopePaths: ['Empresa/Squad Alfa', 'Empresa/Squad Beta'], eligibleScopeCount: 2 } });
   assert.match(html, /prioridade 1 de 5 problemas confirmados/i);
-  assert.match(html, /alcance e severidade/i);
+  assert.match(html, /intensidade do sinal e alcance/i);
   assert.match(html, /Escopo local/);
   assert.match(html, /Squad Alfa/);
+});
+
+test('prioridade compara a decisão principal com o próximo problema', () => {
+  const primary = { kind: 'correction' as const, pattern: 'mudanca-isolada', detailCapability: 'continuous-integration', title: 'Mudanças permanecem isoladas', cause: '', intervention: '', confidence: .9, priority: .78, priorityFactors: { intensity: 1, reach: .4 } };
+  const runnerUp = { kind: 'correction' as const, pattern: 'acoes-perdem-dono', detailCapability: 'organizational-learning', title: 'Ações de melhoria perdem continuidade', cause: '', intervention: '', confidence: .9, priority: .68, priorityFactors: { intensity: .5, reach: 1 } };
+  const html = renderOutcome({ kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '', finding: primary }, { confirmedProblemCount: 2, competingFinding: runnerUp });
+  assert.match(html, /Comparação com a próxima frente/);
+  assert.match(html, /Ações de melhoria perdem continuidade/);
+  assert.match(html, /intensidade mais alta do sinal/i);
+});
+
+test('evidência mostra convergência, amplitude e diversidade como medidas diferentes', () => {
+  const html = renderOutcome({
+    kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '',
+    finding: {
+      kind: 'correction', pattern: 'mudanca-isolada', detailCapability: 'continuous-integration', title: 'Mudanças permanecem isoladas', cause: '', intervention: '', confidence: .9, priority: .9,
+      recommendationEvidence: { supportingParticipants: 3, applicablePopulation: 3, contradictingParticipants: 0, patterns: ['mudanca-isolada'], layers: ['practice'], profiles: ['engineering'], strength: { convergence: 'high', populationBreadth: 'low', perspectiveDiversity: 'low', causalCoverage: 'low', executiveStatus: 'local-hypothesis' } },
+    },
+  });
+  assert.match(html, /Convergência.*Alta/s);
+  assert.match(html, /Amplitude.*Baixa/s);
+  assert.match(html, /Diversidade de perspectivas.*Baixa/s);
+  assert.match(html, /Hipótese local para investigação/);
 });
 
 test('panorama mostra outros problemas confirmados sem duplicar a decisão principal', () => {
@@ -151,6 +202,14 @@ test('panorama informa o total confirmado mesmo quando limita a lista executiva'
   assert.equal((html.match(/<li>/g) ?? []).length, 4);
 });
 
+test('panorama agrupa padrões relacionados sem declará-los como causa única', () => {
+  const findings = ['mudanca-isolada', 'integracao-tardia', 'integracao-por-janela'].map((pattern) => ({ kind: 'correction' as const, pattern, detailCapability: 'continuous-integration', title: pattern, cause: '', intervention: '', confidence: .9, priority: .9 }));
+  const html = renderFindingPortfolio(findings);
+  assert.match(html, /3 padrões formam 1 frente diagnóstica/);
+  assert.match(html, /Integração e feedback tardios \(3\)/);
+  assert.match(html, /não declara que uma causa única já foi comprovada/i);
+});
+
 test('panorama mostra onde cada problema foi observado sem generalizar uma squad', () => {
   const html = renderFindingPortfolio([{
     kind: 'correction', pattern: 'pipeline', detailCapability: 'continuous-integration',
@@ -159,6 +218,34 @@ test('panorama mostra onde cada problema foi observado sem generalizar uma squad
   assert.match(html, /Escopo local/);
   assert.match(html, /Squad Alfa/);
   assert.match(html, /não foi demonstrado na Squad Beta/i);
+});
+
+test('panorama separa decisões organizacionais, compartilhadas e locais e permite abrir o achado', () => {
+  const html = renderFindingPortfolio([
+    { kind: 'correction', pattern: 'policy-gate', detailCapability: 'enabling-governance', title: 'Aprovação trata riscos diferentes do mesmo jeito', cause: '', intervention: '', confidence: .9, priority: .9, containment: 'organizational-policy' },
+    { kind: 'correction', pattern: 'platform-queue', detailCapability: 'platform-autonomy', title: 'Ambientes chegam por fila', cause: '', intervention: '', confidence: .8, priority: .8, containment: 'shared-service' },
+    { kind: 'correction', pattern: 'team-batch', detailCapability: 'work-management', title: 'O time acumula trabalho', cause: '', intervention: '', confidence: .7, priority: .7, containment: 'team' },
+  ], undefined, [], '/projects/example/capabilities');
+  assert.match(html, /Decisões organizacionais/);
+  assert.match(html, /Capacidades compartilhadas/);
+  assert.match(html, /Problemas locais/);
+  assert.match(html, /href="\/projects\/example\/capabilities\/enabling-governance#finding-policy-gate"/);
+});
+
+test('diagnóstico condicionado explica autoridade e motivo da investigação', () => {
+  const html = renderOutcome({
+    kind: 'discriminate', kindLabel: 'Discriminar a causa', limiterLabel: 'Integração contínua', reading: 'Mudanças permanecem isoladas.', nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua a última mudança.',
+    finding: { kind: 'correction', pattern: 'batch', detailCapability: 'continuous-integration', title: 'Mudanças permanecem isoladas', cause: '', intervention: '', confidence: .8, priority: .8, mechanism: 'undetermined', containment: 'undetermined', decisionAuthority: 'undetermined', prescription: { status: 'investigate', reason: 'Ainda falta discriminar o mecanismo.' } },
+  }, { confirmedProblemCount: 3 });
+  assert.match(html, /Autoridade para decidir.*Ainda não determinada/s);
+  assert.match(html, /Estado da orientação.*Ainda falta discriminar o mecanismo/s);
+  assert.doesNotMatch(html, /Decisão solicitada/);
+  assert.match(html, /prioridade 1 de 3 problemas confirmados/i);
+});
+
+test('cartão detalhado publica a âncora canônica do finding', () => {
+  const html = renderCapabilityDiagnosis([{ kind: 'correction', pattern: 'policy/gate', detailCapability: 'enabling-governance', title: 'Controle único', cause: '', intervention: '', confidence: .9, priority: .9 }], leaf({ id: 'enabling-governance', label: 'Governança habilitadora', level: 0 }));
+  assert.match(html, /id="finding-policy-gate"/);
 });
 
 test('recorte de squad apresenta decisão e problemas próprios', () => {
@@ -176,6 +263,8 @@ test('recorte de squad apresenta decisão e problemas próprios', () => {
   assert.match(html, /A esteira devolve feedback tarde/);
   assert.match(html, /Panorama de problemas confirmados/);
   assert.match(html, /Ambientes chegam por fila/);
+  assert.ok(html.indexOf('Próxima decisão') < html.indexOf('Consistência do comportamento no elo limitante'));
+  assert.ok(html.indexOf('Consistência do comportamento no elo limitante') < html.indexOf('Mapa de contraste e cobertura'));
 });
 
 test('radar executivo mostra estado e suficiência de evidência sem decimal ou porcentagem', () => {
@@ -188,6 +277,70 @@ test('radar executivo mostra estado e suficiência de evidência sem decimal ou 
   assert.match(html, /Plataforma <span>Reativo · cobertura temática parcial<\/span>/);
   assert.doesNotMatch(html, />2\.4 · 100%</);
   assert.doesNotMatch(html, />1\.2 · 67%</);
+});
+
+test('estágio ordinal fica no detalhe de consistência, não no cabeçalho', () => {
+  const html = renderClassification({
+    level: 1, label: 'Reativo', limitingCapabilities: ['Descoberta e validação'],
+  }, {
+    kind: 'discriminate', kindLabel: 'Discriminar antes de intervir', limiterLabel: 'Descoberta e validação',
+    reading: 'Ainda faltam causas.', nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua um evento.',
+  });
+  assert.match(html, /<details/);
+  assert.match(html, /Consistência do comportamento no elo limitante/);
+  assert.match(html, /1 · Reativo/);
+  assert.match(html, /Descoberta e validação/);
+  assert.doesNotMatch(html, /Resumo executivo/);
+});
+
+test('radar publica estágio e cobertura, sem N de 4 no primeiro plano', () => {
+  const html = renderCapabilityRadar([leaf({ label: 'Entrega', level: 2.4, coverage: 1 })], '/capabilities');
+  assert.match(html, /Mapa de contraste e cobertura/);
+  assert.match(html, /Repetível/);
+  assert.match(html, /evidência insuficiente, não fragilidade/);
+  assert.doesNotMatch(html, /de 4/);
+  assert.doesNotMatch(html, /baixa maturidade/);
+});
+
+test('limitador organizacional é lido como meta-sistema', () => {
+  const html = renderOutcome({
+    kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Governança habilitadora', limiterId: 'enabling-governance',
+    reading: 'Aprovação cria espera.', nextStepTitle: 'Controle indiferenciado', nextStepBody: 'Teste um caminho proporcional.',
+    finding: {
+      kind: 'correction', pattern: 'controle-indiferenciado', detailCapability: 'enabling-governance',
+      title: 'O mesmo controle trata riscos diferentes', cause: '', intervention: 'Teste um caminho proporcional.',
+      confidence: .9, priority: .9,
+    },
+  });
+  assert.match(html, /meta-sistema/i);
+  assert.match(html, /não um oitavo eixo técnico/i);
+});
+
+test('discriminação distingue evidência insuficiente, contradição e fragilidade dispersa', () => {
+  const insufficient = renderOutcome({
+    kind: 'insufficient', kindLabel: 'Evidência insuficiente', limiterLabel: 'Nenhuma capacidade',
+    reading: 'Ainda não há dado agregado.', nextStepTitle: 'Aguardar', nextStepBody: 'Espere o grupo mínimo.',
+  });
+  assert.match(insufficient, /O que está acontecendo/);
+  assert.match(insufficient, /O que as entrevistas mostraram/);
+  assert.match(insufficient, /evidência coletiva insuficiente|variedade temática|grupo mínimo/i);
+  assert.doesNotMatch(insufficient, /fragilidade confirmada/i);
+
+  const contradiction = renderOutcome({
+    kind: 'discriminate', kindLabel: 'Discriminar antes de intervir', limiterLabel: 'Aprendizado',
+    reading: 'Aprendizado está em reativo, mas as evidências deste elo ainda se misturam.',
+    nextStepTitle: 'Discriminar', nextStepBody: 'Reconstrua um evento sem abrir várias frentes.',
+  });
+  assert.match(contradiction, /O que está acontecendo/);
+  assert.match(contradiction, /direções opostas|contrad/i);
+
+  const dispersed = renderOutcome({
+    kind: 'discriminate', kindLabel: 'Discriminar antes de intervir', limiterLabel: 'Descoberta e validação',
+    reading: 'Descoberta e validação está em reativo e as fragilidades observadas neste elo estão dispersas; o relatório não inventa uma causa.',
+    nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua um evento recente de descoberta.',
+  });
+  assert.match(dispersed, /dispersas/);
+  assert.match(dispersed, /não inventa uma causa/);
 });
 
 test('resumo executivo mostra um limitador e a próxima decisão, sem lista aberta', () => {
@@ -205,6 +358,7 @@ test('resumo executivo mostra um limitador e a próxima decisão, sem lista aber
   }, outcome);
   assert.match(html, /Descoberta e validação/);
   assert.match(html, /elo que limita o sistema, não a organização inteira/i);
+  assert.match(html, /Consistência do comportamento no elo limitante/);
   assert.doesNotMatch(html, /e mais/);
   assert.doesNotMatch(html, /Hipóteses permanecem em execução/);
   assert.match(renderOutcome(outcome), /Próxima decisão/);

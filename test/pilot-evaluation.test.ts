@@ -76,7 +76,7 @@ test('rótulos persistidos não guardam participação, convite ou resposta', ()
   const columns = (db.prepare('PRAGMA table_info(pilot_labels)').all() as Array<{ name: string }>).map((row) => row.name);
   assert.equal(columns.some((name) => /participation|invitation|resume|response|token/i.test(name)), false);
   const pilot = new PilotService(db);
-  const modelVersion = `${GRAPH_VERSION}-bayesian-v2`;
+  const modelVersion = `${GRAPH_VERSION}-bayesian-v4`;
   pilot.recordLabel({ ...label(), modelVersion });
   const stored = db.prepare('SELECT case_key, predicted_hypothesis, labeled_hypothesis FROM pilot_labels').get() as { case_key: string };
   assert.equal(stored.case_key, 'case-1');
@@ -89,7 +89,7 @@ test('mesmo com métricas suficientes o modelo publicado não muda sozinho', () 
   const db = createDatabase(':memory:');
   new CatalogService(db);
   const pilot = new PilotService(db);
-  const modelVersion = `${GRAPH_VERSION}-bayesian-v2`;
+  const modelVersion = `${GRAPH_VERSION}-bayesian-v4`;
   const published = db.prepare("SELECT version, status FROM inference_model_versions WHERE status = 'published'").get() as { version: string };
   for (const item of enoughLabels(true)) pilot.recordLabel({ ...item, modelVersion });
   for (const item of enoughReviews()) pilot.recordCognitiveReview(item);
@@ -115,5 +115,5 @@ test('sem limiar atendido não propõe revisão de priors', () => {
   const db = createDatabase(':memory:');
   new CatalogService(db);
   const pilot = new PilotService(db);
-  assert.throws(() => pilot.proposeRevision(`${GRAPH_VERSION}-bayesian-v2`), /provisório|bloqueado|rótulo/i);
+  assert.throws(() => pilot.proposeRevision(`${GRAPH_VERSION}-bayesian-v4`), /provisório|bloqueado|rótulo/i);
 });

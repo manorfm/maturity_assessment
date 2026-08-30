@@ -35,6 +35,15 @@ test('mapa por estrutura omite o pai que só duplica o filho único', () => {
   assert.equal(scopes.length, 0);
 });
 
+test('mapa por estrutura omite a raiz única que duplica a visão global', () => {
+  const scopes = distinctiveScopes([
+    { path: 'Empresa', classification: { level: 0 } },
+    { path: 'Empresa/Squad Alfa', classification: { level: 0 } },
+    { path: 'Empresa/Squad Beta', classification: { level: 1 } },
+  ], 0);
+  assert.deepEqual(scopes.map((scope) => scope.path), ['Empresa/Squad Alfa', 'Empresa/Squad Beta']);
+});
+
 test('escopo do finding considera somente unidades finais elegíveis', () => {
   const finding = (pattern: string) => ({ kind: 'correction' as const, pattern, detailCapability: 'collaboration', title: pattern, cause: '', intervention: '', confidence: .9, priority: .9 });
   const occurrences = findingScopeOccurrences([
@@ -55,6 +64,17 @@ test('nota alta e coerente preserva a prática', () => {
   });
   assert.equal(outcome.kind, 'preserve');
   assert.match(outcome.nextStepBody, /não acrescente intervenção/i);
+});
+
+test('limitador baixo sem padrão amarrado declara fragilidade dispersa', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Descoberta e validação'] },
+    branches: [leaf('discovery-validation', 'Descoberta e validação', 1)],
+    findings: [],
+  });
+  assert.equal(outcome.kind, 'discriminate');
+  assert.match(outcome.reading, /dispersas/i);
+  assert.match(outcome.reading, /não inventa uma causa/i);
 });
 
 test('limitador baixo sem causa vira coleta, não vazio', () => {
@@ -95,6 +115,23 @@ test('causa no limitador vira um experimento', () => {
   assert.equal(outcome.kind, 'correct');
   assert.equal(outcome.finding?.pattern, 'causa-melhoria-sem-capacidade');
   assert.match(outcome.nextStepBody, /Pare uma iniciativa pequena/);
+});
+
+test('finding sem mecanismo discriminado preserva o problema mas não prescreve solução', () => {
+  const finding = {
+    kind: 'correction' as const, pattern: 'mudanca-isolada', detailCapability: 'continuous-integration',
+    title: 'Mudanças permanecem isoladas', cause: 'Ainda competem várias causas.', intervention: 'Adotar trunk-based.', confidence: .9, priority: .9,
+    mechanism: 'undetermined' as const, containment: 'undetermined' as const,
+    prescription: { status: 'investigate' as const, reason: 'Ainda falta discriminar mecanismo e contenção.' },
+  };
+  const result = decideReportOutcome({
+    classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Integração contínua'] },
+    branches: [leaf('continuous-integration', 'Integração contínua', 0)], findings: [finding],
+  });
+  assert.equal(result.kind, 'discriminate');
+  assert.equal(result.finding?.pattern, 'mudanca-isolada');
+  assert.match(result.nextStepBody, /mecanismo|contenção/i);
+  assert.doesNotMatch(result.nextStepBody, /trunk-based/i);
 });
 
 test('folha de cloud contraditória não vence integração com finding no mesmo piso', () => {

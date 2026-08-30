@@ -13,11 +13,21 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
+O objetivo integrado de transformar o produto em uma plataforma especialista —
+com diagnóstico global/local, operating model, funding, paved paths, segurança,
+workforce, portfólio de intervenção e relatórios por autoridade — está no
+[`specialist-diagnostic-platform-plan.md`](specialist-diagnostic-platform-plan.md).
+Esse documento é a referência canônica da direção completa; os planos abaixo
+continuam donos de suas entregas especializadas e da validação empírica.
+Sua sequência aberta começa pela linguagem e acessibilidade; contrato diagnóstico,
+autoridade, suspensão de prescrição e portfólio por contenção já pertencem à base
+de conhecimento vigente.
+
 A decisão de deixar de se apresentar como framework de maturidade e passar a
 ser um diagnóstico de engenharia está em
-[`engineering-diagnostic-plan.md`](engineering-diagnostic-plan.md). A onda 0
-(vocabulário) entra com este índice; apresentação, autoria e contrato do
-finding ainda não estão na base de conhecimento.
+[`engineering-diagnostic-plan.md`](engineering-diagnostic-plan.md). As ondas 0 a
+3 estão na base de conhecimento (0.33.0). Restam contratos causais das folhas e
+validação empírica no piloto.
 
 O plano para o relatório passar a fechar decisão (limitador útil, um cartão,
 orientação por classe de solução) está em

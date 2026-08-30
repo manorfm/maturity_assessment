@@ -1,8 +1,7 @@
 # Plano: de framework de maturidade para diagnóstico de engenharia
 
-Status: decisão tomada; ondas 1–4 ainda não estão na base de conhecimento.
-A onda 0 (vocabulário e visão) entra junto com este plano. O relatório e o
-catálogo continuam os da versão 0.31.0 até as ondas seguintes.
+Status: ondas 0 a 3 incorporadas à base de conhecimento (0.33.0). Restam os
+contratos causais das folhas (onda 4) e validação empírica no piloto.
 
 Este plano não compete com
 [`decision-report-plan.md`](decision-report-plan.md) nem com
@@ -113,6 +112,8 @@ relatório que ainda existe, sem contradição silenciosa.
 
 ### Onda 1 — Apresentação: o diagnóstico é o produto
 
+Status: na base de conhecimento (0.32.0).
+
 **Público.** Gestão e engenharia que leem o painel.
 
 **Problema.** O cartão de decisão já existe e perde para a classificação
@@ -143,6 +144,8 @@ secundários), `recommendation-model.md` (contrato executivo).
 ---
 
 ### Onda 2 — Autoria: fato na opção, causa no probe
+
+Status: incorporada à versão 0.33.0.
 
 **Público.** Quem responde e quem interpreta o catálogo.
 
@@ -183,6 +186,8 @@ time e prioridade.
 ---
 
 ### Onda 3 — Contrato do finding
+
+Status: incorporada à versão 0.33.0.
 
 **Público.** Quem autoriza o experimento.
 

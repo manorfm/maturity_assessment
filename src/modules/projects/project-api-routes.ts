@@ -75,8 +75,11 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
   const finding = (item: ReturnType<InferenceService['report']>['findings'][number]) => ({
     kind: item.kind, capability: item.capability, detailCapability: item.detailCapability, pattern: item.pattern,
     title: item.title, cause: item.cause, intervention: item.intervention, confidence: item.confidence, priority: item.priority,
+    priorityFactors: item.priorityFactors,
     constraint: item.constraint, reasons: item.reasons, recommendationEvidence: item.recommendationEvidence, experiment: item.experiment,
-    foundation: item.foundation,
+    foundation: item.foundation, affectedCapabilities: item.affectedCapabilities, mechanism: item.mechanism, containment: item.containment,
+    missingEvidence: item.missingEvidence, impacts: item.impacts, severity: item.severity,
+    decisionAuthority: item.decisionAuthority, prescription: item.prescription,
   });
   return {
     completed: report.completed,

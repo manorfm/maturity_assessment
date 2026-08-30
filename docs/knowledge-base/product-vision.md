@@ -33,9 +33,8 @@ O relatório não entrega um nível. Ele apresenta um diagnóstico explicável:
 - recomendações graduais, com dependências e próximos experimentos;
 - evidências que sustentam cada conclusão e lacunas de informação.
 
-Estágio ordinal e radar, enquanto existirem, são leituras auxiliares de
-consistência e cobertura — não o resultado. A sequência para rebaixá-los no
-primeiro plano está em `docs/backlog/engineering-diagnostic-plan.md`.
+Estágio ordinal e mapa de contraste são leituras auxiliares de consistência e
+cobertura — não o resultado. Eles ficam depois do cartão de diagnóstico.
 
 Os resultados podem ser agregados em qualquer nível configurado — por exemplo,
 time, cluster e tribo — preservando tanto o mapa executivo global quanto a origem
