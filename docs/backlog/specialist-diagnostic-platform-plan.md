@@ -264,12 +264,6 @@ paralelos por público.
 - revisar o conteúdo somente a partir dessa evidência, sem tratar teste automatizado
   como substituto da validação humana.
 
-### Onda E — Portfólio de intervenção
-
-- modelar pré-condições, incompatibilidades e risco deslocado;
-- ordenar por dependências e autoridade;
-- gerar sequência de transformação, sem lista simultânea de práticas.
-
 ### Onda F — Relatórios por público
 
 - diretoria;
@@ -298,8 +292,6 @@ paralelos por público.
 
 ```text
 validação humana de linguagem
-  -> C jornadas
-  -> E intervenções
   -> F relatórios
   -> G showcase
   -> H validação e calibração

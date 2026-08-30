@@ -250,6 +250,20 @@ test('panorama separa decisões organizacionais, compartilhadas e locais e permi
   assert.match(html, /href="\/projects\/example\/capabilities\/enabling-governance#finding-policy-gate"/);
 });
 
+test('panorama apresenta uma sequência de transformação em vez de uma lista simultânea', () => {
+  const html = renderFindingPortfolio([
+    { kind: 'correction', pattern: 'servico-sem-owner', detailCapability: 'team-ownership', title: 'Serviço sem responsável', cause: '', intervention: '', confidence: .9, priority: .9, mechanism: 'organization', containment: 'organizational-structure', decisionAuthority: 'cross-team', prescription: { status: 'ready', reason: 'confirmado' } },
+    { kind: 'correction', pattern: 'integracao-tardia', detailCapability: 'continuous-integration', title: 'Integração tardia', cause: '', intervention: '', confidence: .8, priority: .8, mechanism: 'process', containment: 'team', decisionAuthority: 'team', prescription: { status: 'ready', reason: 'confirmado' } },
+    { kind: 'correction', pattern: 'causa-incerta', detailCapability: 'collaboration', title: 'Coordenação sem causa localizada', cause: '', intervention: '', confidence: .7, priority: .7, mechanism: 'undetermined', containment: 'undetermined', decisionAuthority: 'undetermined', prescription: { status: 'investigate', reason: 'Localize a restrição antes de escolher a solução.' } },
+  ]);
+  assert.match(html, /Sequência de transformação/);
+  assert.match(html, /Agora/);
+  assert.match(html, /Depois/);
+  assert.match(html, /Antes de ampliar/);
+  assert.ok(html.indexOf('Serviço sem responsável') < html.indexOf('Integração tardia'));
+  assert.match(html, /Localize a restrição antes de escolher a solução/);
+});
+
 test('diagnóstico condicionado explica autoridade e motivo da investigação', () => {
   const html = renderOutcome({
     kind: 'discriminate', kindLabel: 'Discriminar a causa', limiterLabel: 'Integração contínua', reading: 'Mudanças permanecem isoladas.', nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua a última mudança.',

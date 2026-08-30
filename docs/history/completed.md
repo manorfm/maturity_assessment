@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Portfólio sequenciado de transformação
+
+- Entregue a versão 0.42 com intervenções ordenadas por dependência, autoridade e
+  risco, contratos qualitativos de adoção e prescrição suspensa separada da
+  sequência; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`domain-model.md`](../knowledge-base/domain-model.md).
+
 ## 2026-08-30 — Grafo causal e sistemas de problemas
 
 - Entregue a versão 0.41 com hipóteses concorrentes, evidências favoráveis e

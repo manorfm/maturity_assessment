@@ -113,3 +113,10 @@ Recorrência e contenção são invariantes diferentes. A primeira informa onde 
 padrão apareceu; a segunda informa onde a restrição pode ser removida. O domínio
 classifica o portfólio por contenção — organizacional, compartilhado, local ou
 indeterminado — e nunca promove um relato local por prevalência isolada.
+
+`TransformationPortfolio` é uma projeção versionada dos mesmos findings, não um
+segundo recomendador. Cada passo preserva padrão, contenção e autoridade e declara
+fase, dependências, pré-condições, incompatibilidades, custo, risco,
+reversibilidade e possível deslocamento de risco. Findings com prescrição
+investigativa ficam em `conditioned`: o problema continua visível, mas não entra na
+sequência até que mecanismo, contenção e autoridade sejam discriminados.

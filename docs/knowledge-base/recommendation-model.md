@@ -87,6 +87,22 @@ O catálogo diferencia correção de um padrão negativo e evolução de uma pr�
 intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade abaixo
 de 4 pode receber evolução quando as respostas sustentam um passo concreto.
 
+## Sequenciamento da transformação
+
+O planejador `transformation-portfolio-v1` consome os findings já decididos pelo
+motor e ordena intervenções em cinco fases: estabilizar risco e ownership,
+encurtar feedback, remover restrições compartilhadas, ajustar operating model e
+desenvolver capacidade adaptativa. Dentro da fase, prioridade e padrão fornecem
+ordem estável. Uma dependência só é criada entre fases quando o passo anterior
+remove uma pré-condição plausível; ação local independente nunca bloqueia uma
+decisão organizacional.
+
+Cada passo publica autoridade, contenção, pré-condições, incompatibilidades, custo,
+risco, reversibilidade e risco que pode ser deslocado para outra fronteira. Esses
+atributos são qualitativos e condicionais: não formam score nem alegam previsão de
+retorno. Prescrição suspensa aparece separadamente como investigação necessária e
+não recebe posição artificial no plano.
+
 Título, mecanismo causal e ação são campos distintos. O título descreve o efeito
 observado; a causa explica por que **este** padrão se reproduz; a ação propõe o
 menor teste compatível com a restrição. Cada padrão do tronco declara orientação

@@ -137,6 +137,13 @@ elas alimentam tanto o agrupamento do panorama quanto as alternativas do finding
 A projeção pública remove identificadores internos, preserva a versão
 `causal-catalog-v1` e aparece no cartão e no detalhe sem recalcular o posterior.
 
+`TransformationPortfolioPlanner`, no mesmo módulo de domínio, é a única regra de
+sequenciamento. Ele consome a projeção pública do finding e produz
+`transformation-portfolio-v1` para organização e recortes elegíveis. A interface e
+a API não mantêm tabelas ou condicionais próprias de ordenação; achados
+investigativos são separados antes do ranqueamento e políticas de intervenção por
+mecanismo centralizam pré-condições e risco deslocado.
+
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
 das perguntas e política são publicados com versão imutável no SQLite. A atualização

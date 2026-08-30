@@ -43,6 +43,13 @@ rótulos cegos, gate e bloqueios), sem identificação individual. Entrevistas
 cognitivas do instrumento são registradas nas telas administrativas, sem
 participação ou identidade, e só aparecem em `calibration` como contagem.
 
+`transformationPortfolio` existe no relatório global e em cada item de `scopes`.
+Sua versão vigente é `transformation-portfolio-v1`; `sequence` contém passos
+ordenados com fase, autoridade, contenção, dependências, pré-condições,
+incompatibilidades, custo, risco, reversibilidade e risco deslocado. `conditioned`
+preserva os problemas cuja intervenção depende de investigação adicional. Essa
+projeção deriva dos mesmos findings e não executa inferência paralela.
+
 Cada hipótese causal expõe `observability`, população agregada (`support`,
 `applicable`, quantidade de perspectivas e camadas) e `nextQuestion`. Este último é
 `null` quando não existe discriminador contextual elegível.

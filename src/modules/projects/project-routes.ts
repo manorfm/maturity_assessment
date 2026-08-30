@@ -15,6 +15,7 @@ import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
 import { DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
 import { groupFindingsByDiagnosticSystem } from '../inference/domain/problem-system.js';
 import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../inference/domain/diagnostic-portfolio.js';
+import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -451,8 +452,10 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
   const uniqueFindings = uniqueFindingsByPattern(findings);
   const systems = groupFindingsByDiagnosticSystem(uniqueFindings);
   const allSecondary = uniqueFindings.filter((finding) => finding.pattern !== primaryPattern);
-  const visible = allSecondary.slice(0, 4);
-  if (!visible.length) return '';
+  if (!allSecondary.length) return '';
+  const portfolio = TransformationPortfolioPlanner.plan(allSecondary);
+  const visibleSteps = portfolio.sequence.slice(0, 4);
+  const visibleConditioned = portfolio.conditioned.slice(0, Math.max(0, 4 - visibleSteps.length));
   const total = allSecondary.length;
   const item = (finding: OutcomeFinding) => {
     const evidence = finding.recommendationEvidence;
@@ -471,16 +474,36 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
     local: 'Problemas locais',
     undetermined: 'Ainda precisamos localizar quem pode resolver',
   };
-  const groupedItems = (Object.keys(portfolioLabels) as DiagnosticPortfolioLevel[]).map((level) => {
-    const levelFindings = visible.filter((finding) => classifyPortfolioLevel(finding) === level);
-    return levelFindings.length ? `<section class="finding-portfolio-group"><h3>${portfolioLabels[level]}</h3><ol>${levelFindings.map(item).join('')}</ol></section>` : '';
+  const phaseLabels: Record<TransformationPhase, string> = {
+    stabilize: 'estabilizar risco e ownership',
+    'shorten-feedback': 'encurtar feedback',
+    'shared-capability': 'remover restrições compartilhadas',
+    'operating-model': 'ajustar decisões organizacionais',
+    'adaptive-capability': 'desenvolver capacidade adaptativa',
+  };
+  const sequencedItems = visibleSteps.map((step, index) => {
+    const finding = allSecondary.find((candidate) => candidate.pattern === step.pattern)!;
+    const dependency = step.dependsOn.length ? ` <strong>Depende de:</strong> ${escapeHtml(allSecondary.find((candidate) => candidate.pattern === step.dependsOn[0])?.title ?? step.dependsOn[0]!)}.` : '';
+    const moment = index === 0 ? 'Agora' : 'Depois';
+    return `<section class="finding-portfolio-group"><h3>${moment} · ${phaseLabels[step.phase]}</h3><p class="muted">${portfolioLabels[classifyPortfolioLevel(finding)]} · decisão: ${escapeHtml(authorityLabel(step.authority))}.${dependency}</p><ol>${item(finding)}</ol><details><summary>Condições e riscos deste passo</summary><p><strong>Antes de começar:</strong> ${escapeHtml(step.prerequisites.join(' '))}</p><p><strong>Não é compatível com:</strong> ${escapeHtml(step.incompatibilities.join(' '))}</p><p><strong>Risco que pode ser deslocado:</strong> ${escapeHtml(step.riskDisplacement)}</p><p class="muted">Custo ${qualitativeLabel(step.cost)} · risco ${qualitativeLabel(step.risk)} · reversibilidade ${qualitativeLabel(step.reversibility)}</p></details></section>`;
   }).join('');
+  const conditionedItems = visibleConditioned.length
+    ? `<section class="finding-portfolio-group"><h3>Antes de ampliar · reduzir incerteza</h3><ol>${visibleConditioned.map((candidate) => {
+      const finding = allSecondary.find((item) => item.pattern === candidate.pattern)!;
+      return item({ ...finding, title: `${candidate.title} — ${candidate.condition}` });
+    }).join('')}</ol></section>`
+    : '';
   const noun = primaryPattern ? (total === 1 ? 'outro padrão' : 'outros padrões confirmados') : (total === 1 ? 'padrão confirmado' : 'padrões confirmados');
-  const truncation = total > visible.length ? ` O relatório está mostrando os ${visible.length} mais prioritários.` : '';
+  const visibleCount = visibleSteps.length + visibleConditioned.length;
+  const truncation = total > visibleCount ? ` O relatório está mostrando os ${visibleCount} mais prioritários.` : '';
   const systemSummary = systems.length < uniqueFindings.length
     ? `<p><strong>${uniqueFindings.length} padrões formam ${systems.length} ${systems.length === 1 ? 'frente diagnóstica' : 'frentes diagnósticas'}:</strong> ${systems.map((system) => `${escapeHtml(system.label)} (${system.findings.length})`).join(' · ')}. O agrupamento organiza padrões relacionados; não declara que uma causa única já foi comprovada.</p>`
     : '';
-  return `<section class="card finding-portfolio"><p class="eyebrow">${primaryPattern ? 'Além da decisão principal' : 'Problemas observados'}</p><h2>Panorama de problemas confirmados</h2>${systemSummary}<p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation} O panorama orienta o sequenciamento; não significa abrir todas as frentes ao mesmo tempo.</p>${groupedItems}</section>`;
+  return `<section class="card finding-portfolio"><p class="eyebrow">${primaryPattern ? 'Além da decisão principal' : 'Problemas observados'}</p><h2>Panorama de problemas confirmados</h2>${systemSummary}<p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation}</p><h2>Sequência de transformação</h2><p>A ordem considera dependências, risco e quem possui autoridade. Ela não autoriza todas as frentes ao mesmo tempo.</p>${sequencedItems}${conditionedItems}</section>`;
+}
+
+function qualitativeLabel(value: 'low' | 'moderate' | 'high'): string {
+  return { low: 'baixo', moderate: 'moderado', high: 'alto' }[value];
 }
 
 function findingAnchor(pattern: string | undefined): string {

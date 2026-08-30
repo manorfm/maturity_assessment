@@ -13,6 +13,7 @@ import { DiagnosticModel } from './domain/diagnostic-model.js';
 import { PilotEvaluation, type PilotReport } from './domain/pilot-evaluation.js';
 import { PilotService } from './pilot-service.js';
 import { buildDiagnosticContext, type DiagnosticContext } from './domain/diagnostic-contract.js';
+import { TransformationPortfolioPlanner, type TransformationPortfolio } from './domain/transformation-portfolio.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -311,7 +312,7 @@ export class InferenceService {
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
     const modelVersion = this.modelVersion();
-    if (completed < minimum) return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
+    if (completed < minimum) return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio: TransformationPortfolioPlanner.plan([]), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
     const findings = uniqueFindingsByPattern(this.findings(projectId, completed));
     this.persistTransformation(projectId, completed, findings);
     const areas = this.diagnosticAreas(findings);
@@ -334,13 +335,13 @@ export class InferenceService {
       const descendants = rawScopes
         .filter((candidate) => candidate.path.startsWith(`${scope.path}/`))
         .map((candidate) => TeamClassification.at(TeamClassification.from(candidate.capabilities).level, [candidate.path]));
-      return { ...scope, areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize(scope.capabilities), classification: local.constrainedBy(descendants) };
+      return { ...scope, transformationPortfolio: TransformationPortfolioPlanner.plan(scope.findings), areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize(scope.capabilities), classification: local.constrainedBy(descendants) };
     });
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
     );
     const outcome = decideReportOutcome({ classification, branches: capabilityGroups, findings, perspectiveGaps });
-    return { completed, minimum, modelVersion, hypotheses, classification, findings, areas, capabilities, capabilityGroups, perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), scopes, outcome };
+    return { completed, minimum, modelVersion, hypotheses, classification, findings, transformationPortfolio: TransformationPortfolioPlanner.plan(findings), areas, capabilities, capabilityGroups, perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), scopes, outcome };
   }
 
   private calibration(modelVersion: string | null): PilotReport {
@@ -723,4 +724,4 @@ const rootCapabilityByDetail = Object.fromEntries([
   ['organizational-system', ['team-ownership', 'enabling-governance', 'leadership-management', 'collaboration', 'organizational-learning']],
 ].flatMap(([root, details]) => (details as string[]).map((detail) => [detail, root]))) as Record<string, string>;
 
-type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[]; hypotheses: DiagnosticPosterior[] };
+type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; transformationPortfolio: TransformationPortfolio; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[]; hypotheses: DiagnosticPosterior[] };

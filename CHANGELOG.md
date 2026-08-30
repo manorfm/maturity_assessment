@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.42.0
+
+- Transformou findings prontos em uma sequência versionada por dependência,
+  autoridade e risco, sem autorizar todas as intervenções ao mesmo tempo.
+- Declarou pré-condições, incompatibilidades, custo, risco, reversibilidade e
+  possível deslocamento de risco para cada passo.
+- Publicou o portfólio na API global e em cada recorte elegível e suspendeu
+  prescrições cuja causa ou contenção ainda precisa ser discriminada.
+
 ## 0.41.0
 
 - Materializou hipóteses concorrentes, evidências favoráveis e contrárias,
