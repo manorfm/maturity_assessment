@@ -233,6 +233,14 @@ const interventionSeeds: Record<string, InterventionSeed> = {
   'heroi-troca-contexto': { title: 'A carga depende de quem troca de contexto mais rápido', intervention: 'Separe um tipo de trabalho recorrente para um modo de colaboração explícito e meça se a semana deixa de depender da pessoa que mais troca de contexto.' },
   'capacidade-nova-por-ticket-heroi': { title: 'Usar a capacidade depende de ticket ou de um herói da plataforma', intervention: 'Transforme o pedido recorrente em um caminho que outra pessoa do time consiga seguir, com limite, exemplo e tempo previsível.' },
   'documentacao-substitui-caminho': { title: 'Documentação substitui um caminho que outra pessoa consegue seguir', intervention: 'Peça a uma pessoa que não escreveu o texto para usar a capacidade sem herói; o que travar vira o próximo passo do caminho suportado.' },
+  'caminho-desconhecido': { title: 'O caminho existe, mas os times não conseguem encontrá-lo', intervention: 'Observe uma necessidade comum desde a busca inicial e teste um ponto de descoberta ligado ao contexto real do time.' },
+  'caminho-conhecido-inacessivel': { title: 'O time conhece o caminho, mas não consegue começar', intervention: 'Reconstrua a última tentativa bloqueada e teste acesso proporcional ao risco para o caso comum, preservando trilha e exceção.' },
+  'caminho-inadequado-ao-caso': { title: 'O caminho oferecido não atende uma restrição recorrente', intervention: 'Teste com um time consumidor a menor ampliação que elimina um contorno recorrente sem transformar toda exceção em padrão.' },
+  'caminho-depende-de-ajuda-recorrente': { title: 'O caminho só termina com ajuda recorrente da plataforma', intervention: 'Acompanhe uma pessoa nova usando o caminho e transforme o ponto de ajuda mais frequente em feedback executável no próprio fluxo.' },
+  'caminhos-equivalentes-fragmentados': { title: 'Alternativas equivalentes fragmentam a experiência de engenharia', intervention: 'Compare dois caminhos equivalentes por demanda atendida, custo de manutenção e adoção; consolide primeiro a sobreposição sem necessidade distinta.' },
+  'adocao-do-caminho-nao-observada': { title: 'A plataforma publica capacidades sem observar adoção real', intervention: 'Meça uma jornada desde descoberta até conclusão, incluindo abandono, ajuda e contorno, antes de ampliar o catálogo.' },
+  'suporte-substitui-feedback-de-produto-interno': { title: 'Chamados substituem feedback sobre a experiência do caminho', intervention: 'Converse com quem concluiu, abandonou e contornou o mesmo caminho; teste uma mudança e compare necessidade de ajuda.' },
+  'excecoes-nao-retornam-ao-caminho': { title: 'Exceções locais não melhoram o caminho compartilhado', intervention: 'Dê validade e canal de retorno a uma exceção recorrente; decida com consumidores se ela deve entrar no padrão ou ser retirada.' },
 };
 
 export const interventionCatalog = defineInterventionCatalog(interventionSeeds, {
@@ -250,6 +258,7 @@ export const interventionCatalog = defineInterventionCatalog(interventionSeeds, 
 });
 
 const evolutionSeeds: Record<string, InterventionSeed> = {
+  'excecao-controlada-com-retorno': { title: 'Exceções já possuem dono e retorno planejado', intervention: 'Observe validade e reconciliação das próximas exceções e incorpore ao caminho comum apenas as necessidades que se repetirem.' },
   'automacao-local-consistente': { title: 'Automação ainda é uma capacidade local', intervention: 'Transforme a automação validada em caminho suportado, observável e adotável por outros times, medindo tempo e falhas antes e depois.' },
   'integracao-frequente-fragil': { title: 'Integração frequente ainda depende de condições favoráveis', intervention: 'Remova a principal causa que interrompe a integração sob pressão e valide o fluxo com uma mudança urgente e reversível.' },
   'controles-de-release-acumulados': { title: 'Controles de exposição ainda acumulam estado operacional', intervention: 'Defina validade, responsável, telemetria e remoção automática para cada controle antes de ampliar o uso.' },

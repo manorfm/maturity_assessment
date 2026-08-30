@@ -311,5 +311,7 @@ quem não concluiu pode reabrir o fluxo.
 Não perguntar o nome de Team Topologies nem se “temos IDP”. O mesmo grupo absorve
 pedido de produto, incidente, melhoria de plataforma e exceção na mesma semana; um
 time precisa usar uma capacidade que a plataforma já oferece em algum lugar. A
-inferência observa se a carga é negociada e se existe caminho que outra pessoa
-consegue seguir, sem herói nem fila.
+inferência observa se a carga é negociada e reconstrói descoberta, acesso, execução,
+ajuda, adequação, alternativas e exceções. Uma etapa posterior observa se conclusão,
+abandono, chamados e contornos mudam o caminho. “Não adotou” não é causa: pode
+indicar caminho desconhecido, inacessível, inadequado ou fragmentado.

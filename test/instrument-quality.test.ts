@@ -68,6 +68,15 @@ test('causas de operating model e funding possuem contratos específicos', () =>
   for (const pattern of patterns) assert.equal(recommendations[pattern]?.guidanceStatus, 'explicit', pattern);
 });
 
+test('gaps de paved path possuem contratos específicos por mecanismo', () => {
+  const patterns = [
+    'caminho-desconhecido', 'caminho-conhecido-inacessivel', 'caminho-inadequado-ao-caso',
+    'caminho-depende-de-ajuda-recorrente', 'caminhos-equivalentes-fragmentados',
+    'adocao-do-caminho-nao-observada', 'suporte-substitui-feedback-de-produto-interno',
+  ];
+  for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
+});
+
 test('contrato já compatível não gera recomendação contraditória de compatibilidade', () => {
   const node = graph.find((candidate) => candidate.id === 'data-contract-change');
   const option = node?.options.find((candidate) => candidate.id === 'compatible-evolution');

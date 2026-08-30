@@ -916,6 +916,51 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "principle": "Caminho suportado com guardrails, não fila artesanal",
     "why": "Time de plataforma, IDP ou console não é maturidade operacional."
   },
+  "caminho-desconhecido": {
+    "source": "Platform as a Product",
+    "principle": "Descoberta faz parte da experiência do caminho",
+    "why": "Uma capacidade publicada mas impossível de encontrar não reduz carga nem dependência no trabalho real."
+  },
+  "caminho-conhecido-inacessivel": {
+    "source": "Well-Architected — Security",
+    "principle": "Acesso proporcional com escopo, validade e trilha",
+    "why": "Conhecer o caminho não produz autonomia quando o caso comum ainda depende de favor ou privilégio amplo."
+  },
+  "caminho-inadequado-ao-caso": {
+    "source": "Platform as a Product",
+    "principle": "Caminho pavimentado resolve necessidades reais dos consumidores",
+    "why": "Adoção não é obediência; contornos recorrentes podem demonstrar uma lacuna do produto interno."
+  },
+  "caminho-depende-de-ajuda-recorrente": {
+    "source": "Well-Architected / platform engineering",
+    "principle": "Consumidor conclui o caso comum sem intervenção especializada",
+    "why": "Documentação e automação nominais não removem dependência quando o ponto de falha continua exigindo um herói."
+  },
+  "caminhos-equivalentes-fragmentados": {
+    "source": "Platform as a Product",
+    "principle": "Escolhas distintas correspondem a necessidades distintas",
+    "why": "Alternativas equivalentes aumentam descoberta, manutenção e carga cognitiva sem ampliar capacidade."
+  },
+  "adocao-do-caminho-nao-observada": {
+    "source": "Platform as a Product",
+    "principle": "Adoção é medida da jornada, não do catálogo publicado",
+    "why": "Entregar uma capacidade não mostra se consumidores a encontram, concluem ou abandonam."
+  },
+  "suporte-substitui-feedback-de-produto-interno": {
+    "source": "Platform as a Product",
+    "principle": "Feedback inclui consumidores silenciosos e contornos",
+    "why": "Chamados mostram quem pediu ajuda, mas omitem quem abandonou ou resolveu fora do caminho."
+  },
+  "excecoes-nao-retornam-ao-caminho": {
+    "source": "Platform as a Product",
+    "principle": "Exceção gera aprendizado e decisão de produto interno",
+    "why": "Uma exceção invisível transfere custo e impede distinguir necessidade recorrente de desvio temporário."
+  },
+  "excecao-controlada-com-retorno": {
+    "source": "Platform as a Product",
+    "principle": "Escape hatch possui dono, validade e ciclo de aprendizado",
+    "why": "O caminho permanece seguro sem forçar casos legítimos a criar alternativas permanentes."
+  },
   "automacao-local-consistente": {
     "source": "Melhoria contínua",
     "principle": "Mudança pequena, dono, sinal de efeito",

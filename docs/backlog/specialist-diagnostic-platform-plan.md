@@ -170,34 +170,12 @@ Exemplos:
 
 ## Famílias de jornadas a completar
 
-### Produto, portfólio e funding
-
-Reconstruir necessidade, início do lead time, definição de problema/solução/prazo,
-contestação, discovery, entrega, responsabilidade posterior, revisão de resultado,
-financiamento e decisão de continuidade. Discriminar produto real de projeto
-renomeado, funding temporário, output como sucesso, manutenção sem owner e
-portfólio sem feedback.
-
 ### Mudança e entrega
 
 Reconstruir lote, isolamento, integração, feedback, ambiente, aprovação, deploy,
 exposição, feature toggle, reversão e consequência. Cobrir branch longa sem
 perguntar estratégia nominal; toggle em código versus controle em runtime; release
 train; pipeline nominal; frequência de entrega e lead time por serviço.
-
-### Plataforma e paved paths
-
-Reconstruir descoberta, acesso, execução, feedback, adequação, exceção, suporte,
-adoção e aprendizado. Distinguir:
-
-- caminho desconhecido;
-- conhecido, mas inacessível;
-- acessível, mas inadequado;
-- dependente de ajuda;
-- frequentemente contornado;
-- fragmentado em alternativas equivalentes;
-- operacional com escape hatch;
-- adaptativo a feedback dos usuários internos.
 
 ### Dependência, arquitetura e ownership
 
@@ -302,16 +280,9 @@ paralelos por público.
 
 ### Onda C — Jornadas organizacionais
 
-- plataforma/paved path/adoption;
 - segurança/governança/confiança;
 - workforce/reskilling;
 - legado/ownership compartilhado.
-
-Produto/projeto e funding já pertencem ao grafo vigente: quando evidência de
-resultado não muda o investimento, o aprofundamento discrimina funding temporário,
-responsabilidade encerrada no aceite, capacidade tomada pela próxima iniciativa e
-incentivo por prazo/escopo. A validação humana dessa jornada continua coberta pelo
-gate anterior.
 
 ### Onda D — Grafo causal e bibliotecas
 

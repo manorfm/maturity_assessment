@@ -98,6 +98,13 @@ por entrega. Esses mecanismos levam respectivamente a decisões de funding,
 desenho organizacional, alocação ou incentivo; não são tratados por uma recomendação
 única de “adotar modelo de produto”.
 
+No recorte de plataforma, baixa adoção também permanece um sintoma. O contrato
+separa descoberta, acesso, adequação ao caso, ajuda recorrente, alternativas
+equivalentes, observação da jornada e retorno das exceções. As opções variam entre
+descoberta contextual, política de acesso, evolução da capacidade compartilhada,
+feedback executável, consolidação e discovery de produto interno. Nenhuma delas é
+selecionada apenas porque existe ou falta um time, portal ou ferramenta.
+
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
 corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
 limitador mistura evidência, quando o finding **é** a divergência de perspectiva,

@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v3';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v4';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -845,12 +845,37 @@ const authoredNodes: AssessmentNode[] = [
   },
   {
     id: 'platform-path-to-capability', title: 'Uma capacidade que já existe em algum lugar',
-    scenario: 'Um time precisa de uma capacidade que a plataforma já oferece em algum lugar — ambiente, identidade, observabilidade ou publicação. Não é um pedido exótico.',
-    prompt: 'Quanto tempo e que caminho o time percorre até usar de verdade?',
+    scenario: 'Um time precisa de uma capacidade comum que já é oferecida internamente — por exemplo, preparar um ambiente, publicar uma mudança ou acompanhar o serviço.',
+    prompt: 'No caso mais recente, como o time encontrou e começou a usar o que precisava?',
     options: [
       { id: 'supported-path', label: 'Há um caminho que outra pessoa do time consegue seguir, com limite, exemplo e tempo previsível.', signals: [{ capability: 'plataforma', pattern: 'caminho-suportado-ate-capacidade', weight: 2, details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'unknown-path', label: 'O time não sabia que o caminho existia e só o encontrou ao conversar com alguém que já o conhecia.', signals: [{ capability: 'plataforma', pattern: 'caminho-desconhecido', weight: -1, details: ['platform-autonomy', 'knowledge-discovery'], layer: 'system', constraint: 'knowledge' }] },
+      { id: 'known-but-inaccessible', label: 'O caminho era conhecido, mas acesso, permissão ou critérios de entrada impediram o time de começar sozinho.', signals: [{ capability: 'plataforma', pattern: 'caminho-conhecido-inacessivel', weight: -2, details: ['platform-autonomy', 'identity-access'], layer: 'system', constraint: 'access' }] },
       { id: 'ticket-hero', label: 'Alguém da plataforma faz por eles, ou o pedido espera na fila até haver tempo.', signals: [{ capability: 'plataforma', pattern: 'capacidade-nova-por-ticket-heroi', weight: -2, details: ['platform-autonomy'], layer: 'system', constraint: 'organization' }] },
       { id: 'docs-instead-of-path', label: 'Existe documentação ou um canal; o time monta sozinho e pede ajuda quando trava.', signals: [{ capability: 'plataforma', pattern: 'documentacao-substitui-caminho', weight: -1, details: ['platform-autonomy', 'technical-capability'], layer: 'knowledge', constraint: 'knowledge' }] },
+    ], next: 'platform-path-adoption',
+  },
+  {
+    id: 'platform-path-adoption', title: 'Quando o caminho encontra o trabalho real',
+    scenario: 'Depois de encontrar o caminho oferecido, o time tenta usá-lo numa necessidade comum. Regras, exemplos e suporte já estão disponíveis.',
+    prompt: 'O que normalmente acontece até a necessidade ficar resolvida?',
+    options: [
+      { id: 'common-case-works', label: 'Uma pessoa nova no caminho conclui o caso comum e recebe retorno claro quando algo precisa ser corrigido.', signals: [{ capability: 'plataforma', pattern: 'caminho-atende-caso-comum', weight: 2, details: ['platform-autonomy'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'path-does-not-fit', label: 'O caminho não cobre uma restrição frequente do produto; o time mantém uma solução própria para conseguir trabalhar.', signals: [{ capability: 'plataforma', pattern: 'caminho-inadequado-ao-caso', weight: -2, details: ['platform-autonomy', 'reproducible-infrastructure'], layer: 'system', constraint: 'platform' }] },
+      { id: 'recurring-help', label: 'O caso termina, mas depende repetidamente de mensagens, ajustes ou execução de alguém da plataforma.', signals: [{ capability: 'plataforma', pattern: 'caminho-depende-de-ajuda-recorrente', weight: -1, details: ['platform-autonomy', 'technical-capability'], layer: 'consistency', constraint: 'capacity' }] },
+      { id: 'equivalent-paths', label: 'Há alternativas equivalentes mantidas por grupos diferentes; cada time escolhe pela familiaridade e combina partes quando necessário.', signals: [{ capability: 'plataforma', pattern: 'caminhos-equivalentes-fragmentados', weight: -1, details: ['platform-autonomy', 'cognitive-load'], layer: 'system', constraint: 'tooling' }] },
+      { id: 'controlled-exception', label: 'O caso fora do padrão usa uma exceção com responsável, validade e retorno planejado ao caminho comum.', signals: [{ capability: 'plataforma', pattern: 'excecao-controlada-com-retorno', weight: 1, details: ['platform-autonomy', 'organizational-learning'], layer: 'consistency', constraint: 'none' }] },
+    ], next: 'platform-path-learning',
+  },
+  {
+    id: 'platform-path-learning', title: 'O que a plataforma aprende com o uso',
+    scenario: 'Vários times já tentaram usar o caminho. Alguns concluíram rapidamente; outros pediram ajuda, escolheram uma alternativa ou criaram uma exceção.',
+    prompt: 'Como essas experiências normalmente mudam o caminho oferecido?',
+    options: [
+      { id: 'usage-improves-path', label: 'Conclusão, abandono, ajuda e exceções são observados; times consumidores testam mudanças e o caminho evolui pelo efeito.', signals: [{ capability: 'aprendizado', pattern: 'adocao-muda-caminho-de-plataforma', weight: 2, details: ['platform-autonomy', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'delivery-only', label: 'A plataforma acompanha capacidades publicadas e pedidos concluídos, mas não sabe onde os times abandonam ou mantêm caminhos próprios.', signals: [{ capability: 'plataforma', pattern: 'adocao-do-caminho-nao-observada', weight: -1, details: ['platform-autonomy', 'organizational-learning'], layer: 'outcome', constraint: 'tooling' }] },
+      { id: 'tickets-drive-roadmap', label: 'Chamados e pedidos mais frequentes orientam melhorias; quem contorna ou deixa de tentar não aparece na decisão.', signals: [{ capability: 'plataforma', pattern: 'suporte-substitui-feedback-de-produto-interno', weight: -1, details: ['platform-autonomy', 'product-direction'], layer: 'system', constraint: 'process' }] },
+      { id: 'exceptions-stay-local', label: 'Exceções permanecem com cada time e só chegam à plataforma quando provocam incidente, custo ou cobrança.', signals: [{ capability: 'plataforma', pattern: 'excecoes-nao-retornam-ao-caminho', weight: -2, details: ['platform-autonomy', 'organizational-learning'], layer: 'system', constraint: 'organization' }] },
     ],
   },
 ];
@@ -964,6 +989,10 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, optionId: 'delivery-accepted', to: 'product-operating-model-cause' },
     { from: node.id, optionId: 'next-demand', to: 'product-operating-model-cause' },
     ...skipEdges(node, 'technical-stewardship'),
+  ];
+  if (node.id === 'platform-path-to-capability') return [
+    ...node.options.filter((option) => option.id !== CANNOT_OBSERVE_ID && option.id !== NOT_APPLICABLE_ID).map((option) => ({ from: node.id, optionId: option.id, to: 'platform-path-adoption' })),
+    ...skipEdges(node, 'platform-path-learning'),
   ];
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });

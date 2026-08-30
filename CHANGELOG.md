@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.37.0
+
+- Ampliou a jornada de plataforma para distinguir descoberta, acesso, adequação,
+  ajuda recorrente, fragmentação e exceções.
+- Passou a observar conclusão, abandono, suporte e contornos antes de interpretar
+  adoção ou recomendar evolução do caminho.
+- Publicou contratos específicos por mecanismo e o grafo
+  `evidence-anamnesis-pilot-v4` com linguagem auditada.
+
 ## 0.36.0
 
 - Separou o sintoma de resultado sem efeito no portfólio de quatro mecanismos:

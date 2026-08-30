@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Paved path e adoção discriminados
+
+- Entregue a versão 0.37 com jornada de descoberta, acesso, adequação, ajuda,
+  fragmentação, exceção e aprendizado de plataforma; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-08-30 — Operating model e funding discriminados
 
 - Entregue a versão 0.36 com investigação causal de funding temporário, ownership

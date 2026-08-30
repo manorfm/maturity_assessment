@@ -39,6 +39,24 @@ test('resultado sem efeito no portfólio discrimina operating model e funding an
   assert.ok(edges.some((edge) => edge.from === cause.id && edge.to === 'technical-stewardship'));
 });
 
+test('jornada de plataforma separa descoberta, acesso, adequação e aprendizado de adoção', () => {
+  const entry = graph.find((node) => node.id === 'platform-path-to-capability')!;
+  const adoption = graph.find((node) => node.id === 'platform-path-adoption')!;
+  const learning = graph.find((node) => node.id === 'platform-path-learning')!;
+  assert.ok(adoption);
+  assert.ok(learning);
+  assert.deepEqual(new Set(entry.options.flatMap((option) => option.signals.map((signal) => signal.pattern))), new Set([
+    'caminho-suportado-ate-capacidade', 'caminho-desconhecido', 'caminho-conhecido-inacessivel',
+    'capacidade-nova-por-ticket-heroi', 'documentacao-substitui-caminho',
+  ]));
+  assert.deepEqual(new Set(adoption.options.flatMap((option) => option.signals.map((signal) => signal.pattern))), new Set([
+    'caminho-atende-caso-comum', 'caminho-inadequado-ao-caso', 'caminho-depende-de-ajuda-recorrente',
+    'caminhos-equivalentes-fragmentados', 'excecao-controlada-com-retorno',
+  ]));
+  assert.ok(edges.some((edge) => edge.from === entry.id && edge.optionId === 'supported-path' && edge.to === adoption.id));
+  assert.ok(edges.some((edge) => edge.from === adoption.id && edge.to === learning.id));
+});
+
 test('convites pertencem somente às folhas de uma hierarquia livre', () => {
   const db = createDatabase(':memory:');
   const projects = new ProjectService(db);
@@ -180,7 +198,7 @@ test('entrega aprofunda sinais maduros e investiga bloqueio após integração f
 });
 
 test('estima o restante da entrevista sem contar probes opcionais', () => {
-  assert.equal(estimateRemainingScenarios('platform-path-to-capability', 'platform'), 1);
+  assert.equal(estimateRemainingScenarios('platform-path-to-capability', 'platform'), 3);
   assert.equal(estimateRemainingScenarios('architecture-wait', 'architecture'), 1);
   assert.ok(estimateRemainingScenarios('leadership-enablement', 'architecture') >= 3);
   assert.ok(estimateRemainingScenarios('respondent-context') >= 40);
@@ -254,7 +272,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 258);
+  assert.equal(signals.length, 269);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);
