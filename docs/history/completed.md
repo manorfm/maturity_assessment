@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Legado, ownership e continuidade
+
+- Entregue a versão 0.40 com distinção entre responsabilidade de serviço,
+  fragmentação de decisão, dependência pessoal e mecanismos de mudança segura em
+  legado; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-08-30 — Workforce e reskilling por mecanismo
 
 - Entregue a versão 0.39 com distinção entre aquisição, concentração, acesso,

@@ -20,6 +20,7 @@ const narrativeChoices: Partial<Record<Stance, Record<string, string>>> = {
     'delivery-cause': 'team-boundary', 'blocked-work': 'waiting-external', 'blocked-cause': 'dependency-priority',
     'decision-context': 'expert-decides', 'architecture-pressure': 'ownership-dispute', 'team-pressure': 'private-resolution',
     'improvement-loop': 'action-list-fades', 'shared-surface-risk': 'manual-coordination',
+    'service-ownership-continuity': 'no-accountable-group', 'legacy-change-safety': 'unknown-behavior',
     'leadership-enablement': 'escalation-followup', 'management-portfolio': 'parallel-initiatives',
   },
   emerging: { 'integration-cadence': 'integrated-few-days' },
@@ -102,7 +103,7 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
     lookFor: [
       'Uma próxima decisão e um único limitador — não cloud aninhada por default.',
       'Cartão com o problema, a restrição e o teste; estágio e mapa de contraste em segundo plano.',
-      'Panorama visível com problemas de esteira, comunicação, gestão e fronteiras além da decisão principal.',
+      'Panorama visível com problemas de esteira, comunicação, gestão, responsabilidade de serviço e legado além da decisão principal.',
       'Mapa por estrutura compara os dois times sem expor respostas individuais.',
     ],
     adminUrl: toInspectUrl(adminUrl),

@@ -120,6 +120,15 @@ seguinte — ajuda, erro, tempo e distribuição — e não por presença, certi
 matriz declarada. Contratação, academia, pareamento e rotação são opções condicionadas,
 não sinais de maturidade.
 
+No recorte de legado e ownership, possuir repositório, documentação ou mantenedor
+não demonstra responsabilidade. O contrato separa autoridade pelo resultado,
+responsabilidade limitada ao código, decisão distribuída sem resolução e
+dependência pessoal. Para legado, idade ou tecnologia também não determinam o
+diagnóstico: a inferência observa se o comportamento pode ser reconstruído, se a
+mudança produz evidência repetível, se o risco é reduzido em fatias reversíveis e
+se um parceiro externo deixa capacidade exercitável. Cada mecanismo seleciona uma
+intervenção diferente e explicita o que ela não resolve.
+
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
 corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
 limitador mistura evidência, quando o finding **é** a divergência de perspectiva,

@@ -328,3 +328,14 @@ acesso bloqueado, curso sem tarefa real, dependência de fornecedor e falta de
 capacidade para aprender. Depois de um investimento, uma demanda equivalente mostra
 se mais pessoas executam com segurança ou se presença, matriz e especialista apenas
 preservaram a distribuição anterior.
+
+### Legado, ownership e continuidade
+
+Não perguntar quem é o “owner” nem se o legado está documentado. Um serviço exige
+correção, decisão de risco e acompanhamento sem a pessoa mais experiente; a resposta
+mostra se existe um grupo com autoridade ponta a ponta ou se responsabilidade acaba
+no código, circula entre áreas ou acompanha uma pessoa. Uma mudança posterior em
+área pouco conhecida observa se o comportamento é reconstruído com evidência, se
+o grupo avança por tentativa, espera uma reescrita integral ou depende de parceiro
+sem conseguir repetir a mudança. Idade, linguagem e tecnologia continuam apenas
+contexto.

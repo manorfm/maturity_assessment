@@ -87,6 +87,27 @@ test('jornada de workforce discrimina aquisição, distribuição e oportunidade
   assert.ok(edges.some((edge) => edge.from === gap.id && edge.to === learning.id));
 });
 
+test('jornada de legado separa responsabilidade operacional de segurança para mudar', () => {
+  const ownership = graph.find((node) => node.id === 'service-ownership-continuity')!;
+  const legacy = graph.find((node) => node.id === 'legacy-change-safety')!;
+  assert.ok(ownership);
+  assert.ok(legacy);
+  assert.deepEqual(new Set(ownership.options.flatMap((option) => option.signals.map((signal) => signal.pattern))), new Set([
+    'responsabilidade-servico-ponta-a-ponta', 'servico-sem-responsavel',
+    'responsabilidade-limitada-ao-codigo', 'responsabilidade-compartilhada-sem-decisao',
+    'responsabilidade-depende-de-especialista',
+  ]));
+  assert.deepEqual(new Set(legacy.options.flatMap((option) => option.signals.map((signal) => signal.pattern))), new Set([
+    'legado-evolui-com-evidencia', 'legado-sem-modelo-recuperavel',
+    'legado-muda-por-tentativa', 'legado-congelado-ate-reescrita',
+    'legado-dependente-de-fornecedor',
+  ]));
+  assert.ok(edges.some((edge) => edge.from === 'shared-surface-context' && edge.optionId === 'single-owner' && edge.to === ownership.id));
+  assert.ok(edges.some((edge) => edge.from === 'shared-surface-cause' && edge.to === ownership.id));
+  assert.ok(edges.some((edge) => edge.from === ownership.id && edge.to === legacy.id));
+  assert.ok(edges.some((edge) => edge.from === legacy.id && edge.to === 'team-health'));
+});
+
 test('convites pertencem somente às folhas de uma hierarquia livre', () => {
   const db = createDatabase(':memory:');
   const projects = new ProjectService(db);
@@ -269,7 +290,7 @@ test('aprendizado gera sinais cruzados e compartilhamento aprofunda apenas quand
   assert.deepEqual(new Set(sustained.signals.map((signal) => signal.capability)), new Set(['aprendizado', 'organizacao', 'fluxo']));
   const context = catalog.getNode(GRAPH_VERSION, 'shared-surface-context')!;
   assert.equal(context.options.every((option) => option.signals.length === 0), true);
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-context', 'single-owner'), 'team-health');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-context', 'single-owner'), 'service-ownership-continuity');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-context', 'multiple-teams'), 'shared-surface-risk');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-risk', 'overwritten-change'), 'shared-surface-cause');
 });
@@ -302,7 +323,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 290);
+  assert.equal(signals.length, 300);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

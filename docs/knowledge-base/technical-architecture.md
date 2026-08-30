@@ -94,7 +94,7 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com 79 nós, aprofundamentos
+O corte vigente implementa esses cinco passos com 81 nós, aprofundamentos
 condicionais e nove perspectivas — gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design — escolhidas durante
 a entrevista.
@@ -168,8 +168,8 @@ visibilidade e vocabulário acessível antes da publicação.
 O caso principal possui dois times de dez pessoas cada: um SRE, quatro pessoas de
 engenharia, uma de QA, duas de produto, uma de arquitetura e uma de gestão. Os casos
 fixam escolhas narrativas somente nos eventos que definem sua história central. Um
-time concentra esteira, regressão e ambiente; o outro, dependências, ownership e
-coordenação. As demais respostas ficam em faixas intermediárias e variam por
+time concentra esteira, regressão e ambiente; o outro, dependências, serviço sem
+responsável, legado desconhecido e coordenação. As demais respostas ficam em faixas intermediárias e variam por
 perspectiva. Assim o showcase valida coerência entre resposta e diagnóstico, sem
 reutilizar o recomendador para fabricar a própria expectativa.
 

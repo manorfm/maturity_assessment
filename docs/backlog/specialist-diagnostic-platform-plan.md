@@ -256,17 +256,13 @@ paralelos por público.
 
 ## Sequência de implementação
 
-### Validação humana de linguagem antes da Onda C
+### Validação humana de linguagem antes do piloto
 
 - realizar entrevistas cognitivas com pessoas de baixo repertório técnico;
 - validar leitura sem facilitador por diretoria e gerência reais;
 - registrar compreensão, recuperação do evento e termos confusos no painel;
 - revisar o conteúdo somente a partir dessa evidência, sem tratar teste automatizado
   como substituto da validação humana.
-
-### Onda C — Jornadas organizacionais
-
-- legado/ownership compartilhado.
 
 ### Onda D — Grafo causal e bibliotecas
 

@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v6';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v7';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -463,6 +463,30 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'weak-boundaries', label: 'Os limites do sistema não acompanham as responsabilidades; mudanças locais exigem compreender uma área extensa compartilhada.', signals: [{ capability: 'arquitetura', pattern: 'causa-limites-sem-ownership', weight: -1 , details: ['domain-alignment', 'team-ownership'], layer: 'system', constraint: 'architecture' }] },
       { id: 'independent-priorities', label: 'Times compartilham a superfície, mas objetivos, prazos e decisões são independentes.', signals: [{ capability: 'governanca', pattern: 'causa-prioridades-na-superficie', weight: -1 , details: ['product-direction', 'team-ownership'], layer: 'system', constraint: 'priority' }] },
       { id: 'missing-verification', label: 'Contratos, configuração e integração não possuem feedback repetível antes da composição final.', signals: [{ capability: 'engenharia', pattern: 'causa-verificacao-concorrente', weight: -1 , details: ['continuous-integration', 'quality-strategy', 'organizational-learning'], layer: 'system', constraint: 'tooling' }] },
+    ], next: 'service-ownership-continuity',
+  },
+  {
+    id: 'service-ownership-continuity', title: 'Responsabilidade quando o serviço exige decisão',
+    scenario: 'Um serviço precisa de correção, decisão de risco e acompanhamento depois da mudança. A pessoa que mais o conhece não está disponível.',
+    prompt: 'No caso mais recente, como a responsabilidade foi assumida até o efeito ser verificado?',
+    options: [
+      { id: 'end-to-end-owner', label: 'Um grupo conhecido decidiu prioridade e risco, conduziu a mudança e verificou o comportamento do serviço depois.', signals: [{ capability: 'organizacao', pattern: 'responsabilidade-servico-ponta-a-ponta', weight: 2, details: ['team-ownership', 'incident-management', 'evolvability'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'no-accountable-group', label: 'As áreas envolvidas ajudaram em partes diferentes, mas nenhuma podia decidir e responder pelo resultado completo.', signals: [{ capability: 'organizacao', pattern: 'servico-sem-responsavel', weight: -2, details: ['team-ownership', 'incident-management'], layer: 'system', constraint: 'organization' }] },
+      { id: 'code-only-owner', label: 'O grupo alterou o código, enquanto operação, dados, prioridade e efeito permaneceram sob responsabilidades separadas.', signals: [{ capability: 'organizacao', pattern: 'responsabilidade-limitada-ao-codigo', weight: -1, details: ['team-ownership', 'incident-management'], layer: 'system', constraint: 'organization' }] },
+      { id: 'shared-without-decision', label: 'Vários grupos se consideravam responsáveis, mas a decisão final dependia de alinhamento ou escalada a cada ocorrência.', signals: [{ capability: 'governanca', pattern: 'responsabilidade-compartilhada-sem-decisao', weight: -2, details: ['team-ownership', 'collaboration'], layer: 'system', constraint: 'governance' }] },
+      { id: 'person-is-owner', label: 'A responsabilidade acompanhava uma pessoa específica; sem ela, o grupo procurou quem aceitasse conduzir o caso.', signals: [{ capability: 'organizacao', pattern: 'responsabilidade-depende-de-especialista', weight: -2, details: ['team-ownership', 'technical-capability'], layer: 'system', constraint: 'knowledge' }] },
+    ], next: 'legacy-change-safety',
+  },
+  {
+    id: 'legacy-change-safety', title: 'Mudança segura em uma área pouco conhecida',
+    scenario: 'Uma área antiga precisa mudar. Decisões históricas não estão disponíveis e a alteração pode afetar comportamentos que o grupo não conhece por completo.',
+    prompt: 'Como a última mudança semelhante produziu segurança suficiente para avançar?',
+    options: [
+      { id: 'recoverable-model', label: 'O grupo reconstruiu o comportamento com exemplos, uso real e verificações; mudou uma parte pequena e incorporou o aprendizado ao caminho seguinte.', signals: [{ capability: 'engenharia', pattern: 'legado-evolui-com-evidencia', weight: 2, details: ['sustainable-design', 'evolvability', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'unknown-behavior', label: 'Não foi possível explicar partes relevantes nem localizar evidência confiável; a decisão dependeu do impacto que aparecesse depois.', signals: [{ capability: 'arquitetura', pattern: 'legado-sem-modelo-recuperavel', weight: -2, details: ['sustainable-design', 'evolvability'], layer: 'knowledge', constraint: 'knowledge' }] },
+      { id: 'trial-and-observe', label: 'A mudança avançou por tentativa em ambientes e correções sucessivas até o comportamento parecer aceitável.', signals: [{ capability: 'engenharia', pattern: 'legado-muda-por-tentativa', weight: -2, details: ['sustainable-design', 'quality-strategy'], layer: 'practice', constraint: 'process' }] },
+      { id: 'wait-for-rewrite', label: 'O grupo evitou reduzir o risco atual porque a solução considerada segura depende de uma futura substituição completa.', signals: [{ capability: 'arquitetura', pattern: 'legado-congelado-ate-reescrita', weight: -2, details: ['sustainable-design', 'evolvability', 'portfolio-management'], layer: 'system', constraint: 'architecture' }] },
+      { id: 'vendor-only-change', label: 'Somente um fornecedor conseguiu alterar a área; evidências e decisões necessárias para repetir a mudança não ficaram acessíveis ao grupo.', signals: [{ capability: 'organizacao', pattern: 'legado-dependente-de-fornecedor', weight: -2, details: ['team-ownership', 'sustainable-design'], layer: 'system', constraint: 'external-dependency' }] },
     ], next: 'team-health',
   },
   {
@@ -1019,14 +1043,14 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'shared-surface-context') return [
-    { from: node.id, optionId: 'single-owner', to: 'team-health' },
+    { from: node.id, optionId: 'single-owner', to: 'service-ownership-continuity' },
     { from: node.id, optionId: 'multiple-teams', to: 'shared-surface-risk' },
     { from: node.id, optionId: 'mixed-boundaries', to: 'shared-surface-risk' },
     { from: node.id, optionId: 'unknown-ownership', to: 'shared-surface-risk' },
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'shared-surface-risk') return [
-    { from: node.id, optionId: 'early-contract-feedback', to: 'team-health' },
+    { from: node.id, optionId: 'early-contract-feedback', to: 'service-ownership-continuity' },
     { from: node.id, optionId: 'overwritten-change', to: 'shared-surface-cause' },
     { from: node.id, optionId: 'late-integration-conflict', to: 'shared-surface-cause' },
     { from: node.id, optionId: 'manual-coordination', to: 'shared-surface-cause' },

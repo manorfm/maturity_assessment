@@ -97,6 +97,16 @@ test('gaps de workforce selecionam desenvolvimento compatível com a restrição
   for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
 });
 
+test('legado e ownership selecionam intervenção compatível com o mecanismo', () => {
+  const patterns = [
+    'servico-sem-responsavel', 'responsabilidade-limitada-ao-codigo',
+    'responsabilidade-compartilhada-sem-decisao', 'responsabilidade-depende-de-especialista',
+    'legado-sem-modelo-recuperavel', 'legado-muda-por-tentativa',
+    'legado-congelado-ate-reescrita', 'legado-dependente-de-fornecedor',
+  ];
+  for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
+});
+
 test('contrato já compatível não gera recomendação contraditória de compatibilidade', () => {
   const node = graph.find((candidate) => candidate.id === 'data-contract-change');
   const option = node?.options.find((candidate) => candidate.id === 'compatible-evolution');

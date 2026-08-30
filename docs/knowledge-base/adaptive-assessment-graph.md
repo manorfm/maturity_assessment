@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v6` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v7` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos
@@ -58,7 +58,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 79 nós e cobre eventos de priorização, integração,
+O catálogo atual contém 81 nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
@@ -119,6 +119,15 @@ consegue executar a demanda seguinte. Presença em treinamento e matriz declarad
 não demonstram capacidade sem aplicação; a intervenção pode envolver aquisição
 temporária, colaboração, acesso supervisionado, prática aplicada, transferência
 contratual ou redução explícita de escopo.
+
+O ramo de legado e ownership continua a investigação da superfície de mudança sem
+confundir mantenedor de código com responsabilidade de serviço. Ele distingue grupo
+com autoridade ponta a ponta, serviço sem responsável, responsabilidade encerrada
+no artefato, decisão compartilhada sem direito explícito e dependência de uma
+pessoa. Depois observa como uma área pouco conhecida é alterada: comportamento
+reconstruído com evidência, tentativa sucessiva, congelamento à espera de reescrita
+ou dependência externa sem continuidade interna. Tecnologia antiga, documentação,
+cargo e fornecedor não pontuam por si mesmos.
 
 O ramo de melhoria verifica consequência em vez de frequência da cerimônia: ação
 limitada, ownership, capacidade, revisão de efeito, autonomia e segurança para

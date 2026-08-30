@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.40.0
+
+- Separou responsabilidade ponta a ponta, responsabilidade limitada ao código,
+  decisão compartilhada sem autoridade e dependência de especialista.
+- Passou a distinguir legado sem modelo recuperável, mudança por tentativa,
+  congelamento à espera de reescrita e dependência externa sem continuidade.
+- Publicou contratos específicos e o grafo `evidence-anamnesis-pilot-v7` com 81
+  perguntas auditadas.
+
 ## 0.39.0
 
 - Discriminou competência inexistente, concentrada, bloqueada, sem prática,

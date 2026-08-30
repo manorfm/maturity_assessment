@@ -1041,6 +1041,46 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "principle": "Especialista habilita sem retomar a execução",
     "why": "Correção posterior protege o prazo imediato, mas ensina o sistema a concentrar novamente o próximo caso."
   },
+  "servico-sem-responsavel": {
+    "source": "Team Topologies / service ownership",
+    "principle": "Responsabilidade ponta a ponta acompanha autoridade e resultado",
+    "why": "Mantenedores por componente não substituem um grupo capaz de decidir e responder pelo serviço completo."
+  },
+  "responsabilidade-limitada-ao-codigo": {
+    "source": "DevOps / Accelerate",
+    "principle": "Feedback operacional retorna a quem muda o sistema",
+    "why": "Separar entrega de operação alonga o feedback e dilui a decisão sobre o resultado."
+  },
+  "responsabilidade-compartilhada-sem-decisao": {
+    "source": "Team Topologies / governança habilitadora",
+    "principle": "Interação e direitos de decisão são explícitos",
+    "why": "Participação ampla sem autoridade definida recria coordenação e escalada em toda ocorrência."
+  },
+  "responsabilidade-depende-de-especialista": {
+    "source": "Team Topologies",
+    "principle": "Capacidade e responsabilidade pertencem ao grupo, não ao herói",
+    "why": "Duplicar a referência não remove a dependência enquanto decisões continuarem associadas a pessoas."
+  },
+  "legado-sem-modelo-recuperavel": {
+    "source": "Working Effectively with Legacy Code",
+    "principle": "Caracterizar o comportamento antes de alterar",
+    "why": "O risco do legado vem da falta de feedback recuperável, não de sua idade ou tecnologia nominal."
+  },
+  "legado-muda-por-tentativa": {
+    "source": "Working Effectively with Legacy Code / Continuous Delivery",
+    "principle": "Descoberta vira proteção reproduzível em lote pequeno",
+    "why": "Tentativa sem caracterização obriga a próxima mudança a redescobrir o mesmo comportamento."
+  },
+  "legado-congelado-ate-reescrita": {
+    "source": "Strangler Fig / arquitetura evolutiva",
+    "principle": "Reduzir risco por fatias reversíveis",
+    "why": "Aposta integral posterga aprendizado e preserva o risco até o fim da migração."
+  },
+  "legado-dependente-de-fornecedor": {
+    "source": "Gestão de fornecedores / aprendizagem aplicada",
+    "principle": "Aceite inclui continuidade demonstrada pela organização",
+    "why": "Documento entregue não prova que o grupo consegue avaliar, mudar e sustentar o legado."
+  },
   "automacao-local-consistente": {
     "source": "Melhoria contínua",
     "principle": "Mudança pequena, dono, sinal de efeito",
