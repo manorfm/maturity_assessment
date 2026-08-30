@@ -241,6 +241,13 @@ const interventionSeeds: Record<string, InterventionSeed> = {
   'adocao-do-caminho-nao-observada': { title: 'A plataforma publica capacidades sem observar adoção real', intervention: 'Meça uma jornada desde descoberta até conclusão, incluindo abandono, ajuda e contorno, antes de ampliar o catálogo.' },
   'suporte-substitui-feedback-de-produto-interno': { title: 'Chamados substituem feedback sobre a experiência do caminho', intervention: 'Converse com quem concluiu, abandonou e contornou o mesmo caminho; teste uma mudança e compare necessidade de ajuda.' },
   'excecoes-nao-retornam-ao-caminho': { title: 'Exceções locais não melhoram o caminho compartilhado', intervention: 'Dê validade e canal de retorno a uma exceção recorrente; decida com consumidores se ela deve entrar no padrão ou ser retirada.' },
+  'governanca-compensa-feedback-tecnico': { title: 'Aprovação compensa evidência técnica pouco confiável', intervention: 'Nomeie a evidência que o aprovador reconstrói e teste produzi-la de forma repetível no fluxo para uma classe de baixo risco.' },
+  'governanca-compensa-ownership': { title: 'Aprovação compensa responsabilidade pouco clara', intervention: 'Reconstrua uma decisão recente e atribua autoridade e responsabilidade ao dono do resultado antes de remover uma passagem de aprovação.' },
+  'segregacao-por-fila-manual': { title: 'Separação de responsabilidade virou fila operacional', intervention: 'Preserve quem solicita e quem autoriza, mas teste execução automatizada, limitada e auditável para a operação recorrente.' },
+  'aprovacao-sem-evidencia-decisoria': { title: 'A aprovação registra aceite sem alterar a proteção', intervention: 'Para a próxima etapa, explicite qual evidência poderia mudar a decisão e retire ou redesenhe o controle se nenhuma puder.' },
+  'compliance-substitui-eficacia': { title: 'Passar na auditoria substitui verificar o efeito do controle', intervention: 'Escolha um controle relevante e compare obrigação atendida, risco residual, falhas e espera antes da próxima revisão.' },
+  'excecao-de-risco-renovada-sem-evidencia': { title: 'Aceites temporários são renovados sem reduzir a incerteza', intervention: 'Condicione a próxima renovação a uma evidência nova, responsável e decisão explícita de corrigir, proteger ou encerrar.' },
+  'incidente-apenas-adiciona-controle': { title: 'Cada falha adiciona controle sem revisar os anteriores', intervention: 'Ao adicionar a próxima proteção, identifique qual controle existente perdeu propósito e teste a retirada com sinal de risco e fluxo.' },
 };
 
 export const interventionCatalog = defineInterventionCatalog(interventionSeeds, {

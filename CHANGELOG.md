@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.38.0
+
+- Separou controle legítimo de governança compensando feedback técnico, ownership
+  ou segregação implementada como fila manual.
+- Passou a verificar se auditorias, exceções e incidentes alteram a eficácia do
+  controle ou apenas acumulam aceite e etapas.
+- Publicou contratos específicos e o grafo `evidence-anamnesis-pilot-v5` com
+  linguagem cotidiana auditada.
+
 ## 0.37.0
 
 - Ampliou a jornada de plataforma para distinguir descoberta, acesso, adequação,

@@ -290,7 +290,10 @@ Não perguntar se existe WAF, scanner ou time de AppSec. Uma alteração de praz
 normal passa a tocar dado identificável ou um caminho novo entre sistemas; depois,
 um achado aparece no meio do trabalho. A inferência observa se o risco muda desenho
 antes de liberar, se o achado pode atrasar a mudança, ou se vira exceção e correção
-só do caso visível.
+só do caso visível. Em seguida, um controle aplicado a riscos comum e elevado
+permite observar o que foi verificado e qual decisão mudou, sem pedir que a pessoa
+classifique a governança. Auditoria, exceção e incidente mostram se a proteção
+aprende pelo efeito ou apenas acumula aceite e etapas.
 
 ### Dados como significado compartilhado
 

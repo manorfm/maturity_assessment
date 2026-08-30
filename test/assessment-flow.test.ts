@@ -57,6 +57,21 @@ test('jornada de plataforma separa descoberta, acesso, adequação e aprendizado
   assert.ok(edges.some((edge) => edge.from === adoption.id && edge.to === learning.id));
 });
 
+test('jornada de segurança separa obrigação legítima de governança compensatória', () => {
+  const finding = graph.find((node) => node.id === 'security-after-finding')!;
+  const control = graph.find((node) => node.id === 'security-control-decision')!;
+  const learning = graph.find((node) => node.id === 'security-control-learning')!;
+  assert.ok(control);
+  assert.ok(learning);
+  assert.deepEqual(new Set(control.options.flatMap((option) => option.signals.map((signal) => signal.pattern))), new Set([
+    'obrigacao-com-evidencia-e-segregacao', 'controle-contextual-ao-risco',
+    'governanca-compensa-feedback-tecnico', 'governanca-compensa-ownership',
+    'segregacao-por-fila-manual', 'aprovacao-sem-evidencia-decisoria',
+  ]));
+  assert.ok(edges.some((edge) => edge.from === finding.id && edge.to === control.id));
+  assert.ok(edges.some((edge) => edge.from === control.id && edge.to === learning.id));
+});
+
 test('convites pertencem somente às folhas de uma hierarquia livre', () => {
   const db = createDatabase(':memory:');
   const projects = new ProjectService(db);
@@ -272,7 +287,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 269);
+  assert.equal(signals.length, 279);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

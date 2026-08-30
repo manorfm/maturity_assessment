@@ -77,6 +77,16 @@ test('gaps de paved path possuem contratos específicos por mecanismo', () => {
   for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
 });
 
+test('governança compensatória possui contrato diferente de obrigação legítima', () => {
+  const patterns = [
+    'governanca-compensa-feedback-tecnico', 'governanca-compensa-ownership',
+    'segregacao-por-fila-manual', 'aprovacao-sem-evidencia-decisoria',
+    'compliance-substitui-eficacia', 'excecao-de-risco-renovada-sem-evidencia',
+    'incidente-apenas-adiciona-controle',
+  ];
+  for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
+});
+
 test('contrato já compatível não gera recomendação contraditória de compatibilidade', () => {
   const node = graph.find((candidate) => candidate.id === 'data-contract-change');
   const option = node?.options.find((candidate) => candidate.id === 'compatible-evolution');

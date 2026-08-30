@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v4` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v5` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos
@@ -58,7 +58,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 75 nós e cobre eventos de priorização, integração,
+O catálogo atual contém 77 nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
@@ -102,6 +102,14 @@ verifica se conclusão, abandono, suporte e contornos mudam o produto interno. A
 presença de portal, documentação, time ou automação não pontua; baixa adoção pode
 ser restrição de descoberta, acesso, adequação, feedback, fragmentação ou retorno
 das exceções, cada qual com intervenção própria.
+
+O ramo de segurança continua depois do achado para reconstruir o controle. Distingue
+obrigação legítima com separação verificável, proteção proporcional ao risco,
+aprovação que compensa evidência técnica frágil, fórum que compensa ownership,
+segregação implementada como fila manual e aceite sem decisão possível. Depois
+observa se auditorias, exceções e incidentes alteram a proteção ou apenas acumulam
+registros e etapas. A solução preserva a obrigação quando ela existe e atua no
+mecanismo que tornou o controle lento ou ineficaz.
 
 O ramo de melhoria verifica consequência em vez de frequência da cerimônia: ação
 limitada, ownership, capacidade, revisão de efeito, autonomia e segurança para

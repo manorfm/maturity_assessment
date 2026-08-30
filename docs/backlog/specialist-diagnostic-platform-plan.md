@@ -183,13 +183,6 @@ Cobrir artefato compartilhado, contratos, versões, responsabilidade operacional
 serviço sem owner, legado desconhecido, conhecimento concentrado, fronteiras e
 prioridades incompatíveis.
 
-### Segurança, risco e governança
-
-Cobrir entrada do risco, proporcionalidade, evidência, exceção, acesso, auditoria,
-vulnerabilidade e resposta. Discriminar segurança legítima de policy theater,
-segregação mal implementada, aprovação sem risco nomeado e governança compensando
-pipeline ou ownership pouco confiáveis.
-
 ### Liderança, cultura e aprendizagem
 
 Cobrir reação a erro, contestação, prioridade, interrupção, incentivo, capacidade
@@ -280,7 +273,6 @@ paralelos por público.
 
 ### Onda C — Jornadas organizacionais
 
-- segurança/governança/confiança;
 - workforce/reskilling;
 - legado/ownership compartilhado.
 

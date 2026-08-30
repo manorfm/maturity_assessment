@@ -105,6 +105,13 @@ descoberta contextual, política de acesso, evolução da capacidade compartilha
 feedback executável, consolidação e discovery de produto interno. Nenhuma delas é
 selecionada apenas porque existe ou falta um time, portal ou ferramenta.
 
+No recorte de segurança, espera ou aprovação também não demonstram burocracia por
+si sós. O diagnóstico preserva obrigações e revisão independente legítimas enquanto
+distingue compensações por evidência técnica frágil, ownership ausente, segregação
+manual ou etapa sem decisão possível. Eficácia, conformidade, risco residual e
+custo no fluxo permanecem evidências separadas; passar em auditoria não autoriza
+declarar que o controle reduziu o risco pretendido.
+
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
 corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
 limitador mistura evidência, quando o finding **é** a divergência de perspectiva,

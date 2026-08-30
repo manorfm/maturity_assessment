@@ -961,6 +961,41 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "principle": "Escape hatch possui dono, validade e ciclo de aprendizado",
     "why": "O caminho permanece seguro sem forçar casos legítimos a criar alternativas permanentes."
   },
+  "governanca-compensa-feedback-tecnico": {
+    "source": "Governança habilitadora",
+    "principle": "Controle consome evidência confiável produzida no fluxo",
+    "why": "Remover a aprovação antes de substituir a evidência desloca o risco; mantê-la depois disso preserva espera sem propósito."
+  },
+  "governanca-compensa-ownership": {
+    "source": "Team Topologies",
+    "principle": "Autoridade e responsabilidade acompanham o resultado",
+    "why": "Uma reunião de aprovadores não substitui ownership verificável depois da decisão."
+  },
+  "segregacao-por-fila-manual": {
+    "source": "Well-Architected — Security",
+    "principle": "Separar autorização sem transformar execução em favor pessoal",
+    "why": "Segregação legítima preserva independência e trilha; não exige que toda operação comum espere execução artesanal."
+  },
+  "aprovacao-sem-evidencia-decisoria": {
+    "source": "Governança habilitadora",
+    "principle": "Evidência precisa ser capaz de mudar a decisão",
+    "why": "Registro de aceite sem decisão possível demonstra rito, não redução observável do risco."
+  },
+  "compliance-substitui-eficacia": {
+    "source": "Governança habilitadora",
+    "principle": "Conformidade e eficácia são evidências diferentes",
+    "why": "Atender a obrigação não demonstra sozinho que o controle reduz o risco pretendido com custo proporcional."
+  },
+  "excecao-de-risco-renovada-sem-evidencia": {
+    "source": "Governança habilitadora",
+    "principle": "Exceção temporária reduz incerteza a cada revisão",
+    "why": "Renovar prazo sem evidência nova transforma compensação em estado permanente invisível."
+  },
+  "incidente-apenas-adiciona-controle": {
+    "source": "SRE / blameless postmortem",
+    "principle": "Aprendizado muda o sistema sem acumular proteção cega",
+    "why": "Adicionar etapas após falhas pode aliviar culpa sem tratar causa e sem revisar controles que perderam propósito."
+  },
   "automacao-local-consistente": {
     "source": "Melhoria contínua",
     "principle": "Mudança pequena, dono, sinal de efeito",

@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v4';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v5';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -801,6 +801,30 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'finding-changes-path', label: 'O achado pode atrasar, reduzir escopo ou mudar o caminho; fica dono, evidência e data de revisão.', signals: [{ capability: 'engenharia', pattern: 'achado-altera-o-caminho', weight: 2, details: ['software-security'], layer: 'practice', constraint: 'none' }] },
       { id: 'finding-queued', label: 'O item entra numa fila de segurança e a mudança segue com um aceite temporário.', signals: [{ capability: 'governanca', pattern: 'achado-na-fila-de-excecao', weight: -2, details: ['software-security', 'enabling-governance'], layer: 'system', constraint: 'governance' }] },
       { id: 'finding-local-fix', label: 'Quem encontrou corrige o caso visível; não se verifica se o mesmo padrão existe em outros fluxos.', signals: [{ capability: 'engenharia', pattern: 'achado-corrigido-no-caso', weight: -1, details: ['software-security', 'organizational-learning'], layer: 'practice', constraint: 'process' }] },
+    ], next: 'security-control-decision',
+  },
+  {
+    id: 'security-control-decision', title: 'O que a etapa consegue decidir',
+    scenario: 'Depois de problemas parecidos, uma etapa de controle passou a participar das mudanças. Considere um caso recente de risco comum e outro de risco elevado.',
+    prompt: 'O que a etapa pediu para verificar e o que conseguiu mudar nesses dois casos?',
+    options: [
+      { id: 'explicit-obligation', label: 'Uma obrigação externa ou interna nomeia risco, evidência e separação de responsabilidade; a decisão e a trilha são verificáveis.', signals: [{ capability: 'governanca', pattern: 'obrigacao-com-evidencia-e-segregacao', weight: 2, details: ['enabling-governance', 'software-security'], layer: 'system', constraint: 'none' }] },
+      { id: 'contextual-control', label: 'Impacto, dado e reversibilidade mudam a proteção; casos comuns recebem retorno no fluxo e especialistas julgam as exceções.', signals: [{ capability: 'governanca', pattern: 'controle-contextual-ao-risco', weight: 2, details: ['enabling-governance', 'software-security'], layer: 'practice', constraint: 'none' }] },
+      { id: 'distrusts-technical-feedback', label: 'A aprovação permanece porque testes, esteira ou trilha da mudança ainda não produzem evidência considerada confiável.', signals: [{ capability: 'governanca', pattern: 'governanca-compensa-feedback-tecnico', weight: -1, details: ['enabling-governance', 'sdlc-automation', 'quality-strategy'], layer: 'system', constraint: 'tooling' }] },
+      { id: 'unclear-accountability', label: 'A aprovação reúne responsáveis porque não está claro quem responde pelo serviço, pelo dado ou pela decisão depois da liberação.', signals: [{ capability: 'organizacao', pattern: 'governanca-compensa-ownership', weight: -1, details: ['enabling-governance', 'team-ownership'], layer: 'system', constraint: 'organization' }] },
+      { id: 'manual-separation', label: 'Quem solicita não pode executar; outro grupo repete manualmente a operação e a separação depende da fila e dos acessos desse grupo.', signals: [{ capability: 'governanca', pattern: 'segregacao-por-fila-manual', weight: -2, details: ['enabling-governance', 'identity-access', 'platform-autonomy'], layer: 'system', constraint: 'access' }] },
+      { id: 'approval-records-only', label: 'A etapa registra aceite e responsáveis, mas a mesma evidência costuma levar à aprovação sem alterar desenho, escopo ou proteção.', signals: [{ capability: 'governanca', pattern: 'aprovacao-sem-evidencia-decisoria', weight: -2, details: ['enabling-governance', 'software-security'], layer: 'outcome', constraint: 'governance' }] },
+    ], next: 'security-control-learning',
+  },
+  {
+    id: 'security-control-learning', title: 'Quando o controle é revisto',
+    scenario: 'O controle já passou por auditorias, exceções e ao menos um problema real. Há dados sobre espera e algumas evidências do risco protegido.',
+    prompt: 'O que normalmente faz essa etapa ser mantida, alterada ou retirada?',
+    options: [
+      { id: 'effect-reviewed', label: 'Risco evitado, falhas, espera e exceções são comparados; proteção e caminho mudam quando a evidência mostra efeito diferente.', signals: [{ capability: 'aprendizado', pattern: 'controle-revisado-por-efeito', weight: 2, details: ['enabling-governance', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'audit-passed', label: 'A principal evidência é cumprir a auditoria ou apresentar os registros esperados; efeito sobre risco e fluxo é discutido separadamente.', signals: [{ capability: 'governanca', pattern: 'compliance-substitui-eficacia', weight: -1, details: ['enabling-governance', 'software-security'], layer: 'outcome', constraint: 'governance' }] },
+      { id: 'exceptions-renewed', label: 'Aceites temporários são renovados enquanto a correção disputa prioridade; poucas evidências mudam prazo ou proteção compensatória.', signals: [{ capability: 'governanca', pattern: 'excecao-de-risco-renovada-sem-evidencia', weight: -2, details: ['enabling-governance', 'software-security'], layer: 'consistency', constraint: 'priority' }] },
+      { id: 'controls-accumulate', label: 'Depois de uma falha, adiciona-se revisão, aprovação ou registro; controles anteriores raramente são retirados ou simplificados.', signals: [{ capability: 'governanca', pattern: 'incidente-apenas-adiciona-controle', weight: -2, details: ['enabling-governance', 'incident-management'], layer: 'system', constraint: 'culture' }] },
     ],
   },
   {
