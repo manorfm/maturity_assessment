@@ -264,14 +264,6 @@ paralelos por público.
 - revisar o conteúdo somente a partir dessa evidência, sem tratar teste automatizado
   como substituto da validação humana.
 
-### Onda G — Showcase controlado
-
-- um caso por mecanismo isolado;
-- casos com mesmo sintoma e contenções diferentes;
-- organização saudável com problema local;
-- organização frágil com problemas locais e organizacionais;
-- divergência isolada sem contaminar pilares não relacionados.
-
 ### Onda H — Validação humana e calibração
 
 - entrevistas cognitivas por perspectiva;
@@ -285,7 +277,6 @@ paralelos por público.
 
 ```text
 validação humana de linguagem
-  -> G showcase
   -> H validação e calibração
 ```
 

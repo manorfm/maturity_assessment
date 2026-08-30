@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Showcase diagnóstico controlado
+
+- Entregue a versão 0.44 com seis casos reproduzíveis, contraste entre tooling e
+  política para o mesmo sintoma, isolamento de problema local e remoção de
+  dependência causal inferida apenas pela sequência; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-08-30 — Relatórios por autoridade
 
 - Entregue a versão 0.43 com projeções do mesmo diagnóstico para diretoria,

@@ -329,7 +329,8 @@ tirá-lo do primeiro plano está no
 - entidades e value objects nas fronteiras com invariantes;
 - schema vigente sem camada de retrocompatibilidade legada;
 - testes de domínio, integração, HTTP e jornada completa com Playwright;
-- showcase automatizado com casos inspecionáveis (frágil, emergente, adaptativo e divergência).
+- showcase automatizado com seis casos inspecionáveis, incluindo contraste de
+  contenção e problema local isolado.
 
 ## Arquitetura
 
@@ -387,6 +388,10 @@ imprime os links e mantém a aplicação na porta `3217`. Abra
 `http://127.0.0.1:3217/showcase` para as histórias, o que procurar, trechos
 observados e convites ociosos (entrevista à mão e o experimento do mapa por
 estrutura). `npm run showcase` é um alias do mesmo fluxo.
+
+Além dos casos frágil, emergente, sustentável e divergente, o índice compara duas
+squads com integração tardia causada por mecanismos diferentes e uma organização
+com comportamento sustentado em que somente uma squad possui um problema local.
 
 Para uma execução paralela, `E2E_DATABASE_PATH`, `E2E_SHOWCASE_GUIDE`, `E2E_PORT`
 e `SHOWCASE_PUBLIC_URL` isolam banco, guia e portas sem apagar um showcase que já

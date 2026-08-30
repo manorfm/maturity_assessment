@@ -47,3 +47,11 @@ test('não transforma um problema local independente em pré-condição organiza
   const organizational = portfolio.sequence.find((item) => item.pattern === 'governanca-global');
   assert.deepEqual(organizational?.dependsOn, []);
 });
+
+test('não inventa dependência entre intervenções de mecanismos independentes', () => {
+  const portfolio = TransformationPortfolioPlanner.plan([
+    finding({ pattern: 'policy', detailCapability: 'enabling-governance', title: 'Política acumula mudanças', mechanism: 'policy', containment: 'organizational-policy', decisionAuthority: 'organizational-governance', impacts: ['security'] }),
+    finding({ pattern: 'tooling', detailCapability: 'sdlc-automation', title: 'Feedback automatizado é frágil', mechanism: 'tooling', containment: 'shared-service', decisionAuthority: 'platform' }),
+  ]);
+  assert.deepEqual(portfolio.sequence.find((item) => item.pattern === 'tooling')?.dependsOn, []);
+});

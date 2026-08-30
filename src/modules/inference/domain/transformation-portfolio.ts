@@ -95,8 +95,12 @@ export class TransformationPortfolioPlanner {
     for (const finding of ranked) {
       const phase = phaseFor(finding);
       const policy = policies[finding.mechanism ?? 'undetermined'] ?? defaultPolicy;
-      const predecessor = [...sequence].reverse().find((candidate) => phaseRank(candidate.phase) < phaseRank(phase)
-        && (candidate.containment !== 'team' || finding.containment === 'team'));
+      const predecessor = [...sequence].reverse().find((candidate) => {
+        const candidateFinding = ready.find((item) => item.pattern === candidate.pattern);
+        return candidateFinding?.detailCapability === 'team-ownership'
+          && phaseRank(candidate.phase) < phaseRank(phase)
+          && (candidate.containment !== 'team' || finding.containment === 'team');
+      });
       sequence.push({
         order: sequence.length + 1,
         pattern: finding.pattern,

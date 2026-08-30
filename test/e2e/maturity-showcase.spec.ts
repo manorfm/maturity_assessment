@@ -3,10 +3,11 @@ import { expect, test, type Page } from '@playwright/test';
 import { graph, profileIds, type Profile } from '../../src/modules/catalog/assessment-graph.js';
 import { buildShowcaseGuide, SHOWCASE_GUIDE_PATH, type ShowcaseGuideCase } from './showcase-guide.js';
 
-type Stance = 'fragile' | 'emerging' | 'adaptive' | 'pipeline-fragile' | 'coordination-fragile' | 'divergence-strong' | 'divergence-constrained';
+type Stance = 'fragile' | 'emerging' | 'adaptive' | 'pipeline-fragile' | 'coordination-fragile' | 'integration-tooling' | 'integration-policy' | 'local-improvement' | 'divergence-strong' | 'divergence-constrained';
 
 const mixedSquad: Profile[] = ['quality', 'management', 'product', 'engineering', 'platform', 'architecture', 'design'];
 const tenPersonTeam: Profile[] = ['platform', 'engineering', 'engineering', 'engineering', 'engineering', 'quality', 'product', 'architecture', 'product', 'management'];
+const focusedTeam: Profile[] = ['product', 'product', 'engineering', 'platform', 'management'];
 const inspectHost = process.env.SHOWCASE_PUBLIC_URL ?? 'http://127.0.0.1:3217';
 const narrativeChoices: Partial<Record<Stance, Record<string, string>>> = {
   fragile: { 'integration-cadence': 'isolated-days' },
@@ -23,12 +24,15 @@ const narrativeChoices: Partial<Record<Stance, Record<string, string>>> = {
     'service-ownership-continuity': 'no-accountable-group', 'legacy-change-safety': 'unknown-behavior',
     'leadership-enablement': 'escalation-followup', 'management-portfolio': 'parallel-initiatives',
   },
+  'integration-tooling': { 'shared-change': 'before-release', 'integration-cadence': 'isolated-days', 'delivery-cause': 'tooling-gap' },
+  'integration-policy': { 'shared-change': 'before-release', 'integration-cadence': 'isolated-days', 'delivery-cause': 'process-policy' },
+  'local-improvement': { 'improvement-loop': 'action-list-fades', 'improvement-cause': 'too-many-actions' },
   emerging: { 'integration-cadence': 'integrated-few-days' },
   adaptive: { 'integration-cadence': 'integrated-daily' },
 };
 
 test('gera casos inspecionáveis com textos, resultados e convites manuais', async ({ page }) => {
-  test.setTimeout(420_000);
+  test.setTimeout(600_000);
   const collected: ShowcaseGuideCase[] = [];
   const levels: Record<string, number> = {};
 
@@ -36,6 +40,8 @@ test('gera casos inspecionáveis com textos, resultados e convites manuais', asy
   collected.push(await buildEmergingCase(page, levels));
   collected.push(await buildAdaptiveCase(page, levels));
   collected.push(await buildDivergenceCase(page));
+  collected.push(await buildHealthyWithLocalProblemCase(page));
+  collected.push(await buildContainmentContrastCase(page));
 
   expect(levels.fragile!).toBeLessThan(levels.emerging!);
   expect(levels.emerging!).toBeLessThan(levels.adaptive!);
@@ -121,6 +127,79 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
     adminUrl: toInspectUrl(adminUrl),
     publicUrl: publicUrlFromAdmin(adminUrl),
     observed,
+  };
+}
+
+async function buildContainmentContrastCase(page: Page): Promise<ShowcaseGuideCase> {
+  const org = 'Integração tardia com causas diferentes';
+  const adminUrl = await createProject(page, 'Contraste — mesmo sintoma, duas contenções', org, ['Squad Tooling', 'Squad Política']);
+  const tooling = await createInvitations(page, focusedTeam.length, `${org}/Squad Tooling`);
+  await page.getByRole('link', { name: 'Voltar ao painel' }).click();
+  const policy = await createInvitations(page, focusedTeam.length, `${org}/Squad Política`);
+  for (const [index, link] of tooling.entries()) await completeAssessment(page, link, 'integration-tooling', focusedTeam[index]!, index);
+  for (const [index, link] of policy.entries()) await completeAssessment(page, link, 'integration-policy', focusedTeam[index]!, index);
+
+  await page.goto(adminUrl);
+  const portfolio = page.locator('.finding-portfolio').first();
+  await expect(portfolio.getByRole('link', { name: 'O feedback automatizado não sustenta integração frequente', exact: true })).toBeVisible();
+  await expect(portfolio.getByRole('link', { name: 'Políticas e etapas exigem acumular mudanças', exact: true })).toBeVisible();
+  const toolingStep = portfolio.locator('.finding-portfolio-group', { hasText: 'O feedback automatizado não sustenta integração frequente' });
+  await expect(toolingStep).not.toContainText('Depende de: Políticas e etapas exigem acumular mudanças');
+  await expect(page.getByText(/Capacidades compartilhadas/).first()).toBeVisible();
+  await expect(page.getByText(/Decisões organizacionais/).first()).toBeVisible();
+  const toolingReport = page.locator('details.scope-report', { hasText: 'Squad Tooling' });
+  const policyReport = page.locator('details.scope-report', { hasText: 'Squad Política' });
+  await toolingReport.locator(':scope > summary').click();
+  await expect(toolingReport.getByText(/escalar para .*plataforma/i)).toBeVisible();
+  await policyReport.locator(':scope > summary').click();
+  await expect(policyReport.getByText(/escalar para .*governança/i)).toBeVisible();
+  const observed = await observeReport(page);
+  return {
+    id: 'contraste-contencao',
+    title: 'Contraste — mesmo sintoma, duas contenções',
+    story: 'Duas squads integram mudanças tarde. Em uma, o retorno automatizado não produz confiança; na outra, uma política exige acumular e aguardar. O sintoma é comum, mas autoridade e intervenção não são.',
+    lookFor: [
+      'O problema de tooling aparece como capacidade compartilhada e pede decisão de plataforma.',
+      'O problema de política aparece como decisão organizacional e pede governança.',
+      'A integração tardia não produz uma recomendação única por palavra-chave.',
+    ],
+    adminUrl: toInspectUrl(adminUrl), publicUrl: publicUrlFromAdmin(adminUrl), observed,
+  };
+}
+
+async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGuideCase> {
+  const org = 'Produto sustentável com desvio local';
+  const adminUrl = await createProject(page, 'Sustentável — problema local isolado', org, ['Squad Referência', 'Squad Discovery']);
+  const reference = await createInvitations(page, focusedTeam.length, `${org}/Squad Referência`);
+  await page.getByRole('link', { name: 'Voltar ao painel' }).click();
+  const local = await createInvitations(page, focusedTeam.length, `${org}/Squad Discovery`);
+  for (const [index, link] of reference.entries()) await completeAssessment(page, link, 'adaptive', focusedTeam[index]!, index);
+  for (const [index, link] of local.entries()) await completeAssessment(page, link, 'local-improvement', focusedTeam[index]!, index);
+
+  await page.goto(adminUrl);
+  const localReport = page.locator('details.scope-report', { hasText: 'Squad Discovery' });
+  await expect(localReport.locator(':scope > summary')).toBeVisible();
+  await localReport.locator(':scope > summary').click();
+  await expect(localReport.getByRole('heading', { name: 'O que a unidade pode mudar' })).toBeVisible();
+  await expect(localReport.getByRole('heading', { name: 'Ações de melhoria perdem dono e continuidade' })).toBeVisible();
+  await expect(localReport.getByText('Nenhuma ação local foi confirmada.')).toBeVisible();
+  await expect(localReport.getByText('Nenhuma escalada confirmada para este recorte.')).toBeVisible();
+  const referenceReport = page.locator('details.scope-report', { hasText: 'Squad Referência' });
+  await referenceReport.locator(':scope > summary').click();
+  await expect(referenceReport).not.toContainText('Ações de melhoria perdem dono e continuidade');
+  const executiveBrief = page.locator('#report-executive');
+  await expect(executiveBrief.getByText('Nenhuma decisão confirmada para esta autoridade.').first()).toBeVisible();
+  const observed = await observeReport(page);
+  return {
+    id: 'saudavel-local',
+    title: 'Sustentável — problema local isolado',
+    story: 'Os dois times sustentam a maior parte do sistema; apenas a Squad Discovery abre ações de melhoria demais e não consegue concluí-las. O diagnóstico deve permanecer local e não virar transformação organizacional.',
+    lookFor: [
+      'O problema aparece somente na Squad Discovery e pede discriminação causal antes de prescrever uma ação.',
+      'A Squad Referência não recebe o problema por pertencer à mesma organização.',
+      'O briefing executivo não converte o desvio local em decisão de estrutura ou funding.',
+    ],
+    adminUrl: toInspectUrl(adminUrl), publicUrl: publicUrlFromAdmin(adminUrl), observed,
   };
 }
 
@@ -312,7 +391,7 @@ function chooseOption(options: typeof graph[number]['options'], stance: Stance, 
   const pool = practice.length ? practice : options;
   const scored = pool.map((option) => ({ option, score: option.signals.reduce((total, signal) => total + signal.weight, 0) }));
   const divergenceNodes = new Set(['shared-change', 'integration-cadence', 'architecture-pressure', 'blocked-work', 'decision-context']);
-  const effectiveStance: 'fragile' | 'emerging' | 'adaptive' = stance === 'pipeline-fragile' || stance === 'coordination-fragile'
+  const effectiveStance: 'fragile' | 'emerging' | 'adaptive' = stance === 'pipeline-fragile' || stance === 'coordination-fragile' || stance === 'integration-tooling' || stance === 'integration-policy' || stance === 'local-improvement'
     ? 'adaptive'
     : stance === 'divergence-strong'
       ? divergenceNodes.has(nodeId) ? 'adaptive' : 'emerging'

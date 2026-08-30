@@ -170,12 +170,15 @@ evidência positiva agregada do recorte; não altera a nota da capacidade nem o
 posterior causal. O finding sanitizado carrega capacidade de solução e prontidão
 junto ao experimento.
 
-O showcase E2E gera quatro casos inspecionáveis: linha sob pressão (com partição irmã abaixo do
-grupo mínimo), prática local intermediária, operação adaptativa com as nove lentes e
-divergência triangulada entre gestão e engenharia. Percorre o grafo em Chromium,
+O showcase E2E gera seis casos inspecionáveis: linha sob pressão (com partição irmã abaixo do
+grupo mínimo), prática local intermediária, operação adaptativa com as nove lentes,
+divergência triangulada entre gestão e engenharia, integração tardia com contenção
+em tooling versus política e organização sustentada com um problema contido em uma
+única squad. Percorre o grafo em Chromium,
 grava um índice com histórias, trechos observados e convites ociosos, valida a
 ordenação, um único limitador (sem cloud por default), homes distintos entre
-frágil e emergente, preservação do ramo 4/4 e a tag de divergência, e deixa a mesma base servida em `3217` — inclusive
+frágil e emergente, preservação do ramo 4/4, isolamento local, autoridade distinta
+para o mesmo sintoma e a tag de divergência, e deixa a mesma base servida em `3217` — inclusive
 em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 `demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
 3217, evitando recursão entre scripts.

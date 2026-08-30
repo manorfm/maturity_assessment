@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.44.0
+
+- Expandiu o showcase para seis casos controlados, incluindo o mesmo sintoma com
+  contenções diferentes e uma organização sustentada com problema apenas local.
+- Validou que tooling e política produzem autoridades e orientações diferentes e
+  que um problema de squad não contamina o briefing executivo nem outra squad.
+- Impediu que fases consecutivas criassem dependência causal sem pré-condição
+  sistêmica explícita.
+
 ## 0.43.0
 
 - Criou projeções versionadas do mesmo diagnóstico para diretoria, liderança de

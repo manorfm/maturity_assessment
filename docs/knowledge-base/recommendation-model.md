@@ -94,8 +94,10 @@ motor e ordena intervenções em cinco fases: estabilizar risco e ownership,
 encurtar feedback, remover restrições compartilhadas, ajustar operating model e
 desenvolver capacidade adaptativa. Dentro da fase, prioridade e padrão fornecem
 ordem estável. Uma dependência só é criada entre fases quando o passo anterior
-remove uma pré-condição plausível; ação local independente nunca bloqueia uma
-decisão organizacional.
+representa uma pré-condição sistêmica explícita, atualmente ownership; proximidade
+de fase, prioridade ou sintoma não cria causalidade. Ação local independente nunca
+bloqueia decisão organizacional, e intervenções de squads diferentes não dependem
+uma da outra sem relação declarada.
 
 Cada passo publica autoridade, contenção, pré-condições, incompatibilidades, custo,
 risco, reversibilidade e risco que pode ser deslocado para outra fronteira. Esses
