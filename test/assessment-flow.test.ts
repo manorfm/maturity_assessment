@@ -72,6 +72,21 @@ test('jornada de segurança separa obrigação legítima de governança compensa
   assert.ok(edges.some((edge) => edge.from === control.id && edge.to === learning.id));
 });
 
+test('jornada de workforce discrimina aquisição, distribuição e oportunidade de prática', () => {
+  const gap = graph.find((node) => node.id === 'workforce-capability-gap')!;
+  const learning = graph.find((node) => node.id === 'workforce-learning-effect')!;
+  assert.ok(gap);
+  assert.ok(learning);
+  assert.deepEqual(new Set(gap.options.flatMap((option) => option.signals.map((signal) => signal.pattern))), new Set([
+    'competencia-acessivel-no-trabalho', 'competencia-inexistente', 'competencia-concentrada',
+    'competencia-bloqueada-por-acesso', 'aprendizado-sem-oportunidade-pratica',
+    'competencia-dependente-de-fornecedor', 'aprendizado-impedido-por-carga',
+  ]));
+  assert.ok(edges.some((edge) => edge.from === 'engineering-knowledge-depth' && edge.to === gap.id));
+  assert.ok(edges.some((edge) => edge.from === 'management-cognitive-load' && edge.to === gap.id));
+  assert.ok(edges.some((edge) => edge.from === gap.id && edge.to === learning.id));
+});
+
 test('convites pertencem somente às folhas de uma hierarquia livre', () => {
   const db = createDatabase(':memory:');
   const projects = new ProjectService(db);
@@ -287,7 +302,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 279);
+  assert.equal(signals.length, 290);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

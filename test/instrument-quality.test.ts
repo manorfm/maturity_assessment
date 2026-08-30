@@ -87,6 +87,16 @@ test('governança compensatória possui contrato diferente de obrigação legít
   for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
 });
 
+test('gaps de workforce selecionam desenvolvimento compatível com a restrição', () => {
+  const patterns = [
+    'competencia-inexistente', 'competencia-concentrada', 'competencia-bloqueada-por-acesso',
+    'aprendizado-sem-oportunidade-pratica', 'competencia-dependente-de-fornecedor',
+    'aprendizado-impedido-por-carga', 'capacitacao-medida-por-presenca',
+    'matriz-de-competencia-sem-aplicacao', 'desenvolvimento-reforca-especialista',
+  ];
+  for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
+});
+
 test('contrato já compatível não gera recomendação contraditória de compatibilidade', () => {
   const node = graph.find((candidate) => candidate.id === 'data-contract-change');
   const option = node?.options.find((candidate) => candidate.id === 'compatible-evolution');

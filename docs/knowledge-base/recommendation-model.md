@@ -112,6 +112,14 @@ manual ou etapa sem decisão possível. Eficácia, conformidade, risco residual 
 custo no fluxo permanecem evidências separadas; passar em auditoria não autoriza
 declarar que o controle reduziu o risco pretendido.
 
+No recorte de workforce, “falta capacitação” não é mecanismo suficiente. O contrato
+distingue adquirir experiência inexistente, distribuir conhecimento concentrado,
+liberar prática segura, ligar conteúdo a trabalho, transferir capacidade de
+fornecedor e proteger tempo retirando escopo. O efeito é medido pela execução
+seguinte — ajuda, erro, tempo e distribuição — e não por presença, certificado ou
+matriz declarada. Contratação, academia, pareamento e rotação são opções condicionadas,
+não sinais de maturidade.
+
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
 corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
 limitador mistura evidência, quando o finding **é** a divergência de perspectiva,

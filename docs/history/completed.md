@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Workforce e reskilling por mecanismo
+
+- Entregue a versão 0.39 com distinção entre aquisição, concentração, acesso,
+  prática, fornecedor e carga, validando aprendizagem pela execução seguinte; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-08-30 — Segurança legítima e governança compensatória
 
 - Entregue a versão 0.38 com discriminação de obrigação, risco contextual,

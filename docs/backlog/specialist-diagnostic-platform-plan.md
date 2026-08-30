@@ -189,13 +189,6 @@ Cobrir reação a erro, contestação, prioridade, interrupção, incentivo, cap
 para melhorar, desenvolvimento de pessoas e acompanhamento de ações. Cultura é
 traduzida em mecanismos observáveis, nunca usada como explicação residual.
 
-### Workforce e reskilling
-
-Distinguir competência inexistente, concentrada, bloqueada, sem oportunidade de
-prática, dependente de fornecedor ou impedida por carga. Intervenções possíveis:
-aprendizagem aplicada, pairing, rotação, tempo protegido, enabling team, academia,
-contratação, carreira/incentivo e redução temporária de escopo.
-
 ## Bibliotecas de sistemas de problemas
 
 O catálogo deve possuir, no mínimo, sistemas explicáveis para:
@@ -273,7 +266,6 @@ paralelos por público.
 
 ### Onda C — Jornadas organizacionais
 
-- workforce/reskilling;
 - legado/ownership compartilhado.
 
 ### Onda D — Grafo causal e bibliotecas

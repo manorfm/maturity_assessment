@@ -996,6 +996,51 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "principle": "Aprendizado muda o sistema sem acumular proteção cega",
     "why": "Adicionar etapas após falhas pode aliviar culpa sem tratar causa e sem revisar controles que perderam propósito."
   },
+  "competencia-inexistente": {
+    "source": "Aprendizagem aplicada / enabling team",
+    "principle": "Adquirir capacidade com transferência no trabalho real",
+    "why": "Curso isolado, contratação isolada ou consultoria isolada não demonstram que a organização consegue repetir a decisão."
+  },
+  "competencia-concentrada": {
+    "source": "Team Topologies",
+    "principle": "Colaboração temporária distribui decisão e execução",
+    "why": "Documentar não reduz concentração enquanto prazo e risco continuam devolvendo todo trabalho à referência."
+  },
+  "competencia-bloqueada-por-acesso": {
+    "source": "Well-Architected — Security",
+    "principle": "Prática supervisionada com menor privilégio e trilha",
+    "why": "Conhecimento não vira capacidade quando a política impede qualquer execução segura por outras pessoas."
+  },
+  "aprendizado-sem-oportunidade-pratica": {
+    "source": "Aprendizagem aplicada / prática deliberada",
+    "principle": "Aprender em uma tarefa real com feedback e limite",
+    "why": "Conteúdo consumido não demonstra mudança de comportamento sem oportunidade de aplicação."
+  },
+  "competencia-dependente-de-fornecedor": {
+    "source": "Team Topologies",
+    "principle": "Dependência temporária transfere capacidade verificável",
+    "why": "Acompanhamento passivo não reduz dependência se o fornecedor continua conduzindo toda mudança equivalente."
+  },
+  "aprendizado-impedido-por-carga": {
+    "source": "Lean / Accelerate",
+    "principle": "Aprendizado compete por capacidade real e limite de trabalho",
+    "why": "Declarar prioridade de desenvolvimento sem retirar trabalho preserva a mesma escolha pelo especialista."
+  },
+  "capacitacao-medida-por-presenca": {
+    "source": "Aprendizagem aplicada / prática deliberada",
+    "principle": "Resultado de aprendizagem aparece na execução",
+    "why": "Presença e satisfação medem a atividade, não quem consegue executar com segurança depois."
+  },
+  "matriz-de-competencia-sem-aplicacao": {
+    "source": "Aprendizagem aplicada / prática deliberada",
+    "principle": "Conhecimento declarado é validado por comportamento observável",
+    "why": "A matriz não reduz dependência quando a distribuição do trabalho permanece igual."
+  },
+  "desenvolvimento-reforca-especialista": {
+    "source": "Team Topologies",
+    "principle": "Especialista habilita sem retomar a execução",
+    "why": "Correção posterior protege o prazo imediato, mas ensina o sistema a concentrar novamente o próximo caso."
+  },
   "automacao-local-consistente": {
     "source": "Melhoria contínua",
     "principle": "Mudança pequena, dono, sinal de efeito",

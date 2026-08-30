@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v5';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v6';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -715,6 +715,31 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'shared-model', label: 'Limites, decisões, exemplos e verificações permitem formar hipótese; colaboração distribui conhecimento durante a mudança.', signals: [{ capability: 'engenharia', pattern: 'conhecimento-distribuido-por-modelo-e-feedback', weight: 2, details: ['technical-capability', 'sustainable-design', 'domain-alignment', 'evolvability', 'collaboration'], layer: 'knowledge' , constraint: 'none' }] },
       { id: 'wait-expert', label: 'O grupo aguarda ou consulta a referência para evitar decisão incompatível com detalhes históricos.', signals: [{ capability: 'engenharia', pattern: 'mudanca-aguarda-especialista', weight: -2, details: ['technical-capability', 'sustainable-design'], layer: 'system', constraint: 'knowledge'  }] },
       { id: 'learn-while-changing', label: 'A pessoa investiga e implementa com revisão posterior; qualidade depende do tempo e de quem estiver disponível.', signals: [{ capability: 'engenharia', pattern: 'aprendizado-tecnico-sem-caminho-repetivel', weight: -1, details: ['technical-capability', 'sustainable-design'], layer: 'knowledge', constraint: 'process'  }] },
+    ], next: 'workforce-capability-gap',
+  },
+  {
+    id: 'workforce-capability-gap', title: 'Quando o trabalho exige algo que o grupo ainda não domina',
+    scenario: 'Um trabalho importante exige conhecimento novo ou pouco distribuído. O prazo continua e uma decisão precisa equilibrar entrega, risco e aprendizado.',
+    prompt: 'No caso mais recente, o que permitiu ou impediu outras pessoas de assumir esse trabalho?',
+    options: [
+      { id: 'accessible-in-work', label: 'Alguém experiente colaborou numa parte real; exemplos, retorno e limites permitiram que outras pessoas executassem depois.', signals: [{ capability: 'engenharia', pattern: 'competencia-acessivel-no-trabalho', weight: 2, details: ['technical-capability', 'collaboration', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'missing-everywhere', label: 'Ninguém interno tinha experiência suficiente; o grupo avançou por pesquisa e tentativa ou adiou a decisão de maior risco.', signals: [{ capability: 'engenharia', pattern: 'competencia-inexistente', weight: -2, details: ['technical-capability'], layer: 'system', constraint: 'knowledge' }] },
+      { id: 'held-by-few', label: 'Uma ou poucas pessoas sabiam executar; para proteger prazo e qualidade, o trabalho continuou concentrado nelas.', signals: [{ capability: 'organizacao', pattern: 'competencia-concentrada', weight: -2, details: ['technical-capability', 'team-ownership'], layer: 'system', constraint: 'organization' }] },
+      { id: 'blocked-from-practice', label: 'Outras pessoas conheciam a explicação, mas acesso, política ou responsabilidade impedia praticar com segurança.', signals: [{ capability: 'governanca', pattern: 'competencia-bloqueada-por-acesso', weight: -1, details: ['technical-capability', 'identity-access'], layer: 'system', constraint: 'access' }] },
+      { id: 'training-without-work', label: 'Houve curso, material ou laboratório, mas o trabalho real continuou reservado às pessoas já experientes.', signals: [{ capability: 'aprendizado', pattern: 'aprendizado-sem-oportunidade-pratica', weight: -1, details: ['technical-capability', 'organizational-learning'], layer: 'consistency', constraint: 'process' }] },
+      { id: 'vendor-does-work', label: 'Fornecedor ou consultoria executou a parte crítica, e o time não assumiu a mudança equivalente seguinte.', signals: [{ capability: 'organizacao', pattern: 'competencia-dependente-de-fornecedor', weight: -2, details: ['technical-capability', 'team-ownership'], layer: 'system', constraint: 'external-dependency' }] },
+      { id: 'no-room-to-learn', label: 'As pessoas capazes de ensinar e aprender estavam ocupadas com entregas e urgências; o trabalho voltou para quem já fazia.', signals: [{ capability: 'governanca', pattern: 'aprendizado-impedido-por-carga', weight: -2, details: ['technical-capability', 'portfolio-management'], layer: 'system', constraint: 'capacity' }] },
+    ], next: 'workforce-learning-effect',
+  },
+  {
+    id: 'workforce-learning-effect', title: 'O que mudou depois da capacitação',
+    scenario: 'A organização investiu em curso, mentoria, colaboração ou contratação para reduzir uma lacuna importante. Uma nova demanda equivalente apareceu.',
+    prompt: 'O que aconteceu quando o grupo precisou aplicar o aprendizado no trabalho seguinte?',
+    options: [
+      { id: 'more-people-deliver', label: 'Mais pessoas concluíram trabalho equivalente com segurança; erros, ajuda e tempo foram revistos para ajustar o próximo aprendizado.', signals: [{ capability: 'aprendizado', pattern: 'desenvolvimento-validado-no-trabalho', weight: 2, details: ['technical-capability', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'attendance-completes', label: 'Participação e conclusão registraram o investimento; ainda não houve trabalho comparável para verificar mudança de execução.', signals: [{ capability: 'aprendizado', pattern: 'capacitacao-medida-por-presenca', weight: -1, details: ['technical-capability', 'organizational-learning'], layer: 'outcome', constraint: 'process' }] },
+      { id: 'matrix-updated', label: 'A avaliação ou matriz passou a mostrar mais conhecimento declarado, mas distribuição do trabalho e dependência continuaram iguais.', signals: [{ capability: 'organizacao', pattern: 'matriz-de-competencia-sem-aplicacao', weight: -1, details: ['technical-capability', 'leadership-management'], layer: 'outcome', constraint: 'governance' }] },
+      { id: 'expert-remains-default', label: 'A pessoa mais experiente revisou ou corrigiu a execução e voltou a receber as próximas demandas para preservar o prazo.', signals: [{ capability: 'organizacao', pattern: 'desenvolvimento-reforca-especialista', weight: -2, details: ['technical-capability', 'team-ownership'], layer: 'consistency', constraint: 'incentive' }] },
     ],
   },
   {
@@ -761,7 +786,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'load-visible', label: 'Os tipos de trabalho são visíveis e alguém decide o que o grupo deixa de absorver nesta semana.', signals: [{ capability: 'organizacao', pattern: 'carga-cognitiva-negociada', weight: 2, details: ['team-ownership', 'leadership-management'], layer: 'practice', constraint: 'none' }] },
       { id: 'silent-accumulation', label: 'O grupo absorve os diferentes tipos de trabalho para manter os compromissos; espera e erros ficam visíveis posteriormente.', signals: [{ capability: 'organizacao', pattern: 'acumulo-silencioso-de-tipos', weight: -2, details: ['team-ownership', 'leadership-management'], layer: 'system', constraint: 'organization' }] },
       { id: 'hero-switch', label: 'Depende de quem consegue trocar de contexto mais rápido quando a fila aperta.', signals: [{ capability: 'organizacao', pattern: 'heroi-troca-contexto', weight: -1, details: ['team-ownership'], layer: 'practice', constraint: 'organization' }] },
-    ],
+    ], next: 'workforce-capability-gap',
   },
   {
     id: 'architecture-language', title: 'Um termo que mudou de significado',

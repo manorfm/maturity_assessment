@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v5` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v6` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos
@@ -58,7 +58,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 77 nós e cobre eventos de priorização, integração,
+O catálogo atual contém 79 nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
@@ -110,6 +110,15 @@ segregação implementada como fila manual e aceite sem decisão possível. Depo
 observa se auditorias, exceções e incidentes alteram a proteção ou apenas acumulam
 registros e etapas. A solução preserva a obrigação quando ela existe e atua no
 mecanismo que tornou o controle lento ou ineficaz.
+
+O ramo de workforce é observado por gestão e engenharia a partir de trabalho real.
+Ele distingue conhecimento ainda inexistente, concentrado, bloqueado por acesso,
+sem oportunidade de prática, dependente de fornecedor ou impedido pela carga. Uma
+segunda etapa verifica se curso, mentoria, colaboração ou contratação mudaram quem
+consegue executar a demanda seguinte. Presença em treinamento e matriz declarada
+não demonstram capacidade sem aplicação; a intervenção pode envolver aquisição
+temporária, colaboração, acesso supervisionado, prática aplicada, transferência
+contratual ou redução explícita de escopo.
 
 O ramo de melhoria verifica consequência em vez de frequência da cerimônia: ação
 limitada, ownership, capacidade, revisão de efeito, autonomia e segurança para

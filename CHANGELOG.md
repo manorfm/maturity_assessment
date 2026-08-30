@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.39.0
+
+- Discriminou competência inexistente, concentrada, bloqueada, sem prática,
+  dependente de fornecedor ou impedida pela carga.
+- Passou a validar capacitação pela execução seguinte, sem pontuar presença,
+  certificado, matriz, contratação ou cerimônia.
+- Publicou contratos específicos e o grafo `evidence-anamnesis-pilot-v6` para
+  gestão e engenharia.
+
 ## 0.38.0
 
 - Separou controle legítimo de governança compensando feedback técnico, ownership

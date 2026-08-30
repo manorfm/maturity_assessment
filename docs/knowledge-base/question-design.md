@@ -318,3 +318,13 @@ inferência observa se a carga é negociada e reconstrói descoberta, acesso, ex
 ajuda, adequação, alternativas e exceções. Uma etapa posterior observa se conclusão,
 abandono, chamados e contornos mudam o caminho. “Não adotou” não é causa: pode
 indicar caminho desconhecido, inacessível, inadequado ou fragmentado.
+
+### Workforce e aprendizagem aplicada
+
+Não perguntar formação, certificação nem autoavaliação teórica. Gestão e engenharia
+reconstroem um trabalho recente que exigiu algo novo ou concentrado e observam quem
+conseguiu assumir a execução. As alternativas separam ausência interna, concentração,
+acesso bloqueado, curso sem tarefa real, dependência de fornecedor e falta de
+capacidade para aprender. Depois de um investimento, uma demanda equivalente mostra
+se mais pessoas executam com segurança ou se presença, matriz e especialista apenas
+preservaram a distribuição anterior.
