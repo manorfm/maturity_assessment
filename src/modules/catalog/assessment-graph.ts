@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v2';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v3';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -488,6 +488,17 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'usage-reported', label: 'Acompanhamos uso e indicadores após a entrega, mas eles raramente mudam compromissos já assumidos ou a direção do portfólio.', signals: [{ capability: 'governanca', pattern: 'resultado-sem-repriorizacao', weight: -1 , details: ['product-direction', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
       { id: 'delivery-accepted', label: 'A conclusão é validada principalmente por aceite e entrega do escopo; benefícios são acompanhados por negócio em outro momento.', signals: [{ capability: 'fluxo', pattern: 'entrega-substitui-resultado', weight: -2 , details: ['product-direction', 'release-feedback'], layer: 'outcome', constraint: 'none' }] },
       { id: 'next-demand', label: 'O grupo segue para a próxima demanda e volta ao resultado anterior quando surge reclamação, cobrança ou nova iniciativa.', signals: [{ capability: 'governanca', pattern: 'portfolio-sem-feedback', weight: -2 , details: ['portfolio-management'], layer: 'practice', constraint: 'none' }] },
+    ],
+  },
+  {
+    id: 'product-operating-model-cause', type: 'probe', title: 'Por que o resultado não muda o investimento?',
+    scenario: 'O resultado ficou abaixo do esperado, mas a revisão não mudou a continuidade do trabalho nem a capacidade destinada ao produto.',
+    prompt: 'Na última revisão assim, o que impediu uma mudança prática?',
+    options: [
+      { id: 'temporary-funding', label: 'Orçamento e pessoas estavam aprovados até concluir a iniciativa; depois disso, o grupo seria desfeito ou movido.', signals: [{ capability: 'governanca', pattern: 'causa-funding-temporario', weight: -1, details: ['portfolio-management'], layer: 'system', constraint: 'governance' }] },
+      { id: 'acceptance-ends-ownership', label: 'Depois do aceite, negócio e tecnologia deixaram de compartilhar responsabilidade pelo resultado.', signals: [{ capability: 'organizacao', pattern: 'causa-responsabilidade-encerra-no-aceite', weight: -1, details: ['team-ownership', 'product-direction'], layer: 'system', constraint: 'organization' }] },
+      { id: 'next-initiative-consumes-capacity', label: 'As pessoas já estavam comprometidas com a próxima iniciativa e não havia capacidade para rever a anterior.', signals: [{ capability: 'governanca', pattern: 'causa-capacidade-tomada-pela-proxima-iniciativa', weight: -1, details: ['portfolio-management', 'work-management'], layer: 'system', constraint: 'priority' }] },
+      { id: 'delivery-drives-recognition', label: 'Prazo e escopo definiam sucesso; a evidência de resultado não tinha autoridade para interromper ou redirecionar o investimento.', signals: [{ capability: 'governanca', pattern: 'causa-resultado-sem-autoridade', weight: -1, details: ['portfolio-management', 'product-direction', 'leadership-management'], layer: 'system', constraint: 'incentive' }] },
     ], next: 'technical-stewardship',
   },
   {
@@ -946,6 +957,13 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, optionId: 'late-integration-conflict', to: 'shared-surface-cause' },
     { from: node.id, optionId: 'manual-coordination', to: 'shared-surface-cause' },
     ...skipEdges(node, skipObservational[node.id]!),
+  ];
+  if (node.id === 'product-outcome-evidence') return [
+    { from: node.id, optionId: 'outcome-reviewed', to: 'technical-stewardship' },
+    { from: node.id, optionId: 'usage-reported', to: 'product-operating-model-cause' },
+    { from: node.id, optionId: 'delivery-accepted', to: 'product-operating-model-cause' },
+    { from: node.id, optionId: 'next-demand', to: 'product-operating-model-cause' },
+    ...skipEdges(node, 'technical-stewardship'),
   ];
   return node.next ? [{ from: node.id, to: node.next }] : [];
 });

@@ -63,6 +63,11 @@ test('padrões apresentados no showcase possuem contrato causal específico', ()
   for (const pattern of required) assert.equal(recommendations[pattern]?.guidanceStatus, 'explicit', pattern);
 });
 
+test('causas de operating model e funding possuem contratos específicos', () => {
+  const patterns = ['causa-funding-temporario', 'causa-responsabilidade-encerra-no-aceite', 'causa-capacidade-tomada-pela-proxima-iniciativa', 'causa-resultado-sem-autoridade'];
+  for (const pattern of patterns) assert.equal(recommendations[pattern]?.guidanceStatus, 'explicit', pattern);
+});
+
 test('contrato já compatível não gera recomendação contraditória de compatibilidade', () => {
   const node = graph.find((candidate) => candidate.id === 'data-contract-change');
   const option = node?.options.find((candidate) => candidate.id === 'compatible-evolution');

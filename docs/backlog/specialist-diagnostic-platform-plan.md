@@ -302,11 +302,16 @@ paralelos por público.
 
 ### Onda C — Jornadas organizacionais
 
-- produto/projeto e funding;
 - plataforma/paved path/adoption;
 - segurança/governança/confiança;
 - workforce/reskilling;
 - legado/ownership compartilhado.
+
+Produto/projeto e funding já pertencem ao grafo vigente: quando evidência de
+resultado não muda o investimento, o aprofundamento discrimina funding temporário,
+responsabilidade encerrada no aceite, capacidade tomada pela próxima iniciativa e
+incentivo por prazo/escopo. A validação humana dessa jornada continua coberta pelo
+gate anterior.
 
 ### Onda D — Grafo causal e bibliotecas
 

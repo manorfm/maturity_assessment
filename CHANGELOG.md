@@ -5,6 +5,16 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.36.0
+
+- Separou o sintoma de resultado sem efeito no portfólio de quatro mecanismos:
+  funding temporário, ownership encerrado, capacidade tomada e incentivo por
+  entrega.
+- Publicou intervenções específicas com explicação cotidiana, limites, responsável,
+  indicador e critério de sucesso para cada mecanismo.
+- Direcionou somente respostas frágeis ao aprofundamento e publicou o conteúdo como
+  `evidence-anamnesis-pilot-v3`.
+
 ## 0.35.0
 
 - Substituiu fallbacks por narrativas cotidianas explícitas de investigação,

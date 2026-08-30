@@ -1,6 +1,6 @@
 type FoundationRef = { source: string; principle?: string; why?: string };
 
-export type GuidanceConstraint = 'skill' | 'autonomy' | 'process' | 'structure' | 'platform' | 'incentive' | 'architecture';
+export type GuidanceConstraint = 'skill' | 'autonomy' | 'process' | 'structure' | 'platform' | 'incentive' | 'architecture' | 'governance' | 'organization' | 'priority';
 export type SolutionKind = 'practice' | 'policy' | 'org-design' | 'platform-capability' | 'tool-class';
 
 export type SolutionGuidance = {
@@ -490,6 +490,38 @@ const explicit: Record<string, SolutionGuidance> = {
     whyItWorks: 'Continuidade e capacidade voltam a ser decisões condicionadas ao efeito.', doesNotSolve: 'Não cria uma métrica útil quando o resultado ainda não foi definido.',
     examples: 'Revisar uma iniciativa com hipótese, efeito e opção explícita de parar.', antiPattern: 'Adicionar métricas sem permitir que mudem o investimento.',
     metric: 'iniciativas cuja continuidade mudou por evidência e capacidade liberada por trabalho interrompido', successCriterion: 'a próxima revisão altera continuidade, escopo ou capacidade a partir de evidência do resultado',
+  },
+  'causa-funding-temporario': {
+    mechanism: 'Orçamento e pessoas são autorizados para concluir uma iniciativa temporária. Quando a entrega termina, a capacidade se desfaz antes que a evidência possa orientar continuidade ou correção.',
+    constraintKind: 'governance', plainExplanation: 'O dinheiro paga a entrega, mas não preserva quem precisa observar o resultado e agir depois.',
+    solutionKind: 'policy', solutionClass: 'Financiamento contínuo do resultado com revisão de continuidade', matureReference: 'Lean Product Development / gestão de produto',
+    whyItWorks: 'A capacidade permanece ligada ao resultado e pode crescer, mudar ou ser liberada conforme a evidência.', doesNotSolve: 'Não define sozinho um resultado útil nem corrige ownership fragmentado.',
+    examples: 'Revisar capacidade de um produto por resultado, sem renovar automaticamente um projeto.', antiPattern: 'Renomear projeto como produto mantendo orçamento, prazo e dissolução do grupo.',
+    metric: 'produtos cuja capacidade mudou após revisão de resultado e tempo entre evidência e decisão de investimento', successCriterion: 'a próxima revisão mantém, redireciona ou libera capacidade com base no resultado observado',
+  },
+  'causa-responsabilidade-encerra-no-aceite': {
+    mechanism: 'O aceite encerra a responsabilidade compartilhada; depois dele, resultado, operação e correção passam a grupos diferentes sem autoridade ponta a ponta.',
+    constraintKind: 'organization', plainExplanation: 'A entrega tem dono até ficar pronta, mas o efeito que ela produz fica sem um grupo responsável por agir.',
+    solutionKind: 'org-design', solutionClass: 'Ownership durável do produto depois da entrega', matureReference: 'Team Topologies / modelo operacional de produto',
+    whyItWorks: 'O mesmo grupo preserva contexto e autoridade para observar, corrigir e evoluir o resultado.', doesNotSolve: 'Não cria capacidade se todas as pessoas já estiverem comprometidas com outras iniciativas.',
+    examples: 'Responsabilidade conjunta de negócio e tecnologia até a revisão de efeito.', antiPattern: 'Criar um responsável nominal sem capacidade nem poder de decisão.',
+    metric: 'resultados sem responsável ativo e tempo entre evidência ruim e ação do grupo responsável', successCriterion: 'uma entrega relevante conserva responsável, capacidade e decisão até a revisão do resultado',
+  },
+  'causa-capacidade-tomada-pela-proxima-iniciativa': {
+    mechanism: 'Novos compromissos ocupam toda a capacidade antes da revisão do trabalho anterior, portanto aprender exige atrasar algo que já foi prometido.',
+    constraintKind: 'priority', plainExplanation: 'A equipe sabe que deveria revisar o resultado, mas já recebeu trabalho novo para preencher todo o tempo disponível.',
+    solutionKind: 'policy', solutionClass: 'Capacidade condicionada à revisão de resultado', matureReference: 'Lean portfolio management',
+    whyItWorks: 'A revisão passa a disputar capacidade antes dos novos compromissos, quando ainda é possível mudar a decisão.', doesNotSolve: 'Não ajuda se a evidência de resultado não existe ou não é confiável.',
+    examples: 'Reservar capacidade antes de autorizar todo o próximo ciclo de investimento.', antiPattern: 'Adicionar uma reunião de métricas sem liberar capacidade para agir.',
+    metric: 'resultados revistos antes do próximo compromisso e capacidade alterada pela revisão', successCriterion: 'a próxima iniciativa começa preservando capacidade para uma decisão baseada no resultado anterior',
+  },
+  'causa-resultado-sem-autoridade': {
+    mechanism: 'Prazo e escopo determinam reconhecimento e prestação de contas; a evidência de resultado é informativa, mas não pode mudar continuidade, prioridade ou capacidade.',
+    constraintKind: 'incentive', plainExplanation: 'As pessoas são cobradas por terminar o combinado. Mesmo quando o resultado decepciona, parar ou mudar parece fracasso.',
+    solutionKind: 'policy', solutionClass: 'Direito explícito de mudar ou encerrar investimento', matureReference: 'Evidence-Based Management / Lean Product Development',
+    whyItWorks: 'Aprender e interromper trabalho sem efeito passam a ser decisões legítimas, não desvios do plano.', doesNotSolve: 'Não substitui uma hipótese clara nem evidência confiável de resultado.',
+    examples: 'Revisão com opções reais de continuar, redirecionar ou encerrar.', antiPattern: 'Celebrar aprendizado mantendo todos os compromissos intactos.',
+    metric: 'revisões que mudaram continuidade, prioridade ou capacidade e trabalho encerrado por evidência', successCriterion: 'a próxima revisão altera uma decisão material quando o resultado contradiz o plano',
   },
 };
 

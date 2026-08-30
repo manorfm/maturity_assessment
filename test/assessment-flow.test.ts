@@ -28,6 +28,17 @@ test('convite é consumido uma vez e não mantém vínculo com a participação'
   assert.equal((db.prepare('SELECT COUNT(*) total FROM participations').get() as { total: number }).total, 1);
 });
 
+test('resultado sem efeito no portfólio discrimina operating model e funding antes de recomendar', () => {
+  const symptom = graph.find((node) => node.id === 'product-outcome-evidence')!;
+  const cause = graph.find((node) => node.id === 'product-operating-model-cause')!;
+  assert.ok(symptom);
+  assert.equal(cause.type, 'probe');
+  assert.deepEqual(cause.options.filter((option) => option.signals.length).map((option) => option.signals[0]?.constraint), ['governance', 'organization', 'priority', 'incentive']);
+  assert.ok(edges.some((edge) => edge.from === symptom.id && edge.optionId === 'delivery-accepted' && edge.to === cause.id));
+  assert.ok(edges.some((edge) => edge.from === symptom.id && edge.optionId === 'next-demand' && edge.to === cause.id));
+  assert.ok(edges.some((edge) => edge.from === cause.id && edge.to === 'technical-stewardship'));
+});
+
 test('convites pertencem somente às folhas de uma hierarquia livre', () => {
   const db = createDatabase(':memory:');
   const projects = new ProjectService(db);
@@ -243,7 +254,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 254);
+  assert.equal(signals.length, 258);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

@@ -19,8 +19,9 @@ workforce, portfólio de intervenção e relatórios por autoridade — está no
 [`specialist-diagnostic-platform-plan.md`](specialist-diagnostic-platform-plan.md).
 Esse documento é a referência canônica da direção completa; os planos abaixo
 continuam donos de suas entregas especializadas e da validação empírica.
-Sua sequência aberta começa pela validação humana da linguagem e depois pelas
-jornadas organizacionais; contrato diagnóstico, autoridade, suspensão de
+Sua sequência aberta mantém a validação humana da linguagem e segue pelas jornadas
+de plataforma, segurança, workforce e legado; produto/projeto e funding já foram
+incorporados ao grafo vigente. Contrato diagnóstico, autoridade, suspensão de
 prescrição, portfólio por contenção e proteções automatizadas de acessibilidade já
 pertencem à base de conhecimento vigente.
 

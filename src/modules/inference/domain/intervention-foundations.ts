@@ -546,6 +546,26 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "principle": "Incentivo alinhado a resultado, não a ocupação",
     "why": "Cerimônia de OKR não mede maturidade; o que pesa na decisão sim."
   },
+  "causa-funding-temporario": {
+    "source": "Lean Product Development / gestão de produto",
+    "principle": "Financiar capacidade e resultado, não apenas iniciativa temporária",
+    "why": "O modelo é observado pela decisão de manter, mudar ou liberar capacidade depois da evidência, não pelo nome produto ou projeto."
+  },
+  "causa-responsabilidade-encerra-no-aceite": {
+    "source": "Team Topologies",
+    "principle": "Ownership durável do resultado ponta a ponta",
+    "why": "A fronteira é avaliada pela autoridade e capacidade preservadas depois da entrega, não pelo desenho formal do time."
+  },
+  "causa-capacidade-tomada-pela-proxima-iniciativa": {
+    "source": "Lean / Accelerate",
+    "principle": "Capacidade protegida para fechar o ciclo de resultado",
+    "why": "Medir sem reservar capacidade para decidir não produz aprendizado nem muda o sistema de investimento."
+  },
+  "causa-resultado-sem-autoridade": {
+    "source": "Lean / Accelerate",
+    "principle": "Evidência de resultado com poder para mudar o investimento",
+    "why": "O incentivo real aparece quando uma evidência contrária pode interromper ou redirecionar trabalho já comprometido."
+  },
   "divida-sem-capacidade-continua": {
     "source": "Melhoria contínua",
     "principle": "Mudança pequena, dono, sinal de efeito",

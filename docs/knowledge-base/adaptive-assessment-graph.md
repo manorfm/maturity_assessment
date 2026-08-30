@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v2` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v3` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos
@@ -58,7 +58,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 72 nós e cobre eventos de priorização, integração,
+O catálogo atual contém 73 nós e cobre eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
@@ -87,6 +87,13 @@ runtime, configuração, infraestrutura ou dados.
 O ramo de trabalho verifica se uma iteração é orientada a resultado ou ocupação,
 como o grupo reage a bloqueios e se decisões chegam como solução pronta, escolha
 concentrada, convenção por inércia ou trade-off intencionalmente revisável.
+
+O ramo de resultado distingue o sintoma “a evidência não alterou o investimento”
+de quatro mecanismos concorrentes: financiamento que termina com a iniciativa,
+responsabilidade encerrada no aceite, capacidade já tomada pelo próximo compromisso
+e incentivo que reconhece prazo e escopo sem dar autoridade ao resultado. Cada
+mecanismo possui contenção, classe de solução, limite e experimento próprios; o
+instrumento não conclui “mudar para produto” apenas pela nomenclatura adotada.
 
 O ramo de melhoria verifica consequência em vez de frequência da cerimônia: ação
 limitada, ownership, capacidade, revisão de efeito, autonomia e segurança para

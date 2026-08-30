@@ -91,6 +91,13 @@ referencia explicitamente um fundamento do catálogo — sem classificação por
 coincidência de palavras — e a ausência desse vínculo impede a inicialização do
 recomendador.
 
+No recorte de produto, a evidência que não altera o investimento
+permanece um sintoma até o aprofundamento distinguir financiamento temporário,
+encerramento de ownership no aceite, indisponibilidade de capacidade ou incentivo
+por entrega. Esses mecanismos levam respectivamente a decisões de funding,
+desenho organizacional, alocação ou incentivo; não são tratados por uma recomendação
+única de “adotar modelo de produto”.
+
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
 corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
 limitador mistura evidência, quando o finding **é** a divergência de perspectiva,
