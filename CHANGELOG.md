@@ -5,6 +5,17 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.35.0
+
+- Substituiu fallbacks por narrativas cotidianas explícitas de investigação,
+  preservação e regressão para todas as capacidades publicáveis.
+- Passou a bloquear perguntas sem saída de visibilidade e jargão operacional não
+  traduzido, mantendo a auditoria do instrumento sem erros ou avisos.
+- Reorganizou o cartão para apresentar situação e prioridade antes dos detalhes de
+  causa, localização, autoridade e gravidade.
+- Publicou o conteúdo revisado como `evidence-anamnesis-pilot-v2`; validação com
+  pessoas reais permaneceu como gate aberto.
+
 ## 0.34.0
 
 - Tornou mecanismo causal obrigatório nos probes e suspendeu prescrição quando

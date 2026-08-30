@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v1` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v2` começa por uma escolha neutra de
 perspectiva. A pessoa recebe um tronco comum e, quando a perspectiva muda o que ela
 consegue observar ou decidir, um ramo próprio. Gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design possuem aprofundamentos

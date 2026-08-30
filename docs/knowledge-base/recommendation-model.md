@@ -106,6 +106,11 @@ sinal observado, as explicações que ainda competem e o evento que precisa ser
 reconstruído. O nome da capacidade nunca é encaixado mecanicamente em uma frase.
 Preservação também nomeia o comportamento sustentado e um sinal de regressão; não é
 um elogio genérico nem autoriza intervenção para preencher o relatório.
+Todas as folhas possuem narrativas explícitas de investigação e preservação. Uma
+folha nova sem esse contrato impede a autoria em vez de receber fallback por
+rótulo. No cartão, causa, localização, autoridade e gravidade permanecem
+auditáveis sob demanda; o primeiro plano usa situação, prioridade e próximo evento
+em linguagem cotidiana.
 
 O cartão formula explicitamente a decisão solicitada. Autorizar o experimento vem
 antes do catálogo de alternativas, acompanhado por responsável, horizonte,

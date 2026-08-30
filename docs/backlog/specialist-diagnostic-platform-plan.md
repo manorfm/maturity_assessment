@@ -292,12 +292,13 @@ paralelos por público.
 
 ## Sequência de implementação
 
-### Onda B — Linguagem e acessibilidade
+### Validação humana de linguagem antes da Onda C
 
-- remover fallbacks que encaixam nomes de capacidades em frases;
-- validar cenários com pessoas de baixo repertório técnico;
-- garantir evento recente, opções observáveis e saídas de visibilidade;
-- testar leitura sem facilitador por diretoria e gerência.
+- realizar entrevistas cognitivas com pessoas de baixo repertório técnico;
+- validar leitura sem facilitador por diretoria e gerência reais;
+- registrar compreensão, recuperação do evento e termos confusos no painel;
+- revisar o conteúdo somente a partir dessa evidência, sem tratar teste automatizado
+  como substituto da validação humana.
 
 ### Onda C — Jornadas organizacionais
 
@@ -347,7 +348,7 @@ paralelos por público.
 ## Dependências
 
 ```text
-B linguagem
+validação humana de linguagem
   -> C jornadas
   -> D grafo causal
   -> E intervenções
@@ -357,7 +358,7 @@ B linguagem
 ```
 
 F pode prototipar cedo, mas não fecha antes de D e E.
-Nenhum piloto amplo começa antes de B e G; nenhuma calibração muda o modelo
+Nenhum piloto amplo começa antes da validação humana de linguagem e de G; nenhuma calibração muda o modelo
 publicado antes de H.
 
 ## Critérios de aceite por capacidade nova

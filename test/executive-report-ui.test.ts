@@ -237,10 +237,23 @@ test('diagnóstico condicionado explica autoridade e motivo da investigação', 
     kind: 'discriminate', kindLabel: 'Discriminar a causa', limiterLabel: 'Integração contínua', reading: 'Mudanças permanecem isoladas.', nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua a última mudança.',
     finding: { kind: 'correction', pattern: 'batch', detailCapability: 'continuous-integration', title: 'Mudanças permanecem isoladas', cause: '', intervention: '', confidence: .8, priority: .8, mechanism: 'undetermined', containment: 'undetermined', decisionAuthority: 'undetermined', prescription: { status: 'investigate', reason: 'Ainda falta discriminar o mecanismo.' } },
   }, { confirmedProblemCount: 3 });
-  assert.match(html, /Autoridade para decidir.*Ainda não determinada/s);
-  assert.match(html, /Estado da orientação.*Ainda falta discriminar o mecanismo/s);
+  assert.match(html, /Quem pode decidir.*Ainda não determinada/s);
+  assert.match(html, /Por que ainda não indicamos uma solução/);
+  assert.match(html, /O que parece manter o problema.*Ainda não determinado/s);
+  assert.match(html, /Por que investigar primeiro.*Ainda falta discriminar o mecanismo/s);
   assert.doesNotMatch(html, /Decisão solicitada/);
   assert.match(html, /prioridade 1 de 3 problemas confirmados/i);
+});
+
+test('leitura executiva apresenta situação e prioridade antes do vocabulário metodológico', () => {
+  const html = renderOutcome({
+    kind: 'discriminate', kindLabel: 'Entender a causa antes de agir', limiterLabel: 'Integração contínua', reading: 'Mudanças pequenas ficam separadas por vários dias e encontram conflitos tarde.', nextStepTitle: 'Entender a espera', nextStepBody: 'Reconstrua a última mudança que ficou separada.',
+    finding: { kind: 'correction', pattern: 'batch', detailCapability: 'continuous-integration', title: 'Mudanças encontram o restante do sistema tarde', cause: '', intervention: '', confidence: .8, priority: .8, mechanism: 'undetermined', containment: 'undetermined', decisionAuthority: 'undetermined', prescription: { status: 'investigate', reason: 'Ainda falta localizar o impedimento.' } },
+  }, { confirmedProblemCount: 4 });
+  const firstPlane = html.slice(0, html.indexOf('<details'));
+  assert.match(firstPlane, /Mudanças pequenas ficam separadas/);
+  assert.match(firstPlane, /prioridade 1 de 4 problemas confirmados/i);
+  assert.doesNotMatch(firstPlane, /mecanismo|contenção|severidade|posterior/i);
 });
 
 test('cartão detalhado publica a âncora canônica do finding', () => {
@@ -283,7 +296,7 @@ test('estágio ordinal fica no detalhe de consistência, não no cabeçalho', ()
   const html = renderClassification({
     level: 1, label: 'Reativo', limitingCapabilities: ['Descoberta e validação'],
   }, {
-    kind: 'discriminate', kindLabel: 'Discriminar antes de intervir', limiterLabel: 'Descoberta e validação',
+    kind: 'discriminate', kindLabel: 'Entender a causa antes de agir', limiterLabel: 'Descoberta e validação',
     reading: 'Ainda faltam causas.', nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua um evento.',
   });
   assert.match(html, /<details/);
@@ -327,7 +340,7 @@ test('discriminação distingue evidência insuficiente, contradição e fragili
   assert.doesNotMatch(insufficient, /fragilidade confirmada/i);
 
   const contradiction = renderOutcome({
-    kind: 'discriminate', kindLabel: 'Discriminar antes de intervir', limiterLabel: 'Aprendizado',
+    kind: 'discriminate', kindLabel: 'Entender a causa antes de agir', limiterLabel: 'Aprendizado',
     reading: 'Aprendizado está em reativo, mas as evidências deste elo ainda se misturam.',
     nextStepTitle: 'Discriminar', nextStepBody: 'Reconstrua um evento sem abrir várias frentes.',
   });
@@ -335,7 +348,7 @@ test('discriminação distingue evidência insuficiente, contradição e fragili
   assert.match(contradiction, /direções opostas|contrad/i);
 
   const dispersed = renderOutcome({
-    kind: 'discriminate', kindLabel: 'Discriminar antes de intervir', limiterLabel: 'Descoberta e validação',
+    kind: 'discriminate', kindLabel: 'Entender a causa antes de agir', limiterLabel: 'Descoberta e validação',
     reading: 'Descoberta e validação está em reativo e as fragilidades observadas neste elo estão dispersas; o relatório não inventa uma causa.',
     nextStepTitle: 'Investigar', nextStepBody: 'Reconstrua um evento recente de descoberta.',
   });
@@ -369,7 +382,7 @@ test('resumo executivo mostra um limitador e a próxima decisão, sem lista aber
 test('divergência suspende a classificação ordinal no primeiro plano', () => {
   const html = renderClassification(
     { level: 0, label: 'Opaco', limitingCapabilities: ['Aprendizado'] },
-    { kind: 'discriminate', kindLabel: 'Discriminar antes de intervir', limiterLabel: 'Perspectivas divergem sobre aprendizado', reading: 'As lentes divergem.', nextStepTitle: 'Triangular', nextStepBody: 'Reconstruir evento.' },
+    { kind: 'discriminate', kindLabel: 'Entender a causa antes de agir', limiterLabel: 'Perspectivas divergem sobre aprendizado', reading: 'As lentes divergem.', nextStepTitle: 'Triangular', nextStepBody: 'Reconstruir evento.' },
   );
   assert.match(html, /Inconclusivo/);
   assert.doesNotMatch(html, />0 · Opaco</);

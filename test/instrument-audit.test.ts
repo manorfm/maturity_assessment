@@ -9,7 +9,18 @@ test('auditoria relata todos os problemas editoriais sem parar no primeiro', () 
   const intervention = { title: 'Problema', cause: 'Causa suficientemente descrita.', action: 'Agir.', intervention: 'Agir.', owner: 'Responsável pela capacidade com o time', metric: 'tempo de espera, recorrência e efeito observado na capacidade afetada', reviewHorizon: '30 dias', successCriterion: 'a métrica escolhida melhora no período sem deslocar risco ou espera para outra etapa', evidencePatterns: ['p'], contradictionPatterns: [], foundation: { source: 'Melhoria contínua', principle: 'Revisar', why: 'A intervenção ataca o comportamento observado, não um inventário de práticas.' } } satisfies InterventionDefinition;
   const issues = auditInstrument(nodes, { p: intervention });
   assert.ok(issues.length >= 6);
-  assert.deepEqual(new Set(issues.map((item) => item.code)), new Set(['missing-observation-anchor', 'abstract-prompt', 'compound-option', 'desirability-cue', 'signal-overload', 'generic-success', 'generic-metric', 'generic-owner', 'generic-foundation']));
+  assert.deepEqual(new Set(issues.map((item) => item.code)), new Set(['missing-observation-anchor', 'missing-visibility-exit', 'abstract-prompt', 'compound-option', 'desirability-cue', 'signal-overload', 'generic-success', 'generic-metric', 'generic-owner', 'generic-foundation']));
+});
+
+test('pergunta sem saída de visibilidade é bloqueada', () => {
+  const node: AssessmentNode = { id: 'without-exit', title: 'Mudança', scenario: 'Na última mudança.', prompt: 'O que aconteceu?', options: [{ id: 'answer', label: 'O grupo esperou outra área.', signals: [] }] };
+  assert.ok(auditInstrument([node], {}).some((issue) => issue.code === 'missing-visibility-exit'));
+});
+
+test('jargão exposto à pessoa respondente exige tradução cotidiana', () => {
+  const node: AssessmentNode = { id: 'jargon', title: 'Mudança', scenario: 'Depois do último deploy.', prompt: 'Como o handoff aconteceu?', options: [{ id: 'answer', label: 'O rollback dependeu do runbook.', signals: [] }, { id: 'cannot-observe', label: 'Não acompanho.', observation: 'visibility', signals: [] }] };
+  const issues = auditInstrument([node], {});
+  assert.equal(issues.filter((issue) => issue.code === 'exposed-jargon').length, 3);
 });
 
 test('cenário publica fato e reserva padrão causal para probe', () => {

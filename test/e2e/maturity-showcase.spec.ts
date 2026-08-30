@@ -90,7 +90,7 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await page.locator('.radar-drill-link', { hasText: 'Plataforma e experiência de engenharia' }).first().click();
   await page.locator('.radar-drill-link', { hasText: 'Capacidades chegam com autonomia' }).click();
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();
-  await expect(page.locator('.outcome-card .tag')).toHaveText(/Corrigir o limitador|Evoluir a prática|Discriminar antes de intervir|Preservar a prática/);
+  await expect(page.locator('.outcome-card .tag')).toHaveText(/Corrigir o limitador|Evoluir a prática|Entender a causa antes de agir|Preservar a prática/);
   await page.goto(adminUrl);
   const observed = await observeReport(page);
   levels.fragile = Number(observed.classification.split('·')[0]?.trim());
@@ -175,7 +175,7 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
   await revealConsistency(page);
   await expect(page.locator('.classification-level')).toContainText('Gerenciado');
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();
-  await expect(page.locator('.outcome-card .tag')).toHaveText(/Evoluir a prática|Corrigir o limitador|Discriminar antes de intervir|Preservar a prática/);
+  await expect(page.locator('.outcome-card .tag')).toHaveText(/Evoluir a prática|Corrigir o limitador|Entender a causa antes de agir|Preservar a prática/);
   await page.goto(adminUrl);
   const observed = await observeReport(page);
   levels.adaptive = Number(observed.classification.split('·')[0]?.trim());

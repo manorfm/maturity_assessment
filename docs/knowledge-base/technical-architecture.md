@@ -159,6 +159,12 @@ frágil e emergente, preservação do ramo 4/4 e a tag de divergência, e deixa 
 em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 `demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
 3217, evitando recursão entre scripts.
+
+O catálogo `capability-narrative.ts` é o único contrato de prosa para investigação
+e preservação. Cada folha declara situação incerta, evento recente, comportamento
+sustentado e regressão; não existe fallback que encaixe o rótulo da capacidade em
+uma frase. A auditoria do instrumento protege evento recuperável, saída de
+visibilidade e vocabulário acessível antes da publicação.
 O caso principal possui dois times de dez pessoas cada: um SRE, quatro pessoas de
 engenharia, uma de QA, duas de produto, uma de arquitetura e uma de gestão. Os casos
 fixam escolhas narrativas somente nos eventos que definem sua história central. Um

@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Linguagem operacional e autoria sem fallback
+
+- Entregue a versão 0.35 com narrativas explícitas por capacidade, auditoria de
+  visibilidade e jargão e primeiro plano executivo em linguagem cotidiana; ver
+  [`question-design.md`](../knowledge-base/question-design.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md). A
+  validação cognitiva com pessoas reais permaneceu no backlog.
+
 ## 2026-08-29 — Roadmap da plataforma especialista
 
 - Consolidado o objetivo futuro, as invariantes, os motores, as jornadas, a

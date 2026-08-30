@@ -62,7 +62,7 @@ const kindLabels: Record<ReportOutcomeKind, string> = {
   preserve: 'Preservar a prática',
   correct: 'Corrigir o limitador',
   evolve: 'Evoluir a prática',
-  discriminate: 'Discriminar antes de intervir',
+  discriminate: 'Entender a causa antes de agir',
 };
 
 const stageLabels = ['Opaco', 'Reativo', 'Repetível', 'Gerenciado', 'Adaptativo'] as const;
@@ -156,7 +156,9 @@ export function decideReportOutcome(input: {
     };
   }
   if (focus?.children.length && focus.level >= 4 && (!limiter || cloudCapabilityIds.has(limiter.id) || limiter.level >= 4)) {
-    const preservation = preservationFor(focus.label);
+    const preservedLeaf = flattenAssessedLeaves([focus]).find((candidate) => !cloudCapabilityIds.has(candidate.id)) ?? flattenAssessedLeaves([focus])[0];
+    if (!preservedLeaf) throw new Error(`Narrativa de preservação sem capacidade observada para ${focus.id}.`);
+    const preservation = preservationFor(preservedLeaf.id);
     return { ...outcome('preserve', focus.label, preservation.reading, 'Não iniciar transformação aqui', preservation.nextStep), limiterId: focus.id };
   }
   if (mixed) {
@@ -182,10 +184,10 @@ export function decideReportOutcome(input: {
     };
   }
   if (stageLevel >= 4 || (limiter && limiter.level >= 4)) {
-    const preservation = preservationFor(limiterLabel);
+    const preservation = preservationFor(limiter?.id ?? focus?.id ?? '');
     return { ...outcome('preserve', limiterLabel, preservation.reading, 'Não iniciar transformação aqui', preservation.nextStep), ...limiterId(limiter) };
   }
-  const investigation = investigationFor(limiter?.id ?? focus?.id ?? '', limiterLabel);
+  const investigation = investigationFor(limiter?.id ?? focus?.id ?? '');
   if (!input.focusId && uniqueFindings.length === 0 && stageLevel < 4) {
     return {
       ...outcome(

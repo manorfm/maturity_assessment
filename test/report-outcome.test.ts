@@ -88,7 +88,7 @@ test('limitador baixo sem causa vira coleta, não vazio', () => {
   });
   assert.equal(outcome.kind, 'discriminate');
   assert.equal(outcome.limiterLabel, 'Descoberta e validação');
-  assert.match(outcome.nextStepBody, /Descoberta e validação/);
+  assert.match(outcome.nextStepBody, /última ideia levada à construção/i);
   assert.equal(outcome.finding, undefined);
 });
 
@@ -197,7 +197,7 @@ test('investigação sem causa descreve incerteza sem encaixar o nome em frase a
   });
   assert.equal(outcome.kind, 'discriminate');
   assert.match(outcome.reading, /as respostas|os relatos/i);
-  assert.match(outcome.reading, /telemetria|acesso|conhecimento/i);
+  assert.match(outcome.reading, /informaç|acesso|conhecimento/i);
   assert.doesNotMatch(outcome.reading, /Impacto pode ser investigado está em/i);
   assert.match(outcome.nextStepBody, /incidente|mudança|evento/i);
 });
@@ -210,7 +210,7 @@ test('preservação nomeia comportamento e sinal de regressão do recorte', () =
     focusId: 'reliability-practice',
   });
   assert.equal(outcome.kind, 'preserve');
-  assert.match(outcome.reading, /Confiabilidade altera decisões/);
+  assert.match(outcome.reading, /Impacto e risco aceitável orientam/i);
   assert.match(outcome.nextStepBody, /regressão|deixar de|voltar/i);
 });
 

@@ -36,8 +36,11 @@
   perspectivas conseguem reconhecer o mesmo comportamento sem traduzir jargão.
 - Antes do piloto, executar `npm run audit:instrument`. O comando percorre todas as
   perguntas e intervenções e bloqueia alternativas compostas, pistas julgadoras e
-  experimentos genéricos; avisos de evento ausente ou abstração também devem chegar
-  a zero na versão publicada para entrevista cognitiva.
+  experimentos genéricos. Também bloqueia pergunta sem saída de visibilidade e
+  jargão operacional exposto (`deploy`, `rollback`, `handoff`, `runtime`, entre
+  outros); avisos de evento ausente ou abstração devem chegar a zero na versão
+  publicada para entrevista cognitiva. Essa auditoria prepara, mas não substitui,
+  entrevistas cognitivas com pessoas reais.
 
 ## Formatos
 

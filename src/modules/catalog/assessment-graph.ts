@@ -1,4 +1,4 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v1';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v2';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -615,7 +615,7 @@ const authoredNodes: AssessmentNode[] = [
   },
   {
     id: 'noisy-signal', title: 'Um gráfico que parece ter melhorado',
-    scenario: 'Depois de um deploy, um gráfico de latência “melhorou”: a média caiu, um extremo piorou e o volume caiu cerca de 40%. Alguém pergunta se podem comunicar sucesso.',
+    scenario: 'Depois de uma nova versão chegar ao ambiente real, um gráfico de tempo de resposta “melhorou”: a média caiu, um extremo piorou e o volume caiu cerca de 40%. Alguém pergunta se podem comunicar sucesso.',
     prompt: 'Qual decisão o grupo toma com o que tem?',
     options: [
       { id: 'ask-denominator', label: 'Verificam quantos casos formam o indicador e quais grupos foram afetados. Com poucos casos, esperam mais evidência antes de concluir.', signals: [{ capability: 'observabilidade', pattern: 'recusa-concluir-sem-contexto', weight: 2, details: ['observability-practice'], layer: 'practice', constraint: 'none' }] },

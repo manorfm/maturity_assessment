@@ -12,6 +12,7 @@ export type InstrumentIssue = {
 const abstractLanguage = /\b(capacidade|evid[eê]ncia|contexto|hip[oó]tese|fronteira|reconcili\w*|reproduz[ií]vel|correlacion\w*)\b/i;
 const desirableLanguage = /\b(maduro|ideal|corret[oa]mente|correto|melhor pr[aá]tica|excel[eê]ncia)\b/i;
 const observableAnchor = /(últim[oa]|últimas?|recent[ea]|nesta semana|neste ciclo|depois de|quando|durante)/i;
+const exposedJargon = /\b(deploy|rollback|runtime|handoff|ownership|guardrails?|schema|pipelines?|feature flags?|runbooks?|finops)\b/i;
 
 export function auditInstrument(nodes: AssessmentNode[], interventions: Record<string, InterventionDefinition>): InstrumentIssue[] {
   return [...auditQuestions(nodes), ...auditInterventions(interventions)];
@@ -22,9 +23,13 @@ function auditQuestions(nodes: AssessmentNode[]): InstrumentIssue[] {
     if (node.id === 'respondent-context') return [];
     const issues: InstrumentIssue[] = [];
     if (!observableAnchor.test(`${node.scenario} ${node.prompt}`)) issues.push(issue('warning', 'missing-observation-anchor', node.id, 'O cenário não ancora a resposta em um evento ou período recuperável.'));
+    if (!node.options.some((option) => option.observation === 'visibility')) issues.push(issue('error', 'missing-visibility-exit', node.id, 'A pergunta precisa permitir que a pessoa declare não observar a situação sem produzir sinal.'));
+    if (exposedJargon.test(node.scenario)) issues.push(issue('error', 'exposed-jargon', `${node.id}/scenario`, 'O cenário expõe jargão que precisa ser traduzido para um comportamento cotidiano.'));
+    if (exposedJargon.test(node.prompt)) issues.push(issue('error', 'exposed-jargon', `${node.id}/prompt`, 'A pergunta expõe jargão que precisa ser traduzido para um comportamento cotidiano.'));
     if (abstractLanguage.test(node.prompt)) issues.push(issue('warning', 'abstract-prompt', node.id, 'A pergunta usa abstração que pode exigir tradução pela pessoa respondente.'));
     for (const option of node.options.filter((item) => (item.observation ?? 'practice') === 'practice')) {
       const subject = `${node.id}/${option.id}`;
+      if (exposedJargon.test(option.label)) issues.push(issue('error', 'exposed-jargon', subject, 'A alternativa expõe jargão que precisa ser traduzido para um comportamento cotidiano.'));
       const clauses = option.label.split(/[;.]|\bmas\b|\bporém\b/i).filter((part) => part.trim()).length;
       if (clauses > 2) issues.push(issue('error', 'compound-option', subject, 'A alternativa reúne mais de dois comportamentos ou consequências.'));
       if (desirableLanguage.test(option.label)) issues.push(issue('error', 'desirability-cue', subject, 'A alternativa revela julgamento ou resposta socialmente desejável.'));
