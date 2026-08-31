@@ -94,13 +94,15 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com 87 nós, aprofundamentos
+O corte vigente implementa esses cinco passos com 88 nós, aprofundamentos
 condicionais e nove perspectivas — gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design — escolhidas durante
 a entrevista. Um contexto neutro adicional registra responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. `assessment_edges.conditions_json`
 mantém condições declarativas e `participations.work_context_json` preserva o
 contexto da retomada sem gerar sinal.
+O mesmo JSON preserva a trilha derivada da opção de contexto. A estimativa exibida
+percorre as arestas dessa trilha, em vez de usar o primeiro sucessor do grafo amplo.
 
 O cálculo ordinal agrega primeiro por pessoa, aplica partial pooling fraco em
 recortes pequenos e publica intervalo beta-binomial de 90%. Sinais contraditórios

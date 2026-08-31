@@ -65,7 +65,9 @@ conhecimento. Em seguida seleciona uma descrição ampla das responsabilidades q
 exerce, autoridade, alcance e eventos que observa. Esse contexto também não gera
 sinal e é persistido separadamente para avaliar condições declarativas das arestas.
 O catálogo roteia a entrevista pela combinação de contexto e perspectiva. Todos
-atravessam um tronco comportamental comum. Depois da liderança sistêmica:
+recebem de dois a quatro eventos elegíveis numa trilha de entrega, ciclo completo,
+risco, capacidade compartilhada, arquitetura, resultados, portfólio ou experiência.
+Depois da coleta factual e dos probes elegíveis:
 
 - gestão aprofunda portfólio, poder, segurança para expor risco e carga cognitiva
   do grupo;

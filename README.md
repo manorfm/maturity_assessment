@@ -70,8 +70,9 @@ incidente, uma decisão arquitetural ou uma ação de melhoria. Em vez de pergun
 “você usa CI/CD?” ou “aplica SRE?”, ela investiga o que aconteceu, quem percebeu,
 quanto esperou, como decidiu, que consequência ocorreu e o que mudou depois.
 
-O percurso é um grafo versionado com 87 nós. Um tronco comum identifica sintomas;
-ramos por contexto de trabalho e perspectiva aprofundam o que a pessoa consegue observar. Depois do
+O percurso é um grafo versionado com 88 nós. O contexto seleciona uma trilha curta
+de dois a quatro eventos observáveis; cada evento aprofunda fatos e consequências,
+e a perspectiva adapta a linguagem ao que a pessoa consegue observar. Depois do
 percurso declarativo, o motor pode selecionar até cinco perguntas adicionais para
 reduzir a incerteza causal, respeitando aplicabilidade, custo e orçamento da jornada.
 

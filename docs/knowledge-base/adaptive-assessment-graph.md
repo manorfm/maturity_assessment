@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v10` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v11` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. A pessoa recebe um tronco comum e,
 quando contexto ou perspectiva mudam o que ela consegue observar ou decidir, um
@@ -21,7 +21,7 @@ dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem,
 não a evidência procurada.
 
 A auditoria versionada publica uma linha de base de autoria sem modificar essa
-jornada. Para `evidence-anamnesis-pilot-v10`, ela registra quantidade e tipo de nós,
+jornada. Para `evidence-anamnesis-pilot-v11`, ela registra quantidade e tipo de nós,
 percurso e duração estimados por perspectiva, tronco comum, variantes, probes
 causais, saídas de visibilidade e dívida dos contratos de direção. Esses números
 caracterizam o instrumento para comparar versões futuras; não medem capacidade da
@@ -84,11 +84,18 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 87 nós e cobre contexto de trabalho e eventos de priorização, integração,
+O catálogo atual contém 88 nós e cobre contexto de trabalho e eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
 com base em lacunas de evidência e sinais anteriores, como uma entrevista.
+
+O contexto de trabalho também seleciona uma de oito trilhas declarativas: entrega,
+ciclo completo, risco, capacidade compartilhada, arquitetura, resultados, portfólio
+ou experiência. Cada trilha contém de duas a quatro famílias de evento compatíveis
+com o ponto de observação e encerra numa saída neutra antes dos probes adaptativos.
+Os caminhos típicos possuem de 5 a 14 cenários (cerca de 4 a 11 minutos), sem contar
+até cinco probes causais posteriores. Título profissional não participa da seleção.
 
 As alternativas de prática são apresentadas em ordem determinística por
 participação e nó. Isso reduz a pista recorrente de desejabilidade sem fazer a

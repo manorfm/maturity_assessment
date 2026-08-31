@@ -141,7 +141,7 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
     while (participations.find(resumeToken)?.status === 'in_progress') {
       const current = participations.find(resumeToken)!;
       const node = new CatalogService(db).getNode(current.graph_version, current.current_node)!;
-      const option = node.id === 'respondent-context' ? 'engineering' : node.id === 'shared-change' ? 'before-release' : node.options[0]!.id;
+      const option = node.id === 'respondent-context' ? 'engineering' : node.id === 'work-context' ? 'cannot-observe' : node.id === 'shared-change' ? 'before-release' : node.options[0]!.id;
       participations.answer(resumeToken, option);
     }
   }
@@ -204,11 +204,10 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   assert.equal(participations.find(claimed.resumeToken)?.profile, 'quality');
   assert.equal(participations.find(claimed.resumeToken)?.current_node, 'work-context');
   participations.answer(claimed.resumeToken, 'quality-and-risk');
-  participations.answer(claimed.resumeToken, 'replan-together');
-  participations.answer(claimed.resumeToken, 'continuous');
-  participations.answer(claimed.resumeToken, 'test-queue');
+  assert.equal(participations.find(claimed.resumeToken)?.current_node, 'security-change');
+  participations.answer(claimed.resumeToken, 'late-review');
   const current = participations.find(claimed.resumeToken)!;
-  assert.equal(current.current_node, 'quality-probe');
+  assert.equal(current.current_node, 'security-event-consequence');
   assert.equal(catalog.getNode(current.graph_version, current.current_node)?.type, 'probe');
 });
 
@@ -242,6 +241,17 @@ test('responsabilidade operacional abre recuperação mesmo sem perfil SRE', () 
   assert.notEqual(catalog.nextNode(participation.graph_version, 'leadership-enablement', 'system-owner', 'platform', sharedCapability), 'product-discovery-depth');
 });
 
+test('contexto seleciona poucos eventos sem depender do título escolhido', () => {
+  const db = createDatabase(':memory:');
+  const catalog = new CatalogService(db);
+  const buildAndOperate = RespondentWorkContext.fromOption('build-and-operate');
+  const architecture = RespondentWorkContext.fromOption('architecture-and-boundaries');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'engineering', buildAndOperate), 'ready-to-release');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'architecture', buildAndOperate), 'ready-to-release');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'architecture-and-boundaries', 'architecture', architecture), 'architecture-pressure');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildAndOperate), 'environment-access');
+});
+
 test('contexto apenas roteia e não produz sinal para inferência', () => {
   const db = createDatabase(':memory:');
   new CatalogService(db);
@@ -266,7 +276,7 @@ test('seletor adaptativo não duplica o aprofundamento já escolhido pelo grafo 
   while (participations.find(claimed.resumeToken)?.current_node !== 'integration-cadence') {
     const current = participations.find(claimed.resumeToken)!;
     const node = catalog.getNode(current.graph_version, current.current_node, current.profile)!;
-    participations.answer(claimed.resumeToken, node.id === 'respondent-context' ? 'engineering' : node.options[0]!.id);
+    participations.answer(claimed.resumeToken, node.id === 'respondent-context' ? 'engineering' : node.id === 'work-context' ? 'cannot-observe' : node.options[0]!.id);
   }
   participations.answer(claimed.resumeToken, 'isolated-days');
   const participation = participations.find(claimed.resumeToken)!;
@@ -406,6 +416,7 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
       const current = participations.find(claimed.resumeToken)!;
       const node = new CatalogService(db).getNode(current.graph_version, current.current_node, current.profile)!;
       const option = node.id === 'respondent-context' ? profile
+        : node.id === 'work-context' ? 'cannot-observe'
         : node.id === 'urgent-change' ? firstOption
         : node.id === 'recent-need' && firstOption === 'add-to-sprint' ? 'defined-then-built'
         : node.id === 'iteration-purpose' && firstOption === 'add-to-sprint' ? 'fill-capacity'
@@ -443,7 +454,7 @@ test('suprime toda a cadeia quando uma partição irmã é pequena', () => {
     while (participations.find(claimed.resumeToken)?.status === 'in_progress') {
       const current = participations.find(claimed.resumeToken)!;
       const node = new CatalogService(db).getNode(current.graph_version, current.current_node)!;
-      participations.answer(claimed.resumeToken, constrained && node.id === 'improvement-loop' ? 'ceremony-report' : node.options[0]!.id);
+      participations.answer(claimed.resumeToken, node.id === 'work-context' ? 'cannot-observe' : constrained && node.id === 'improvement-loop' ? 'ceremony-report' : node.options[0]!.id);
     }
   };
   invitations.createBatch(String(project.id), timeA.id, 5).tokens.forEach((token) => complete(token));

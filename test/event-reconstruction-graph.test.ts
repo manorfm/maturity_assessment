@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   eventReconstructionDefinitions,
+  eventInterviewTracks,
+  estimateTrackScenarios,
   estimatePathScenarios,
   graph,
   validateEventReconstruction,
@@ -26,6 +28,16 @@ test('os cinco eventos migrados reconstroem fatos em mais de um momento recuper�
     assert.ok(definition.steps.some((step) => ['consequence', 'learning', 'review'].includes(step.phase)), id);
     assert.doesNotThrow(() => validateEventReconstruction(definition, graph));
   }
+});
+
+test('cada trilha percorre de dois a quatro eventos elegíveis e reduz o tronco serial', () => {
+  for (const track of Object.values(eventInterviewTracks)) {
+    assert.ok(track.events.length >= 2, track.id);
+    assert.ok(track.events.length <= 4, track.id);
+    assert.ok(estimateTrackScenarios(track.id) < 30, track.id);
+  }
+  assert.deepEqual(eventInterviewTracks['full-cycle'].events, ['change', 'environment-access', 'incident', 'system-improvement']);
+  assert.deepEqual(eventInterviewTracks.risk.events, ['security-risk', 'incident', 'system-improvement']);
 });
 
 test('etapas factuais não pedem causa nem combinam decisão, mecanismo e consequência', () => {

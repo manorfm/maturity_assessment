@@ -80,7 +80,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   while (participations.find(resumeToken)?.status === 'in_progress') {
     const current = participations.find(resumeToken)!;
     const node = catalog.getNode(current.graph_version, current.current_node)!;
-    participations.answer(resumeToken, node.id === 'respondent-context' ? 'quality' : node.options[0]!.id);
+    participations.answer(resumeToken, node.id === 'respondent-context' ? 'quality' : node.id === 'work-context' ? 'cannot-observe' : node.options[0]!.id);
   }
   const completed = await app.inject({ method: 'GET', url: `/respond/${resumeToken}` });
   assert.equal(completed.statusCode, 200);
@@ -132,7 +132,7 @@ test('piloto inicial conclui oito jornadas em uma unidade sem alegar calibraçã
     while (participations.find(resumeToken)?.status === 'in_progress') {
       const current = participations.find(resumeToken)!;
       const node = catalog.getNode(current.graph_version, current.current_node)!;
-      participations.answer(resumeToken, node.id === 'respondent-context' ? pilotProfiles[index]! : node.options[0]!.id);
+      participations.answer(resumeToken, node.id === 'respondent-context' ? pilotProfiles[index]! : node.id === 'work-context' ? 'cannot-observe' : node.options[0]!.id);
     }
   }
 

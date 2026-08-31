@@ -154,6 +154,7 @@ function edgeMatches(conditions: AssessmentEdge['when'], context?: RespondentWor
   if (conditions.authoritiesAny && !conditions.authoritiesAny.includes(context.authority)) return false;
   if (conditions.scopesAny && !conditions.scopesAny.includes(context.scope)) return false;
   if (conditions.observableEventsAny && !conditions.observableEventsAny.some((item) => context.observableEvents.includes(item))) return false;
+  if (conditions.tracksAny && !conditions.tracksAny.includes(context.interviewTrack)) return false;
   return true;
 }
 

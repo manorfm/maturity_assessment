@@ -1,6 +1,8 @@
 import {
   GRAPH_VERSION,
   SECONDS_PER_SCENARIO,
+  eventInterviewTracks,
+  estimateTrackScenarios,
   typicalSuccessor,
   type AssessmentNode,
   type NodeVariant,
@@ -34,6 +36,10 @@ export function measureInstrumentBaseline(input: BaselineInput) {
     const scenarios = paths[profile].length;
     return [profile, { scenarios, estimatedMinutes: Math.max(1, Math.ceil((scenarios * SECONDS_PER_SCENARIO) / 60)) }];
   })) as Record<Profile, { scenarios: number; estimatedMinutes: number }>;
+  const trackRoutes = Object.fromEntries(Object.keys(eventInterviewTracks).map((track) => {
+    const scenarios = estimateTrackScenarios(track as keyof typeof eventInterviewTracks);
+    return [track, { events: eventInterviewTracks[track as keyof typeof eventInterviewTracks].events.length, scenarios, estimatedMinutes: Math.max(1, Math.ceil((scenarios * SECONDS_PER_SCENARIO) / 60)) }];
+  }));
   const repeatedFoundationGroups = Object.entries(groupPatternsByFoundation(input.foundations))
     .filter(([, patterns]) => patterns.length > 1)
     .map(([foundation, patterns]) => ({ foundation, count: patterns.length, patterns: [...patterns].sort() }))
@@ -54,6 +60,7 @@ export function measureInstrumentBaseline(input: BaselineInput) {
       },
     },
     routes,
+    trackRoutes,
     authorship: {
       commonTrunkNodes,
       commonTrunkRatio: ratio(commonTrunkNodes, input.graph.length),

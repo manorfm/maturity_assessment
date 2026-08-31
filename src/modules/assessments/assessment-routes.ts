@@ -29,7 +29,7 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
     const node = catalog.getNode(participation.graph_version, participation.current_node, participation.profile);
     if (!node) throw new Error('Published assessment node was not found');
     const answered = participations.answeredCount(participation.id);
-    const remainingMinutes = estimateRemainingMinutes(node.id, participation.profile);
+    const remainingMinutes = estimateRemainingMinutes(node.id, participation.profile, participation.workContext?.interviewTrack);
     const choices = orderAssessmentOptions(node.options, resumeToken, node.id).map((option) => `<label class="choice"><input type="radio" name="optionId" value="${escapeHtml(option.id)}" required><span>${escapeHtml(option.label)}</span></label>`).join('');
     const profile = profiles[participation.profile as Profile] ?? 'Participante';
     const progress = node.type === 'probe'

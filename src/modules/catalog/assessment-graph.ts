@@ -1,6 +1,6 @@
-import { workContextOptions, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
+import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v10';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v11';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -50,7 +50,7 @@ export type AssessmentNode = {
   next?: string;
 };
 
-export type EdgeConditions = { responsibilitiesAny?: WorkResponsibility[]; authoritiesAny?: WorkAuthority[]; scopesAny?: WorkScope[]; observableEventsAny?: ObservableEvent[] };
+export type EdgeConditions = { responsibilitiesAny?: WorkResponsibility[]; authoritiesAny?: WorkAuthority[]; scopesAny?: WorkScope[]; observableEventsAny?: ObservableEvent[]; tracksAny?: InterviewTrack[] };
 export type AssessmentEdge = { from: string; to: string; optionId?: string; profile?: Profile; when?: EdgeConditions };
 export type NodeVariant = { nodeId: string; profile: Profile; title?: string; scenario: string; prompt?: string };
 export type EventReconstructionDefinition = {
@@ -356,7 +356,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'qa-cycle', label: 'Uma pessoa de qualidade executa a maior parte das verificações quando recebe uma versão e um ambiente utilizável.', signals: [{ capability: 'qualidade', pattern: 'qualidade-como-handoff', weight: -2 , details: ['quality-strategy', 'collaboration'], layer: 'practice', constraint: 'none' }] },
       { id: 'developer-memory', label: 'Quem alterou valida os casos que conhece; outros efeitos aparecem na revisão, regressão ou uso posterior.', signals: [{ capability: 'engenharia', pattern: 'verificacao-dependente-de-memoria', weight: -2 , details: ['quality-strategy', 'technical-capability', 'organizational-learning'], layer: 'knowledge', constraint: 'none' }] },
       { id: 'slow-suite', label: 'Há verificações automatizadas, mas o retorno demora ou varia tanto que frequentemente seguimos sem esperar.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1 , details: ['sdlc-automation', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
-    ], next: 'environment-access',
+    ], next: 'team-pressure',
   },
   {
     id: 'environment-access', title: 'Um ambiente para aprender',
@@ -519,7 +519,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'manager-reorganizes', label: 'A liderança reorganiza responsabilidades e pessoas usando desempenho, capacidade e prioridades disponíveis.', signals: [{ capability: 'organizacao', pattern: 'estrutura-definida-centralmente', weight: -1 , details: ['team-ownership'], layer: 'practice', constraint: 'none' }] },
       { id: 'add-coordination', label: 'Mantêm-se as fronteiras e adicionam-se alinhamentos, responsáveis ou especialistas para absorver a complexidade.', signals: [{ capability: 'organizacao', pattern: 'coordenacao-compensa-carga', weight: -1 , details: ['work-management', 'team-ownership', 'collaboration', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
       { id: 'individual-adaptation', label: 'As pessoas ajustam informalmente responsabilidades e buscam ajuda conforme a pressão aparece.', signals: [{ capability: 'organizacao', pattern: 'estrutura-implicita', weight: -2 , details: ['team-ownership'], layer: 'practice', constraint: 'none' }] },
-    ], next: 'product-outcome-evidence',
+    ], next: 'technical-stewardship',
   },
   {
     id: 'product-outcome-evidence', title: 'Da entrega ao resultado',
@@ -1027,6 +1027,12 @@ const eventFollowupNodes: AssessmentNode[] = [
       { id: 'priority-displaced-it', factKind: 'review', label: 'Uma nova prioridade retirou capacidade da melhoria antes de existir efeito verificável.', signals: [{ capability: 'governanca', pattern: 'melhoria-sem-prioridade', weight: -1, details: ['organizational-learning'], layer: 'outcome', constraint: 'priority' }] },
     ], next: 'shared-surface-context',
   },
+  {
+    id: 'event-interview-close', type: 'context', title: 'Eventos reconstruídos',
+    scenario: 'A entrevista reuniu fatos de eventos recentes compatíveis com o seu ponto de observação. As respostas serão combinadas apenas de forma agregada com outras perspectivas.',
+    prompt: 'Você concluiu esta parte da entrevista.',
+    options: [{ id: 'finish', label: 'Concluir participação.', signals: [] }],
+  },
 ];
 
 const eventAnchors = new Set(['ready-to-release', 'environment-access', 'security-change', 'architecture-pressure', 'improvement-loop']);
@@ -1043,6 +1049,18 @@ export const eventReconstructionDefinitions: Record<string, EventReconstructionD
   'security-change': { anchorNodeId: 'security-change', family: 'security-risk', steps: [{ nodeId: 'security-change', phase: 'trigger' }, { nodeId: 'security-event-consequence', phase: 'consequence' }] },
   'architecture-pressure': { anchorNodeId: 'architecture-pressure', family: 'architecture-decision', steps: [{ nodeId: 'architecture-pressure', phase: 'trigger' }, { nodeId: 'architecture-event-consequence', phase: 'learning' }] },
   'improvement-loop': { anchorNodeId: 'improvement-loop', family: 'system-improvement', steps: [{ nodeId: 'improvement-loop', phase: 'trigger' }, { nodeId: 'improvement-event-consequence', phase: 'review' }] },
+};
+
+export type EventInterviewTrackDefinition = { id: InterviewTrack; events: readonly ObservableEvent[] };
+export const eventInterviewTracks: Record<InterviewTrack, EventInterviewTrackDefinition> = {
+  delivery: { id: 'delivery', events: ['change', 'architecture-decision', 'system-improvement'] },
+  'full-cycle': { id: 'full-cycle', events: ['change', 'environment-access', 'incident', 'system-improvement'] },
+  risk: { id: 'risk', events: ['security-risk', 'incident', 'system-improvement'] },
+  capability: { id: 'capability', events: ['environment-access', 'incident', 'system-improvement'] },
+  architecture: { id: 'architecture', events: ['architecture-decision', 'incident', 'system-improvement'] },
+  outcomes: { id: 'outcomes', events: ['product-result', 'system-improvement'] },
+  portfolio: { id: 'portfolio', events: ['product-result', 'architecture-decision', 'system-improvement'] },
+  experience: { id: 'experience', events: ['product-result', 'change', 'system-improvement'] },
 };
 
 export function validateEventReconstruction(definition: EventReconstructionDefinition, nodes: AssessmentNode[]): void {
@@ -1071,6 +1089,47 @@ function skipEdges(node: AssessmentNode, to: string): AssessmentEdge[] {
 }
 
 export const edges: AssessmentEdge[] = graph.flatMap((node) => {
+  if (node.id === 'work-context') return [
+    { from: node.id, to: 'ready-to-release', when: { tracksAny: ['delivery', 'full-cycle'] } },
+    { from: node.id, to: 'security-change', when: { tracksAny: ['risk'] } },
+    { from: node.id, to: 'environment-access', when: { tracksAny: ['capability'] } },
+    { from: node.id, to: 'architecture-pressure', when: { tracksAny: ['architecture'] } },
+    { from: node.id, to: 'product-outcome-evidence', when: { tracksAny: ['outcomes', 'portfolio', 'experience'] } },
+    { from: node.id, to: 'urgent-change' },
+  ];
+  if (node.id === 'release-event-consequence') return [
+    { from: node.id, to: 'architecture-pressure', when: { tracksAny: ['delivery'] } },
+    { from: node.id, to: 'environment-access', when: { tracksAny: ['full-cycle'] } },
+    { from: node.id, to: 'improvement-loop', when: { tracksAny: ['experience'] } },
+    { from: node.id, to: 'integration-cadence' },
+  ];
+  if (node.id === 'environment-event-consequence') return [
+    { from: node.id, to: 'degradation', when: { tracksAny: ['full-cycle', 'capability'] } },
+    { from: node.id, to: 'security-change' },
+  ];
+  if (node.id === 'security-event-consequence') return [
+    { from: node.id, to: 'degradation', when: { tracksAny: ['risk'] } },
+    { from: node.id, to: 'architecture-pressure' },
+  ];
+  if (node.id === 'architecture-event-consequence') return [
+    { from: node.id, to: 'degradation', when: { tracksAny: ['architecture'] } },
+    { from: node.id, to: 'improvement-loop', when: { tracksAny: ['delivery', 'portfolio'] } },
+    { from: node.id, to: 'team-pressure' },
+  ];
+  if (node.id === 'recurrence') return [
+    { from: node.id, to: 'improvement-loop', when: { tracksAny: ['full-cycle', 'risk', 'capability', 'architecture'] } },
+    { from: node.id, to: 'recent-need' },
+  ];
+  if (node.id === 'product-operating-model-cause') return [
+    { from: node.id, to: 'improvement-loop', when: { tracksAny: ['outcomes'] } },
+    { from: node.id, to: 'architecture-pressure', when: { tracksAny: ['portfolio'] } },
+    { from: node.id, to: 'ready-to-release', when: { tracksAny: ['experience'] } },
+    { from: node.id, to: 'technical-stewardship' },
+  ];
+  if (node.id === 'improvement-event-consequence') return [
+    { from: node.id, to: 'event-interview-close', when: { tracksAny: Object.keys(eventInterviewTracks) as InterviewTrack[] } },
+    { from: node.id, to: 'shared-surface-context' },
+  ];
   if (node.id === 'leadership-enablement') return [
     { from: node.id, to: 'platform-cloud-reliability', when: { responsibilitiesAny: ['operate'] } },
     { from: node.id, to: 'management-portfolio', profile: 'management' },
@@ -1156,6 +1215,9 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'product-outcome-evidence') return [
+    { from: node.id, optionId: 'outcome-reviewed', to: 'improvement-loop', when: { tracksAny: ['outcomes'] } },
+    { from: node.id, optionId: 'outcome-reviewed', to: 'architecture-pressure', when: { tracksAny: ['portfolio'] } },
+    { from: node.id, optionId: 'outcome-reviewed', to: 'ready-to-release', when: { tracksAny: ['experience'] } },
     { from: node.id, optionId: 'outcome-reviewed', to: 'technical-stewardship' },
     { from: node.id, optionId: 'usage-reported', to: 'product-operating-model-cause' },
     { from: node.id, optionId: 'delivery-accepted', to: 'product-operating-model-cause' },
@@ -1246,8 +1308,9 @@ export function estimateRemainingScenarios(fromNodeId: string, profile?: string)
   return seen.size;
 }
 
-export function estimateRemainingMinutes(fromNodeId: string, profile?: string): number {
-  return Math.max(1, Math.ceil((estimateRemainingScenarios(fromNodeId, profile) * SECONDS_PER_SCENARIO) / 60));
+export function estimateRemainingMinutes(fromNodeId: string, profile?: string, track?: InterviewTrack): number {
+  const scenarios = track ? estimateTrackScenarios(track, profile as Profile | undefined, fromNodeId) : estimateRemainingScenarios(fromNodeId, profile);
+  return Math.max(1, Math.ceil((scenarios * SECONDS_PER_SCENARIO) / 60));
 }
 
 export function estimatePathScenarios(fromNodeId: string, answers: Readonly<Record<string, string>>, profile?: string): number {
@@ -1262,4 +1325,26 @@ export function estimatePathScenarios(fromNodeId: string, answers: Readonly<Reco
     } else current = typicalSuccessor(current, profile);
   }
   return seen.size;
+}
+
+export function estimateTrackScenarios(track: InterviewTrack, profile: Profile = 'engineering', fromNodeId = 'work-context'): number {
+  const seen = new Set<string>();
+  let current: string | undefined = fromNodeId;
+  while (current && !seen.has(current)) {
+    seen.add(current);
+    current = trackSuccessor(current, track, profile);
+  }
+  return seen.size;
+}
+
+function trackSuccessor(from: string, track: InterviewTrack, profile: Profile): string | undefined {
+  const outgoing = edges.filter((edge) => edge.from === from);
+  const trackEdge = outgoing.find((edge) => edge.when?.tracksAny?.includes(track) && !edge.optionId)
+    ?? outgoing.find((edge) => edge.when?.tracksAny?.includes(track) && edge.optionId && edge.optionId !== CANNOT_OBSERVE_ID && edge.optionId !== NOT_APPLICABLE_ID);
+  if (trackEdge) return trackEdge.to;
+  const profileEdge = outgoing.find((edge) => edge.profile === profile && !edge.optionId && !edge.when);
+  if (profileEdge) return profileEdge.to;
+  const defaultEdge = outgoing.find((edge) => !edge.optionId && !edge.profile && !edge.when);
+  if (defaultEdge) return defaultEdge.to;
+  return outgoing.find((edge) => edge.optionId && !edge.when && edge.optionId !== CANNOT_OBSERVE_ID && edge.optionId !== NOT_APPLICABLE_ID)?.to;
 }

@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-31 — Trilhas curtas por contexto de trabalho
+
+- Publicado o grafo `evidence-anamnesis-pilot-v11` com oito trilhas declarativas,
+  seleção de duas a quatro famílias de evento e estimativa contextual de 5 a 14
+  cenários; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`profiles-and-triangulation.md`](../knowledge-base/profiles-and-triangulation.md).
+
 ## 2026-08-31 — Reconstrução factual de eventos
 
 - Publicado o grafo `evidence-anamnesis-pilot-v10` com contrato reutilizável para

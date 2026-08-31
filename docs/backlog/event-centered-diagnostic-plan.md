@@ -1,8 +1,8 @@
 # Plano: diagnóstico centrado em eventos reais e direção técnica aplicável
 
-Status: implementação em andamento. O contrato factual e as cinco reconstruções
-iniciais da onda 2 estão vigentes; seleção de dois a quatro eventos e redução do
-tronco permanecem abertas.
+Status: implementação em andamento. O contrato factual, as reconstruções iniciais
+e as trilhas de dois a quatro eventos da onda 2 estão vigentes; a validação
+cognitiva do orçamento permanece aberta.
 
 ## Problema
 
@@ -177,10 +177,6 @@ eliminar triangulação mínima.
 
 ### Próximo incremento
 
-- Selecionar de dois a quatro eventos elegíveis por responsabilidade e observação,
-  em vez de percorrer todas as famílias no tronco.
-- Persistir a identidade lógica do evento entre as etapas sem guardar texto livre
-  ou enfraquecer anonimato.
 - Comparar duração e recuperação do evento em entrevista cognitiva antes de fechar
   o orçamento.
 
@@ -477,7 +473,7 @@ orientações após a estabilização cognitiva.
 
 ## Estratégia de migração
 
-- Não alterar `evidence-anamnesis-pilot-v10` depois do início de coleta humana.
+- Não alterar `evidence-anamnesis-pilot-v11` depois do início de coleta humana.
 - Desenvolver a nova autoria sob identificador de versão próprio.
 - Campanhas guardam integralmente a versão utilizada.
 - Não comparar posterior ou nível entre versões como se fossem o mesmo instrumento.
