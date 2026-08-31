@@ -4,6 +4,7 @@ import { id } from '../../shared/ids.js';
 import { graph, profiles as catalogProfiles } from '../catalog/assessment-graph.js';
 import { PilotEvaluation, type CognitiveReview, type ExternalLabel, type PilotReport } from './domain/pilot-evaluation.js';
 import { PILOT_THRESHOLDS } from './domain/pilot-policy.js';
+import { CognitivePilotReadiness, type CognitivePilotReadinessReport } from './domain/cognitive-pilot-readiness.js';
 
 const allowedProfiles = new Set(Object.keys(catalogProfiles));
 
@@ -46,6 +47,26 @@ export class PilotService {
       goldOptionBias: Number(row.gold_option_bias) === 1, visibilityExitUsed: Number(row.visibility_exit_used) === 1,
       ...(row.confusing_term ? { confusingTerm: row.confusing_term } : {}),
     })), this.policy(modelVersion));
+  }
+
+  cognitiveReadiness(projectId: string, targetParticipants: number, minimumGroupSize: number): CognitivePilotReadinessReport {
+    const units = this.db.prepare(`
+      SELECT u.id,
+        (SELECT COUNT(*) FROM invitations i
+          WHERE i.project_id = u.project_id AND i.unit_id = u.id
+            AND (i.status = 'claimed' OR (i.status = 'issued' AND i.expires_at >= ?))) invited,
+        (SELECT COUNT(*) FROM participations p
+          WHERE p.project_id = u.project_id AND p.unit_id = u.id AND p.status = 'completed') completed
+      FROM organization_units u
+      WHERE u.project_id = ?
+        AND NOT EXISTS (SELECT 1 FROM organization_units child WHERE child.parent_id = u.id)
+      ORDER BY u.path
+    `).all(new Date().toISOString(), projectId) as unknown as Array<{ id: string; invited: number; completed: number }>;
+    return CognitivePilotReadiness.evaluate({
+      targetParticipants,
+      minimumGroupSize,
+      units: units.map((unit) => ({ id: unit.id, invited: Number(unit.invited), completed: Number(unit.completed) })),
+    });
   }
 
   proposeRevision(modelVersion: string): { version: string; status: 'draft' } {

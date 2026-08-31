@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-30 — Preflight do piloto cognitivo inicial
+
+- Entregue a versão 0.45 com preflight para oito pessoas, proteção contra alocação
+  abaixo do limiar por squad e contratos específicos das causas do ciclo de
+  melhoria; ver [`technical-architecture.md`](../knowledge-base/technical-architecture.md)
+  e [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-08-30 — Showcase diagnóstico controlado
 
 - Entregue a versão 0.44 com seis casos reproduzíveis, contraste entre tooling e

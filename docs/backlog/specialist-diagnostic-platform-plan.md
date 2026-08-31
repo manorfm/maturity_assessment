@@ -256,9 +256,12 @@ paralelos por público.
 
 ## Sequência de implementação
 
-### Validação humana de linguagem antes do piloto
+### Piloto cognitivo inicial — trabalho humano aberto
 
-- realizar entrevistas cognitivas com pessoas de baixo repertório técnico;
+- o software e o preflight para uma primeira coorte de oito pessoas estão vigentes;
+- realizar as oito entrevistas numa única unidade elegível, ou ampliar para pelo
+  menos cinco pessoas por unidade quando o objetivo incluir comparação entre squads;
+- incluir pessoas de baixo repertório técnico;
 - validar leitura sem facilitador por diretoria e gerência reais;
 - registrar compreensão, recuperação do evento e termos confusos no painel;
 - revisar o conteúdo somente a partir dessa evidência, sem tratar teste automatizado

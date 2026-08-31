@@ -181,12 +181,12 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
   await expect(localReport.locator(':scope > summary')).toBeVisible();
   await localReport.locator(':scope > summary').click();
   await expect(localReport.getByRole('heading', { name: 'O que a unidade pode mudar' })).toBeVisible();
-  await expect(localReport.getByRole('heading', { name: 'Ações de melhoria perdem dono e continuidade' })).toBeVisible();
-  await expect(localReport.getByText('Nenhuma ação local foi confirmada.')).toBeVisible();
+  await expect(localReport.locator('.unit-management-report').getByRole('link', { name: 'Ações de melhoria excedem a capacidade de concluir' })).toBeVisible();
+  await expect(localReport.getByText('Aprendizado e adaptação.')).toBeVisible();
   await expect(localReport.getByText('Nenhuma escalada confirmada para este recorte.')).toBeVisible();
   const referenceReport = page.locator('details.scope-report', { hasText: 'Squad Referência' });
   await referenceReport.locator(':scope > summary').click();
-  await expect(referenceReport).not.toContainText('Ações de melhoria perdem dono e continuidade');
+  await expect(referenceReport.locator('.unit-management-report')).not.toContainText('Ações de melhoria excedem a capacidade de concluir');
   const executiveBrief = page.locator('#report-executive');
   await expect(executiveBrief.getByText('Nenhuma decisão confirmada para esta autoridade.').first()).toBeVisible();
   const observed = await observeReport(page);
@@ -195,7 +195,7 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
     title: 'Sustentável — problema local isolado',
     story: 'Os dois times sustentam a maior parte do sistema; apenas a Squad Discovery abre ações de melhoria demais e não consegue concluí-las. O diagnóstico deve permanecer local e não virar transformação organizacional.',
     lookFor: [
-      'O problema aparece somente na Squad Discovery e pede discriminação causal antes de prescrever uma ação.',
+      'A ação aparece somente sob autoridade da Squad Discovery.',
       'A Squad Referência não recebe o problema por pertencer à mesma organização.',
       'O briefing executivo não converte o desvio local em decisão de estrutura ou funding.',
     ],

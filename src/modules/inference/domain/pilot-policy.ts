@@ -20,6 +20,8 @@ export const PILOT_THRESHOLDS: PilotThresholds = Object.freeze({
   decisionThreshold: .7,
 });
 
+export const INITIAL_COGNITIVE_PILOT_SIZE = 8;
+
 export function assertPilotThresholds(value: PilotThresholds): PilotThresholds {
   for (const [name, amount] of Object.entries(value)) {
     if (!Number.isFinite(amount) || amount < 0) throw new Error(`Invalid pilot threshold: ${name}`);

@@ -447,9 +447,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "causa-melhoria-sem-autonomia": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Fronteiras e modos de interação tornam autoridade e dependências explícitas",
+    "why": "A intervenção leva a restrição a quem pode alterar o sistema sem culpar o time bloqueado."
   },
   "causa-acoes-sem-foco": {
     "source": "Melhoria contínua",
@@ -457,9 +457,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "causa-baixa-seguranca-psicologica": {
-    "source": "Qualidade no fluxo",
-    "principle": "Risco entra cedo; verificação é feedback, não fase",
-    "why": "Suíte ou scanner presente não prova estratégia de qualidade."
+    "source": "SRE / blameless postmortem",
+    "principle": "Aprender com condições do sistema sem transformar relato em culpa individual",
+    "why": "Proteção não punitiva permite que fatos difíceis entrem na investigação e produzam mudança verificável."
   },
   "mudanca-sobrescrita": {
     "source": "Melhoria contínua",

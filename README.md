@@ -399,11 +399,14 @@ esteja aberto.
 
 ## Estado e limites atuais
 
-- O MVP está concluído e suporta um piloto controlado.
+- O MVP está concluído e suporta um piloto cognitivo inicial com oito pessoas em
+  uma única unidade elegível. O painel impede interpretar uma divisão 4+4 como
+  comparação segura entre squads.
 - O acesso administrativo usa o segredo entregue na criação; ainda não há conta,
   recuperação ou SSO.
-- Os ramos de dados, design, arquitetura e segurança já existem no grafo; a
-  linguagem ainda precisa de validação com cada disciplina antes de um piloto real.
+- Os ramos de dados, design, arquitetura e segurança já existem no grafo; o piloto
+  cognitivo deve validar sua linguagem com cada disciplina antes de uso diagnóstico
+  amplo.
 - A adaptação probabilística complementa o tronco declarativo somente no
   aprofundamento terminal.
 - Não há calibração empírica, aprendizado automático em produção ou atualização

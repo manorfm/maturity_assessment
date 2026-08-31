@@ -271,6 +271,12 @@ substitui sozinha o modelo publicado. O painel administrativo registra entrevist
 cognitivas por cenário e perspectiva, sem participação, convite ou resposta; o
 registro não abre o gate sozinho e não identifica pessoas.
 
+Um piloto cognitivo inicial com oito participantes é um gate operacional diferente.
+Ele serve para observar compreensão, recuperação de eventos, adequação das opções e
+utilidade da leitura agregada. Pode ocorrer em uma única unidade elegível; não
+autoriza comparação entre duas squads com menos de cinco participantes em cada uma,
+nem transforma seus resultados em calibração estatística.
+
 ## Experimento e reaplicação
 
 Quando o recorte é elegível, o relatório persiste o experimento agregado (ação,

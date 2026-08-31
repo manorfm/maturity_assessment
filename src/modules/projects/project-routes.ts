@@ -3,7 +3,7 @@ import { escapeHtml, layout } from '../../shared/html.js';
 import { profiles, graph } from '../catalog/assessment-graph.js';
 import { InferenceService } from '../inference/inference-service.js';
 import { PilotService } from '../inference/pilot-service.js';
-import { PILOT_THRESHOLDS } from '../inference/domain/pilot-policy.js';
+import { INITIAL_COGNITIVE_PILOT_SIZE, PILOT_THRESHOLDS } from '../inference/domain/pilot-policy.js';
 import { InvitationService } from '../assessments/invitation-service.js';
 import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
@@ -139,6 +139,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const units = projects.listUnits(projectId);
     const report = inference.report(projectId, Number(auth.project.minimum_group_size));
     const batches = invitations.listBatches(projectId);
+    const cognitiveReadiness = pilot.cognitiveReadiness(projectId, INITIAL_COGNITIVE_PILOT_SIZE, Number(auth.project.minimum_group_size));
     const unitOptions = units.filter((unit) => unit.isLeaf).map((unit) => `<option value="${escapeHtml(unit.id)}">${escapeHtml(unit.path)}</option>`).join('');
     const reportAvailability = report.completed < report.minimum
       ? `<p class="notice">O relatório será liberado com ${report.minimum} respostas concluídas. Atualmente: ${report.completed}.</p>`
@@ -182,7 +183,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
       ${previous}
       ${scopeReports ? `<section><h2>Mapa por estrutura</h2><p class="muted">Somente recortes que mudam o diagnóstico em relação à visão global aparecem.</p>${scopeReports}</section>` : ''}
-      <details class="methodology"><summary>Instrumento e calibração</summary>${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, auth.params)}</details>
+      <details class="methodology"><summary>Instrumento e calibração</summary>${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, auth.params)}</details>
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
   });
 
@@ -265,6 +266,18 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     });
     return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
   });
+}
+
+function renderCognitivePilotReadiness(readiness: import('../inference/domain/cognitive-pilot-readiness.js').CognitivePilotReadinessReport): string {
+  const status = readiness.status === 'ready_to_collect'
+    ? 'Pronto para iniciar a coleta.'
+    : readiness.status === 'collecting_complete'
+      ? 'Coleta inicial concluída.'
+      : readiness.status === 'unsafe_allocation'
+        ? 'Distribuição incompatível com o limiar de anonimato.'
+        : 'Convites ainda não preparados.';
+  const blockers = readiness.blockers.length ? `<ul>${readiness.blockers.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : '';
+  return `<section class="card cognitive-pilot-readiness"><h2>Preflight do piloto inicial</h2><p><strong>${escapeHtml(status)}</strong> ${escapeHtml(readiness.summary)}</p><p>${readiness.invitedParticipants} de ${INITIAL_COGNITIVE_PILOT_SIZE} convites ativos · ${readiness.completedParticipants} respostas concluídas.</p>${blockers}<p class="muted">Este piloto de oito pessoas avalia compreensão, percurso e utilidade inicial. Ele não calibra probabilidades nem autoriza comparar squads abaixo do limiar de anonimato.</p></section>`;
 }
 
 function renderPilotStatus(calibration: PilotReport): string {

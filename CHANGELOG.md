@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.45.0
+
+- Adicionou preflight para uma coorte cognitiva inicial de oito pessoas, separado
+  do gate de calibração.
+- Impediu que uma alocação 4+4 fosse apresentada como comparação segura entre
+  squads e validou a coleta completa de oito jornadas numa unidade elegível.
+- Especificou contratos causais para falta de autonomia, excesso de ações e baixa
+  segurança psicológica no ciclo de melhoria.
+
 ## 0.44.0
 
 - Expandiu o showcase para seis casos controlados, incluindo o mesmo sintoma com

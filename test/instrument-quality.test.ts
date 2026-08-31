@@ -97,6 +97,20 @@ test('gaps de workforce selecionam desenvolvimento compatível com a restrição
   for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
 });
 
+test('causas do ciclo de melhoria possuem contratos específicos para o piloto', () => {
+  const patterns = [
+    'causa-melhoria-sem-capacidade',
+    'causa-melhoria-sem-autonomia',
+    'causa-acoes-sem-foco',
+    'causa-baixa-seguranca-psicologica',
+  ];
+  for (const pattern of patterns) assert.equal(interventionCatalog[pattern]?.guidanceStatus, 'explicit', pattern);
+  const causeNode = graph.find((node) => node.id === 'improvement-cause')!;
+  const focusSignal = causeNode.options.find((option) => option.id === 'too-many-actions')!.signals[0]!;
+  assert.equal(focusSignal.details[0], 'organizational-learning');
+  assert.ok(focusSignal.details.includes('product-direction'));
+});
+
 test('legado e ownership selecionam intervenção compatível com o mecanismo', () => {
   const patterns = [
     'servico-sem-responsavel', 'responsabilidade-limitada-ao-codigo',

@@ -25,6 +25,9 @@ incorporados ao grafo vigente, e a rede causal e as bibliotecas de sistemas já
 pertencem ao diagnóstico. Contrato diagnóstico, autoridade, suspensão de
 prescrição, portfólio sequenciado, relatórios por autoridade, showcase controlado e proteções automatizadas de acessibilidade já
 pertencem à base de conhecimento vigente.
+O preflight operacional para uma coorte cognitiva inicial de oito pessoas também
+está vigente. A coleta deve ocorrer numa única unidade para preservar o limiar; uma
+comparação entre duas squads exige ao menos dez pessoas, cinco em cada unidade.
 
 A decisão de deixar de se apresentar como framework de maturidade e passar a
 ser um diagnóstico de engenharia está em

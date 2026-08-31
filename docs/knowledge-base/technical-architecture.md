@@ -201,6 +201,15 @@ Banco, guia e porta do E2E podem ser isolados com `E2E_DATABASE_PATH`,
 nos links preservados para inspeção. Assim uma nova execução não precisa tocar em
 um showcase manual já aberto.
 
+O painel administrativo possui um preflight distinto do gate de calibração para um
+piloto cognitivo inicial de oito pessoas. Ele conta apenas convites ativos e
+participações concluídas por unidade final. Oito pessoas numa única unidade
+sustentam uma leitura agregada inicial; dividir quatro e quatro entre duas squads
+não sustenta comparação local porque nenhuma alcança o limiar de anonimato de cinco.
+Duas unidades comparáveis exigem pelo menos cinco participantes em cada uma. O
+preflight nunca declara calibração: priors e posterior continuam provisórios até o
+gate empírico próprio ser atendido.
+
 O serviço de inferência projeta sinais versionados do catálogo em uma ou mais folhas
 da taxonomia. Essa projeção preserva o padrão de origem e permite efeitos cruzados
 sem duplicar respostas. Cada folha calcula nível pela evidência ordinal independente,

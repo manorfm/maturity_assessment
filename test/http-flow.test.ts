@@ -51,6 +51,8 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(dashboard.body, /Próxima decisão/);
   assert.match(dashboard.body, /Instrumento e calibração/);
   assert.match(dashboard.body, /Revisão cognitiva do instrumento/);
+  assert.match(dashboard.body, /Preflight do piloto inicial/);
+  assert.match(dashboard.body, /Ainda faltam 8 convites/);
   const review = await app.inject({
     method: 'POST', url: `${managementUrl}/item-reviews`,
     payload: { nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', interpretationMatch: 'yes', optionFit: 'yes', optionOverlap: 'no', retrievalDifficulty: 'no', goldOptionBias: 'no', visibilityExitUsed: 'yes' },
@@ -62,6 +64,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const batchDashboard = await app.inject({ method: 'GET', url: managementUrl });
   assert.match(batchDashboard.body, /Lotes de convites/);
   assert.match(batchDashboard.body, /Revogar links disponíveis/);
+  assert.match(batchDashboard.body, /Ainda faltam 6 convites/);
   const revoked = await app.inject({ method: 'POST', url: `${managementUrl}/invitation-batches/${batch.id}/revoke` });
   assert.equal(revoked.statusCode, 302);
   const reissued = await app.inject({ method: 'POST', url: `${managementUrl}/invitation-batches/${batch.id}/reissue` });
@@ -107,6 +110,38 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(capability.body, /Aprofundar|Problemas e correções|evidência/i);
   assert.match(capability.body, /aria-label="Navegação da capacidade"/);
   assert.match(capability.body, /Voltar<\/a>/);
+  await app.close();
+});
+
+test('piloto inicial conclui oito jornadas em uma unidade sem alegar calibração', async () => {
+  const db = createDatabase(':memory:');
+  const app = await createApp(db);
+  const created = await app.inject({ method: 'POST', url: '/projects', payload: { name: 'Piloto oito', hierarchy: 'Empresa/Squad Piloto' } });
+  const managementUrl = created.headers.location!;
+  const unit = db.prepare("SELECT id FROM organization_units WHERE path = 'Empresa/Squad Piloto'").get() as { id: string };
+  const invitationPage = await app.inject({ method: 'POST', url: `${managementUrl}/invitations`, payload: { unitId: unit.id, count: '8' } });
+  const tokens = [...invitationPage.body.matchAll(/\/invite\/([A-Za-z0-9_-]+)/g)].map((match) => match[1]!);
+  assert.equal(tokens.length, 8);
+
+  const participations = new ParticipationService(db);
+  const catalog = new CatalogService(db);
+  const pilotProfiles = ['management', 'product', 'quality', 'engineering', 'platform', 'architecture', 'security', 'data'];
+  for (const [index, token] of tokens.entries()) {
+    const claimed = await app.inject({ method: 'GET', url: `/invite/${token}` });
+    const resumeToken = claimed.headers.location!.split('/').at(-1)!;
+    while (participations.find(resumeToken)?.status === 'in_progress') {
+      const current = participations.find(resumeToken)!;
+      const node = catalog.getNode(current.graph_version, current.current_node)!;
+      participations.answer(resumeToken, node.id === 'respondent-context' ? pilotProfiles[index]! : node.options[0]!.id);
+    }
+  }
+
+  const dashboard = await app.inject({ method: 'GET', url: managementUrl });
+  assert.match(dashboard.body, /Coleta inicial concluída/);
+  assert.match(dashboard.body, /8 de 8 convites ativos · 8 respostas concluídas/);
+  assert.match(dashboard.body, /não calibra probabilidades/i);
+  assert.match(dashboard.body, /Calibração bloqueada/);
+  assert.match(dashboard.body, /Diagnóstico/);
   await app.close();
 });
 
