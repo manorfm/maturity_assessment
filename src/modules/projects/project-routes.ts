@@ -17,6 +17,7 @@ import { groupFindingsByDiagnosticSystem } from '../inference/domain/problem-sys
 import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../inference/domain/diagnostic-portfolio.js';
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
 import { AudienceReportProjector, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
+import { projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -377,11 +378,10 @@ const solutionKindLabels: Record<SolutionGuidance['solutionKind'], string> = {
 
 export function renderOutcome(outcome: ReportOutcome, context: { confirmedProblemCount?: number; occurrence?: FindingScopeOccurrence; competingFinding?: OutcomeFinding } = {}): string {
   const guidance = outcome.finding ? guidanceFor(outcome.finding.pattern, outcome.finding.foundation, outcome.finding.title) : undefined;
-  const experiment = outcome.finding?.experiment;
-  const foundation = outcome.finding?.foundation;
   const readiness = outcome.finding?.solutionReadiness;
   const evidence = outcome.finding?.recommendationEvidence;
   const evidenceBlock = evidence ? renderRecommendationEvidence(evidence, outcome.finding?.title ?? outcome.reading) : '';
+  const narrativeEvidenceBlock = evidence?.strength ? `<details class="decision-evidence"><summary>Como interpretar a força desta evidência</summary>${renderEvidenceStrength(evidence.strength)}</details>` : '';
   const readinessText = readiness?.stage === 'not-demonstrated'
     ? `As entrevistas ainda não mostraram esse caminho funcionando. Isso não significa que ele não exista.`
     : readiness ? `${readiness.label}: ${readiness.explanation}` : '';
@@ -400,17 +400,37 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
   const metaSystem = organizationalCapabilityIds.has(outcome.limiterId ?? '')
     ? '<p class="muted">O sistema organizacional é um meta-sistema: a restrição aqui explica espera, handoff ou decisão nos demais pilares, não um oitavo eixo técnico.</p>'
     : '';
-  const briefing = guidance && (outcome.kind === 'correct' || outcome.kind === 'evolve')
-    ? `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(guidance.plainExplanation)}</p><p>${escapeHtml(guidance.mechanism)}</p></section>${affected}${priority}${evidenceBlock}${diagnosticContext}${causalAnalysis}${readinessBlock}${technicalDirection}${metaSystem}
-      <section class="decision-request"><p class="eyebrow">Decisão solicitada</p><h3>O que recomendamos testar</h3><p><strong>${escapeHtml(experiment?.action ?? outcome.nextStepBody)}</strong></p><p>Responsável: ${escapeHtml(experiment?.owner ?? 'Responsável pelo recorte com o grupo afetado')} · revisão ${escapeHtml(experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p></section>
-      <section><h3>Como saber se funcionou</h3><p>Observe: ${escapeHtml(experiment?.metric ?? guidance.metric)}.</p><p>Critério de sucesso: ${escapeHtml(experiment?.successCriterion ?? guidance.successCriterion)}.</p></section>
-      <section><h3>O que esta decisão não resolve</h3><p>${escapeHtml(guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(guidance.antiPattern)}</p></section>
-      <details class="methodology"><summary>Fundamento técnico e opções</summary><p><strong>${escapeHtml(guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[guidance.solutionKind])}). ${escapeHtml(guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(foundation?.source ?? guidance.matureReference)}.</p>${foundation ? `<p><strong>Princípio aplicado:</strong> ${escapeHtml(foundation.principle)}. ${escapeHtml(foundation.why)}</p>` : ''}<p>Exemplo de mecanismo: ${escapeHtml(guidance.examples)}</p></details>`
+  const briefing = guidance && outcome.finding && (outcome.kind === 'correct' || outcome.kind === 'evolve')
+    ? renderFindingNarrative(outcome.finding, { guidance, affected, priority, evidenceBlock: narrativeEvidenceBlock, causalAnalysis, readinessBlock, technicalDirection, metaSystem })
     : `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section>${affected}${priority}${evidenceBlock}${diagnosticContext}${causalAnalysis}
       ${evidenceBlock ? '' : `<section><h3>O que as entrevistas mostraram</h3><p>${escapeHtml(interviewReading(outcome))}</p></section>`}${metaSystem}
       <section><h3>O que recomendamos testar</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>
       <section><h3>Como saber se funcionou</h3><p>${escapeHtml(successReading(outcome))}</p></section>`;
   return `<article class="card outcome-card"><p class="eyebrow">Próxima decisão</p><p class="tag">${escapeHtml(outcome.kindLabel)}</p><h2>${escapeHtml(outcome.finding?.title ?? outcome.nextStepTitle)}</h2>${briefing}<p class="muted outcome-scope">Onde aparece: ${escapeHtml(outcome.limiterLabel)}</p></article>`;
+}
+
+function renderFindingNarrative(finding: OutcomeFinding, fragments: {
+  guidance: SolutionGuidance; affected: string; priority: string; evidenceBlock: string; causalAnalysis: string;
+  readinessBlock: string; technicalDirection: string; metaSystem: string;
+}): string {
+  const narrative = projectFindingNarrative(finding);
+  return narrative.sections.map((section) => renderNarrativeSection(section, finding, fragments)).join('');
+}
+
+function renderNarrativeSection(section: FindingNarrativeSection, finding: OutcomeFinding, fragments: {
+  guidance: SolutionGuidance; affected: string; priority: string; evidenceBlock: string; causalAnalysis: string;
+  readinessBlock: string; technicalDirection: string; metaSystem: string;
+}): string {
+  if (section.id === 'observation') return `<section data-narrative="observation"><h3>${section.title}</h3><p class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</p></section>`;
+  if (section.id === 'importance') return `<section data-narrative="importance"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.affected}${fragments.priority}${fragments.metaSystem}</section>`;
+  if (section.id === 'evidence') return `<section data-narrative="evidence"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.evidenceBlock}</section>`;
+  if (section.id === 'mechanism') return `<section data-narrative="mechanism"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.causalAnalysis}</section>`;
+  if (section.id === 'containment') return `<section data-narrative="containment"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p></section>`;
+  if (section.id === 'existing-strength') return `<section data-narrative="existing-strength"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.readinessBlock}</section>`;
+  if (section.id === 'experiment') return `<section data-narrative="experiment" class="decision-request"><p class="eyebrow">Decisão solicitada</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? section.body)}</strong></p><p>Responsável: ${escapeHtml(finding.experiment?.owner ?? 'Responsável pelo recorte com o grupo afetado')} · revisão ${escapeHtml(finding.experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p><p><strong>Como saber se funcionou:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}. Critério: ${escapeHtml(finding.experiment?.successCriterion ?? fragments.guidance.successCriterion)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p></section>`;
+  if (section.id === 'investigation') return `<section data-narrative="investigation"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p></section>`;
+  if (section.id === 'technical-options') return `<section data-narrative="technical-options"><h3>${section.title}</h3>${fragments.technicalDirection}</section>`;
+  return `<details class="methodology" data-narrative="methodology"><summary>${section.title}</summary><p>${escapeHtml(section.body)}</p><p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(finding.foundation?.source ?? fragments.guidance.matureReference)}.</p>${finding.foundation ? `<p><strong>Princípio aplicado:</strong> ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}<p>Exemplo de mecanismo: ${escapeHtml(fragments.guidance.examples)}</p></details>`;
 }
 
 function renderTechnicalDirection(direction?: OutcomeFinding['technicalDirection']): string {

@@ -244,9 +244,10 @@ não mascaram uma terceira squad crítica dentro da mesma área.
 
 ### 8. Relatório e plano de melhoria
 
-O painel abre pelo diagnóstico: o que está acontecendo, a prioridade, o que testar
-e como saber se funcionou. A base das entrevistas, a justificativa da prioridade e
-as hipóteses ficam disponíveis sob demanda, sem competir com a decisão. Depois do
+O painel abre por uma narrativa estável: o que foi observado, por que importa, o
+que sustenta ou contradiz, o que pode manter o padrão, onde a restrição está
+contida, o que já funciona, o próximo experimento e, quando elegíveis, as opções
+técnicas. Metodologia e estágio permanecem por último. Depois do
 primeiro cartão, atalhos orientam quatro leituras do mesmo diagnóstico — diretoria,
 liderança de tecnologia, gerência local e especialistas/times — sem criar motores
 ou recomendações diferentes por público. Estágio, mapa de contraste e administração

@@ -1,8 +1,9 @@
 # Plano: diagnóstico centrado em eventos reais e direção técnica aplicável
 
-Status: implementação em andamento. As ondas 2 a 4 estão vigentes: eventos curtos,
-ciclos sociotécnicos e seis bibliotecas técnicas condicionadas. A validação
-cognitiva permanece aberta e a próxima implementação é a onda 5.
+Status: implementação e validação em andamento. As ondas 2 a 5 estão vigentes:
+eventos curtos, ciclos sociotécnicos, bibliotecas técnicas condicionadas e narrativa
+ordenada do finding. A próxima etapa é a onda 6, com showcase contrastante e
+validação humana.
 
 ## Problema
 
@@ -193,58 +194,6 @@ eliminar triangulação mínima.
   comportamento sustentado.
 - A jornada típica é menor que a atual e possui maior quantidade de fatos ligados
   ao mesmo evento.
-
----
-
-## Onda 5 — Direção e organização da leitura
-
-### Objetivo
-
-Fazer o relatório responder primeiro ao trabalho observado e depois oferecer
-direção técnica utilizável.
-
-### Ordem da página
-
-1. **O que observamos** — evento e padrão recorrente em linguagem concreta.
-2. **Por que importa** — consequência demonstrada e alcance.
-3. **O que sustenta ou contradiz** — fatos agregados e perspectivas.
-4. **O que pode manter o padrão** — hipótese principal, concorrentes e lacuna.
-5. **Onde a restrição está contida** — autoridade provável e limite da leitura.
-6. **O que já funciona** — padrão virtuoso e capacidade disponível para agir.
-7. **Próximo experimento** — decisão, responsável, horizonte, indicador e critério.
-8. **Opções técnicas** — prática, técnica, habilitador e família de ferramenta.
-9. **Detalhes metodológicos** — posterior, cobertura, ordinal, calibração e versão.
-
-As leituras por autoridade continuam projeções do mesmo finding. Especialistas e
-times recebem opções técnicas abertas por padrão; diretoria recebe somente decisões
-sob sua autoridade e consequências demonstradas.
-
-### Red
-
-- Leitor não precisa abrir metodologia para identificar evento, padrão, impacto e
-  decisão solicitada.
-- Uma ferramenta não aparece antes de mecanismo e prática-alvo.
-- O relatório não mostra vários cartões concorrentes como prioridades simultâneas.
-- Prescrição investigativa não exibe playbook de implementação.
-- Padrões virtuosos aparecem com condição de sustentação e sinal de regressão.
-
-### Green
-
-- Criar uma projeção de narrativa centrada no evento a partir do finding existente.
-- Reordenar o HTML sem recalcular diagnóstico nas rotas.
-- Tornar o contrato técnico visível na leitura especialista.
-
-### Blue
-
-- Remover explicações duplicadas entre cartão, panorama, briefings e detalhes.
-- Centralizar labels e prosa de apresentação no domínio responsável.
-
-### Critério de aceite
-
-- Em teste moderado, leitor descreve o problema e o experimento sem citar estágio
-  ordinal como resultado principal.
-- Pessoa desenvolvedora entende o comportamento esperado, a técnica possível, seu
-  fundamento e o limite sem precisar conhecer o nome do framework.
 
 ---
 

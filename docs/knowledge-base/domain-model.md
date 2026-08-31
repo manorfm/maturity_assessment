@@ -120,6 +120,9 @@ Todo finding precisa informar:
 - direção técnica condicionada, com prática, técnica, habilitador, família de
   ferramenta opcional, pré-condições, limites, custo/risco e experimento como
   conceitos separados; ausência nominal não produz direção.
+- `FindingNarrative`, projeção versionada que ordena a leitura sem alterar o
+  finding, omite playbook em investigação e preserva força local e regressão de
+  padrões virtuosos.
 
 Recorrência e contenção são invariantes diferentes. A primeira informa onde o
 padrão apareceu; a segunda informa onde a restrição pode ser removida. O domínio

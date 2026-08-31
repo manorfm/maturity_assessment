@@ -48,8 +48,8 @@ técnica em camadas está em
 preserva a taxonomia e proíbe pontuar ferramentas; esteira, SAST, ambiente seguro,
 descoberta de domínio, mapeamento arquitetural e ferramentas homologadas aparecem
 somente como técnicas ou famílias condicionadas ao mecanismo demonstrado.
-As ondas 2 a 4 estão na base vigente; a próxima implementação aberta é a direção e
-organização da leitura da onda 5.
+As ondas 2 a 5 estão na base vigente; a próxima etapa aberta é o showcase
+contrastante e a validação humana da onda 6.
 
 O plano sequenciado após a auditoria do modelo está em
 [`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam o trabalho

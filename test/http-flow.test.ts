@@ -99,7 +99,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.doesNotMatch(report.body, /Risco gerencial/);
   assert.doesNotMatch(report.body, /Resumo executivo/);
   assert.match(report.body, /class="radar-point radar-status-/);
-  assert.ok(report.body.indexOf('O que está acontecendo') < report.body.indexOf('Consistência do comportamento no elo limitante'));
+  assert.ok(report.body.indexOf('O que observamos') < report.body.indexOf('Consistência do comportamento no elo limitante'));
   assert.ok(report.body.indexOf('Mapa de contraste') < report.body.indexOf('Gerar convites individuais'));
   const capabilityUrl = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
   assert.ok(capabilityUrl);

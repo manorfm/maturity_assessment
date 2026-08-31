@@ -157,6 +157,12 @@ habilitar um contrato; `technicalDirectionFor` materializa a direção depois de
 validar padrão, mecanismo, prescrição e `SolutionReadiness`. Rotas e HTML apenas
 projetam o objeto pronto e não contêm regras de elegibilidade.
 
+`finding-narrative.ts` é a única regra de ordem e linguagem resumida do cartão
+principal. Sua versão `finding-narrative-v1` produz seções tipadas; a rota associa
+cada seção à marcação HTML e mantém detalhes metodológicos em divulgação
+progressiva. O projetor não consulta banco, não ranqueia e não altera posterior,
+contenção, autoridade ou prescrição.
+
 `TransformationPortfolioPlanner`, no mesmo módulo de domínio, é a única regra de
 sequenciamento. Ele consome a projeção pública do finding e produz
 `transformation-portfolio-v1` para organização e recortes elegíveis. A interface e

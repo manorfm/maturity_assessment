@@ -31,6 +31,14 @@ Para uma visão resumida dos marcos por versão, consulte o
   [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
   [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
 
+## 2026-08-31 — Narrativa do finding centrada no evento
+
+- Publicado `finding-narrative-v1` com ordem observação→impacto→evidência→causa→
+  contenção→força→experimento→técnica→metodologia, resumo factual sem duplicação e
+  suspensão de playbook investigativo. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-08-31 — Reconstrução factual de eventos
 
 - Publicado o grafo `evidence-anamnesis-pilot-v10` com contrato reutilizável para

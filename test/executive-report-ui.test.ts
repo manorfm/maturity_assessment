@@ -27,9 +27,9 @@ test('primeiro plano é o diagnóstico, não o estágio nem o radar', () => {
     findings: [outcome.finding],
     confirmedProblemCount: 2,
   });
-  const diagnosis = html.indexOf('O que está acontecendo');
-  const interviews = html.indexOf('O que as entrevistas mostraram');
-  const test = html.indexOf('O que recomendamos testar');
+  const diagnosis = html.indexOf('O que observamos');
+  const interviews = html.indexOf('O que sustenta ou contradiz');
+  const test = html.indexOf('Próximo experimento');
   const success = html.indexOf('Como saber se funcionou');
   const consistency = html.indexOf('Consistência do comportamento no elo limitante');
   assert.ok(diagnosis >= 0 && interviews > diagnosis && test > interviews && success > test);
@@ -102,7 +102,7 @@ test('cartão de correção mostra o universo da solução', () => {
       experiment: { action: 'Reduza uma mudança até integrá-la no mesmo dia', owner: 'Fluxo', metric: 'espera até a junta', reviewHorizon: '30 dias', successCriterion: 'encontro no mesmo dia' },
     },
   });
-  assert.match(html, /Fundamento técnico e opções/);
+  assert.match(html, /Detalhes metodológicos/);
   assert.match(html, /Princípio aplicado/);
   assert.match(html, /Integração frequente reduz o custo/);
   assert.match(html, /Integração em tronco/);
@@ -132,18 +132,18 @@ test('cartão executivo explica a situação em linguagem cotidiana sem perder r
       experiment: { action: 'Explicite o risco e teste um caminho simples para baixo risco.', owner: 'Governança e executores', metric: 'espera da mudança pequena', reviewHorizon: '30 dias', successCriterion: 'a mudança pequena avança sem perder o controle' },
     },
   });
-  assert.match(html, /O que está acontecendo/);
-  assert.match(html, /O que as entrevistas mostraram/);
-  assert.match(html, /O que recomendamos testar/);
+  assert.match(html, /O que observamos/);
+  assert.match(html, /O que sustenta ou contradiz/);
+  assert.match(html, /Próximo experimento/);
   assert.match(html, /Como saber se funcionou/);
   assert.match(html, /4 de 9 pessoas que poderiam observar/);
   assert.match(html, /2 padrões de resposta/);
-  assert.match(html, /O comportamento identificado foi:.*Políticas e etapas exigem acumular mudanças/s);
+  assert.match(html, /Políticas e etapas exigem acumular mudanças.*O que observamos/s);
   assert.match(html, /5 pessoas não aparecem neste agregado como apoio nem como contradição específica/);
   assert.match(html, /não significa que (?:as demais pessoas )?concordaram com a hipótese/i);
   assert.match(html, /Nenhuma contradição específica atingiu o limiar de publicação/);
   assert.match(html, /ainda não mostraram esse caminho funcionando/i);
-  assert.match(html, /<details class="decision-evidence"/);
+  assert.equal((html.match(/data-narrative="evidence"/g) ?? []).length, 1);
   assert.doesNotMatch(html, /padrões independentes|Capacidade para resolver|Impacto decisório/);
 });
 

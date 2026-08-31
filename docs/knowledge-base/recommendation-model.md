@@ -104,6 +104,19 @@ Snapshots individuais nunca são publicados.
 
 ## Recomendações
 
+O projetor `finding-narrative-v1` organiza cada finding nesta ordem pública:
+observação, consequência/alcance, evidência favorável e contrária, hipótese e
+lacuna, contenção/autoridade, capacidade que já funciona, experimento, opções
+técnicas e metodologia. A rota percorre os IDs dessa projeção; não decide uma ordem
+própria nem recalcula inferência. O resumo factual aparece uma vez. Detalhes
+progressivos explicam força da evidência, alternativas e método sem repetir a
+mesma contagem.
+
+Findings investigativos substituem experimento e opções técnicas por uma próxima
+investigação. Padrões virtuosos publicam condição de sustentação e sinal de
+regressão. As leituras de diretoria, tecnologia, gestão local e especialistas
+continuam filtrando o mesmo finding por autoridade, sem criar outra prioridade.
+
 Uma recomendação exige suporte coletivo mínimo e hipótese causal correspondente.
 O motor suprime prescrições incompatíveis e sua entidade probabilística valida
 pré-requisitos antes de recomendar; entre 50% e 70% a ação permanece como hipótese
