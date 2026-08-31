@@ -144,12 +144,18 @@ evidência, contradição, intervenção e fundamento. `problem-system.ts` mant�
 bibliotecas declarativas com os papéis `symptoms`, `hypotheses` e `amplifiers`;
 elas alimentam tanto o agrupamento do panorama quanto as alternativas do finding.
 A projeção pública remove identificadores internos, preserva a versão
-`causal-catalog-v2` e aparece no cartão e no detalhe sem recalcular o posterior.
+`causal-catalog-v3` e aparece no cartão e no detalhe sem recalcular o posterior.
 `SociotechnicalPattern` valida decisão e consequência observadas antes de compor
 um ciclo, mantém reforço como hipótese e separa racionalidade local, efeito,
 incentivo, fronteira decisória e comportamento compensatório. A projeção é
 omitida quando essas evidências não existem; não há fallback narrativo que invente
 causalidade.
+
+`technical-practice-library.ts` contém contratos declarativos das seis famílias
+técnicas vigentes. `CausalKnowledgeGraph` registra apenas que um padrão pode
+habilitar um contrato; `technicalDirectionFor` materializa a direção depois de
+validar padrão, mecanismo, prescrição e `SolutionReadiness`. Rotas e HTML apenas
+projetam o objeto pronto e não contêm regras de elegibilidade.
 
 `TransformationPortfolioPlanner`, no mesmo módulo de domínio, é a única regra de
 sequenciamento. Ele consome a projeção pública do finding e produz

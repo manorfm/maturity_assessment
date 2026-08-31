@@ -256,6 +256,8 @@ ficam depois, para localizar cobertura ou operar a coleta. Cada diagnóstico rec
 - causa provável e força da hipótese;
 - ação sugerida e responsável provável;
 - medida, horizonte de revisão e critério de sucesso;
+- quando elegível, direção técnica separada em prática-alvo, técnicas, mecanismo
+  habilitador e famílias de ferramenta opcionais, com pré-condições e limites;
 - evidências e detalhes do modelo sob demanda.
 
 Na base das entrevistas, o painel nomeia o comportamento identificado e separa
@@ -272,7 +274,10 @@ quando mudam a interpretação global e preservam os limiares de anonimato.
 
 Recomendações são classificadas como correção ou evolução. Uma ferramenta só pode
 ser sugerida quando resolve uma causa sustentada e é compatível com o contexto; sua
-simples presença nunca é tratada como evidência de capacidade.
+simples presença nunca é tratada como evidência de capacidade. As seis bibliotecas
+técnicas vigentes cobrem feedback/esteira, segurança, ambiente seguro, descoberta
+de domínio, mapeamento arquitetural e caminhos homologados. Elas permanecem
+ocultas enquanto mecanismo, contenção ou capacidade para agir não forem suficientes.
 
 ## Capacidades observadas
 

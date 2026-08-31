@@ -16,6 +16,7 @@ import { buildDiagnosticContext, type DiagnosticContext } from './domain/diagnos
 import { TransformationPortfolioPlanner, type TransformationPortfolio } from './domain/transformation-portfolio.js';
 import { AudienceReportProjector, type UnitManagementReport } from './domain/audience-report.js';
 import { sociotechnicalPatternFor, type SociotechnicalPatternView } from './domain/sociotechnical-pattern.js';
+import { technicalDirectionFor, type TechnicalDirection } from './domain/technical-practice-library.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -27,6 +28,7 @@ export type Finding = {
   foundation: { source: string; principle: string; why: string };
   solutionCapability: string;
   solutionReadiness: SolutionReadiness;
+  technicalDirection?: TechnicalDirection;
   affectedCapabilities?: string[];
   causalAnalysis: {
     knowledgeVersion: string;
@@ -557,7 +559,15 @@ export class InferenceService {
       capability,
       new Set(signals.filter((signal) => signal.detailCapability === capability).map((signal) => signal.participantId)).size,
     ]));
-    return new GroupRecommendationEngine(interventionCatalog, evolutionCatalog).rank(signals, { total: population, applicableByCapability }).map((ranked) => ({
+    return new GroupRecommendationEngine(interventionCatalog, evolutionCatalog).rank(signals, { total: population, applicableByCapability }).map((ranked) => {
+      const diagnosticContext = buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint });
+      const technicalDirection = technicalDirectionFor({
+        pattern: ranked.pattern,
+        mechanism: diagnosticContext.mechanism,
+        prescription: diagnosticContext.prescription,
+        readiness: ranked.solutionReadiness,
+      });
+      return ({
       kind: ranked.kind,
       capability: ranked.detailCapability,
       detailCapability: ranked.detailCapability,
@@ -575,13 +585,15 @@ export class InferenceService {
       foundation: ranked.foundation,
       solutionCapability: ranked.solutionCapability,
       solutionReadiness: ranked.solutionReadiness,
+      ...(technicalDirection ? { technicalDirection } : {}),
       affectedCapabilities: ranked.affectedCapabilities,
       priorityFactors: ranked.priorityFactors,
-      causalAnalysis: causalAnalysisFor(causalKnowledgeGraph.pathFor(ranked.pattern)!, ranked.evidence, buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }).missingEvidence, {
+      causalAnalysis: causalAnalysisFor(causalKnowledgeGraph.pathFor(ranked.pattern)!, ranked.evidence, diagnosticContext.missingEvidence, {
         kind: ranked.kind, pattern: ranked.pattern, title: ranked.title, cause: ranked.cause, constraint: ranked.constraint,
       }),
-      ...buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }),
-    }));
+      ...diagnosticContext,
+    });
+    });
   }
 
   private persistTransformation(projectId: string, completed: number, findings: Finding[]): void {

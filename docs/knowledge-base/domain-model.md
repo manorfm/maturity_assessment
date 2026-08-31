@@ -117,6 +117,9 @@ Todo finding precisa informar:
 - ciclo sociotécnico somente quando decisão e consequência foram observadas,
   preservando incentivo, fronteira decisória, compensação, evidência contrária,
   lacuna, escopo e reforço como hipótese.
+- direção técnica condicionada, com prática, técnica, habilitador, família de
+  ferramenta opcional, pré-condições, limites, custo/risco e experimento como
+  conceitos separados; ausência nominal não produz direção.
 
 Recorrência e contenção são invariantes diferentes. A primeira informa onde o
 padrão apareceu; a segunda informa onde a restrição pode ser removida. O domínio

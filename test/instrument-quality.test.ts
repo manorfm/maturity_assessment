@@ -139,4 +139,5 @@ test('rede especialista explicita hipótese concorrente, evidência contrária e
   assert.ok(path.edges.some((edge) => edge.relation === 'may_be_explained_by'));
   assert.ok(path.edges.some((edge) => edge.relation === 'supported_by'));
   assert.ok(path.edges.some((edge) => edge.relation === 'contradicted_by'));
+  assert.ok(path.edges.some((edge) => edge.relation === 'may_enable' && edge.to === 'technical-contract:causa-ferramental-feedback'));
 });

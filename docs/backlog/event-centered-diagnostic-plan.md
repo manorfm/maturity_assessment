@@ -1,8 +1,8 @@
 # Plano: diagnóstico centrado em eventos reais e direção técnica aplicável
 
-Status: implementação em andamento. O contrato factual, as trilhas curtas da onda
-2 e os padrões/ciclos sociotécnicos da onda 3 estão vigentes; a validação cognitiva
-do orçamento permanece aberta e a próxima implementação é a onda 4.
+Status: implementação em andamento. As ondas 2 a 4 estão vigentes: eventos curtos,
+ciclos sociotécnicos e seis bibliotecas técnicas condicionadas. A validação
+cognitiva permanece aberta e a próxima implementação é a onda 5.
 
 ## Problema
 
@@ -193,105 +193,6 @@ eliminar triangulação mínima.
   comportamento sustentado.
 - A jornada típica é menor que a atual e possui maior quantidade de fatos ligados
   ao mesmo evento.
-
----
-
-## Onda 4 — Bibliotecas técnicas condicionadas ao problema
-
-### Objetivo
-
-Cobrir práticas e técnicas concretas sem transformar o produto em inventário ou
-prova de jargão.
-
-### Contrato comum
-
-Cada biblioteca declara:
-
-- sintomas observáveis;
-- fatos discriminantes;
-- mecanismos concorrentes;
-- prática-alvo;
-- técnicas compatíveis;
-- mecanismo habilitador;
-- famílias de ferramentas opcionais;
-- pré-condições;
-- o que a técnica não resolve;
-- risco e custo qualitativos;
-- menor experimento;
-- indicador e critério;
-- fundamento com fonte, princípio, data/versão e limitação.
-
-### 4A — Esteira e feedback técnico
-
-Cobrir proveniência do artefato, integração, duração e estabilidade das verificações,
-ownership das falhas, promoção, exposição, bypass, reconciliação e feedback ao
-desenvolvedor. Famílias possíveis incluem build, integração, contrato, qualidade,
-entrega e observação da mudança; presença nominal não gera sinal.
-
-### 4B — Segurança no fluxo
-
-Cobrir análise estática, composição de dependências, segredo, configuração e
-infraestrutura como código apenas quando o risco for aplicável. Distinguir tempo de
-retorno, precisão, política por criticidade, ownership, bloqueio, exceção e
-aprendizado. Explicitar que scanners não substituem modelagem de ameaça,
-autorização, teste de comportamento ou decisão de risco.
-
-### 4C — Ambiente seguro e autonomia operacional
-
-Separar provisionamento, isolamento, dado, acesso, custo, descarte, fidelidade,
-concorrência e observabilidade. Avaliar o tempo até o primeiro aprendizado e se o
-caminho comum pode ser executado com acesso mínimo, guardrails e reconciliação.
-
-### 4D — Descoberta de domínio e Event Storming
-
-Recomendar descoberta colaborativa quando eventos, regras, linguagem, ownership ou
-fronteiras não puderem ser reconstruídos durante uma mudança. Explicar que Event
-Storming torna conflitos e decisões visíveis, mas não resolve sozinho acoplamento,
-falta de autoridade, funding ou feedback técnico.
-
-### 4E — Mapeamento arquitetural e parque tecnológico
-
-Distinguir inventário nominal de mapa usado para decidir. Cobrir ownership,
-criticidade, dependências, fluxos, tecnologias sem mantenedor, risco de mudança e
-capacidade de reconstruir impacto. Técnicas possíveis incluem context map, mapa de
-capacidades, catálogo de serviços, C4 e mapa de dependências, conforme o problema.
-
-### 4F — Ferramentas e caminhos homologados
-
-Investigar descoberta, acesso, adequação, suporte, alternativas redundantes,
-exceções, telemetria de uso e evolução do catálogo. Homologação só é capacidade
-quando reduz risco e permite execução; catálogo inacessível ou inadequado pode
-produzir fila e contorno.
-
-### Red
-
-- Nenhuma família pode ser recomendada por ausência nominal.
-- SAST não pode ser recomendado quando a evidência exige modelagem de ameaça ou
-  decisão de autorização.
-- Event Storming não pode ser indicado apenas por ausência de documentação.
-- C4 ou catálogo de serviços não pode ser indicado quando o problema é somente
-  acesso desatualizado.
-- Esteira não pode ser recomendada quando política de lote permanece como causa.
-- Ferramenta homologada não pode ser tratada como adequada sem evidência da jornada
-  do consumidor.
-
-### Green
-
-- Implementar uma biblioteca por vez, começando por esteira, segurança e ambiente.
-- Ligar contratos à rede causal e ao recomendador explícito.
-- Manter padrões sem contrato diagnosticáveis e com prescrição suspensa.
-
-### Blue
-
-- Eliminar fundamentos repetidos e orientações genéricas substituídas.
-- Consolidar referências compartilhadas sem reutilizar justificativas incompatíveis.
-
-### Critério de aceite
-
-- Casos com o mesmo sintoma e mecanismos diferentes recebem técnicas diferentes.
-- Cada orientação explica prática, técnica, habilitador e ferramenta opcional em
-  camadas separadas.
-- Nenhum contrato novo usa marca como solução ou presença como evidência.
 
 ---
 

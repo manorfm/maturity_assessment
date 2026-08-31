@@ -88,7 +88,7 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(causal.locator(':scope > summary')).toBeVisible();
   await causal.locator(':scope > summary').click();
   await expect(causal.getByText('Hipótese mais sustentada:')).toBeVisible();
-  await expect(causal.getByText(/Versão do conhecimento: causal-catalog-v2/)).toBeVisible();
+  await expect(causal.getByText(/Versão do conhecimento: causal-catalog-v3/)).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Leituras por unidade' })).toBeVisible();
   const alfaReport = page.locator('details.scope-report', { hasText: 'Squad Alfa' });
   const betaReport = page.locator('details.scope-report', { hasText: 'Squad Beta' });

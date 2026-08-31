@@ -22,6 +22,15 @@ Para uma visão resumida dos marcos por versão, consulte o
   [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
   [`domain-model.md`](../knowledge-base/domain-model.md).
 
+## 2026-08-31 — Bibliotecas técnicas condicionadas
+
+- Publicado `causal-catalog-v3` com contratos em camadas para feedback técnico,
+  segurança, ambiente seguro, descoberta de domínio, mapeamento arquitetural e
+  caminhos homologados, sempre condicionados a mecanismo, prescrição e capacidade
+  de solução. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-08-31 — Reconstrução factual de eventos
 
 - Publicado o grafo `evidence-anamnesis-pilot-v10` com contrato reutilizável para

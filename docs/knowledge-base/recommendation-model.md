@@ -64,7 +64,7 @@ O catálogo materializa essa cadeia em uma rede especialista tipada com relaçõ
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v2` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v3` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
@@ -84,6 +84,15 @@ investigação de visibilidade, fronteira ou poder.
 `culture` isolado não é mecanismo publicável: ele é normalizado para mecanismo e
 contenção indeterminados, suspende a prescrição e exige reconstruir decisão,
 incentivo, política, poder ou consequência observável.
+
+A direção técnica condicionada possui seis bibliotecas: feedback/esteira,
+segurança no fluxo, ambiente seguro, descoberta de domínio, mapeamento arquitetural
+e caminhos homologados. Cada contrato separa prática-alvo, técnicas, mecanismo
+habilitador e famílias de ferramenta opcionais, além de pré-condições, limite,
+custo, risco, menor experimento, indicador, critério e fundamento versionado. A
+rede causal registra a relação potencial `may_enable`, mas a projeção só aparece
+quando mecanismo e contenção autorizam experimento e a capacidade de solução foi
+ao menos declarada. Presença ou ausência nominal nunca seleciona contrato.
 
 O prior de evidência insuficiente varia com a observabilidade, sem uma reserva fixa
 que cresça artificialmente com a quantidade de causas. O suporte publicado de uma

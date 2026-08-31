@@ -213,6 +213,29 @@ test('detalhe causal publica ciclo sociotécnico sem apresentá-lo como causalid
   assert.match(html, /não comprovam causalidade/i);
 });
 
+test('direção técnica separa prática, técnica, habilitador e ferramenta opcional', () => {
+  const finding = {
+    kind: 'correction' as const, pattern: 'causa-ferramental-feedback', detailCapability: 'sdlc-automation',
+    title: 'O retorno automatizado não orienta a mudança', cause: '', intervention: '', confidence: .8, priority: .8,
+    technicalDirection: {
+      library: 'delivery-feedback' as const, practiceTarget: 'Feedback técnico no tempo da decisão',
+      techniques: ['Caminho rápido', 'Teste de contrato'], enablingMechanism: 'Evidência acionável antes da próxima decisão.',
+      toolFamilies: ['integração e build'], prerequisites: ['Verificação crítica identificada'], doesNotSolve: 'Não remove política de lote.',
+      qualitativeCost: 'medium' as const, risk: 'Reduzir cobertura relevante.', smallestExperiment: 'Estabilizar uma verificação.',
+      indicator: 'Tempo até retorno.', successCriterion: 'Retorno usado no mesmo dia.',
+      foundation: { source: 'Continuous Delivery', principle: 'Feedback rápido', versionOrDate: '2010', limitation: 'Não define o risco do produto.' },
+    },
+  };
+  const html = renderOutcome({ kind: 'correct', kindLabel: 'Corrigir', limiterLabel: 'Feedback', reading: '', nextStepTitle: '', nextStepBody: '', finding });
+  assert.match(html, /Opções técnicas condicionadas/);
+  assert.ok(html.indexOf('Prática-alvo') < html.indexOf('Técnicas compatíveis'));
+  assert.ok(html.indexOf('Técnicas compatíveis') < html.indexOf('Mecanismo habilitador'));
+  assert.ok(html.indexOf('Mecanismo habilitador') < html.indexOf('Famílias de ferramenta opcionais'));
+  assert.match(html, /Não remove política de lote/);
+  assert.match(html, /Continuous Delivery.*2010/s);
+  assert.match(html, /Não define o risco do produto/);
+});
+
 test('evidência mostra convergência, amplitude e diversidade como medidas diferentes', () => {
   const html = renderOutcome({
     kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '',

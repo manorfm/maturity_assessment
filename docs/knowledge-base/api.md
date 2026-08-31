@@ -29,6 +29,11 @@ Quando decisão e consequência estão trianguladas, `causalAnalysis` pode inclu
 `sociotechnicalPattern`: tipo virtuoso/vicioso, racionalidade local, efeito,
 reforço hipotético, incentivo, fronteira decisória, compensação, evidência e limite
 de escopo. A ausência desse campo significa que o ciclo ainda não é publicável.
+Um finding elegível pode incluir `technicalDirection`, com biblioteca,
+prática-alvo, técnicas, habilitador, famílias opcionais, pré-condições, limite,
+custo/risco, experimento, indicador, critério e fundamento. O campo é omitido se
+o mecanismo ainda estiver em investigação ou a capacidade de solução não tiver
+sido demonstrada ao menos como declarada.
 `prescription.status` informa se uma intervenção condicionada está pronta ou se o
 finding exige investigação causal. A prontidão diferencia capacidade não demonstrada, apenas
 declarada, local, operacional e adaptativa sem afirmar inexistência a partir de
