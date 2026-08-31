@@ -137,7 +137,12 @@ test('cartão executivo explica a situação em linguagem cotidiana sem perder r
   assert.match(html, /Como saber se funcionou/);
   assert.match(html, /4 de 9 pessoas que poderiam observar/);
   assert.match(html, /2 padrões de resposta/);
+  assert.match(html, /O comportamento identificado foi:.*Políticas e etapas exigem acumular mudanças/s);
+  assert.match(html, /5 pessoas não aparecem neste agregado como apoio nem como contradição específica/);
+  assert.match(html, /não significa que (?:as demais pessoas )?concordaram com a hipótese/i);
+  assert.match(html, /Nenhuma contradição específica atingiu o limiar de publicação/);
   assert.match(html, /ainda não mostraram esse caminho funcionando/i);
+  assert.match(html, /<details class="decision-evidence"/);
   assert.doesNotMatch(html, /padrões independentes|Capacidade para resolver|Impacto decisório/);
 });
 
@@ -189,9 +194,25 @@ test('evidência mostra convergência, amplitude e diversidade como medidas dife
     },
   });
   assert.match(html, /Convergência.*Alta/s);
+  assert.match(html, /Convergência.*quanto as respostas aplicáveis apontam na mesma direção/s);
   assert.match(html, /Amplitude.*Baixa/s);
+  assert.match(html, /Amplitude.*quantas pessoas sustentam a leitura/s);
   assert.match(html, /Diversidade de perspectivas.*Baixa/s);
+  assert.match(html, /Cobertura causal.*se as entrevistas explicam por que o comportamento acontece/s);
   assert.match(html, /Hipótese local para investigação/);
+});
+
+test('evidência contrária é apresentada sem converter o restante da população em concordância', () => {
+  const html = renderOutcome({
+    kind: 'discriminate', kindLabel: 'Entender a causa antes de agir', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '',
+    finding: {
+      kind: 'correction', pattern: 'mudanca-isolada', detailCapability: 'continuous-integration', title: 'Mudanças permanecem isoladas', cause: '', intervention: '', confidence: .7, priority: .8,
+      recommendationEvidence: { supportingParticipants: 4, applicablePopulation: 9, contradictingParticipants: 2, patterns: ['mudanca-isolada'], layers: ['practice'], profiles: ['engineering', 'product'] },
+    },
+  });
+  assert.match(html, /2 pessoas relataram uma situação que contradiz especificamente essa leitura/);
+  assert.match(html, /3 pessoas não aparecem neste agregado como apoio nem como contradição específica/);
+  assert.doesNotMatch(html, /Nenhum relato contraditório suficiente/);
 });
 
 test('panorama mostra outros problemas confirmados sem duplicar a decisão principal', () => {
@@ -274,6 +295,16 @@ test('navegação por público explica a decisão de cada leitura sem duplicar m
   assert.match(html, /Gerência local.*2 recortes/s);
   assert.match(html, /Especialistas e times.*6 diagnósticos explicáveis/s);
   assert.match(html, /mesmos diagnósticos e portfólio/i);
+  assert.match(html, /href="#report-executive"/);
+  assert.match(html, /href="#report-technology"/);
+  assert.match(html, /href="#report-units"/);
+  assert.match(html, /href="#report-portfolio"/);
+});
+
+test('navegação especialista não aponta para um panorama ausente quando existe um único diagnóstico', () => {
+  const html = renderAudienceNavigation({ executiveDecisions: 0, technologyConstraints: 0, localReports: 0, specialistFindings: 1 });
+  assert.match(html, /href="#report-diagnosis"[^>]*>.*Especialistas e times/s);
+  assert.doesNotMatch(html, /href="#report-portfolio"/);
 });
 
 test('briefings de diretoria e tecnologia mostram somente decisões da sua autoridade', () => {

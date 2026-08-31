@@ -1,6 +1,7 @@
 import type { AssessmentNode } from './assessment-graph.js';
 import type { InterventionDefinition } from '../inference/domain/group-recommendation-engine.js';
 import { allowsImprovementFoundation } from '../inference/domain/solution-guidance.js';
+import { measureInstrumentBaseline, type BaselineInput } from './instrument-baseline.js';
 
 export type InstrumentIssue = {
   severity: 'error' | 'warning';
@@ -16,6 +17,23 @@ const exposedJargon = /\b(deploy|rollback|runtime|handoff|ownership|guardrails?|
 
 export function auditInstrument(nodes: AssessmentNode[], interventions: Record<string, InterventionDefinition>): InstrumentIssue[] {
   return [...auditQuestions(nodes), ...auditInterventions(interventions)];
+}
+
+export function auditInstrumentVersion(input: BaselineInput) {
+  const issues = auditInstrument(input.graph, input.interventions);
+  return {
+    baseline: measureInstrumentBaseline(input),
+    issues,
+    errors: issues.filter((item) => item.severity === 'error').length,
+    warnings: issues.filter((item) => item.severity === 'warning').length,
+    counts: countIssues(issues),
+  };
+}
+
+function countIssues(issues: InstrumentIssue[]): Record<string, number> {
+  const result: Record<string, number> = {};
+  for (const item of issues) result[item.code] = (result[item.code] ?? 0) + 1;
+  return result;
 }
 
 function auditQuestions(nodes: AssessmentNode[]): InstrumentIssue[] {

@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-31 — Evidência agregada sem falso consenso
+
+- Entregue a versão 0.47 com separação entre apoio, contradição específica e
+  jornadas sem sinal classificável, acompanhada da tradução dos indicadores; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e o
+  [README](../../README.md#8-relatório-e-plano-de-melhoria).
+
 ## 2026-08-30 — Preflight do piloto cognitivo inicial
 
 - Entregue a versão 0.45 com preflight para oito pessoas, proteção contra alocação
@@ -451,3 +458,19 @@ Para uma visão resumida dos marcos por versão, consulte o
   padrões relacionados; ver
   [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
   [`question-design.md`](../knowledge-base/question-design.md).
+
+## 2026-08-30
+
+- Entregue a versão 0.46 com divulgação progressiva do relatório, decisão
+  prioritária antes dos detalhes e navegação por autoridade; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md) e o
+  [README](../../README.md#8-relatório-e-plano-de-melhoria).
+
+## 2026-08-31
+
+- Incorporada a linha de base versionada do instrumento, os fixtures das lacunas
+  diagnósticas e o contrato de autoria `ObservedEvent`, sem alterar o grafo ou a
+  inferência publicados; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md),
+  [`question-design.md`](../knowledge-base/question-design.md) e
+  [`domain-model.md`](../knowledge-base/domain-model.md).

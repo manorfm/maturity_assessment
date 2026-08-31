@@ -79,8 +79,8 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(page.locator('.outcome-scope').first()).not.toContainText('Infraestrutura reproduzível');
   await revealConsistency(page);
   await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
-  await expect(page.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Visões para decisão' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Outros problemas que exigem decisão' }).first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Escolha por onde avaliar' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Briefing para liderança de tecnologia' })).toBeVisible();
   await expect(page.getByText(/prioridade 1 de \d+ problemas confirmados/i).first()).toBeVisible();
@@ -89,7 +89,7 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await causal.locator(':scope > summary').click();
   await expect(causal.getByText('Hipótese mais sustentada:')).toBeVisible();
   await expect(causal.getByText(/Versão do conhecimento: causal-catalog-v1/)).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Mapa por estrutura' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Leituras por unidade' })).toBeVisible();
   const alfaReport = page.locator('details.scope-report', { hasText: 'Squad Alfa' });
   const betaReport = page.locator('details.scope-report', { hasText: 'Squad Beta' });
   await expect(alfaReport.locator(':scope > summary')).toBeVisible();
@@ -100,10 +100,10 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(alfaReport.getByRole('heading', { name: 'Restrições que a unidade recebe' })).toBeVisible();
   await expect(alfaReport.getByRole('heading', { name: 'O que precisa ser escalado' })).toBeVisible();
   await expect(alfaReport.getByText('Próxima decisão')).toBeVisible();
-  await expect(alfaReport.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
+  await expect(alfaReport.getByRole('heading', { name: 'Outros problemas que exigem decisão' })).toBeVisible();
   await betaReport.locator(':scope > summary').click();
   await expect(betaReport.getByText('Próxima decisão')).toBeVisible();
-  await expect(betaReport.getByRole('heading', { name: 'Panorama de problemas confirmados' })).toBeVisible();
+  await expect(betaReport.getByRole('heading', { name: 'Outros problemas que exigem decisão' })).toBeVisible();
   await page.locator('.radar-drill-link', { hasText: 'Operação e confiabilidade' }).first().click();
   await page.goto(adminUrl);
   await page.locator('.radar-drill-link', { hasText: 'Plataforma e experiência de engenharia' }).first().click();

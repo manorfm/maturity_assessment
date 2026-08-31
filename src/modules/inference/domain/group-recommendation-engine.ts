@@ -9,7 +9,7 @@ export type InterventionFoundation = { source: string; principle: string; why: s
 export type InterventionSeed = { title: string; intervention: string; foundation?: InterventionFoundation };
 export type InterventionDefinition = InterventionSeed & { cause: string; action: string; owner: string; metric: string; reviewHorizon: string; successCriterion: string; evidencePatterns: string[]; contradictionPatterns: string[]; foundation: InterventionFoundation; guidance?: SolutionGuidance; guidanceStatus?: 'explicit' | 'fallback' };
 export type RecommendationPopulation = { total: number; applicableByCapability: Record<string, number> };
-export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[]; strength: EvidenceStrength };
+export type RecommendationEvidence = { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; unclassifiedParticipants: number; patterns: string[]; layers: EvidenceLayer[]; profiles: string[]; strength: EvidenceStrength };
 export type RankedIntervention = InterventionDefinition & { kind: 'correction' | 'evolution'; detailCapability: string; affectedCapabilities: string[]; pattern: string; constraint: ConstraintKind; support: number; confidence: number; priority: number; priorityFactors: { intensity: number; reach: number }; reasons: string[]; evidence: RecommendationEvidence; solutionCapability: string; solutionReadiness: SolutionReadiness; experiment: Pick<InterventionDefinition, 'action' | 'owner' | 'metric' | 'reviewHorizon' | 'successCriterion'> };
 export type InterventionEvidenceRule = { evidencePatterns?: string[]; contradictionPatterns?: string[]; owner?: string; metric?: string; reviewHorizon?: string; successCriterion?: string };
 
@@ -69,7 +69,8 @@ export class GroupRecommendationEngine {
       const solutionReadiness = assessSolutionReadiness(signals, applicablePopulation);
       const solutionCapability = definition.guidance?.solutionClass ?? `Capacidade coletiva para reduzir ${definition.title.toLocaleLowerCase('pt-BR')}`;
       const strength = assessEvidenceStrength(supporters.size, applicablePopulation, profiles.length, layers.length, contradictors.size);
-      const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, patterns, layers, profiles, strength };
+      const classifiedParticipants = new Set([...supporters, ...contradictors]);
+      const evidence: RecommendationEvidence = { supportingParticipants: supporters.size, applicablePopulation, contradictingParticipants: contradictors.size, unclassifiedParticipants: Math.max(0, applicablePopulation - classifiedParticipants.size), patterns, layers, profiles, strength };
       const affectedCapabilities = unique(sourceSignals.flatMap((signal) => signal.affectedCapabilities ?? [signal.detailCapability]));
       const priorityFactors = priorityFactorsOf(sourceSignals, support);
       const reasons = [

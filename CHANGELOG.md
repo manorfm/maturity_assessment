@@ -5,6 +5,23 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.47.0
+
+- Passou a apresentar primeiro o comportamento identificado e a separar apoio,
+  contradição específica e jornadas sem sinal classificável.
+- Impediu que ausência de contradição publicável fosse interpretada como consenso.
+- Traduziu convergência, amplitude, diversidade de perspectivas e cobertura causal
+  para a pergunta respondida por cada indicador.
+
+## 0.46.0
+
+- Reorganizou o relatório para manter situação, prioridade, experimento e critério
+  de sucesso no primeiro plano, recolhendo evidências e fundamento sob demanda.
+- Adicionou navegação por público para diretoria, tecnologia, gerência local e
+  especialistas sem duplicar diagnóstico ou recomendação.
+- Moveu o panorama sequenciado para depois dos briefings e distinguiu visualmente
+  decisão principal, problemas seguintes, mapa e leituras por unidade.
+
 ## 0.45.0
 
 - Adicionou preflight para uma coorte cognitiva inicial de oito pessoas, separado

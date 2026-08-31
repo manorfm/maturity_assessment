@@ -108,10 +108,14 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva: um cartão de decisão
-em linguagem operacional (situação, observação das entrevistas, prontidão, teste,
-critério e limite da decisão);
-radar e recortes
-estruturais orientam a navegação sem reabrir a decisão. O limitador de palco
+em linguagem operacional mantém situação, prioridade, teste, critério e limite no
+primeiro plano. Base das entrevistas, justificativa da prioridade, hipóteses e
+fundamento técnico ficam em detalhes expansíveis. Depois da decisão, uma navegação
+por âncoras conduz às projeções de diretoria, liderança de tecnologia, gerência
+local e especialistas; todas consomem o mesmo diagnóstico e o mesmo portfólio.
+O panorama sequenciado vem após os briefings, enquanto radar e recortes estruturais
+orientam aprofundamento sem reabrir a decisão. IDs de navegação pertencem apenas ao
+relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam
 amarradas ao limitador. Probabilidades, ordinal exato, cobertura percentual, versão,
 calibração e revisão cognitiva ficam em elementos `details`. O home coloca decisão
@@ -221,6 +225,21 @@ Na versão vigente, cada sinal do próprio catálogo contém obrigatoriamente as
 afetadas, a camada de evidência e o tipo de restrição. O catálogo não completa esses
 campos por regex ou pelo nome do padrão. A inferência não possui leitura ou backfill
 para formatos históricos.
+
+`auditInstrumentVersion` compõe a auditoria editorial com uma linha de base
+determinística da versão publicada. `npm run audit:instrument` expõe percursos e
+duração típica por perspectiva, distribuição de tipos de nó, tamanho do tronco
+comum, variantes, probes causais, saídas de visibilidade e dívida dos fundamentos e
+contratos de direção. Os cinco fixtures de lacuna — time full-cycle sem SRE,
+segurança tardia, ambiente inseguro, parque desconhecido e ferramenta homologada
+inutilizável — caracterizam trabalho futuro e não fabricam expectativa a partir do
+recomendador.
+
+`ObservedEvent`, no módulo `catalog`, é um value object de autoria para a próxima
+versão do instrumento. Ele valida fatos ordenados, responsabilidade observável e
+condição de revisão e rejeita narrativa abstrata. O tipo não é persistido nem
+consumido pela inferência vigente e deliberadamente não possui causa, capacidade ou
+pontuação.
 
 `TeamClassification` encapsula a escala e a regra de elo limitante. O serviço de
 inferência calcula classificações locais e aplica a menor classificação descendente

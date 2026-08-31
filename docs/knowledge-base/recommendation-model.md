@@ -23,10 +23,22 @@ primeiro passo quando ainda falta execução, alcance ou aprendizado para susten
 
 No contrato executivo, a recomendação carrega também a proveniência agregada que
 sustenta a decisão: pessoas que podiam observar a situação, pessoas favoráveis,
-padrões de resposta, perspectivas e contradições. Esses números descrevem a base
+padrões de resposta, perspectivas, contradições específicas e pessoas que não
+entraram em nenhuma dessas duas categorias. A parcela não classificada é calculada
+pela união dos participantes favoráveis e contraditórios, porque uma mesma pessoa
+pode produzir sinais em direções diferentes. Esses números descrevem a base
 observada; não são chamados de evidência ampla, não são convertidos em porcentagem
 causal e não escondem a incerteza remanescente. Cobertura temática, suporte coletivo,
 posterior causal e prontidão da solução permanecem medidas separadas.
+
+A apresentação começa pelo comportamento identificado e distingue explicitamente
+apoio, contradição específica publicável e respostas que não geraram sinal em
+nenhuma dessas direções. Ausência de contradição publicável nunca é descrita como
+concordância. Uma pessoa fora das duas categorias pode não ter observado o evento,
+não ter produzido sinal classificável ou não ter alcançado evidência publicável;
+o relatório não escolhe uma dessas explicações sem dados próprios. Convergência,
+amplitude, diversidade de perspectivas e cobertura causal aparecem acompanhadas
+da pergunta que cada indicador responde, em vez de palavras soltas.
 
 A força da evidência mantém quatro leituras independentes: convergência das
 respostas, amplitude na população aplicável, diversidade de perspectivas e
@@ -56,7 +68,8 @@ A versão causal vigente `causal-catalog-v1` projeta no mesmo finding a hipótes
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
-contrária agregada, nunca como confirmação da hipótese. Sintoma, hipótese e
+contrária específica acima do limiar e acompanhada da parcela não classificada,
+nunca como confirmação da hipótese. Sintoma, hipótese e
 amplificador continuam papéis diferentes dentro da biblioteca.
 
 O prior de evidência insuficiente varia com a observabilidade, sem uma reserva fixa

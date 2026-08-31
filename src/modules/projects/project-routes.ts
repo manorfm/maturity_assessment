@@ -21,7 +21,11 @@ import { AudienceReportProjector, type AudienceReports, type UnitManagementRepor
 type Params = { publicId: string; adminSecret: string };
 
 export function renderAudienceNavigation(counts: { executiveDecisions: number; technologyConstraints: number; localReports: number; specialistFindings: number }): string {
-  return `<section class="card audience-navigation"><p class="eyebrow">Leitura por autoridade</p><h2>Visões para decisão</h2><p>As quatro leituras projetam os mesmos diagnósticos e portfólio; muda apenas o que cada público precisa decidir.</p><div class="grid"><article><h3>Diretoria</h3><p>${counts.executiveDecisions} ${counts.executiveDecisions === 1 ? 'decisão organizacional' : 'decisões organizacionais'} sobre política, estrutura ou investimento.</p></article><article><h3>Liderança de tecnologia</h3><p>${counts.technologyConstraints} ${counts.technologyConstraints === 1 ? 'restrição sistêmica' : 'restrições sistêmicas'} de arquitetura, plataforma, segurança, fluxo ou confiabilidade.</p></article><article><h3>Gerência local</h3><p>${counts.localReports} ${counts.localReports === 1 ? 'recorte' : 'recortes'} com ações próprias, dependências recebidas e escaladas.</p></article><article><h3>Especialistas e times</h3><p>${counts.specialistFindings} ${counts.specialistFindings === 1 ? 'diagnóstico explicável' : 'diagnósticos explicáveis'} com evidências, hipóteses e experimentos.</p></article></div></section>`;
+  const destination = (href: string, title: string, body: string, enabled = true) => enabled
+    ? `<a class="audience-link" href="${href}"><h3>${title}</h3><p>${body}</p><span>Ir para esta leitura →</span></a>`
+    : `<article class="audience-link disabled"><h3>${title}</h3><p>${body}</p><span>Nenhuma decisão confirmada</span></article>`;
+  const specialistTarget = counts.specialistFindings > 1 ? '#report-portfolio' : '#report-diagnosis';
+  return `<nav class="card audience-navigation" aria-label="Escolher leitura do relatório"><p class="eyebrow">Visões para decisão</p><h2>Escolha por onde avaliar</h2><p>As quatro visões projetam os mesmos diagnósticos e portfólio; muda apenas o que cada público precisa decidir.</p><div class="grid">${destination('#report-executive', 'Diretoria', `${counts.executiveDecisions} ${counts.executiveDecisions === 1 ? 'decisão organizacional' : 'decisões organizacionais'} sobre política, estrutura ou investimento.`, counts.executiveDecisions > 0)}${destination('#report-technology', 'Liderança de tecnologia', `${counts.technologyConstraints} ${counts.technologyConstraints === 1 ? 'restrição sistêmica' : 'restrições sistêmicas'} de arquitetura, plataforma, segurança, fluxo ou confiabilidade.`, counts.technologyConstraints > 0)}${destination('#report-units', 'Gerência local', `${counts.localReports} ${counts.localReports === 1 ? 'recorte' : 'recortes'} com ações próprias, dependências recebidas e escaladas.`, counts.localReports > 0)}${destination(specialistTarget, 'Especialistas e times', `${counts.specialistFindings} ${counts.specialistFindings === 1 ? 'diagnóstico explicável' : 'diagnósticos explicáveis'} com evidências, hipóteses e experimentos.`, counts.specialistFindings > 0)}</div></nav>`;
 }
 
 export function renderAudienceBriefs(reports: AudienceReports, capabilityBase: string): string {
@@ -153,17 +157,12 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const scopeOccurrences = findingScopeOccurrences(report.scopes);
     const primaryOccurrence = scopeOccurrences.find((item) => item.pattern === report.outcome.finding?.pattern);
     const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
+    const orderedFindings = uniqueFindingsByPattern(report.findings);
+    const competingFinding = orderedFindings.find((finding) => finding.pattern !== report.outcome.finding?.pattern);
     const firstPlane = report.classification
-      ? renderDiagnosticFirstPlane({
-        classification: report.classification,
-        outcome: report.outcome,
-        findings: report.findings,
-        confirmedProblemCount: uniqueFindingsByPattern(report.findings).length,
-        ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}),
-        occurrences: scopeOccurrences,
-        capabilityBase,
-      })
+      ? `${renderOutcome(report.outcome, { confirmedProblemCount: orderedFindings.length, ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}), ...(competingFinding ? { competingFinding } : {}) })}${renderClassification(report.classification, report.outcome)}`
       : renderOutcome(report.outcome);
+    const globalPortfolio = renderFindingPortfolio(report.findings, report.outcome.finding?.pattern, scopeOccurrences, capabilityBase);
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const scopeReports = distinctive.map((scope) => renderScopeReport(scope, capabilityBase)).join('');
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
@@ -171,8 +170,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
-      <section><h2>Diagnóstico</h2>${firstPlane}${reportAvailability}${perspectives}</section>
-      ${audienceNavigation}${audienceBriefs}
+      <section id="report-diagnosis"><h2>Decisão prioritária</h2>${firstPlane}${reportAvailability}${perspectives}</section>
+      ${audienceNavigation}${audienceBriefs}${globalPortfolio ? `<div id="report-portfolio">${globalPortfolio}</div>` : ''}
       <section><h2>Mapa de contraste</h2>${capabilityMap}</section>
       <details class="methodology"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
@@ -182,7 +181,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}</details>
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
       ${previous}
-      ${scopeReports ? `<section><h2>Mapa por estrutura</h2><p class="muted">Somente recortes que mudam o diagnóstico em relação à visão global aparecem.</p>${scopeReports}</section>` : ''}
+      ${scopeReports ? `<section id="report-units"><p class="eyebrow">Mapa por estrutura</p><h2>Leituras por unidade</h2><p class="muted">Somente unidades que mudam o diagnóstico em relação à visão global aparecem.</p>${scopeReports}</section>` : ''}
       <details class="methodology"><summary>Instrumento e calibração</summary>${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, auth.params)}</details>
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
   });
@@ -382,9 +381,7 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
   const foundation = outcome.finding?.foundation;
   const readiness = outcome.finding?.solutionReadiness;
   const evidence = outcome.finding?.recommendationEvidence;
-  const patternCount = evidence?.patterns.length ?? 0;
-  const perspectiveLabels = evidence?.profiles.map(profileLabel).join(' · ') ?? '';
-  const evidenceBlock = evidence ? `<section><h3>O que as entrevistas mostraram</h3><p><strong>${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas que poderiam observar essa situação</strong> relataram ${patternCount} ${patternCount === 1 ? 'padrão de resposta' : 'padrões de resposta'}.</p><p>Perspectivas que sustentam a leitura: ${escapeHtml(perspectiveLabels || 'não diferenciadas')}.</p>${evidence.contradictingParticipants ? `<p>${evidence.contradictingParticipants} ${evidence.contradictingParticipants === 1 ? 'pessoa relatou' : 'pessoas relataram'} uma situação que contradiz essa leitura.</p>` : '<p>Nenhum relato contraditório suficiente foi agregado para esta hipótese.</p>'}${evidence.strength ? renderEvidenceStrength(evidence.strength) : ''}</section>` : '';
+  const evidenceBlock = evidence ? renderRecommendationEvidence(evidence, outcome.finding?.title ?? outcome.reading) : '';
   const readinessText = readiness?.stage === 'not-demonstrated'
     ? `As entrevistas ainda não mostraram esse caminho funcionando. Isso não significa que ele não exista.`
     : readiness ? `${readiness.label}: ${readiness.explanation}` : '';
@@ -397,7 +394,7 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
     : '';
   const causalAnalysis = renderCausalAnalysis(outcome.finding?.causalAnalysis);
   const priority = outcome.finding && context.confirmedProblemCount
-    ? `<section class="priority-rationale"><h3>Por que vem primeiro</h3><p>Esta é a prioridade 1 de ${context.confirmedProblemCount} ${context.confirmedProblemCount === 1 ? 'problema confirmado' : 'problemas confirmados'}. O motor a colocou primeiro pela combinação de intensidade do sinal e alcance; os demais continuam no panorama para sequenciamento.</p>${outcome.finding.priorityFactors ? `<dl class="evidence-strength"><div><dt>Intensidade do sinal observado</dt><dd>${qualitativeFactor(outcome.finding.priorityFactors.intensity)}</dd></div><div><dt>Alcance entre pessoas aplicáveis</dt><dd>${qualitativeFactor(outcome.finding.priorityFactors.reach)}</dd></div></dl>` : ''}${priorityComparison(outcome.finding, context.competingFinding)}${context.occurrence ? `<p class="muted">${renderFindingScope(context.occurrence).trim()}</p>` : ''}</section>`
+    ? `<p><strong>Prioridade 1 de ${context.confirmedProblemCount} ${context.confirmedProblemCount === 1 ? 'problema confirmado' : 'problemas confirmados'}.</strong> Os demais continuam no panorama para sequenciamento.</p><details class="decision-evidence priority-rationale"><summary>Por que esta é a primeira decisão</summary><section><h3>Critério de prioridade</h3><p>O motor a colocou primeiro pela combinação de intensidade do sinal e alcance.</p>${outcome.finding.priorityFactors ? `<dl class="evidence-strength"><div><dt>Intensidade do sinal observado</dt><dd>${qualitativeFactor(outcome.finding.priorityFactors.intensity)}</dd></div><div><dt>Alcance entre pessoas aplicáveis</dt><dd>${qualitativeFactor(outcome.finding.priorityFactors.reach)}</dd></div></dl>` : ''}${priorityComparison(outcome.finding, context.competingFinding)}${context.occurrence ? `<p class="muted">${renderFindingScope(context.occurrence).trim()}</p>` : ''}</section></details>`
     : '';
   const metaSystem = organizationalCapabilityIds.has(outcome.limiterId ?? '')
     ? '<p class="muted">O sistema organizacional é um meta-sistema: a restrição aqui explica espera, handoff ou decisão nos demais pilares, não um oitavo eixo técnico.</p>'
@@ -418,7 +415,21 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
 function renderEvidenceStrength(strength: NonNullable<NonNullable<OutcomeFinding['recommendationEvidence']>['strength']>): string {
   const label = (value: 'low' | 'medium' | 'high') => ({ low: 'Baixa', medium: 'Média', high: 'Alta' })[value];
   const status = ({ 'local-hypothesis': 'Hipótese local para investigação', directional: 'Evidência direcional', triangulated: 'Evidência triangulada' })[strength.executiveStatus];
-  return `<div class="evidence-assessment"><p><strong>${status}.</strong> Convergência não substitui amplitude nem diversidade.</p><dl class="evidence-strength"><div><dt>Convergência</dt><dd>${label(strength.convergence)}</dd></div><div><dt>Amplitude</dt><dd>${label(strength.populationBreadth)}</dd></div><div><dt>Diversidade de perspectivas</dt><dd>${label(strength.perspectiveDiversity)}</dd></div><div><dt>Cobertura causal</dt><dd>${label(strength.causalCoverage)}</dd></div></dl></div>`;
+  return `<div class="evidence-assessment"><p><strong>${status}.</strong> Os quatro indicadores respondem perguntas diferentes; nenhum deles, isoladamente, confirma a hipótese.</p><dl class="evidence-strength"><div><dt>Convergência</dt><dd><strong>${label(strength.convergence)}</strong> — quanto as respostas aplicáveis apontam na mesma direção.</dd></div><div><dt>Amplitude</dt><dd><strong>${label(strength.populationBreadth)}</strong> — quantas pessoas sustentam a leitura.</dd></div><div><dt>Diversidade de perspectivas</dt><dd><strong>${label(strength.perspectiveDiversity)}</strong> — quantas funções diferentes observaram o comportamento.</dd></div><div><dt>Cobertura causal</dt><dd><strong>${label(strength.causalCoverage)}</strong> — se as entrevistas explicam por que o comportamento acontece, e não apenas que ele ocorreu.</dd></div></dl></div>`;
+}
+
+function renderRecommendationEvidence(evidence: NonNullable<OutcomeFinding['recommendationEvidence']>, findingTitle: string): string {
+  const patternCount = evidence.patterns.length;
+  const perspectives = evidence.profiles.map(profileLabel).join(' · ') || 'não diferenciadas';
+  const unclassified = evidence.unclassifiedParticipants
+    ?? Math.max(0, evidence.applicablePopulation - evidence.supportingParticipants - evidence.contradictingParticipants);
+  const contradiction = evidence.contradictingParticipants
+    ? `${evidence.contradictingParticipants} ${evidence.contradictingParticipants === 1 ? 'pessoa relatou' : 'pessoas relataram'} uma situação que contradiz especificamente essa leitura.`
+    : 'Nenhuma contradição específica atingiu o limiar de publicação. Isso não significa que as demais pessoas concordaram com a hipótese.';
+  const remainder = unclassified
+    ? `<p><strong>${unclassified} ${unclassified === 1 ? 'pessoa não aparece' : 'pessoas não aparecem'} neste agregado como apoio nem como contradição específica.</strong> Isso pode significar que não observaram o comportamento, não produziram um sinal classificável ou não geraram evidência publicável; não significa que concordaram com a hipótese.</p>`
+    : '';
+  return `<details class="decision-evidence"><summary>Base da decisão nas entrevistas</summary><section><h3>O que as entrevistas mostraram</h3><h4>O que foi identificado</h4><p><strong>O comportamento identificado foi:</strong> ${escapeHtml(findingTitle)}.</p><p><strong>${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas que poderiam observar essa situação</strong> relataram ${patternCount} ${patternCount === 1 ? 'padrão de resposta relacionado' : 'padrões de resposta relacionados'} a esse comportamento.</p><p><strong>Perspectivas que sustentam a leitura:</strong> ${escapeHtml(perspectives)}.</p><h4>O que as demais respostas permitem concluir</h4><p>${escapeHtml(contradiction)}</p>${remainder}${evidence.strength ? renderEvidenceStrength(evidence.strength) : ''}</section></details>`;
 }
 
 function renderCausalAnalysis(causal?: OutcomeFinding['causalAnalysis']): string {
@@ -530,7 +541,7 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
   const systemSummary = systems.length < uniqueFindings.length
     ? `<p><strong>${uniqueFindings.length} padrões formam ${systems.length} ${systems.length === 1 ? 'frente diagnóstica' : 'frentes diagnósticas'}:</strong> ${systems.map((system) => `${escapeHtml(system.label)} (${system.findings.length})`).join(' · ')}. O agrupamento organiza padrões relacionados; não declara que uma causa única já foi comprovada.</p>`
     : '';
-  return `<section class="card finding-portfolio"><p class="eyebrow">${primaryPattern ? 'Além da decisão principal' : 'Problemas observados'}</p><h2>Panorama de problemas confirmados</h2>${systemSummary}<p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation}</p><h2>Sequência de transformação</h2><p>A ordem considera dependências, risco e quem possui autoridade. Ela não autoriza todas as frentes ao mesmo tempo.</p>${sequencedItems}${conditionedItems}</section>`;
+  return `<section class="card finding-portfolio"><p class="eyebrow">Panorama de problemas confirmados</p><h2>${primaryPattern ? 'Outros problemas que exigem decisão' : 'Problemas que exigem decisão'}</h2>${systemSummary}<p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation}</p><h3>Sequência de transformação</h3><p>A ordem considera dependências, risco e quem possui autoridade. Ela não autoriza todas as frentes ao mesmo tempo.</p>${sequencedItems}${conditionedItems}</section>`;
 }
 
 function qualitativeLabel(value: 'low' | 'moderate' | 'high'): string {

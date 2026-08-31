@@ -25,7 +25,7 @@ export type OutcomeFinding = {
   foundation?: { source: string; principle: string; why: string };
   solutionCapability?: string;
   solutionReadiness?: import('./solution-readiness.js').SolutionReadiness;
-  recommendationEvidence?: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; patterns: string[]; layers: string[]; profiles: string[]; strength?: import('./group-recommendation-engine.js').EvidenceStrength };
+  recommendationEvidence?: { supportingParticipants: number; applicablePopulation: number; contradictingParticipants: number; unclassifiedParticipants?: number; patterns: string[]; layers: string[]; profiles: string[]; strength?: import('./group-recommendation-engine.js').EvidenceStrength };
   causalAnalysis?: {
     knowledgeVersion: string;
     hypothesis: string;

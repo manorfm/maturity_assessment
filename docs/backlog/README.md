@@ -41,6 +41,14 @@ orientação por classe de solução) está em
 na base de conhecimento (0.31.0). Restam os contratos causais das demais folhas e o piloto
 cognitivo dos novos textos.
 
+A evolução da experiência para uma entrevista centrada em eventos reais, com
+roteamento por responsabilidade e autonomia, padrões virtuosos/viciosos e direção
+técnica em camadas está em
+[`event-centered-diagnostic-plan.md`](event-centered-diagnostic-plan.md). O plano
+preserva a taxonomia e proíbe pontuar ferramentas; esteira, SAST, ambiente seguro,
+descoberta de domínio, mapeamento arquitetural e ferramentas homologadas aparecem
+somente como técnicas ou famílias condicionadas ao mecanismo demonstrado.
+
 O plano sequenciado após a auditoria do modelo está em
 [`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam o trabalho
 humano do piloto, validação de linguagem com as disciplinas, separação de

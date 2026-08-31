@@ -21,6 +21,10 @@
   permite estados coletivos, revogação e uma reemissão sem identificar pessoas.
 - **Participation:** sessão anônima associada a um convite, separada das respostas.
 - **RespondentContext:** papel, escopo e contexto relevantes, com minimização de PII.
+- **ObservedEvent:** contrato de autoria para uma futura anamnese centrada em evento;
+  preserva família, recência, gatilho, responsabilidade observável, autoridade,
+  alcance, fatos ordenados e condição de revisão, sem carregar causa, capacidade,
+  sinal ou pontuação. Ainda não altera o percurso publicado.
 - **Profile:** lente configurável sobre responsabilidades, visibilidade e decisões;
   seleciona cenários, mas não cria uma escala de capacidade por cargo.
 - **Response:** resposta bruta e metadados consentidos.

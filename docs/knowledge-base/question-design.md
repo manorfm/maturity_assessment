@@ -41,6 +41,11 @@
   outros); avisos de evento ausente ou abstração devem chegar a zero na versão
   publicada para entrevista cognitiva. Essa auditoria prepara, mas não substitui,
   entrevistas cognitivas com pessoas reais.
+- O mesmo comando publica a linha de base da versão: tamanho e duração estimada dos
+  percursos, tronco comum, variantes por perspectiva, probes causais, saídas de
+  visibilidade e repetição dos fundamentos. A linha de base torna dívida de autoria
+  comparável entre versões, mas não transforma contagem em critério de qualidade e
+  não altera sinais, posterior ou recomendação.
 
 ## Formatos
 

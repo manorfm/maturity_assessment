@@ -238,15 +238,31 @@ não mascaram uma terceira squad crítica dentro da mesma área.
 
 ### 8. Relatório e plano de melhoria
 
-O painel abre pelo diagnóstico: o que está acontecendo, o que as entrevistas
-mostraram, o que testar e como saber se funcionou. Estágio e mapa de contraste
-ficam depois, para localizar cobertura. Cada diagnóstico recomendado apresenta:
+O painel abre pelo diagnóstico: o que está acontecendo, a prioridade, o que testar
+e como saber se funcionou. A base das entrevistas, a justificativa da prioridade e
+as hipóteses ficam disponíveis sob demanda, sem competir com a decisão. Depois do
+primeiro cartão, atalhos orientam quatro leituras do mesmo diagnóstico — diretoria,
+liderança de tecnologia, gerência local e especialistas/times — sem criar motores
+ou recomendações diferentes por público. Estágio, mapa de contraste e administração
+ficam depois, para localizar cobertura ou operar a coleta. Cada diagnóstico recomendado apresenta:
 
 - problema observado e impacto esperado;
 - causa provável e força da hipótese;
 - ação sugerida e responsável provável;
 - medida, horizonte de revisão e critério de sucesso;
 - evidências e detalhes do modelo sob demanda.
+
+Na base das entrevistas, o painel nomeia o comportamento identificado e separa
+pessoas que o sustentaram, contradições específicas e jornadas que não produziram
+sinal publicável em nenhuma direção. “Sem contradição publicada” nunca significa
+que todas as demais pessoas concordaram. Os indicadores de convergência, amplitude,
+diversidade e cobertura causal explicam em texto o que medem e o que não permitem
+concluir.
+
+O panorama posterior mostra quantos outros problemas foram confirmados, agrupa
+padrões relacionados e organiza a sequência de transformação por dependência,
+risco e autoridade. Recortes locais aparecem em “Leituras por unidade” somente
+quando mudam a interpretação global e preservam os limiares de anonimato.
 
 Recomendações são classificadas como correção ou evolução. Uma ferramenta só pode
 ser sugerida quando resolve uma causa sustentada e é compatível com o contexto; sua

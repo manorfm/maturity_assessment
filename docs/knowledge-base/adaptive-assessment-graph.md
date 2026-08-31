@@ -18,6 +18,19 @@ plataforma/operações, arquitetura, segurança, dados e design possuem aprofund
 dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem, mas
 não a evidência procurada.
 
+A auditoria versionada publica uma linha de base de autoria sem modificar essa
+jornada. Para `evidence-anamnesis-pilot-v8`, ela registra quantidade e tipo de nós,
+percurso e duração estimados por perspectiva, tronco comum, variantes, probes
+causais, saídas de visibilidade e dívida dos contratos de direção. Esses números
+caracterizam o instrumento para comparar versões futuras; não medem capacidade da
+organização e não entram na inferência.
+
+O contrato `ObservedEvent` também está disponível para a autoria da próxima versão.
+Ele exige ao menos dois fatos em ordem temporal e registra gatilho, recência,
+responsabilidades, autoridade, alcance e condição capaz de revisar a interpretação.
+Por definição, não contém causa, capacidade ou pontuação. A versão publicada ainda
+não persiste nem executa esse contrato; sua incorporação à jornada permanece futura.
+
 Cenários e probes (exceto a escolha de perspectiva) oferecem “não observo”, sem
 sinal. Nós de contexto sobre credencial, dependência, reconhecimento e assistência
 de modelo roteiam para a prática somente quando o evento ocorre; caso contrário a
