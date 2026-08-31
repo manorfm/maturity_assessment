@@ -23,10 +23,10 @@
 - **RespondentContext:** perspectiva, responsabilidades exercidas, autoridade,
   alcance e eventos observáveis, com minimização de PII. O contexto seleciona
   arestas e não produz sinal de capacidade.
-- **ObservedEvent:** contrato de autoria para uma futura anamnese centrada em evento;
+- **ObservedEvent:** contrato de autoria para a anamnese centrada em evento;
   preserva família, recência, gatilho, responsabilidade observável, autoridade,
   alcance, fatos ordenados e condição de revisão, sem carregar causa, capacidade,
-  sinal ou pontuação. Ainda não altera o percurso publicado.
+  sinal ou pontuação. As cinco reconstruções iniciais já alteram o percurso publicado.
 - **Profile:** lente configurável sobre responsabilidades, visibilidade e decisões;
   seleciona cenários, mas não cria uma escala de capacidade por cargo.
 - **Response:** resposta bruta e metadados consentidos.

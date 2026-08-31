@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-08-31 — Reconstrução factual de eventos
+
+- Publicado o grafo `evidence-anamnesis-pilot-v10` com contrato reutilizável para
+  cinco eventos, consequência/aprendizado separado da âncora e estimativa sensível
+  ao caminho escolhido; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-08-31 — Evidência agregada sem falso consenso
 
 - Entregue a versão 0.47 com separação entre apoio, contradição específica e

@@ -280,7 +280,7 @@ test('seletor adaptativo não duplica o aprofundamento já escolhido pelo grafo 
 test('entrega aprofunda sinais maduros e investiga bloqueio após integração frágil', () => {
   const db = createDatabase(':memory:');
   const catalog = new CatalogService(db);
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'ready-to-release', 'small-automated'), 'integration-cadence');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'ready-to-release', 'small-automated'), 'release-event-consequence');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'integrated-daily'), 'release-control');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'isolated-days'), 'delivery-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap'), 'release-control');
@@ -372,7 +372,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 300);
+  assert.equal(signals.length, 320);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

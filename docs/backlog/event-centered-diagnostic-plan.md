@@ -1,7 +1,8 @@
 # Plano: diagnóstico centrado em eventos reais e direção técnica aplicável
 
-Status: proposta aberta para implementação. Este plano não descreve comportamento
-vigente até que cada onda seja promovida à base de conhecimento.
+Status: implementação em andamento. O contrato factual e as cinco reconstruções
+iniciais da onda 2 estão vigentes; seleção de dois a quatro eventos e redução do
+tronco permanecem abertas.
 
 ## Problema
 
@@ -174,12 +175,14 @@ eliminar triangulação mínima.
 - A estimativa de duração deve refletir caminhos reais, não apenas o primeiro
   sucessor disponível.
 
-### Green
+### Próximo incremento
 
-- Criar o subgrafo reutilizável de reconstrução de evento.
-- Migrar primeiro `ready-to-release`, `environment-access`, `security-change`,
-  `architecture-pressure` e `improvement-loop`.
-- Manter a versão anterior isolada para comparação, sem misturar respostas.
+- Selecionar de dois a quatro eventos elegíveis por responsabilidade e observação,
+  em vez de percorrer todas as famílias no tronco.
+- Persistir a identidade lógica do evento entre as etapas sem guardar texto livre
+  ou enfraquecer anonimato.
+- Comparar duração e recuperação do evento em entrevista cognitiva antes de fechar
+  o orçamento.
 
 ### Blue
 
@@ -474,7 +477,7 @@ orientações após a estabilização cognitiva.
 
 ## Estratégia de migração
 
-- Não alterar `evidence-anamnesis-pilot-v9` depois do início de coleta humana.
+- Não alterar `evidence-anamnesis-pilot-v10` depois do início de coleta humana.
 - Desenvolver a nova autoria sob identificador de versão próprio.
 - Campanhas guardam integralmente a versão utilizada.
 - Não comparar posterior ou nível entre versões como se fossem o mesmo instrumento.

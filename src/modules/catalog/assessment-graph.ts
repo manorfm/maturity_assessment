@@ -1,6 +1,6 @@
 import { workContextOptions, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v9';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v10';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -9,7 +9,8 @@ export type EvidenceLayer = 'knowledge' | 'practice' | 'consistency' | 'system' 
 export type ConstraintKind = 'none' | 'undetermined' | 'knowledge' | 'capacity' | 'process' | 'policy' | 'tooling' | 'platform' | 'access' | 'architecture' | 'organization' | 'governance' | 'culture' | 'incentive' | 'priority' | 'external-dependency';
 export type ObservationKind = 'practice' | 'visibility' | 'not_applicable';
 export type Signal = { capability: string; pattern: string; weight: number; details: string[]; layer: EvidenceLayer; constraint: ConstraintKind };
-export type Option = { id: string; label: string; signals: Signal[]; observation?: ObservationKind };
+export type EventFactKind = 'trigger' | 'decision' | 'work' | 'wait' | 'workaround' | 'consequence' | 'learning' | 'review';
+export type Option = { id: string; label: string; signals: Signal[]; observation?: ObservationKind; factKind?: EventFactKind };
 
 export const cannotObserve: Option = {
   id: CANNOT_OBSERVE_ID,
@@ -52,6 +53,11 @@ export type AssessmentNode = {
 export type EdgeConditions = { responsibilitiesAny?: WorkResponsibility[]; authoritiesAny?: WorkAuthority[]; scopesAny?: WorkScope[]; observableEventsAny?: ObservableEvent[] };
 export type AssessmentEdge = { from: string; to: string; optionId?: string; profile?: Profile; when?: EdgeConditions };
 export type NodeVariant = { nodeId: string; profile: Profile; title?: string; scenario: string; prompt?: string };
+export type EventReconstructionDefinition = {
+  anchorNodeId: string;
+  family: 'change' | 'environment-access' | 'security-risk' | 'architecture-decision' | 'system-improvement';
+  steps: readonly { nodeId: string; phase: EventFactKind }[];
+};
 
 export const profiles: Record<Profile, string> = {
   management: 'Gestão', product: 'Produto', quality: 'Qualidade / QA',
@@ -126,7 +132,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'local-script', label: 'Uma pessoa ou grupo criou scripts que ajudam, mas adoção, suporte e comportamento variam.', signals: [{ capability: 'plataforma', pattern: 'solucao-local-nao-difundida', weight: -1 , details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
       { id: 'runbook', label: 'Há instruções; a execução depende de atenção, acesso e conhecimento de quem está disponível.', signals: [{ capability: 'entrega', pattern: 'operacao-manual-fragil', weight: -2 , details: ['organizational-learning'], layer: 'practice', constraint: 'none' }] },
       { id: 'memory', label: 'Os passos são conhecidos principalmente por experiência e são ajustados durante a execução.', signals: [{ capability: 'entrega', pattern: 'dependencia-de-heroi', weight: -2 , details: ['technical-capability'], layer: 'knowledge', constraint: 'none' }] },
-    ], next: 'integration-cadence',
+    ], next: 'release-event-consequence',
   },
   {
     id: 'quality-probe', type: 'probe', title: 'De onde vem a espera de qualidade?',
@@ -137,7 +143,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'data-environment', label: 'Preparar massa e ambiente confiáveis consome grande parte do tempo e exige intervenção.', signals: [{ capability: 'qualidade', pattern: 'dados-de-teste-fragil', weight: -2 , details: ['sustainable-design', 'quality-strategy', 'integration-data'], layer: 'practice', constraint: 'none' }] },
       { id: 'regression', label: 'A regressão cresceu e precisa ser repetida manualmente porque mudanças novas podem afetar áreas antigas.', signals: [{ capability: 'qualidade', pattern: 'regressao-crescente', weight: -2 , details: ['quality-strategy'], layer: 'practice', constraint: 'none' }] },
       { id: 'late-context', label: 'Critérios, riscos ou contexto chegam quando a implementação já está pronta.', signals: [{ capability: 'fluxo', pattern: 'qualidade-tardia', weight: -2 , details: ['planning-refinement', 'quality-strategy'], layer: 'practice', constraint: 'none' }] },
-    ], next: 'integration-cadence',
+    ], next: 'release-event-consequence',
   },
   {
     id: 'governance-probe', type: 'probe', title: 'O que a aprovação protege?',
@@ -148,7 +154,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'same-flow', label: 'O caminho é praticamente igual para todos; isso simplifica a política, embora gere espera.', signals: [{ capability: 'governanca', pattern: 'controle-indiferenciado', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'relationship', label: 'A velocidade depende de conhecer responsáveis, explicar urgência e conseguir prioridade.', signals: [{ capability: 'governanca', pattern: 'governanca-relacional', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'unclear', label: 'É difícil explicar qual risco cada aprovação reduz ou quais evidências mudariam a decisão.', signals: [{ capability: 'governanca', pattern: 'controle-sem-proposito', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
-    ], next: 'integration-cadence',
+    ], next: 'release-event-consequence',
   },
   {
     id: 'integration-cadence', type: 'probe', title: 'Quanto tempo a mudança fica isolada?',
@@ -361,7 +367,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'ticket-queue', label: 'Abre-se uma solicitação e o trabalho aguarda disponibilidade, esclarecimentos e execução de outro grupo.', signals: [{ capability: 'plataforma', pattern: 'provisionamento-em-fila', weight: -2 , details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
       { id: 'manual-access', label: 'Pessoas experientes combinam acessos e ajustam recursos existentes até a validação se tornar possível.', signals: [{ capability: 'governanca', pattern: 'acesso-artesanal', weight: -2 , details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
       { id: 'shared-drift', label: 'Usa-se um ambiente compartilhado; diferenças e concorrência são resolvidas durante a execução.', signals: [{ capability: 'confiabilidade', pattern: 'ambiente-inconsistente', weight: -2 , details: ['reliability-practice'], layer: 'practice', constraint: 'none' }] },
-    ], next: 'security-change',
+    ], next: 'environment-event-consequence',
   },
   {
     id: 'security-change', title: 'Uma mudança com risco diferente',
@@ -372,7 +378,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'late-review', label: 'A revisão especializada ocorre perto da liberação e pode devolver a mudança para etapas anteriores.', signals: [{ capability: 'governanca', pattern: 'seguranca-tardia', weight: -2 , details: ['software-security'], layer: 'practice', constraint: 'none' }] },
       { id: 'same-checklist', label: 'As duas seguem a mesma lista e aprovações; cumprir o processo é a principal evidência disponível.', signals: [{ capability: 'governanca', pattern: 'controle-indiferenciado', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
       { id: 'team-best-effort', label: 'O time aplica o que conhece e procura ajuda quando percebe algo fora do comum.', signals: [{ capability: 'engenharia', pattern: 'competencia-de-seguranca-inacessivel', weight: -1 , details: ['software-security', 'technical-capability'], layer: 'knowledge', constraint: 'none' }] },
-    ], next: 'architecture-pressure',
+    ], next: 'security-event-consequence',
   },
   {
     id: 'architecture-pressure', title: 'Mudança além de uma fronteira',
@@ -383,7 +389,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'planning-sync', label: 'Aumentam alinhamentos, calendário e responsáveis para coordenar melhor a estrutura existente.', signals: [{ capability: 'arquitetura', pattern: 'acoplamento-coordenado', weight: -1 , details: ['evolvability'], layer: 'practice', constraint: 'none' }] },
       { id: 'architecture-project', label: 'A solução aguarda uma iniciativa maior de arquitetura enquanto entregas continuam usando contornos locais.', signals: [{ capability: 'arquitetura', pattern: 'evolucao-em-grande-lote', weight: -2 , details: ['evolvability'], layer: 'practice', constraint: 'none' }] },
       { id: 'ownership-dispute', label: 'A prioridade varia conforme quem sofre o impacto e quem possui autoridade sobre cada componente.', signals: [{ capability: 'organizacao', pattern: 'ownership-fragmentado', weight: -2 , details: ['domain-alignment', 'team-ownership'], layer: 'practice', constraint: 'none' }] },
-    ], next: 'team-pressure',
+    ], next: 'architecture-event-consequence',
   },
   {
     id: 'team-pressure', title: 'Pressão, conflito e aprendizado',
@@ -429,7 +435,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'no-autonomy', label: 'As causas dependem de decisões, políticas ou estruturas fora da autonomia do grupo e não há caminho efetivo de escalada.', signals: [{ capability: 'organizacao', pattern: 'causa-melhoria-sem-autonomia', weight: -1 , details: ['organizational-learning'], layer: 'system', constraint: 'organization' }] },
       { id: 'too-many-actions', label: 'Muitas ações são abertas sem limite, evidência de sucesso ou encerramento explícito.', signals: [{ capability: 'aprendizado', pattern: 'causa-acoes-sem-foco', weight: -1 , details: ['organizational-learning', 'product-direction'], layer: 'system', constraint: 'process' }] },
       { id: 'unsafe-dialogue', label: 'Conflitos, erros e decisões difíceis são suavizados porque expô-los traz risco pessoal ou pouca mudança prática.', signals: [{ capability: 'organizacao', pattern: 'causa-baixa-seguranca-psicologica', weight: -2 , details: ['software-security'], layer: 'system', constraint: 'culture' }] },
-    ], next: 'shared-surface-context',
+    ], next: 'improvement-event-consequence',
   },
   {
     id: 'shared-surface-context', type: 'context', title: 'Fronteira de mudança',
@@ -965,7 +971,87 @@ const authoredNodes: AssessmentNode[] = [
   },
 ];
 
-export const graph: AssessmentNode[] = authoredNodes.map((node) => ({ ...attachObservationalExits(node), scenario: anchorRecentObservation(node.scenario) }));
+const eventFollowupNodes: AssessmentNode[] = [
+  {
+    id: 'release-event-consequence', type: 'probe', title: 'O efeito daquela espera',
+    scenario: 'Volte à mesma mudança usada na resposta anterior e ao momento em que ela finalmente ficou disponível.',
+    prompt: 'Qual fato ocorreu depois desse intervalo?',
+    options: [
+      { id: 'decision-still-useful', factKind: 'consequence', label: 'A mudança chegou ainda no momento da decisão e a evidência confirmou o efeito esperado.', signals: [{ capability: 'entrega', pattern: 'entrega-repetivel', weight: 2, details: ['release-feedback'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'rework-after-wait', factKind: 'consequence', label: 'Alguma parte precisou ser refeita porque contexto, versão ou necessidade mudou durante a espera.', signals: [{ capability: 'entrega', pattern: 'empacotamento-manual', weight: -1, details: ['release-feedback'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'risk-accepted-to-finish', factKind: 'consequence', label: 'Uma verificação ou controle foi reduzido para concluir a entrega no prazo restante.', signals: [{ capability: 'governanca', pattern: 'controle-sem-feedback', weight: -1, details: ['enabling-governance'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'effect-not-checked', factKind: 'consequence', label: 'A entrega terminou, mas o efeito esperado não voltou à decisão do grupo.', signals: [{ capability: 'governanca', pattern: 'portfolio-sem-feedback', weight: -1, details: ['portfolio-management', 'release-feedback'], layer: 'outcome', constraint: 'undetermined' }] },
+    ], next: 'integration-cadence',
+  },
+  {
+    id: 'environment-event-consequence', type: 'probe', title: 'O primeiro aprendizado naquele ambiente',
+    scenario: 'Continue no mesmo pedido não planejado de ambiente, acesso ou dado.',
+    prompt: 'O que ocorreu quando a primeira validação pôde ser executada?',
+    options: [
+      { id: 'result-in-time', factKind: 'consequence', label: 'O resultado chegou a tempo de alterar ou confirmar a mudança antes de avançar.', signals: [{ capability: 'plataforma', pattern: 'self-service-com-guardrails', weight: 2, details: ['platform-autonomy'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'contention-changed-result', factKind: 'consequence', label: 'Concorrência ou diferença do ambiente tornou o resultado incerto e exigiu nova tentativa.', signals: [{ capability: 'confiabilidade', pattern: 'ambiente-inconsistente', weight: -1, details: ['reliability-practice'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'wait-removed-choice', factKind: 'consequence', label: 'Quando o acesso chegou, o prazo já havia eliminado uma opção de validação ou desenho.', signals: [{ capability: 'plataforma', pattern: 'provisionamento-em-fila', weight: -1, details: ['platform-autonomy'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'workaround-remained', factKind: 'consequence', label: 'O contorno permaneceu para casos seguintes sem retorno ao caminho suportado.', signals: [{ capability: 'governanca', pattern: 'acesso-artesanal', weight: -1, details: ['platform-autonomy'], layer: 'outcome', constraint: 'undetermined' }] },
+    ], next: 'security-change',
+  },
+  {
+    id: 'security-event-consequence', type: 'probe', title: 'O que o risco mudou',
+    scenario: 'Continue na mesma alteração recente em que apareceu um risco de qualidade ou segurança.',
+    prompt: 'Qual foi o efeito observável do primeiro retorno sobre esse risco?',
+    options: [
+      { id: 'design-changed', factKind: 'consequence', label: 'A solução mudou antes da liberação e uma verificação confirmou a proteção no fluxo comum.', signals: [{ capability: 'plataforma', pattern: 'seguranca-habilitadora', weight: 2, details: ['software-security'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'returned-to-earlier-step', factKind: 'consequence', label: 'A mudança voltou para uma etapa anterior e o prazo ou escopo precisou ser renegociado.', signals: [{ capability: 'governanca', pattern: 'seguranca-tardia', weight: -1, details: ['software-security'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'exception-recorded', factKind: 'consequence', label: 'O risco foi aceito como exceção e ficou uma ação posterior com responsável e prazo.', signals: [{ capability: 'governanca', pattern: 'controle-indiferenciado', weight: -1, details: ['enabling-governance'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'case-fixed-only', factKind: 'consequence', label: 'O caso visível foi corrigido, sem verificar se o mesmo risco existia em mudanças equivalentes.', signals: [{ capability: 'engenharia', pattern: 'competencia-de-seguranca-inacessivel', weight: -1, details: ['software-security'], layer: 'outcome', constraint: 'undetermined' }] },
+    ], next: 'architecture-pressure',
+  },
+  {
+    id: 'architecture-event-consequence', type: 'probe', title: 'O efeito da decisão entre fronteiras',
+    scenario: 'Continue na mesma mudança recente que exigiu coordenação entre componentes ou grupos.',
+    prompt: 'Na entrega equivalente seguinte, qual fato mostrou o efeito da decisão tomada?',
+    options: [
+      { id: 'coordination-reduced', factKind: 'learning', label: 'Menos grupos ou esperas foram necessários e o resultado foi comparado com o caso anterior.', signals: [{ capability: 'arquitetura', pattern: 'arquitetura-evolutiva', weight: 2, details: ['evolvability'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'meetings-remained', factKind: 'learning', label: 'A mesma coordenação reapareceu, agora com mais agenda, calendário ou responsáveis.', signals: [{ capability: 'arquitetura', pattern: 'acoplamento-coordenado', weight: -1, details: ['evolvability'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'workaround-repeated', factKind: 'learning', label: 'Outro contorno local foi criado enquanto a mudança estrutural continuou aguardando.', signals: [{ capability: 'arquitetura', pattern: 'evolucao-em-grande-lote', weight: -1, details: ['evolvability'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'ownership-still-disputed', factKind: 'learning', label: 'A decisão voltou a depender de quem sofria o impacto e de quem podia priorizar cada parte.', signals: [{ capability: 'organizacao', pattern: 'ownership-fragmentado', weight: -1, details: ['team-ownership'], layer: 'outcome', constraint: 'undetermined' }] },
+    ], next: 'team-pressure',
+  },
+  {
+    id: 'improvement-event-consequence', type: 'probe', title: 'A revisão pelo evento seguinte',
+    scenario: 'Continue na mesma melhoria escolhida após a revisão do trabalho e encontre o primeiro caso equivalente.',
+    prompt: 'Que fato faria revisar a interpretação sobre essa melhoria?',
+    options: [
+      { id: 'effect-rechecked', factKind: 'review', label: 'O grupo comparou o efeito no caso seguinte e manteve, ajustou ou desfez a mudança.', signals: [{ capability: 'aprendizado', pattern: 'melhoria-com-ciclo-fechado', weight: 2, details: ['organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'action-not-revisited', factKind: 'review', label: 'A ação não voltou à decisão quando o mesmo problema reapareceu.', signals: [{ capability: 'aprendizado', pattern: 'retrospectiva-sem-fechamento', weight: -1, details: ['organizational-learning'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'only-record-remained', factKind: 'review', label: 'O registro permaneceu, mas não foi possível relacioná-lo a uma mudança no trabalho.', signals: [{ capability: 'aprendizado', pattern: 'cerimonia-sem-adaptacao', weight: -1, details: ['organizational-learning'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'priority-displaced-it', factKind: 'review', label: 'Uma nova prioridade retirou capacidade da melhoria antes de existir efeito verificável.', signals: [{ capability: 'governanca', pattern: 'melhoria-sem-prioridade', weight: -1, details: ['organizational-learning'], layer: 'outcome', constraint: 'priority' }] },
+    ], next: 'shared-surface-context',
+  },
+];
+
+const eventAnchors = new Set(['ready-to-release', 'environment-access', 'security-change', 'architecture-pressure', 'improvement-loop']);
+export const graph: AssessmentNode[] = [...authoredNodes, ...eventFollowupNodes].map((node) => {
+  const factual = eventAnchors.has(node.id)
+    ? { ...node, scenario: node.scenario.replace(/normalmente|costuma/gi, 'naquele caso'), prompt: node.prompt.replace(/normalmente|costuma/gi, 'naquele caso'), options: node.options.map((option) => option.observation ? option : { ...option, factKind: 'trigger' as const }) }
+    : node;
+  return { ...attachObservationalExits(factual), scenario: anchorRecentObservation(factual.scenario) };
+});
+
+export const eventReconstructionDefinitions: Record<string, EventReconstructionDefinition> = {
+  'ready-to-release': { anchorNodeId: 'ready-to-release', family: 'change', steps: [{ nodeId: 'ready-to-release', phase: 'trigger' }, { nodeId: 'release-event-consequence', phase: 'consequence' }] },
+  'environment-access': { anchorNodeId: 'environment-access', family: 'environment-access', steps: [{ nodeId: 'environment-access', phase: 'trigger' }, { nodeId: 'environment-event-consequence', phase: 'consequence' }] },
+  'security-change': { anchorNodeId: 'security-change', family: 'security-risk', steps: [{ nodeId: 'security-change', phase: 'trigger' }, { nodeId: 'security-event-consequence', phase: 'consequence' }] },
+  'architecture-pressure': { anchorNodeId: 'architecture-pressure', family: 'architecture-decision', steps: [{ nodeId: 'architecture-pressure', phase: 'trigger' }, { nodeId: 'architecture-event-consequence', phase: 'learning' }] },
+  'improvement-loop': { anchorNodeId: 'improvement-loop', family: 'system-improvement', steps: [{ nodeId: 'improvement-loop', phase: 'trigger' }, { nodeId: 'improvement-event-consequence', phase: 'review' }] },
+};
+
+export function validateEventReconstruction(definition: EventReconstructionDefinition, nodes: AssessmentNode[]): void {
+  if (definition.steps.length < 2 || definition.steps[0]?.nodeId !== definition.anchorNodeId || definition.steps[0]?.phase !== 'trigger') throw new Error('Reconstrução exige âncora e aprofundamento factual.');
+  for (const step of definition.steps) {
+    const node = nodes.find((candidate) => candidate.id === step.nodeId);
+    if (!node || !node.options.some((option) => option.observation === undefined && option.factKind === step.phase)) throw new Error(`Etapa factual inválida: ${step.nodeId}.`);
+  }
+}
 
 const skipObservational: Record<string, string> = {
   'ready-to-release': 'integration-cadence',
@@ -1014,7 +1100,7 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, 'accidental-complexity'),
   ];
   if (node.id === 'ready-to-release') return [
-    { from: node.id, optionId: 'small-automated', to: 'integration-cadence' },
+    { from: node.id, optionId: 'small-automated', to: 'release-event-consequence' },
     { from: node.id, optionId: 'manual-package', to: 'deployment-probe' },
     { from: node.id, optionId: 'test-queue', to: 'quality-probe' },
     { from: node.id, optionId: 'approval', to: 'governance-probe' },
@@ -1049,7 +1135,7 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'improvement-loop') return [
-    { from: node.id, optionId: 'owned-and-verified', to: 'shared-surface-context' },
+    { from: node.id, optionId: 'owned-and-verified', to: 'improvement-event-consequence' },
     { from: node.id, optionId: 'action-list-fades', to: 'improvement-cause' },
     { from: node.id, optionId: 'ceremony-report', to: 'improvement-cause' },
     { from: node.id, optionId: 'only-after-crisis', to: 'improvement-cause' },
@@ -1162,4 +1248,18 @@ export function estimateRemainingScenarios(fromNodeId: string, profile?: string)
 
 export function estimateRemainingMinutes(fromNodeId: string, profile?: string): number {
   return Math.max(1, Math.ceil((estimateRemainingScenarios(fromNodeId, profile) * SECONDS_PER_SCENARIO) / 60));
+}
+
+export function estimatePathScenarios(fromNodeId: string, answers: Readonly<Record<string, string>>, profile?: string): number {
+  const seen = new Set<string>();
+  let current: string | undefined = fromNodeId;
+  while (current && !seen.has(current)) {
+    seen.add(current);
+    const selected: string | undefined = answers[current];
+    if (selected) {
+      const outgoing = edges.filter((edge) => edge.from === current);
+      current = outgoing.find((edge) => edge.optionId === selected)?.to ?? typicalSuccessor(current, profile);
+    } else current = typicalSuccessor(current, profile);
+  }
+  return seen.size;
 }

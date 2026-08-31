@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v9` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v10` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. A pessoa recebe um tronco comum e,
 quando contexto ou perspectiva mudam o que ela consegue observar ou decidir, um
@@ -21,17 +21,19 @@ dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem,
 não a evidência procurada.
 
 A auditoria versionada publica uma linha de base de autoria sem modificar essa
-jornada. Para `evidence-anamnesis-pilot-v9`, ela registra quantidade e tipo de nós,
+jornada. Para `evidence-anamnesis-pilot-v10`, ela registra quantidade e tipo de nós,
 percurso e duração estimados por perspectiva, tronco comum, variantes, probes
 causais, saídas de visibilidade e dívida dos contratos de direção. Esses números
 caracterizam o instrumento para comparar versões futuras; não medem capacidade da
 organização e não entram na inferência.
 
-O contrato `ObservedEvent` também está disponível para a autoria da próxima versão.
+O contrato `ObservedEvent` sustenta a autoria da reconstrução factual vigente.
 Ele exige ao menos dois fatos em ordem temporal e registra gatilho, recência,
 responsabilidades, autoridade, alcance e condição capaz de revisar a interpretação.
-Por definição, não contém causa, capacidade ou pontuação. A versão publicada ainda
-não persiste nem executa esse contrato; sua incorporação à jornada permanece futura.
+Por definição, não contém causa, capacidade ou pontuação. Cinco reconstruções usam
+esse contrato: mudança pronta, ambiente/acesso, risco de segurança, decisão entre
+fronteiras e melhoria do sistema de trabalho. Cada uma separa a âncora recente de
+uma consequência, aprendizado ou fato que faria revisar a interpretação.
 
 O contexto de trabalho é persistido separadamente da perspectiva e das respostas
 que produzem sinais. Suas opções agrupam responsabilidades reconhecíveis — como
@@ -82,7 +84,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 82 nós e cobre contexto de trabalho e eventos de priorização, integração,
+O catálogo atual contém 87 nós e cobre contexto de trabalho e eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
