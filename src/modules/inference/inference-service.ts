@@ -15,6 +15,7 @@ import { PilotService } from './pilot-service.js';
 import { buildDiagnosticContext, type DiagnosticContext } from './domain/diagnostic-contract.js';
 import { TransformationPortfolioPlanner, type TransformationPortfolio } from './domain/transformation-portfolio.js';
 import { AudienceReportProjector, type UnitManagementReport } from './domain/audience-report.js';
+import { sociotechnicalPatternFor, type SociotechnicalPatternView } from './domain/sociotechnical-pattern.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -35,6 +36,7 @@ export type Finding = {
     evidenceAgainst: string[];
     missingEvidence: string;
     limitations: string;
+    sociotechnicalPattern?: SociotechnicalPatternView;
   };
 } & DiagnosticContext;
 type DiagnosticProblem = {
@@ -575,7 +577,9 @@ export class InferenceService {
       solutionReadiness: ranked.solutionReadiness,
       affectedCapabilities: ranked.affectedCapabilities,
       priorityFactors: ranked.priorityFactors,
-      causalAnalysis: causalAnalysisFor(causalKnowledgeGraph.pathFor(ranked.pattern)!, ranked.evidence, buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }).missingEvidence),
+      causalAnalysis: causalAnalysisFor(causalKnowledgeGraph.pathFor(ranked.pattern)!, ranked.evidence, buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }).missingEvidence, {
+        kind: ranked.kind, pattern: ranked.pattern, title: ranked.title, cause: ranked.cause, constraint: ranked.constraint,
+      }),
       ...buildDiagnosticContext({ capability: ranked.detailCapability, constraint: ranked.constraint }),
     }));
   }
@@ -686,9 +690,18 @@ export class InferenceService {
   }
 }
 
-function causalAnalysisFor(path: CausalPath, evidence: RecommendationEvidence, missingEvidence: string): Finding['causalAnalysis'] {
+function causalAnalysisFor(path: CausalPath, evidence: RecommendationEvidence, missingEvidence: string, finding: { kind: 'correction' | 'evolution'; pattern: string; title: string; cause: string; constraint: ConstraintKind }): Finding['causalAnalysis'] {
   const catalog = { ...interventionCatalog, ...evolutionCatalog };
   const labelFor = (pattern: string, fallback: string) => catalog[pattern]?.title ?? fallback;
+  const sociotechnicalPattern = sociotechnicalPatternFor({
+    ...finding,
+    evidence: {
+      patterns: evidence.patterns,
+      layers: evidence.layers,
+      profiles: evidence.profiles,
+      observationLabels: evidence.patterns.map((pattern) => labelFor(pattern, 'Fato agregado relacionado ao evento')),
+    },
+  });
   return {
     knowledgeVersion: path.knowledgeVersion,
     hypothesis: path.cause,
@@ -699,6 +712,7 @@ function causalAnalysisFor(path: CausalPath, evidence: RecommendationEvidence, m
       : [],
     missingEvidence,
     limitations: path.limitations,
+    ...(sociotechnicalPattern ? { sociotechnicalPattern } : {}),
   };
 }
 

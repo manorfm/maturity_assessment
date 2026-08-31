@@ -14,6 +14,14 @@ Para uma visão resumida dos marcos por versão, consulte o
   [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
   [`profiles-and-triangulation.md`](../knowledge-base/profiles-and-triangulation.md).
 
+## 2026-08-31 — Padrões e ciclos sociotécnicos explicáveis
+
+- Publicado `causal-catalog-v2` com padrões virtuosos/viciosos, reforço tratado
+  como hipótese, incentivo, fronteira decisória e comportamento compensatório;
+  explicações isoladas por cultura agora suspendem prescrição. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`domain-model.md`](../knowledge-base/domain-model.md).
+
 ## 2026-08-31 — Reconstrução factual de eventos
 
 - Publicado o grafo `evidence-anamnesis-pilot-v10` com contrato reutilizável para

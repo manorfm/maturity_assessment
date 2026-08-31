@@ -27,6 +27,15 @@ test('mecanismo desconhecido mantém autoridade e prescrição em investigação
   assert.match(context.prescription.reason, /mecanismo|contenção/i);
 });
 
+test('cultura isolada permanece hipótese e não autoriza prescrição ou contenção local', () => {
+  const context = buildDiagnosticContext({ capability: 'organizational-learning', constraint: 'culture' });
+  assert.equal(context.mechanism, 'undetermined');
+  assert.equal(context.containment, 'undetermined');
+  assert.equal(context.decisionAuthority, 'undetermined');
+  assert.equal(context.prescription.status, 'investigate');
+  assert.match(context.missingEvidence, /decisão|incentivo|política|poder/i);
+});
+
 test('política discriminada pede decisão organizacional e permite experimento condicionado', () => {
   const context = buildDiagnosticContext({ capability: 'enabling-governance', constraint: 'policy' });
   assert.equal(context.containment, 'organizational-policy');

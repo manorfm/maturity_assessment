@@ -114,6 +114,9 @@ Todo finding precisa informar:
 - estado da prescrição: pronta para experimento ou suspensa para investigação.
 - hipóteses concorrentes, evidência favorável e contrária, limitação e versão da
   biblioteca causal, sem expor identificadores internos.
+- ciclo sociotécnico somente quando decisão e consequência foram observadas,
+  preservando incentivo, fronteira decisória, compensação, evidência contrária,
+  lacuna, escopo e reforço como hipótese.
 
 Recorrência e contenção são invariantes diferentes. A primeira informa onde o
 padrão apareceu; a segunda informa onde a restrição pode ser removida. O domínio

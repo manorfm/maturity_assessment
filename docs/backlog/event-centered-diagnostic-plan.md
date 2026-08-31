@@ -1,8 +1,8 @@
 # Plano: diagnóstico centrado em eventos reais e direção técnica aplicável
 
-Status: implementação em andamento. O contrato factual, as reconstruções iniciais
-e as trilhas de dois a quatro eventos da onda 2 estão vigentes; a validação
-cognitiva do orçamento permanece aberta.
+Status: implementação em andamento. O contrato factual, as trilhas curtas da onda
+2 e os padrões/ciclos sociotécnicos da onda 3 estão vigentes; a validação cognitiva
+do orçamento permanece aberta e a próxima implementação é a onda 4.
 
 ## Problema
 
@@ -193,59 +193,6 @@ eliminar triangulação mínima.
   comportamento sustentado.
 - A jornada típica é menor que a atual e possui maior quantidade de fatos ligados
   ao mesmo evento.
-
----
-
-## Onda 3 — Padrões virtuosos, viciosos e ciclos sociotécnicos
-
-### Objetivo
-
-Explicar como decisões e incentivos sustentam ou degradam o sistema, sem usar
-“cultura” como causa terminal.
-
-### Modelo
-
-Adicionar ao sistema de problemas:
-
-- `VirtuousPattern`: comportamento, condição habilitadora, efeito e regressão;
-- `ViciousPattern`: decisão local racional, efeito sistêmico e reforço;
-- `ReinforcingLoop`: relações explícitas entre fatos e padrões;
-- `IncentiveMechanism`: reconhecimento, prazo, utilização, risco oculto, volume,
-  custo ou resultado que altera decisão;
-- `DecisionBoundary`: quem observa, recomenda, decide e executa;
-- `CompensatingBehavior`: coordenação, heroísmo, contorno, fila ou controle que
-  mascara uma restrição.
-
-O ciclo é hipótese explicável, não causalidade comprovada automaticamente.
-
-### Red
-
-- Cultura isolada não pode autorizar recomendação.
-- Recorrência em todas as squads não pode determinar contenção organizacional.
-- Divergência entre gestão e engenharia abre hipótese de visibilidade, fronteira ou
-  poder antes de virar fragilidade.
-- Uma prática local eficaz permanece virtuosa mesmo quando revela ausência de
-  difusão organizacional.
-- Incentivo só aparece quando ligado a uma decisão e consequência observadas.
-
-### Green
-
-- Estender a rede causal e as bibliotecas de sistemas.
-- Publicar o ciclo em linguagem cotidiana, com evidência favorável, contrária e
-  faltante.
-- Usar o ciclo apenas para organizar investigação e direção; não criar score.
-
-### Blue
-
-- Consolidar padrões equivalentes sem apagar fatos ou escopos de origem.
-- Remover explicações residuais por `culture` quando existir mecanismo mais
-  observável.
-
-### Critério de aceite
-
-- O relatório explica por que um comportamento localmente racional se repete.
-- Para cada ciclo publicado existe ao menos uma observação de decisão, uma de
-  consequência e uma hipótese explícita de reforço.
 
 ---
 

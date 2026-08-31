@@ -144,7 +144,12 @@ evidência, contradição, intervenção e fundamento. `problem-system.ts` mant�
 bibliotecas declarativas com os papéis `symptoms`, `hypotheses` e `amplifiers`;
 elas alimentam tanto o agrupamento do panorama quanto as alternativas do finding.
 A projeção pública remove identificadores internos, preserva a versão
-`causal-catalog-v1` e aparece no cartão e no detalhe sem recalcular o posterior.
+`causal-catalog-v2` e aparece no cartão e no detalhe sem recalcular o posterior.
+`SociotechnicalPattern` valida decisão e consequência observadas antes de compor
+um ciclo, mantém reforço como hipótese e separa racionalidade local, efeito,
+incentivo, fronteira decisória e comportamento compensatório. A projeção é
+omitida quando essas evidências não existem; não há fallback narrativo que invente
+causalidade.
 
 `TransformationPortfolioPlanner`, no mesmo módulo de domínio, é a única regra de
 sequenciamento. Ele consome a projeção pública do finding e produz

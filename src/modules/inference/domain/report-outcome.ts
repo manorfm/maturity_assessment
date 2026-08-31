@@ -34,6 +34,7 @@ export type OutcomeFinding = {
     evidenceAgainst: string[];
     missingEvidence: string;
     limitations: string;
+    sociotechnicalPattern?: import('./sociotechnical-pattern.js').SociotechnicalPatternView;
   };
 };
 

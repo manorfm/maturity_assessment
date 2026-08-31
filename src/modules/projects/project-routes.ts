@@ -440,7 +440,16 @@ function renderCausalAnalysis(causal?: OutcomeFinding['causalAnalysis']): string
   const contrary = causal.evidenceAgainst.length
     ? `<ul>${causal.evidenceAgainst.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
     : '<p>Nenhuma evidência contrária específica atingiu o limiar neste recorte.</p>';
-  return `<details class="methodology causal-analysis"><summary>Hipóteses e limites do diagnóstico</summary><p><strong>Hipótese mais sustentada:</strong> ${escapeHtml(causal.hypothesis)}</p>${alternatives}<h4>Evidência a favor</h4><ul>${causal.evidenceFor.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul><h4>Evidência que contraria</h4>${contrary}<p><strong>O que ainda falta:</strong> ${escapeHtml(causal.missingEvidence)}</p><p><strong>Limite desta orientação:</strong> ${escapeHtml(causal.limitations)}</p><p class="muted">Versão do conhecimento: ${escapeHtml(causal.knowledgeVersion)}.</p></details>`;
+  const loop = causal.sociotechnicalPattern ? renderSociotechnicalPattern(causal.sociotechnicalPattern) : '';
+  return `<details class="methodology causal-analysis"><summary>Hipóteses e limites do diagnóstico</summary><p><strong>Hipótese mais sustentada:</strong> ${escapeHtml(causal.hypothesis)}</p>${alternatives}<h4>Evidência a favor</h4><ul>${causal.evidenceFor.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul><h4>Evidência que contraria</h4>${contrary}${loop}<p><strong>O que ainda falta:</strong> ${escapeHtml(causal.missingEvidence)}</p><p><strong>Limite desta orientação:</strong> ${escapeHtml(causal.limitations)}</p><p class="muted">Versão do conhecimento: ${escapeHtml(causal.knowledgeVersion)}.</p></details>`;
+}
+
+function renderSociotechnicalPattern(pattern: NonNullable<NonNullable<OutcomeFinding['causalAnalysis']>['sociotechnicalPattern']>): string {
+  const incentive = pattern.incentive ? `<p><strong>Incentivo observado:</strong> ${escapeHtml(pattern.incentive.effectOnDecision)}</p>` : '';
+  const compensation = pattern.compensatingBehavior
+    ? `<p><strong>Comportamento compensatório:</strong> ${escapeHtml(pattern.compensatingBehavior.description)} ${escapeHtml(pattern.compensatingBehavior.masks)}</p>`
+    : '';
+  return `<section class="sociotechnical-pattern"><h4>Ciclo sociotécnico em investigação</h4><p><strong>Comportamento:</strong> ${escapeHtml(pattern.behavior)}</p><p><strong>Decisão localmente racional:</strong> ${escapeHtml(pattern.localRationale)}</p><p><strong>Efeito no sistema:</strong> ${escapeHtml(pattern.systemicEffect)}</p>${incentive}${compensation}<p><strong>Hipótese de reforço:</strong> ${escapeHtml(pattern.loop.plainLanguage)}</p><dl><dt>Quem observa</dt><dd>${escapeHtml(pattern.boundary.observes)}</dd><dt>Quem recomenda</dt><dd>${escapeHtml(pattern.boundary.recommends)}</dd><dt>Quem decide</dt><dd>${escapeHtml(pattern.boundary.decides)}</dd><dt>Quem executa</dt><dd>${escapeHtml(pattern.boundary.executes)}</dd></dl><p><strong>Limite de escopo:</strong> ${escapeHtml(pattern.scope.limit)}</p><p class="notice">Decisão, consequência e hipótese organizam a investigação; não comprovam causalidade.</p></section>`;
 }
 
 function qualitativeFactor(value: number): string {

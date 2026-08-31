@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { diagnosticStrength, renderAudienceBriefs, renderAudienceNavigation, renderCapabilityDiagnosis, renderCapabilityRadar, renderClassification, renderDiagnosticFirstPlane, renderFindingPortfolio, renderOutcome, renderPerspectiveSynthesis, renderScopeReport } from '../src/modules/projects/project-routes.js';
 import { AudienceReportProjector } from '../src/modules/inference/domain/audience-report.js';
 import { TransformationPortfolioPlanner } from '../src/modules/inference/domain/transformation-portfolio.js';
+import { SociotechnicalPattern } from '../src/modules/inference/domain/sociotechnical-pattern.js';
 
 const leaf = (overrides: Partial<Parameters<typeof renderCapabilityRadar>[0][number]> = {}) => ({
   id: 'delivery', label: 'Entrega', level: 2.4, confidence: .8, evidence: 8,
@@ -183,6 +184,33 @@ test('detalhe causal mostra alternativas, evidência contrária e limite do conh
   assert.match(html, /Evidência que contraria/);
   assert.match(html, /causal-catalog-v1/);
   assert.match(html, /Não corrige uma política externa/);
+});
+
+test('detalhe causal publica ciclo sociotécnico sem apresentá-lo como causalidade comprovada', () => {
+  const finding = {
+    kind: 'correction' as const, pattern: 'causa-processo-lote', detailCapability: 'continuous-integration',
+    title: 'Mudanças acumulam antes da integração', cause: '', intervention: '', confidence: .8, priority: .8,
+    causalAnalysis: {
+      knowledgeVersion: 'causal-catalog-v2', hypothesis: 'A política preserva lotes maiores.', alternatives: [],
+      evidenceFor: ['O lote foi adiado.', 'O conflito apareceu na integração.'], evidenceAgainst: [], missingEvidence: 'Confirmar a autoridade.', limitations: 'Não prova causalidade.',
+      sociotechnicalPattern: SociotechnicalPattern.create({
+        kind: 'vicious', behavior: 'O lote foi ampliado para preservar a data.', enablingCondition: 'A data premia volume entregue.',
+        localRationale: 'Agrupar reduz coordenação imediata.', systemicEffect: 'O conflito aparece tarde.',
+        reinforcementHypothesis: 'O retrabalho consome capacidade e aumenta a pressão.', regressionSignal: 'O lote volta a crescer.',
+        observations: { decision: ['O lote foi adiado.'], consequence: ['O conflito apareceu na integração.'], contrary: [], missing: ['Confirmar a autoridade.'] },
+        incentive: { kind: 'deadline', effectOnDecision: 'A data tornou o lote racional.' },
+        boundary: { observes: 'Time', recommends: 'Liderança técnica', decides: 'Portfólio', executes: 'Time' },
+        compensatingBehavior: { kind: 'coordination', description: 'Uma pessoa coordena a integração.', masks: 'A ausência de feedback reproduzível.' },
+        scope: { observed: ['Squad A'], eligible: ['Squad A', 'Squad B'] },
+      }),
+    },
+  };
+  const html = renderOutcome({ kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '', finding });
+  assert.match(html, /Ciclo sociotécnico em investigação/);
+  assert.match(html, /Decisão localmente racional/);
+  assert.match(html, /Comportamento compensatório/);
+  assert.match(html, /Hipótese de reforço/);
+  assert.match(html, /não comprovam causalidade/i);
 });
 
 test('evidência mostra convergência, amplitude e diversidade como medidas diferentes', () => {

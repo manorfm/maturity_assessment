@@ -49,12 +49,14 @@ const impactsByCapability: Record<string, ImpactKind[]> = {
 };
 
 export function buildDiagnosticContext(input: { capability: string; constraint: ConstraintKind }): DiagnosticContext {
-  const mechanism = input.constraint === 'none' ? 'undetermined' : input.constraint;
+  const mechanism = input.constraint === 'none' || input.constraint === 'culture' ? 'undetermined' : input.constraint;
   const containment = containmentFor(mechanism);
   return {
     mechanism,
     containment,
-    missingEvidence: missingEvidenceFor(mechanism),
+    missingEvidence: input.constraint === 'culture'
+      ? 'Ainda falta ligar a explicação cultural a uma decisão, incentivo, política, fronteira de poder ou consequência observada.'
+      : missingEvidenceFor(mechanism),
     impacts: impactsByCapability[input.capability] ?? ['change-capability'],
     severity: 'undetermined',
     decisionAuthority: authorityFor(mechanism),

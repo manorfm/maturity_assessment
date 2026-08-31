@@ -64,13 +64,26 @@ O catálogo materializa essa cadeia em uma rede especialista tipada com relaçõ
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v1` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v2` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
 contrária específica acima do limiar e acompanhada da parcela não classificada,
 nunca como confirmação da hipótese. Sintoma, hipótese e
 amplificador continuam papéis diferentes dentro da biblioteca.
+
+Quando a evidência agregada contém uma decisão ou comportamento, uma consequência
+em camada de resultado e ao menos dois padrões factuais, o finding pode materializar
+um padrão sociotécnico. O contrato distingue comportamento virtuoso ou vicioso,
+condição habilitadora, racionalidade local, efeito sistêmico, incentivo, fronteira
+entre quem observa/recomenda/decide/executa, comportamento compensatório e sinal de
+regressão. A relação de reforço permanece explicitamente uma hipótese. Recorrência
+não determina contenção, prática local não implica difusão e divergência abre
+investigação de visibilidade, fronteira ou poder.
+
+`culture` isolado não é mecanismo publicável: ele é normalizado para mecanismo e
+contenção indeterminados, suspende a prescrição e exige reconstruir decisão,
+incentivo, política, poder ou consequência observável.
 
 O prior de evidência insuficiente varia com a observabilidade, sem uma reserva fixa
 que cresça artificialmente com a quantidade de causas. O suporte publicado de uma
