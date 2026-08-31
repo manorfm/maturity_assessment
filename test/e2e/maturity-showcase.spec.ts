@@ -382,6 +382,14 @@ async function observeReport(page: Page) {
 
 function chooseOption(options: typeof graph[number]['options'], stance: Stance, nodeId: string, profile: Profile, participantIndex: number) {
   if (nodeId === 'respondent-context') return options.find((option) => option.id === profile)!;
+  if (nodeId === 'work-context') {
+    const contextByProfile: Partial<Record<Profile, string>> = {
+      management: 'people-and-portfolio', product: 'product-and-outcomes', quality: 'quality-and-risk',
+      engineering: 'build-focused', platform: 'shared-capability', architecture: 'architecture-and-boundaries',
+      security: 'quality-and-risk', data: 'data-and-experience', design: 'data-and-experience',
+    };
+    return options.find((option) => option.id === contextByProfile[profile])!;
+  }
   const narrativeChoice = narrativeChoices[stance]?.[nodeId];
   if (narrativeChoice) {
     const selected = options.find((option) => option.id === narrativeChoice);

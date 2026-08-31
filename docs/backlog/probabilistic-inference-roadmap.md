@@ -20,4 +20,4 @@ Este backlog contém somente o trabalho humano que o código não pode inventar.
   publicá-la explicitamente após revisão humana.
 
 Não tratar clique nem aceitação de recomendação como rótulo. Não executar este
-trabalho sobre um grafo anterior a `evidence-anamnesis-pilot-v8`.
+trabalho sobre um grafo anterior a `evidence-anamnesis-pilot-v9`.

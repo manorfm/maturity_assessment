@@ -35,7 +35,7 @@ TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudança
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
 O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
-o único schema vigente, registrado como versão 18; mudanças incompatíveis exigem
+o único schema vigente, registrado como versão 19; mudanças incompatíveis exigem
 recriação explícita da base. Opções carregam `observation_kind` (`practice`,
 `visibility` ou `not_applicable`). Capturas agregadas de diagnóstico, experimentos
 de transformação, rótulos cegos do piloto e entrevistas cognitivas ficam em tabelas
@@ -94,10 +94,13 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com 81 nós, aprofundamentos
+O corte vigente implementa esses cinco passos com 82 nós, aprofundamentos
 condicionais e nove perspectivas — gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design — escolhidas durante
-a entrevista.
+a entrevista. Um contexto neutro adicional registra responsabilidades exercidas,
+autoridade, alcance e eventos observáveis. `assessment_edges.conditions_json`
+mantém condições declarativas e `participations.work_context_json` preserva o
+contexto da retomada sem gerar sinal.
 
 O cálculo ordinal agrega primeiro por pessoa, aplica partial pooling fraco em
 recortes pequenos e publica intervalo beta-binomial de 90%. Sinais contraditórios

@@ -61,7 +61,10 @@ disse X” quando isso puder identificar alguém.
 
 O convite é comum à unidade. Na primeira etapa, a pessoa seleciona a perspectiva
 que mais se aproxima de sua atuação cotidiana; a seleção não gera sinais nem mede
-conhecimento. O catálogo roteia a entrevista pela perspectiva escolhida. Todos
+conhecimento. Em seguida seleciona uma descrição ampla das responsabilidades que
+exerce, autoridade, alcance e eventos que observa. Esse contexto também não gera
+sinal e é persistido separadamente para avaliar condições declarativas das arestas.
+O catálogo roteia a entrevista pela combinação de contexto e perspectiva. Todos
 atravessam um tronco comportamental comum. Depois da liderança sistêmica:
 
 - gestão aprofunda portfólio, poder, segurança para expor risco e carga cognitiva
@@ -81,6 +84,13 @@ atravessam um tronco comportamental comum. Depois da liderança sistêmica:
 Um ramo pode produzir efeitos cruzados em várias capacidades sem premiar o cargo.
 Nenhum ramo pergunta se a organização “faz DDD”, “usa Team Topologies”, “tem IDP”
 ou qual ferramenta de design está instalada.
+
+Quando a responsabilidade exercida contradiz a expectativa do cargo, ela orienta o
+aprofundamento. Uma pessoa de engenharia que constrói, verifica, opera e provisiona
+dentro de limites recebe recuperação e capacidade operacional sem precisar escolher
+`Plataforma / SRE`. Pessoas com títulos diferentes e a mesma responsabilidade podem
+observar a mesma capacidade. O perfil continua necessário para linguagem e
+triangulação, não para restringir artificialmente o trabalho real.
 
 O convite continua comum à squad. Uma composição multiperfil pode percorrer todos
 esses ramos, mas o relatório publica somente folhas efetivamente cobertas por padrões

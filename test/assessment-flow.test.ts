@@ -8,6 +8,7 @@ import { AdaptiveJourneyService } from '../src/modules/assessments/adaptive-jour
 import { InferenceService, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
 import { edges, graph, GRAPH_VERSION, profileIds, estimateRemainingMinutes, estimateRemainingScenarios } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
+import { RespondentWorkContext } from '../src/modules/assessments/domain/respondent-work-context.js';
 
 test('convite é consumido uma vez e não mantém vínculo com a participação', () => {
   const db = createDatabase(':memory:');
@@ -201,12 +202,53 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   const claimed = invitations.claim(token!) as { resumeToken: string };
   participations.answer(claimed.resumeToken, 'quality');
   assert.equal(participations.find(claimed.resumeToken)?.profile, 'quality');
+  assert.equal(participations.find(claimed.resumeToken)?.current_node, 'work-context');
+  participations.answer(claimed.resumeToken, 'quality-and-risk');
   participations.answer(claimed.resumeToken, 'replan-together');
   participations.answer(claimed.resumeToken, 'continuous');
   participations.answer(claimed.resumeToken, 'test-queue');
   const current = participations.find(claimed.resumeToken)!;
   assert.equal(current.current_node, 'quality-probe');
   assert.equal(catalog.getNode(current.graph_version, current.current_node)?.type, 'probe');
+});
+
+test('responsabilidade operacional abre recuperação mesmo sem perfil SRE', () => {
+  const db = createDatabase(':memory:');
+  const projects = new ProjectService(db);
+  const invitations = new InvitationService(db);
+  const participations = new ParticipationService(db);
+  const catalog = new CatalogService(db);
+  const created = projects.create('Full cycle', 'Empresa/Time A');
+  const project = projects.authorize(created.publicId, created.adminSecret)!;
+  const unit = projects.listUnits(String(project.id)).at(-1)!;
+  const [token] = invitations.createBatch(String(project.id), unit.id, 1).tokens;
+  const claimed = invitations.claim(token!) as { resumeToken: string };
+
+  participations.answer(claimed.resumeToken, 'engineering');
+  participations.answer(claimed.resumeToken, 'build-and-operate');
+  const participation = participations.find(claimed.resumeToken)!;
+  assert.equal(participation.profile, 'engineering');
+  assert.ok(participation.workContext?.responsibilities.includes('operate'));
+  assert.equal(catalog.nextNode(
+    participation.graph_version,
+    'leadership-enablement',
+    'system-owner',
+    participation.profile,
+    participation.workContext,
+  ), 'platform-cloud-reliability');
+  const sameResponsibility = RespondentWorkContext.fromOption('build-and-operate');
+  assert.equal(catalog.nextNode(participation.graph_version, 'leadership-enablement', 'system-owner', 'architecture', sameResponsibility), 'platform-cloud-reliability');
+  const sharedCapability = RespondentWorkContext.fromOption('shared-capability');
+  assert.notEqual(catalog.nextNode(participation.graph_version, 'leadership-enablement', 'system-owner', 'platform', sharedCapability), 'product-discovery-depth');
+});
+
+test('contexto apenas roteia e não produz sinal para inferência', () => {
+  const db = createDatabase(':memory:');
+  new CatalogService(db);
+  const signalCount = db.prepare("SELECT COUNT(*) total FROM assessment_signals WHERE node_key = 'work-context'").get() as { total: number };
+  assert.equal(Number(signalCount.total), 0);
+  const conditional = db.prepare("SELECT conditions_json FROM assessment_edges WHERE from_node_key = 'leadership-enablement' AND to_node_key = 'platform-cloud-reliability' AND conditions_json <> '{}'").get() as { conditions_json: string } | undefined;
+  assert.deepEqual(JSON.parse(conditional!.conditions_json), { responsibilitiesAny: ['operate'] });
 });
 
 test('seletor adaptativo não duplica o aprofundamento já escolhido pelo grafo declarativo', () => {

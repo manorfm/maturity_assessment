@@ -20,7 +20,9 @@
   imposto pelo criador;
   permite estados coletivos, revogação e uma reemissão sem identificar pessoas.
 - **Participation:** sessão anônima associada a um convite, separada das respostas.
-- **RespondentContext:** papel, escopo e contexto relevantes, com minimização de PII.
+- **RespondentContext:** perspectiva, responsabilidades exercidas, autoridade,
+  alcance e eventos observáveis, com minimização de PII. O contexto seleciona
+  arestas e não produz sinal de capacidade.
 - **ObservedEvent:** contrato de autoria para uma futura anamnese centrada em evento;
   preserva família, recência, gatilho, responsabilidade observável, autoridade,
   alcance, fatos ordenados e condição de revisão, sem carregar causa, capacidade,

@@ -3,6 +3,7 @@ import { id } from '../../shared/ids.js';
 import { edges, graph, GRAPH_VERSION, nodeVariants, observationOf, profiles, type AssessmentEdge, type AssessmentNode, type ObservationKind, type Option, type Signal } from './assessment-graph.js';
 import { capabilityLeafIds } from '../inference/domain/capability-taxonomy.js';
 import { PILOT_THRESHOLDS } from '../inference/domain/pilot-policy.js';
+import type { RespondentWorkContext } from '../assessments/domain/respondent-work-context.js';
 
 type NodeRow = { node_key: string; node_type: 'context' | 'scenario' | 'probe'; title: string; scenario: string; prompt: string };
 type OptionRow = { option_key: string; label: string; observation_kind: string | null; capability: string | null; pattern: string | null; weight: number | null; detail_capabilities: string | null; evidence_layer: string | null; constraint_kind: string | null };
@@ -31,8 +32,8 @@ export class CatalogService {
       });
       nodeVariants.forEach((variant) => this.db.prepare('INSERT INTO assessment_node_variants (graph_version, node_key, profile, title, scenario, prompt) VALUES (?, ?, ?, ?, ?, ?)')
         .run(GRAPH_VERSION, variant.nodeId, variant.profile, variant.title ?? null, variant.scenario, variant.prompt ?? null));
-      edges.forEach((edge, position) => this.db.prepare('INSERT INTO assessment_edges (id, graph_version, from_node_key, option_key, to_node_key, priority, profile) VALUES (?, ?, ?, ?, ?, ?, ?)')
-        .run(id(), GRAPH_VERSION, edge.from, edge.optionId ?? null, edge.to, position, edge.profile ?? null));
+      edges.forEach((edge, position) => this.db.prepare('INSERT INTO assessment_edges (id, graph_version, from_node_key, option_key, to_node_key, priority, profile, conditions_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(id(), GRAPH_VERSION, edge.from, edge.optionId ?? null, edge.to, position, edge.profile ?? null, JSON.stringify(edge.when ?? {})));
       this.seedDiagnosticModel();
     });
   }
@@ -130,18 +131,34 @@ export class CatalogService {
     };
   }
 
-  nextNode(version: string, nodeKey: string, optionKey: string, profile?: string): string | undefined {
-    const row = this.db.prepare(`
-      SELECT to_node_key FROM assessment_edges
+  nextNode(version: string, nodeKey: string, optionKey: string, profile?: string, context?: RespondentWorkContext): string | undefined {
+    const rows = this.db.prepare(`
+      SELECT to_node_key, option_key, profile, conditions_json, priority FROM assessment_edges
       WHERE graph_version = ? AND from_node_key = ? AND (option_key = ? OR option_key IS NULL)
         AND (profile = ? OR profile IS NULL)
-      ORDER BY CASE WHEN profile = ? THEN 0 ELSE 1 END,
-        CASE WHEN option_key = ? THEN 0 ELSE 1 END, priority LIMIT 1
-    `).get(version, nodeKey, optionKey, profile ?? '', profile ?? '', optionKey) as { to_node_key: string } | undefined;
-    return row?.to_node_key;
+      ORDER BY CASE WHEN option_key = ? THEN 0 ELSE 1 END, priority
+    `).all(version, nodeKey, optionKey, profile ?? '', optionKey) as unknown as Array<{ to_node_key: string; option_key: string | null; profile: string | null; conditions_json: string; priority: number }>;
+    const eligible = rows.filter((row) => edgeMatches(JSON.parse(row.conditions_json) as AssessmentEdge['when'], context));
+    eligible.sort((left, right) => conditionRank(left.conditions_json) - conditionRank(right.conditions_json)
+      || profileRank(left.profile, profile) - profileRank(right.profile, profile)
+      || Number(left.priority) - Number(right.priority));
+    return eligible[0]?.to_node_key;
   }
 
 }
+
+function edgeMatches(conditions: AssessmentEdge['when'], context?: RespondentWorkContext): boolean {
+  if (!conditions || Object.keys(conditions).length === 0) return true;
+  if (!context) return false;
+  if (conditions.responsibilitiesAny && !conditions.responsibilitiesAny.some((item) => context.responsibilities.includes(item))) return false;
+  if (conditions.authoritiesAny && !conditions.authoritiesAny.includes(context.authority)) return false;
+  if (conditions.scopesAny && !conditions.scopesAny.includes(context.scope)) return false;
+  if (conditions.observableEventsAny && !conditions.observableEventsAny.some((item) => context.observableEvents.includes(item))) return false;
+  return true;
+}
+
+function conditionRank(raw: string): number { return raw === '{}' ? 1 : 0; }
+function profileRank(candidate: string | null, profile?: string): number { return candidate && candidate === profile ? 0 : 1; }
 
 function applicabilityPatternsFor(nodeId: string): string[] {
   const incoming = edges.filter((edge) => edge.to === nodeId && edge.optionId);

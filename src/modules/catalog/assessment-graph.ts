@@ -1,4 +1,6 @@
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v8';
+import { workContextOptions, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
+
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v9';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -47,7 +49,8 @@ export type AssessmentNode = {
   next?: string;
 };
 
-export type AssessmentEdge = { from: string; to: string; optionId?: string; profile?: Profile };
+export type EdgeConditions = { responsibilitiesAny?: WorkResponsibility[]; authoritiesAny?: WorkAuthority[]; scopesAny?: WorkScope[]; observableEventsAny?: ObservableEvent[] };
+export type AssessmentEdge = { from: string; to: string; optionId?: string; profile?: Profile; when?: EdgeConditions };
 export type NodeVariant = { nodeId: string; profile: Profile; title?: string; scenario: string; prompt?: string };
 
 export const profiles: Record<Profile, string> = {
@@ -65,6 +68,15 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Pessoas diferentes vivenciam partes distintas do mesmo sistema de entrega. Escolha a perspectiva que mais se aproxima de onde você atua hoje. Isso apenas adapta a entrevista e não produz pontuação.',
     prompt: 'De qual perspectiva você acompanha a maior parte do trabalho no dia a dia?',
     options: Object.entries(profiles).map(([profile, label]) => ({ id: profile, label, signals: [] })),
+    next: 'work-context',
+  },
+  {
+    id: 'work-context',
+    type: 'context',
+    title: 'Como você participa do trabalho',
+    scenario: 'Pense no trabalho recente, não no título do cargo. Pessoas com nomes de função diferentes podem construir, operar, decidir ou oferecer capacidades semelhantes. Esta resposta apenas seleciona situações que você consegue observar e não produz pontuação.',
+    prompt: 'Qual descrição reúne melhor suas responsabilidades, autoridade e alcance no cotidiano?',
+    options: workContextOptions,
     next: 'urgent-change',
   },
   {
@@ -974,6 +986,7 @@ function skipEdges(node: AssessmentNode, to: string): AssessmentEdge[] {
 
 export const edges: AssessmentEdge[] = graph.flatMap((node) => {
   if (node.id === 'leadership-enablement') return [
+    { from: node.id, to: 'platform-cloud-reliability', when: { responsibilitiesAny: ['operate'] } },
     { from: node.id, to: 'management-portfolio', profile: 'management' },
     { from: node.id, to: 'product-discovery-depth', profile: 'product' },
     { from: node.id, to: 'quality-risk-strategy', profile: 'quality' },
@@ -1123,7 +1136,7 @@ export function typicalSuccessor(from: string, profile?: string): string | undef
     const byProfile = outgoing.find((edge) => edge.profile === profile && !edge.optionId);
     if (byProfile) return byProfile.to;
   }
-  const unscoped = outgoing.find((edge) => !edge.optionId && !edge.profile);
+  const unscoped = outgoing.find((edge) => !edge.optionId && !edge.profile && !edge.when);
   if (unscoped) return unscoped.to;
   const practice = outgoing.find((edge) => edge.optionId && edge.optionId !== CANNOT_OBSERVE_ID && edge.optionId !== NOT_APPLICABLE_ID);
   return practice?.to;

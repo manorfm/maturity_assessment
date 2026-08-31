@@ -103,8 +103,6 @@ suas responsabilidades e autonomia abrem os aprofundamentos correspondentes.
 ## Sequência
 
 ```text
-Onda 1  contexto de responsabilidade, visibilidade e autonomia
-   |
 Onda 2  entrevista centrada em eventos
    |
 Onda 3  fatos, padrões e ciclos sociotécnicos
@@ -118,63 +116,9 @@ Onda 6  showcase contrastante e validação humana
 Onda 7  piloto, revisão cega e calibração
 ```
 
-As ondas 1 a 5 mudam comportamento e exigem `red -> green -> blue`. Onda 6 é
+As ondas 2 a 5 mudam comportamento e exigem `red -> green -> blue`. Onda 6 é
 gate de linguagem e utilidade; onda 7 reutiliza a infraestrutura de calibração
 vigente e não pode começar sobre duas versões diferentes do grafo.
-
----
-
-## Onda 1 — Contexto por responsabilidade e autonomia
-
-### Objetivo
-
-Substituir o perfil amplo como principal seletor por um contexto mínimo de trabalho
-real, sem gerar sinal de capacidade.
-
-### Modelo
-
-Introduzir conteúdo versionado para:
-
-- responsabilidades exercidas: construir, testar, operar, provisionar, proteger,
-  decidir arquitetura, priorizar produto, gerir pessoas ou funding;
-- eventos observáveis: mudança, incidente, risco, ambiente, dependência, resultado,
-  legado, dado ou experiência;
-- autoridade: executar, decidir, recomendar, solicitar ou apenas observar;
-- alcance: componente, serviço, jornada, time, múltiplos times ou organização;
-- dependências oferecidas e consumidas;
-- contexto técnico necessário ao roteamento, sem pontuação.
-
-O título local continua opcional e não substitui responsabilidade.
-
-### Red
-
-- Desenvolvedor com responsabilidade operacional recebe incidentes e recuperação
-  mesmo sem escolher `Plataforma / SRE`.
-- Pessoa de plataforma que não observa decisão de produto não recebe probe que
-  exige essa visibilidade.
-- Ausência de especialidade não emite sinal negativo.
-- Respostas de contexto não alteram nível, posterior ou prioridade.
-- Retomada preserva o mesmo contexto e caminho.
-
-### Green
-
-- Criar nós de contexto e value objects para responsabilidade, autoridade,
-  observabilidade e alcance.
-- Estender condições declarativas das arestas para elegibilidade por contexto.
-- Manter as nove perspectivas apenas para linguagem e triangulação.
-
-### Blue
-
-- Remover roteamentos redundantes por perfil quando responsabilidade já expressar a
-  regra.
-- Garantir que as rotas apenas executem o grafo publicado.
-
-### Critério de aceite
-
-- Dois respondentes com o mesmo perfil nominal e responsabilidades diferentes
-  percorrem aprofundamentos diferentes.
-- Dois cargos diferentes que exercem a mesma responsabilidade observam a mesma
-  capacidade sob linguagem adequada.
 
 ---
 
@@ -530,7 +474,7 @@ orientações após a estabilização cognitiva.
 
 ## Estratégia de migração
 
-- Não alterar `evidence-anamnesis-pilot-v8` depois do início de coleta humana.
+- Não alterar `evidence-anamnesis-pilot-v9` depois do início de coleta humana.
 - Desenvolver a nova autoria sob identificador de versão próprio.
 - Campanhas guardam integralmente a versão utilizada.
 - Não comparar posterior ou nível entre versões como se fossem o mesmo instrumento.

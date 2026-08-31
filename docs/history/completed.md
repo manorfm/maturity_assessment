@@ -474,3 +474,8 @@ Para uma visão resumida dos marcos por versão, consulte o
   [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md),
   [`question-design.md`](../knowledge-base/question-design.md) e
   [`domain-model.md`](../knowledge-base/domain-model.md).
+- Publicado o grafo `evidence-anamnesis-pilot-v9` com contexto neutro de
+  responsabilidades, autoridade, alcance e eventos observáveis e roteamento
+  declarativo independente de cargo; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`profiles-and-triangulation.md`](../knowledge-base/profiles-and-triangulation.md).

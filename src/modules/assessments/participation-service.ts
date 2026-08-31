@@ -3,8 +3,9 @@ import { hashSecret, id } from '../../shared/ids.js';
 import { CatalogService } from '../catalog/catalog-service.js';
 import { AssessmentProfile } from './domain/invitation.js';
 import { AdaptiveJourneyService } from './adaptive-journey-service.js';
+import { RespondentWorkContext } from './domain/respondent-work-context.js';
 
-type Participation = { id: string; profile: string; status: string; current_node: string; graph_version: string };
+type Participation = { id: string; profile: string; status: string; current_node: string; graph_version: string; workContext: RespondentWorkContext | undefined };
 
 export class ParticipationService {
   private readonly catalog: CatalogService;
@@ -12,8 +13,9 @@ export class ParticipationService {
   constructor(private readonly db: Database) { this.catalog = new CatalogService(db); this.adaptiveJourney = new AdaptiveJourneyService(db); }
 
   find(resumeToken: string): Participation | undefined {
-    return this.db.prepare('SELECT id, profile, status, current_node, graph_version FROM participations WHERE resume_hash = ?')
-      .get(hashSecret(resumeToken)) as unknown as Participation | undefined;
+    const row = this.db.prepare('SELECT id, profile, status, current_node, graph_version, work_context_json FROM participations WHERE resume_hash = ?')
+      .get(hashSecret(resumeToken)) as unknown as (Omit<Participation, 'workContext'> & { work_context_json: string }) | undefined;
+    return row ? { id: row.id, profile: row.profile, status: row.status, current_node: row.current_node, graph_version: row.graph_version, workContext: RespondentWorkContext.fromJSON(row.work_context_json) } : undefined;
   }
 
   answeredCount(participationId: string): number {
@@ -34,8 +36,13 @@ export class ParticipationService {
         const profile = AssessmentProfile.create(option.id);
         this.db.prepare('UPDATE participations SET profile = ? WHERE id = ?').run(profile.value, participation.id);
       }
+      if (node.id === 'work-context' && option.id !== 'cannot-observe') {
+        const workContext = RespondentWorkContext.fromOption(option.id);
+        this.db.prepare('UPDATE participations SET work_context_json = ? WHERE id = ?').run(JSON.stringify(workContext), participation.id);
+      }
       const effectiveProfile = node.id === 'respondent-context' ? option.id : participation.profile;
-      const declarativeNext = this.catalog.nextNode(participation.graph_version, node.id, option.id, effectiveProfile);
+      const effectiveContext = node.id === 'work-context' && option.id !== 'cannot-observe' ? RespondentWorkContext.fromOption(option.id) : participation.workContext;
+      const declarativeNext = this.catalog.nextNode(participation.graph_version, node.id, option.id, effectiveProfile, effectiveContext);
       const next = declarativeNext && !this.hasAnswered(participation.id, declarativeNext)
         ? declarativeNext
         : this.adaptiveJourney.selectAfterTerminal(participation.id, effectiveProfile, participation.graph_version);

@@ -34,11 +34,15 @@ test('banco novo nasce somente no esquema vigente', () => {
   const db = createDatabase(':memory:');
   const signals = db.prepare('PRAGMA table_info(assessment_signals)').all() as Array<{ name: string; notnull: number }>;
   const invitations = db.prepare('PRAGMA table_info(invitations)').all() as Array<{ name: string; notnull: number }>;
+  const participations = db.prepare('PRAGMA table_info(participations)').all() as Array<{ name: string; notnull: number }>;
+  const edges = db.prepare('PRAGMA table_info(assessment_edges)').all() as Array<{ name: string; notnull: number }>;
   assert.equal(signals.find((column) => column.name === 'detail_capabilities')?.notnull, 1);
   assert.equal(signals.find((column) => column.name === 'evidence_layer')?.notnull, 1);
   assert.equal(signals.find((column) => column.name === 'constraint_kind')?.notnull, 1);
   assert.equal(invitations.find((column) => column.name === 'batch_id')?.notnull, 1);
-  assert.deepEqual([...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)), [18]);
+  assert.equal(participations.find((column) => column.name === 'work_context_json')?.notnull, 1);
+  assert.equal(edges.find((column) => column.name === 'conditions_json')?.notnull, 1);
+  assert.deepEqual([...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)), [19]);
   db.close();
 });
 
