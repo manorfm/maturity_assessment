@@ -50,7 +50,10 @@ limiar e relataram “não observo”), `previousMeasurement` (delta de suporte 
 padrões entre capturas) e `calibration` (limiares pré-declarados, contagem de
 rótulos cegos, gate e bloqueios), sem identificação individual. Entrevistas
 cognitivas do instrumento são registradas nas telas administrativas, sem
-participação ou identidade, e só aparecem em `calibration` como contagem.
+participação ou identidade, e só aparecem em `calibration` como contagem e totais
+de problemas observados. Além de compreensão, encaixe, sobreposição, recuperação e
+viés de resposta, os totais cobrem reconhecimento de autonomia, utilidade,
+segurança e explicação do fundamento.
 
 `transformationPortfolio` existe no relatório global e em cada item de `scopes`.
 Sua versão vigente é `transformation-portfolio-v1`; `sequence` contém passos

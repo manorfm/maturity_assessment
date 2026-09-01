@@ -1,17 +1,21 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { buildShowcaseGuide } from './e2e/showcase-guide.js';
+import { WAVE_SIX_SHOWCASE_CASES } from '../src/modules/inference/domain/showcase-validation.js';
 
 test('guia vazio ainda explica que os casos são sintéticos', () => {
   const html = buildShowcaseGuide([]);
   assert.match(html, /Índice de inspeção/);
   assert.match(html, /casos sintéticos/i);
   assert.match(html, /não substituem calibração/i);
+  assert.match(html, /6 contrastes ainda sem cobertura sintética/i);
+  assert.match(html, /validação humana.*pendente/i);
 });
 
 test('guia do showcase descreve casos inspecionáveis com URLs e textos observados', () => {
   const html = buildShowcaseGuide([{
     id: 'fragil',
+    scenarioIds: ['low-autonomy-handoffs'],
     title: 'Frágil — linha sob pressão',
     story: 'Entrega <urgente> sem negociar compromisso.',
     lookFor: ['Mapa por estrutura ausente', 'Prioridades com ação recomendada'],
@@ -36,4 +40,21 @@ test('guia do showcase descreve casos inspecionáveis com URLs e textos observad
   assert.match(html, /href="http:\/\/127\.0\.0\.1:3217\/p\/abc"/);
   assert.match(html, /\/invite\/token/);
   assert.match(html, /Complete no Squad Beta/);
+  assert.match(html, /Baixa autonomia e muitos handoffs/);
+  assert.match(html, /5 contrastes ainda sem cobertura sintética/i);
+});
+
+test('guia distingue cobertura sintética completa do gate humano', () => {
+  const html = buildShowcaseGuide(WAVE_SIX_SHOWCASE_CASES.map((scenario, index) => ({
+    id: `case-${index}`,
+    scenarioIds: [scenario.id],
+    title: scenario.title,
+    story: scenario.observation,
+    lookFor: [scenario.expectedDistinction],
+    adminUrl: `/projects/${index}`,
+  })));
+
+  assert.match(html, /6 de 6 contrastes cobertos sinteticamente/i);
+  assert.match(html, /entrevistas reais por perspectiva ainda não foram satisfeitas/i);
+  assert.doesNotMatch(html, /contrastes ainda sem cobertura sintética/i);
 });

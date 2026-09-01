@@ -253,7 +253,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.post('/projects/:publicId/manage/:adminSecret/item-reviews', async (request, reply) => {
     const auth = requireProject(request.params as Params);
-    const body = (request.body ?? {}) as { nodeKey?: string; profile?: string; comprehensionOk?: string; interpretationMatch?: string; optionFit?: string; optionOverlap?: string; retrievalDifficulty?: string; goldOptionBias?: string; visibilityExitUsed?: string; confusingTerm?: string };
+    const body = (request.body ?? {}) as { nodeKey?: string; profile?: string; comprehensionOk?: string; interpretationMatch?: string; optionFit?: string; optionOverlap?: string; retrievalDifficulty?: string; goldOptionBias?: string; visibilityExitUsed?: string; autonomyRecognition?: string; guidanceUseful?: string; guidanceSafe?: string; foundationExplained?: string; confusingTerm?: string };
     pilot.recordCognitiveReview({
       nodeKey: body.nodeKey ?? '',
       profile: body.profile ?? '',
@@ -262,6 +262,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       optionOverlap: body.optionOverlap === 'yes', retrievalDifficulty: body.retrievalDifficulty === 'yes',
       goldOptionBias: body.goldOptionBias === 'yes',
       visibilityExitUsed: body.visibilityExitUsed === 'yes',
+      autonomyRecognition: body.autonomyRecognition === 'yes', guidanceUseful: body.guidanceUseful === 'yes',
+      guidanceSafe: body.guidanceSafe === 'yes', foundationExplained: body.foundationExplained === 'yes',
       ...(body.confusingTerm?.trim() ? { confusingTerm: body.confusingTerm } : {}),
     });
     return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
@@ -298,7 +300,7 @@ function renderCognitiveReview(calibration: PilotReport, params: Params): string
   const nodes = graph.map((node) => `<option value="${escapeHtml(node.id)}">${escapeHtml(node.title)}</option>`).join('');
   const profileOptions = Object.entries(profiles).map(([id, label]) => `<option value="${escapeHtml(id)}">${escapeHtml(label)}</option>`).join('');
   const issues = calibration.cognitiveIssues;
-  return `<section class="card"><h2>Revisão cognitiva do instrumento</h2><p class="muted">Use este registro depois de ler um cenário com alguém da disciplina. Não identifique pessoas e não vincule a uma participação. Isso não calibra o posterior sozinho.</p><ul>${coverage}</ul><p class="muted">Problemas observados: compreensão ${issues.comprehension ?? 0}, interpretação ${issues.interpretation ?? 0}, alternativa ausente ${issues.optionFit ?? 0}, alternativas sobrepostas ${issues.optionOverlap ?? 0}, dificuldade de lembrar ${issues.retrieval ?? 0}, resposta desejável evidente ${issues.desirability ?? 0}.</p><form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/item-reviews">
+  return `<section class="card"><h2>Revisão cognitiva do instrumento</h2><p class="muted">Use este registro depois de ler um cenário com alguém da disciplina. Não identifique pessoas e não vincule a uma participação. Isso não calibra o posterior sozinho.</p><ul>${coverage}</ul><p class="muted">Problemas observados: compreensão ${issues.comprehension ?? 0}, interpretação ${issues.interpretation ?? 0}, alternativa ausente ${issues.optionFit ?? 0}, alternativas sobrepostas ${issues.optionOverlap ?? 0}, dificuldade de lembrar ${issues.retrieval ?? 0}, resposta desejável evidente ${issues.desirability ?? 0}, autonomia não reconhecida ${issues.autonomy ?? 0}, orientação sem utilidade ${issues.utility ?? 0}, orientação insegura ${issues.safety ?? 0}, fundamento não explicado ${issues.foundation ?? 0}.</p><form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/item-reviews">
     <label for="nodeKey">Cenário revisado</label><select id="nodeKey" name="nodeKey" required>${nodes}</select>
     <label for="reviewProfile">Perspectiva de quem revisou a linguagem</label><select id="reviewProfile" name="profile" required>${profileOptions}</select>
     <label for="comprehensionOk">O cenário foi compreendido sem jargão?</label><select id="comprehensionOk" name="comprehensionOk" required><option value="yes">Sim</option><option value="no">Não</option></select>
@@ -308,6 +310,10 @@ function renderCognitiveReview(calibration: PilotReport, params: Params): string
     <label for="retrievalDifficulty">Foi difícil lembrar uma situação concreta?</label><select id="retrievalDifficulty" name="retrievalDifficulty" required><option value="no">Não</option><option value="yes">Sim</option></select>
     <label for="goldOptionBias">Alguma opção revela a resposta desejada?</label><select id="goldOptionBias" name="goldOptionBias" required><option value="no">Não</option><option value="yes">Sim</option></select>
     <label for="visibilityExitUsed">A pessoa usou ou considerou “não observo”?</label><select id="visibilityExitUsed" name="visibilityExitUsed" required><option value="no">Não</option><option value="yes">Sim</option></select>
+    <label for="autonomyRecognition">A pessoa reconheceu sua responsabilidade e autonomia reais?</label><select id="autonomyRecognition" name="autonomyRecognition" required><option value="yes">Sim</option><option value="no">Não</option></select>
+    <label for="guidanceUseful">A orientação seria útil no trabalho descrito?</label><select id="guidanceUseful" name="guidanceUseful" required><option value="yes">Sim</option><option value="no">Não</option></select>
+    <label for="guidanceSafe">A orientação preserva limites e responsabilidades sem sugerir um atalho inseguro?</label><select id="guidanceSafe" name="guidanceSafe" required><option value="yes">Sim</option><option value="no">Não</option></select>
+    <label for="foundationExplained">A pessoa explicou com as próprias palavras por que o teste pode atacar o problema?</label><select id="foundationExplained" name="foundationExplained" required><option value="yes">Sim</option><option value="no">Não</option></select>
     <label for="confusingTerm">Palavra ou expressão confusa (opcional, sem identificar a pessoa)</label><input id="confusingTerm" name="confusingTerm" maxlength="120">
     <button type="submit">Registrar revisão</button></form></section>`;
 }

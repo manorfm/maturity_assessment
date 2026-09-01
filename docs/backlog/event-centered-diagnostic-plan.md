@@ -1,9 +1,9 @@
 # Plano: diagnóstico centrado em eventos reais e direção técnica aplicável
 
-Status: implementação e validação em andamento. As ondas 2 a 5 estão vigentes:
+Status: implementação e validação em andamento. As ondas 2 a 5 e o showcase
+contrastante da onda 6 estão vigentes:
 eventos curtos, ciclos sociotécnicos, bibliotecas técnicas condicionadas e narrativa
-ordenada do finding. A próxima etapa é a onda 6, com showcase contrastante e
-validação humana.
+ordenada do finding. A próxima etapa é concluir a validação humana da onda 6.
 
 ## Problema
 
@@ -197,27 +197,12 @@ eliminar triangulação mínima.
 
 ---
 
-## Onda 6 — Showcase contrastante e validação humana
+## Onda 6 — Validação humana do showcase contrastante
 
 ### Objetivo
 
-Demonstrar que o mesmo modelo funciona em estruturas organizacionais distintas e
-que a linguagem é reconhecível no cotidiano.
-
-### Casos obrigatórios
-
-1. **Baixa autonomia e muitos handoffs** — desenvolvimento depende de ambiente,
-   aprovação, qualidade e operação externas.
-2. **Time full-cycle sem SRE dedicado** — desenvolvimento opera com autonomia e
-   responsabilidade, guardrails e recuperação demonstrável.
-3. **Organização com especialidades** — plataforma, segurança e arquitetura existem,
-   mas são avaliadas por tempo, adequação, efeito e modos de interação.
-4. **Mesmo sintoma, causas diferentes** — entrega lenta por esteira instável,
-   política de lote e acoplamento arquitetural.
-5. **Parque desconhecido** — mapa inexistente ou nominal produz ownership e impacto
-   não reconstruíveis.
-6. **Prática forte com ferramenta simples** — capacidade sustentada não é rebaixada
-   pela ausência de produto sofisticado.
+Verificar com pessoas reais que a linguagem dos seis contrastes já disponíveis no
+showcase é reconhecível no cotidiano. Cobertura sintética não conta como entrevista.
 
 ### Validação cognitiva
 
@@ -270,7 +255,7 @@ orientações após a estabilização cognitiva.
 
 ## Estratégia de migração
 
-- Não alterar `evidence-anamnesis-pilot-v11` depois do início de coleta humana.
+- Não alterar `evidence-anamnesis-pilot-v12` depois do início de coleta humana.
 - Desenvolver a nova autoria sob identificador de versão próprio.
 - Campanhas guardam integralmente a versão utilizada.
 - Não comparar posterior ou nível entre versões como se fossem o mesmo instrumento.

@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v11` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v12` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. A pessoa recebe um tronco comum e,
 quando contexto ou perspectiva mudam o que ela consegue observar ou decidir, um
@@ -21,7 +21,7 @@ dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem,
 não a evidência procurada.
 
 A auditoria versionada publica uma linha de base de autoria sem modificar essa
-jornada. Para `evidence-anamnesis-pilot-v11`, ela registra quantidade e tipo de nós,
+jornada. Para `evidence-anamnesis-pilot-v12`, ela registra quantidade e tipo de nós,
 percurso e duração estimados por perspectiva, tronco comum, variantes, probes
 causais, saídas de visibilidade e dívida dos contratos de direção. Esses números
 caracterizam o instrumento para comparar versões futuras; não medem capacidade da
@@ -43,6 +43,11 @@ condições tipadas sobre esse contexto; o serviço de catálogo avalia as condi
 armazenadas e as rotas HTTP continuam sem regras próprias de negócio. Responsabilidade
 operacional prevalece sobre o título: engenharia full-cycle pode abrir recuperação,
 enquanto ausência de SRE permanece neutra.
+
+Na trilha de entrega, a consequência da liberação leva à frequência de integração
+antes de abrir outras famílias. Se a mudança permanece isolada, o evento discrimina
+feedback técnico, política, fronteira de times ou acoplamento arquitetural; declarar
+responsabilidade de entrega não pode pular essa causa.
 
 Cenários e probes (exceto a escolha de perspectiva) oferecem “não observo”, sem
 sinal. Nós de contexto sobre credencial, dependência, reconhecimento e assistência

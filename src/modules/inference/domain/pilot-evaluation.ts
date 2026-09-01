@@ -12,7 +12,7 @@ export type ExternalLabel = {
   reviewerDiscipline: string;
 };
 
-export type CognitiveReview = { nodeKey: string; profile: string; comprehensionOk: boolean; interpretationMatch: boolean; optionFit: boolean; optionOverlap: boolean; retrievalDifficulty: boolean; goldOptionBias: boolean; visibilityExitUsed: boolean; confusingTerm?: string };
+export type CognitiveReview = { nodeKey: string; profile: string; comprehensionOk: boolean; interpretationMatch: boolean; optionFit: boolean; optionOverlap: boolean; retrievalDifficulty: boolean; goldOptionBias: boolean; visibilityExitUsed: boolean; autonomyRecognition: boolean; guidanceUseful: boolean; guidanceSafe: boolean; foundationExplained: boolean; confusingTerm?: string };
 export type PilotGate = 'blocked' | 'ready_for_revision';
 export type PilotReport = {
   policy: PilotThresholds;
@@ -49,6 +49,10 @@ export class PilotEvaluation {
       optionOverlap: reviews.filter((item) => item.optionOverlap).length,
       retrieval: reviews.filter((item) => item.retrievalDifficulty).length,
       desirability: reviews.filter((item) => item.goldOptionBias).length,
+      autonomy: reviews.filter((item) => !item.autonomyRecognition).length,
+      utility: reviews.filter((item) => !item.guidanceUseful).length,
+      safety: reviews.filter((item) => !item.guidanceSafe).length,
+      foundation: reviews.filter((item) => !item.foundationExplained).length,
     };
     const blockers = [
       ...(cases.length < thresholds.minLabeledCases ? [`Revisão cega insuficiente: ${cases.length} de ${thresholds.minLabeledCases} jornadas rotuladas.`] : []),

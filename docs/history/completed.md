@@ -6,6 +6,18 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-01 — Showcase contrastante da onda 6
+
+- Publicada a matriz dos seis contrastes organizacionais, incluindo integração
+  tardia por feedback, política e acoplamento, com cobertura sintética separada do
+  gate humano. O registro `cognitive-validation-v1` passou a observar autonomia,
+  utilidade, segurança e explicação do fundamento; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+- Publicado `evidence-anamnesis-pilot-v12`: responsabilidade de entrega preserva a
+  discriminação entre feedback, política, fronteira e acoplamento após a consequência
+  observada, e acoplamento recebeu contrato de orientação específico.
+
 ## 2026-08-31 — Trilhas curtas por contexto de trabalho
 
 - Publicado o grafo `evidence-anamnesis-pilot-v11` com oito trilhas declarativas,

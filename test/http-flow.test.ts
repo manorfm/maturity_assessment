@@ -55,7 +55,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(dashboard.body, /Ainda faltam 8 convites/);
   const review = await app.inject({
     method: 'POST', url: `${managementUrl}/item-reviews`,
-    payload: { nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', interpretationMatch: 'yes', optionFit: 'yes', optionOverlap: 'no', retrievalDifficulty: 'no', goldOptionBias: 'no', visibilityExitUsed: 'yes' },
+    payload: { nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', interpretationMatch: 'yes', optionFit: 'yes', optionOverlap: 'no', retrievalDifficulty: 'no', goldOptionBias: 'no', visibilityExitUsed: 'yes', autonomyRecognition: 'yes', guidanceUseful: 'yes', guidanceSafe: 'yes', foundationExplained: 'yes' },
   });
   assert.equal(review.statusCode, 302);
   assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM item_reviews').get() as { total: number }).total), 1);

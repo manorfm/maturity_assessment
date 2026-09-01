@@ -59,6 +59,7 @@ test('padrões apresentados no showcase possuem contrato causal específico', ()
     'concorrencia-coordenada-manualmente', 'credencial-em-configuracao',
     'seguranca-depende-de-reconhecimento-e-especialista', 'prestigio-tecnico',
     'mudanca-emergencial-reconciliada',
+    'causa-acoplamento-entrega',
   ];
   for (const pattern of required) assert.equal(recommendations[pattern]?.guidanceStatus, 'explicit', pattern);
 });

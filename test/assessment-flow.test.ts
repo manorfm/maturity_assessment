@@ -245,11 +245,14 @@ test('contexto seleciona poucos eventos sem depender do título escolhido', () =
   const db = createDatabase(':memory:');
   const catalog = new CatalogService(db);
   const buildAndOperate = RespondentWorkContext.fromOption('build-and-operate');
+  const buildFocused = RespondentWorkContext.fromOption('build-focused');
   const architecture = RespondentWorkContext.fromOption('architecture-and-boundaries');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'engineering', buildAndOperate), 'ready-to-release');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'architecture', buildAndOperate), 'ready-to-release');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'architecture-and-boundaries', 'architecture', architecture), 'architecture-pressure');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildAndOperate), 'environment-access');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildFocused), 'integration-cadence');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap', 'engineering', buildFocused), 'architecture-pressure');
 });
 
 test('contexto apenas roteia e não produz sinal para inferência', () => {
@@ -311,7 +314,7 @@ test('estima o restante da entrevista sem contar probes opcionais', () => {
   assert.equal(estimateRemainingScenarios('platform-path-to-capability', 'platform'), 3);
   assert.equal(estimateRemainingScenarios('architecture-wait', 'architecture'), 1);
   assert.ok(estimateRemainingScenarios('leadership-enablement', 'architecture') >= 3);
-  assert.ok(estimateRemainingScenarios('respondent-context') >= 40);
+  assert.ok(estimateRemainingScenarios('respondent-context') >= 30);
   assert.ok(estimateRemainingMinutes('respondent-context') >= 25);
   assert.ok(estimateRemainingScenarios('respondent-context', 'architecture') > estimateRemainingScenarios('leadership-enablement', 'architecture'));
 });

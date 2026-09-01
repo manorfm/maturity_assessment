@@ -16,6 +16,11 @@ O MVP está concluído e pronto para piloto controlado. O first screen do relat�
 de jornadas reais, revisão com especialistas e calibração, sem transformar o
 resultado em ranking de pessoas ou times.
 
+O showcase sintético cobre seis contrastes operacionais e explicita a diferença
+entre cobertura demonstrável e validação humana. O registro cognitivo observa também
+autonomia reconhecida, utilidade, segurança e explicação do fundamento; somente
+entrevistas reais contam para o gate de cinco por perspectiva.
+
 ## Objetivo
 
 O produto procura responder quatro perguntas:

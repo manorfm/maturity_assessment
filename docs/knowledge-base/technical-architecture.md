@@ -196,15 +196,19 @@ evidência positiva agregada do recorte; não altera a nota da capacidade nem o
 posterior causal. O finding sanitizado carrega capacidade de solução e prontidão
 junto ao experimento.
 
-O showcase E2E gera seis casos inspecionáveis: linha sob pressão (com partição irmã abaixo do
-grupo mínimo), prática local intermediária, operação adaptativa com as nove lentes,
-divergência triangulada entre gestão e engenharia, integração tardia com contenção
-em tooling versus política e organização sustentada com um problema contido em uma
-única squad. Percorre o grafo em Chromium,
+O showcase E2E gera seis relatórios inspecionáveis e os relaciona aos seis contratos
+contrastantes da onda 6: baixa autonomia com handoffs, time full-cycle sem SRE,
+organização com especialidades, mesmo sintoma com causas distintas, parque sem
+ownership/impacto recuperáveis e prática forte com mecanismo simples. Os relatórios
+continuam sendo linha sob pressão (com partição irmã abaixo do grupo mínimo), prática
+local intermediária, operação adaptativa com as nove lentes, contraste entre gestão
+e engenharia sobre a mesma responsabilidade, integração tardia com contenção em tooling, política e
+arquitetura e organização sustentada com um problema contido em uma única squad.
+Percorre o grafo em Chromium,
 grava um índice com histórias, trechos observados e convites ociosos, valida a
 ordenação, um único limitador (sem cloud por default), homes distintos entre
-frágil e emergente, preservação do ramo 4/4, isolamento local, autoridade distinta
-para o mesmo sintoma e a tag de divergência, e deixa a mesma base servida em `3217` — inclusive
+frágil e emergente, preservação de prática forte sem exigir ordinal, isolamento local,
+autoridade distinta para o mesmo sintoma e cobertura explícita da matriz, e deixa a mesma base servida em `3217` — inclusive
 em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 `demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
 3217, evitando recursão entre scripts.
@@ -216,7 +220,8 @@ uma frase. A auditoria do instrumento protege evento recuperável, saída de
 visibilidade e vocabulário acessível antes da publicação.
 O caso principal possui dois times de dez pessoas cada: um SRE, quatro pessoas de
 engenharia, uma de QA, duas de produto, uma de arquitetura e uma de gestão. Os casos
-fixam escolhas narrativas somente nos eventos que definem sua história central. Um
+selecionam contexto de trabalho coerente com responsabilidade, autonomia e história,
+e fixam escolhas narrativas somente nos eventos que definem seu contraste central. Um
 time concentra esteira, regressão e ambiente; o outro, dependências, serviço sem
 responsável, legado desconhecido e coordenação. As demais respostas ficam em faixas intermediárias e variam por
 perspectiva. Assim o showcase valida coerência entre resposta e diagnóstico, sem
@@ -235,6 +240,12 @@ não sustenta comparação local porque nenhuma alcança o limiar de anonimato d
 Duas unidades comparáveis exigem pelo menos cinco participantes em cada uma. O
 preflight nunca declara calibração: priors e posterior continuam provisórios até o
 gate empírico próprio ser atendido.
+
+O registro cognitivo usa `cognitive-validation-v1` e observa compreensão, recuperação
+de evento, encaixe e sobreposição, termo artificial, resposta desejável, autonomia
+reconhecida, utilidade, segurança e explicação do fundamento. Esses registros não
+possuem participação nem identidade. Cobertura sintética nunca satisfaz o mínimo de
+cinco entrevistas humanas por perspectiva.
 
 O serviço de inferência projeta sinais versionados do catálogo em uma ou mais folhas
 da taxonomia. Essa projeção preserva o padrão de origem e permite efeitos cruzados

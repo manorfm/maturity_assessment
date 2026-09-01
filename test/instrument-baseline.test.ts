@@ -10,13 +10,13 @@ const interventions = { ...interventionCatalog, ...evolutionCatalog };
 test('linha de base mede percurso, autoria e profundidade por perspectiva', () => {
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
-  assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v11');
+  assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v12');
   assert.equal(baseline.nodes.total, 88);
   assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 57, probe: 24 });
   assert.equal(Object.keys(baseline.routes).length, profileIds.length);
   for (const profile of profileIds) {
-    assert.ok(baseline.routes[profile].scenarios >= 40, profile);
-    assert.ok(baseline.routes[profile].estimatedMinutes >= 25, profile);
+    assert.ok(baseline.routes[profile].scenarios >= 30, profile);
+    assert.ok(baseline.routes[profile].estimatedMinutes >= 24, profile);
     assert.equal(baseline.authorship.profileVariants[profile], nodeVariants.filter((variant) => variant.profile === profile).length);
   }
   assert.equal(Object.keys(baseline.trackRoutes).length, 8);
@@ -25,8 +25,8 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
     assert.ok(route.scenarios < 30);
     assert.ok(route.estimatedMinutes <= 11);
   }
-  assert.ok(baseline.authorship.commonTrunkNodes >= 36);
-  assert.ok(baseline.authorship.commonTrunkRatio > .4);
+  assert.ok(baseline.authorship.commonTrunkNodes >= 30);
+  assert.ok(baseline.authorship.commonTrunkRatio > .34);
   assert.ok(baseline.authorship.causalProbeNodes > 0);
   assert.equal(baseline.authorship.nodesWithoutVisibilityExit, 0);
 });

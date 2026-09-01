@@ -1,6 +1,6 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v11';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v12';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -1098,10 +1098,14 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: 'urgent-change' },
   ];
   if (node.id === 'release-event-consequence') return [
-    { from: node.id, to: 'architecture-pressure', when: { tracksAny: ['delivery'] } },
+    { from: node.id, to: 'integration-cadence', when: { tracksAny: ['delivery'] } },
     { from: node.id, to: 'environment-access', when: { tracksAny: ['full-cycle'] } },
     { from: node.id, to: 'improvement-loop', when: { tracksAny: ['experience'] } },
     { from: node.id, to: 'integration-cadence' },
+  ];
+  if (node.id === 'delivery-cause') return [
+    { from: node.id, to: 'architecture-pressure', when: { tracksAny: ['delivery'] } },
+    { from: node.id, to: 'release-control' },
   ];
   if (node.id === 'environment-event-consequence') return [
     { from: node.id, to: 'degradation', when: { tracksAny: ['full-cycle', 'capability'] } },
@@ -1166,6 +1170,10 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'integration-cadence') return [
+    { from: node.id, optionId: 'integrated-daily', to: 'architecture-pressure', when: { tracksAny: ['delivery'] } },
+    { from: node.id, optionId: 'integrated-few-days', to: 'architecture-pressure', when: { tracksAny: ['delivery'] } },
+    { from: node.id, optionId: 'isolated-days', to: 'delivery-cause', when: { tracksAny: ['delivery'] } },
+    { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause', when: { tracksAny: ['delivery'] } },
     { from: node.id, optionId: 'integrated-daily', to: 'release-control' },
     { from: node.id, optionId: 'integrated-few-days', to: 'release-control' },
     { from: node.id, optionId: 'isolated-days', to: 'delivery-cause' },

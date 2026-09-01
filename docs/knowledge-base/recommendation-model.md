@@ -317,7 +317,15 @@ massa, o gate permanece bloqueado e o posterior exibido continua provisório.
 Mesmo quando o gate abre, uma revisão de priors nasce como versão `draft` e não
 substitui sozinha o modelo publicado. O painel administrativo registra entrevistas
 cognitivas por cenário e perspectiva, sem participação, convite ou resposta; o
-registro não abre o gate sozinho e não identifica pessoas.
+registro não abre o gate sozinho e não identifica pessoas. A versão
+`cognitive-validation-v1` também registra se a pessoa reconheceu sua autonomia real,
+considerou a orientação útil e segura e conseguiu explicar o fundamento com suas
+próprias palavras. Showcase e respostas sintéticas nunca contam nesse gate.
+
+Acoplamento que amplia o lote possui contrato explícito: diferencia a restrição de
+feedback instável e política de lote, propõe reduzir uma mudança conjunta por limite
+evolutivo ou contrato verificável, declara que não resolve tooling nem governança e
+mede partes, responsáveis e coordenação antes de qualquer modularização ampla.
 
 Um piloto cognitivo inicial com oito participantes é um gate operacional diferente.
 Ele serve para observar compreensão, recuperação de eventos, adequação das opções e

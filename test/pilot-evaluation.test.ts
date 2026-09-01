@@ -17,6 +17,7 @@ function enoughReviews(): CognitiveReview[] {
   return Object.keys(profiles).flatMap((profile) =>
     Array.from({ length: PILOT_THRESHOLDS.minCognitiveReviewsPerProfile }, () => ({
       nodeKey: 'urgent-change', profile, comprehensionOk: true, interpretationMatch: true, optionFit: true, optionOverlap: false, retrievalDifficulty: false, goldOptionBias: false, visibilityExitUsed: false,
+      autonomyRecognition: true, guidanceUseful: true, guidanceSafe: true, foundationExplained: true,
     })));
 }
 
@@ -70,6 +71,16 @@ test('gate só abre com massa, entrevistas cognitivas e métricas dentro do limi
   assert.ok(ready.calibration!.brierScore < PILOT_THRESHOLDS.maxBrierScore);
 });
 
+test('revisão cognitiva contabiliza autonomia, utilidade, segurança e explicação do fundamento', () => {
+  const report = PilotEvaluation.from([], [{
+    ...enoughReviews()[0]!, autonomyRecognition: false, guidanceUseful: false, guidanceSafe: false, foundationExplained: false,
+  }]);
+  assert.equal(report.cognitiveIssues.autonomy, 1);
+  assert.equal(report.cognitiveIssues.utility, 1);
+  assert.equal(report.cognitiveIssues.safety, 1);
+  assert.equal(report.cognitiveIssues.foundation, 1);
+});
+
 test('rótulos persistidos não guardam participação, convite ou resposta', () => {
   const db = createDatabase(':memory:');
   new CatalogService(db);
@@ -108,6 +119,7 @@ test('revisão cognitiva rejeita nó inexistente e não guarda participação', 
   const pilot = new PilotService(db);
   assert.throws(() => pilot.recordCognitiveReview({
     nodeKey: 'missing-node', profile: 'engineering', comprehensionOk: true, interpretationMatch: true, optionFit: true, optionOverlap: false, retrievalDifficulty: false, goldOptionBias: false, visibilityExitUsed: false,
+    autonomyRecognition: true, guidanceUseful: true, guidanceSafe: true, foundationExplained: true,
   }));
 });
 

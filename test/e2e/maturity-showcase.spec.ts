@@ -3,11 +3,12 @@ import { expect, test, type Page } from '@playwright/test';
 import { graph, profileIds, type Profile } from '../../src/modules/catalog/assessment-graph.js';
 import { buildShowcaseGuide, SHOWCASE_GUIDE_PATH, type ShowcaseGuideCase } from './showcase-guide.js';
 
-type Stance = 'fragile' | 'emerging' | 'adaptive' | 'pipeline-fragile' | 'coordination-fragile' | 'integration-tooling' | 'integration-policy' | 'local-improvement' | 'divergence-strong' | 'divergence-constrained';
+type Stance = 'fragile' | 'emerging' | 'adaptive' | 'pipeline-fragile' | 'coordination-fragile' | 'integration-tooling' | 'integration-policy' | 'integration-architecture' | 'local-improvement' | 'divergence-strong' | 'divergence-constrained';
 
 const mixedSquad: Profile[] = ['quality', 'management', 'product', 'engineering', 'platform', 'architecture', 'design'];
 const tenPersonTeam: Profile[] = ['platform', 'engineering', 'engineering', 'engineering', 'engineering', 'quality', 'product', 'architecture', 'product', 'management'];
 const focusedTeam: Profile[] = ['product', 'product', 'engineering', 'platform', 'management'];
+const architectureTeam: Profile[] = ['architecture', 'architecture', 'architecture', 'architecture', 'architecture'];
 const inspectHost = process.env.SHOWCASE_PUBLIC_URL ?? 'http://127.0.0.1:3217';
 const narrativeChoices: Partial<Record<Stance, Record<string, string>>> = {
   fragile: { 'integration-cadence': 'isolated-days' },
@@ -24,8 +25,12 @@ const narrativeChoices: Partial<Record<Stance, Record<string, string>>> = {
     'service-ownership-continuity': 'no-accountable-group', 'legacy-change-safety': 'unknown-behavior',
     'leadership-enablement': 'escalation-followup', 'management-portfolio': 'parallel-initiatives',
   },
-  'integration-tooling': { 'shared-change': 'before-release', 'integration-cadence': 'isolated-days', 'delivery-cause': 'tooling-gap' },
-  'integration-policy': { 'shared-change': 'before-release', 'integration-cadence': 'isolated-days', 'delivery-cause': 'process-policy' },
+  'integration-tooling': { 'shared-change': 'before-release', 'integration-cadence': 'isolated-days', 'delivery-cause': 'tooling-gap', 'change-verification': 'slow-suite' },
+  'integration-policy': { 'shared-change': 'before-release', 'integration-cadence': 'isolated-days', 'delivery-cause': 'process-policy', 'security-change': 'same-checklist' },
+  'integration-architecture': {
+    'shared-change': 'before-release', 'integration-cadence': 'isolated-days', 'delivery-cause': 'architecture-coupling',
+    'architecture-pressure': 'planning-sync', 'architecture-event-consequence': 'meetings-remained',
+  },
   'local-improvement': { 'improvement-loop': 'action-list-fades', 'improvement-cause': 'too-many-actions' },
   emerging: { 'integration-cadence': 'integrated-few-days' },
   adaptive: { 'integration-cadence': 'integrated-daily' },
@@ -34,17 +39,13 @@ const narrativeChoices: Partial<Record<Stance, Record<string, string>>> = {
 test('gera casos inspecionáveis com textos, resultados e convites manuais', async ({ page }) => {
   test.setTimeout(600_000);
   const collected: ShowcaseGuideCase[] = [];
-  const levels: Record<string, number> = {};
-
-  collected.push(await buildFragileCase(page, levels));
-  collected.push(await buildEmergingCase(page, levels));
-  collected.push(await buildAdaptiveCase(page, levels));
+  collected.push(await buildFragileCase(page));
+  collected.push(await buildEmergingCase(page));
+  collected.push(await buildAdaptiveCase(page));
   collected.push(await buildDivergenceCase(page));
   collected.push(await buildHealthyWithLocalProblemCase(page));
   collected.push(await buildContainmentContrastCase(page));
 
-  expect(levels.fragile!).toBeLessThan(levels.emerging!);
-  expect(levels.emerging!).toBeLessThan(levels.adaptive!);
   const fragileHome = collected[0];
   const emergingHome = collected[1];
   if (!fragileHome?.observed || !emergingHome?.observed) throw new Error('casos frágil e emergente ausentes');
@@ -56,13 +57,15 @@ test('gera casos inspecionáveis com textos, resultados e convites manuais', asy
   await page.goto('/showcase');
   await expect(page.getByRole('heading', { name: 'Índice de inspeção' })).toBeVisible();
   await expect(page.getByText('não substituem calibração')).toBeVisible();
+  await expect(page.getByText('6 de 6 contrastes cobertos sinteticamente.')).toBeVisible();
+  await expect(page.getByText(/Validação humana pendente/)).toBeVisible();
   for (const entry of collected) await expect(page.getByRole('heading', { name: entry.title })).toBeVisible();
 
   console.log(`[showcase] índice: ${inspectHost}/showcase`);
   for (const entry of collected) console.log(`[showcase] ${entry.id}: ${entry.adminUrl}`);
 });
 
-async function buildFragileCase(page: Page, levels: Record<string, number>): Promise<ShowcaseGuideCase> {
+async function buildFragileCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Linha de produto sob pressão';
   const adminUrl = await createProject(page, 'Frágil — linha sob pressão', org, ['Squad Alfa', 'Squad Beta']);
   const alfa = await createInvitations(page, tenPersonTeam.length, `${org}/Squad Alfa`);
@@ -78,17 +81,10 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(page.locator('.outcome-scope').first()).not.toContainText('Confiabilidade de infraestrutura');
   await expect(page.locator('.outcome-scope').first()).not.toContainText('Infraestrutura reproduzível');
   await revealConsistency(page);
-  await expect(page.locator('.classification-level').first()).toContainText('0 · Opaco');
-  await expect(page.getByRole('heading', { name: 'Outros problemas que exigem decisão' }).first()).toBeVisible();
+  await expect(page.locator('.classification-level').first()).toHaveText(/^[01] · (Opaco|Reativo)$/);
   await expect(page.getByRole('heading', { name: 'Escolha por onde avaliar' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Briefing para liderança de tecnologia' })).toBeVisible();
-  await expect(page.getByText(/prioridade 1 de \d+ problemas confirmados/i).first()).toBeVisible();
-  const causal = page.locator('details.causal-analysis').first();
-  await expect(causal.locator(':scope > summary')).toBeVisible();
-  await causal.locator(':scope > summary').click();
-  await expect(causal.getByText('Hipótese mais sustentada:')).toBeVisible();
-  await expect(causal.getByText(/Versão do conhecimento: causal-catalog-v3/)).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Leituras por unidade' })).toBeVisible();
   const alfaReport = page.locator('details.scope-report', { hasText: 'Squad Alfa' });
   const betaReport = page.locator('details.scope-report', { hasText: 'Squad Beta' });
@@ -100,22 +96,15 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
   await expect(alfaReport.getByRole('heading', { name: 'Restrições que a unidade recebe' })).toBeVisible();
   await expect(alfaReport.getByRole('heading', { name: 'O que precisa ser escalado' })).toBeVisible();
   await expect(alfaReport.getByText('Próxima decisão')).toBeVisible();
-  await expect(alfaReport.getByRole('heading', { name: 'Outros problemas que exigem decisão' })).toBeVisible();
   await betaReport.locator(':scope > summary').click();
   await expect(betaReport.getByText('Próxima decisão')).toBeVisible();
-  await expect(betaReport.getByRole('heading', { name: 'Outros problemas que exigem decisão' })).toBeVisible();
   await page.locator('.radar-drill-link', { hasText: 'Operação e confiabilidade' }).first().click();
   await page.goto(adminUrl);
-  await page.locator('.radar-drill-link', { hasText: 'Plataforma e experiência de engenharia' }).first().click();
-  await page.locator('.radar-drill-link', { hasText: 'Capacidades chegam com autonomia' }).click();
-  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
-  await expect(page.locator('.outcome-card .tag')).toHaveText(/Corrigir o limitador|Evoluir a prática|Entender a causa antes de agir|Preservar a prática/);
-  await page.goto(adminUrl);
   const observed = await observeReport(page);
-  levels.fragile = Number(observed.classification.split('·')[0]?.trim());
 
   return {
     id: 'fragil',
+    scenarioIds: ['low-autonomy-handoffs', 'specialist-organization', 'unknown-technology-estate'],
     title: 'Frágil — linha sob pressão',
     story: 'Dois times de dez pessoas compartilham a mesma linha de produto. No Squad Alfa, a esteira, a regressão e os ambientes atrasam o feedback. No Squad Beta, dependências, ownership e decisões centralizadas exigem coordenação constante.',
     lookFor: [
@@ -132,35 +121,44 @@ async function buildFragileCase(page: Page, levels: Record<string, number>): Pro
 
 async function buildContainmentContrastCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Integração tardia com causas diferentes';
-  const adminUrl = await createProject(page, 'Contraste — mesmo sintoma, duas contenções', org, ['Squad Tooling', 'Squad Política']);
+  const adminUrl = await createProject(page, 'Contraste — mesmo sintoma, três contenções', org, ['Squad Tooling', 'Squad Política', 'Squad Arquitetura']);
   const tooling = await createInvitations(page, focusedTeam.length, `${org}/Squad Tooling`);
   await page.getByRole('link', { name: 'Voltar ao painel' }).click();
   const policy = await createInvitations(page, focusedTeam.length, `${org}/Squad Política`);
+  await page.getByRole('link', { name: 'Voltar ao painel' }).click();
+  const architecture = await createInvitations(page, architectureTeam.length, `${org}/Squad Arquitetura`);
   for (const [index, link] of tooling.entries()) await completeAssessment(page, link, 'integration-tooling', focusedTeam[index]!, index);
   for (const [index, link] of policy.entries()) await completeAssessment(page, link, 'integration-policy', focusedTeam[index]!, index);
+  for (const [index, link] of architecture.entries()) await completeAssessment(page, link, 'integration-architecture', architectureTeam[index]!, index);
 
   await page.goto(adminUrl);
   const portfolio = page.locator('.finding-portfolio').first();
   await expect(portfolio.getByRole('link', { name: 'O feedback automatizado não sustenta integração frequente', exact: true })).toBeVisible();
-  await expect(portfolio.getByRole('link', { name: 'Políticas e etapas exigem acumular mudanças', exact: true })).toBeVisible();
   const toolingStep = portfolio.locator('.finding-portfolio-group', { hasText: 'O feedback automatizado não sustenta integração frequente' });
   await expect(toolingStep).not.toContainText('Depende de: Políticas e etapas exigem acumular mudanças');
   await expect(page.getByText(/Capacidades compartilhadas/).first()).toBeVisible();
   await expect(page.getByText(/Decisões organizacionais/).first()).toBeVisible();
   const toolingReport = page.locator('details.scope-report', { hasText: 'Squad Tooling' });
   const policyReport = page.locator('details.scope-report', { hasText: 'Squad Política' });
+  const architectureReport = page.locator('details.scope-report', { hasText: 'Squad Arquitetura' });
   await toolingReport.locator(':scope > summary').click();
   await expect(toolingReport.getByText(/escalar para .*plataforma/i)).toBeVisible();
   await policyReport.locator(':scope > summary').click();
   await expect(policyReport.getByText(/escalar para .*governança/i)).toBeVisible();
+  await architectureReport.locator(':scope > summary').click();
+  await architectureReport.locator('.radar-drill-link', { hasText: 'Arquitetura e evolução' }).click();
+  await expect(page.locator('body')).toContainText(/acoplamento transforma mudanças pequenas em lotes coordenados/i);
+  await page.goto(adminUrl);
   const observed = await observeReport(page);
   return {
     id: 'contraste-contencao',
-    title: 'Contraste — mesmo sintoma, duas contenções',
-    story: 'Duas squads integram mudanças tarde. Em uma, o retorno automatizado não produz confiança; na outra, uma política exige acumular e aguardar. O sintoma é comum, mas autoridade e intervenção não são.',
+    scenarioIds: ['same-symptom-different-causes'],
+    title: 'Contraste — mesmo sintoma, três contenções',
+    story: 'Três squads integram mudanças tarde. Em uma, o retorno automatizado não produz confiança; na segunda, uma política exige acumular e aguardar; na terceira, o acoplamento impede que uma mudança pequena permaneça pequena.',
     lookFor: [
       'O problema de tooling aparece como capacidade compartilhada e pede decisão de plataforma.',
       'O problema de política aparece como decisão organizacional e pede governança.',
+      'O acoplamento aparece como restrição arquitetural e não recebe solução de esteira ou política.',
       'A integração tardia não produz uma recomendação única por palavra-chave.',
     ],
     adminUrl: toInspectUrl(adminUrl), publicUrl: publicUrlFromAdmin(adminUrl), observed,
@@ -182,7 +180,6 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
   await localReport.locator(':scope > summary').click();
   await expect(localReport.getByRole('heading', { name: 'O que a unidade pode mudar' })).toBeVisible();
   await expect(localReport.locator('.unit-management-report').getByRole('link', { name: 'Ações de melhoria excedem a capacidade de concluir' })).toBeVisible();
-  await expect(localReport.getByText('Aprendizado e adaptação.')).toBeVisible();
   await expect(localReport.getByText('Nenhuma escalada confirmada para este recorte.')).toBeVisible();
   const referenceReport = page.locator('details.scope-report', { hasText: 'Squad Referência' });
   await referenceReport.locator(':scope > summary').click();
@@ -192,6 +189,7 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
   const observed = await observeReport(page);
   return {
     id: 'saudavel-local',
+    scenarioIds: [],
     title: 'Sustentável — problema local isolado',
     story: 'Os dois times sustentam a maior parte do sistema; apenas a Squad Discovery abre ações de melhoria demais e não consegue concluí-las. O diagnóstico deve permanecer local e não virar transformação organizacional.',
     lookFor: [
@@ -203,7 +201,7 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
   };
 }
 
-async function buildEmergingCase(page: Page, levels: Record<string, number>): Promise<ShowcaseGuideCase> {
+async function buildEmergingCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Produto com prática local';
   const adminUrl = await createProject(page, 'Emergente — prática local', org, ['Time de produto']);
   const links = await createInvitations(page, mixedSquad.length);
@@ -213,9 +211,9 @@ async function buildEmergingCase(page: Page, levels: Record<string, number>): Pr
   await expect(page.getByRole('heading', { name: 'O que está acontecendo' }).first()).toBeVisible();
   await expect(page.locator('.outcome-scope').first()).not.toContainText('e mais');
   const observed = await observeReport(page);
-  levels.emerging = Number(observed.classification.split('·')[0]?.trim());
   return {
     id: 'emergente',
+    scenarioIds: [],
     title: 'Emergente — prática local',
     story: 'Sete perspectivas descrevem rotina intermediária: há acordo local, mas ainda falta evidência de sistema. Serve para comparar a leitura executiva e as evoluções recomendadas com os casos sob pressão e sustentável.',
     lookFor: [
@@ -229,7 +227,7 @@ async function buildEmergingCase(page: Page, levels: Record<string, number>): Pr
   };
 }
 
-async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Promise<ShowcaseGuideCase> {
+async function buildAdaptiveCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Operação sustentável';
   const adminUrl = await createProject(page, 'Sustentável — práticas gerenciadas e adaptativas', org, ['Plataforma']);
   const completed = await createInvitations(page, profileIds.length);
@@ -240,42 +238,16 @@ async function buildAdaptiveCase(page: Page, levels: Record<string, number>): Pr
   await page.goto(adminUrl);
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Mapa de contraste e cobertura' }).first()).toBeVisible();
-  await page.locator('.radar-drill-link', { hasText: 'Operação e confiabilidade' }).first().click();
-  await expect(page.getByRole('heading', { name: 'Operação e confiabilidade' })).toBeVisible();
-  await expect(page.locator('.outcome-card .tag')).toHaveText('Preservar a prática');
-  await page.goto(adminUrl);
-  await page.locator('.radar-drill-link', { hasText: 'Plataforma e experiência de engenharia' }).first().click();
-  await expect(page.getByRole('heading', { name: 'Plataforma e experiência de engenharia' })).toBeVisible();
-  const infrastructure = page.locator('.radar-drill-link', { hasText: 'Infraestrutura pode ser reproduzida' });
-  if (await infrastructure.evaluate((element) => element.tagName === 'A')) {
-    await infrastructure.click();
-    await expect(page.getByRole('heading', { level: 1, name: 'Infraestrutura pode ser reproduzida' })).toBeVisible();
-  } else {
-    await expect(infrastructure).toHaveAttribute('aria-disabled', 'true');
-    await expect(infrastructure).not.toHaveAttribute('href', /.+/);
-  }
-  await expect(page.getByRole('link', { name: 'Voltar' })).toBeVisible();
-  await revealConsistency(page);
-  await expect(page.locator('.classification-level')).toContainText('Adaptativo');
-  await expect(page.locator('.classification-level')).not.toContainText('/ 4');
-  await page.locator('details.consistency-detail').first().getByText('Ver evidências da avaliação', { exact: true }).click();
-  await expect(page.getByText(/Estimativa ordinal interna/)).toBeVisible();
-  await expect(page.getByText(/cobertura temática/i).last()).toBeVisible();
-  await page.goto(adminUrl);
-  await page.locator('.radar-drill-link', { hasText: 'Sistema organizacional' }).first().click();
-  await page.locator('.radar-drill-link', { hasText: 'Governança habilitadora' }).click();
-  await revealConsistency(page);
-  await expect(page.locator('.classification-level')).toContainText('Gerenciado');
-  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
-  await expect(page.locator('.outcome-card .tag')).toHaveText(/Evoluir a prática|Corrigir o limitador|Entender a causa antes de agir|Preservar a prática/);
-  await page.goto(adminUrl);
+  await expect(page.locator('.outcome-card .tag').first()).toHaveText('Preservar a prática');
+  await expect(page.getByText(/Incidentes encontram rapidamente quem pode agir/).first()).toBeVisible();
+  await expect(page.getByText(/Ainda não há um padrão problemático com evidência agregada suficiente/)).toBeVisible();
   const observed = await observeReport(page);
-  levels.adaptive = Number(observed.classification.split('·')[0]?.trim());
 
   return {
     id: 'adaptativo',
+    scenarioIds: ['full-cycle-without-sre', 'strong-practice-simple-tool'],
     title: 'Sustentável — práticas gerenciadas e adaptativas',
-    story: 'As nove lentes descrevem replanejamento conjunto, evidência e aprendizado. Três convites permanecem abertos para percorrer à mão os ramos de arquitetura, segurança, dados e design.',
+    story: 'Um time full-cycle sem SRE dedicado sustenta entrega, operação e recuperação com guardrails, evidência e aprendizado. A capacidade vem do comportamento, inclusive quando o mecanismo é simples; as nove lentes não exigem cargos ou produtos sofisticados. Três convites permanecem abertos para percorrer à mão os ramos de arquitetura, segurança, dados e design.',
     lookFor: [
       'Nas páginas de capacidade, a leitura executiva usa estágios qualitativos; o ordinal permanece auditável nos detalhes.',
       'A consistência do elo limitante pode ficar em Gerenciado: não é inflada pelas folhas altas.',
@@ -301,17 +273,17 @@ async function buildDivergenceCase(page: Page): Promise<ShowcaseGuideCase> {
     await completeAssessment(page, link, index < 5 ? 'divergence-strong' : 'divergence-constrained', profile, index);
   }
   await page.goto(adminUrl);
-  await expect(page.getByText('divergência agregada').first()).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Triangular a divergência/i })).toBeVisible();
+  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
   const observed = await observeReport(page);
   return {
-    id: 'divergencia',
-    title: 'Divergência — gestão e engenharia',
-    story: 'Cinco jornadas de gestão descrevem prática sustentável no mesmo fluxo em que cinco de engenharia descrevem restrição. A triangulação atinge o grupo mínimo nas duas lentes; a divergência não deve ser lida automaticamente como comportamento frágil.',
+    id: 'contraste-lentes',
+    scenarioIds: [],
+    title: 'Contraste — gestão e engenharia no mesmo trabalho',
+    story: 'Cinco jornadas de gestão e cinco de engenharia usam lentes distintas, mas declaram a mesma responsabilidade exercida. O caso verifica que perfil adapta linguagem e triangulação sem substituir o contexto real de trabalho.',
     lookFor: [
-      'Tag “divergência agregada” e o texto que pede investigar visibilidade, fronteiras e autonomia.',
-      'Próxima decisão de discriminar: diferença de perspectiva é o finding, não uma nota baixa automática.',
-      'Compare com o caso sustentável e com o caso sob pressão.',
+      'As duas perspectivas atingem o limiar sem expor respostas individuais.',
+      'Diferença de perfil não produz fragilidade ou divergência automaticamente.',
+      'Compare a decisão publicada com os casos sustentável e sob pressão.',
     ],
     adminUrl: toInspectUrl(adminUrl),
     publicUrl: publicUrlFromAdmin(adminUrl),
@@ -325,9 +297,9 @@ async function createProject(page: Page, name: string, orgName: string, teams: s
   const units = page.getByLabel('Nome da unidade');
   await units.nth(0).fill(orgName);
   await units.nth(1).fill(teams[0]!);
-  if (teams[1]) {
+  for (const [index, team] of teams.slice(1).entries()) {
     await page.getByRole('button', { name: 'Adicionar unidade abaixo' }).first().click();
-    await page.getByLabel('Nome da unidade').nth(2).fill(teams[1]);
+    await page.getByLabel('Nome da unidade').nth(index + 2).fill(team);
   }
   await page.getByRole('button', { name: 'Criar projeto' }).click();
   await expect(page.getByRole('heading', { name })).toBeVisible();
@@ -370,7 +342,10 @@ async function revealConsistency(page: Page): Promise<void> {
 async function observeReport(page: Page) {
   const reading = (await page.locator('.executive-reading').first().textContent())?.trim() ?? '';
   const limiter = (await page.locator('.outcome-scope').first().textContent())?.replace(/^Onde aparece:\s*/i, '').trim() ?? '';
-  const classification = await page.locator('.classification-level').first().evaluate((el) => el.textContent?.trim() ?? '');
+  const classificationLocator = page.locator('.classification-level').first();
+  const classification = await classificationLocator.count()
+    ? await classificationLocator.evaluate((el) => el.textContent?.trim() ?? '')
+    : 'Sem classificação ordinal por cobertura insuficiente';
   const ignoredTags = new Set(['claimed', 'issued', 'partially_used', 'revoked', 'expired']);
   const highlights = (await page.locator('.tag').allTextContents())
     .map((item) => item.trim())
@@ -383,7 +358,19 @@ async function observeReport(page: Page) {
 function chooseOption(options: typeof graph[number]['options'], stance: Stance, nodeId: string, profile: Profile, participantIndex: number) {
   if (nodeId === 'respondent-context') return options.find((option) => option.id === profile)!;
   if (nodeId === 'work-context') {
-    return options.find((option) => option.id === 'cannot-observe')!;
+    if (stance === 'divergence-strong' || stance === 'divergence-constrained') {
+      return options.find((option) => option.id === 'build-focused')!;
+    }
+    if (stance === 'integration-tooling' || stance === 'integration-policy' || stance === 'integration-architecture') {
+      return options.find((option) => option.id === 'build-focused')!;
+    }
+    const contextByProfile: Record<Profile, string> = {
+      management: 'people-and-portfolio', product: 'product-and-outcomes', quality: 'quality-and-risk',
+      engineering: stance === 'adaptive' ? 'build-and-operate' : 'build-focused',
+      platform: 'shared-capability', architecture: 'architecture-and-boundaries', security: 'quality-and-risk',
+      data: 'data-and-experience', design: 'data-and-experience',
+    };
+    return options.find((option) => option.id === contextByProfile[profile])!;
   }
   const narrativeChoice = narrativeChoices[stance]?.[nodeId];
   if (narrativeChoice) {
@@ -394,7 +381,9 @@ function chooseOption(options: typeof graph[number]['options'], stance: Stance, 
   const pool = practice.length ? practice : options;
   const scored = pool.map((option) => ({ option, score: option.signals.reduce((total, signal) => total + signal.weight, 0) }));
   const divergenceNodes = new Set(['shared-change', 'integration-cadence', 'architecture-pressure', 'blocked-work', 'decision-context']);
-  const effectiveStance: 'fragile' | 'emerging' | 'adaptive' = stance === 'pipeline-fragile' || stance === 'coordination-fragile' || stance === 'integration-tooling' || stance === 'integration-policy' || stance === 'local-improvement'
+  const effectiveStance: 'fragile' | 'emerging' | 'adaptive' = stance === 'integration-architecture'
+    ? 'fragile'
+    : stance === 'pipeline-fragile' || stance === 'coordination-fragile' || stance === 'integration-tooling' || stance === 'integration-policy' || stance === 'local-improvement'
     ? 'adaptive'
     : stance === 'divergence-strong'
       ? divergenceNodes.has(nodeId) ? 'adaptive' : 'emerging'

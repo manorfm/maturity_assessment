@@ -48,8 +48,8 @@
   com participação, convite ou resposta.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
-  termo confuso, viés de opção ouro,
-  uso de “não observo”).
+  termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da
+  autonomia, utilidade e segurança da orientação e explicação do fundamento).
 
 ## Módulos do monólito
 
