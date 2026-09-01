@@ -203,6 +203,8 @@ eliminar triangulação mínima.
 
 Verificar com pessoas reais que a linguagem dos seis contrastes já disponíveis no
 showcase é reconhecível no cotidiano. Cobertura sintética não conta como entrevista.
+O painel já registra o contraste validado e evidencia cobertura, lacunas e problemas
+abertos por contraste e perspectiva. A execução das entrevistas permanece humana.
 
 ### Validação cognitiva
 

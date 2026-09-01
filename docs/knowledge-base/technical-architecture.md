@@ -35,7 +35,7 @@ TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudança
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
 O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
-o único schema vigente, registrado como versão 19; mudanças incompatíveis exigem
+o único schema vigente, registrado como versão 21; mudanças incompatíveis exigem
 recriação explícita da base. Opções carregam `observation_kind` (`practice`,
 `visibility` ou `not_applicable`). Capturas agregadas de diagnóstico, experimentos
 de transformação, rótulos cegos do piloto e entrevistas cognitivas ficam em tabelas
@@ -246,6 +246,15 @@ de evento, encaixe e sobreposição, termo artificial, resposta desejável, auto
 reconhecida, utilidade, segurança e explicação do fundamento. Esses registros não
 possuem participação nem identidade. Cobertura sintética nunca satisfaz o mínimo de
 cinco entrevistas humanas por perspectiva.
+Cada entrevista pode ser associada a um dos seis contrastes por
+`showcase_case_id`, sem identidade ou vínculo com participação. O painel projeta
+cobertura por contraste e perspectiva e mantém o gate bloqueado enquanto houver
+contraste sem observação, perspectiva abaixo do mínimo ou problema de linguagem,
+autonomia, utilidade, segurança ou fundamento ainda aberto. Registros antigos sem
+contraste continuam úteis à calibração geral, mas não contam para esse gate.
+Cada registro carrega `graph_version` e `protocol_version`; projeções consideram
+somente a combinação vigente, impedindo que entrevistas de instrumentos diferentes
+sejam somadas silenciosamente.
 
 O serviço de inferência projeta sinais versionados do catálogo em uma ou mais folhas
 da taxonomia. Essa projeção preserva o padrão de origem e permite efeitos cruzados

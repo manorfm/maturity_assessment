@@ -8,6 +8,9 @@ Para uma visão resumida dos marcos por versão, consulte o
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 
+- Operacionalizada a validação humana com rastreabilidade anônima por contraste e
+  perspectiva, cobertura explícita e bloqueio para lacunas ou problemas abertos;
+  ver [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
 - Publicada a matriz dos seis contrastes organizacionais, incluindo integração
   tardia por feedback, política e acoplamento, com cobertura sintética separada do
   gate humano. O registro `cognitive-validation-v1` passou a observar autonomia,

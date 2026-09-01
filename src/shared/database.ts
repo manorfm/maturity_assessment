@@ -26,7 +26,7 @@ export function createDatabase(filename = process.env.DATABASE_PATH ?? 'data/app
     applyMigrations(db);
   } else {
     const schema = db.prepare('SELECT MAX(version) version FROM schema_migrations').get() as { version: number | null };
-    if (Number(schema.version) !== 20) {
+    if (Number(schema.version) !== 21) {
       db.close();
       throw new Error('Unsupported database schema; recreate the database');
     }

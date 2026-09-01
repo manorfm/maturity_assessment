@@ -123,6 +123,15 @@ test('revisão cognitiva rejeita nó inexistente e não guarda participação', 
   }));
 });
 
+test('revisão cognitiva rejeita contraste desconhecido', () => {
+  const db = createDatabase(':memory:');
+  new CatalogService(db);
+  const pilot = new PilotService(db);
+  assert.throws(() => pilot.recordCognitiveReview({
+    ...enoughReviews()[0]!, showcaseCaseId: 'invented-case',
+  }));
+});
+
 test('sem limiar atendido não propõe revisão de priors', () => {
   const db = createDatabase(':memory:');
   new CatalogService(db);

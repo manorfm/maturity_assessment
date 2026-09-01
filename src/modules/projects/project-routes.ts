@@ -18,6 +18,7 @@ import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../infere
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
 import { AudienceReportProjector, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
 import { projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
+import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -145,6 +146,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const report = inference.report(projectId, Number(auth.project.minimum_group_size));
     const batches = invitations.listBatches(projectId);
     const cognitiveReadiness = pilot.cognitiveReadiness(projectId, INITIAL_COGNITIVE_PILOT_SIZE, Number(auth.project.minimum_group_size));
+    const humanShowcaseValidation = pilot.humanShowcaseValidation();
     const unitOptions = units.filter((unit) => unit.isLeaf).map((unit) => `<option value="${escapeHtml(unit.id)}">${escapeHtml(unit.path)}</option>`).join('');
     const reportAvailability = report.completed < report.minimum
       ? `<p class="notice">O relatório será liberado com ${report.minimum} respostas concluídas. Atualmente: ${report.completed}.</p>`
@@ -183,7 +185,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
       ${previous}
       ${scopeReports ? `<section id="report-units"><p class="eyebrow">Mapa por estrutura</p><h2>Leituras por unidade</h2><p class="muted">Somente unidades que mudam o diagnóstico em relação à visão global aparecem.</p>${scopeReports}</section>` : ''}
-      <details class="methodology"><summary>Instrumento e calibração</summary>${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, auth.params)}</details>
+      <details class="methodology"><summary>Instrumento e calibração</summary>${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details>
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
   });
 
@@ -253,8 +255,9 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.post('/projects/:publicId/manage/:adminSecret/item-reviews', async (request, reply) => {
     const auth = requireProject(request.params as Params);
-    const body = (request.body ?? {}) as { nodeKey?: string; profile?: string; comprehensionOk?: string; interpretationMatch?: string; optionFit?: string; optionOverlap?: string; retrievalDifficulty?: string; goldOptionBias?: string; visibilityExitUsed?: string; autonomyRecognition?: string; guidanceUseful?: string; guidanceSafe?: string; foundationExplained?: string; confusingTerm?: string };
+    const body = (request.body ?? {}) as { showcaseCaseId?: string; nodeKey?: string; profile?: string; comprehensionOk?: string; interpretationMatch?: string; optionFit?: string; optionOverlap?: string; retrievalDifficulty?: string; goldOptionBias?: string; visibilityExitUsed?: string; autonomyRecognition?: string; guidanceUseful?: string; guidanceSafe?: string; foundationExplained?: string; confusingTerm?: string };
     pilot.recordCognitiveReview({
+      ...(body.showcaseCaseId ? { showcaseCaseId: body.showcaseCaseId } : {}),
       nodeKey: body.nodeKey ?? '',
       profile: body.profile ?? '',
       comprehensionOk: body.comprehensionOk === 'yes',
@@ -291,7 +294,7 @@ function renderPilotStatus(calibration: PilotReport): string {
   return `<details class="methodology"><summary>Calibração do modelo</summary><p>${escapeHtml(gate)}</p><p>Rótulos cegos: ${calibration.labeledCases} / ${policy.minLabeledCases}. Entrevistas cognitivas: ${calibration.cognitiveReviews}.</p><p>Limiares pré-declarados antes da análise: falso positivo ≤ ${Math.round(policy.maxFalsePositiveRate * 100)}%, parada incorreta ≤ ${Math.round(policy.maxIncorrectStopRate * 100)}%, ECE ≤ ${policy.maxExpectedCalibrationError}, Brier ≤ ${policy.maxBrierScore}, discordância entre avaliadores ≤ ${Math.round(policy.maxRaterDisagreement * 100)}%.</p>${blockers ? `<ul>${blockers}</ul>` : ''}<p>Clique, frequência de resposta e aceitação de recomendação não são rótulos. O modelo publicado não se atualiza sozinho.</p></details>`;
 }
 
-function renderCognitiveReview(calibration: PilotReport, params: Params): string {
+function renderCognitiveReview(calibration: PilotReport, showcase: HumanShowcaseValidationReport, params: Params): string {
   const minimum = PILOT_THRESHOLDS.minCognitiveReviewsPerProfile;
   const coverage = Object.keys(profiles).map((profile) => {
     const count = calibration.cognitiveCoverage[profile] ?? 0;
@@ -299,8 +302,14 @@ function renderCognitiveReview(calibration: PilotReport, params: Params): string
   }).join('');
   const nodes = graph.map((node) => `<option value="${escapeHtml(node.id)}">${escapeHtml(node.title)}</option>`).join('');
   const profileOptions = Object.entries(profiles).map(([id, label]) => `<option value="${escapeHtml(id)}">${escapeHtml(label)}</option>`).join('');
+  const caseOptions = WAVE_SIX_SHOWCASE_CASES.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title)}</option>`).join('');
+  const caseCoverage = WAVE_SIX_SHOWCASE_CASES.map((item) => `<li>${escapeHtml(item.title)}: ${showcase.caseCoverage[item.id]} entrevistas${showcase.problematicCaseIds.includes(item.id) ? ' · requer revisão de linguagem' : ''}</li>`).join('');
+  const humanGate = showcase.humanValidationSatisfied
+    ? 'Cobertura humana concluída; a onda 7 ainda depende dos demais gates de piloto e revisão cega.'
+    : `Validação humana pendente: ${showcase.missingCaseIds.length} contrastes sem observação, ${showcase.missingPerspectives.length} perspectivas abaixo do mínimo e ${showcase.problematicCaseIds.length} contrastes com problema aberto.`;
   const issues = calibration.cognitiveIssues;
-  return `<section class="card"><h2>Revisão cognitiva do instrumento</h2><p class="muted">Use este registro depois de ler um cenário com alguém da disciplina. Não identifique pessoas e não vincule a uma participação. Isso não calibra o posterior sozinho.</p><ul>${coverage}</ul><p class="muted">Problemas observados: compreensão ${issues.comprehension ?? 0}, interpretação ${issues.interpretation ?? 0}, alternativa ausente ${issues.optionFit ?? 0}, alternativas sobrepostas ${issues.optionOverlap ?? 0}, dificuldade de lembrar ${issues.retrieval ?? 0}, resposta desejável evidente ${issues.desirability ?? 0}, autonomia não reconhecida ${issues.autonomy ?? 0}, orientação sem utilidade ${issues.utility ?? 0}, orientação insegura ${issues.safety ?? 0}, fundamento não explicado ${issues.foundation ?? 0}.</p><form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/item-reviews">
+  return `<section class="card"><h2>Revisão cognitiva do instrumento</h2><p class="muted">Use este registro depois de uma entrevista real. Não identifique pessoas e não vincule a uma participação. Massa sintética não é aceita.</p><h3>Cobertura humana dos seis contrastes</h3><p class="notice">${escapeHtml(humanGate)}</p><ul>${caseCoverage}</ul><h3>Cobertura por perspectiva</h3><ul>${coverage}</ul><p class="muted">Problemas observados: compreensão ${issues.comprehension ?? 0}, interpretação ${issues.interpretation ?? 0}, alternativa ausente ${issues.optionFit ?? 0}, alternativas sobrepostas ${issues.optionOverlap ?? 0}, dificuldade de lembrar ${issues.retrieval ?? 0}, resposta desejável evidente ${issues.desirability ?? 0}, autonomia não reconhecida ${issues.autonomy ?? 0}, orientação sem utilidade ${issues.utility ?? 0}, orientação insegura ${issues.safety ?? 0}, fundamento não explicado ${issues.foundation ?? 0}.</p><form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/item-reviews">
+    <label for="showcaseCaseId">Contraste validado na entrevista</label><select id="showcaseCaseId" name="showcaseCaseId" required>${caseOptions}</select>
     <label for="nodeKey">Cenário revisado</label><select id="nodeKey" name="nodeKey" required>${nodes}</select>
     <label for="reviewProfile">Perspectiva de quem revisou a linguagem</label><select id="reviewProfile" name="profile" required>${profileOptions}</select>
     <label for="comprehensionOk">O cenário foi compreendido sem jargão?</label><select id="comprehensionOk" name="comprehensionOk" required><option value="yes">Sim</option><option value="no">Não</option></select>

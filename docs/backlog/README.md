@@ -50,6 +50,8 @@ descoberta de domínio, mapeamento arquitetural e ferramentas homologadas aparec
 somente como técnicas ou famílias condicionadas ao mecanismo demonstrado.
 As ondas 2 a 5 e o showcase contrastante da onda 6 estão na base vigente; a próxima
 etapa aberta é executar a validação humana da linguagem sem contar massa sintética.
+O painel já operacionaliza essa coleta com rastreabilidade anônima por contraste e
+perspectiva; os registros reais ainda precisam ser produzidos nas entrevistas.
 
 O plano sequenciado após a auditoria do modelo está em
 [`instrument-evolution-plan.md`](instrument-evolution-plan.md): restam o trabalho

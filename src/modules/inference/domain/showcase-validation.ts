@@ -86,6 +86,21 @@ export type ShowcaseCoverageReport = {
   missingCaseIds: WaveSixShowcaseCaseId[];
 };
 
+export type HumanShowcaseReview = {
+  showcaseCaseId?: WaveSixShowcaseCaseId;
+  profile: string;
+  acceptable: boolean;
+};
+
+export type HumanShowcaseValidationReport = {
+  humanValidationSatisfied: boolean;
+  caseCoverage: Record<WaveSixShowcaseCaseId, number>;
+  perspectiveCoverage: Record<string, number>;
+  missingCaseIds: WaveSixShowcaseCaseId[];
+  missingPerspectives: string[];
+  problematicCaseIds: WaveSixShowcaseCaseId[];
+};
+
 export function evaluateShowcaseCoverage(caseIds: readonly WaveSixShowcaseCaseId[]): ShowcaseCoverageReport {
   const known = new Set(WAVE_SIX_SHOWCASE_CASES.map((item) => item.id));
   const coveredCaseIds = [...new Set(caseIds)].filter((id) => known.has(id));
@@ -96,5 +111,32 @@ export function evaluateShowcaseCoverage(caseIds: readonly WaveSixShowcaseCaseId
     humanValidationSatisfied: false,
     coveredCaseIds,
     missingCaseIds,
+  };
+}
+
+export function evaluateHumanShowcaseValidation(
+  reviews: readonly HumanShowcaseReview[],
+  requiredPerspectives: readonly string[],
+): HumanShowcaseValidationReport {
+  const caseCoverage = Object.fromEntries(WAVE_SIX_SHOWCASE_CASES.map((item) => [item.id, 0])) as Record<WaveSixShowcaseCaseId, number>;
+  const perspectiveCoverage: Record<string, number> = {};
+  const problematic = new Set<WaveSixShowcaseCaseId>();
+  for (const review of reviews) {
+    if (!review.showcaseCaseId || !(review.showcaseCaseId in caseCoverage)) continue;
+    caseCoverage[review.showcaseCaseId] += 1;
+    perspectiveCoverage[review.profile] = (perspectiveCoverage[review.profile] ?? 0) + 1;
+    if (!review.acceptable) problematic.add(review.showcaseCaseId);
+  }
+  const missingCaseIds = WAVE_SIX_SHOWCASE_CASES.map((item) => item.id).filter((id) => caseCoverage[id] === 0);
+  const missingPerspectives = requiredPerspectives.filter((profile) =>
+    (perspectiveCoverage[profile] ?? 0) < COGNITIVE_VALIDATION_PROTOCOL.minimumInterviewsPerPerspective);
+  const problematicCaseIds = WAVE_SIX_SHOWCASE_CASES.map((item) => item.id).filter((id) => problematic.has(id));
+  return {
+    humanValidationSatisfied: missingCaseIds.length === 0 && missingPerspectives.length === 0 && problematicCaseIds.length === 0,
+    caseCoverage,
+    perspectiveCoverage,
+    missingCaseIds,
+    missingPerspectives,
+    problematicCaseIds,
   };
 }

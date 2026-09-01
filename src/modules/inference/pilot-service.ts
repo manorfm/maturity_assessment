@@ -1,12 +1,14 @@
 import type { Database } from '../../shared/database.js';
 import { DomainValidationError } from '../../shared/errors.js';
 import { id } from '../../shared/ids.js';
-import { graph, profiles as catalogProfiles } from '../catalog/assessment-graph.js';
+import { GRAPH_VERSION, graph, profiles as catalogProfiles } from '../catalog/assessment-graph.js';
 import { PilotEvaluation, type CognitiveReview, type ExternalLabel, type PilotReport } from './domain/pilot-evaluation.js';
 import { PILOT_THRESHOLDS } from './domain/pilot-policy.js';
 import { CognitivePilotReadiness, type CognitivePilotReadinessReport } from './domain/cognitive-pilot-readiness.js';
+import { COGNITIVE_VALIDATION_PROTOCOL, WAVE_SIX_SHOWCASE_CASES, evaluateHumanShowcaseValidation, type HumanShowcaseValidationReport } from './domain/showcase-validation.js';
 
 const allowedProfiles = new Set(Object.keys(catalogProfiles));
+const allowedShowcaseCases = new Set(WAVE_SIX_SHOWCASE_CASES.map((item) => item.id));
 
 export class PilotService {
   constructor(private readonly db: Database) {}
@@ -26,22 +28,23 @@ export class PilotService {
   recordCognitiveReview(input: CognitiveReview): void {
     if (!input.nodeKey.trim() || !graph.some((node) => node.id === input.nodeKey)) throw new DomainValidationError();
     if (!allowedProfiles.has(input.profile)) throw new DomainValidationError();
+    if (input.showcaseCaseId && !allowedShowcaseCases.has(input.showcaseCaseId as never)) throw new DomainValidationError();
     const confusingTerm = input.confusingTerm?.trim().slice(0, 120) || null;
-    this.db.prepare('INSERT INTO item_reviews (id, node_key, profile, comprehension_ok, interpretation_match, option_fit, option_overlap, retrieval_difficulty, gold_option_bias, visibility_exit_used, autonomy_recognition, guidance_useful, guidance_safe, foundation_explained, confusing_term, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id(), input.nodeKey, input.profile, input.comprehensionOk ? 1 : 0, input.interpretationMatch ? 1 : 0, input.optionFit ? 1 : 0, input.optionOverlap ? 1 : 0, input.retrievalDifficulty ? 1 : 0, input.goldOptionBias ? 1 : 0, input.visibilityExitUsed ? 1 : 0, input.autonomyRecognition ? 1 : 0, input.guidanceUseful ? 1 : 0, input.guidanceSafe ? 1 : 0, input.foundationExplained ? 1 : 0, confusingTerm, new Date().toISOString());
+    this.db.prepare('INSERT INTO item_reviews (id, graph_version, protocol_version, showcase_case_id, node_key, profile, comprehension_ok, interpretation_match, option_fit, option_overlap, retrieval_difficulty, gold_option_bias, visibility_exit_used, autonomy_recognition, guidance_useful, guidance_safe, foundation_explained, confusing_term, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(id(), GRAPH_VERSION, COGNITIVE_VALIDATION_PROTOCOL.version, input.showcaseCaseId ?? null, input.nodeKey, input.profile, input.comprehensionOk ? 1 : 0, input.interpretationMatch ? 1 : 0, input.optionFit ? 1 : 0, input.optionOverlap ? 1 : 0, input.retrievalDifficulty ? 1 : 0, input.goldOptionBias ? 1 : 0, input.visibilityExitUsed ? 1 : 0, input.autonomyRecognition ? 1 : 0, input.guidanceUseful ? 1 : 0, input.guidanceSafe ? 1 : 0, input.foundationExplained ? 1 : 0, confusingTerm, new Date().toISOString());
   }
 
   summarize(modelVersion: string): PilotReport {
     const labels = this.db.prepare('SELECT case_key, family_key, predicted_hypothesis, predicted_confidence, labeled_hypothesis, stopped_without_cause, reviewer_discipline FROM pilot_labels WHERE model_version = ?')
       .all(modelVersion) as unknown as Array<{ case_key: string; family_key: string; predicted_hypothesis: string; predicted_confidence: number; labeled_hypothesis: string; stopped_without_cause: number; reviewer_discipline: string }>;
-    const reviews = this.db.prepare('SELECT node_key, profile, comprehension_ok, interpretation_match, option_fit, option_overlap, retrieval_difficulty, gold_option_bias, visibility_exit_used, autonomy_recognition, guidance_useful, guidance_safe, foundation_explained, confusing_term FROM item_reviews')
-      .all() as unknown as Array<{ node_key: string; profile: string; comprehension_ok: number; interpretation_match: number; option_fit: number; option_overlap: number; retrieval_difficulty: number; gold_option_bias: number; visibility_exit_used: number; autonomy_recognition: number; guidance_useful: number; guidance_safe: number; foundation_explained: number; confusing_term: string | null }>;
+    const reviews = this.db.prepare('SELECT showcase_case_id, node_key, profile, comprehension_ok, interpretation_match, option_fit, option_overlap, retrieval_difficulty, gold_option_bias, visibility_exit_used, autonomy_recognition, guidance_useful, guidance_safe, foundation_explained, confusing_term FROM item_reviews WHERE graph_version = ? AND protocol_version = ?')
+      .all(GRAPH_VERSION, COGNITIVE_VALIDATION_PROTOCOL.version) as unknown as Array<{ showcase_case_id: string | null; node_key: string; profile: string; comprehension_ok: number; interpretation_match: number; option_fit: number; option_overlap: number; retrieval_difficulty: number; gold_option_bias: number; visibility_exit_used: number; autonomy_recognition: number; guidance_useful: number; guidance_safe: number; foundation_explained: number; confusing_term: string | null }>;
     return PilotEvaluation.from(labels.map((row) => ({
       caseKey: row.case_key, familyKey: row.family_key, predictedHypothesis: row.predicted_hypothesis,
       predictedConfidence: Number(row.predicted_confidence), labeledHypothesis: row.labeled_hypothesis,
       stoppedWithoutCause: Number(row.stopped_without_cause) === 1, reviewerDiscipline: row.reviewer_discipline,
     })), reviews.map((row) => ({
-      nodeKey: row.node_key, profile: row.profile, comprehensionOk: Number(row.comprehension_ok) === 1,
+      ...(row.showcase_case_id ? { showcaseCaseId: row.showcase_case_id } : {}), nodeKey: row.node_key, profile: row.profile, comprehensionOk: Number(row.comprehension_ok) === 1,
       interpretationMatch: Number(row.interpretation_match) === 1, optionFit: Number(row.option_fit) === 1,
       optionOverlap: Number(row.option_overlap) === 1, retrievalDifficulty: Number(row.retrieval_difficulty) === 1,
       goldOptionBias: Number(row.gold_option_bias) === 1, visibilityExitUsed: Number(row.visibility_exit_used) === 1,
@@ -49,6 +52,16 @@ export class PilotService {
       guidanceSafe: Number(row.guidance_safe) === 1, foundationExplained: Number(row.foundation_explained) === 1,
       ...(row.confusing_term ? { confusingTerm: row.confusing_term } : {}),
     })), this.policy(modelVersion));
+  }
+
+  humanShowcaseValidation(): HumanShowcaseValidationReport {
+    const rows = this.db.prepare('SELECT showcase_case_id, profile, comprehension_ok, interpretation_match, option_fit, option_overlap, autonomy_recognition, guidance_useful, guidance_safe, foundation_explained FROM item_reviews WHERE showcase_case_id IS NOT NULL AND graph_version = ? AND protocol_version = ?').all(GRAPH_VERSION, COGNITIVE_VALIDATION_PROTOCOL.version) as unknown as Array<Record<string, string | number>>;
+    return evaluateHumanShowcaseValidation(rows.map((row) => ({
+      showcaseCaseId: String(row.showcase_case_id) as import('./domain/showcase-validation.js').WaveSixShowcaseCaseId,
+      profile: String(row.profile),
+      acceptable: ['comprehension_ok', 'interpretation_match', 'option_fit', 'autonomy_recognition', 'guidance_useful', 'guidance_safe', 'foundation_explained'].every((key) => Number(row[key]) === 1)
+        && Number(row.option_overlap) === 0,
+    })), Object.keys(catalogProfiles));
   }
 
   cognitiveReadiness(projectId: string, targetParticipants: number, minimumGroupSize: number): CognitivePilotReadinessReport {

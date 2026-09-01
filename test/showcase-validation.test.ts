@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import {
   COGNITIVE_VALIDATION_PROTOCOL,
   WAVE_SIX_SHOWCASE_CASES,
+  evaluateHumanShowcaseValidation,
   evaluateShowcaseCoverage,
 } from '../src/modules/inference/domain/showcase-validation.js';
 
@@ -49,4 +50,33 @@ test('protocolo cognitivo preserva oito observações e cinco entrevistas reais 
     'guidance-utility-and-explanation',
   ]);
   assert.equal(COGNITIVE_VALIDATION_PROTOCOL.syntheticEvidenceAccepted, false);
+});
+
+test('gate humano evidencia lacunas por contraste e perspectiva sem contar revisão genérica', () => {
+  const report = evaluateHumanShowcaseValidation([
+    { showcaseCaseId: 'low-autonomy-handoffs', profile: 'engineering', acceptable: true },
+    { profile: 'engineering', acceptable: true },
+  ], ['engineering', 'quality']);
+  assert.equal(report.humanValidationSatisfied, false);
+  assert.equal(report.caseCoverage['low-autonomy-handoffs'], 1);
+  assert.equal(report.perspectiveCoverage.engineering, 1);
+  assert.ok(report.missingCaseIds.includes('full-cycle-without-sre'));
+  assert.deepEqual(report.missingPerspectives, ['engineering', 'quality']);
+});
+
+test('gate humano só abre com massa real, todos os contrastes e linguagem aceitável', () => {
+  const perspectives = ['engineering', 'quality'];
+  const reviews = perspectives.flatMap((profile) => Array.from({ length: 5 }, (_, index) => ({
+    showcaseCaseId: WAVE_SIX_SHOWCASE_CASES[index % WAVE_SIX_SHOWCASE_CASES.length]!.id,
+    profile,
+    acceptable: true,
+  })));
+  reviews.push({ showcaseCaseId: 'strong-practice-simple-tool', profile: 'engineering', acceptable: true });
+  const ready = evaluateHumanShowcaseValidation(reviews, perspectives);
+  assert.equal(ready.humanValidationSatisfied, true);
+  const unsafe = evaluateHumanShowcaseValidation([...reviews, {
+    showcaseCaseId: 'strong-practice-simple-tool', profile: 'quality', acceptable: false,
+  }], perspectives);
+  assert.equal(unsafe.humanValidationSatisfied, false);
+  assert.deepEqual(unsafe.problematicCaseIds, ['strong-practice-simple-tool']);
 });

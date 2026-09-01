@@ -42,13 +42,14 @@ export function applyMigrations(db: DatabaseSync): void {
       created_at TEXT NOT NULL, UNIQUE(model_version, case_key, family_key, reviewer_discipline)
     );
     CREATE TABLE item_reviews (
-      id TEXT PRIMARY KEY, node_key TEXT NOT NULL, profile TEXT NOT NULL, comprehension_ok INTEGER NOT NULL,
+      id TEXT PRIMARY KEY, graph_version TEXT NOT NULL, protocol_version TEXT NOT NULL, showcase_case_id TEXT,
+      node_key TEXT NOT NULL, profile TEXT NOT NULL, comprehension_ok INTEGER NOT NULL,
       interpretation_match INTEGER NOT NULL, option_fit INTEGER NOT NULL, option_overlap INTEGER NOT NULL,
       retrieval_difficulty INTEGER NOT NULL, gold_option_bias INTEGER NOT NULL, visibility_exit_used INTEGER NOT NULL,
       autonomy_recognition INTEGER NOT NULL, guidance_useful INTEGER NOT NULL, guidance_safe INTEGER NOT NULL,
       foundation_explained INTEGER NOT NULL,
       confusing_term TEXT, created_at TEXT NOT NULL
     );
-    INSERT INTO schema_migrations (version, applied_at) VALUES (20, datetime('now'));
+    INSERT INTO schema_migrations (version, applied_at) VALUES (21, datetime('now'));
   `);
 }

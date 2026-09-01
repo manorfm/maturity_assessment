@@ -12,7 +12,7 @@ export type ExternalLabel = {
   reviewerDiscipline: string;
 };
 
-export type CognitiveReview = { nodeKey: string; profile: string; comprehensionOk: boolean; interpretationMatch: boolean; optionFit: boolean; optionOverlap: boolean; retrievalDifficulty: boolean; goldOptionBias: boolean; visibilityExitUsed: boolean; autonomyRecognition: boolean; guidanceUseful: boolean; guidanceSafe: boolean; foundationExplained: boolean; confusingTerm?: string };
+export type CognitiveReview = { showcaseCaseId?: string; nodeKey: string; profile: string; comprehensionOk: boolean; interpretationMatch: boolean; optionFit: boolean; optionOverlap: boolean; retrievalDifficulty: boolean; goldOptionBias: boolean; visibilityExitUsed: boolean; autonomyRecognition: boolean; guidanceUseful: boolean; guidanceSafe: boolean; foundationExplained: boolean; confusingTerm?: string };
 export type PilotGate = 'blocked' | 'ready_for_revision';
 export type PilotReport = {
   policy: PilotThresholds;

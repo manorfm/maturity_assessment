@@ -51,14 +51,20 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(dashboard.body, /Próxima decisão/);
   assert.match(dashboard.body, /Instrumento e calibração/);
   assert.match(dashboard.body, /Revisão cognitiva do instrumento/);
+  assert.match(dashboard.body, /Cobertura humana dos seis contrastes/);
+  assert.match(dashboard.body, /name="showcaseCaseId"/);
   assert.match(dashboard.body, /Preflight do piloto inicial/);
   assert.match(dashboard.body, /Ainda faltam 8 convites/);
   const review = await app.inject({
     method: 'POST', url: `${managementUrl}/item-reviews`,
-    payload: { nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', interpretationMatch: 'yes', optionFit: 'yes', optionOverlap: 'no', retrievalDifficulty: 'no', goldOptionBias: 'no', visibilityExitUsed: 'yes', autonomyRecognition: 'yes', guidanceUseful: 'yes', guidanceSafe: 'yes', foundationExplained: 'yes' },
+    payload: { showcaseCaseId: 'low-autonomy-handoffs', nodeKey: 'urgent-change', profile: 'engineering', comprehensionOk: 'yes', interpretationMatch: 'yes', optionFit: 'yes', optionOverlap: 'no', retrievalDifficulty: 'no', goldOptionBias: 'no', visibilityExitUsed: 'yes', autonomyRecognition: 'yes', guidanceUseful: 'yes', guidanceSafe: 'yes', foundationExplained: 'yes' },
   });
   assert.equal(review.statusCode, 302);
   assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM item_reviews').get() as { total: number }).total), 1);
+  assert.equal((db.prepare('SELECT showcase_case_id FROM item_reviews').get() as { showcase_case_id: string }).showcase_case_id, 'low-autonomy-handoffs');
+  const reviewVersion = db.prepare('SELECT graph_version, protocol_version FROM item_reviews').get() as { graph_version: string; protocol_version: string };
+  assert.match(reviewVersion.graph_version, /evidence-anamnesis-pilot-v12/);
+  assert.equal(reviewVersion.protocol_version, 'cognitive-validation-v1');
   assert.equal((db.prepare('PRAGMA table_info(item_reviews)').all() as Array<{ name: string }>).some((column) => column.name === 'participation_id'), false);
   const batch = db.prepare('SELECT id FROM invitation_batches ORDER BY rowid DESC LIMIT 1').get() as { id: string };
   const batchDashboard = await app.inject({ method: 'GET', url: managementUrl });

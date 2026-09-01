@@ -50,6 +50,11 @@
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
   termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da
   autonomia, utilidade e segurança da orientação e explicação do fundamento).
+  Pode referenciar o contraste do showcase validado, sem carregar identidade,
+  convite, participação ou resposta; essa referência alimenta somente cobertura
+  e bloqueios da validação humana.
+  A versão do grafo e a versão do protocolo são obrigatórias para não misturar
+  coortes cognitivas de instrumentos diferentes.
 
 ## Módulos do monólito
 

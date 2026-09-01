@@ -54,6 +54,10 @@ participação ou identidade, e só aparecem em `calibration` como contagem e to
 de problemas observados. Além de compreensão, encaixe, sobreposição, recuperação e
 viés de resposta, os totais cobrem reconhecimento de autonomia, utilidade,
 segurança e explicação do fundamento.
+O painel também apresenta a matriz humana dos seis contrastes. O registro manual
+aceita `showcaseCaseId`, validado contra o contrato vigente, e expõe apenas totais
+por contraste e perspectiva; não existe endpoint para converter massa sintética em
+entrevista.
 
 `transformationPortfolio` existe no relatório global e em cada item de `scopes`.
 Sua versão vigente é `transformation-portfolio-v1`; `sequence` contém passos
