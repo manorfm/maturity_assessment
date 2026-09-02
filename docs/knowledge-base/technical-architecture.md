@@ -118,6 +118,9 @@ primeiro plano. Base das entrevistas, justificativa da prioridade, hipóteses e
 fundamento técnico ficam em detalhes expansíveis. Depois da decisão, uma navegação
 por âncoras conduz às projeções de diretoria, liderança de tecnologia, gerência
 local e especialistas; todas consomem o mesmo diagnóstico e o mesmo portfólio.
+Essa navegação só aparece quando existem ao menos dois destinos úteis. Públicos sem
+decisão ou restrição confirmada não geram cartões desabilitados nem briefings vazios;
+as projeções continuam existindo no domínio e aparecem quando recebem conteúdo.
 O panorama sequenciado vem após os briefings, enquanto radar e recortes estruturais
 orientam aprofundamento sem reabrir a decisão. IDs de navegação pertencem apenas ao
 relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco

@@ -279,6 +279,9 @@ a contenção, a autoridade e o passo do portfólio permanecem os mesmos em toda
 projeções. Uma restrição compartilhada pode aparecer para diretoria e liderança
 técnica porque ambas possuem decisões diferentes sobre o mesmo problema; isso não
 duplica o diagnóstico nem sua prioridade.
+Na interface, uma leitura por autoridade sem conteúdo é omitida em vez de repetir
+“nenhuma decisão”. Se apenas o diagnóstico principal estiver disponível, não se
+cria navegação que retorne ao próprio cartão.
 
 ## Capacidade, sintoma, causa e solução
 

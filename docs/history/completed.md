@@ -12,6 +12,8 @@ Para uma visão resumida dos marcos por versão, consulte o
   mecanismos para integração tardia e evitar radar vazio enganoso; ver
   [`technical-architecture.md`](../knowledge-base/technical-architecture.md) e
   [`assessment-model.md`](../knowledge-base/assessment-model.md).
+- Navegação e briefings passaram a omitir públicos sem decisão confirmada, reduzindo
+  repetição sem alterar as projeções por autoridade.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

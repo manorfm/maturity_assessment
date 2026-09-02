@@ -23,21 +23,24 @@ import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../
 type Params = { publicId: string; adminSecret: string };
 
 export function renderAudienceNavigation(counts: { executiveDecisions: number; technologyConstraints: number; localReports: number; specialistFindings: number }): string {
-  const destination = (href: string, title: string, body: string, enabled = true) => enabled
-    ? `<a class="audience-link" href="${href}"><h3>${title}</h3><p>${body}</p><span>Ir para esta leitura →</span></a>`
-    : `<article class="audience-link disabled"><h3>${title}</h3><p>${body}</p><span>Nenhuma decisão confirmada</span></article>`;
+  const destination = (href: string, title: string, body: string) => `<a class="audience-link" href="${href}"><h3>${title}</h3><p>${body}</p><span>Ir para esta leitura →</span></a>`;
   const specialistTarget = counts.specialistFindings > 1 ? '#report-portfolio' : '#report-diagnosis';
-  return `<nav class="card audience-navigation" aria-label="Escolher leitura do relatório"><p class="eyebrow">Visões para decisão</p><h2>Escolha por onde avaliar</h2><p>As quatro visões projetam os mesmos diagnósticos e o mesmo portfólio; muda apenas o que cada público precisa decidir.</p><div class="grid">${destination('#report-executive', 'Diretoria', `${counts.executiveDecisions} ${counts.executiveDecisions === 1 ? 'decisão organizacional' : 'decisões organizacionais'} sobre política, estrutura ou investimento.`, counts.executiveDecisions > 0)}${destination('#report-technology', 'Liderança de tecnologia', `${counts.technologyConstraints} ${counts.technologyConstraints === 1 ? 'restrição sistêmica' : 'restrições sistêmicas'} de arquitetura, plataforma, segurança, fluxo ou confiabilidade.`, counts.technologyConstraints > 0)}${destination('#report-units', 'Gerência local', `${counts.localReports} ${counts.localReports === 1 ? 'recorte' : 'recortes'} com ações próprias, dependências recebidas e escaladas.`, counts.localReports > 0)}${destination(specialistTarget, 'Especialistas e times', `${counts.specialistFindings} ${counts.specialistFindings === 1 ? 'diagnóstico explicável' : 'diagnósticos explicáveis'} com evidências, hipóteses e experimentos.`, counts.specialistFindings > 0)}</div></nav>`;
+  const destinations = [
+    ...(counts.executiveDecisions ? [destination('#report-executive', 'Diretoria', `${counts.executiveDecisions} ${counts.executiveDecisions === 1 ? 'decisão organizacional' : 'decisões organizacionais'} sobre política, estrutura ou investimento.`)] : []),
+    ...(counts.technologyConstraints ? [destination('#report-technology', 'Liderança de tecnologia', `${counts.technologyConstraints} ${counts.technologyConstraints === 1 ? 'restrição sistêmica' : 'restrições sistêmicas'} de arquitetura, plataforma, segurança, fluxo ou confiabilidade.`)] : []),
+    ...(counts.localReports ? [destination('#report-units', 'Gerência local', `${counts.localReports} ${counts.localReports === 1 ? 'recorte' : 'recortes'} com ações próprias, dependências recebidas e escaladas.`)] : []),
+    ...(counts.specialistFindings ? [destination(specialistTarget, 'Especialistas e times', `${counts.specialistFindings} ${counts.specialistFindings === 1 ? 'diagnóstico explicável' : 'diagnósticos explicáveis'} com evidências, hipóteses e experimentos.`)] : []),
+  ];
+  if (destinations.length < 2) return '';
+  return `<nav class="card audience-navigation" aria-label="Escolher leitura do relatório"><p class="eyebrow">Visões para decisão</p><h2>Escolha por onde avaliar</h2><p>Estas leituras projetam os mesmos diagnósticos e o mesmo portfólio; muda apenas o que cada público precisa decidir.</p><div class="grid">${destinations.join('')}</div></nav>`;
 }
 
 export function renderAudienceBriefs(reports: AudienceReports, capabilityBase: string): string {
-  const list = (findings: OutcomeFinding[]) => findings.length
-    ? `<ol>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a><br><span class="muted">Decisão: ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))} · efeitos: ${escapeHtml((finding.impacts ?? []).map(impactLabel).join(' · ') || 'a confirmar')}</span></li>`).join('')}</ol>`
-    : '<p class="muted">Nenhuma decisão confirmada para esta autoridade.</p>';
-  const outcomes = reports.executive.threatenedOutcomes.length
-    ? `<p><strong>Resultados ameaçados:</strong> ${reports.executive.threatenedOutcomes.map(impactLabel).map(escapeHtml).join(' · ')}.</p>`
-    : '<p class="muted">Nenhum impacto organizacional foi demonstrado com evidência suficiente.</p>';
-  return `<section class="audience-briefs"><article class="card" id="report-executive"><p class="eyebrow">Decisões de política, estrutura e investimento</p><h2>Briefing para diretoria</h2>${outcomes}<h3>Decisões organizacionais</h3>${list(reports.executive.decisions)}<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${list(reports.executive.sharedConstraints)}</article><article class="card" id="report-technology"><p class="eyebrow">Restrições técnicas compartilhadas</p><h2>Briefing para liderança de tecnologia</h2>${list(reports.technology.systemicConstraints)}</article></section>`;
+  const list = (findings: OutcomeFinding[]) => `<ol>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a><br><span class="muted">Decisão: ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))} · efeitos: ${escapeHtml((finding.impacts ?? []).map(impactLabel).join(' · ') || 'a confirmar')}</span></li>`).join('')}</ol>`;
+  const executiveHasContent = reports.executive.decisions.length > 0 || reports.executive.sharedConstraints.length > 0;
+  const executive = executiveHasContent ? `<article class="card" id="report-executive"><p class="eyebrow">Decisões de política, estrutura e investimento</p><h2>Briefing para diretoria</h2>${reports.executive.threatenedOutcomes.length ? `<p><strong>Resultados ameaçados:</strong> ${reports.executive.threatenedOutcomes.map(impactLabel).map(escapeHtml).join(' · ')}.</p>` : ''}${reports.executive.decisions.length ? `<h3>Decisões organizacionais</h3>${list(reports.executive.decisions)}` : ''}${reports.executive.sharedConstraints.length ? `<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${list(reports.executive.sharedConstraints)}` : ''}</article>` : '';
+  const technology = reports.technology.systemicConstraints.length ? `<article class="card" id="report-technology"><p class="eyebrow">Restrições técnicas compartilhadas</p><h2>Briefing para liderança de tecnologia</h2>${list(reports.technology.systemicConstraints)}</article>` : '';
+  return executive || technology ? `<section class="audience-briefs">${executive}${technology}</section>` : '';
 }
 
 const projectForm = () => layout('Novo projeto', `

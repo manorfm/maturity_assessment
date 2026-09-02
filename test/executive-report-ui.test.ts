@@ -370,10 +370,18 @@ test('navegação por público explica a decisão de cada leitura sem duplicar m
   assert.match(html, /href="#report-portfolio"/);
 });
 
-test('navegação especialista não aponta para um panorama ausente quando existe um único diagnóstico', () => {
+test('navegação é omitida quando só repetiria o diagnóstico principal', () => {
   const html = renderAudienceNavigation({ executiveDecisions: 0, technologyConstraints: 0, localReports: 0, specialistFindings: 1 });
-  assert.match(html, /href="#report-diagnosis"[^>]*>.*Especialistas e times/s);
-  assert.doesNotMatch(html, /href="#report-portfolio"/);
+  assert.equal(html, '');
+});
+
+test('navegação omite públicos sem decisão confirmada', () => {
+  const html = renderAudienceNavigation({ executiveDecisions: 0, technologyConstraints: 2, localReports: 1, specialistFindings: 3 });
+  assert.doesNotMatch(html, />Diretoria</);
+  assert.doesNotMatch(html, /Nenhuma decisão confirmada/);
+  assert.match(html, />Liderança de tecnologia</);
+  assert.match(html, />Gerência local</);
+  assert.match(html, />Especialistas e times</);
 });
 
 test('briefings de diretoria e tecnologia mostram somente decisões da sua autoridade', () => {
@@ -388,6 +396,20 @@ test('briefings de diretoria e tecnologia mostram somente decisões da sua autor
   assert.match(html, /Briefing para liderança de tecnologia/);
   assert.match(html, /Feedback técnico chega tarde/);
   assert.match(html, /Velocidade de entrega/);
+});
+
+test('briefings vazios são omitidos em vez de repetir ausência de decisão', () => {
+  const reports = AudienceReportProjector.project({ findings: [], portfolio: TransformationPortfolioPlanner.plan([]) });
+  assert.equal(renderAudienceBriefs(reports, '/capabilities'), '');
+});
+
+test('briefing renderiza somente o público com conteúdo', () => {
+  const finding = { kind: 'correction' as const, pattern: 'pipeline', detailCapability: 'continuous-integration', title: 'Feedback técnico chega tarde', cause: '', intervention: '', confidence: .8, priority: .8, mechanism: 'tooling' as const, containment: 'team' as const, decisionAuthority: 'architecture' as const, prescription: { status: 'ready' as const, reason: 'confirmado' } };
+  const reports = AudienceReportProjector.project({ findings: [finding], portfolio: TransformationPortfolioPlanner.plan([finding]) });
+  const html = renderAudienceBriefs(reports, '/capabilities');
+  assert.doesNotMatch(html, /Briefing para diretoria/);
+  assert.match(html, /Briefing para liderança de tecnologia/);
+  assert.doesNotMatch(html, /Nenhuma decisão confirmada/);
 });
 
 test('diagnóstico condicionado explica autoridade e motivo da investigação', () => {

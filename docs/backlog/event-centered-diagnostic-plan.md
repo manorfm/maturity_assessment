@@ -205,9 +205,10 @@ Verificar com pessoas reais que a linguagem dos seis contrastes já disponíveis
 showcase é reconhecível no cotidiano. Cobertura sintética não conta como entrevista.
 O painel já registra o contraste validado e evidencia cobertura, lacunas e problemas
 abertos por contraste e perspectiva. A execução das entrevistas permanece humana.
-O showcase já separa hipótese simulada de resultado produzido e compara os três
-mecanismos de integração; ainda é hipótese de melhoria condensar seções vazias e
-repetições do relatório depois de observar a navegação com pessoas reais.
+O showcase já separa hipótese simulada de resultado produzido, compara os três
+mecanismos de integração e omite leituras vazias; ainda é hipótese de melhoria
+reduzir repetições entre cartão, panorama e recortes depois de observar a navegação
+com pessoas reais.
 
 ### Validação cognitiva
 

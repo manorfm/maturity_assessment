@@ -191,8 +191,7 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
   const referenceReport = page.locator('details.scope-report', { hasText: 'Squad Referência' });
   await referenceReport.locator(':scope > summary').click();
   await expect(referenceReport.locator('.unit-management-report')).not.toContainText('Ações de melhoria excedem a capacidade de concluir');
-  const executiveBrief = page.locator('#report-executive');
-  await expect(executiveBrief.getByText('Nenhuma decisão confirmada para esta autoridade.').first()).toBeVisible();
+  await expect(page.locator('#report-executive')).toHaveCount(0);
   const observed = await observeReport(page);
   return {
     id: 'saudavel-local',
