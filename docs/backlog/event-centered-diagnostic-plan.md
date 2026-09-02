@@ -15,9 +15,9 @@ restrição, consequência e aprendizado.
 
 O relatório separa mecanismo, contenção, autoridade, impacto e prescrição, porém
 parte dessas conclusões nasce de respostas fechadas que já nomeiam a causa. A
-direção técnica possui bons contratos em alguns padrões, mas 53 padrões ainda
-contêm o fundamento genérico; fluxo, prioridade e melhoria já possuem dez
-fundamentos específicos. Práticas, técnicas e famílias de
+direção técnica possui bons contratos em alguns padrões, mas 43 padrões ainda
+contêm o fundamento genérico; fluxo, prioridade, melhoria, arquitetura e evolução
+já possuem vinte fundamentos específicos. Práticas, técnicas e famílias de
 ferramentas longe da leitura principal de especialistas e times.
 
 Isso reduz a capacidade de:

@@ -35,7 +35,7 @@ test('linha de base torna visível dívida de fundamentos e contratos de direç�
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
   assert.equal(baseline.direction.totalInterventions, Object.keys(interventions).length);
-  assert.equal(baseline.direction.genericFoundations, 53);
+  assert.equal(baseline.direction.genericFoundations, 43);
   assert.ok(baseline.direction.repeatedFoundationGroups.some((group) => group.count >= 10));
   assert.ok(baseline.direction.withoutExplicitGuidance > 0);
   assert.ok(baseline.direction.withoutPrerequisiteContract > 0);
@@ -54,6 +54,22 @@ test('fundamentos de fluxo, prioridade e melhoria explicam o mecanismo específi
     'iteracao-orientada-a-escopo', 'prioridade-sem-foco', 'retrospectiva-sem-fechamento',
     'melhoria-sem-prioridade', 'cerimonia-sem-adaptacao', 'processo-sem-autonomia',
     'melhoria-reativa',
+  ];
+  for (const pattern of promotedPatterns) {
+    const foundation = interventionFoundations[pattern];
+    assert.ok(foundation, pattern);
+    assert.notEqual(foundation.why, 'A intervenção ataca o comportamento observado, não um inventário de práticas.', pattern);
+    assert.ok(foundation.why.length >= 70, pattern);
+  }
+});
+
+test('fundamentos de arquitetura e evolução explicam o mecanismo específico', () => {
+  const promotedPatterns = [
+    'acoplamento-coordenado', 'causa-correlacao-arquitetural',
+    'causa-dependencia-arquitetural', 'causa-impacto-invisivel',
+    'contrato-implicito-fragil', 'estrutura-implicita', 'evolucao-em-grande-lote',
+    'migracao-coordenada-em-lote', 'planejamento-compensa-acoplamento',
+    'sustentabilidade-em-grande-lote',
   ];
   for (const pattern of promotedPatterns) {
     const foundation = interventionFoundations[pattern];

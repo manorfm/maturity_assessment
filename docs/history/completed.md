@@ -24,6 +24,9 @@ Para uma visão resumida dos marcos por versão, consulte o
   próprios, reduzindo de 63 para 53 as justificativas genéricas e publicando a rede
   especialista como `causal-catalog-v4`; ver
   [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+- Dez padrões de arquitetura e evolução receberam fundamentos próprios para
+  acoplamento, correlação, contratos e lotes de mudança, reduzindo a dívida genérica
+  de 53 para 43 e publicando `causal-catalog-v5`.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

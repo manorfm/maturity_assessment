@@ -167,14 +167,14 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Suíte ou scanner presente não prova estratégia de qualidade."
   },
   "acoplamento-coordenado": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Fronteiras reduzem coordenação recorrente quando seguem o fluxo de mudança",
+    "why": "Medir uma mudança transversal e remover uma interação recorrente testa se contrato ou limite reduz coordenação sem apenas deslocá-la para outro grupo."
   },
   "evolucao-em-grande-lote": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Evolução segura ocorre por passos reversíveis com feedback",
+    "why": "Extrair uma fatia reversível permite verificar redução no custo de mudança antes de comprometer capacidade e risco numa transformação arquitetural ampla."
   },
   "ownership-fragmentado": {
     "source": "Team Topologies",
@@ -287,9 +287,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo."
   },
   "causa-impacto-invisivel": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "SRE / blameless postmortem",
+    "principle": "Sinal técnico só orienta decisão quando ligado ao impacto",
+    "why": "Relacionar sintoma, jornada afetada, abrangência e mudança recente torna a criticidade investigável antes de ampliar painéis ou alertas sem contexto."
   },
   "causa-fronteira-sustentacao": {
     "source": "Team Topologies",
@@ -327,9 +327,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A prática é o ciclo de incidente, não a ferramenta de observabilidade."
   },
   "causa-correlacao-arquitetural": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Fronteiras preservam contexto suficiente para investigar uma jornada",
+    "why": "Um contrato mínimo de correlação entre componentes testa se o contexto atravessa o limite técnico sem exigir acesso direto ou reconstrução manual do evento."
   },
   "causa-privacidade-operacional": {
     "source": "Melhoria contínua",
@@ -392,9 +392,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "causa-dependencia-arquitetural": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Fronteiras devem alinhar autoridade e ritmo de mudança",
+    "why": "Remover uma passagem recorrente por contrato, limite ou ownership testa se a dependência vem do desenho do sistema em vez de culpar coordenação individual."
   },
   "solucao-entregue-pronta": {
     "source": "Discovery e evidência de uso",
@@ -492,9 +492,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Uma prova reproduzível substitui coordenação recorrente como detector principal de colisões."
   },
   "planejamento-compensa-acoplamento": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Composição precoce substitui previsão excessiva por feedback",
+    "why": "Reduzir o intervalo até a primeira composição verificável revela conflitos enquanto a mudança é pequena; mais alinhamento prévio não produz essa evidência."
   },
   "causa-multiplas-fontes": {
     "source": "Continuous Delivery",
@@ -527,9 +527,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo."
   },
   "estrutura-implicita": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Ownership e modo de interação explícitos reduzem negociação sob pressão",
+    "why": "Explicitar quem decide, executa e apoia uma jornada permite testar a fronteira numa entrega real, sem inferir capacidade pelo organograma ou pelo cargo."
   },
   "resultado-sem-repriorizacao": {
     "source": "Lean / Accelerate",
@@ -577,19 +577,19 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "sustentabilidade-em-grande-lote": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Sustentabilidade melhora no fluxo de mudanças presentes",
+    "why": "Uma melhoria reversível na próxima mudança produz evidência de redução de custo agora, sem condicionar segurança e aprendizado a uma futura reescrita completa."
   },
   "migracao-coordenada-em-lote": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Compatibilidade permite evolução desacoplada no tempo",
+    "why": "Alterar em duas etapas e observar consumidores reduz a necessidade de uma janela única, preservando reversibilidade enquanto produtor e consumidores evoluem."
   },
   "contrato-implicito-fragil": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Contrato verificável torna expectativa e compatibilidade observáveis",
+    "why": "Formalizar um contrato crítico e verificá-lo durante a mudança do produtor antecipa quebra que consumidores hoje descobrem e compensam depois da integração."
   },
   "migracao-de-dados-contextual": {
     "source": "Melhoria contínua",

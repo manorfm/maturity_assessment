@@ -65,7 +65,7 @@ O catálogo materializa essa cadeia em uma rede especialista tipada com relaçõ
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v4` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v5` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
@@ -109,6 +109,12 @@ capacidade reservada, autonomia dentro de limites e gatilhos antecipados. Esses
 fundamentos explicam por que o menor experimento pode alterar o mecanismo observado;
 não usam mais uma justificativa única de “atacar o comportamento” para padrões
 causalmente diferentes.
+
+Arquitetura e evolução também possuem fundamentos próprios para acoplamento por
+coordenação, correlação entre componentes, impacto invisível, contratos implícitos,
+ownership e mudanças em grande lote. Mapas, contratos e técnicas de descoberta só
+entram para tornar dependência, contexto ou compatibilidade verificáveis; a presença
+nominal de C4, DDD ou Event Storming continua sem sustentar diagnóstico.
 
 ## Recomendações
 
