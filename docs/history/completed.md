@@ -20,6 +20,10 @@ Para uma visão resumida dos marcos por versão, consulte o
 - Recortes de unidade deixaram de repetir o portfólio global e passaram a mostrar
   somente a decisão local e comportamentos relacionados; o índice do showcase agora
   registra a decisão produzida sem misturar etiquetas de categorias diferentes.
+- Dez padrões de fluxo, prioridade e melhoria receberam fundamentos causais
+  próprios, reduzindo de 63 para 53 as justificativas genéricas e publicando a rede
+  especialista como `causal-catalog-v4`; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

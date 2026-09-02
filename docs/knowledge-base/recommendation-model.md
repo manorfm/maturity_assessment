@@ -65,7 +65,7 @@ O catálogo materializa essa cadeia em uma rede especialista tipada com relaçõ
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v3` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v4` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
@@ -102,6 +102,13 @@ identificador coincide com um padrão de evidência conta somente essas observa�
 O relatório lista no máximo três causas distintas por padrão, sem repetir o mesmo
 texto em cada folha afetada. Incerteza e discriminadores ficam sob demanda.
 Snapshots individuais nunca são publicados.
+
+Os fundamentos de fluxo, prioridade e melhoria distinguem fechamento do ciclo,
+feedback multidisciplinar precoce, aprendizagem sob prazo, foco por resultado,
+capacidade reservada, autonomia dentro de limites e gatilhos antecipados. Esses
+fundamentos explicam por que o menor experimento pode alterar o mecanismo observado;
+não usam mais uma justificativa única de “atacar o comportamento” para padrões
+causalmente diferentes.
 
 ## Recomendações
 

@@ -63,8 +63,8 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
   },
   "acao-sem-fechamento": {
     "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "principle": "Fechar o ciclo entre ação e efeito observado",
+    "why": "Limitar ações, atribuir responsabilidade e revisar um sinal de efeito impede que a reflexão termine em intenção sem aprendizagem verificável."
   },
   "mitigacao-sem-prevencao": {
     "source": "Melhoria contínua",
@@ -112,9 +112,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Aprovação que não distingue risco só adiciona espera."
   },
   "cascata-fracionada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Discovery e evidência de uso",
+    "principle": "Feedback multidisciplinar antes de consolidar o lote",
+    "why": "Envolver produto, engenharia, qualidade e operação numa hipótese pequena antecipa restrições enquanto ainda é barato alterar direção e desenho."
   },
   "feedback-tardio": {
     "source": "Discovery e evidência de uso",
@@ -122,9 +122,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Aceite de escopo não substitui a prova de que a hipótese vale o lote."
   },
   "prazo-sem-aprendizado": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Discovery e evidência de uso",
+    "principle": "Urgência não elimina a hipótese nem sua revisão",
+    "why": "Registrar o efeito esperado e uma data de revisão preserva aprendizagem mesmo sob prazo, evitando que entrega seja confundida com resultado comprovado."
   },
   "qualidade-como-handoff": {
     "source": "Qualidade no fluxo",
@@ -347,9 +347,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "iteracao-orientada-a-escopo": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Resultado estável, opções de escopo adaptáveis",
+    "why": "Fixar o resultado e limitar trabalho permite trocar itens quando surge evidência nova, em vez de proteger um escopo que já pode ter perdido valor."
   },
   "ocupacao-como-progresso": {
     "source": "Lean / Accelerate",
@@ -357,9 +357,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Cerimônia de OKR não mede maturidade; o que pesa na decisão sim."
   },
   "prioridade-sem-foco": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Toda nova prioridade explicita custo de oportunidade",
+    "why": "Tornar visível o resultado corrente e o trabalho deslocado por cada urgência reduz troca silenciosa de foco e permite revisar a decisão pelo efeito."
   },
   "bloqueio-depende-de-coordenador": {
     "source": "Melhoria contínua",
@@ -413,28 +413,28 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
   },
   "retrospectiva-sem-fechamento": {
     "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "principle": "Poucas mudanças com dono e verificação posterior",
+    "why": "Escolher uma mudança, reservar capacidade e marcar sua revisão fecha o loop de aprendizagem que uma lista crescente de ações deixa aberto."
   },
   "melhoria-sem-prioridade": {
     "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "principle": "Melhoria compete por capacidade de forma explícita",
+    "why": "Reservar um limite pequeno de capacidade transforma melhoria em trabalho executável e permite comparar recorrência, espera ou retrabalho antes e depois."
   },
   "cerimonia-sem-adaptacao": {
     "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "principle": "Reflexão só aprende quando muda uma decisão",
+    "why": "Partir de um evento recente e escolher uma decisão revisável conecta a conversa ao trabalho real; realizar a cerimônia sem mudança não fecha o ciclo."
   },
   "processo-sem-autonomia": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Governança habilitadora",
+    "principle": "Limites explícitos distinguem proteção de escolha local",
+    "why": "Explicar o risco protegido e o espaço seguro de experimento permite adaptar o fluxo sem remover controles legítimos nem depender de exceção informal."
   },
   "melhoria-reativa": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Resilience engineering / SRE",
+    "principle": "Sinais fracos acionam revisão antes da crise",
+    "why": "Um gatilho antecipado de espera, recorrência ou desgaste cria oportunidade de adaptação enquanto o custo e o risco ainda são menores."
   },
   "mudanca-centralizada": {
     "source": "Melhoria contínua",

@@ -35,7 +35,7 @@ test('linha de base torna visível dívida de fundamentos e contratos de direç�
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
   assert.equal(baseline.direction.totalInterventions, Object.keys(interventions).length);
-  assert.ok(baseline.direction.genericFoundations >= 60);
+  assert.equal(baseline.direction.genericFoundations, 53);
   assert.ok(baseline.direction.repeatedFoundationGroups.some((group) => group.count >= 10));
   assert.ok(baseline.direction.withoutExplicitGuidance > 0);
   assert.ok(baseline.direction.withoutPrerequisiteContract > 0);
@@ -46,6 +46,21 @@ test('linha de base torna visível dívida de fundamentos e contratos de direç�
       .map(([pattern]) => pattern)
       .sort(),
   );
+});
+
+test('fundamentos de fluxo, prioridade e melhoria explicam o mecanismo específico', () => {
+  const promotedPatterns = [
+    'acao-sem-fechamento', 'cascata-fracionada', 'prazo-sem-aprendizado',
+    'iteracao-orientada-a-escopo', 'prioridade-sem-foco', 'retrospectiva-sem-fechamento',
+    'melhoria-sem-prioridade', 'cerimonia-sem-adaptacao', 'processo-sem-autonomia',
+    'melhoria-reativa',
+  ];
+  for (const pattern of promotedPatterns) {
+    const foundation = interventionFoundations[pattern];
+    assert.ok(foundation, pattern);
+    assert.notEqual(foundation.why, 'A intervenção ataca o comportamento observado, não um inventário de práticas.', pattern);
+    assert.ok(foundation.why.length >= 70, pattern);
+  }
 });
 
 test('fixtures reproduzem as cinco lacunas aceitas para as ondas seguintes', () => {
