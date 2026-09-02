@@ -57,7 +57,7 @@ test('gera casos inspecionáveis com textos, resultados e convites manuais', asy
   await page.goto('/showcase');
   await expect(page.getByRole('heading', { name: 'Índice de inspeção' })).toBeVisible();
   await expect(page.getByText('não substituem calibração')).toBeVisible();
-  await expect(page.getByText('6 de 6 contrastes cobertos sinteticamente.')).toBeVisible();
+  await expect(page.getByText('6 de 6 contratos com coerência sintética exercitada.')).toBeVisible();
   await expect(page.getByText(/Validação humana pendente/)).toBeVisible();
   for (const entry of collected) await expect(page.getByRole('heading', { name: entry.title })).toBeVisible();
 
@@ -67,7 +67,7 @@ test('gera casos inspecionáveis com textos, resultados e convites manuais', asy
 
 async function buildFragileCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Linha de produto sob pressão';
-  const adminUrl = await createProject(page, 'Frágil — linha sob pressão', org, ['Squad Alfa', 'Squad Beta']);
+  const adminUrl = await createProject(page, 'Cenário sob pressão — duas squads', org, ['Squad Alfa', 'Squad Beta']);
   const alfa = await createInvitations(page, tenPersonTeam.length, `${org}/Squad Alfa`);
   await page.getByRole('link', { name: 'Voltar ao painel' }).click();
   const beta = await createInvitations(page, tenPersonTeam.length, `${org}/Squad Beta`);
@@ -105,8 +105,9 @@ async function buildFragileCase(page: Page): Promise<ShowcaseGuideCase> {
   return {
     id: 'fragil',
     scenarioIds: ['low-autonomy-handoffs', 'specialist-organization', 'unknown-technology-estate'],
-    title: 'Frágil — linha sob pressão',
+    title: 'Cenário sob pressão — duas squads',
     story: 'Dois times de dez pessoas compartilham a mesma linha de produto. No Squad Alfa, a esteira, a regressão e os ambientes atrasam o feedback. No Squad Beta, dependências, ownership e decisões centralizadas exigem coordenação constante.',
+    expectedOutcome: 'Separar as restrições recebidas da capacidade dos times, sem recomendar ferramenta antes de discriminar o mecanismo.',
     lookFor: [
       'Uma próxima decisão e um único limitador — não cloud aninhada por default.',
       'Cartão com o problema, a restrição e o teste; estágio e mapa de contraste em segundo plano.',
@@ -155,11 +156,17 @@ async function buildContainmentContrastCase(page: Page): Promise<ShowcaseGuideCa
     scenarioIds: ['same-symptom-different-causes'],
     title: 'Contraste — mesmo sintoma, três contenções',
     story: 'Três squads integram mudanças tarde. Em uma, o retorno automatizado não produz confiança; na segunda, uma política exige acumular e aguardar; na terceira, o acoplamento impede que uma mudança pequena permaneça pequena.',
+    expectedOutcome: 'Separar feedback técnico, política de lote e acoplamento arquitetural, atribuindo autoridade e teste diferentes.',
     lookFor: [
       'O problema de tooling aparece como capacidade compartilhada e pede decisão de plataforma.',
       'O problema de política aparece como decisão organizacional e pede governança.',
       'O acoplamento aparece como restrição arquitetural e não recebe solução de esteira ou política.',
       'A integração tardia não produz uma recomendação única por palavra-chave.',
+    ],
+    contrasts: [
+      { scope: 'Squad Tooling', mechanism: 'feedback técnico instável ou lento', containment: 'capacidade compartilhada', authority: 'plataforma', nextTest: 'encurtar um ciclo de retorno relevante' },
+      { scope: 'Squad Política', mechanism: 'política de lote indiferenciada', containment: 'política organizacional', authority: 'governança', nextTest: 'testar caminho proporcional ao risco' },
+      { scope: 'Squad Arquitetura', mechanism: 'acoplamento entre partes', containment: 'fronteira arquitetural', authority: 'arquitetura e times envolvidos', nextTest: 'reduzir uma mudança conjunta verificável' },
     ],
     adminUrl: toInspectUrl(adminUrl), publicUrl: publicUrlFromAdmin(adminUrl), observed,
   };
@@ -167,7 +174,7 @@ async function buildContainmentContrastCase(page: Page): Promise<ShowcaseGuideCa
 
 async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Produto sustentável com desvio local';
-  const adminUrl = await createProject(page, 'Sustentável — problema local isolado', org, ['Squad Referência', 'Squad Discovery']);
+  const adminUrl = await createProject(page, 'Desvio local em organização sustentável', org, ['Squad Referência', 'Squad Discovery']);
   const reference = await createInvitations(page, focusedTeam.length, `${org}/Squad Referência`);
   await page.getByRole('link', { name: 'Voltar ao painel' }).click();
   const local = await createInvitations(page, focusedTeam.length, `${org}/Squad Discovery`);
@@ -190,8 +197,9 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
   return {
     id: 'saudavel-local',
     scenarioIds: [],
-    title: 'Sustentável — problema local isolado',
+    title: 'Desvio local em organização sustentável',
     story: 'Os dois times sustentam a maior parte do sistema; apenas a Squad Discovery abre ações de melhoria demais e não consegue concluí-las. O diagnóstico deve permanecer local e não virar transformação organizacional.',
+    expectedOutcome: 'Conter o problema na Squad Discovery e não converter o desvio local em decisão organizacional.',
     lookFor: [
       'A ação aparece somente sob autoridade da Squad Discovery.',
       'A Squad Referência não recebe o problema por pertencer à mesma organização.',
@@ -203,7 +211,7 @@ async function buildHealthyWithLocalProblemCase(page: Page): Promise<ShowcaseGui
 
 async function buildEmergingCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Produto com prática local';
-  const adminUrl = await createProject(page, 'Emergente — prática local', org, ['Time de produto']);
+  const adminUrl = await createProject(page, 'Prática local — resultado a verificar', org, ['Time de produto']);
   const links = await createInvitations(page, mixedSquad.length);
   for (const [index, link] of links.entries()) await completeAssessment(page, link, 'emerging', mixedSquad[index]!, index);
   await page.goto(adminUrl);
@@ -214,8 +222,9 @@ async function buildEmergingCase(page: Page): Promise<ShowcaseGuideCase> {
   return {
     id: 'emergente',
     scenarioIds: [],
-    title: 'Emergente — prática local',
+    title: 'Prática local — resultado a verificar',
     story: 'Sete perspectivas descrevem rotina intermediária: há acordo local, mas ainda falta evidência de sistema. Serve para comparar a leitura executiva e as evoluções recomendadas com os casos sob pressão e sustentável.',
+    expectedOutcome: 'Distinguir prática local de capacidade sistêmica sem antecipar um estágio no nome do caso.',
     lookFor: [
       'Consistência do elo limitante entre o caso sob pressão e o sustentável.',
       'Um limitador, um desfecho e um próximo passo — sem “e mais N” nem três prioridades do mesmo texto.',
@@ -229,7 +238,7 @@ async function buildEmergingCase(page: Page): Promise<ShowcaseGuideCase> {
 
 async function buildAdaptiveCase(page: Page): Promise<ShowcaseGuideCase> {
   const org = 'Operação sustentável';
-  const adminUrl = await createProject(page, 'Sustentável — práticas gerenciadas e adaptativas', org, ['Plataforma']);
+  const adminUrl = await createProject(page, 'Prática sustentável — full-cycle sem SRE', org, ['Plataforma']);
   const completed = await createInvitations(page, profileIds.length);
   await page.getByRole('link', { name: 'Voltar ao painel' }).click();
   const unused = await createInvitations(page, 3);
@@ -240,14 +249,15 @@ async function buildAdaptiveCase(page: Page): Promise<ShowcaseGuideCase> {
   await expect(page.getByRole('heading', { name: 'Mapa de contraste e cobertura' }).first()).toBeVisible();
   await expect(page.locator('.outcome-card .tag').first()).toHaveText('Preservar a prática');
   await expect(page.getByText(/Incidentes encontram rapidamente quem pode agir/).first()).toBeVisible();
-  await expect(page.getByText(/Ainda não há um padrão problemático com evidência agregada suficiente/)).toBeVisible();
+  await expect(page.getByText(/A leitura principal é preservar a prática observada/)).toBeVisible();
   const observed = await observeReport(page);
 
   return {
     id: 'adaptativo',
     scenarioIds: ['full-cycle-without-sre', 'strong-practice-simple-tool'],
-    title: 'Sustentável — práticas gerenciadas e adaptativas',
+    title: 'Prática sustentável — full-cycle sem SRE',
     story: 'Um time full-cycle sem SRE dedicado sustenta entrega, operação e recuperação com guardrails, evidência e aprendizado. A capacidade vem do comportamento, inclusive quando o mecanismo é simples; as nove lentes não exigem cargos ou produtos sofisticados. Três convites permanecem abertos para percorrer à mão os ramos de arquitetura, segurança, dados e design.',
+    expectedOutcome: 'Preservar o comportamento observado sem exigir cargo SRE, marca de ferramenta ou cobertura macro inexistente.',
     lookFor: [
       'Nas páginas de capacidade, a leitura executiva usa estágios qualitativos; o ordinal permanece auditável nos detalhes.',
       'A consistência do elo limitante pode ficar em Gerenciado: não é inflada pelas folhas altas.',
@@ -280,6 +290,7 @@ async function buildDivergenceCase(page: Page): Promise<ShowcaseGuideCase> {
     scenarioIds: [],
     title: 'Contraste — gestão e engenharia no mesmo trabalho',
     story: 'Cinco jornadas de gestão e cinco de engenharia usam lentes distintas, mas declaram a mesma responsabilidade exercida. O caso verifica que perfil adapta linguagem e triangulação sem substituir o contexto real de trabalho.',
+    expectedOutcome: 'Suspender a classificação e investigar visibilidade, fronteira e poder antes de atribuir fragilidade.',
     lookFor: [
       'As duas perspectivas atingem o limiar sem expor respostas individuais.',
       'Diferença de perfil não produz fragilidade ou divergência automaticamente.',

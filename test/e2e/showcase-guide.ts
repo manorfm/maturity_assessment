@@ -15,6 +15,7 @@ export type ShowcaseGuideCase = {
   scenarioIds: WaveSixShowcaseCaseId[];
   title: string;
   story: string;
+  expectedOutcome: string;
   lookFor: string[];
   adminUrl: string;
   publicUrl?: string;
@@ -24,6 +25,7 @@ export type ShowcaseGuideCase = {
     limiter?: string;
     highlights?: string[];
   };
+  contrasts?: Array<{ scope: string; mechanism: string; containment: string; authority: string; nextTest: string }>;
   unusedInvites?: Array<{ label: string; url: string }>;
 };
 
@@ -50,13 +52,17 @@ function renderCase(entry: ShowcaseGuideCase): string {
   const scenarioLabels = entry.scenarioIds.map((id) => WAVE_SIX_SHOWCASE_CASES.find((item) => item.id === id)?.title).filter(Boolean);
   const lookFor = entry.lookFor.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   const observed = entry.observed ? `
-    <h3>O que esta execução observou</h3>
+    <h3>Resultado produzido</h3>
     <dl class="executive-facts">
       ${entry.observed.classification ? `<div><dt>Consistência do elo</dt><dd>${escapeHtml(entry.observed.classification)}</dd></div>` : ''}
       ${entry.observed.limiter ? `<div><dt>Onde aparece</dt><dd>${escapeHtml(entry.observed.limiter)}</dd></div>` : ''}
       ${entry.observed.highlights?.length ? `<div><dt>Destaques</dt><dd>${entry.observed.highlights.map((item) => `<span class="tag">${escapeHtml(item)}</span>`).join(' ')}</dd></div>` : ''}
     </dl>
     ${entry.observed.reading ? `<p class="executive-reading">${escapeHtml(entry.observed.reading)}</p>` : ''}
+  ` : '';
+  const contrasts = entry.contrasts?.length ? `
+    <h3>Comparação produzida</h3>
+    <div class="comparison-table" role="region" aria-label="Comparação entre mecanismos" tabindex="0"><table><thead><tr><th>Recorte</th><th>Mecanismo</th><th>Onde mudar</th><th>Quem decide</th><th>Menor teste</th></tr></thead><tbody>${entry.contrasts.map((item) => `<tr><th scope="row">${escapeHtml(item.scope)}</th><td>${escapeHtml(item.mechanism)}</td><td>${escapeHtml(item.containment)}</td><td>${escapeHtml(item.authority)}</td><td>${escapeHtml(item.nextTest)}</td></tr>`).join('')}</tbody></table></div>
   ` : '';
   const unused = entry.unusedInvites?.length ? `
     <h3>Convites para percorrer ou completar à mão</h3>
@@ -66,13 +72,15 @@ function renderCase(entry: ShowcaseGuideCase): string {
     <article class="card" id="${escapeHtml(entry.id)}">
       <p class="eyebrow">Caso de inspeção</p>
       <h2>${escapeHtml(entry.title)}</h2>
-      <p>${escapeHtml(entry.story)}</p>
+      <h3>Cenário simulado</h3><p>${escapeHtml(entry.story)}</p>
+      <p><strong>Comportamento esperado do diagnóstico:</strong> ${escapeHtml(entry.expectedOutcome)}</p>
       <p>${scenarioLabels.map((label) => `<span class="tag">${escapeHtml(label!)}</span>`).join(' ')}</p>
       <h3>O que procurar</h3>
       <ul>${lookFor}</ul>
       <p><a class="button" href="${escapeHtml(entry.adminUrl)}">Abrir relatório administrativo</a>
       ${entry.publicUrl ? `<a class="button secondary" href="${escapeHtml(entry.publicUrl)}">Página pública do projeto</a>` : ''}</p>
       ${observed}
+      ${contrasts}
       ${unused}
     </article>
   `;
@@ -81,7 +89,7 @@ function renderCase(entry: ShowcaseGuideCase): string {
 function renderWaveSixCoverage(covered: WaveSixShowcaseCaseId[], missing: WaveSixShowcaseCaseId[]): string {
   const state = missing.length
     ? `${missing.length} contrastes ainda sem cobertura sintética.`
-    : `${covered.length} de ${WAVE_SIX_SHOWCASE_CASES.length} contrastes cobertos sinteticamente.`;
-  const rows = WAVE_SIX_SHOWCASE_CASES.map((scenario) => `<li><strong>${escapeHtml(scenario.title)}</strong> — ${covered.includes(scenario.id) ? 'coberto' : 'pendente'}. ${escapeHtml(scenario.expectedDistinction)} <span class="muted">Não inferir: ${escapeHtml(scenario.nonInference)}</span></li>`).join('');
+    : `${covered.length} de ${WAVE_SIX_SHOWCASE_CASES.length} contratos com coerência sintética exercitada.`;
+  const rows = WAVE_SIX_SHOWCASE_CASES.map((scenario) => `<li><strong>${escapeHtml(scenario.title)}</strong> — ${covered.includes(scenario.id) ? 'exercitado com massa sintética' : 'pendente'}. ${escapeHtml(scenario.expectedDistinction)} <span class="muted">Não inferir: ${escapeHtml(scenario.nonInference)}</span></li>`).join('');
   return `<section class="card"><p class="eyebrow">Cobertura da onda 6</p><h2>Matriz de contrastes</h2><p><strong>${escapeHtml(state)}</strong></p><ol>${rows}</ol><p class="notice"><strong>Validação humana pendente.</strong> O showcase não substitui entrevistas reais por perspectiva. O gate exige ${COGNITIVE_VALIDATION_PROTOCOL.minimumInterviewsPerPerspective} entrevistas por perspectiva; entrevistas reais por perspectiva ainda não foram satisfeitas.</p></section>`;
 }

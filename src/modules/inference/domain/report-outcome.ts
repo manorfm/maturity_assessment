@@ -170,7 +170,7 @@ export function decideReportOutcome(input: {
     const preservedLeaf = flattenAssessedLeaves([focus]).find((candidate) => !cloudCapabilityIds.has(candidate.id)) ?? flattenAssessedLeaves([focus])[0];
     if (!preservedLeaf) throw new Error(`Narrativa de preservação sem capacidade observada para ${focus.id}.`);
     const preservation = preservationFor(preservedLeaf.id);
-    return { ...outcome('preserve', focus.label, preservation.reading, 'Não iniciar transformação aqui', preservation.nextStep), limiterId: focus.id };
+    return { ...outcome('preserve', focus.label, preservation.reading, 'Preservar antes de intervir', preservation.nextStep), limiterId: focus.id };
   }
   if (mixed) {
     return {
@@ -196,7 +196,7 @@ export function decideReportOutcome(input: {
   }
   if (stageLevel >= 4 || (limiter && limiter.level >= 4)) {
     const preservation = preservationFor(limiter?.id ?? focus?.id ?? '');
-    return { ...outcome('preserve', limiterLabel, preservation.reading, 'Não iniciar transformação aqui', preservation.nextStep), ...limiterId(limiter) };
+    return { ...outcome('preserve', limiterLabel, preservation.reading, 'Preservar antes de intervir', preservation.nextStep), ...limiterId(limiter) };
   }
   const investigation = investigationFor(limiter?.id ?? focus?.id ?? '');
   if (!input.focusId && uniqueFindings.length === 0 && stageLevel < 4) {

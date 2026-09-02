@@ -20,6 +20,8 @@ O showcase sintético cobre seis contrastes operacionais e explicita a diferenç
 entre cobertura demonstrável e validação humana. O registro cognitivo observa também
 autonomia reconhecida, utilidade, segurança e explicação do fundamento; somente
 entrevistas reais contam para o gate de cinco por perspectiva.
+No índice, cenário simulado, comportamento esperado e resultado produzido aparecem
+separados; a execução demonstra coerência sintética, não acurácia empírica.
 O painel administrativo registra qual contraste foi validado e mostra cobertura e
 problemas abertos sem associar a entrevista a convite, participação ou pessoa.
 

@@ -34,6 +34,7 @@ test('primeiro plano é o diagnóstico, não o estágio nem o radar', () => {
   const consistency = html.indexOf('Consistência do comportamento no elo limitante');
   assert.ok(diagnosis >= 0 && interviews > diagnosis && test > interviews && success > test);
   assert.ok(consistency > success);
+  assert.match(html, /Quem conduz: Fluxo/);
   assert.doesNotMatch(html, /Resumo executivo/);
   assert.match(html, /<details[^>]*>[\s\S]*0 · Opaco/);
 });
@@ -50,6 +51,23 @@ test('radar diferencia fragilidade confirmada de ausência de evidência', () =>
   assert.match(html, /Evidência insuficiente/);
   assert.doesNotMatch(html, /href="\/capabilities\/unknown"/);
   assert.match(html, /aria-disabled="true"/);
+});
+
+test('mapa sem nenhum pilar avaliado não desenha pontos sobrepostos', () => {
+  const html = renderCapabilityRadar([
+    leaf({ id: 'delivery', assessed: false }),
+    leaf({ id: 'operation', label: 'Operação', assessed: false }),
+  ], '/capabilities');
+  assert.match(html, /Nenhum pilar possui cobertura temática suficiente/);
+  assert.match(html, /uma prática específica ainda pode ter evidência/);
+  assert.doesNotMatch(html, /<svg/);
+  assert.doesNotMatch(html, /radar-marker-unassessed/);
+});
+
+test('síntese de uma divergência usa singular', () => {
+  const html = renderPerspectiveSynthesis([{ title: 'Lentes divergem', capability: 'Integração', strongerProfiles: ['Gestão'], constrainedProfiles: ['Engenharia'] }], []);
+  assert.match(html, /1 capacidade[^s]/);
+  assert.doesNotMatch(html, /1 capacidades/);
 });
 
 test('recomendação apresenta decisão executiva antes da metodologia', () => {
@@ -345,7 +363,7 @@ test('navegação por público explica a decisão de cada leitura sem duplicar m
   assert.match(html, /Liderança de tecnologia.*3 restrições sistêmicas/s);
   assert.match(html, /Gerência local.*2 recortes/s);
   assert.match(html, /Especialistas e times.*6 diagnósticos explicáveis/s);
-  assert.match(html, /mesmos diagnósticos e portfólio/i);
+  assert.match(html, /mesmos diagnósticos e o mesmo portfólio/i);
   assert.match(html, /href="#report-executive"/);
   assert.match(html, /href="#report-technology"/);
   assert.match(html, /href="#report-units"/);

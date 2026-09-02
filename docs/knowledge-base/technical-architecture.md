@@ -213,6 +213,13 @@ em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 `demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
 3217, evitando recursão entre scripts.
 
+O índice separa explicitamente cenário simulado, comportamento esperado do
+diagnóstico e resultado efetivamente produzido. Essa verificação é chamada de
+coerência sintética, nunca de acurácia. O contraste de integração expõe lado a lado
+recorte, mecanismo, contenção, autoridade e menor teste para feedback técnico,
+política de lote e acoplamento arquitetural. Nomes dos projetos de demonstração não
+antecipam estágio ordinal quando esse estágio é justamente o resultado inspecionado.
+
 O catálogo `capability-narrative.ts` é o único contrato de prosa para investigação
 e preservação. Cada folha declara situação incerta, evento recente, comportamento
 sustentado e regressão; não existe fallback que encaixe o rótulo da capacidade em

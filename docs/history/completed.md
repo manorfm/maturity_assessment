@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-02 — Coerência da apresentação sintética
+
+- O showcase passou a separar cenário, expectativa e resultado, comparar três
+  mecanismos para integração tardia e evitar radar vazio enganoso; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md) e
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-09-01 — Showcase contrastante da onda 6
 
 - Operacionalizada a validação humana com rastreabilidade anônima por contraste e

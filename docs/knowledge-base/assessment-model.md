@@ -122,6 +122,10 @@ evidência insuficiente, aparece com marcador neutro “?” e nunca é interpre
 zero ou fragilidade. Esse estado não permite aprofundamento até atingir cobertura;
 vermelho é reservado a uma fragilidade efetivamente avaliada. O radar não combina pilares
 em uma nota global e não substitui findings, bloqueios ou recomendações.
+Quando nenhum pilar possui cobertura temática suficiente, a interface não desenha
+um radar com marcadores sobrepostos. Ela informa o estado de cobertura em texto e
+explica que uma folha ou prática específica ainda pode sustentar preservação ou
+investigação sem autorizar uma classificação macro.
 
 O cálculo pré-piloto converte pesos em níveis ordinais, agrega primeiro por pessoa e
 só então estima o recorte. Isso impede que várias respostas correlacionadas da mesma
