@@ -27,6 +27,9 @@ Para uma visão resumida dos marcos por versão, consulte o
 - Dez padrões de arquitetura e evolução receberam fundamentos próprios para
   acoplamento, correlação, contratos e lotes de mudança, reduzindo a dívida genérica
   de 53 para 43 e publicando `causal-catalog-v5`.
+- Dez padrões de autonomia, autoridade e dependências passaram a distinguir acesso
+  seguro, competência disponível, prioridade, poder de decisão e coordenação,
+  reduzindo a dívida genérica de 43 para 33 e publicando `causal-catalog-v6`.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

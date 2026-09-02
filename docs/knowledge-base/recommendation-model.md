@@ -65,7 +65,7 @@ O catálogo materializa essa cadeia em uma rede especialista tipada com relaçõ
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v5` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v6` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
@@ -115,6 +115,12 @@ coordenação, correlação entre componentes, impacto invisível, contratos imp
 ownership e mudanças em grande lote. Mapas, contratos e técnicas de descoberta só
 entram para tornar dependência, contexto ou compatibilidade verificáveis; a presença
 nominal de C4, DDD ou Event Storming continua sem sustentar diagnóstico.
+
+Autonomia e dependências distinguem ainda acesso operacional seguro, competência
+acessível ao fluxo, prioridade compartilhada, decisão concentrada, desenho
+organizacional e autoridade para agir sobre risco. A ausência de SRE, arquiteto ou
+especialista formal não é uma deficiência: o diagnóstico observa se quem assume o
+resultado dispõe de contexto, limites, capacidade e poder de decisão.
 
 ## Recomendações
 

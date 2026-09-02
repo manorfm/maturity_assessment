@@ -35,7 +35,7 @@ test('linha de base torna visível dívida de fundamentos e contratos de direç�
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
   assert.equal(baseline.direction.totalInterventions, Object.keys(interventions).length);
-  assert.equal(baseline.direction.genericFoundations, 43);
+  assert.equal(baseline.direction.genericFoundations, 33);
   assert.ok(baseline.direction.repeatedFoundationGroups.some((group) => group.count >= 10));
   assert.ok(baseline.direction.withoutExplicitGuidance > 0);
   assert.ok(baseline.direction.withoutPrerequisiteContract > 0);
@@ -70,6 +70,22 @@ test('fundamentos de arquitetura e evolução explicam o mecanismo específico',
     'contrato-implicito-fragil', 'estrutura-implicita', 'evolucao-em-grande-lote',
     'migracao-coordenada-em-lote', 'planejamento-compensa-acoplamento',
     'sustentabilidade-em-grande-lote',
+  ];
+  for (const pattern of promotedPatterns) {
+    const foundation = interventionFoundations[pattern];
+    assert.ok(foundation, pattern);
+    assert.notEqual(foundation.why, 'A intervenção ataca o comportamento observado, não um inventário de práticas.', pattern);
+    assert.ok(foundation.why.length >= 70, pattern);
+  }
+});
+
+test('fundamentos de autonomia e dependência explicam autoridade e acesso à capacidade', () => {
+  const promotedPatterns = [
+    'bloqueio-depende-de-coordenador', 'causa-competencia-inacessivel',
+    'causa-prioridade-entre-times', 'decisao-concentrada',
+    'decisao-de-confiabilidade-concentrada', 'dependencia-coordenada',
+    'dependencia-operacional-sob-urgencia', 'estrutura-definida-centralmente',
+    'lideranca-coordena-handoffs', 'risco-visivel-sem-poder-de-decisao',
   ];
   for (const pattern of promotedPatterns) {
     const foundation = interventionFoundations[pattern];

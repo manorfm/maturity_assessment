@@ -22,9 +22,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "dependencia-coordenada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Dependências recorrentes precisam de contrato e modo de interação explícitos",
+    "why": "Uma fonte reproduzível e uma verificação antecipada substituem combinação pessoa a pessoa como mecanismo principal para integrar o trabalho entre grupos."
   },
   "feedback-em-producao": {
     "source": "Continuous Delivery",
@@ -247,9 +247,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "dependencia-operacional-sob-urgencia": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Well-Architected — Security",
+    "principle": "Autonomia operacional exige operação reversível e privilégio mínimo",
+    "why": "Um caminho limitado e auditável permite que quem responde pelo serviço aja durante a urgência sem depender do acesso permanente de um especialista."
   },
   "incidente-por-handoff": {
     "source": "SRE / blameless postmortem",
@@ -362,9 +362,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Tornar visível o resultado corrente e o trabalho deslocado por cada urgência reduz troca silenciosa de foco e permite revisar a decisão pelo efeito."
   },
   "bloqueio-depende-de-coordenador": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Autonomia nasce de limites e caminhos explícitos, não de intermediação pessoal",
+    "why": "Delegar uma classe recorrente de bloqueio com tempo e limites visíveis testa se o grupo consegue resolver a dependência sem uma pessoa coordenadora."
   },
   "espera-normalizada": {
     "source": "Lean / Accelerate",
@@ -382,14 +382,14 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "O problema observado é credencial ou acesso, não a ausência de um produto de cofre."
   },
   "causa-prioridade-entre-times": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Dependências compartilham resultado, tempo de resposta e regra de escalada",
+    "why": "Um objetivo comum e uma decisão explícita de escalada tornam o custo da espera negociável, em vez de cada grupo otimizar sua própria fila de prioridade."
   },
   "causa-competencia-inacessivel": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Competência necessária deve estar acessível ao fluxo de trabalho",
+    "why": "Colaboração temporária, aprendizagem aplicada ou um caminho pavimentado reduzem espera quando transferem capacidade de execução, não apenas conhecimento abstrato."
   },
   "causa-dependencia-arquitetural": {
     "source": "Arquitetura evolutiva / DDD",
@@ -402,9 +402,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Comparar opções cedo permite que negócio, produto e competências técnicas mudem o desenho."
   },
   "decisao-concentrada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Contexto e critérios tornam decisões revisáveis por outras pessoas",
+    "why": "Registrar trade-offs e fazer outra pessoa conduzir a revisão testa se a decisão pertence ao sistema de trabalho ou permanece dependente de uma referência."
   },
   "decisao-por-inercia": {
     "source": "Melhoria contínua",
@@ -517,9 +517,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "estrutura-definida-centralmente": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Desenho organizacional é uma hipótese sobre fluxo, carga e interação",
+    "why": "Incluir as pessoas afetadas e revisar efeitos após trabalho real permite adaptar a estrutura pela evidência, não apenas pela intenção de quem a desenhou."
   },
   "coordenacao-compensa-carga": {
     "source": "Team Topologies",
@@ -607,14 +607,14 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A prática é o ciclo de incidente, não a ferramenta de observabilidade."
   },
   "decisao-de-confiabilidade-concentrada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Resilience engineering / SRE",
+    "principle": "Objetivos e trade-offs distribuem a decisão de confiabilidade",
+    "why": "Tornar risco, distribuição e limite visíveis permite que produto, engenharia e operação calibrem juntos uma decisão hoje concentrada no julgamento especialista."
   },
   "lideranca-coordena-handoffs": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Ownership do resultado reduz passagens que liderança precisa orquestrar",
+    "why": "Dar autonomia sobre uma passagem de alta espera testa se a fronteira pode sustentar o resultado sem coordenação gerencial recorrente entre especialistas."
   },
   "otimizacao-local-pela-gestao": {
     "source": "Melhoria contínua",
@@ -637,9 +637,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Cerimônia de OKR não mede maturidade; o que pesa na decisão sim."
   },
   "risco-visivel-sem-poder-de-decisao": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Governança habilitadora",
+    "principle": "Evidência de risco precisa alcançar quem pode alterar o compromisso",
+    "why": "Definir limiar e autoridade para parar, reduzir ou reordenar trabalho transforma risco conhecido em decisão, sem transferir responsabilidade a quem só observa."
   },
   "alerta-de-risco-depende-de-seguranca-pessoal": {
     "source": "Qualidade no fluxo",
