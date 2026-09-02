@@ -83,8 +83,10 @@ nem ranking de times.
 
 ## Problemas transversais
 
-Cada recorte elegível abre sua própria classificação, decisão prioritária, panorama
-de padrões e radar. No resumo global, a ocorrência nas unidades finais distingue:
+Cada recorte elegível abre sua própria classificação, decisão prioritária, lista
+curta de comportamentos relacionados e radar. A sequência priorizada pertence ao
+panorama global; o recorte não cria um segundo portfólio concorrente. No resumo
+global, a ocorrência nas unidades finais distingue:
 
 - **local**, quando apenas uma unidade sustenta o padrão;
 - **compartilhada**, quando mais de uma, mas não todas, sustentam o padrão;

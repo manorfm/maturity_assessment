@@ -23,10 +23,10 @@ test('guia do showcase descreve casos inspecionáveis com URLs e textos observad
     adminUrl: 'http://127.0.0.1:3217/projects/abc/manage/secret',
     publicUrl: 'http://127.0.0.1:3217/p/abc',
     observed: {
+      decision: 'Entender a causa antes de agir',
       classification: '0 · Opaco',
       reading: 'O sistema ainda reage sob pressão.',
       limiter: 'Fluxo de trabalho',
-      highlights: ['atenção prioritária'],
     },
     unusedInvites: [{ label: 'Complete no Squad Beta para liberar o recorte', url: 'http://127.0.0.1:3217/invite/token' }],
   }]);
@@ -39,6 +39,9 @@ test('guia do showcase descreve casos inspecionáveis com URLs e textos observad
   assert.match(html, /O sistema ainda reage sob pressão/);
   assert.match(html, /Cenário simulado/);
   assert.match(html, /Resultado produzido/);
+  assert.match(html, /Decisão apresentada/);
+  assert.match(html, /Entender a causa antes de agir/);
+  assert.doesNotMatch(html, /Destaques/);
   assert.match(html, /O cenário deve evidenciar uma restrição/);
   assert.match(html, /href="http:\/\/127\.0\.0\.1:3217\/projects\/abc\/manage\/secret"/);
   assert.match(html, /href="http:\/\/127\.0\.0\.1:3217\/p\/abc"/);

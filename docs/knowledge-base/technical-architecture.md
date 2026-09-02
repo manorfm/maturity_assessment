@@ -121,8 +121,10 @@ local e especialistas; todas consomem o mesmo diagnóstico e o mesmo portfólio.
 Essa navegação só aparece quando existem ao menos dois destinos úteis. Públicos sem
 decisão ou restrição confirmada não geram cartões desabilitados nem briefings vazios;
 as projeções continuam existindo no domínio e aparecem quando recebem conteúdo.
-O panorama sequenciado vem após os briefings, enquanto radar e recortes estruturais
-orientam aprofundamento sem reabrir a decisão. IDs de navegação pertencem apenas ao
+O panorama sequenciado vem após os briefings e pertence ao relatório global. Cada
+recorte estrutural preserva a decisão local, a leitura por autoridade e até quatro
+comportamentos relacionados, mas não repete a sequência de transformação; seu radar
+orienta o aprofundamento sem reabrir a priorização. IDs de navegação pertencem apenas ao
 relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam
 amarradas ao limitador. Probabilidades, ordinal exato, cobertura percentual, versão,
@@ -217,7 +219,9 @@ em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
 3217, evitando recursão entre scripts.
 
 O índice separa explicitamente cenário simulado, comportamento esperado do
-diagnóstico e resultado efetivamente produzido. Essa verificação é chamada de
+diagnóstico e resultado efetivamente produzido. O resultado registra decisão,
+consistência e localização por campos próprios; não coleta etiquetas genéricas da
+página como se pertencessem à mesma categoria. Essa verificação é chamada de
 coerência sintética, nunca de acurácia. O contraste de integração expõe lado a lado
 recorte, mecanismo, contenção, autoridade e menor teste para feedback técnico,
 política de lote e acoplamento arquitetural. Nomes dos projetos de demonstração não

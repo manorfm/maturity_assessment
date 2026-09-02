@@ -352,17 +352,12 @@ async function revealConsistency(page: Page): Promise<void> {
 async function observeReport(page: Page) {
   const reading = (await page.locator('.executive-reading').first().textContent())?.trim() ?? '';
   const limiter = (await page.locator('.outcome-scope').first().textContent())?.replace(/^Onde aparece:\s*/i, '').trim() ?? '';
+  const decision = (await page.locator('.outcome-card > .tag').first().textContent())?.trim() ?? '';
   const classificationLocator = page.locator('.classification-level').first();
   const classification = await classificationLocator.count()
     ? await classificationLocator.evaluate((el) => el.textContent?.trim() ?? '')
     : 'Sem classificação ordinal por cobertura insuficiente';
-  const ignoredTags = new Set(['claimed', 'issued', 'partially_used', 'revoked', 'expired']);
-  const highlights = (await page.locator('.tag').allTextContents())
-    .map((item) => item.trim())
-    .filter((item) => item && !ignoredTags.has(item))
-    .filter((item, index, list) => list.indexOf(item) === index)
-    .slice(0, 8);
-  return { classification, reading, limiter, highlights };
+  return { decision, classification, reading, limiter };
 }
 
 function chooseOption(options: typeof graph[number]['options'], stance: Stance, nodeId: string, profile: Profile, participantIndex: number) {

@@ -603,6 +603,15 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
   return `<section class="card finding-portfolio"><p class="eyebrow">Panorama de comportamentos recorrentes</p><h2>${primaryPattern ? 'Outros problemas que exigem decisão' : 'Problemas que exigem decisão'}</h2>${systemSummary}<p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation}</p><h3>Sequência de transformação</h3><p>A ordem considera dependências, risco e quem possui autoridade. Ela não autoriza todas as frentes ao mesmo tempo.</p>${sequencedItems}${conditionedItems}</section>`;
 }
 
+function renderScopeCompanionFindings(findings: OutcomeFinding[], primaryPattern: string | undefined, capabilityBase: string, scopeId: string): string {
+  const companions = uniqueFindingsByPattern(findings).filter((finding) => finding.pattern !== primaryPattern);
+  if (!companions.length) return '';
+  const items = companions.slice(0, 4).map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding, scopeId))}">${escapeHtml(finding.title)}</a></li>`).join('');
+  const remaining = companions.length - Math.min(companions.length, 4);
+  const truncation = remaining ? `<p class="muted">Mais ${remaining} ${remaining === 1 ? 'comportamento permanece' : 'comportamentos permanecem'} no panorama global priorizado.</p>` : '';
+  return `<section class="scope-companion-findings"><h3>Outros comportamentos neste recorte</h3><ul>${items}</ul>${truncation}</section>`;
+}
+
 function qualitativeLabel(value: 'low' | 'moderate' | 'high'): string {
   return { low: 'baixo', moderate: 'moderado', high: 'alto' }[value];
 }
@@ -632,7 +641,10 @@ export function renderScopeReport(scope: ScopeReportView, capabilityBase: string
   const empty = scope.findings.length ? '' : '<p class="muted">Sem padrão problemático recorrente com confiança suficiente.</p>';
   const gaps = scope.perspectiveGaps.map((gap) => `<article><h3>${escapeHtml(gap.title)}</h3><p>Diferença entre perspectivas elegíveis; valide assimetria de visibilidade e poder.</p></article>`).join('');
   const managerReading = renderUnitManagementReport(audienceReport, capabilityBase);
-  return `<details class="card scope-report"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${managerReading}${renderDiagnosticFirstPlane({ classification: scope.classification, outcome, findings: scope.findings, confirmedProblemCount: uniqueFindingsByPattern(scope.findings).length, capabilityBase, scopeId: scope.id })}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${empty}${gaps}</details>`;
+  const ordered = uniqueFindingsByPattern(scope.findings);
+  const competingFinding = ordered.find((finding) => finding.pattern !== outcome.finding?.pattern);
+  const outcomeContext = { confirmedProblemCount: ordered.length, ...(competingFinding ? { competingFinding } : {}) };
+  return `<details class="card scope-report"><summary><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span></summary>${managerReading}${renderOutcome(outcome, outcomeContext)}${renderScopeCompanionFindings(scope.findings, outcome.finding?.pattern, capabilityBase, scope.id)}${renderClassification(scope.classification, outcome)}${renderCapabilityRadar(scope.capabilityGroups, capabilityBase, scope.id)}${empty}${gaps}</details>`;
 }
 
 function renderUnitManagementReport(report: UnitManagementReport, capabilityBase: string): string {

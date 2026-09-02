@@ -20,10 +20,10 @@ export type ShowcaseGuideCase = {
   adminUrl: string;
   publicUrl?: string;
   observed?: {
+    decision?: string;
     classification?: string;
     reading?: string;
     limiter?: string;
-    highlights?: string[];
   };
   contrasts?: Array<{ scope: string; mechanism: string; containment: string; authority: string; nextTest: string }>;
   unusedInvites?: Array<{ label: string; url: string }>;
@@ -54,9 +54,9 @@ function renderCase(entry: ShowcaseGuideCase): string {
   const observed = entry.observed ? `
     <h3>Resultado produzido</h3>
     <dl class="executive-facts">
+      ${entry.observed.decision ? `<div><dt>Decisão apresentada</dt><dd>${escapeHtml(entry.observed.decision)}</dd></div>` : ''}
       ${entry.observed.classification ? `<div><dt>Consistência do elo</dt><dd>${escapeHtml(entry.observed.classification)}</dd></div>` : ''}
       ${entry.observed.limiter ? `<div><dt>Onde aparece</dt><dd>${escapeHtml(entry.observed.limiter)}</dd></div>` : ''}
-      ${entry.observed.highlights?.length ? `<div><dt>Destaques</dt><dd>${entry.observed.highlights.map((item) => `<span class="tag">${escapeHtml(item)}</span>`).join(' ')}</dd></div>` : ''}
     </dl>
     ${entry.observed.reading ? `<p class="executive-reading">${escapeHtml(entry.observed.reading)}</p>` : ''}
   ` : '';

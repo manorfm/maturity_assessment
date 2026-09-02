@@ -17,6 +17,9 @@ Para uma visão resumida dos marcos por versão, consulte o
 - A apresentação passou a nomear comportamentos recorrentes sem sugerir causa
   confirmada e traduziu força da evidência em acordo, tamanho da base, variedade de
   lentes e explicação do mecanismo.
+- Recortes de unidade deixaram de repetir o portfólio global e passaram a mostrar
+  somente a decisão local e comportamentos relacionados; o índice do showcase agora
+  registra a decisão produzida sem misturar etiquetas de categorias diferentes.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

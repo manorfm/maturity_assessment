@@ -454,8 +454,10 @@ test('recorte de squad apresenta decisão e problemas próprios', () => {
   }, '/capabilities');
   assert.match(html, /Próxima decisão/);
   assert.match(html, /A esteira devolve feedback tarde/);
-  assert.match(html, /Panorama de comportamentos recorrentes/);
+  assert.match(html, /Outros comportamentos neste recorte/);
   assert.match(html, /Ambientes chegam por fila/);
+  assert.doesNotMatch(html, /Sequência de transformação/);
+  assert.doesNotMatch(html, /finding-portfolio/);
   assert.ok(html.indexOf('Próxima decisão') < html.indexOf('Consistência do comportamento no elo limitante'));
   assert.ok(html.indexOf('Consistência do comportamento no elo limitante') < html.indexOf('Mapa de contraste e cobertura'));
 });
