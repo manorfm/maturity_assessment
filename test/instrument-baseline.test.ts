@@ -35,7 +35,7 @@ test('linha de base torna visível dívida de fundamentos e contratos de direç�
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
   assert.equal(baseline.direction.totalInterventions, Object.keys(interventions).length);
-  assert.equal(baseline.direction.genericFoundations, 23);
+  assert.equal(baseline.direction.genericFoundations, 13);
   assert.ok(baseline.direction.repeatedFoundationGroups.some((group) => group.count >= 10));
   assert.ok(baseline.direction.withoutExplicitGuidance > 0);
   assert.ok(baseline.direction.withoutPrerequisiteContract > 0);
@@ -102,6 +102,22 @@ test('fundamentos de operação sustentável explicam repetibilidade e prevenç�
     'excecao-controlada', 'migracao-de-dados-contextual',
     'mitigacao-sem-prevencao', 'operacao-manual-fragil',
     'solucao-local-nao-difundida', 'verificacao-dependente-de-memoria',
+  ];
+  for (const pattern of promotedPatterns) {
+    const foundation = interventionFoundations[pattern];
+    assert.ok(foundation, pattern);
+    assert.notEqual(foundation.why, 'A intervenção ataca o comportamento observado, não um inventário de práticas.', pattern);
+    assert.ok(foundation.why.length >= 70, pattern);
+  }
+});
+
+test('fundamentos de decisão e aprendizagem explicam como evidência muda direção', () => {
+  const promotedPatterns = [
+    'aprendizado-restrito', 'aprendizado-tecnico-sem-caminho-repetivel',
+    'causa-acoes-sem-foco', 'causa-melhoria-sem-capacidade',
+    'causa-prioridades-na-superficie', 'decisao-opaca', 'decisao-por-inercia',
+    'discovery-refina-solucao-dada', 'discovery-substituida-por-patrocinio',
+    'resultado-gera-ajuste-sem-revisar-direcao',
   ];
   for (const pattern of promotedPatterns) {
     const foundation = interventionFoundations[pattern];

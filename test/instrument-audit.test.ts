@@ -44,5 +44,5 @@ test('auditoria versionada centraliza issues e linha de base de autoria', () => 
   assert.equal(report.warnings, 0);
   assert.equal(report.baseline.nodes.total, graph.length);
   assert.equal(report.baseline.direction.totalInterventions, Object.keys(interventions).length);
-  assert.equal(report.baseline.direction.genericFoundations, 23);
+  assert.equal(report.baseline.direction.genericFoundations, 13);
 });

@@ -2,7 +2,7 @@ import type { InterventionDefinition } from './group-recommendation-engine.js';
 import { diagnosticSystemFor } from './problem-system.js';
 import { hasTechnicalContract } from './technical-practice-library.js';
 
-export const CAUSAL_KNOWLEDGE_VERSION = 'causal-catalog-v7';
+export const CAUSAL_KNOWLEDGE_VERSION = 'causal-catalog-v8';
 
 export type CausalRelation = 'observed_as' | 'may_be_explained_by' | 'supported_by' | 'contradicted_by' | 'addressed_by' | 'grounded_in' | 'may_enable';
 export type CausalEdge = { from: string; relation: CausalRelation; to: string };

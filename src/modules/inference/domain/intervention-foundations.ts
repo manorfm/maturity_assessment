@@ -12,9 +12,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo."
   },
   "decisao-opaca": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Discovery e evidência de uso",
+    "principle": "Critério e consequência tornam a decisão observável",
+    "why": "Reconstruir participantes, espera e informação disponível revela o que realmente pesou e permite testar um critério explícito na próxima decisão equivalente."
   },
   "integracao-tardia": {
     "source": "Continuous Delivery",
@@ -188,8 +188,8 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
   },
   "aprendizado-restrito": {
     "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "principle": "Aprendizagem útil circula com contexto e possibilidade de contestação",
+    "why": "Compartilhar condições e decisões de forma segura permite que outros grupos testem a interpretação, em vez de transformar síntese de especialistas em regra sem contexto."
   },
   "incidente-sem-aprendizado": {
     "source": "SRE / blameless postmortem",
@@ -407,9 +407,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Registrar trade-offs e fazer outra pessoa conduzir a revisão testa se a decisão pertence ao sistema de trabalho ou permanece dependente de uma referência."
   },
   "decisao-por-inercia": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Decisão possui condição explícita de revisão",
+    "why": "Um sinal antecipado de custo ou risco permite revisar o padrão antes de uma falha grave, evitando que precedentes antigos permaneçam válidos por ausência de gatilho."
   },
   "retrospectiva-sem-fechamento": {
     "source": "Melhoria contínua",
@@ -442,9 +442,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "causa-melhoria-sem-capacidade": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Melhoria só ocorre quando recebe capacidade real no portfólio",
+    "why": "Interromper uma iniciativa pequena explicita o custo de oportunidade e libera trabalho para remover um gargalo que apenas registrar como ação não consegue alterar."
   },
   "causa-melhoria-sem-autonomia": {
     "source": "Team Topologies",
@@ -453,8 +453,8 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
   },
   "causa-acoes-sem-foco": {
     "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "principle": "Limitar melhoria em andamento preserva capacidade de fechar ciclos",
+    "why": "Reduzir ações simultâneas e encerrar as que não têm dono ou efeito evita dispersão de capacidade e torna o aprendizado das poucas mudanças concluídas verificável."
   },
   "causa-baixa-seguranca-psicologica": {
     "source": "SRE / blameless postmortem",
@@ -507,9 +507,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo."
   },
   "causa-prioridades-na-superficie": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Superfície compartilhada exige objetivo e regra de decisão comuns",
+    "why": "Explicitar resultado, responsabilidade e desempate reduz colisões que integração técnica sozinha não resolve quando os grupos preservam prioridades incompatíveis."
   },
   "causa-verificacao-concorrente": {
     "source": "Continuous Delivery",
@@ -647,19 +647,19 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Suíte ou scanner presente não prova estratégia de qualidade."
   },
   "discovery-refina-solucao-dada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Discovery e evidência de uso",
+    "principle": "Discovery compara problemas e opções antes do compromisso",
+    "why": "Contrastar hipóteses com pessoas afetadas e evidência de valor preserva a possibilidade de mudar a solução; detalhar uma escolha pronta apenas reduz incerteza de execução."
   },
   "discovery-substituida-por-patrocinio": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Discovery e evidência de uso",
+    "principle": "Patrocínio autoriza teste, mas não substitui evidência",
+    "why": "Um experimento reversível capaz de contrariar a hipótese separa urgência política de validade do problema sem exigir um investimento amplo antes de aprender."
   },
   "resultado-gera-ajuste-sem-revisar-direcao": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Evidência de resultado decide manter, alterar ou encerrar investimento",
+    "why": "Uma decisão explícita sobre direção impede que métricas sirvam apenas para otimizar execução enquanto a hipótese de valor e o compromisso permanecem intocados."
   },
   "resultado-sem-efeito-no-portfolio": {
     "source": "Lean / Accelerate",
@@ -697,9 +697,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
   },
   "aprendizado-tecnico-sem-caminho-repetivel": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Well-Architected / platform engineering",
+    "principle": "Aprendizado vira capacidade quando outra pessoa consegue aplicá-lo",
+    "why": "Usar a descoberta numa mudança real e registrar exemplos, limites e feedback testa transferência de execução, em vez de contabilizar curso, documento ou especialista disponível."
   },
   "recuperacao-cloud-depende-de-runbook": {
     "source": "Well-Architected / platform engineering",

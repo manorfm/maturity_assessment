@@ -65,7 +65,7 @@ O catálogo materializa essa cadeia em uma rede especialista tipada com relaçõ
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v7` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v8` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
@@ -127,6 +127,12 @@ reproduzível, automação local de capacidade compartilhada e exceção tempor�
 fluxo emergencial reconciliável. Ambiente, correção e migração de dados são tratados
 por idempotência, validação, reversibilidade e efeito observado; nenhuma família de
 ferramenta é exigida por nome.
+
+Decisão e aprendizagem distinguem critério observável, revisão por evidência,
+capacidade real para melhoria, foco entre grupos e transferência de conhecimento
+para execução. Discovery só é orientação quando preserva alternativas e pode
+contrariar a hipótese; cerimônia, patrocínio, curso ou documento não demonstram por
+si mesmos que a direção ou a capacidade mudou.
 
 ## Recomendações
 

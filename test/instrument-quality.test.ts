@@ -136,7 +136,7 @@ test('rede especialista explicita hipótese concorrente, evidência contrária e
   assert.ok(path.evidenceFor.includes('causa-ferramental-feedback'));
   assert.ok(path.evidenceAgainst.includes('integracao-continua-validada'));
   assert.match(path.limitations, /não/i);
-  assert.equal(path.knowledgeVersion, 'causal-catalog-v7');
+  assert.equal(path.knowledgeVersion, 'causal-catalog-v8');
   assert.ok(path.edges.some((edge) => edge.relation === 'may_be_explained_by'));
   assert.ok(path.edges.some((edge) => edge.relation === 'supported_by'));
   assert.ok(path.edges.some((edge) => edge.relation === 'contradicted_by'));

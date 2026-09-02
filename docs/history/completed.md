@@ -33,6 +33,9 @@ Para uma visão resumida dos marcos por versão, consulte o
 - Dez padrões de operação sustentável passaram a distinguir prevenção,
   repetibilidade, idempotência, difusão e reconciliação de exceções, reduzindo a
   dívida genérica de 33 para 23 e publicando `causal-catalog-v7`.
+- Dez padrões de decisão e aprendizagem passaram a distinguir evidência, foco,
+  capacidade, discovery e revisão de direção, reduzindo a dívida genérica de 23
+  para 13 e publicando `causal-catalog-v8`.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 
