@@ -36,9 +36,10 @@ apoio, contradição específica publicável e respostas que não geraram sinal 
 nenhuma dessas direções. Ausência de contradição publicável nunca é descrita como
 concordância. Uma pessoa fora das duas categorias pode não ter observado o evento,
 não ter produzido sinal classificável ou não ter alcançado evidência publicável;
-o relatório não escolhe uma dessas explicações sem dados próprios. Convergência,
-amplitude, diversidade de perspectivas e cobertura causal aparecem acompanhadas
-da pergunta que cada indicador responde, em vez de palavras soltas.
+o relatório não escolhe uma dessas explicações sem dados próprios. Na interface,
+convergência, amplitude, diversidade de perspectivas e cobertura causal aparecem
+como “acordo entre os relatos”, “tamanho da base”, “variedade de lentes” e
+“explicação do mecanismo”, sempre acompanhados da pergunta respondida.
 
 A força da evidência mantém quatro leituras independentes: convergência das
 respostas, amplitude na população aplicável, diversidade de perspectivas e
@@ -238,7 +239,7 @@ indicador e critério. Divergências de várias capacidades são condensadas num
 hipótese de fronteira e pedem a reconstrução conjunta de um evento recente; não se
 repetem como uma lista de déficits.
 
-A decisão principal explicita que é a primeira entre `N` problemas confirmados e
+A decisão principal explicita que é a primeira entre `N` comportamentos recorrentes e
 que a ordenação combina alcance e intensidade do sinal. Os demais não desaparecem: o panorama
 mantém o total real e mostra até quatro próximos candidatos. A abrangência por
 unidade é uma projeção da mesma evidência agregada, não um segundo recomendador.

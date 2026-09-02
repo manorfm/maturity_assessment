@@ -187,8 +187,8 @@ autorização solicitada: experimento, responsável, horizonte, indicador e crit
 Termos metodológicos como posterior, população aplicável, mecanismo causal e classe
 de solução ficam na explicação sob demanda; não substituem a descrição concreta do
 trabalho, da espera, da decisão ou do risco observado.
-No resumo global, a decisão prioritária declara sua posição entre todos os padrões
-confirmados e é seguida por um panorama dos quatro seguintes, com o total real,
+No resumo global, a decisão prioritária declara sua posição entre todos os
+comportamentos recorrentes e é seguida por um panorama dos quatro seguintes, com o total real,
 capacidade, sustentação agregada e distribuição entre unidades elegíveis. Limitar a
 lista não reduz a contagem nem permite interpretar `Opaco` como “um único problema”.
 O panorama não prescreve transformações simultâneas: torna o sistema de problemas

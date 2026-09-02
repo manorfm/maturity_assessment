@@ -14,6 +14,9 @@ Para uma visão resumida dos marcos por versão, consulte o
   [`assessment-model.md`](../knowledge-base/assessment-model.md).
 - Navegação e briefings passaram a omitir públicos sem decisão confirmada, reduzindo
   repetição sem alterar as projeções por autoridade.
+- A apresentação passou a nomear comportamentos recorrentes sem sugerir causa
+  confirmada e traduziu força da evidência em acordo, tamanho da base, variedade de
+  lentes e explicação do mecanismo.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

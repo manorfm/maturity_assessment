@@ -171,7 +171,7 @@ test('decisão principal explica que é uma prioridade entre vários problemas',
     reading: 'Integração limita o fluxo.', nextStepTitle: 'A esteira devolve feedback tarde', nextStepBody: 'Reduza o retorno.',
     finding: { kind: 'correction', pattern: 'mudanca-isolada', detailCapability: 'continuous-integration', title: 'A esteira devolve feedback tarde', cause: '', intervention: '', confidence: .9, priority: .9 },
   }, { confirmedProblemCount: 5, occurrence: { pattern: 'mudanca-isolada', scopePaths: ['Empresa/Squad Alfa'], eligibleScopePaths: ['Empresa/Squad Alfa', 'Empresa/Squad Beta'], eligibleScopeCount: 2 } });
-  assert.match(html, /prioridade 1 de 5 problemas confirmados/i);
+  assert.match(html, /prioridade 1 entre 5 comportamentos recorrentes/i);
   assert.match(html, /intensidade do sinal e alcance/i);
   assert.match(html, /Escopo local/);
   assert.match(html, /Squad Alfa/);
@@ -254,7 +254,7 @@ test('direção técnica separa prática, técnica, habilitador e ferramenta opc
   assert.match(html, /Não define o risco do produto/);
 });
 
-test('evidência mostra convergência, amplitude e diversidade como medidas diferentes', () => {
+test('evidência explica proporção, tamanho da base, lentes e mecanismo como medidas diferentes', () => {
   const html = renderOutcome({
     kind: 'correct', kindLabel: 'Corrigir o limitador', limiterLabel: 'Integração contínua', reading: '', nextStepTitle: '', nextStepBody: '',
     finding: {
@@ -262,12 +262,12 @@ test('evidência mostra convergência, amplitude e diversidade como medidas dife
       recommendationEvidence: { supportingParticipants: 3, applicablePopulation: 3, contradictingParticipants: 0, patterns: ['mudanca-isolada'], layers: ['practice'], profiles: ['engineering'], strength: { convergence: 'high', populationBreadth: 'low', perspectiveDiversity: 'low', causalCoverage: 'low', executiveStatus: 'local-hypothesis' } },
     },
   });
-  assert.match(html, /Convergência.*Alta/s);
-  assert.match(html, /Convergência.*quanto as respostas aplicáveis apontam na mesma direção/s);
-  assert.match(html, /Amplitude.*Baixa/s);
-  assert.match(html, /Amplitude.*quantas pessoas sustentam a leitura/s);
-  assert.match(html, /Diversidade de perspectivas.*Baixa/s);
-  assert.match(html, /Cobertura causal.*se as entrevistas explicam por que o comportamento acontece/s);
+  assert.match(html, /Acordo entre os relatos.*Alta/s);
+  assert.match(html, /proporção das respostas classificáveis/s);
+  assert.match(html, /Tamanho da base.*Baixa/s);
+  assert.match(html, /quantidade absoluta de pessoas/s);
+  assert.match(html, /Variedade de lentes.*Baixa/s);
+  assert.match(html, /Explicação do mecanismo.*Baixa/s);
   assert.match(html, /Hipótese local para investigação/);
 });
 
@@ -284,13 +284,13 @@ test('evidência contrária é apresentada sem converter o restante da populaç�
   assert.doesNotMatch(html, /Nenhum relato contraditório suficiente/);
 });
 
-test('panorama mostra outros problemas confirmados sem duplicar a decisão principal', () => {
+test('panorama mostra outros comportamentos recorrentes sem alegar causa confirmada', () => {
   const html = renderFindingPortfolio([
     { kind: 'correction', pattern: 'pipeline', detailCapability: 'continuous-integration', title: 'A esteira devolve feedback tarde', cause: '', intervention: '', confidence: .9, priority: .9, recommendationEvidence: { supportingParticipants: 8, applicablePopulation: 10, contradictingParticipants: 0, patterns: ['pipeline'], layers: ['practice'], profiles: ['engineering', 'quality'] } },
     { kind: 'correction', pattern: 'communication', detailCapability: 'collaboration', title: 'Dependências exigem coordenação constante', cause: '', intervention: '', confidence: .8, priority: .8, recommendationEvidence: { supportingParticipants: 7, applicablePopulation: 10, contradictingParticipants: 1, patterns: ['communication'], layers: ['system'], profiles: ['management', 'product'] } },
     { kind: 'correction', pattern: 'pipeline', detailCapability: 'sdlc-automation', title: 'A esteira devolve feedback tarde', cause: '', intervention: '', confidence: .9, priority: .7 },
   ], 'pipeline');
-  assert.match(html, /Panorama de problemas confirmados/);
+  assert.match(html, /Panorama de comportamentos recorrentes/);
   assert.match(html, /1 outro padrão exige atenção/);
   assert.match(html, /Dependências exigem coordenação constante/);
   assert.match(html, /Colaboração/);
@@ -422,7 +422,7 @@ test('diagnóstico condicionado explica autoridade e motivo da investigação', 
   assert.match(html, /O que parece manter o problema.*Ainda não determinado/s);
   assert.match(html, /Por que investigar primeiro.*Ainda falta discriminar o mecanismo/s);
   assert.doesNotMatch(html, /Decisão solicitada/);
-  assert.match(html, /prioridade 1 de 3 problemas confirmados/i);
+  assert.match(html, /prioridade 1 entre 3 comportamentos recorrentes/i);
 });
 
 test('leitura executiva apresenta situação e prioridade antes do vocabulário metodológico', () => {
@@ -432,7 +432,7 @@ test('leitura executiva apresenta situação e prioridade antes do vocabulário 
   }, { confirmedProblemCount: 4 });
   const firstPlane = html.slice(0, html.indexOf('<details'));
   assert.match(firstPlane, /Mudanças pequenas ficam separadas/);
-  assert.match(firstPlane, /prioridade 1 de 4 problemas confirmados/i);
+  assert.match(firstPlane, /prioridade 1 entre 4 comportamentos recorrentes/i);
   assert.doesNotMatch(firstPlane, /mecanismo|contenção|severidade|posterior/i);
 });
 
@@ -454,7 +454,7 @@ test('recorte de squad apresenta decisão e problemas próprios', () => {
   }, '/capabilities');
   assert.match(html, /Próxima decisão/);
   assert.match(html, /A esteira devolve feedback tarde/);
-  assert.match(html, /Panorama de problemas confirmados/);
+  assert.match(html, /Panorama de comportamentos recorrentes/);
   assert.match(html, /Ambientes chegam por fila/);
   assert.ok(html.indexOf('Próxima decisão') < html.indexOf('Consistência do comportamento no elo limitante'));
   assert.ok(html.indexOf('Consistência do comportamento no elo limitante') < html.indexOf('Mapa de contraste e cobertura'));
