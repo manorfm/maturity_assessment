@@ -30,6 +30,9 @@ Para uma visão resumida dos marcos por versão, consulte o
 - Dez padrões de autonomia, autoridade e dependências passaram a distinguir acesso
   seguro, competência disponível, prioridade, poder de decisão e coordenação,
   reduzindo a dívida genérica de 43 para 33 e publicando `causal-catalog-v6`.
+- Dez padrões de operação sustentável passaram a distinguir prevenção,
+  repetibilidade, idempotência, difusão e reconciliação de exceções, reduzindo a
+  dívida genérica de 33 para 23 e publicando `causal-catalog-v7`.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

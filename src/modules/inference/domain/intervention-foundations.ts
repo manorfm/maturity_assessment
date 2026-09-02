@@ -67,19 +67,19 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Limitar ações, atribuir responsabilidade e revisar um sinal de efeito impede que a reflexão termine em intenção sem aprendizagem verificável."
   },
   "mitigacao-sem-prevencao": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Resilience engineering / SRE",
+    "principle": "Mitigar impacto e reduzir recorrência são capacidades distintas",
+    "why": "Alterar uma condição que antecede a falha testa prevenção ou detecção precoce; aperfeiçoar somente a reação preserva a mesma classe de incidente."
   },
   "solucao-local-nao-difundida": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Well-Architected / platform engineering",
+    "principle": "Capacidade compartilhada é demonstrada pela jornada de outro consumidor",
+    "why": "Testar a automação com um segundo time revela documentação, suporte e adequação ausentes antes de institucionalizar uma solução que só funciona localmente."
   },
   "operacao-manual-fragil": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Operação frequente precisa ser repetível e verificável",
+    "why": "Codificar um passo sensível a contexto reduz variação e produz feedback reproduzível; instrução continua apoio, não mecanismo principal de controle."
   },
   "dados-de-teste-fragil": {
     "source": "Qualidade no fluxo",
@@ -132,9 +132,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Suíte ou scanner presente não prova estratégia de qualidade."
   },
   "verificacao-dependente-de-memoria": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Qualidade no fluxo",
+    "principle": "Escape real vira feedback repetível junto à mudança",
+    "why": "Transformar um defeito recente numa verificação pequena reduz dependência da memória de quem altera e antecipa a mesma falha em mudanças equivalentes."
   },
   "automacao-sem-feedback": {
     "source": "Continuous Delivery",
@@ -152,9 +152,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "O problema observado é credencial ou acesso, não a ausência de um produto de cofre."
   },
   "ambiente-inconsistente": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Well-Architected / platform engineering",
+    "principle": "Dependência crítica reproduzível reduz concorrência e diferença ambiental",
+    "why": "Reproduzir a menor dependência que causa conflito permite comparar execuções e reduz tempo gasto distinguindo defeito do produto de estado do ambiente."
   },
   "seguranca-tardia": {
     "source": "Qualidade no fluxo",
@@ -342,9 +342,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Reconciliação e detecção de divergência impedem que console e fonte definam estados concorrentes."
   },
   "correcao-manual-de-dados": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Dados como produto",
+    "principle": "Correção recorrente precisa ser idempotente, revisável e auditável",
+    "why": "Uma operação com validação e reversão explícitas pode ser repetida sem depender do contexto individual e reduz risco de corrigir duas vezes ou parcialmente."
   },
   "iteracao-orientada-a-escopo": {
     "source": "Lean / Accelerate",
@@ -567,9 +567,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "O incentivo real aparece quando uma evidência contrária pode interromper ou redirecionar trabalho já comprometido."
   },
   "divida-sem-capacidade-continua": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Custo de mudança é reduzido durante a evolução cotidiana",
+    "why": "Reservar melhoria proporcional na próxima alteração produz evidência contínua sobre defeitos, espera ou dependência sem aguardar uma iniciativa futura incerta."
   },
   "codigo-depende-de-especialista": {
     "source": "Melhoria contínua",
@@ -592,9 +592,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Formalizar um contrato crítico e verificá-lo durante a mudança do produtor antecipa quebra que consumidores hoje descobrem e compensam depois da integração."
   },
   "migracao-de-dados-contextual": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Dados como produto",
+    "principle": "Migração segura explicita estado, repetição e reversibilidade",
+    "why": "Casos representativos e uma operação idempotente tornam o estado encontrado verificável antes da implantação, reduzindo decisões improvisadas durante a execução."
   },
   "limites-escondem-distribuicao": {
     "source": "Data literacy / SRE",
@@ -1082,9 +1082,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Documento entregue não prova que o grupo consegue avaliar, mudar e sustentar o legado."
   },
   "automacao-local-consistente": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Well-Architected / platform engineering",
+    "principle": "Automação compartilhada é produto interno com suporte e observabilidade",
+    "why": "Medir adoção, tempo e falhas por outros times verifica se a automação virou capacidade acessível, em vez de apenas uma prática eficaz no grupo de origem."
   },
   "integracao-frequente-fragil": {
     "source": "Continuous Delivery",
@@ -1092,9 +1092,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "excecao-controlada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Infrastructure as Code / SRE",
+    "principle": "Caminho emergencial preserva limite, auditoria e reconciliação",
+    "why": "Transformar uma exceção recorrente em fluxo rápido e reconciliável mantém velocidade sem deixar estado paralelo, privilégio amplo ou correção posterior por memória."
   },
   "mudanca-emergencial-reconciliada": {
     "source": "Infrastructure as Code / SRE",

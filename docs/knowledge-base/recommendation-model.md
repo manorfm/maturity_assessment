@@ -65,7 +65,7 @@ O catálogo materializa essa cadeia em uma rede especialista tipada com relaçõ
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v6` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v7` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
@@ -121,6 +121,12 @@ acessível ao fluxo, prioridade compartilhada, decisão concentrada, desenho
 organizacional e autoridade para agir sobre risco. A ausência de SRE, arquiteto ou
 especialista formal não é uma deficiência: o diagnóstico observa se quem assume o
 resultado dispõe de contexto, limites, capacidade e poder de decisão.
+
+Operação sustentável distingue mitigação de prevenção, instrução de caminho
+reproduzível, automação local de capacidade compartilhada e exceção temporária de
+fluxo emergencial reconciliável. Ambiente, correção e migração de dados são tratados
+por idempotência, validação, reversibilidade e efeito observado; nenhuma família de
+ferramenta é exigida por nome.
 
 ## Recomendações
 
