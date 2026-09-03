@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.58.0
+
+- Publicou `capability-reference-v9` com a rubrica 0–4 de liderança e gestão.
+- Passou a comparar decisões sobre risco, carga, conflito, capacidade e resultado,
+  distinguindo remoção de restrições de coordenação, pressão, culpa e heroísmo.
+- Impediu que cargo, one-on-one, modelo de liderança ou cerimônia determinem
+  estágio ou atribuam cultura a uma pessoa isolada.
+
 ## 0.57.0
 
 - Publicou `capability-reference-v8` com a rubrica 0–4 de governança habilitadora.

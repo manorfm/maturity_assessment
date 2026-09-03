@@ -19,10 +19,11 @@ const initialCapabilities = [
   'organizational-learning',
   'team-ownership',
   'enabling-governance',
+  'leadership-management',
 ];
 
-test('catálogo publica onze referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v8');
+test('catálogo publica doze referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v9');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -41,6 +42,17 @@ test('catálogo publica onze referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('liderança é avaliada pelas decisões sobre restrições, não pelo cargo', () => {
+  const reference = capabilityReferenceCatalog['leadership-management'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /culpa|pressão|ocupação|centraliz|prazo/i);
+  assert.match(reference.stage(3).behavior, /risco|carga|capacidade|restriç|decis/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|resultado|aprend|incentivo/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /one-on-one|Tuckman|transformacional|servant leadership/i);
+  assert.ok(reference.interpretationLimits.some((item) => /cargo|one-on-one|modelo|cerimônia/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /indivíduo|pessoa|cultura|sistema/i.test(item)));
 });
 
 test('governança distingue risco e efeito sem premiar controle nominal', () => {

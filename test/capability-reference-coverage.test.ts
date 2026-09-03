@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as onze referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as doze referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -15,6 +15,16 @@ test('matriz relaciona as onze referências a sinais tipados sem inferência tex
     assert.equal(item.desirabilityCues, 0, item.capabilityId);
     assert.ok(item.gaps.length > 0 || item.status === 'minimum-covered', item.capabilityId);
   }
+});
+
+test('liderança cobre decisão, incentivo, pressão e consequência', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const leadership = matrix.references.find((item) => item.capabilityId === 'leadership-management');
+  assert.ok(leadership);
+  assert.equal(leadership.status, 'minimum-covered');
+  assert.ok(leadership.direct.nodes >= 11);
+  assert.ok(leadership.direct.patterns >= 16);
+  assert.deepEqual(leadership.layers, ['consistency', 'outcome', 'practice', 'system']);
 });
 
 test('governança cobre proporcionalidade, compensação e revisão pelo efeito', () => {

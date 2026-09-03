@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `leadership-management`, distinguindo liderança que
-torna risco, carga e conflito decidíveis de gestão que protege ocupação, prazo ou
-culpa local. Os estágios devem observar se decisões removem restrições, protegem
-capacidade e aprendem pelo efeito sem atribuir cultura a uma pessoa; cargo,
-one-on-one, modelo de liderança ou cerimônia não podem determinar estágio.
+Escrever a próxima rubrica para `collaboration`, distinguindo interação que resolve
+uma dependência e transfere capacidade de coordenação permanente, reunião ou
+escalada. Os estágios devem observar contexto compartilhado, decisão, reciprocidade,
+conflito e efeito no trabalho seguinte sem premiar proximidade, ferramenta de
+comunicação, cerimônia ou modelo nominal de interação.

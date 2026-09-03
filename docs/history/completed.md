@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de liderança e gestão
+
+- Publicado `capability-reference-v9` com cinco estágios para decisões sobre risco,
+  carga, conflito, capacidade e resultado, sem diagnosticar pessoas; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de governança habilitadora
 
 - Publicado `capability-reference-v8` com cinco estágios para proporcionalidade,

@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v8' as const;
+export const capabilityReferenceVersion = 'capability-reference-v9' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -288,6 +288,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Governança baseada em risco com controles proporcionais, automatizáveis e decisão explícita sobre exceções.', 'Revisão de eficácia do controle e de seu custo no fluxo, com autonomia segura dentro de limites observáveis.'],
     optionalToolFamilies: ['Políticas executáveis, trilhas de decisão, evidência de controle e gestão de exceções.', 'Telemetria de risco, fluxo, identidade, conformidade, falhas e eficácia de proteções.'],
     interpretationLimits: ['Comitê, política, auditoria, certificação ou ferramenta de policy não produzem estágio por presença.', 'Obrigação, segregação ou revisão independente legítima não penaliza o estágio quando risco, evidência, autoridade e efeito são proporcionais e verificáveis.'],
+  },
+  {
+    capabilityId: 'leadership-management',
+    title: 'Liderança e gestão',
+    purpose: 'Tornar risco, carga, conflito e resultado decidíveis no nível capaz de remover restrições, protegendo capacidade e segurança para aprender sem concentrar coordenação ou culpa.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir o que orientou a última decisão de prioridade, carga ou risco, quem possuía autoridade nem como a consequência foi acompanhada.', 'Direção, incentivo e reação ao problema permanecem implícitos, impedindo distinguir restrição do sistema, escolha local ou compensação individual.', 'Sob pressão, compromissos mudam por conversas privadas e nenhuma evidência recuperável explica o que deixou de ser feito, quem decidiu ou que risco foi aceito.'),
+      stage(1, 'Reativo', 'Prazo, ocupação e cobrança dominam a decisão; coordenação se centraliza, alertas exigem segurança pessoal e falhas procuram culpa ou uma etapa adicional de controle.', 'Pessoas iniciam mais trabalho, ocultam risco ou dependem de escalada, enquanto espera, sobrecarga e causas compartilhadas permanecem sem decisão no nível adequado.', 'Sob pressão, liderança absorve ou redistribui tarefas sem retirar compromisso, reforça heroísmo e protege a data mesmo quando consequência e capacidade indicam outro caminho.'),
+      stage(2, 'Repetível', 'Alguns grupos negociam carga, tornam risco visível e protegem melhorias, mas autoridade, incentivo e resposta ao conflito ainda variam conforme liderança e contexto.', 'Práticas locais reduzem sobrecarga e exposição, enquanto dependências ou prioridades organizacionais continuam exigindo coordenação e escalada para mudar o sistema.', 'Sob pressão, a proteção depende de pessoas específicas, resultado perde peso para escopo e alertas sensíveis voltam a circular fora do espaço decisório.'),
+      stage(3, 'Gerenciado', 'Decisões explícitas confrontam risco, resultado, carga e capacidade; restrições recebem responsável no nível que pode removê-las e compromissos são reduzidos quando necessário.', 'Times conseguem expor problemas, interromper trabalho ou proteger melhoria sem punição, enquanto liderança remove dependências em vez de coordenar indefinidamente suas consequências.', 'Sob pressão, critérios e autoridade permanecem visíveis, carga adicional retira outro compromisso e a análise de falha protege aprendizagem sem apagar responsabilidade.'),
+      stage(4, 'Adaptativo', 'Feedback sobre resultado, fluxo, carga, conflito e segurança para alertar modifica continuamente incentivos, prioridades, capacidade e fronteiras de decisão.', 'O sistema aprende a remover restrições mais cedo, reduz coordenação e heroísmo e sustenta desempenho sem transformar urgência, ocupação ou ausência de falha em sucesso.', 'Sob pressão, sinais contrários podem rever a decisão e o efeito observado ajusta incentivo e desenho do sistema antes que a compensação local se torne permanente.'),
+    ],
+    evidenceRequired: ['Um evento recente ligando alerta ou restrição, decisão de prioridade e capacidade, autoridade exercida e consequência para o trabalho ou resultado.', 'Um caso posterior mostrando se incentivo, compromisso, carga, fronteira ou resposta à falha mudou pelo efeito observado.'],
+    enablingConditions: ['Autoridade explícita para retirar compromisso, proteger capacidade e escalar restrições ao nível que pode removê-las.', 'Segurança para expor risco e conflito com critérios de decisão orientados a resultado, sustentabilidade e aprendizagem.'],
+    regressionSignals: ['O progresso volta a ser inferido por ocupação, escopo ou prazo enquanto carga, espera e resultado deixam de alterar compromissos.', 'Coordenação, decisão e contexto retornam a uma pessoa, e falhas voltam a produzir culpa, silêncio ou controles sem revisão causal.'],
+    compatiblePractices: ['Gestão de fluxo e capacidade com limites de trabalho, retirada explícita de compromissos e tratamento sistêmico de bloqueios.', 'Liderança orientada a resultado, segurança para alertar, aprendizagem sem culpa e experimentos organizacionais reversíveis.'],
+    optionalToolFamilies: ['Visualização de fluxo, carga, dependências, riscos, decisões e resultados.', 'Feedback organizacional, acompanhamento de experimentos e análise agregada de saúde e aprendizagem.'],
+    interpretationLimits: ['Cargo, one-on-one, modelo de liderança, cerimônia ou avaliação declarada não produzem estágio por presença.', 'Um comportamento de uma pessoa não define cultura nem capacidade do sistema; recorrência, perspectivas, poder e consequência precisam ser triangulados.'],
   },
 ];
 
