@@ -1,7 +1,7 @@
 # Plano aberto: referencial comparativo de alta performance
 
-Status: onda 0 incorporada à base de conhecimento em 2026-09-02. Este documento
-contém somente o trabalho ainda futuro.
+Status: contrato do produto e primeiro corte das rubricas incorporados à base de
+conhecimento em 2026-09-02. Este documento contém somente o trabalho ainda futuro.
 
 ## Objetivo
 
@@ -25,12 +25,11 @@ cargo ou cerimônia por presença.
 
 ## Sequência restante
 
-### Onda 1 — Rubricas operacionais 0–4
+### Expansão das rubricas operacionais 0–4
 
-Definir para cada folha propósito, âncoras dos cinco estágios, evidências, efeitos,
-condições habilitadoras, comportamento sob pressão, regressão e limites. Começar
-por descoberta/validação, feedback técnico, autonomia de plataforma e sistema
-organizacional antes de expandir para a taxonomia inteira.
+Depois de mapear e validar o primeiro corte, expandir o mesmo contrato para as
+folhas restantes: propósito, âncoras dos cinco estágios, evidências, efeitos,
+condições habilitadoras, comportamento sob pressão, regressão e limites.
 
 **Aceite:** cada estágio possui comportamento observável específico; nenhuma
 rubrica concede ou retira estágio por nome de tecnologia.
@@ -90,6 +89,6 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Criar as quatro primeiras rubricas sem alterar inferência. Revisar se pessoas de
-gestão e engenharia conseguem diferenciar comportamento-alvo, mecanismo causal e
-ferramenta habilitadora antes de expandir o contrato às demais folhas.
+Relacionar perguntas e sinais existentes às quatro referências vigentes. Tornar
+visível quais âncoras têm observação direta, evidência indireta ou nenhuma cobertura,
+sem alterar pesos ou inferência.

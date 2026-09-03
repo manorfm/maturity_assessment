@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.48.0
+
+- Consolidou diagnóstico causal e referência comparativa como leituras
+  complementares, sem transformar tecnologia nominal em pontuação.
+- Publicou as primeiras rubricas operacionais 0–4 para descoberta, feedback
+  técnico, autonomia de plataforma e sistema organizacional.
+- Tornou quantidade e aderência taxonômica das referências visíveis na auditoria
+  versionada do instrumento.
+
 ## 0.47.0
 
 - Passou a apresentar primeiro o comportamento identificado e a separar apoio,

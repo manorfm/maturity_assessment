@@ -116,6 +116,14 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
+A referência vigente `capability-reference-v1` materializa o primeiro corte para
+`discovery-validation`, `sdlc-automation`, `platform-autonomy` e
+`organizational-system`. Cada contrato possui propósito, cinco âncoras de
+comportamento, efeito e reação sob pressão, evidências necessárias, condições
+habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
+e limites. O meta-sistema organizacional é uma referência de leitura agregada; não
+substitui as cinco folhas organizacionais nem atribui cultura a indivíduos.
+
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer
 outro nome. Da mesma forma, tecnologia antiga não reduz o estágio por idade: perde

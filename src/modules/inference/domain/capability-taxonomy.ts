@@ -37,6 +37,7 @@ const taxonomy: TaxonomyNode[] = [
 ];
 
 export const capabilityLeafIds = collectLeaves(taxonomy);
+export const capabilityIds = collectNodes(taxonomy);
 
 export const cloudCapabilityIds = new Set([
   'cloud-infrastructure', 'reproducible-infrastructure', 'cloud-security', 'cloud-reliability', 'cloud-efficiency',
@@ -48,6 +49,10 @@ export const organizationalCapabilityIds = new Set([
 
 function collectLeaves(nodes: TaxonomyNode[]): string[] {
   return nodes.flatMap((node) => node.children?.length ? collectLeaves(node.children) : [node.id]);
+}
+
+function collectNodes(nodes: TaxonomyNode[]): string[] {
+  return nodes.flatMap((node) => [node.id, ...collectNodes(node.children ?? [])]);
 }
 
 export class CapabilityTaxonomy {

@@ -194,6 +194,14 @@ superior e os radares de aprofundamento consomem a mesma árvore; a UI não reca
 níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmente o
 escopo da unidade, permitindo navegação macro→micro sem perder o recorte.
 
+`capability-reference.ts` mantém o catálogo comparativo imutável
+`capability-reference-v1`. `CapabilityReference` rejeita base de avaliação nominal,
+estágios ausentes e dimensões observacionais incompletas. A linha de base do
+instrumento publica quantidade de referências e quantas pertencem à taxonomia. O
+primeiro corte cobre descoberta/validação, feedback técnico repetível, autonomia de
+plataforma e o meta-sistema organizacional; inferência e relatório ainda não
+consomem essas rubricas nesta versão.
+
 A taxonomia executiva possui oito pilares. Operação/confiabilidade,
 plataforma/experiência de engenharia e segurança/risco são ramos separados, embora
 um mesmo sinal possa afetar folhas de todos eles. `SolutionReadiness` é derivado de

@@ -26,9 +26,9 @@ pertencem ao diagnóstico. Contrato diagnóstico, autoridade, suspensão de
 prescrição, portfólio sequenciado, relatórios por autoridade, showcase controlado e proteções automatizadas de acessibilidade já
 pertencem à base de conhecimento vigente.
 
-O contrato aprovado de combinar diagnóstico causal com referencial comparativo de
-alta performance está na base vigente. As rubricas por folha, a matriz de cobertura,
-o contrato explícito de comparação e a integração posterior de telemetria estão no
+O contrato aprovado e as quatro referências iniciais de alta performance estão na
+base vigente. A expansão das rubricas, a matriz de cobertura, o contrato explícito
+de comparação e a integração posterior de telemetria estão no
 [`plano comparativo`](comparative-diagnostic-plan.md).
 O preflight operacional para uma coorte cognitiva inicial de oito pessoas também
 está vigente. A coleta deve ocorrer numa única unidade para preservar o limiar; uma

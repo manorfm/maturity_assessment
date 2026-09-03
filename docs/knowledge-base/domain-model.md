@@ -8,6 +8,10 @@
 - **OrganizationUnit:** nó configurável de uma hierarquia, com tipo e nome locais;
   pode representar organização, tribo, cluster, time, squad ou outra estrutura.
 - **Capability:** comportamento ou resultado que queremos compreender.
+- **CapabilityReference:** rubrica versionada de alta performance para uma
+  capacidade; define propósito, estágios 0–4 por comportamento e efeito, reação
+  sob pressão, evidências, condições, regressões e limites. Práticas e famílias de
+  ferramentas ficam separadas e não compõem pontuação nominal.
 - **Scenario:** contexto apresentado ao respondente.
 - **Question:** interação dentro de um cenário.
 - **Option:** escolha com sinais e trade-offs, nunca uma “alternativa correta” nua.

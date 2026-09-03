@@ -45,6 +45,11 @@ Para uma visão resumida dos marcos por versão, consulte o
   performance operacional; ver
   [`product-vision.md`](../knowledge-base/product-vision.md) e
   [`assessment-model.md`](../knowledge-base/assessment-model.md).
+- Entregue a versão 0.48 com rubricas comportamentais 0–4 para descoberta,
+  feedback técnico, autonomia de plataforma e sistema organizacional, protegidas
+  contra adoção nominal e visíveis na auditoria do instrumento; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

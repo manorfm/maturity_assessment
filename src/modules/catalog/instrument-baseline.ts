@@ -10,6 +10,8 @@ import {
 } from './assessment-graph.js';
 import type { InterventionDefinition } from '../inference/domain/group-recommendation-engine.js';
 import type { ExplicitFoundation } from '../inference/domain/intervention-foundations.js';
+import { capabilityReferenceCatalog, capabilityReferenceVersion } from '../inference/domain/capability-reference.js';
+import { capabilityIds } from '../inference/domain/capability-taxonomy.js';
 
 export type BaselineInput = {
   graph: AssessmentNode[];
@@ -75,6 +77,11 @@ export function measureInstrumentBaseline(input: BaselineInput) {
       repeatedFoundationGroups,
       withoutExplicitGuidance: Object.values(input.interventions).filter((intervention) => intervention.guidanceStatus !== 'explicit').length,
       withoutPrerequisiteContract: Object.values(input.interventions).filter((intervention) => !Object.hasOwn(intervention, 'prerequisites')).length,
+    },
+    comparison: {
+      version: capabilityReferenceVersion,
+      references: Object.keys(capabilityReferenceCatalog).length,
+      taxonomyCoverage: Object.keys(capabilityReferenceCatalog).filter((capabilityId) => capabilityIds.includes(capabilityId)).length,
     },
   };
 }
