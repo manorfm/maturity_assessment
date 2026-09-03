@@ -16,10 +16,11 @@ const initialCapabilities = [
   'technical-capability',
   'software-security',
   'evolvability',
+  'organizational-learning',
 ];
 
-test('catálogo publica oito referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v5');
+test('catálogo publica nove referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v6');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -38,6 +39,16 @@ test('catálogo publica oito referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('aprendizado organizacional exige efeito revisto no evento seguinte', () => {
+  const reference = capabilityReferenceCatalog['organizational-learning'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /crise|aç[oõ]es|reativ/i);
+  assert.match(reference.stage(3).behavior, /efeito|evento seguinte|revis/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|aprend|sistema/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /retrospectiva|post-mortem|treinamento|repositório/i);
+  assert.ok(reference.interpretationLimits.some((item) => /retrospectiva|post-mortem|treinamento|repositório/i.test(item)));
 });
 
 test('evolutibilidade é avaliada pelo custo da mudança seguinte, não pelo estilo arquitetural', () => {

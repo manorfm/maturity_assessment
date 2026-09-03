@@ -116,10 +116,10 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v5` materializa rubricas para
+A referência vigente `capability-reference-v6` materializa rubricas para
 `discovery-validation`, `sdlc-automation`, `release-feedback`,
 `platform-autonomy`, `technical-capability`, `software-security` e
-`evolvability`, além de `organizational-system`. Cada contrato possui propósito, cinco âncoras de
+`evolvability`, `organizational-learning` e `organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
 e limites. O meta-sistema organizacional é uma referência de leitura agregada; não
@@ -134,7 +134,7 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as oito referências atingem cobertura mínima. Em feedback
+No corte atual, as nove referências atingem cobertura mínima. Em feedback
 técnico, a prática é confrontada com a consequência da mesma mudança: decisão
 alterada a tempo, retrabalho posterior, avanço sem retorno ou efeito descoberto
 mais tarde. O fato chega à camada de resultado sem escolher causa ou ferramenta e
@@ -166,6 +166,12 @@ partes alteradas, responsáveis, espera, coordenação, contornos e retrabalho.
 Arquitetura formal, DDD, microsserviços, diagramas ou tecnologia recente não
 concedem estágio; monólito ou tecnologia antiga também não penalizam quando limites
 e contratos permitem mudanças pequenas, seguras e adaptadas pelo efeito.
+
+Em aprendizado organizacional, o estágio exige ligar evento, mudança escolhida,
+responsável, capacidade e revisão no caso seguinte. A referência separa ausência de
+fechamento de uma ação local bloqueada por prioridade, política ou autoridade.
+Retrospectiva, post-mortem, treinamento, comunidade ou repositório não concedem
+estágio sem alteração demonstrada no trabalho ou no sistema.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

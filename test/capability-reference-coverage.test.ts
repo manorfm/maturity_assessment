@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as oito referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as nove referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -65,6 +65,16 @@ test('evolutibilidade confronta decisão arquitetural com a mudança equivalente
   assert.ok(evolvability.direct.nodes >= 16);
   assert.ok(evolvability.direct.patterns >= 24);
   assert.deepEqual(evolvability.layers, ['consistency', 'knowledge', 'outcome', 'practice', 'system']);
+});
+
+test('aprendizado organizacional cobre fechamento, bloqueio e adaptação pelo efeito', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const learning = matrix.references.find((item) => item.capabilityId === 'organizational-learning');
+  assert.ok(learning);
+  assert.equal(learning.status, 'minimum-covered');
+  assert.ok(learning.direct.nodes >= 30);
+  assert.ok(learning.direct.patterns >= 50);
+  assert.deepEqual(learning.layers, ['consistency', 'knowledge', 'outcome', 'practice', 'system']);
 });
 
 test('matriz distingue efeito indireto, perspectiva única e ausência', () => {

@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de aprendizado
+
+- Publicado `capability-reference-v6` com cinco estágios baseados no fechamento do
+  ciclo e na mudança do evento seguinte, preservando bloqueios fora da autonomia do
+  grupo; ver [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de evolutibilidade
 
 - Publicado `capability-reference-v5` com cinco estágios baseados no custo e no

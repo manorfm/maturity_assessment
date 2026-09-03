@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.55.0
+
+- Publicou `capability-reference-v6` com a rubrica 0–4 de aprendizado
+  organizacional.
+- Separou ausência de fechamento de ações válidas bloqueadas por prioridade,
+  capacidade ou autoridade externa.
+- Exigiu revisão do efeito no evento seguinte, sem pontuar cerimônia, treinamento
+  ou repositório por presença.
+
 ## 0.54.0
 
 - Publicou `capability-reference-v5` com a rubrica 0–4 de evolutibilidade.

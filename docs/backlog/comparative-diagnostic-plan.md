@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `organizational-learning`, que possui a maior
-amplitude factual entre as folhas restantes. Os estágios devem observar se revisão,
-incidente e experimento alteram o próximo evento e o próprio sistema, distinguindo
-ação local bloqueada de ausência de fechamento; retrospectiva, post-mortem,
-treinamento ou repositório nominal não podem determinar estágio.
+Escrever a próxima rubrica para `team-ownership`, que possui ampla cobertura de
+fronteiras, operação e consequências. Os estágios devem observar se autoridade
+acompanha responsabilidade ponta a ponta e se espera, conflito e carga alteram a
+distribuição do trabalho; nome do time, matriz RACI, modelo Team Topologies ou owner
+declarado não podem determinar estágio.

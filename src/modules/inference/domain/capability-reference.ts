@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v5' as const;
+export const capabilityReferenceVersion = 'capability-reference-v6' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -231,6 +231,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Arquitetura evolutiva com decisões reversíveis e comparação explícita do custo de mudança.', 'Mapeamento de dependências, contratos verificáveis e modelagem colaborativa de limites de domínio.'],
     optionalToolFamilies: ['Mapeamento arquitetural, dependências, ownership e impacto de mudança.', 'Verificação de contratos, compatibilidade, observabilidade de fluxo e registros de decisão.'],
     interpretationLimits: ['DDD, microsserviços, arquitetura formal, TOGAF, diagrama ou documentação não produzem estágio por presença.', 'Monólito ou tecnologia antiga não reduzem estágio quando mudanças permanecem pequenas, seguras e capazes de adaptar limites pelo efeito.'],
+  },
+  {
+    capabilityId: 'organizational-learning',
+    title: 'Aprendizado e adaptação',
+    purpose: 'Transformar eventos, falhas e experimentos em mudanças verificáveis no trabalho e no sistema, preservando autoria, capacidade e revisão do efeito no caso seguinte.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir qual evento provocou uma tentativa de melhoria, quem decidiu a mudança, que efeito era esperado ou se o tema voltou à decisão.', 'Registro, intenção e resultado permanecem desconectados, impedindo distinguir ausência de ação, bloqueio externo, perda de prioridade ou efeito contrário.', 'Sob pressão, decisões e contornos desaparecem em conversas informais e não existe condição explícita para revisar a interpretação.'),
+      stage(1, 'Reativo', 'Mudanças surgem após crise ou cobrança, geram muitas ações sem foco ou apenas orientação para reagir melhor, sem retorno consistente ao problema equivalente.', 'O sistema repete o comportamento e acumula pendências; esforço local pode aliviar o caso sem alterar as condições que o reproduzem.', 'Sob pressão, toda capacidade retorna à entrega urgente, responsáveis somem e a melhoria reaparece somente depois de nova falha ou escalada.'),
+      stage(2, 'Repetível', 'Alguns grupos escolhem mudanças pequenas e verificam resultados, mas fechamento, capacidade e poder para alterar causas sistêmicas variam conforme liderança e contexto.', 'Há aprendizado local demonstrável, enquanto ações que atravessam fronteiras perdem prioridade ou permanecem como compensações sem difusão.', 'Sob pressão, revisão de efeito é adiada, a prática virtuosa fica dependente de pessoas e o grupo mantém contornos por não conseguir mudar o sistema.'),
+      stage(3, 'Gerenciado', 'Poucas mudanças possuem responsável, capacidade, efeito esperado e revisão no evento seguinte; bloqueios externos são escalados com autoridade e decisão explícitas.', 'A organização mantém, ajusta ou desfaz ações conforme o efeito e distingue melhoria ineficaz de melhoria válida impedida pelo sistema.', 'Sob pressão, liderança protege correção e aprendizagem, limita novas ações e torna explícito qual compromisso ou política precisa mudar para fechar o ciclo.'),
+      stage(4, 'Adaptativo', 'Feedback de resultados, fluxo, risco, carga e recorrência modifica continuamente práticas, prioridades, políticas e capacidades no nível capaz de remover a restrição.', 'O sistema reduz recorrência e difunde aprendizagem útil sem transformar todo evento em padronização, controle adicional ou programa de mudança em grande lote.', 'Sob pressão, o efeito continua sendo revisto, sinais contrários podem desfazer a intervenção e o aprendizado altera o sistema antes do próximo caso equivalente.'),
+    ],
+    evidenceRequired: ['Um evento recente ligado a uma mudança escolhida, responsável, capacidade, efeito esperado e decisão posterior.', 'O evento equivalente seguinte ou evidência contrária mostrando manutenção, ajuste, reversão, bloqueio ou ausência de efeito.'],
+    enablingConditions: ['Capacidade protegida para melhorar o sistema junto ao trabalho de entrega e operação.', 'Autoridade ou escalada efetiva para tratar restrições além da autonomia do grupo observador.'],
+    regressionSignals: ['A conversa volta a gerar listas extensas sem responsável, prioridade, efeito ou encerramento.', 'Registro e comunicação substituem verificação no caso seguinte, enquanto a recorrência permanece sem alterar decisões.'],
+    compatiblePractices: ['Revisão de eventos e melhoria contínua com poucas hipóteses, ownership e ciclo de efeito fechado.', 'Experimentos organizacionais reversíveis, aprendizagem sem culpa e difusão condicionada ao contexto.'],
+    optionalToolFamilies: ['Registro de decisões, experimentos, ações e evidências de efeito.', 'Análise de fluxo, incidentes, recorrência, carga e aprendizagem compartilhada.'],
+    interpretationLimits: ['Retrospectiva, post-mortem, treinamento, repositório ou comunidade não produzem estágio por presença.', 'Ação local bloqueada por prioridade, política ou autoridade não prova incapacidade do grupo; contenção e poder de decisão precisam ser discriminados.'],
   },
 ];
 
