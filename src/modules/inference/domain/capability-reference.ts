@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v7' as const;
+export const capabilityReferenceVersion = 'capability-reference-v8' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -269,6 +269,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Ownership de serviço ou produto ponta a ponta com limites e consequências observáveis.', 'Revisão de fronteiras, carga cognitiva e modos de interação orientada por fluxo e resultado.'],
     optionalToolFamilies: ['Mapeamento de serviços, ownership, dependências e fluxo de trabalho.', 'Catálogos, registros de decisão, carga, incidentes e resultados por serviço.'],
     interpretationLimits: ['Nome do time, owner declarado, matriz RACI ou modelo Team Topologies não produzem estágio por presença.', 'Responsabilidade compartilhada não é fragilidade quando autoridade, decisão e consequência entre as partes são explícitas e sustentáveis.'],
+  },
+  {
+    capabilityId: 'enabling-governance',
+    title: 'Governança habilitadora',
+    purpose: 'Fazer obrigações e riscos alterarem decisões por evidência proporcional, preservando autonomia segura, retorno no fluxo e revisão contínua da eficácia e do custo dos controles.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir qual risco ou obrigação originou o controle, que evidência foi examinada, quem podia decidir ou qual consequência deveria ser evitada.', 'Cumprimento, espera e redução de risco permanecem indistintos, impedindo avaliar se a etapa protege o sistema ou apenas transfere responsabilidade.', 'Sob pressão, decisões circulam por relações e exceções informais sem trilha suficiente para explicar o risco aceito, mitigado ou deslocado.'),
+      stage(1, 'Reativo', 'Aprovações indiferenciadas, filas e escaladas relacionais tratam casos distintos pelo mesmo caminho, normalmente sem evidência capaz de mudar a decisão.', 'O trabalho espera ou cria contornos, enquanto especialistas concentram responsabilidade formal sem contexto, capacidade ou retorno sobre a consequência real.', 'Sob pressão, urgência pessoal acelera a fila, controles são ignorados ou novas etapas são adicionadas depois da falha sem rever as anteriores.'),
+      stage(2, 'Repetível', 'Alguns riscos possuem critérios e caminhos conhecidos, mas proporcionalidade, autonomia, exceções e qualidade da evidência ainda variam entre grupos e situações.', 'Casos comuns avançam com menos espera, enquanto decisões ambíguas retornam à aprovação manual ou acumulam aceites temporários sem tratamento sustentado.', 'Sob pressão, a classificação perde efeito, a exceção se prolonga ou a segurança volta a depender da disponibilidade e confiança de pessoas específicas.'),
+      stage(3, 'Gerenciado', 'Risco, impacto e reversibilidade determinam proteção proporcional; evidência confiável devolve decisão no fluxo e permite autonomia dentro de limites verificáveis.', 'Obrigações legítimas preservam separação de responsabilidade e rastreabilidade, enquanto casos comuns deixam de esperar por julgamento que não mudaria seu resultado.', 'Sob pressão, exceções possuem autoridade, validade, proteção compensatória e reconciliação explícitas, sem ocultar nem transferir o risco para outra etapa.'),
+      stage(4, 'Adaptativo', 'Feedback sobre efeito no risco, espera, falhas, exceções e contornos modifica critérios, proteções e limites, incluindo retirar controles que não demonstram eficácia.', 'O sistema melhora simultaneamente segurança e fluxo, reduz compensações por baixa confiança e amplia autonomia segura conforme a evidência operacional se fortalece.', 'Sob pressão, a decisão continua proporcional e verificável; sinais contrários ajustam rapidamente proteção e autoridade antes que a exceção vire o novo caminho normal.'),
+    ],
+    evidenceRequired: ['Uma decisão recente reconstruída do risco ou obrigação até a evidência examinada, autoridade, espera, exceção e consequência.', 'Um caso posterior ou sinal contrário mostrando se o controle foi mantido, alterado, automatizado, simplificado ou retirado pelo efeito.'],
+    enablingConditions: ['Critérios de risco, responsabilidade e evidência compreensíveis por quem solicita e por quem decide.', 'Feedback técnico confiável e limites executáveis que permitam decidir casos comuns no próprio fluxo.'],
+    regressionSignals: ['O mesmo caminho volta a tratar riscos diferentes e a principal evidência passa a ser concluir a etapa ou registrar o aceite.', 'Exceções, revisões e aprovações se acumulam sem prazo, reconciliação ou comparação entre redução de risco e espera criada.'],
+    compatiblePractices: ['Governança baseada em risco com controles proporcionais, automatizáveis e decisão explícita sobre exceções.', 'Revisão de eficácia do controle e de seu custo no fluxo, com autonomia segura dentro de limites observáveis.'],
+    optionalToolFamilies: ['Políticas executáveis, trilhas de decisão, evidência de controle e gestão de exceções.', 'Telemetria de risco, fluxo, identidade, conformidade, falhas e eficácia de proteções.'],
+    interpretationLimits: ['Comitê, política, auditoria, certificação ou ferramenta de policy não produzem estágio por presença.', 'Obrigação, segregação ou revisão independente legítima não penaliza o estágio quando risco, evidência, autoridade e efeito são proporcionais e verificáveis.'],
   },
 ];
 

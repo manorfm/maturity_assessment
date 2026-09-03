@@ -26,7 +26,7 @@ pertencem ao diagnóstico. Contrato diagnóstico, autoridade, suspensão de
 prescrição, portfólio sequenciado, relatórios por autoridade, showcase controlado e proteções automatizadas de acessibilidade já
 pertencem à base de conhecimento vigente.
 
-O contrato aprovado e as dez referências iniciais de alta performance estão na
+O contrato aprovado e as onze referências iniciais de alta performance estão na
 base vigente, e a matriz de cobertura tipada já torna suas lacunas visíveis. A
 expansão das rubricas, as jornadas faltantes, o contrato explícito de comparação e
 a integração posterior de telemetria estão no

@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.57.0
+
+- Publicou `capability-reference-v8` com a rubrica 0–4 de governança habilitadora.
+- Passou a comparar proporcionalidade, autonomia segura, evidência decisória,
+  exceções e revisão conjunta de eficácia e espera.
+- Preservou obrigações e segregações legítimas sem pontuar comitê, política,
+  auditoria ou ferramenta por presença.
+
 ## 0.56.0
 
 - Publicou `capability-reference-v7` com a rubrica 0–4 de ownership.

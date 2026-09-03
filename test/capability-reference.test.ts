@@ -18,10 +18,11 @@ const initialCapabilities = [
   'evolvability',
   'organizational-learning',
   'team-ownership',
+  'enabling-governance',
 ];
 
-test('catálogo publica dez referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v7');
+test('catálogo publica onze referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v8');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -40,6 +41,17 @@ test('catálogo publica dez referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('governança distingue risco e efeito sem premiar controle nominal', () => {
+  const reference = capabilityReferenceCatalog['enabling-governance'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /aprovaç|fila|relacion|indiferenci/i);
+  assert.match(reference.stage(3).behavior, /risco|evidência|proporcional|autonomia/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /efeito|feedback|risco|espera|exceç/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /comitê|auditoria|policy as code/i);
+  assert.ok(reference.interpretationLimits.some((item) => /comitê|política|auditoria|ferramenta/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /obrigaç|segregaç|independente/i.test(item)));
 });
 
 test('ownership exige autoridade e consequência, não declaração de estrutura', () => {

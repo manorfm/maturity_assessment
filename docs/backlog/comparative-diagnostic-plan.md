@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `enabling-governance`, que possui ampla cobertura de
-decisão, restrições e consequências. Os estágios devem observar se controles
-distinguem risco, devolvem feedback no fluxo e permitem autonomia segura, separando
-obrigação legítima de aprovação compensatória; comitê, política, auditoria ou
-ferramenta de policy não podem determinar estágio.
+Escrever a próxima rubrica para `leadership-management`, distinguindo liderança que
+torna risco, carga e conflito decidíveis de gestão que protege ocupação, prazo ou
+culpa local. Os estágios devem observar se decisões removem restrições, protegem
+capacidade e aprendem pelo efeito sem atribuir cultura a uma pessoa; cargo,
+one-on-one, modelo de liderança ou cerimônia não podem determinar estágio.

@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as dez referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as onze referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -15,6 +15,16 @@ test('matriz relaciona as dez referências a sinais tipados sem inferência text
     assert.equal(item.desirabilityCues, 0, item.capabilityId);
     assert.ok(item.gaps.length > 0 || item.status === 'minimum-covered', item.capabilityId);
   }
+});
+
+test('governança cobre proporcionalidade, compensação e revisão pelo efeito', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const governance = matrix.references.find((item) => item.capabilityId === 'enabling-governance');
+  assert.ok(governance);
+  assert.equal(governance.status, 'minimum-covered');
+  assert.ok(governance.direct.nodes >= 20);
+  assert.ok(governance.direct.patterns >= 30);
+  assert.deepEqual(governance.layers, ['consistency', 'outcome', 'practice', 'system']);
 });
 
 test('automação do SDLC combina prática com consequência observável', () => {
