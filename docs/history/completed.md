@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de direção de produto
+
+- Publicado `capability-reference-v11` com cinco estágios ligando problema,
+  resultado, prioridade e decisão de investimento; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de colaboração
 
 - Publicado `capability-reference-v10` com cinco estágios para dependência,

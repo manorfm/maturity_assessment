@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.60.0
+
+- Publicou `capability-reference-v11` com a rubrica 0–4 de direção de produto.
+- Passou a comparar problema, resultado, prioridade, autoridade e decisão de
+  investimento, incluindo redução ou interrupção da solução.
+- Impediu que OKR, roadmap, cargo de produto, Scrum, cerimônia ou dashboard
+  determinem estágio por presença.
+
 ## 0.59.0
 
 - Publicou `capability-reference-v10` com a rubrica 0–4 de colaboração.

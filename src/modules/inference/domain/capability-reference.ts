@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v10' as const;
+export const capabilityReferenceVersion = 'capability-reference-v11' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -326,6 +326,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Modos de interação explícitos com pedido, resultado, responsabilidade e condição de encerramento.', 'Pareamento, facilitação temporária e comunidades de prática quando produzem execução posterior e não dependência permanente.'],
     optionalToolFamilies: ['Gestão de dependências, decisões, pedidos, tempos de espera e capacidades compartilhadas.', 'Documentação colaborativa, comunicação contextual e observação do fluxo entre grupos.'],
     interpretationLimits: ['Ferramenta de comunicação, reunião, cerimônia, proximidade física ou modelo nominal de interação não produzem estágio por presença.', 'Conflito, divergência ou variação entre grupos não são fragilidade automática; consequência, reciprocidade, poder e adequação ao contexto precisam ser observados.'],
+  },
+  {
+    capabilityId: 'product-direction',
+    title: 'Direção de produto e valor',
+    purpose: 'Conectar problema, público, resultado e investimento para que evidência de uso, risco e valor consiga alterar prioridade, solução ou continuidade antes de ampliar desperdício.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir qual problema e público originaram a iniciativa, qual resultado justificou o investimento nem quem podia rever a direção.', 'Pedido, solução, atividade e valor permanecem indistintos, impedindo explicar por que o trabalho começou, continuou ou deveria ser interrompido.', 'Sob pressão, prioridades mudam sem critério recuperável e nenhuma evidência permite distinguir urgência real de preferência, patrocínio ou ocupação.'),
+      stage(1, 'Reativo', 'Solução, prazo, escopo ou pedido patrocinado definem a direção; uso e resultado são observados principalmente depois que o compromisso já foi entregue.', 'O sistema otimiza volume e aceite, acumula urgências e ajusta funcionalidades sem confrontar se o problema ou investimento ainda se sustentam.', 'Sob pressão, feedback é adiado, risco técnico perde espaço e concluir o combinado substitui a possibilidade de reduzir, redirecionar ou parar.'),
+      stage(2, 'Repetível', 'Algumas iniciativas explicitam problema e resultado e ajustam solução, mas prioridade, incentivo e autoridade para rever investimento variam conforme produto e patrocínio.', 'Aprendizado melhora partes da solução, enquanto compromissos maiores permanecem protegidos e capacidade continua fragmentada por demandas concorrentes.', 'Sob pressão, o objetivo volta a ser escopo, o resultado vira reporte posterior e evidência contrária produz otimização local sem rever a direção.'),
+      stage(3, 'Gerenciado', 'Problema, público, resultado, risco e custo de atraso orientam decisões; evidência pode mudar prioridade, reduzir solução e rever investimento com autoridade explícita.', 'Capacidade se concentra em resultados compartilhados, iniciar algo novo torna a interrupção visível e negócio e tecnologia acompanham a consequência após a entrega.', 'Sob pressão, o grupo reduz o teste ou o escopo, preserva o resultado como critério e torna explícito qual investimento ou compromisso foi trocado.'),
+      stage(4, 'Adaptativo', 'Feedback de uso, efeito, risco, custo e aprendizagem modifica continuamente direção, prioridade e investimento, incluindo interromper apostas sem resultado sustentado.', 'O sistema melhora a qualidade das escolhas e reduz capacidade consumida por soluções, urgências ou incentivos desconectados do valor demonstrado.', 'Sob pressão, sinais contrários continuam capazes de rever a direção e o menor experimento útil protege aprendizagem antes de ampliar o compromisso.'),
+    ],
+    evidenceRequired: ['Uma iniciativa recente reconstruída do problema e resultado esperado até prioridade, investimento, entrega e evidência de efeito.', 'Uma decisão posterior mostrando se uso, risco ou resultado manteve, alterou, reduziu ou interrompeu solução e investimento.'],
+    enablingConditions: ['Autoridade compartilhada entre negócio, produto e tecnologia para alterar prioridade, escopo e continuidade pelo resultado.', 'Acesso oportuno a pessoas afetadas, uso, risco, custo e sinais de valor no momento da decisão.'],
+    regressionSignals: ['Prazo, volume entregue ou aceite voltam a definir sucesso sem evidência de mudança para o público ou resultado pretendido.', 'Resultados são reportados, mas novas prioridades já ocupam a capacidade e nenhuma decisão de investimento pode ser revista.'],
+    compatiblePractices: ['Gestão de produto orientada a problema, hipótese, resultado e decisões explícitas de investimento.', 'Portfólio adaptativo e discovery contínuo com apostas menores, trade-offs visíveis e autoridade para interromper.'],
+    optionalToolFamilies: ['Pesquisa, experimentação, análise de uso, resultado e jornada.', 'Gestão de objetivos, decisões, portfólio, capacidade, custos e riscos.'],
+    interpretationLimits: ['OKR, roadmap, cargo de produto, Scrum, cerimônia ou dashboard não produzem estágio por presença.', 'Resultado local favorável não prova direção adaptativa quando prioridade e investimento permanecem imunes à evidência contrária.'],
   },
 ];
 

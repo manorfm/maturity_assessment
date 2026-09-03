@@ -21,10 +21,11 @@ const initialCapabilities = [
   'enabling-governance',
   'leadership-management',
   'collaboration',
+  'product-direction',
 ];
 
-test('catálogo publica treze referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v10');
+test('catálogo publica catorze referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v11');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -43,6 +44,16 @@ test('catálogo publica treze referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('direção de produto exige autoridade para rever investimento pelo resultado', () => {
+  const reference = capabilityReferenceCatalog['product-direction'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /solução|prazo|escopo|urgência|pedido/i);
+  assert.match(reference.stage(3).behavior, /problema|resultado|prioridade|investimento|decis/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|resultado|investimento|interromp/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /OKR|roadmap|product manager|Scrum/i);
+  assert.ok(reference.interpretationLimits.some((item) => /OKR|roadmap|cargo|cerimônia/i.test(item)));
 });
 
 test('colaboração resolve dependência e transfere capacidade, não premia proximidade', () => {
