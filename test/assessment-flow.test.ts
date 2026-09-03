@@ -342,6 +342,8 @@ test('fluxo de trabalho investiga objetivo bloqueio e decisão antes da constru�
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-work', 'waiting-external'), 'blocked-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-cause', 'permission-policy'), 'decision-context');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'decision-context', 'options-recorded'), 'change-verification');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'change-verification', 'repeatable-checks'), 'technical-feedback-consequence');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'technical-feedback-consequence', 'changed-before-integration'), 'team-pressure');
 });
 
 test('aprendizado gera sinais cruzados e compartilhamento aprofunda apenas quando aplicável', () => {
@@ -385,7 +387,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 320);
+  assert.equal(signals.length, 324);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

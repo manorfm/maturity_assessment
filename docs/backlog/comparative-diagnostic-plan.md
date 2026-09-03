@@ -81,6 +81,7 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Adicionar ao evento de mudança uma consequência observável para feedback técnico:
-tempo até retorno, decisão tomada, contorno, escape ou retrabalho. O novo sinal deve
-ser factual, chegar à camada de resultado e não escolher causa nem ferramenta.
+Mapear as folhas restantes da taxonomia contra o contrato de rubrica e selecionar
+uma única folha com evidência factual suficiente, mas sem referência 0–4. Escrever
+seus cinco comportamentos, efeitos e limites antes de conectá-la ao relatório; a
+presença de prática ou tecnologia não pode determinar estágio.

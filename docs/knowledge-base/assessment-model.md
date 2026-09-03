@@ -133,11 +133,12 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, descoberta/validação, autonomia de plataforma e sistema
-organizacional atingem essa cobertura mínima. Feedback técnico repetível permanece
-parcial: possui sinais de prática e sistema, mas ainda não possui consequência na
-camada de resultado ou aprendizado. Essa lacuna deve orientar autoria factual, não
-ser preenchida por aumento de peso.
+No corte atual, as quatro referências atingem cobertura mínima. Em feedback
+técnico, a prática é confrontada com a consequência da mesma mudança: decisão
+alterada a tempo, retrabalho posterior, avanço sem retorno ou efeito descoberto
+mais tarde. O fato chega à camada de resultado sem escolher causa ou ferramenta e
+sem aumentar o peso da prática. Cobertura mínima continua sendo propriedade do
+instrumento, não evidência de maturidade da organização nem validação da rubrica.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

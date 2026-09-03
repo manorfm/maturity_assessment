@@ -17,6 +17,16 @@ test('matriz relaciona as quatro referências a sinais tipados sem inferência t
   }
 });
 
+test('automação do SDLC combina prática com consequência observável', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const automation = matrix.references.find((item) => item.capabilityId === 'sdlc-automation');
+  assert.ok(automation);
+  assert.equal(automation.status, 'minimum-covered');
+  assert.ok(automation.layers.includes('practice'));
+  assert.ok(automation.layers.includes('outcome'));
+  assert.doesNotMatch(automation.gaps.join(' '), /consequência/i);
+});
+
 test('matriz distingue efeito indireto, perspectiva única e ausência', () => {
   const nodes = [{
     id: 'one', type: 'scenario' as const, title: 'Evento', scenario: 'Na última mudança.', prompt: 'O que ocorreu?',

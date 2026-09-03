@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Consequência do feedback técnico
+
+- Publicado `evidence-anamnesis-pilot-v13` com consequência factual do primeiro
+  retorno técnico na mesma mudança, fechando a cobertura mínima de
+  `sdlc-automation` sem escolher causa ou ferramenta; ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-09-02 — Coerência da apresentação sintética
 
 - O showcase passou a separar cenário, expectativa e resultado, comparar três

@@ -53,6 +53,17 @@ test('etapas factuais não pedem causa nem combinam decisão, mecanismo e conseq
   }
 });
 
+test('aprofundamento de feedback técnico registra consequência sem escolher causa ou ferramenta', () => {
+  const node = graph.find((candidate) => candidate.id === 'technical-feedback-consequence');
+  assert.ok(node);
+  assert.match(node.scenario, /mesma mudança/i);
+  for (const option of node.options.filter((item) => item.observation === undefined)) {
+    assert.equal(option.factKind, 'consequence');
+    assert.doesNotMatch(`${option.label} ${option.signals.map((signal) => signal.pattern).join(' ')}`, /causa-|sast|scanner|ferramenta/i);
+    assert.ok(option.signals.some((signal) => signal.details.includes('sdlc-automation') && signal.layer === 'outcome'));
+  }
+});
+
 test('estimativa segue a alternativa real em vez do primeiro sucessor', () => {
   assert.ok(
     estimatePathScenarios('ready-to-release', { 'ready-to-release': 'manual-package' })

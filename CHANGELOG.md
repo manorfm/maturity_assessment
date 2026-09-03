@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.50.0
+
+- Acrescentou à mudança uma consequência factual para o primeiro retorno técnico:
+  decisão alterada a tempo, retrabalho, contorno ou efeito descoberto mais tarde.
+- Levou `sdlc-automation` à camada de resultado e fechou a cobertura mínima das
+  quatro referências sem alterar pesos nem pontuar ferramenta.
+- Publicou o grafo `evidence-anamnesis-pilot-v13` com 89 nós.
+
 ## 0.49.0
 
 - Relacionou as quatro referências iniciais aos metadados tipados das perguntas e

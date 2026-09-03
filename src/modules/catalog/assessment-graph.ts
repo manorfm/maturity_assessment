@@ -1,6 +1,6 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v12';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v13';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -356,7 +356,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'qa-cycle', label: 'Uma pessoa de qualidade executa a maior parte das verificações quando recebe uma versão e um ambiente utilizável.', signals: [{ capability: 'qualidade', pattern: 'qualidade-como-handoff', weight: -2 , details: ['quality-strategy', 'collaboration'], layer: 'practice', constraint: 'none' }] },
       { id: 'developer-memory', label: 'Quem alterou valida os casos que conhece; outros efeitos aparecem na revisão, regressão ou uso posterior.', signals: [{ capability: 'engenharia', pattern: 'verificacao-dependente-de-memoria', weight: -2 , details: ['quality-strategy', 'technical-capability', 'organizational-learning'], layer: 'knowledge', constraint: 'none' }] },
       { id: 'slow-suite', label: 'Há verificações automatizadas, mas o retorno demora ou varia tanto que frequentemente seguimos sem esperar.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1 , details: ['sdlc-automation', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
-    ], next: 'team-pressure',
+    ], next: 'technical-feedback-consequence',
   },
   {
     id: 'environment-access', title: 'Um ambiente para aprender',
@@ -972,6 +972,17 @@ const authoredNodes: AssessmentNode[] = [
 ];
 
 const eventFollowupNodes: AssessmentNode[] = [
+  {
+    id: 'technical-feedback-consequence', type: 'probe', title: 'O efeito do primeiro retorno',
+    scenario: 'Continue na mesma mudança pequena e considere o primeiro retorno técnico que poderia alterar a decisão de integrá-la.',
+    prompt: 'O que ocorreu depois desse primeiro retorno?',
+    options: [
+      { id: 'changed-before-integration', factKind: 'consequence', label: 'A mudança foi corrigida ou confirmada antes de ser integrada, enquanto o contexto ainda estava disponível.', signals: [{ capability: 'engenharia', pattern: 'feedback-tecnico-rapido', weight: 2, details: ['sdlc-automation'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'rework-after-integration', factKind: 'consequence', label: 'O retorno chegou depois da integração e exigiu reabrir a mudança ou refazer parte do trabalho.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'continued-without-result', factKind: 'consequence', label: 'O grupo avançou sem o resultado porque esperar eliminaria o tempo restante para concluir.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'effect-found-later', factKind: 'consequence', label: 'Um efeito da mudança só apareceu em uma verificação posterior ou depois de chegar a quem a utiliza.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation'], layer: 'outcome', constraint: 'undetermined' }] },
+    ], next: 'team-pressure',
+  },
   {
     id: 'release-event-consequence', type: 'probe', title: 'O efeito daquela espera',
     scenario: 'Volte à mesma mudança usada na resposta anterior e ao momento em que ela finalmente ficou disponível.',

@@ -94,7 +94,7 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com 88 nós, aprofundamentos
+O corte vigente implementa esses cinco passos com 89 nós, aprofundamentos
 condicionais e nove perspectivas — gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design — escolhidas durante
 a entrevista. Um contexto neutro adicional registra responsabilidades exercidas,
@@ -208,6 +208,11 @@ do nó e variantes de perspectiva. Ela não usa regex de conteúdo para atribuir
 capacidade e não altera sinal, peso, inferência ou relatório. A linha de base expõe
 a matriz completa para que uma lacuna de autoria não seja confundida com baixa
 capacidade da organização avaliada.
+
+O grafo `evidence-anamnesis-pilot-v13` acrescenta uma consequência factual ao
+feedback técnico durante a construção. As quatro referências iniciais atingem
+cobertura mínima na matriz; esse estado mede somente suficiência estrutural do
+instrumento, não maturidade, acurácia ou calibração empírica.
 
 A taxonomia executiva possui oito pilares. Operação/confiabilidade,
 plataforma/experiência de engenharia e segurança/risco são ramos separados, embora
