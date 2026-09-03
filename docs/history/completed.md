@@ -40,6 +40,11 @@ Para uma visão resumida dos marcos por versão, consulte o
   privacidade, severidade, conhecimento, comunicação e mudança sistêmica; a dívida
   genérica chegou a zero, o fallback mecânico foi removido e `causal-catalog-v9`
   passou a ser a rede vigente.
+- Consolidado o produto como diagnóstico causal com referencial comparativo de
+  alta performance, preservando estágio comportamental separado de confiança e
+  performance operacional; ver
+  [`product-vision.md`](../knowledge-base/product-vision.md) e
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

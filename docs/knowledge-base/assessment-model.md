@@ -109,9 +109,36 @@ empírica. Não é o diagnóstico nem uma nota de framework:
 3. **Gerenciado:** comportamento é consistente, observável e possui ownership.
 4. **Adaptativo:** feedback modifica ativamente políticas, produto e plataforma.
 
+Essa escala também expressa a distância comportamental para uma referência de alta
+performance, desde que cada folha possua uma rubrica própria. A referência não é
+um pacote universal de práticas: declara propósito, comportamentos observáveis,
+condições habilitadoras, efeitos, evidências, reação sob pressão, sinais de
+regressão e limites de interpretação. Uma folha sem esse contrato continua com a
+estimativa direcional vigente, mas não pode alegar comparação normativa completa.
+
+O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
+é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer
+outro nome. Da mesma forma, tecnologia antiga não reduz o estágio por idade: perde
+sustentação quando os eventos demonstram variação, espera, risco, baixa
+reprodutibilidade, dependência pessoal, ausência de rastreabilidade ou incapacidade
+de aprender.
+
 Não haverá média simples entre pilares. O relatório deve destacar capacidades
 limitantes, relações causais plausíveis e confiança. Uma nota agregada, se existir,
 será secundária e explicável.
+
+O relatório preserva três leituras independentes:
+
+1. **diagnóstico causal**, que explica comportamento, efeito, mecanismo, contenção
+   e autoridade;
+2. **estágio comportamental**, que localiza a distância para a referência daquela
+   capacidade;
+3. **performance operacional**, formada por telemetria de aplicações ou serviços
+   quando ela existir, sem ser inferida da entrevista.
+
+Confiança e cobertura acompanham as três leituras e nunca são fundidas num score
+único. Categoria de performance DORA depende das métricas vigentes por aplicação
+ou serviço e de referência comparável; não deriva do estágio 0–4.
 
 O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
 os oito eixos macro. A leitura começa pelo cartão de diagnóstico. Estágio ordinal

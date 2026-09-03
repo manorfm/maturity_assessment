@@ -35,7 +35,9 @@ produto, com engenharia e operação como efeitos.
 ## O que esta evolução recusa
 
 - Expandir a árvore ou o tronco para parecer mais “de engenharia”.
-- Pontuar prática, framework, ferramenta, cargo ou métrica DORA.
+- Pontuar framework, ferramenta, cargo ou métrica DORA por presença. O estágio
+  comportamental comparativo aprovado posteriormente está especificado na base de
+  conhecimento e evolui pelo `comparative-diagnostic-plan.md`.
 - Transformar a entrevista em inventário técnico (Kubernetes, Helm, Vault).
 - Observation identificável (entrevista, pessoa, time no grão).
 - Reescrever o runtime em uma cadeia de 16 etapas.

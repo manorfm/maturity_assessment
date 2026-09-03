@@ -14,6 +14,12 @@ Estágio do comportamento, cobertura temática, posterior e prioridade são medi
 Uma nota baixa não escolhe uma solução sozinha; grupos com a mesma nota podem ter
 causas e experimentos diferentes.
 
+O estágio pode localizar a distância para o comportamento de alta performance da
+capacidade, mas não seleciona a intervenção. A recomendação continua dependendo da
+cadeia `fato -> efeito -> hipótese causal -> contenção -> autoridade -> capacidade
+necessária`. A rubrica comparativa define o destino comportamental; o diagnóstico
+causal decide qual caminho é plausível neste contexto.
+
 O finding separa ainda problema, capacidades afetadas e capacidade necessária para
 resolver a causa. A prontidão dessa capacidade usa evidências positivas do recorte e
 é classificada como não demonstrada, declarada, local, operacional ou adaptativa.
@@ -172,6 +178,12 @@ padrão não vira várias prioridades apenas porque atravessa pilares.
 O catálogo diferencia correção de um padrão negativo e evolução de uma prática
 intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade abaixo
 de 4 pode receber evolução quando as respostas sustentam um passo concreto.
+
+Prática, processo, framework, técnica e família de ferramenta podem compor a
+direção, nunca a evidência inicial. Cada opção deve explicar qual comportamento
+pretende habilitar, por que é compatível com o mecanismo, quais pré-condições exige,
+o que não resolve e como seu efeito será verificado. Exemplos de produto ou marca
+permanecem ilustrativos e não alteram estágio, confiança ou prioridade.
 
 ## Sequenciamento da transformação
 

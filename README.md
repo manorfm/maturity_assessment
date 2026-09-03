@@ -6,10 +6,12 @@ realmente acontece: decisões, comportamentos, restrições, consequências e
 aprendizado. Ferramentas, cargos, cerimônias e frameworks fornecem contexto, mas
 não geram evidência de capacidade por existirem nominalmente.
 
-O produto não é um framework de maturidade. O resultado esperado é um diagnóstico
-explicável — comportamento, hipóteses de causa, confiança e menor experimento —
-não um nível. O repositório ainda se chama `maturity_assessment`; isso não define
-o propósito.
+O produto não é um checklist de maturidade. Ele combina um diagnóstico explicável
+— comportamento, hipóteses de causa, confiança e menor experimento — com um
+referencial comparativo de alta performance por capacidade. O estágio 0–4 localiza
+a distância comportamental depois do diagnóstico; ferramenta, framework ou cargo
+não pontuam por presença. O repositório ainda se chama `maturity_assessment`; isso
+não define o propósito.
 
 O MVP está concluído e pronto para piloto controlado. O first screen do relatório já é o diagnóstico
 ([plano](docs/backlog/engineering-diagnostic-plan.md)). O instrumento ainda precisa
@@ -27,19 +29,21 @@ problemas abertos sem associar a entrevista a convite, participação ou pessoa.
 
 ## Objetivo
 
-O produto procura responder quatro perguntas:
+O produto procura responder cinco perguntas:
 
 1. Quais capacidades do sistema de trabalho são sustentáveis e quais são frágeis?
 2. O que limita a evolução: conhecimento, processo, ferramenta, acesso, arquitetura,
    governança, cultura ou desenho organizacional?
 3. Em qual parte da estrutura o problema aparece e até onde seu efeito se propaga?
 4. Qual é o menor experimento verificável capaz de melhorar a situação?
+5. Qual distância comportamental existe para uma capacidade de alta performance?
 
-O resultado esperado não é apenas uma nota. É um diagnóstico explicável que conecta:
+O resultado esperado não é apenas uma nota. É um diagnóstico explicável e uma
+comparação condicionada à evidência que conectam:
 
 ```text
 contexto → comportamento → evidência → sintoma → causa provável
-         → impacto → intervenção → medida de sucesso
+         → impacto → comportamento-alvo → intervenção → medida de sucesso
 ```
 
 ## Como funciona

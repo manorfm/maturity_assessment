@@ -23,9 +23,11 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
 - Tratar confiança probabilística como não calibrada até piloto com rótulos externos;
   clique ou aceitação de recomendação não constituem verdade de treinamento.
 - O produto é um diagnóstico de engenharia do sistema sociotécnico de entrega,
-  não um framework de maturidade. Os oito pilares indexam o mapa de problemas;
-  estágio ordinal e radar são leituras auxiliares. A sequência está em
-  `docs/backlog/engineering-diagnostic-plan.md`. Ferramenta, framework e cargo
-  continuam sem pontuar.
+  não um checklist de maturidade. Ele combina diagnóstico causal e referencial
+  comparativo de alta performance. Os oito pilares indexam o mapa de problemas;
+  estágio ordinal e radar são leituras auxiliares. O estágio expressa consistência
+  do comportamento contra uma rubrica específica da capacidade, nunca presença de
+  ferramenta, framework ou cargo. A entrevista sozinha não atribui categoria DORA
+  nem declara uma empresa “elite”.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

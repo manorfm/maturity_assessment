@@ -37,7 +37,10 @@ validação de linguagem com as disciplinas, evidência externa) está no
 [`plano de evolução`](../backlog/instrument-evolution-plan.md). A decisão de
 apresentar o produto como diagnóstico de engenharia — e não como framework de
 maturidade — está no
-[`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
+[`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md). A evolução
+aberta para tornar explícita a distância entre o comportamento observado e uma
+referência de alta performance está no
+[`plano comparativo`](../backlog/comparative-diagnostic-plan.md).
 
 ## Princípio central
 
@@ -53,3 +56,9 @@ sistema são sinais mais fortes.
 Da mesma forma, Kafka, Kubernetes, cloud, DORA ou um time de plataforma não geram
 pontos. Essas informações podem selecionar cenários relevantes; somente decisões,
 comportamentos, restrições, resultados e aprendizado sustentam inferências.
+
+O produto não precisa escolher entre causa e comparação. O finding causal é a
+leitura principal; o estágio 0–4 resume, de modo secundário, a distância entre o
+comportamento demonstrado e uma referência específica da capacidade. Práticas e
+famílias de ferramentas podem aparecer como direção quando atacam o mecanismo
+observado, mas sua existência nominal continua sem produzir pontos.
