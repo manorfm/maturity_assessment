@@ -242,9 +242,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "maturidade-nao-resiste-urgencia": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "O caminho seguro precisa ser também o caminho rápido sob pressão",
+    "why": "Transformar o atalho recorrente em fluxo automatizado e auditável testa se segurança operacional resiste à urgência sem depender de disciplina excepcional."
   },
   "dependencia-operacional-sob-urgencia": {
     "source": "Well-Architected — Security",
@@ -267,9 +267,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "A prática é o ciclo de incidente, não a ferramenta de observabilidade."
   },
   "severidade-inconsistente": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Resilience engineering / SRE",
+    "principle": "Severidade nasce de impacto e abrangência observáveis",
+    "why": "Calibrar critérios contra incidentes reais reduz variação por autoridade ou percepção individual e liga urgência às decisões que o impacto justificou."
   },
   "incidente-por-escalada-relacional": {
     "source": "SRE / blameless postmortem",
@@ -332,9 +332,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Um contrato mínimo de correlação entre componentes testa se o contexto atravessa o limite técnico sem exigir acesso direto ou reconstrução manual do evento."
   },
   "causa-privacidade-operacional": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Well-Architected — Security",
+    "principle": "Investigação preserva minimização, finalidade e acesso proporcional",
+    "why": "Identificadores técnicos e retenção mínima permitem correlacionar a jornada sem tornar dado pessoal o mecanismo padrão para diagnosticar falhas operacionais."
   },
   "correcao-direta-na-producao": {
     "source": "Infrastructure as Code / SRE",
@@ -437,9 +437,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Um gatilho antecipado de espera, recorrência ou desgaste cria oportunidade de adaptação enquanto o custo e o risco ainda são menores."
   },
   "mudanca-centralizada": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Quem executa o fluxo precisa de autonomia dentro de limites explícitos",
+    "why": "Delegar um experimento reversível testa se o grupo consegue adaptar o trabalho com segurança, em vez de depender da liderança para toda mudança do sistema."
   },
   "causa-melhoria-sem-capacidade": {
     "source": "Lean / Accelerate",
@@ -462,9 +462,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Proteção não punitiva permite que fatos difíceis entrem na investigação e produzam mudança verificável."
   },
   "mudanca-sobrescrita": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Uma origem reproduzível impede promoção de composição incompleta",
+    "why": "Verificar que a versão promovida incorpora a linha compartilhada detecta sobrescrita no fluxo, antes que comunicação manual precise reconstruir qual mudança se perdeu."
   },
   "fonte-nao-confiavel": {
     "source": "Continuous Delivery",
@@ -472,9 +472,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Pipeline nominal não substitui o comportamento sob pressão."
   },
   "comunicacao-de-mudanca-fragil": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Continuous Delivery",
+    "principle": "Compatibilidade e ownership precisam ser detectáveis no fluxo",
+    "why": "Automatizar a detecção de alterações incompatíveis libera comunicação humana para decisões e exceções, sem usá-la como mecanismo básico de sincronização."
   },
   "conflito-de-integracao-tardio": {
     "source": "Continuous Delivery",
@@ -572,9 +572,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Reservar melhoria proporcional na próxima alteração produz evidência contínua sobre defeitos, espera ou dependência sem aguardar uma iniciativa futura incerta."
   },
   "codigo-depende-de-especialista": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Conhecimento crítico torna-se capacidade por colaboração e feedback reproduzível",
+    "why": "Outra pessoa concluir uma mudança com verificações confiáveis demonstra transferência de execução; documentação ou presença do especialista isoladamente não demonstram isso."
   },
   "sustentabilidade-em-grande-lote": {
     "source": "Arquitetura evolutiva / DDD",
@@ -617,14 +617,14 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Dar autonomia sobre uma passagem de alta espera testa se a fronteira pode sustentar o resultado sem coordenação gerencial recorrente entre especialistas."
   },
   "otimizacao-local-pela-gestao": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "O fluxo ponta a ponta prevalece sobre metas locais de utilização",
+    "why": "Medir espera no sistema e atribuir ownership ao gargalo compartilhado evita que cada área melhore sua ocupação enquanto aumenta fila ou transferência para outra etapa."
   },
   "mudanca-sistemica-em-grande-lote": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Lean / Accelerate",
+    "principle": "Mudança sistêmica aprende por experimento pequeno antes de ampliar",
+    "why": "Proteger capacidade para agir num gargalo produz evidência sobre o mecanismo e reduz risco de institucionalizar governança ou escopo amplo sobre uma hipótese não testada."
   },
   "portfolio-por-prioridade-executiva": {
     "source": "Lean / Accelerate",
@@ -677,14 +677,14 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Suíte ou scanner presente não prova estratégia de qualidade."
   },
   "nao-funcionais-por-campanha": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Qualidade no fluxo",
+    "principle": "Risco não funcional recebe feedback contínuo na mudança",
+    "why": "Verificar desempenho, segurança ou resiliência no fluxo reduz o intervalo entre introduzir e descobrir risco que campanhas periódicas deixam acumular em lote."
   },
   "nao-funcionais-descobertos-em-producao": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Qualidade no fluxo",
+    "principle": "Limites críticos são exercitados antes da exposição relevante",
+    "why": "Carga ou falha representativa numa jornada crítica antecipa evidência sobre o limite, sem fingir que um ambiente de teste reproduz todo o comportamento de produção."
   },
   "seguranca-depende-de-reconhecimento-e-especialista": {
     "source": "Qualidade no fluxo",
@@ -692,9 +692,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Suíte ou scanner presente não prova estratégia de qualidade."
   },
   "mudanca-aguarda-especialista": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Team Topologies",
+    "principle": "Especialidade entra no fluxo para habilitar execução, não criar fila permanente",
+    "why": "Colaboração temporária e documentação executável são verificadas quando outra pessoa conclui a mudança com segurança, reduzindo espera sem eliminar conhecimento especializado."
   },
   "aprendizado-tecnico-sem-caminho-repetivel": {
     "source": "Well-Architected / platform engineering",
@@ -1107,9 +1107,9 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "why": "Mais coordenação ou herói de contexto costuma compensar limite ruim, não resolvê-lo."
   },
   "divida-revista-por-efeito": {
-    "source": "Melhoria contínua",
-    "principle": "Mudança pequena, dono, sinal de efeito",
-    "why": "A intervenção ataca o comportamento observado, não um inventário de práticas."
+    "source": "Arquitetura evolutiva / DDD",
+    "principle": "Recorrência orienta prevenção no desenho e nos guardrails",
+    "why": "Converter uma causa repetida em verificação ou limite de design testa redução de reincidência, indo além de priorizar cada ocorrência de dívida depois que reaparece."
   },
   "seguranca-concentrada-em-scanners": {
     "source": "Qualidade no fluxo",

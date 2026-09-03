@@ -36,6 +36,10 @@ Para uma visão resumida dos marcos por versão, consulte o
 - Dez padrões de decisão e aprendizagem passaram a distinguir evidência, foco,
   capacidade, discovery e revisão de direção, reduzindo a dívida genérica de 23
   para 13 e publicando `causal-catalog-v8`.
+- Os treze fundamentos restantes receberam contratos próprios para risco,
+  privacidade, severidade, conhecimento, comunicação e mudança sistêmica; a dívida
+  genérica chegou a zero, o fallback mecânico foi removido e `causal-catalog-v9`
+  passou a ser a rede vigente.
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

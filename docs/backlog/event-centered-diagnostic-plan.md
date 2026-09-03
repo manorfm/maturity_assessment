@@ -15,10 +15,8 @@ restrição, consequência e aprendizado.
 
 O relatório separa mecanismo, contenção, autoridade, impacto e prescrição, porém
 parte dessas conclusões nasce de respostas fechadas que já nomeiam a causa. A
-direção técnica possui bons contratos em alguns padrões, mas 13 padrões ainda
-contêm o fundamento genérico; fluxo, prioridade, melhoria, arquitetura, evolução,
-autonomia, dependências e operação sustentável já possuem quarenta fundamentos
-específicos, e decisão e aprendizagem acrescentam outros dez. Práticas, técnicas e famílias de
+direção técnica já substituiu todos os fundamentos genéricos por contratos
+específicos. Práticas, técnicas e famílias de
 ferramentas longe da leitura principal de especialistas e times.
 
 Isso reduz a capacidade de:
@@ -319,8 +317,6 @@ O plano só sai do backlog quando:
 - esteira, segurança, ambiente, descoberta de domínio, mapeamento arquitetural,
   parque tecnológico e ferramentas homologadas possuem contratos condicionados;
 - cada direção separa prática, técnica, habilitador e família de ferramenta;
-- fundamentos genéricos do escopo promovido foram substituídos por contratos
-  específicos;
 - as três estruturas organizacionais contrastantes produzem diagnósticos coerentes;
 - entrevistas cognitivas e revisão cega cumprem os gates vigentes;
 - a base de conhecimento descreve o novo comportamento e o backlog contém somente

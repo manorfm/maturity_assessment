@@ -16,8 +16,7 @@ export type InterventionEvidenceRule = { evidencePatterns?: string[]; contradict
 export function defineInterventionCatalog(seeds: Record<string, InterventionSeed>, rules: Record<string, InterventionEvidenceRule> = {}): Record<string, InterventionDefinition> {
   return Object.fromEntries(Object.entries(seeds).map(([pattern, seed]) => {
     const rule = rules[pattern] ?? {};
-    const baseFoundation = seed.foundation ?? foundationFor(pattern);
-    const foundation = { ...baseFoundation, why: specificFoundationWhy(baseFoundation, seed.title) };
+    const foundation = seed.foundation ?? foundationFor(pattern);
     const guidance = guidanceFor(pattern, foundation, seed.title);
     return [pattern, {
       ...seed, cause: causeFromGuidance(guidance, seed.title), action: seed.intervention, foundation, guidance,
@@ -142,18 +141,11 @@ function ownerFor(source?: string): string {
   };
   return owners[source ?? ''] ?? 'Liderança do fluxo e pessoas afetadas pelo problema';
 }
-function specificFoundationWhy(foundation: InterventionFoundation, title: string): string {
-  if (foundation.why !== 'A intervenção ataca o comportamento observado, não um inventário de práticas.') return foundation.why;
-  return `O princípio orienta um experimento para reduzir “${lowerFirst(title)}” e verificar o efeito antes de institucionalizar a solução.`;
-}
 function horizonFor(pattern: string): string {
   if (/incidente|diagnostico|telemetria|deteccao|resilien/.test(pattern)) return 'no próximo exercício controlado ou incidente equivalente';
   if (/portfolio|incentivo|lideranca|resultado/.test(pattern)) return 'no próximo ciclo de decisão de investimento';
   if (/cloud|plataforma|provisionamento|credencial|acesso/.test(pattern)) return 'nas próximas cinco utilizações do caminho';
   return 'na próxima mudança equivalente, com revisão em até 30 dias';
-}
-function lowerFirst(value: string): string {
-  return value.charAt(0).toLocaleLowerCase('pt-BR') + value.slice(1).replace(/[.]$/, '');
 }
 function priorityFactorsOf(signals: GroupSignal[], support: number): { intensity: number; reach: number } {
   return { intensity: Math.min(1, Math.abs(Math.min(...signals.map((signal) => signal.weight))) / 3), reach: Math.min(1, support) };
