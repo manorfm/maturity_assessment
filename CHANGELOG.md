@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.59.0
+
+- Publicou `capability-reference-v10` com a rubrica 0–4 de colaboração.
+- Passou a comparar contexto, decisão, reciprocidade, espera e transferência de
+  capacidade no trabalho seguinte.
+- Impediu que proximidade, reunião, cerimônia, ferramenta ou modelo nominal de
+  interação determinem estágio.
+
 ## 0.58.0
 
 - Publicou `capability-reference-v9` com a rubrica 0–4 de liderança e gestão.

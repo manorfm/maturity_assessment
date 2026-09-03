@@ -195,11 +195,11 @@ níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmen
 escopo da unidade, permitindo navegação macro→micro sem perder o recorte.
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
-`capability-reference-v9`. `CapabilityReference` rejeita base de avaliação nominal,
+`capability-reference-v10`. `CapabilityReference` rejeita base de avaliação nominal,
 estágios ausentes e dimensões observacionais incompletas. A linha de base do
 instrumento publica quantidade de referências e quantas pertencem à taxonomia. O
 catálogo cobre descoberta/validação, feedback técnico repetível, release e feedback,
-autonomia de plataforma, competência técnica, segurança de software, evolutibilidade, aprendizado organizacional, ownership, governança habilitadora, liderança e o meta-sistema organizacional; inferência e relatório ainda não
+autonomia de plataforma, competência técnica, segurança de software, evolutibilidade, aprendizado organizacional, ownership, governança habilitadora, liderança, colaboração e o meta-sistema organizacional; inferência e relatório ainda não
 consomem essas rubricas nesta versão.
 
 `capability-reference-coverage.ts` produz a projeção auditável
@@ -210,7 +210,7 @@ a matriz completa para que uma lacuna de autoria não seja confundida com baixa
 capacidade da organização avaliada.
 
 O grafo `evidence-anamnesis-pilot-v13` acrescenta uma consequência factual ao
-feedback técnico durante a construção. As doze referências vigentes atingem
+feedback técnico durante a construção. As treze referências vigentes atingem
 cobertura mínima na matriz; esse estado mede somente suficiência estrutural do
 instrumento, não maturidade, acurácia ou calibração empírica.
 

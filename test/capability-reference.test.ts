@@ -20,10 +20,11 @@ const initialCapabilities = [
   'team-ownership',
   'enabling-governance',
   'leadership-management',
+  'collaboration',
 ];
 
-test('catálogo publica doze referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v9');
+test('catálogo publica treze referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v10');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -42,6 +43,17 @@ test('catálogo publica doze referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('colaboração resolve dependência e transfere capacidade, não premia proximidade', () => {
+  const reference = capabilityReferenceCatalog.collaboration;
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /handoff|escal|coordena|fila/i);
+  assert.match(reference.stage(3).behavior, /decis|contexto|explícit|capacidade/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|trabalho seguinte|dependência|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /Slack|Microsoft Teams|Team Topologies|daily/i);
+  assert.ok(reference.interpretationLimits.some((item) => /ferramenta|reunião|cerimônia|proximidade/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /conflito|divergência|variação/i.test(item)));
 });
 
 test('liderança é avaliada pelas decisões sobre restrições, não pelo cargo', () => {

@@ -116,11 +116,12 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v9` materializa rubricas para
+A referência vigente `capability-reference-v10` materializa rubricas para
 `discovery-validation`, `sdlc-automation`, `release-feedback`,
 `platform-autonomy`, `technical-capability`, `software-security` e
 `evolvability`, `organizational-learning`, `team-ownership`,
-`enabling-governance`, `leadership-management` e `organizational-system`. Cada contrato possui propósito, cinco âncoras de
+`enabling-governance`, `leadership-management`, `collaboration` e
+`organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
 e limites. O meta-sistema organizacional é uma referência de leitura agregada; não
@@ -135,7 +136,7 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as doze referências atingem cobertura mínima. Em feedback
+No corte atual, as treze referências atingem cobertura mínima. Em feedback
 técnico, a prática é confrontada com a consequência da mesma mudança: decisão
 alterada a tempo, retrabalho posterior, avanço sem retorno ou efeito descoberto
 mais tarde. O fato chega à camada de resultado sem escolher causa ou ferramenta e
@@ -193,6 +194,13 @@ Prazo, ocupação, heroísmo, culpa e silêncio são efeitos observáveis do sis
 rótulos de uma pessoa. Cargo, one-on-one, modelo de liderança ou cerimônia não
 concedem estágio; recorrência, poder, perspectivas e consequência precisam ser
 triangulados antes de caracterizar cultura ou capacidade organizacional.
+
+Em colaboração, o estágio observa como uma dependência compartilha contexto,
+produz decisão e devolve resultado, incluindo se uma ajuda recorrente transfere
+capacidade para o trabalho seguinte. Handoff, fila, escalada e coordenação permanente
+são diferentes de parceria temporária com propósito e encerramento. Proximidade,
+reunião, cerimônia, ferramenta ou modelo nominal de interação não concedem estágio;
+conflito e variação também não são fragilidade automática.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

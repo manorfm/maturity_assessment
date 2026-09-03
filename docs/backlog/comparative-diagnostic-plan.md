@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `collaboration`, distinguindo interação que resolve
-uma dependência e transfere capacidade de coordenação permanente, reunião ou
-escalada. Os estágios devem observar contexto compartilhado, decisão, reciprocidade,
-conflito e efeito no trabalho seguinte sem premiar proximidade, ferramenta de
-comunicação, cerimônia ou modelo nominal de interação.
+Escrever a próxima rubrica para `product-direction`, distinguindo direção orientada
+a problema e resultado de compromisso por solução, prazo ou ocupação. Os estágios
+devem observar quem pode rever investimento, quais sinais mudam prioridade e como
+resultado realimenta a direção sem premiar OKR, roadmap, cargo de produto ou
+cerimônia por presença.

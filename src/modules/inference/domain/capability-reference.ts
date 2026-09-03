@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v9' as const;
+export const capabilityReferenceVersion = 'capability-reference-v10' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -307,6 +307,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Gestão de fluxo e capacidade com limites de trabalho, retirada explícita de compromissos e tratamento sistêmico de bloqueios.', 'Liderança orientada a resultado, segurança para alertar, aprendizagem sem culpa e experimentos organizacionais reversíveis.'],
     optionalToolFamilies: ['Visualização de fluxo, carga, dependências, riscos, decisões e resultados.', 'Feedback organizacional, acompanhamento de experimentos e análise agregada de saúde e aprendizagem.'],
     interpretationLimits: ['Cargo, one-on-one, modelo de liderança, cerimônia ou avaliação declarada não produzem estágio por presença.', 'Um comportamento de uma pessoa não define cultura nem capacidade do sistema; recorrência, perspectivas, poder e consequência precisam ser triangulados.'],
+  },
+  {
+    capabilityId: 'collaboration',
+    title: 'Colaboração entre responsabilidades',
+    purpose: 'Resolver dependências com contexto, decisão e reciprocidade, transferindo capacidade quando útil sem transformar especialização, fronteiras ou conflito em filas permanentes de coordenação.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quais grupos participaram da última dependência, que contexto cada parte possuía, quem decidiu nem onde o trabalho esperou.', 'Ajuda, transferência, responsabilidade e escalada ficam indistintas, impedindo explicar se a interação resolveu o problema ou apenas movimentou a fila.', 'Sob pressão, pedidos circulam por contatos informais e não resta evidência de compromisso, decisão, devolução ou condição para encerrar a interação.'),
+      stage(1, 'Reativo', 'Dependências avançam por handoff, fila, escalada relacional ou coordenação centralizada; contexto e responsabilidade se perdem a cada passagem entre grupos.', 'O trabalho espera, volta incompleto ou depende das mesmas pessoas, enquanto cada área otimiza sua parte sem uma decisão verificável sobre o resultado compartilhado.', 'Sob pressão, influência pessoal encontra atalhos, especialistas executam pelo outro grupo ou mais alinhamentos compensam a ausência de um modo confiável de interação.'),
+      stage(2, 'Repetível', 'Algumas dependências possuem interlocutores, pedidos ou parcerias reconhecíveis, mas contexto, tempo, reciprocidade e transferência de capacidade variam conforme relação e urgência.', 'Casos conhecidos fluem, enquanto mudanças novas ou conflitos retornam à coordenação manual e o conhecimento permanece concentrado após a ajuda.', 'Sob pressão, o modo explícito cede à pessoa conhecida, a colaboração vira execução terceirizada e o grupo consumidor não consegue repetir a decisão sozinho.'),
+      stage(3, 'Gerenciado', 'Cada dependência usa um modo explícito com contexto, decisão, tempo e responsabilidade claros; colaboração transfere capacidade quando recorrência torna a execução externa desnecessária.', 'Espera e retrabalho diminuem, conflitos podem alterar a decisão e grupos conseguem concluir casos equivalentes sem converter especialistas em intermediários permanentes.', 'Sob pressão, as partes preservam contexto e autoridade, tornam a espera visível e escolhem conscientemente entre ajuda, parceria temporária ou capacidade reutilizável.'),
+      stage(4, 'Adaptativo', 'Feedback do trabalho seguinte, dependências, espera, conflito e resultado modifica modos de interação, fronteiras e capacidades compartilhadas com as partes afetadas.', 'O sistema reduz coordenação recorrente e amplia aprendizagem entre grupos sem eliminar especialização, dissenso útil ou variações adequadas ao contexto.', 'Sob pressão, uma interação excepcional deixa evidência para ajustar o caminho e o próximo caso equivalente exige menos espera sem deslocar responsabilidade ou risco.'),
+    ],
+    evidenceRequired: ['Uma dependência recente reconstruída com contexto compartilhado, pedido, decisão, responsáveis, espera, conflito e resultado devolvido às partes.', 'Um trabalho seguinte mostrando se o outro grupo conseguiu decidir ou executar, se a dependência permaneceu e qual efeito a interação produziu.'],
+    enablingConditions: ['Fronteiras, autoridade e modos de interação compreensíveis para quem oferece e consome uma capacidade.', 'Tempo e segurança para compartilhar contexto, contestar decisões e transformar ajuda recorrente em aprendizagem ou capacidade reutilizável.'],
+    regressionSignals: ['Pedidos voltam a depender de contatos, escaladas, reuniões recorrentes ou uma pessoa capaz de traduzir contextos entre grupos.', 'Especialistas passam a executar casos comuns permanentemente e o grupo consumidor deixa de aprender, decidir ou responder pela consequência.'],
+    compatiblePractices: ['Modos de interação explícitos com pedido, resultado, responsabilidade e condição de encerramento.', 'Pareamento, facilitação temporária e comunidades de prática quando produzem execução posterior e não dependência permanente.'],
+    optionalToolFamilies: ['Gestão de dependências, decisões, pedidos, tempos de espera e capacidades compartilhadas.', 'Documentação colaborativa, comunicação contextual e observação do fluxo entre grupos.'],
+    interpretationLimits: ['Ferramenta de comunicação, reunião, cerimônia, proximidade física ou modelo nominal de interação não produzem estágio por presença.', 'Conflito, divergência ou variação entre grupos não são fragilidade automática; consequência, reciprocidade, poder e adequação ao contexto precisam ser observados.'],
   },
 ];
 
