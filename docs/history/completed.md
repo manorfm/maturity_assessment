@@ -50,6 +50,11 @@ Para uma visão resumida dos marcos por versão, consulte o
   contra adoção nominal e visíveis na auditoria do instrumento; ver
   [`assessment-model.md`](../knowledge-base/assessment-model.md) e
   [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+- Entregue a versão 0.49 com matriz tipada de cobertura das quatro referências,
+  distinguindo observação direta e indireta, camadas, perspectivas e lacunas sem
+  alterar pesos; feedback técnico ficou explicitamente parcial por ausência de
+  consequência observada; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
 
 ## 2026-09-01 — Showcase contrastante da onda 6
 

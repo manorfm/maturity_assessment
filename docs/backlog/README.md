@@ -27,8 +27,9 @@ prescrição, portfólio sequenciado, relatórios por autoridade, showcase contr
 pertencem à base de conhecimento vigente.
 
 O contrato aprovado e as quatro referências iniciais de alta performance estão na
-base vigente. A expansão das rubricas, a matriz de cobertura, o contrato explícito
-de comparação e a integração posterior de telemetria estão no
+base vigente, e a matriz de cobertura tipada já torna suas lacunas visíveis. A
+expansão das rubricas, as jornadas faltantes, o contrato explícito de comparação e
+a integração posterior de telemetria estão no
 [`plano comparativo`](comparative-diagnostic-plan.md).
 O preflight operacional para uma coorte cognitiva inicial de oito pessoas também
 está vigente. A coleta deve ocorrer numa única unidade para preservar o limiar; uma

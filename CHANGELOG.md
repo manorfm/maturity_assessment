@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.49.0
+
+- Relacionou as quatro referências iniciais aos metadados tipados das perguntas e
+  sinais, sem inferência por texto nem alteração de pesos.
+- Passou a distinguir cobertura direta, indireta, camadas, perspectivas, pistas de
+  desejabilidade, mistura causal e lacunas observacionais.
+- Evidenciou a ausência de consequência observada na referência de feedback
+  técnico, mantendo-a parcial até a jornada ser aprofundada.
+
 ## 0.48.0
 
 - Consolidou diagnóstico causal e referência comparativa como leituras

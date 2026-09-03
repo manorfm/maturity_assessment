@@ -12,6 +12,7 @@ import type { InterventionDefinition } from '../inference/domain/group-recommend
 import type { ExplicitFoundation } from '../inference/domain/intervention-foundations.js';
 import { capabilityReferenceCatalog, capabilityReferenceVersion } from '../inference/domain/capability-reference.js';
 import { capabilityIds } from '../inference/domain/capability-taxonomy.js';
+import { mapCapabilityReferenceCoverage } from './capability-reference-coverage.js';
 
 export type BaselineInput = {
   graph: AssessmentNode[];
@@ -50,6 +51,7 @@ export function measureInstrumentBaseline(input: BaselineInput) {
     .filter(([, foundation]) => foundation.why === genericFoundation)
     .map(([pattern]) => pattern)
     .sort();
+  const referenceCoverage = mapCapabilityReferenceCoverage(input.graph, input.nodeVariants, capabilityReferenceCatalog);
 
   return {
     graphVersion: GRAPH_VERSION,
@@ -82,6 +84,8 @@ export function measureInstrumentBaseline(input: BaselineInput) {
       version: capabilityReferenceVersion,
       references: Object.keys(capabilityReferenceCatalog).length,
       taxonomyCoverage: Object.keys(capabilityReferenceCatalog).filter((capabilityId) => capabilityIds.includes(capabilityId)).length,
+      coverageVersion: referenceCoverage.version,
+      coverage: referenceCoverage.references,
     },
   };
 }

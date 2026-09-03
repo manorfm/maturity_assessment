@@ -202,6 +202,13 @@ primeiro corte cobre descoberta/validação, feedback técnico repetível, auton
 plataforma e o meta-sistema organizacional; inferência e relatório ainda não
 consomem essas rubricas nesta versão.
 
+`capability-reference-coverage.ts` produz a projeção auditável
+`capability-reference-coverage-v1` a partir de `details`, `layer`, `pattern`, tipo
+do nó e variantes de perspectiva. Ela não usa regex de conteúdo para atribuir uma
+capacidade e não altera sinal, peso, inferência ou relatório. A linha de base expõe
+a matriz completa para que uma lacuna de autoria não seja confundida com baixa
+capacidade da organização avaliada.
+
 A taxonomia executiva possui oito pilares. Operação/confiabilidade,
 plataforma/experiência de engenharia e segurança/risco são ramos separados, embora
 um mesmo sinal possa afetar folhas de todos eles. `SolutionReadiness` é derivado de

@@ -124,6 +124,21 @@ habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opci
 e limites. O meta-sistema organizacional é uma referência de leitura agregada; não
 substitui as cinco folhas organizacionais nem atribui cultura a indivíduos.
 
+A matriz vigente `capability-reference-coverage-v1` relaciona essas referências
+somente aos metadados tipados dos sinais. Correspondência exata com a capacidade é
+direta; no meta-sistema organizacional, sinais das cinco folhas são indiretos. A
+matriz separa padrões e nós, camadas, perspectivas explícitas ou compartilhadas,
+causa emitida cedo demais, pista de resposta desejável e lacunas de comportamento,
+resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, observação
+do comportamento ou sistema, consequência e situação de pressão; não valida todos
+os textos da rubrica nem autoriza recalibrar o estágio.
+
+No corte atual, descoberta/validação, autonomia de plataforma e sistema
+organizacional atingem essa cobertura mínima. Feedback técnico repetível permanece
+parcial: possui sinais de prática e sistema, mas ainda não possui consequência na
+camada de resultado ou aprendizado. Essa lacuna deve orientar autoria factual, não
+ser preenchida por aumento de peso.
+
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer
 outro nome. Da mesma forma, tecnologia antiga não reduz o estágio por idade: perde

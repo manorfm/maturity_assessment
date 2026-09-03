@@ -34,14 +34,6 @@ condições habilitadoras, comportamento sob pressão, regressão e limites.
 **Aceite:** cada estágio possui comportamento observável específico; nenhuma
 rubrica concede ou retira estágio por nome de tecnologia.
 
-### Onda 2 — Matriz de cobertura do instrumento
-
-Relacionar perguntas e sinais às rubricas. Marcar observação direta, inferência
-indireta, perspectiva única, alternativa desejável, mistura de fato/causa e lacuna.
-
-**Aceite:** cada âncora crítica possui ao menos dois sinais independentes e as
-fronteiras relevantes são trianguláveis.
-
 ### Onda 3 — Jornadas centradas em eventos
 
 Reescrever lacunas prioritárias como reconstruções de discovery, mudança, build,
@@ -89,6 +81,6 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Relacionar perguntas e sinais existentes às quatro referências vigentes. Tornar
-visível quais âncoras têm observação direta, evidência indireta ou nenhuma cobertura,
-sem alterar pesos ou inferência.
+Adicionar ao evento de mudança uma consequência observável para feedback técnico:
+tempo até retorno, decisão tomada, contorno, escape ou retrabalho. O novo sinal deve
+ser factual, chegar à camada de resultado e não escolher causa nem ferramenta.
