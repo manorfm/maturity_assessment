@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v2' as const;
+export const capabilityReferenceVersion = 'capability-reference-v3' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -174,6 +174,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Cultura generativa e aprendizagem sem culpa baseada em condições do sistema.', 'Limites de trabalho, ownership explícito e modos de interação adequados à dependência.'],
     optionalToolFamilies: ['Visualização de fluxo, carga, dependências e resultados.', 'Registro e acompanhamento de decisões, incidentes e experimentos organizacionais.'],
     interpretationLimits: ['O instrumento não diagnostica pessoa, personalidade ou liderança individual como tóxica.', 'Cultura não é causa terminal; precisa ser decomposta em comportamento, incentivo, poder, prioridade ou reação a erro.'],
+  },
+  {
+    capabilityId: 'technical-capability',
+    title: 'Competências necessárias entram no fluxo',
+    purpose: 'Fazer o conhecimento necessário chegar ao trabalho real, permitir prática segura e distribuir capacidade de decisão e execução sem criar dependência permanente de especialistas.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir qual conhecimento uma mudança exigiu, quem conseguiu executar nem onde a decisão ficou bloqueada ou foi assumida sem domínio suficiente.', 'Ausência, concentração e impedimento organizacional parecem o mesmo problema, portanto investimento e risco não podem ser direcionados com segurança.', 'Sob pressão, o trabalho muda de responsável por relações informais e ninguém consegue explicar se faltou conhecimento, acesso, tempo ou autoridade.'),
+      stage(1, 'Reativo', 'Conhecimento crítico está ausente ou concentrado em especialistas, fornecedores ou pessoas específicas que executam e corrigem o trabalho para preservar o prazo.', 'Filas, interrupções e decisões frágeis crescem; o restante do grupo observa ou tenta avançar sem retorno suficiente para assumir o próximo caso.', 'Sob pressão, o trabalho volta para quem já sabe, aprendizagem é adiada e heroísmo ou dependência externa preservam a concentração.'),
+      stage(2, 'Repetível', 'Pessoas aprendem em casos reais por colaboração, exemplos ou tentativa, mas acesso, capacidade protegida e qualidade do retorno variam entre demandas e grupos.', 'Parte do conhecimento se espalha, porém mudanças de maior risco ainda dependem de poucas pessoas e a execução segura não se repete de modo previsível.', 'Sob pressão, pareamento e prática são cortados, revisão vira correção tardia e a pessoa experiente reassume a execução para cumprir o compromisso.'),
+      stage(3, 'Gerenciado', 'Mais pessoas executam trabalho equivalente com limites, feedback e autonomia compatíveis; especialistas ampliam capacidade sem permanecer como etapa obrigatória do caso comum.', 'Espera e risco por concentração diminuem, enquanto erros, ajuda necessária e tempo até execução segura orientam o próximo investimento de aprendizagem.', 'Sob pressão, o grupo preserva revisão proporcional e distribuição do trabalho, ajustando escopo ou apoio sem retirar de forma permanente a oportunidade de praticar.'),
+      stage(4, 'Adaptativo', 'Feedback sobre demanda futura, incidentes, dependências, tempo de ajuda e distribuição da execução modifica continuamente onde conhecimento, acesso e colaboração precisam evoluir.', 'A capacidade acompanha mudanças do produto e do sistema, reduz pontos únicos de conhecimento e permite assumir novos riscos sem depender de contratação ou treinamento em grande lote.', 'Sob pressão, lacunas emergentes tornam-se visíveis cedo, o apoio muda conforme o risco e o efeito observado realimenta a distribuição antes do próximo trabalho equivalente.'),
+    ],
+    evidenceRequired: ['Um trabalho recente que exigiu conhecimento novo ou concentrado, com responsáveis, ajuda, acesso, decisão e execução reconstruídos.', 'Uma demanda equivalente posterior mostrando quem conseguiu executar, com qual segurança, tempo, correção e dependência.'],
+    enablingConditions: ['Capacidade protegida e trabalho real em que aprender, praticar e receber retorno.', 'Acesso, autoridade e limites seguros compatíveis com a responsabilidade que se pretende distribuir.'],
+    regressionSignals: ['Demandas voltam automaticamente para a pessoa mais experiente quando prazo ou risco aumentam.', 'Presença, conhecimento declarado ou material produzido substituem evidência de execução segura por mais pessoas.'],
+    compatiblePractices: ['Aprendizagem deliberada no fluxo por pareamento, mentoria, revisão e rotação com contexto.', 'Comunidades de prática e caminhos de desenvolvimento ligados a demandas e efeitos observáveis.'],
+    optionalToolFamilies: ['Ambientes de aprendizagem, laboratórios e feedback técnico seguro.', 'Mapeamento de conhecimento, documentação executável e descoberta de especialistas.'],
+    interpretationLimits: ['Cargo, curso, certificação, matriz de competência ou quantidade de especialistas não produzem estágio por presença.', 'Baixa distribuição não prova falta individual: acesso, carga, política, autoridade e oportunidade de prática precisam ser discriminados.'],
   },
 ];
 

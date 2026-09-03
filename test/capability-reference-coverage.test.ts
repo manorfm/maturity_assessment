@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as cinco referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as seis referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -35,6 +35,16 @@ test('release e feedback já possuem base factual para a nova rubrica', () => {
   assert.ok(release.direct.nodes >= 7);
   assert.ok(release.direct.patterns >= 10);
   assert.deepEqual(release.layers, ['outcome', 'practice', 'system']);
+});
+
+test('competência técnica separa conhecimento, sistema, consistência e efeito', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const capability = matrix.references.find((item) => item.capabilityId === 'technical-capability');
+  assert.ok(capability);
+  assert.equal(capability.status, 'minimum-covered');
+  assert.ok(capability.direct.nodes >= 15);
+  assert.ok(capability.direct.patterns >= 25);
+  assert.deepEqual(capability.layers, ['consistency', 'knowledge', 'outcome', 'practice', 'system']);
 });
 
 test('matriz distingue efeito indireto, perspectiva única e ausência', () => {

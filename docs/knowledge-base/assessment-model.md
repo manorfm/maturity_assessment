@@ -116,9 +116,9 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v2` materializa rubricas para
+A referência vigente `capability-reference-v3` materializa rubricas para
 `discovery-validation`, `sdlc-automation`, `release-feedback`,
-`platform-autonomy` e `organizational-system`. Cada contrato possui propósito, cinco âncoras de
+`platform-autonomy`, `technical-capability` e `organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
 e limites. O meta-sistema organizacional é uma referência de leitura agregada; não
@@ -133,7 +133,7 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as cinco referências atingem cobertura mínima. Em feedback
+No corte atual, as seis referências atingem cobertura mínima. Em feedback
 técnico, a prática é confrontada com a consequência da mesma mudança: decisão
 alterada a tempo, retrabalho posterior, avanço sem retorno ou efeito descoberto
 mais tarde. O fato chega à camada de resultado sem escolher causa ou ferramenta e
@@ -146,6 +146,13 @@ entrega. Entrega contínua, exposição progressiva e GitOps são práticas comp
 somente quando reduzem variação, preservam reconciliação e produzem esse
 comportamento; presença nominal não concede estágio. Frequência declarada também
 não vira classificação DORA sem telemetria por serviço e estabilidade em contexto.
+
+Em competência técnica, o estágio observa quem consegue decidir e executar um
+trabalho equivalente com segurança. Ele distingue conhecimento ausente,
+concentração em especialistas ou fornecedores, conhecimento bloqueado por acesso ou
+carga, aprendizagem local e capacidade distribuída que se adapta à demanda. Cargo,
+curso, certificação e matriz declarada permanecem contexto: só a execução posterior
+e seu efeito sustentam a comparação.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

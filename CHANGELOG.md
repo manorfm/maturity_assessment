@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.52.0
+
+- Publicou `capability-reference-v3` com a rubrica 0–4 de competência técnica.
+- Separou ausência de conhecimento, concentração, bloqueio de acesso ou capacidade,
+  aprendizagem local e distribuição adaptativa pelo efeito no trabalho.
+- Impediu que cargo, curso, certificação ou matriz declarada determinem estágio.
+
 ## 0.51.0
 
 - Publicou `capability-reference-v2` com a rubrica 0–4 de release e feedback.

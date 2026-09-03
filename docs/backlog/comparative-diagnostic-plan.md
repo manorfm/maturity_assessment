@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `technical-capability`, que já possui sinais nas
-cinco camadas, situação de pressão e consequência factual. Os estágios devem
-distinguir conhecimento ausente, competência concentrada, acesso local,
-capacidade distribuída e adaptação da distribuição pelo efeito; cargo, curso,
-certificação ou matriz declarada não podem determinar estágio.
+Escrever a próxima rubrica para `software-security`, que já possui sinais nas cinco
+camadas, situações de pressão e consequências factuais. Os estágios devem observar
+quando o risco muda desenho e decisão, como exceções retornam ao sistema e se a
+proteção resiste ao prazo; scanner, SAST, checklist ou time especializado não podem
+determinar estágio.

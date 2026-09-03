@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de competência técnica
+
+- Publicado `capability-reference-v3` com cinco estágios para o acesso e a
+  distribuição de competência no trabalho, distinguindo falta de conhecimento de
+  bloqueios organizacionais; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de release
 
 - Publicado `capability-reference-v2` com cinco estágios de release e feedback,
