@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de segurança
+
+- Publicado `capability-reference-v4` com cinco estágios para decisões de risco,
+  proteção proporcional e aprendizagem de exceções e escapes, sem pontuar scanner
+  ou estrutura nominal; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de competência técnica
 
 - Publicado `capability-reference-v3` com cinco estágios para o acesso e a

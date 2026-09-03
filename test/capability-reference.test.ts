@@ -14,10 +14,11 @@ const initialCapabilities = [
   'release-feedback',
   'organizational-system',
   'technical-capability',
+  'software-security',
 ];
 
-test('catálogo publica seis referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v3');
+test('catálogo publica sete referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v4');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -36,6 +37,16 @@ test('catálogo publica seis referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('segurança é avaliada pela decisão sobre risco, não pela presença de controle', () => {
+  const reference = capabilityReferenceCatalog['software-security'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /tardi|incidente|especialista/i);
+  assert.match(reference.stage(3).behavior, /risco|desenho|decis[aã]o/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|aprend|exceç/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /SAST|scanner|checklist|AppSec/i);
+  assert.ok(reference.interpretationLimits.some((item) => /SAST|scanner|checklist|especialista/i.test(item)));
 });
 
 test('competência é avaliada pelo trabalho distribuído, não por formação declarada', () => {

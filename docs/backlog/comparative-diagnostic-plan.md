@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `software-security`, que já possui sinais nas cinco
+Escrever a próxima rubrica para `evolvability`, que já possui sinais nas cinco
 camadas, situações de pressão e consequências factuais. Os estágios devem observar
-quando o risco muda desenho e decisão, como exceções retornam ao sistema e se a
-proteção resiste ao prazo; scanner, SAST, checklist ou time especializado não podem
-determinar estágio.
+se limites e contratos reduzem o custo da mudança equivalente seguinte, distinguindo
+decisão local, coordenação compensatória e bloqueio organizacional; arquitetura,
+DDD, microsserviço ou documentação nominal não podem determinar estágio.

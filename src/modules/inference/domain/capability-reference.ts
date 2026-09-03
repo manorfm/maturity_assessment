@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v3' as const;
+export const capabilityReferenceVersion = 'capability-reference-v4' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -193,6 +193,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Aprendizagem deliberada no fluxo por pareamento, mentoria, revisão e rotação com contexto.', 'Comunidades de prática e caminhos de desenvolvimento ligados a demandas e efeitos observáveis.'],
     optionalToolFamilies: ['Ambientes de aprendizagem, laboratórios e feedback técnico seguro.', 'Mapeamento de conhecimento, documentação executável e descoberta de especialistas.'],
     interpretationLimits: ['Cargo, curso, certificação, matriz de competência ou quantidade de especialistas não produzem estágio por presença.', 'Baixa distribuição não prova falta individual: acesso, carga, política, autoridade e oportunidade de prática precisam ser discriminados.'],
+  },
+  {
+    capabilityId: 'software-security',
+    title: 'Risco muda o caminho da entrega',
+    purpose: 'Tornar riscos relevantes observáveis cedo o bastante para mudar desenho, escopo, proteção ou liberação, preservando decisão proporcional e aprendizagem após exceções e falhas.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir qual risco uma mudança introduziu, quais evidências foram consideradas, quem decidiu aceitá-lo ou que proteção chegou ao uso real.', 'Registros, aprovações e incidentes não podem ser ligados à decisão, portanto conformidade aparente não demonstra redução nem conhecimento do risco.', 'Sob pressão, mudanças e acessos seguem por caminhos informais e nenhuma pessoa consegue explicar qual risco foi aceito ou como seria percebido.'),
+      stage(1, 'Reativo', 'Risco recebe atenção depois da implementação, perto da liberação ou após incidente, geralmente quando uma pessoa reconhece o tema e aciona um especialista.', 'Achados provocam retrabalho tardio, correção apenas do caso visível ou aceite sem proteção verificável, enquanto riscos semelhantes permanecem desconhecidos.', 'Sob pressão, revisão é ignorada, transferida para depois ou convertida em exceção sem condição clara de retorno, responsável e validade.'),
+      stage(2, 'Repetível', 'Verificações comuns e orientações cobrem parte das mudanças, mas julgamento de contexto, tratamento de alertas e participação especializada ainda variam entre grupos.', 'Alguns riscos recebem retorno cedo, porém listas e resultados técnicos nem sempre alteram desenho, escopo ou decisão e exceções tendem a acumular.', 'Sob pressão, a evidência vira etapa de aprovação, alertas são priorizados pelo prazo e aceites temporários são renovados sem verificar mudança do risco.'),
+      stage(3, 'Gerenciado', 'Impacto, dado, ameaça e reversibilidade definem proteção proporcional; riscos relevantes mudam desenho ou liberação e exceções possuem evidência, responsável, validade e contenção.', 'O caso comum recebe retorno durante o trabalho, especialistas julgam exceções e a proteção confirmada reduz retrabalho sem criar a mesma fila para todo risco.', 'Sob pressão, o grupo preserva controles essenciais e decisão rastreável, reduz escopo quando necessário e reconcilia exceções dentro do horizonte assumido.'),
+      stage(4, 'Adaptativo', 'Feedback de incidentes, escapes, falsos alertas, exceções e efeito sobre o fluxo modifica continuamente ameaças consideradas, proteções e limites de decisão.', 'A organização reduz recorrência e exposição sem aumentar controle indiferenciado, distribuindo capacidade de decisão à medida que evidência e contexto evoluem.', 'Sob pressão, risco e impacto continuam alterando o caminho; qualquer simplificação é observada e realimenta a proteção antes de uma mudança equivalente.'),
+    ],
+    evidenceRequired: ['Uma mudança recente em que um risco foi reconhecido, avaliado e ligado a uma decisão de desenho, escopo, proteção, exceção ou liberação.', 'Uma consequência observada da decisão e o tratamento posterior de escape, alerta, exceção ou risco equivalente.'],
+    enablingConditions: ['Retorno de segurança durante o trabalho, com risco e evidência compreensíveis para quem decide a mudança.', 'Autoridade e competência distribuídas para tratar casos comuns, com julgamento especializado acessível para exceções.'],
+    regressionSignals: ['Revisão volta a ocorrer apenas perto da liberação ou depois de incidente.', 'Quantidade de verificações, aprovações ou auditorias volta a substituir evidência de decisão e eficácia.'],
+    compatiblePractices: ['Modelagem de ameaças proporcional e segurança integrada ao desenho e à mudança.', 'Proteção contínua com gestão explícita de exceções, aprendizado de escapes e revisão de eficácia.'],
+    optionalToolFamilies: ['Análise de código, dependências, artefatos, segredos e configuração.', 'Gestão de vulnerabilidades, políticas executáveis, evidência, exceções e monitoramento de risco.'],
+    interpretationLimits: ['SAST, scanner, checklist, certificação ou time especializado não produzem estágio por presença.', 'Segregação de responsabilidade e obrigação legítima não são fragilidade quando risco, evidência, decisão e efeito permanecem proporcionais e verificáveis.'],
   },
 ];
 

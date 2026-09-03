@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.53.0
+
+- Publicou `capability-reference-v4` com a rubrica 0–4 de segurança de software.
+- Passou a comparar quando risco muda decisão, como exceções retornam ao sistema e
+  se a proteção mantém eficácia sob pressão.
+- Impediu que SAST, scanner, checklist, certificação ou time especializado
+  determinem estágio por presença.
+
 ## 0.52.0
 
 - Publicou `capability-reference-v3` com a rubrica 0–4 de competência técnica.
