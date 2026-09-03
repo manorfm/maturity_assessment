@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.54.0
+
+- Publicou `capability-reference-v5` com a rubrica 0–4 de evolutibilidade.
+- Passou a comparar limites e contratos pelo custo observado na mudança equivalente
+  seguinte, separando evolução de coordenação compensatória e grandes reescritas.
+- Impediu que DDD, microsserviços, arquitetura formal ou documentação determinem
+  estágio por presença.
+
 ## 0.53.0
 
 - Publicou `capability-reference-v4` com a rubrica 0–4 de segurança de software.

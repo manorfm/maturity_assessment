@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as sete referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as oito referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -55,6 +55,16 @@ test('segurança de software possui decisão, pressão e consequência observáv
   assert.ok(security.direct.nodes >= 12);
   assert.ok(security.direct.patterns >= 20);
   assert.deepEqual(security.layers, ['consistency', 'knowledge', 'outcome', 'practice', 'system']);
+});
+
+test('evolutibilidade confronta decisão arquitetural com a mudança equivalente seguinte', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const evolvability = matrix.references.find((item) => item.capabilityId === 'evolvability');
+  assert.ok(evolvability);
+  assert.equal(evolvability.status, 'minimum-covered');
+  assert.ok(evolvability.direct.nodes >= 16);
+  assert.ok(evolvability.direct.patterns >= 24);
+  assert.deepEqual(evolvability.layers, ['consistency', 'knowledge', 'outcome', 'practice', 'system']);
 });
 
 test('matriz distingue efeito indireto, perspectiva única e ausência', () => {

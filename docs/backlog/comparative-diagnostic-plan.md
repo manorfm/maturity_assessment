@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `evolvability`, que já possui sinais nas cinco
-camadas, situações de pressão e consequências factuais. Os estágios devem observar
-se limites e contratos reduzem o custo da mudança equivalente seguinte, distinguindo
-decisão local, coordenação compensatória e bloqueio organizacional; arquitetura,
-DDD, microsserviço ou documentação nominal não podem determinar estágio.
+Escrever a próxima rubrica para `organizational-learning`, que possui a maior
+amplitude factual entre as folhas restantes. Os estágios devem observar se revisão,
+incidente e experimento alteram o próximo evento e o próprio sistema, distinguindo
+ação local bloqueada de ausência de fechamento; retrospectiva, post-mortem,
+treinamento ou repositório nominal não podem determinar estágio.

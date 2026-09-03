@@ -15,10 +15,11 @@ const initialCapabilities = [
   'organizational-system',
   'technical-capability',
   'software-security',
+  'evolvability',
 ];
 
-test('catálogo publica sete referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v4');
+test('catálogo publica oito referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v5');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -37,6 +38,16 @@ test('catálogo publica sete referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('evolutibilidade é avaliada pelo custo da mudança seguinte, não pelo estilo arquitetural', () => {
+  const reference = capabilityReferenceCatalog.evolvability;
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /coorden|contorno|grande/i);
+  assert.match(reference.stage(3).behavior, /limite|contrato|mudança/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|aprend|mudança seguinte/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /DDD|microsserviç|TOGAF/i);
+  assert.ok(reference.interpretationLimits.some((item) => /DDD|microsserviç|arquitetura|documentaç/i.test(item)));
 });
 
 test('segurança é avaliada pela decisão sobre risco, não pela presença de controle', () => {

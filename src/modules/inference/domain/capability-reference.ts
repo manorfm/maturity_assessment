@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v4' as const;
+export const capabilityReferenceVersion = 'capability-reference-v5' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -212,6 +212,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Modelagem de ameaças proporcional e segurança integrada ao desenho e à mudança.', 'Proteção contínua com gestão explícita de exceções, aprendizado de escapes e revisão de eficácia.'],
     optionalToolFamilies: ['Análise de código, dependências, artefatos, segredos e configuração.', 'Gestão de vulnerabilidades, políticas executáveis, evidência, exceções e monitoramento de risco.'],
     interpretationLimits: ['SAST, scanner, checklist, certificação ou time especializado não produzem estágio por presença.', 'Segregação de responsabilidade e obrigação legítima não são fragilidade quando risco, evidência, decisão e efeito permanecem proporcionais e verificáveis.'],
+  },
+  {
+    capabilityId: 'evolvability',
+    title: 'Evolutibilidade',
+    purpose: 'Permitir que mudanças frequentes permaneçam pequenas, seguras e compreensíveis, ajustando limites e contratos quando coordenação, espera ou risco crescem de forma recorrente.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quais partes e responsáveis uma mudança atravessou, por que precisaram mudar juntos ou qual custo reapareceu no caso seguinte.', 'Acoplamento, desconhecimento e bloqueio organizacional ficam indistintos, impedindo escolher entre aprender, ajustar contrato, mudar limite ou remover dependência.', 'Sob pressão, o grupo segue relações e sequências informais sem conseguir explicar impacto, responsabilidade ou condição para revisar o desenho.'),
+      stage(1, 'Reativo', 'Mudanças comuns exigem coordenação manual, conhecimento de poucas pessoas, contornos locais ou espera por uma iniciativa arquitetural de grande porte.', 'Lotes, conflitos e retrabalho crescem; cada nova necessidade absorve o custo da estrutura existente sem reduzir a próxima coordenação equivalente.', 'Sob pressão, mais reuniões, calendário e responsáveis compensam o acoplamento, ou o time contorna a fronteira e transfere custo para mudanças futuras.'),
+      stage(2, 'Repetível', 'Alguns limites, contratos e verificações permitem mudanças locais, mas a autonomia varia e dependências relevantes ainda exigem alinhamento ou intervenção entre grupos.', 'Parte do fluxo melhora, enquanto áreas críticas continuam acumulando coordenação e iniciativas estruturais competem com entregas sem efeito comparado.', 'Sob pressão, o caminho volta à coordenação conhecida, a simplificação é adiada e exceções locais permanecem sem alterar o limite compartilhado.'),
+      stage(3, 'Gerenciado', 'Impacto e custo de coordenação são observáveis; grupos testam limites ou contratos menores e verificam na mudança seguinte se partes, esperas e responsáveis diminuíram.', 'Mudanças frequentes permanecem menores, responsabilidades ficam claras e risco pode ser isolado sem depender de sincronização excepcional entre unidades.', 'Sob pressão, o grupo preserva contratos verificáveis e mudanças reversíveis, reduzindo escopo ou explicitando exceção em vez de ampliar silenciosamente o lote.'),
+      stage(4, 'Adaptativo', 'Feedback sobre tempo de mudança, conflitos, falhas, contornos e carga entre grupos modifica continuamente limites, contratos e distribuição de responsabilidade.', 'O sistema reduz o custo da mudança seguinte e evolui sua estrutura sem programas permanentes de reescrita, coordenação ou padronização indiferenciada.', 'Sob pressão, decisões locais preservam impacto observável e qualquer coordenação extraordinária realimenta o desenho antes do próximo caso equivalente.'),
+    ],
+    evidenceRequired: ['Uma mudança recente reconstruída através de partes, contratos, responsáveis, esperas, conflitos e decisões de risco.', 'Uma mudança equivalente posterior mostrando se coordenação, contorno, retrabalho e quantidade de partes realmente mudaram.'],
+    enablingConditions: ['Ownership e impacto arquitetural visíveis no fluxo de mudança, não apenas em documentação separada.', 'Capacidade e autoridade para testar limites ou contratos menores e revisar a decisão pelo efeito.'],
+    regressionSignals: ['Reuniões, calendário ou um coordenador voltam a ser a principal forma de tornar a mudança segura.', 'Contornos e projetos futuros se acumulam sem reduzir o custo observado na mudança seguinte.'],
+    compatiblePractices: ['Arquitetura evolutiva com decisões reversíveis e comparação explícita do custo de mudança.', 'Mapeamento de dependências, contratos verificáveis e modelagem colaborativa de limites de domínio.'],
+    optionalToolFamilies: ['Mapeamento arquitetural, dependências, ownership e impacto de mudança.', 'Verificação de contratos, compatibilidade, observabilidade de fluxo e registros de decisão.'],
+    interpretationLimits: ['DDD, microsserviços, arquitetura formal, TOGAF, diagrama ou documentação não produzem estágio por presença.', 'Monólito ou tecnologia antiga não reduzem estágio quando mudanças permanecem pequenas, seguras e capazes de adaptar limites pelo efeito.'],
   },
 ];
 
