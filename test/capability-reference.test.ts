@@ -11,11 +11,12 @@ const initialCapabilities = [
   'discovery-validation',
   'sdlc-automation',
   'platform-autonomy',
+  'release-feedback',
   'organizational-system',
 ];
 
-test('catálogo inicial publica quatro referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v1');
+test('catálogo publica cinco referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v2');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -34,6 +35,15 @@ test('catálogo inicial publica quatro referências comportamentais versionadas'
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('release é avaliado por decisão, efeito e aprendizado, não por mecanismo nominal', () => {
+  const reference = capabilityReferenceCatalog['release-feedback'];
+  assert.ok(reference);
+  assert.match(reference.stage(3).behavior, /decis[aã]o|mudança|exposiç[aã]o/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /GitOps|Argo|Jenkins|Kubernetes/i);
+  assert.ok(reference.interpretationLimits.some((item) => /ferramenta|pipeline|estrat[eé]gia/i.test(item)));
 });
 
 test('nível quatro exige adaptação por efeito e não adoção nominal', () => {

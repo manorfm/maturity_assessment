@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.51.0
+
+- Publicou `capability-reference-v2` com a rubrica 0–4 de release e feedback.
+- Separou rastreabilidade, exposição, contenção e aprendizado pelo efeito sem
+  pontuar pipeline, GitOps, ferramenta de implantação ou estratégia de ramificação.
+- Confirmou cobertura mínima da nova referência em 12 padrões de sete nós do
+  instrumento vigente.
+
 ## 0.50.0
 
 - Acrescentou à mudança uma consequência factual para o primeiro retorno técnico:

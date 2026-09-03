@@ -116,9 +116,9 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v1` materializa o primeiro corte para
-`discovery-validation`, `sdlc-automation`, `platform-autonomy` e
-`organizational-system`. Cada contrato possui propósito, cinco âncoras de
+A referência vigente `capability-reference-v2` materializa rubricas para
+`discovery-validation`, `sdlc-automation`, `release-feedback`,
+`platform-autonomy` e `organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
 e limites. O meta-sistema organizacional é uma referência de leitura agregada; não
@@ -133,12 +133,19 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as quatro referências atingem cobertura mínima. Em feedback
+No corte atual, as cinco referências atingem cobertura mínima. Em feedback
 técnico, a prática é confrontada com a consequência da mesma mudança: decisão
 alterada a tempo, retrabalho posterior, avanço sem retorno ou efeito descoberto
 mais tarde. O fato chega à camada de resultado sem escolher causa ou ferramenta e
 sem aumentar o peso da prática. Cobertura mínima continua sendo propriedade do
 instrumento, não evidência de maturidade da organização nem validação da rubrica.
+
+Em release e feedback, os estágios distinguem rastreabilidade e decisão sobre
+implantação, exposição e contenção, além do efeito que retorna ao caminho de
+entrega. Entrega contínua, exposição progressiva e GitOps são práticas compatíveis
+somente quando reduzem variação, preservam reconciliação e produzem esse
+comportamento; presença nominal não concede estágio. Frequência declarada também
+não vira classificação DORA sem telemetria por serviço e estabilidade em contexto.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

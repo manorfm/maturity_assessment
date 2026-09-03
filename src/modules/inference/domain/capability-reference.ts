@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v1' as const;
+export const capabilityReferenceVersion = 'capability-reference-v2' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -136,6 +136,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Platform engineering orientada à experiência e ao resultado do consumidor.', 'Paved paths opcionais, evolutivos e capazes de incorporar exceções relevantes.'],
     optionalToolFamilies: ['Catálogo e APIs de capacidades internas.', 'Provisionamento, identidade, políticas executáveis e feedback operacional.'],
     interpretationLimits: ['Time de plataforma, portal ou IDP não produz estágio por existência.', 'Autonomia não significa liberdade irrestrita; limites seguros e responsabilidade também precisam ser demonstrados.'],
+  },
+  {
+    capabilityId: 'release-feedback',
+    title: 'Release e feedback',
+    purpose: 'Levar mudanças pequenas e rastreáveis até operação com decisão explícita sobre exposição, evidência rápida do efeito e capacidade segura de conter ou reverter problemas.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir qual versão chegou ao ambiente, quais passos e decisões ocorreram ou como o resultado da liberação foi verificado.', 'Espera, falha e efeito no uso não podem ser ligados à mudança, impedindo distinguir entrega concluída de valor ou risco realmente observado.', 'Sob pressão, arquivos, versões e acessos circulam por caminhos informais e não resta evidência suficiente para explicar o que foi exposto ou corrigido.'),
+      stage(1, 'Reativo', 'Empacotamento, transporte, aprovação e exposição dependem de execução manual, filas ou coordenação de especialistas em grandes momentos de liberação.', 'Mudanças esperam, acumulam risco e recebem retorno tarde; uma falha exige localizar versão, responsável e forma de restauração durante o impacto.', 'Sob pressão, verificações são reduzidas, alterações são agrupadas ou acessos excepcionais substituem o caminho comum para cumprir a data.'),
+      stage(2, 'Repetível', 'Parte do caminho é repetível e alguns serviços liberam mudanças menores, mas ambiente, aprovação, exposição ou retorno ainda variam conforme o grupo.', 'O tempo e o risco diminuem em casos conhecidos, enquanto dependências e exceções continuam criando lotes, espera ou retorno somente depois da liberação.', 'Sob pressão, implantação e exposição voltam a ser uma decisão única, o lote cresce e o sucesso é inferido pela execução técnica sem observar o efeito esperado.'),
+      stage(3, 'Gerenciado', 'Mudanças pequenas percorrem um caminho rastreável e repetível; implantação, exposição e reversão são decisões distintas, com responsável e evidência de resultado.', 'Espera e risco são visíveis, problemas podem ser contidos sem coordenação excepcional e o retorno chega a tempo de confirmar ou ajustar a mudança.', 'Sob pressão, o grupo preserva rastreabilidade e contenção, reduz o tamanho da mudança e registra exceções temporárias com prazo de reconciliação.'),
+      stage(4, 'Adaptativo', 'Tempo de espera, falhas, retrabalho, reversões e efeito no uso modificam continuamente políticas, proteções e estratégia de liberação de cada contexto.', 'O sistema aprende a entregar mudanças menores e mais frequentes com estabilidade, reduzindo recorrência sem acrescentar controles indiferenciados ou deslocar risco.', 'Sob pressão, exposição e contenção permanecem graduais e observáveis; o efeito da urgência realimenta o caminho antes da próxima mudança equivalente.'),
+    ],
+    evidenceRequired: ['Uma mudança recente reconstruída da versão pronta até a exposição, incluindo esperas, decisões, responsáveis e exceções.', 'Uma consequência observável da liberação no uso, risco, retrabalho, contenção, reversão ou decisão seguinte.'],
+    enablingConditions: ['Versão e configuração rastreáveis atravessam ambientes por um caminho reproduzível.', 'Times responsáveis conseguem decidir exposição e contenção dentro de limites proporcionais ao risco.'],
+    regressionSignals: ['Mudanças voltam a acumular numa janela coordenada ou depender de pacote e transporte manuais.', 'Execução concluída volta a substituir evidência de efeito, e falhas deixam de alterar o caminho seguinte.'],
+    compatiblePractices: ['Entrega contínua com mudanças pequenas, reversíveis e verificadas pelo efeito.', 'Exposição progressiva e GitOps quando reduzem variação, preservam rastreabilidade e permitem reconciliação segura.'],
+    optionalToolFamilies: ['Orquestração de entrega, promoção e reconciliação declarativa.', 'Gestão de exposição, artefatos, configuração e observação do resultado.'],
+    interpretationLimits: ['Pipeline, GitOps, estratégia de ramificação ou ferramenta de implantação não produzem estágio por presença.', 'Frequência declarada não equivale a performance DORA sem telemetria por serviço, estabilidade e contexto comparável.'],
   },
   {
     capabilityId: 'organizational-system',

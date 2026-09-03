@@ -81,7 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Mapear as folhas restantes da taxonomia contra o contrato de rubrica e selecionar
-uma única folha com evidência factual suficiente, mas sem referência 0–4. Escrever
-seus cinco comportamentos, efeitos e limites antes de conectá-la ao relatório; a
-presença de prática ou tecnologia não pode determinar estágio.
+Escrever a próxima rubrica para `technical-capability`, que já possui sinais nas
+cinco camadas, situação de pressão e consequência factual. Os estágios devem
+distinguir conhecimento ausente, competência concentrada, acesso local,
+capacidade distribuída e adaptação da distribuição pelo efeito; cargo, curso,
+certificação ou matriz declarada não podem determinar estágio.

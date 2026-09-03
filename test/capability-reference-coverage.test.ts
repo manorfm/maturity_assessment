@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as quatro referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as cinco referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -25,6 +25,16 @@ test('automação do SDLC combina prática com consequência observável', () =>
   assert.ok(automation.layers.includes('practice'));
   assert.ok(automation.layers.includes('outcome'));
   assert.doesNotMatch(automation.gaps.join(' '), /consequência/i);
+});
+
+test('release e feedback já possuem base factual para a nova rubrica', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const release = matrix.references.find((item) => item.capabilityId === 'release-feedback');
+  assert.ok(release);
+  assert.equal(release.status, 'minimum-covered');
+  assert.ok(release.direct.nodes >= 7);
+  assert.ok(release.direct.patterns >= 10);
+  assert.deepEqual(release.layers, ['outcome', 'practice', 'system']);
 });
 
 test('matriz distingue efeito indireto, perspectiva única e ausência', () => {

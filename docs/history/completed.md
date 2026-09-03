@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de release
+
+- Publicado `capability-reference-v2` com cinco estágios de release e feedback,
+  tratando entrega contínua, exposição progressiva e GitOps como práticas
+  condicionadas ao comportamento e ao efeito; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Consequência do feedback técnico
 
 - Publicado `evidence-anamnesis-pilot-v13` com consequência factual do primeiro
