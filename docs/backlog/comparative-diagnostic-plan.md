@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `team-ownership`, que possui ampla cobertura de
-fronteiras, operação e consequências. Os estágios devem observar se autoridade
-acompanha responsabilidade ponta a ponta e se espera, conflito e carga alteram a
-distribuição do trabalho; nome do time, matriz RACI, modelo Team Topologies ou owner
-declarado não podem determinar estágio.
+Escrever a próxima rubrica para `enabling-governance`, que possui ampla cobertura de
+decisão, restrições e consequências. Os estágios devem observar se controles
+distinguem risco, devolvem feedback no fluxo e permitem autonomia segura, separando
+obrigação legítima de aprovação compensatória; comitê, política, auditoria ou
+ferramenta de policy não podem determinar estágio.

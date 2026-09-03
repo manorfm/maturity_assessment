@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v6' as const;
+export const capabilityReferenceVersion = 'capability-reference-v7' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -250,6 +250,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Revisão de eventos e melhoria contínua com poucas hipóteses, ownership e ciclo de efeito fechado.', 'Experimentos organizacionais reversíveis, aprendizagem sem culpa e difusão condicionada ao contexto.'],
     optionalToolFamilies: ['Registro de decisões, experimentos, ações e evidências de efeito.', 'Análise de fluxo, incidentes, recorrência, carga e aprendizagem compartilhada.'],
     interpretationLimits: ['Retrospectiva, post-mortem, treinamento, repositório ou comunidade não produzem estágio por presença.', 'Ação local bloqueada por prioridade, política ou autoridade não prova incapacidade do grupo; contenção e poder de decisão precisam ser discriminados.'],
+  },
+  {
+    capabilityId: 'team-ownership',
+    title: 'Estrutura e ownership',
+    purpose: 'Fazer responsabilidade pelo resultado vir acompanhada de autoridade, capacidade e fronteiras compreensíveis, reduzindo espera e coordenação sem concentrar risco em pessoas específicas.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quem podia decidir prioridade, risco e mudança de um serviço nem onde a responsabilidade terminava quando apareceu impacto.', 'Ajuda pontual, responsabilidade formal e autoridade real ficam indistintas, impedindo localizar quem pode remover espera, conflito ou risco.', 'Sob pressão, o caso circula por relações informais e nenhuma pessoa consegue explicar quem decide, executa e responde pela consequência completa.'),
+      stage(1, 'Reativo', 'Responsabilidade é fragmentada entre áreas, depende de uma pessoa ou exige coordenação e escalada a cada ocorrência para formar uma decisão completa.', 'Trabalho espera, especialistas acumulam interrupções e decisões locais transferem risco para operação, dados, produto ou outro grupo sem responsável pelo todo.', 'Sob pressão, a pessoa mais experiente assume, a liderança coordena os envolvidos ou cada parte protege sua própria prioridade para concluir o caso.'),
+      stage(2, 'Repetível', 'Alguns serviços possuem grupos capazes de conduzir mudanças e incidentes, mas fronteiras, prioridades compartilhadas e autoridade variam conforme contexto e relacionamento.', 'Casos conhecidos fluem, enquanto superfícies compartilhadas e dependências ainda exigem alinhamento manual, contornos ou apoio recorrente.', 'Sob pressão, responsabilidade volta a se concentrar, decisões atravessam escaladas e fronteiras saudáveis dependem da negociação local.'),
+      stage(3, 'Gerenciado', 'Responsabilidade pelo resultado possui autoridade ponta a ponta para prioridade, risco, mudança e acompanhamento, com interações explícitas onde a fronteira é compartilhada.', 'Espera e conflito diminuem porque decisões comuns ocorrem no grupo responsável e dependências devolvem um resultado claro sem apagar responsabilidades entre partes.', 'Sob pressão, autoridade e limites permanecem claros, carga pode alterar compromisso e colaboração temporária não transforma especialistas em donos permanentes.'),
+      stage(4, 'Adaptativo', 'Feedback sobre fluxo, carga, incidentes, conflitos e resultado modifica fronteiras, autoridade e modos de interação com participação das pessoas afetadas.', 'A estrutura reduz coordenação e pontos únicos sem criar silos, permitindo que responsabilidade acompanhe a evolução do produto e do sistema.', 'Sob pressão, mudanças de carga ou dependência tornam-se visíveis cedo e ajustam capacidade ou fronteira antes de reforçar heroísmo e escalada.'),
+    ],
+    evidenceRequired: ['Um evento recente reconstruindo quem observou, decidiu prioridade e risco, executou a mudança e respondeu pelo resultado.', 'Uma ocorrência equivalente posterior mostrando espera, conflito, carga, escalada e continuidade sem pessoas específicas.'],
+    enablingConditions: ['Autoridade e capacidade compatíveis com a responsabilidade atribuída pelo resultado.', 'Fronteiras e modos de interação explícitos, revisáveis e observáveis no trabalho real.'],
+    regressionSignals: ['Decisões comuns voltam a exigir escalada, calendário ou uma pessoa coordenadora para reunir responsabilidade fragmentada.', 'Ausência ou pressão devolve trabalho à pessoa especialista e interrompe continuidade, aprendizagem ou resposta pelo resultado.'],
+    compatiblePractices: ['Ownership de serviço ou produto ponta a ponta com limites e consequências observáveis.', 'Revisão de fronteiras, carga cognitiva e modos de interação orientada por fluxo e resultado.'],
+    optionalToolFamilies: ['Mapeamento de serviços, ownership, dependências e fluxo de trabalho.', 'Catálogos, registros de decisão, carga, incidentes e resultados por serviço.'],
+    interpretationLimits: ['Nome do time, owner declarado, matriz RACI ou modelo Team Topologies não produzem estágio por presença.', 'Responsabilidade compartilhada não é fragilidade quando autoridade, decisão e consequência entre as partes são explícitas e sustentáveis.'],
   },
 ];
 

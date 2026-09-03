@@ -17,10 +17,11 @@ const initialCapabilities = [
   'software-security',
   'evolvability',
   'organizational-learning',
+  'team-ownership',
 ];
 
-test('catálogo publica nove referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v6');
+test('catálogo publica dez referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v7');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -39,6 +40,16 @@ test('catálogo publica nove referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('ownership exige autoridade e consequência, não declaração de estrutura', () => {
+  const reference = capabilityReferenceCatalog['team-ownership'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /pessoa|escal|fragment|coordena/i);
+  assert.match(reference.stage(3).behavior, /autoridade|responsabilidade|ponta a ponta/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|carga|fronteira/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /RACI|Team Topologies|stream-aligned/i);
+  assert.ok(reference.interpretationLimits.some((item) => /RACI|Team Topologies|owner|nome do time/i.test(item)));
 });
 
 test('aprendizado organizacional exige efeito revisto no evento seguinte', () => {

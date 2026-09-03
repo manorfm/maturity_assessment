@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.56.0
+
+- Publicou `capability-reference-v7` com a rubrica 0–4 de ownership.
+- Passou a comparar responsabilidade com autoridade, capacidade, continuidade e
+  consequência ponta a ponta.
+- Impediu que nome de time, owner declarado, RACI ou Team Topologies determinem
+  estágio por presença.
+
 ## 0.55.0
 
 - Publicou `capability-reference-v6` com a rubrica 0–4 de aprendizado

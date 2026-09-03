@@ -116,10 +116,11 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v6` materializa rubricas para
+A referência vigente `capability-reference-v7` materializa rubricas para
 `discovery-validation`, `sdlc-automation`, `release-feedback`,
 `platform-autonomy`, `technical-capability`, `software-security` e
-`evolvability`, `organizational-learning` e `organizational-system`. Cada contrato possui propósito, cinco âncoras de
+`evolvability`, `organizational-learning`, `team-ownership` e
+`organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
 e limites. O meta-sistema organizacional é uma referência de leitura agregada; não
@@ -134,7 +135,7 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as nove referências atingem cobertura mínima. Em feedback
+No corte atual, as dez referências atingem cobertura mínima. Em feedback
 técnico, a prática é confrontada com a consequência da mesma mudança: decisão
 alterada a tempo, retrabalho posterior, avanço sem retorno ou efeito descoberto
 mais tarde. O fato chega à camada de resultado sem escolher causa ou ferramenta e
@@ -172,6 +173,12 @@ responsável, capacidade e revisão no caso seguinte. A referência separa ausê
 fechamento de uma ação local bloqueada por prioridade, política ou autoridade.
 Retrospectiva, post-mortem, treinamento, comunidade ou repositório não concedem
 estágio sem alteração demonstrada no trabalho ou no sistema.
+
+Em ownership, o estágio confronta responsabilidade declarada com autoridade sobre
+prioridade, risco, mudança e acompanhamento do resultado. Responsabilidade
+compartilhada pode ser sustentável quando a decisão entre as partes é explícita;
+nome do time, owner nominal, RACI ou Team Topologies não concedem estágio. Carga,
+espera e conflito precisam conseguir alterar capacidade, fronteira ou interação.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

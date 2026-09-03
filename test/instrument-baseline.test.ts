@@ -39,11 +39,11 @@ test('linha de base torna visível dívida de fundamentos e contratos de direç�
   assert.ok(baseline.direction.repeatedFoundationGroups.some((group) => group.count >= 10));
   assert.ok(baseline.direction.withoutExplicitGuidance > 0);
   assert.ok(baseline.direction.withoutPrerequisiteContract > 0);
-  assert.equal(baseline.comparison.version, 'capability-reference-v6');
-  assert.equal(baseline.comparison.references, 9);
-  assert.equal(baseline.comparison.taxonomyCoverage, 9);
+  assert.equal(baseline.comparison.version, 'capability-reference-v7');
+  assert.equal(baseline.comparison.references, 10);
+  assert.equal(baseline.comparison.taxonomyCoverage, 10);
   assert.equal(baseline.comparison.coverageVersion, 'capability-reference-coverage-v1');
-  assert.equal(baseline.comparison.coverage.length, 9);
+  assert.equal(baseline.comparison.coverage.length, 10);
   assert.deepEqual(
     [...baseline.direction.patternsWithGenericFoundation].sort(),
     Object.entries(interventionFoundations)
