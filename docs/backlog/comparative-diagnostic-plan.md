@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `planning-refinement`, distinguindo preparação
-colaborativa suficiente de uma fase antecipada que transforma incerteza em grande
-lote. Os estágios devem observar entendimento do problema, exemplos, riscos,
-dependências, reversibilidade e efeito no trabalho iniciado sem premiar backlog,
-refinement, sprint planning, estimativa, framework ou ferramenta por presença.
+Escrever a próxima rubrica para `continuous-integration`, distinguindo composição
+frequente com feedback acionável de simples uso de branches, automação ou servidor
+de integração. Os estágios devem observar tamanho e duração do isolamento, conflito,
+compatibilidade, correção do caminho e efeito na mudança seguinte sem premiar Git,
+trunk-based development, pull request, pipeline ou ferramenta por presença.

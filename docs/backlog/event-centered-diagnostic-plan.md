@@ -261,7 +261,7 @@ orientações após a estabilização cognitiva.
 
 ## Estratégia de migração
 
-- Não alterar `evidence-anamnesis-pilot-v14` depois do início de coleta humana.
+- Não alterar `evidence-anamnesis-pilot-v15` depois do início de coleta humana.
 - Desenvolver a nova autoria sob identificador de versão próprio.
 - Campanhas guardam integralmente a versão utilizada.
 - Não comparar posterior ou nível entre versões como se fossem o mesmo instrumento.

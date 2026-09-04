@@ -6,6 +6,15 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de planejamento e refinamento
+
+- Publicado `capability-reference-v14` com cinco estágios para preparação
+  suficiente, compromisso reversível e aprendizado durante a construção, e
+  `evidence-anamnesis-pilot-v15` com consequência factual; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md),
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de gestão do trabalho
 
 - Publicado `capability-reference-v13` com cinco estágios para fluxo, limites,

@@ -5,6 +5,16 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.63.0
+
+- Publicou `capability-reference-v14` com a rubrica 0–4 de planejamento e
+  refinamento orientados à redução suficiente de incerteza.
+- Passou a comparar problema, exemplos, riscos, dependências, reversibilidade e
+  efeito do primeiro feedback, sem exigir definição completa antecipada.
+- Publicou `evidence-anamnesis-pilot-v15`, conectando a consequência factual do
+  feedback durante a construção sem adicionar pergunta ou pontuar cerimônia,
+  estimativa, framework ou ferramenta por presença.
+
 ## 0.62.0
 
 - Publicou `capability-reference-v13` com a rubrica 0–4 de gestão do trabalho e

@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as dezesseis referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as dezessete referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -15,6 +15,16 @@ test('matriz relaciona as dezesseis referências a sinais tipados sem inferênci
     assert.equal(item.desirabilityCues, 0, item.capabilityId);
     assert.ok(item.gaps.length > 0 || item.status === 'minimum-covered', item.capabilityId);
   }
+});
+
+test('planejamento e refinamento cobrem preparação, pressão e consequência', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const planning = matrix.references.find((item) => item.capabilityId === 'planning-refinement');
+  assert.ok(planning);
+  assert.equal(planning.status, 'minimum-covered');
+  assert.ok(planning.direct.nodes >= 5);
+  assert.ok(planning.direct.patterns >= 6);
+  assert.deepEqual(planning.layers, ['outcome', 'practice']);
 });
 
 test('gestão do trabalho cobre fluxo, espera, bloqueio e consequência', () => {

@@ -24,10 +24,11 @@ const initialCapabilities = [
   'product-direction',
   'portfolio-management',
   'work-management',
+  'planning-refinement',
 ];
 
-test('catálogo publica dezesseis referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v13');
+test('catálogo publica dezessete referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v14');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -46,6 +47,17 @@ test('catálogo publica dezesseis referências comportamentais versionadas', () 
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('planejamento e refinamento reduzem incerteza sem fingir definição completa', () => {
+  const reference = capabilityReferenceCatalog['planning-refinement'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /critério|risco|dependência|solução|compromisso/i);
+  assert.match(reference.stage(3).behavior, /problema|exemplo|risco|dependência|revers/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|incerteza|resultado|retrabalho|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /Scrum|SAFe|Jira|sprint planning|story points/i);
+  assert.ok(reference.interpretationLimits.some((item) => /backlog|refinement|estimativa|cerimônia|ferramenta/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /incerteza|definição completa|antecip/i.test(item)));
 });
 
 test('gestão do trabalho mede conclusão e espera, não ocupação ou método', () => {

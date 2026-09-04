@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v13' as const;
+export const capabilityReferenceVersion = 'capability-reference-v14' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -382,6 +382,24 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Gestão de fluxo com limites de trabalho e tratamento sistêmico de bloqueios.', 'Lotes menores, priorização explícita e melhoria orientada pelo tempo total.'],
     optionalToolFamilies: ['Visualização de fluxo, filas, bloqueios e capacidade.', 'Telemetria de tempo, retrabalho e resultado.'],
     interpretationLimits: ['Quadro, sprint, método ágil, reunião ou ferramenta de gestão não produzem estágio por presença.', 'Alta ocupação ou volume iniciado não demonstram fluxo nem valor concluído.'],
+  },
+  {
+    capabilityId: 'planning-refinement', title: 'Planejamento e refinamento',
+    purpose: 'Reduzir incerteza suficiente para assumir um compromisso pequeno e reversível, mantendo problema, exemplos, riscos e dependências abertos ao feedback durante a construção.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir qual problema, exemplo, risco ou dependência sustentou o compromisso nem quando a solução deixou de ser reversível.', 'Trabalho iniciado, decisão e retrabalho ficam desconectados, impedindo distinguir aprendizado inevitável de preparação ausente.', 'Sob pressão, uma descrição ou prazo autoriza o início e não resta evidência sobre o que ainda era incerto.'),
+      stage(1, 'Reativo', 'Critérios, riscos e dependências aparecem depois do compromisso; a solução chega pronta para execução e dúvidas retornam a quem a definiu.', 'Descobertas tardias reabrem trabalho, criam espera e ampliam lote porque mudar a direção já assumida se torna custoso.', 'Sob pressão, detalhamento ou estimativa substituem entendimento compartilhado e a incerteza é transferida para construção, qualidade ou operação.'),
+      stage(2, 'Repetível', 'Alguns trabalhos discutem problema, exemplos e riscos com as competências necessárias, mas profundidade e momento variam conforme pessoa, prazo ou iniciativa.', 'Casos conhecidos começam com menos surpresa, enquanto dependências e decisões difíceis ainda aparecem tarde e exigem renegociação.', 'Sob pressão, a preparação cresce como fase antecipada ou encolhe até uma lista de itens, sem proteger a menor decisão reversível.'),
+      stage(3, 'Gerenciado', 'Problema, exemplos, riscos e dependências relevantes são entendidos pelas competências necessárias antes de um compromisso pequeno e reversível.', 'O trabalho começa com condição suficiente para obter feedback cedo; incerteza restante é explícita e pode mudar escopo sem grande retrabalho.', 'Sob pressão, o grupo reduz lote ou escopo, preserva riscos essenciais e adia o compromisso que ainda não possui condição segura de aprendizado.'),
+      stage(4, 'Adaptativo', 'Feedback durante e depois da construção modifica continuamente exemplos, limites de preparação e decisões sobre quanto compromisso assumir.', 'Aprendizado reduz surpresa tardia e retrabalho sem transformar refinamento em definição completa, fila ou etapa anterior à entrega.', 'Sob pressão, exceções e descobertas tardias permanecem observáveis e ajustam o próximo caso equivalente em vez de ampliar cerimônia para todos.'),
+    ],
+    evidenceRequired: ['Um trabalho recente desde o problema até o primeiro feedback, incluindo incertezas, exemplos, riscos, dependências e momento do compromisso.', 'A consequência observada em retrabalho, espera, redução de escopo, reversão ou confirmação da decisão.'],
+    enablingConditions: ['Participação oportuna das competências capazes de reconhecer risco e dependência.', 'Autoridade para reduzir lote, adiar compromisso ou alterar a solução com nova evidência.'],
+    regressionSignals: ['Critérios e riscos relevantes voltam a aparecer somente depois que construir já é compromisso.', 'Mais detalhamento, estimativa ou cerimônia é usado para fingir certeza e aumenta o lote antecipado.'],
+    compatiblePractices: ['Refinamento colaborativo orientado por exemplos, riscos e decisões reversíveis.', 'Story mapping, example mapping, descoberta técnica e fatiamento vertical quando reduzem a próxima incerteza relevante.'],
+    optionalToolFamilies: ['Gestão e visualização de hipóteses, exemplos, riscos e dependências.', 'Colaboração, prototipação e verificação antecipada de contratos ou critérios.'],
+    interpretationLimits: ['Backlog, refinement, sprint planning, estimativa, cerimônia ou ferramenta não produzem estágio por presença.', 'Alta performance não exige eliminar incerteza nem produzir definição completa antecipada; exige tornar o próximo compromisso pequeno, seguro e revisável.'],
   },
 ];
 
