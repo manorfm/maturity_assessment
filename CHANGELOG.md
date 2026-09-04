@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.61.0
+
+- Publicou `capability-reference-v12` com a rubrica 0–4 de gestão de portfólio.
+- Passou a comparar capacidade, custo de atraso, trade-offs, funding e decisões de
+  não iniciar, reduzir ou interromper investimentos.
+- Impediu que PMO, comitê, orçamento anual, OKR ou ferramenta determinem estágio.
+
 ## 0.60.0
 
 - Publicou `capability-reference-v11` com a rubrica 0–4 de direção de produto.

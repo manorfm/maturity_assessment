@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de gestão de portfólio
+
+- Publicado `capability-reference-v12` com cinco estágios para escolhas de
+  capacidade, trade-offs e revisão de investimento pelo resultado; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de direção de produto
 
 - Publicado `capability-reference-v11` com cinco estágios ligando problema,

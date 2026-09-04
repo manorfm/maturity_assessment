@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `portfolio-management`, distinguindo escolhas
-explícitas de capacidade e custo de atraso de uma fila de iniciativas protegidas por
-patrocínio. Os estágios devem observar o que deixa de ser iniciado, reduzido ou
-interrompido e como resultado revê investimento sem premiar PMO, comitê, orçamento
-anual, OKR ou ferramenta de portfólio por presença.
+Escrever a próxima rubrica para `work-management`, distinguindo fluxo orientado a
+concluir valor de ocupação individual e início contínuo de tarefas. Os estágios
+devem observar limites de trabalho, espera, bloqueio, retirada de compromisso e
+efeito no fluxo sem premiar quadro, sprint, método ágil ou ferramenta de gestão por
+presença.

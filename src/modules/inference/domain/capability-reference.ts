@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v11' as const;
+export const capabilityReferenceVersion = 'capability-reference-v12' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -345,6 +345,25 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Gestão de produto orientada a problema, hipótese, resultado e decisões explícitas de investimento.', 'Portfólio adaptativo e discovery contínuo com apostas menores, trade-offs visíveis e autoridade para interromper.'],
     optionalToolFamilies: ['Pesquisa, experimentação, análise de uso, resultado e jornada.', 'Gestão de objetivos, decisões, portfólio, capacidade, custos e riscos.'],
     interpretationLimits: ['OKR, roadmap, cargo de produto, Scrum, cerimônia ou dashboard não produzem estágio por presença.', 'Resultado local favorável não prova direção adaptativa quando prioridade e investimento permanecem imunes à evidência contrária.'],
+  },
+  {
+    capabilityId: 'portfolio-management',
+    title: 'Gestão de portfólio e capacidade',
+    purpose: 'Escolher investimentos e capacidade por resultado, risco e custo de atraso, tornando explícito o que não começa, é reduzido ou interrompido quando uma prioridade muda.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quais iniciativas disputavam capacidade, por que uma recebeu investimento, o que deixou de começar nem quem podia interrompê-la.', 'Prioridade, patrocínio, funding e disponibilidade de pessoas permanecem desconectados de resultado e custo de atraso.', 'Sob pressão, novas iniciativas entram sem decisão recuperável sobre capacidade, dependências, trabalho abandonado ou risco deslocado.'),
+      stage(1, 'Reativo', 'Iniciativas patrocinadas, urgências e filas avançam em paralelo; cada responsável negocia pessoas durante a execução sem retirar compromissos anteriores.', 'Capacidade fragmenta, trabalho espera e melhorias, dívida e aprendizagem perdem espaço até se tornarem crise ou projeto separado.', 'Sob pressão, tudo permanece prioritário, pessoas são redistribuídas e concluir escopo protege o investimento mesmo sem efeito demonstrado.'),
+      stage(2, 'Repetível', 'Alguns recortes comparam valor, risco ou capacidade, mas funding temporário, prioridades executivas e filas separadas ainda protegem iniciativas já iniciadas.', 'Escolhas locais reduzem parte da sobrecarga, enquanto dependências e investimento organizacional continuam pouco responsivos ao resultado.', 'Sob pressão, exceções acumulam trabalho, capacidade de melhoria desaparece e interromper uma iniciativa depende de nova escalada ou crise.'),
+      stage(3, 'Gerenciado', 'Resultados, riscos, dependências, capacidade e custo de atraso sustentam trade-offs explícitos; iniciar algo novo reduz, adia ou interrompe outro investimento.', 'Menos trabalho concorre ao mesmo tempo, capacidade acompanha produtos e problemas relevantes, e melhoria do sistema participa da escolha normal.', 'Sob pressão, a autoridade preserva limites de capacidade, explicita o compromisso retirado e evita financiar urgência com sobrecarga silenciosa.'),
+      stage(4, 'Adaptativo', 'Feedback de resultado, fluxo, risco, custo e aprendizagem redistribui continuamente investimento e capacidade, inclusive encerrando iniciativas antes do escopo previsto.', 'O sistema reduz espera e desperdício, protege capacidades duradouras e melhora a qualidade das apostas sem depender de grandes ciclos de funding.', 'Sob pressão, evidência contrária continua capaz de interromper trabalho e a revisão rápida evita que patrocínio ou custo já incorrido congelem a escolha.'),
+    ],
+    evidenceRequired: ['Uma decisão recente com iniciativas concorrentes, capacidade disponível, critérios, autoridade e trabalho explicitamente não iniciado, reduzido ou interrompido.', 'Uma revisão posterior mostrando como resultado, risco ou custo alterou investimento, pessoas e continuidade.'],
+    enablingConditions: ['Visibilidade conjunta de capacidade, dependências, custo de atraso, riscos e resultados dos investimentos.', 'Autoridade para retirar compromisso e realocar capacidade sem converter toda mudança em escalada excepcional.'],
+    regressionSignals: ['Novas prioridades voltam a ser adicionadas sem retirar trabalho e cada iniciativa negocia capacidade durante a execução.', 'Resultado vira reporte posterior enquanto funding, reconhecimento e pessoas seguem protegidos até a entrega do escopo.'],
+    compatiblePractices: ['Gestão adaptativa de portfólio com limites de trabalho, apostas menores e decisões explícitas de interrupção.', 'Funding orientado a produtos e capacidades duradouras quando permite realocar investimento pelo resultado.'],
+    optionalToolFamilies: ['Visualização de portfólio, capacidade, dependências, custos, riscos e resultados.', 'Gestão de cenários, investimentos, experimentos e decisões de continuidade.'],
+    interpretationLimits: ['PMO, comitê, orçamento anual, OKR, método de priorização ou ferramenta de portfólio não produzem estágio por presença.', 'Uma lista ordenada não demonstra escolha quando iniciar trabalho não retira capacidade nem permite interromper investimento pelo resultado.'],
   },
 ];
 

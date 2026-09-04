@@ -22,10 +22,11 @@ const initialCapabilities = [
   'leadership-management',
   'collaboration',
   'product-direction',
+  'portfolio-management',
 ];
 
-test('catálogo publica catorze referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v11');
+test('catálogo publica quinze referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v12');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -44,6 +45,16 @@ test('catálogo publica catorze referências comportamentais versionadas', () =>
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('portfólio exige escolhas de capacidade e interrupção, não uma fila priorizada', () => {
+  const reference = capabilityReferenceCatalog['portfolio-management'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /paralel|patroc|fila|iniciativa|urgência/i);
+  assert.match(reference.stage(3).behavior, /capacidade|custo de atraso|interromp|trade-off|investimento/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|resultado|investimento|capacidade|interromp/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /PMO|OKR|Jira|SAFe/i);
+  assert.ok(reference.interpretationLimits.some((item) => /PMO|comitê|orçamento|OKR|ferramenta/i.test(item)));
 });
 
 test('direção de produto exige autoridade para rever investimento pelo resultado', () => {
