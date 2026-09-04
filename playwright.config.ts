@@ -8,6 +8,8 @@ const showcaseManifest = process.env.SHOWCASE_MANIFEST ?? '/private/tmp/maturity
 export default defineConfig({
   testDir: './test/e2e',
   timeout: 60_000,
+  // One SQLite and one demo server. Extra workers would share the seed write
+  // and would not help: the spec is a single test that fans out read-only pages.
   workers: 1,
   reporter: 'line',
   use: { baseURL: `http://127.0.0.1:${testPort}`, headless: true },

@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Browser, type Page } from '@playwright/test';
 import { buildShowcaseGuide, SHOWCASE_GUIDE_PATH, type ShowcaseGuideCase } from './showcase-guide.js';
 import type { MaturityBand } from '../../src/modules/inference/domain/organizational-synthetic.js';
 
@@ -50,13 +50,10 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
   },
 };
 
-test('gera relatórios organizacionais de baixa, média e alta para inspeção da POC', async ({ page }) => {
+test('gera relatórios organizacionais de baixa, média e alta para inspeção da POC', async ({ browser, page, baseURL }) => {
   const seeded = JSON.parse(readFileSync(manifestPath, 'utf8')) as SeededOrg[];
   expect(seeded.map((entry) => entry.band)).toEqual(['low', 'medium', 'high']);
-  const collected: ShowcaseGuideCase[] = [];
-  for (const org of seeded) {
-    collected.push(await inspectSeededOrg(page, org));
-  }
+  const collected = await Promise.all(seeded.map((org) => inspectSeededOrg(browser, org, baseURL)));
   const readings = collected.map((entry) => `${entry.observed?.decision}|${entry.observed?.limiter}|${entry.observed?.reading}`);
   expect(new Set(readings).size).toBe(3);
   expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Preservar/i);
@@ -74,7 +71,17 @@ test('gera relatórios organizacionais de baixa, média e alta para inspeção d
   for (const entry of collected) console.log(`[showcase] ${entry.id}: ${entry.adminUrl}`);
 });
 
-async function inspectSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideCase> {
+async function inspectSeededOrg(browser: Browser, org: SeededOrg, baseURL: string | undefined): Promise<ShowcaseGuideCase> {
+  const context = await browser.newContext({ baseURL });
+  const page = await context.newPage();
+  try {
+    return await readSeededOrg(page, org);
+  } finally {
+    await context.close();
+  }
+}
+
+async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideCase> {
   const expected = expectations[org.band];
   await page.goto(org.adminPath);
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();

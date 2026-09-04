@@ -6,6 +6,12 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-04 — Showcase inspeciona as três organizações em paralelo
+
+- O E2E abre os três relatórios ao mesmo tempo no mesmo servidor; o seed continua
+  serial num único SQLite; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-04 — First screen executivo fecha decisão pronta
 
 - O cartão principal da organização deixou de abrir em coleta quando já existe
