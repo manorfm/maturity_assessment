@@ -5,6 +5,16 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.62.0
+
+- Publicou `capability-reference-v13` com a rubrica 0–4 de gestão do trabalho e
+  fluxo até uma consequência útil.
+- Passou a comparar limites de trabalho, espera, bloqueio, retirada de compromisso
+  e adaptação por tempo, retrabalho e resultado.
+- Publicou `evidence-anamnesis-pilot-v14`, conectando a consequência factual da
+  mudança à gestão do trabalho sem criar nova pergunta nem pontuar método ou
+  ferramenta por presença.
+
 ## 0.61.0
 
 - Publicou `capability-reference-v12` com a rubrica 0–4 de gestão de portfólio.

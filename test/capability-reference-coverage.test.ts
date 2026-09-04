@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as quinze referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as dezesseis referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -15,6 +15,16 @@ test('matriz relaciona as quinze referências a sinais tipados sem inferência t
     assert.equal(item.desirabilityCues, 0, item.capabilityId);
     assert.ok(item.gaps.length > 0 || item.status === 'minimum-covered', item.capabilityId);
   }
+});
+
+test('gestão do trabalho cobre fluxo, espera, bloqueio e consequência', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const work = matrix.references.find((item) => item.capabilityId === 'work-management');
+  assert.ok(work);
+  assert.equal(work.status, 'minimum-covered');
+  assert.ok(work.direct.nodes >= 7);
+  assert.ok(work.direct.patterns >= 10);
+  assert.deepEqual(work.layers, ['outcome', 'practice', 'system']);
 });
 
 test('portfólio cobre capacidade, trade-off, funding e revisão de investimento', () => {

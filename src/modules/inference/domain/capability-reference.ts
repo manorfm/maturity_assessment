@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v12' as const;
+export const capabilityReferenceVersion = 'capability-reference-v13' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -364,6 +364,24 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Gestão adaptativa de portfólio com limites de trabalho, apostas menores e decisões explícitas de interrupção.', 'Funding orientado a produtos e capacidades duradouras quando permite realocar investimento pelo resultado.'],
     optionalToolFamilies: ['Visualização de portfólio, capacidade, dependências, custos, riscos e resultados.', 'Gestão de cenários, investimentos, experimentos e decisões de continuidade.'],
     interpretationLimits: ['PMO, comitê, orçamento anual, OKR, método de priorização ou ferramenta de portfólio não produzem estágio por presença.', 'Uma lista ordenada não demonstra escolha quando iniciar trabalho não retira capacidade nem permite interromper investimento pelo resultado.'],
+  },
+  {
+    capabilityId: 'work-management', title: 'Gestão do trabalho e fluxo',
+    purpose: 'Fazer o trabalho fluir até uma consequência útil, limitando início, tornando espera e bloqueio decidíveis e retirando compromissos quando capacidade ou risco mudam.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quanto trabalho estava iniciado, onde esperou, quem podia remover o bloqueio ou qual consequência definiu conclusão.', 'Ocupação, progresso e entrega permanecem indistintos, ocultando filas, retrabalho e capacidade realmente disponível.', 'Sob pressão, novos itens entram e o estado do trabalho depende de atualizações individuais sem decisão recuperável.'),
+      stage(1, 'Reativo', 'O sistema inicia tarefas para manter ocupação; bloqueios ficam em fila, pessoas puxam outro item e compromissos anteriores não são retirados.', 'Espera e sobrecarga crescem silenciosamente, coordenação substitui resolução e contexto expira antes da conclusão.', 'Sob pressão, urgências entram como trabalho adicional e cada etapa tenta absorvê-las sem alterar o restante.'),
+      stage(2, 'Repetível', 'Alguns grupos limitam trabalho e tratam bloqueios, mas espera, prioridade e retirada de compromisso variam por pessoa, fluxo ou urgência.', 'Parte do trabalho conclui mais cedo, enquanto dependências externas e iniciativas paralelas continuam fragmentando capacidade.', 'Sob pressão, limites cedem, itens bloqueados permanecem ativos e iniciar outro trabalho volta a parecer progresso.'),
+      stage(3, 'Gerenciado', 'Limites explícitos favorecem concluir; bloqueios e espera alteram prioridade, e nova demanda retira ou reduz um compromisso com autoridade clara.', 'Tempo parado, retrabalho e acúmulo diminuem porque o sistema otimiza fluxo e resultado em vez de ocupação individual.', 'Sob pressão, o grupo preserva limites essenciais, reduz escopo e torna visível o trabalho abandonado ou adiado.'),
+      stage(4, 'Adaptativo', 'Feedback sobre tempo de fluxo, espera, retrabalho, bloqueios e resultado modifica continuamente limites, políticas e capacidade.', 'O sistema conclui valor com sustentabilidade e remove causas recorrentes sem deslocar fila ou risco para outra etapa.', 'Sob pressão, exceções permanecem observáveis e seu efeito ajusta o fluxo antes do próximo caso equivalente.'),
+    ],
+    evidenceRequired: ['Um trabalho recente reconstruído do início à consequência, com esperas, bloqueios, mudanças de prioridade e itens concorrentes.', 'Um caso seguinte mostrando efeito em tempo, retrabalho, capacidade ou resultado.'],
+    enablingConditions: ['Autoridade para limitar início e retirar compromissos.', 'Visibilidade de trabalho, espera, bloqueio e consequência ponta a ponta.'],
+    regressionSignals: ['Ocupação e início voltam a substituir conclusão.', 'Itens bloqueados permanecem ativos enquanto novas tarefas entram.'],
+    compatiblePractices: ['Gestão de fluxo com limites de trabalho e tratamento sistêmico de bloqueios.', 'Lotes menores, priorização explícita e melhoria orientada pelo tempo total.'],
+    optionalToolFamilies: ['Visualização de fluxo, filas, bloqueios e capacidade.', 'Telemetria de tempo, retrabalho e resultado.'],
+    interpretationLimits: ['Quadro, sprint, método ágil, reunião ou ferramenta de gestão não produzem estágio por presença.', 'Alta ocupação ou volume iniciado não demonstram fluxo nem valor concluído.'],
   },
 ];
 

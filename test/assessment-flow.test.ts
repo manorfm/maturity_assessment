@@ -387,7 +387,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 324);
+  assert.equal(signals.length, 326);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);
@@ -426,6 +426,7 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
         : node.id === 'recent-need' && firstOption === 'add-to-sprint' ? 'defined-then-built'
         : node.id === 'iteration-purpose' && firstOption === 'add-to-sprint' ? 'fill-capacity'
         : node.id === 'blocked-work' && firstOption === 'add-to-sprint' ? 'waiting-external'
+        : node.id === 'release-event-consequence' && firstOption === 'add-to-sprint' ? 'rework-after-wait'
         : node.id === 'product-outcome-evidence' && firstOption === 'add-to-sprint' ? 'delivery-accepted'
         : node.id === 'data-contract-change' && firstOption === 'add-to-sprint' ? 'coordinated-migration'
         : node.options[0]!.id;

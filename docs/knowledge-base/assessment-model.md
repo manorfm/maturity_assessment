@@ -116,11 +116,11 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v12` materializa rubricas para
+A referência vigente `capability-reference-v13` materializa rubricas para
 `discovery-validation`, `sdlc-automation`, `release-feedback`,
 `platform-autonomy`, `technical-capability`, `software-security` e
 `evolvability`, `organizational-learning`, `team-ownership`,
-`enabling-governance`, `leadership-management`, `collaboration`, `product-direction`, `portfolio-management` e
+`enabling-governance`, `leadership-management`, `collaboration`, `product-direction`, `portfolio-management`, `work-management` e
 `organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
@@ -136,7 +136,12 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as quinze referências atingem cobertura mínima. Em feedback
+No corte atual, as dezesseis referências atingem cobertura mínima. Em gestão do
+trabalho, sete eventos distintos cobrem dez padrões sob as lentes de todas as
+perspectivas, distinguindo fluxo até uma consequência útil de ocupação, início
+contínuo e espera normalizada. Limites de trabalho, retirada de compromisso e
+tratamento de bloqueios só sustentam estágio quando aparecem em comportamento e
+efeito; quadro, sprint, método ou ferramenta não pontuam por presença. Em feedback
 técnico, a prática é confrontada com a consequência da mesma mudança: decisão
 alterada a tempo, retrabalho posterior, avanço sem retorno ou efeito descoberto
 mais tarde. O fato chega à camada de resultado sem escolher causa ou ferramenta e

@@ -23,10 +23,11 @@ const initialCapabilities = [
   'collaboration',
   'product-direction',
   'portfolio-management',
+  'work-management',
 ];
 
-test('catálogo publica quinze referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v12');
+test('catálogo publica dezesseis referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v13');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -45,6 +46,16 @@ test('catálogo publica quinze referências comportamentais versionadas', () => 
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('gestão do trabalho mede conclusão e espera, não ocupação ou método', () => {
+  const reference = capabilityReferenceCatalog['work-management'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /ocupação|inicia|espera|bloqueio|fila/i);
+  assert.match(reference.stage(3).behavior, /limite|concluir|bloqueio|compromisso|fluxo/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|tempo|espera|resultado|fluxo/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /Kanban|Scrum|Jira|sprint/i);
+  assert.ok(reference.interpretationLimits.some((item) => /quadro|sprint|método|ferramenta/i.test(item)));
 });
 
 test('portfólio exige escolhas de capacidade e interrupção, não uma fila priorizada', () => {

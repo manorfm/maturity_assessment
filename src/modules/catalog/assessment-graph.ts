@@ -1,6 +1,6 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v13';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v14';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -988,8 +988,8 @@ const eventFollowupNodes: AssessmentNode[] = [
     scenario: 'Volte à mesma mudança usada na resposta anterior e ao momento em que ela finalmente ficou disponível.',
     prompt: 'Qual fato ocorreu depois desse intervalo?',
     options: [
-      { id: 'decision-still-useful', factKind: 'consequence', label: 'A mudança chegou ainda no momento da decisão e a evidência confirmou o efeito esperado.', signals: [{ capability: 'entrega', pattern: 'entrega-repetivel', weight: 2, details: ['release-feedback'], layer: 'outcome', constraint: 'none' }] },
-      { id: 'rework-after-wait', factKind: 'consequence', label: 'Alguma parte precisou ser refeita porque contexto, versão ou necessidade mudou durante a espera.', signals: [{ capability: 'entrega', pattern: 'empacotamento-manual', weight: -1, details: ['release-feedback'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'decision-still-useful', factKind: 'consequence', label: 'A mudança chegou ainda no momento da decisão e a evidência confirmou o efeito esperado.', signals: [{ capability: 'entrega', pattern: 'entrega-repetivel', weight: 2, details: ['release-feedback'], layer: 'outcome', constraint: 'none' }, { capability: 'fluxo', pattern: 'feedback-integrado', weight: 2, details: ['work-management'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'rework-after-wait', factKind: 'consequence', label: 'Alguma parte precisou ser refeita porque contexto, versão ou necessidade mudou durante a espera.', signals: [{ capability: 'entrega', pattern: 'empacotamento-manual', weight: -1, details: ['release-feedback'], layer: 'outcome', constraint: 'undetermined' }, { capability: 'fluxo', pattern: 'espera-normalizada', weight: -1, details: ['work-management'], layer: 'outcome', constraint: 'undetermined' }] },
       { id: 'risk-accepted-to-finish', factKind: 'consequence', label: 'Uma verificação ou controle foi reduzido para concluir a entrega no prazo restante.', signals: [{ capability: 'governanca', pattern: 'controle-sem-feedback', weight: -1, details: ['enabling-governance'], layer: 'outcome', constraint: 'undetermined' }] },
       { id: 'effect-not-checked', factKind: 'consequence', label: 'A entrega terminou, mas o efeito esperado não voltou à decisão do grupo.', signals: [{ capability: 'governanca', pattern: 'portfolio-sem-feedback', weight: -1, details: ['portfolio-management', 'release-feedback'], layer: 'outcome', constraint: 'undetermined' }] },
     ], next: 'integration-cadence',

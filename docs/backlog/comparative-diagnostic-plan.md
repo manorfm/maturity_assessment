@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `work-management`, distinguindo fluxo orientado a
-concluir valor de ocupação individual e início contínuo de tarefas. Os estágios
-devem observar limites de trabalho, espera, bloqueio, retirada de compromisso e
-efeito no fluxo sem premiar quadro, sprint, método ágil ou ferramenta de gestão por
-presença.
+Escrever a próxima rubrica para `planning-refinement`, distinguindo preparação
+colaborativa suficiente de uma fase antecipada que transforma incerteza em grande
+lote. Os estágios devem observar entendimento do problema, exemplos, riscos,
+dependências, reversibilidade e efeito no trabalho iniciado sem premiar backlog,
+refinement, sprint planning, estimativa, framework ou ferramenta por presença.
