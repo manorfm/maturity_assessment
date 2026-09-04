@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `domain-alignment`, distinguindo linguagem e
-limites reconstruídos no trabalho de glossário, modelagem ou arquitetura apenas
-declarados. Os estágios devem observar significado compartilhado, conflito,
-ownership, efeito na mudança e adaptação do limite sem premiar DDD, bounded context,
-event storming, glossário, diagrama ou ferramenta por presença.
+Escrever a próxima rubrica para `architecture-decisions`, distinguindo contexto,
+alternativas, trade-offs, reversibilidade, autoridade e revisão pelo efeito de ADR,
+comitê, framework ou ferramenta apenas declarados. Os estágios devem observar uma
+decisão recente e sua consequência na mudança seguinte sem premiar governança ou
+documentação arquitetural por presença.

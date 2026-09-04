@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as vinte referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as vinte e uma referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -185,6 +185,16 @@ test('ownership confronta responsabilidade declarada com autoridade e consequên
   assert.ok(ownership.direct.nodes >= 18);
   assert.ok(ownership.direct.patterns >= 30);
   assert.deepEqual(ownership.layers, ['consistency', 'outcome', 'practice', 'system']);
+});
+
+test('alinhamento ao domínio cobre significado, pressão, sistema e efeito', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const alignment = matrix.references.find((item) => item.capabilityId === 'domain-alignment');
+  assert.ok(alignment);
+  assert.equal(alignment.status, 'minimum-covered');
+  assert.ok(alignment.direct.nodes >= 5);
+  assert.ok(alignment.direct.patterns >= 7);
+  assert.deepEqual(alignment.layers, ['knowledge', 'outcome', 'practice', 'system']);
 });
 
 test('matriz distingue efeito indireto, perspectiva única e ausência', () => {

@@ -195,11 +195,11 @@ níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmen
 escopo da unidade, permitindo navegação macro→micro sem perder o recorte.
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
-`capability-reference-v17`. `CapabilityReference` rejeita base de avaliação nominal,
+`capability-reference-v18`. `CapabilityReference` rejeita base de avaliação nominal,
 estágios ausentes e dimensões observacionais incompletas. A linha de base do
 instrumento publica quantidade de referências e quantas pertencem à taxonomia. O
 catálogo cobre descoberta/validação, feedback técnico repetível, release e feedback,
-autonomia de plataforma, competência técnica, segurança de software, evolutibilidade, aprendizado organizacional, ownership, governança habilitadora, liderança, colaboração, direção de produto, gestão de portfólio, gestão do trabalho, planejamento/refinamento, integração contínua, design sustentável, estratégia de qualidade e o meta-sistema organizacional; inferência e relatório ainda não
+autonomia de plataforma, competência técnica, segurança de software, evolutibilidade, aprendizado organizacional, ownership, governança habilitadora, liderança, colaboração, direção de produto, gestão de portfólio, gestão do trabalho, planejamento/refinamento, integração contínua, design sustentável, estratégia de qualidade, alinhamento ao domínio e o meta-sistema organizacional; inferência e relatório ainda não
 consomem essas rubricas nesta versão.
 
 `capability-reference-coverage.ts` produz a projeção auditável
@@ -209,9 +209,10 @@ capacidade e não altera sinal, peso, inferência ou relatório. A linha de base
 a matriz completa para que uma lacuna de autoria não seja confundida com baixa
 capacidade da organização avaliada.
 
-O grafo `evidence-anamnesis-pilot-v17` explicita o mesmo prazo em mudanças de
+O grafo `evidence-anamnesis-pilot-v18` associa o aprendizado da decisão entre
+fronteiras também ao alinhamento de domínio e explicita o mesmo prazo em mudanças de
 impactos distintos para observar se a proteção responde ao risco, sem criar
-pergunta, sinal ou causa. As vinte referências vigentes atingem
+pergunta, sinal ou causa. As vinte e uma referências vigentes atingem
 cobertura mínima na matriz; esse estado mede somente suficiência estrutural do
 instrumento, não maturidade, acurácia ou calibração empírica.
 

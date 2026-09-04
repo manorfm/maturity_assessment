@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.67.0
+
+- Publicou `capability-reference-v18` com a rubrica 0–4 de alinhamento ao domínio.
+- Passou a comparar significado, conflito, limites, ownership e aprendizado na
+  mudança seguinte sem pontuar DDD, event storming, glossário ou ferramenta.
+- Publicou `evidence-anamnesis-pilot-v18`, reutilizando a consequência arquitetural
+  existente sem adicionar pergunta ou sinal.
+
 ## 0.66.0
 
 - Publicou `capability-reference-v17` com a rubrica 0–4 de estratégia de qualidade

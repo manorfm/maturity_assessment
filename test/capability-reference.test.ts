@@ -28,10 +28,11 @@ const initialCapabilities = [
   'continuous-integration',
   'sustainable-design',
   'quality-strategy',
+  'domain-alignment',
 ];
 
-test('catálogo publica vinte referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v17');
+test('catálogo publica vinte e uma referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v18');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -50,6 +51,17 @@ test('catálogo publica vinte referências comportamentais versionadas', () => {
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('alinhamento ao domínio mede significado na mudança, não vocabulário nominal', () => {
+  const reference = capabilityReferenceCatalog['domain-alignment'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /termo|significado|conflito|glossário|ownership|especialista/i);
+  assert.match(reference.stage(3).behavior, /linguagem|limite|respons|mudança|exemplo/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|mudança seguinte|conflito|custo|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /DDD|bounded context|event storming|EventStorming|Ubiquitous Language/i);
+  assert.ok(reference.interpretationLimits.some((item) => /DDD|bounded context|event storming|glossário|diagrama|ferramenta/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /divergência|desacordo|fronteira|tradução/i.test(item)));
 });
 
 test('estratégia de qualidade mede proteção proporcional, não volume de testes', () => {

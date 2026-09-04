@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v17' as const;
+export const capabilityReferenceVersion = 'capability-reference-v18' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -454,6 +454,24 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Estratégia de testes e qualidade orientada por risco e exemplos.', 'Prevenção, verificação contínua e observação em produção com aprendizado sobre escapes.'],
     optionalToolFamilies: ['Automação de testes, análise e verificação de segurança ou qualidade.', 'Gestão de dados de teste, ambientes, observabilidade e análise de escapes.'],
     interpretationLimits: ['Cobertura, quantidade de testes, suíte, scanner, pirâmide, shift-left ou ferramenta não produzem estágio por presença.', 'QA ou especialista dedicado não é fragilidade por existir; pesa quando a organização transforma sua participação em etapa, fila ou transferência de responsabilidade.'],
+  },
+  {
+    capabilityId: 'domain-alignment', title: 'Alinhamento ao domínio',
+    purpose: 'Manter significado, regras, responsabilidades e limites coerentes com o trabalho real, tornando conflitos observáveis e revisando o modelo pelo efeito produzido nas mudanças seguintes.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir que significado orientou uma mudança, onde termos ou regras divergiram, quem podia decidir nem qual limite foi atravessado.', 'Conflito de entendimento, acoplamento técnico e bloqueio de autoridade ficam indistintos, impedindo localizar a causa do retrabalho ou do comportamento inesperado.', 'Sob pressão, cada grupo interpreta o pedido com o contexto disponível e a diferença só aparece na integração, na operação ou no uso.'),
+      stage(1, 'Reativo', 'Termos e regras mudam entre grupos, conflitos aparecem tarde e a decisão depende de especialista, ownership informal, glossário adiado ou negociação caso a caso.', 'Retrabalho e coordenação se repetem porque código, linguagem e responsabilidade representam entendimentos diferentes sem uma fronteira ou tradução explícita.', 'Sob pressão, prevalece a interpretação de quem possui prazo, sistema ou autoridade; o desacordo é contornado e transferido para a mudança seguinte.'),
+      stage(2, 'Repetível', 'Algumas mudanças alinham exemplos, significado e responsáveis antes da implementação, mas o cuidado varia por grupo, pessoa, dependência e urgência.', 'Conflitos diminuem em áreas conhecidas, enquanto documentação, modelo e comportamento ainda se afastam nas fronteiras compartilhadas ou menos visíveis.', 'Sob pressão, o grupo reutiliza a definição disponível, adia a conversa entre perspectivas e mantém uma tradução manual para conseguir entregar.'),
+      stage(3, 'Gerenciado', 'Pessoas afetadas alinham linguagem, exemplos, regras, limites e responsabilidade dentro da mudança; conflitos ficam explícitos e a decisão pode ser revista.', 'O comportamento entregue preserva o significado acordado, reduz surpresa entre grupos e permite alterar uma fronteira sem ampliar coordenação desnecessária.', 'Sob pressão, o grupo reduz escopo, registra a divergência e preserva exemplo verificável e responsável pela reconciliação em vez de esconder interpretações incompatíveis.'),
+      stage(4, 'Adaptativo', 'Feedback de uso, conflito, defeito e custo da mudança seguinte modifica continuamente linguagem, exemplos, limites e distribuição de responsabilidade.', 'Aprendizado reduz traduções manuais e recorrência de conflitos, mantendo o modelo aderente ao trabalho real sem impor uniformidade onde diferenças são úteis.', 'Sob pressão, exceções de significado permanecem observáveis e realimentam o limite antes do próximo caso equivalente, com decisão e efeito comparáveis.'),
+    ],
+    evidenceRequired: ['Uma mudança recente em que grupos ou pessoas precisaram reconciliar significado, regra, exemplo, limite ou responsabilidade.', 'A mudança equivalente seguinte ou um efeito de uso mostrando redução, persistência ou deslocamento do conflito e do custo de coordenação.'],
+    enablingConditions: ['Acesso durante a mudança às pessoas que conhecem o problema, o uso e as partes técnicas afetadas.', 'Autoridade para esclarecer responsabilidade e testar ou revisar limites, contratos e traduções pelo efeito.'],
+    regressionSignals: ['Glossário, documentação ou diagrama passam a substituir a reconstrução do conflito no trabalho.', 'O modelo volta a ser propriedade de especialistas e diverge do código, das decisões ou da linguagem usada por quem opera e utiliza o produto.'],
+    compatiblePractices: ['Descoberta colaborativa de domínio e modelagem orientada por eventos, exemplos e conflitos reais.', 'Exemplos executáveis, contratos verificáveis e revisão incremental de linguagem, limites e ownership.'],
+    optionalToolFamilies: ['Modelagem colaborativa, registro de decisões e mapeamento de dependências, ownership e impacto.', 'Catálogos, documentação viva, contratos e rastreabilidade capazes de ligar significado ao comportamento observado.'],
+    interpretationLimits: ['DDD, bounded context, event storming, glossário, diagrama, linguagem formal ou ferramenta não produzem estágio por presença.', 'Divergência ou desacordo não é fragilidade por si só; fronteiras deliberadas e traduções explícitas podem preservar significados diferentes com bom efeito.'],
   },
 ];
 
