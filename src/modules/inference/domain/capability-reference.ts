@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v14' as const;
+export const capabilityReferenceVersion = 'capability-reference-v15' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -400,6 +400,24 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Refinamento colaborativo orientado por exemplos, riscos e decisões reversíveis.', 'Story mapping, example mapping, descoberta técnica e fatiamento vertical quando reduzem a próxima incerteza relevante.'],
     optionalToolFamilies: ['Gestão e visualização de hipóteses, exemplos, riscos e dependências.', 'Colaboração, prototipação e verificação antecipada de contratos ou critérios.'],
     interpretationLimits: ['Backlog, refinement, sprint planning, estimativa, cerimônia ou ferramenta não produzem estágio por presença.', 'Alta performance não exige eliminar incerteza nem produzir definição completa antecipada; exige tornar o próximo compromisso pequeno, seguro e revisável.'],
+  },
+  {
+    capabilityId: 'continuous-integration', title: 'Integração contínua',
+    purpose: 'Fazer mudanças pequenas encontrarem cedo uma versão compartilhada e verificável, com retorno acionável e correção do caminho antes que isolamento, conflito e risco se acumulem.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir por quanto tempo a mudança ficou isolada, qual versão recebeu a composição ou de onde veio o primeiro retorno confiável.', 'Conflitos, regressões e versões concorrentes não podem ser ligados ao intervalo, à mudança ou à decisão que permitiu avançar.', 'Sob pressão, cópias, combinações e correções circulam por caminhos individuais sem fonte ou consequência recuperável.'),
+      stage(1, 'Reativo', 'Mudanças permanecem isoladas até uma janela ou momento de estabilização e encontram conflitos depois que várias decisões já se acumularam.', 'Composição vira evento de risco, exige coordenação e produz retrabalho difícil de atribuir enquanto outras mudanças continuam entrando.', 'Sob pressão, lotes são reunidos tarde, verificações cedem e pessoas corrigem diretamente a combinação necessária para cumprir a data.'),
+      stage(2, 'Repetível', 'Algumas mudanças pequenas encontram a versão compartilhada em poucos dias, mas duração, instabilidade, fronteiras ou acoplamento ainda interrompem a frequência.', 'O retorno reduz parte dos conflitos, porém estabilização e espera reaparecem quando muda o serviço, o grupo ou a urgência.', 'Sob pressão, o isolamento cresce, a composição volta para uma janela e falhas do caminho são contornadas em vez de corrigidas.'),
+      stage(3, 'Gerenciado', 'Mudanças pequenas encontram a versão compartilhada no mesmo ciclo e recebem feedback rápido; uma falha interrompe acúmulo e é corrigida com ownership claro.', 'Conflitos e incompatibilidades aparecem enquanto contexto e lote são pequenos, permitindo corrigir sem coordenação excepcional.', 'Sob pressão, o grupo reduz escopo, preserva composição e verificações essenciais e reconcilia qualquer exceção antes de acumular outra mudança.'),
+      stage(4, 'Adaptativo', 'Feedback sobre tempo de isolamento, falhas, conflitos e escapes modifica continuamente arquitetura, verificações e políticas de composição.', 'A mudança seguinte encontra retorno mais cedo e o sistema reduz recorrência sem transferir espera ou risco para estabilização posterior.', 'Sob pressão, simplificações permanecem observáveis e seu efeito melhora o caminho antes do próximo caso equivalente.'),
+    ],
+    evidenceRequired: ['Uma mudança recente desde a primeira alteração até encontrar a versão compartilhada, com intervalo, conflitos, verificações e responsáveis.', 'A consequência do primeiro retorno e o efeito observado numa mudança seguinte equivalente.'],
+    enablingConditions: ['Fonte compartilhada e verificável com feedback rápido o bastante para orientar a mudança atual.', 'Autoridade e capacidade para interromper acúmulo e corrigir o caminho quando a composição falha.'],
+    regressionSignals: ['Mudanças voltam a permanecer dias isoladas ou depender de janela coordenada.', 'Falhas frequentes são toleradas, contornadas ou transferidas para estabilização posterior.'],
+    compatiblePractices: ['Composição frequente de mudanças pequenas com correção imediata de falhas.', 'Verificações de contrato, configuração e compatibilidade posicionadas antes do acúmulo.'],
+    optionalToolFamilies: ['Controle de versão e revisão colaborativa de mudanças.', 'Integração, build, análise e verificação automatizada de contratos e compatibilidade.'],
+    interpretationLimits: ['Git, branch, pipeline, servidor de integração ou ferramenta não produzem estágio por presença.', 'Trunk-based development, pull request ou frequência declarada não demonstram integração quando mudanças continuam isoladas, quebradas ou sem retorno acionável.'],
   },
 ];
 

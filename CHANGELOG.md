@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.64.0
+
+- Publicou `capability-reference-v15` com a rubrica 0–4 de integração contínua
+  orientada à composição frequente e ao retorno acionável.
+- Passou a comparar isolamento, conflitos, compatibilidade, correção do caminho e
+  efeito na mudança seguinte.
+- Publicou `evidence-anamnesis-pilot-v16`, conectando a consequência factual do
+  primeiro retorno e explicitando pressão sem adicionar pergunta, sinal ou peso.
+
 ## 0.63.0
 
 - Publicou `capability-reference-v14` com a rubrica 0–4 de planejamento e

@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `continuous-integration`, distinguindo composição
-frequente com feedback acionável de simples uso de branches, automação ou servidor
-de integração. Os estágios devem observar tamanho e duração do isolamento, conflito,
-compatibilidade, correção do caminho e efeito na mudança seguinte sem premiar Git,
-trunk-based development, pull request, pipeline ou ferramenta por presença.
+Escrever a próxima rubrica para `sustainable-design`, distinguindo mudança pequena
+e segura de desenho que acumula dependência, contorno e dívida até exigir grande
+reescrita. Os estágios devem observar coesão, testabilidade, custo de alteração,
+decisões reversíveis e efeito na mudança seguinte sem premiar SOLID, Clean
+Architecture, padrão, linguagem ou ferramenta por presença.

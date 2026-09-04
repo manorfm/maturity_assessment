@@ -25,10 +25,11 @@ const initialCapabilities = [
   'portfolio-management',
   'work-management',
   'planning-refinement',
+  'continuous-integration',
 ];
 
-test('catálogo publica dezessete referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v14');
+test('catálogo publica dezoito referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v15');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -47,6 +48,16 @@ test('catálogo publica dezessete referências comportamentais versionadas', () 
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('integração contínua mede composição e correção, não branch ou ferramenta', () => {
+  const reference = capabilityReferenceCatalog['continuous-integration'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /isolad|conflito|janela|acumul/i);
+  assert.match(reference.stage(3).behavior, /pequen|compartilh|feedback|corrig/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|falha|tempo|mudança seguinte|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /GitHub|GitLab|Jenkins|trunk-based|pull request/i);
+  assert.ok(reference.interpretationLimits.some((item) => /Git|branch|pipeline|servidor|ferramenta/i.test(item)));
 });
 
 test('planejamento e refinamento reduzem incerteza sem fingir definição completa', () => {

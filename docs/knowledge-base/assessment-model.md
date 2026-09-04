@@ -116,11 +116,11 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v14` materializa rubricas para
+A referência vigente `capability-reference-v15` materializa rubricas para
 `discovery-validation`, `sdlc-automation`, `release-feedback`,
 `platform-autonomy`, `technical-capability`, `software-security` e
 `evolvability`, `organizational-learning`, `team-ownership`,
-`enabling-governance`, `leadership-management`, `collaboration`, `product-direction`, `portfolio-management`, `work-management`, `planning-refinement` e
+`enabling-governance`, `leadership-management`, `collaboration`, `product-direction`, `portfolio-management`, `work-management`, `planning-refinement`, `continuous-integration` e
 `organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
@@ -136,7 +136,7 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as dezessete referências atingem cobertura mínima. Em gestão do
+No corte atual, as dezoito referências atingem cobertura mínima. Em gestão do
 trabalho, sete eventos distintos cobrem dez padrões sob as lentes de todas as
 perspectivas, distinguindo fluxo até uma consequência útil de ocupação, início
 contínuo e espera normalizada. Limites de trabalho, retirada de compromisso e
@@ -225,6 +225,13 @@ feedback confirma ou reabre o trabalho enquanto o contexto ainda está disponív
 Incerteza restante deve continuar explícita e capaz de alterar escopo; definição
 completa antecipada não é o alvo. Backlog, refinement, sprint planning, estimativa,
 cerimônia, framework ou ferramenta não concedem estágio por presença.
+
+Em integração contínua, o estágio observa quanto tempo mudanças permanecem
+isoladas, quando encontram a versão compartilhada, que conflitos e incompatibilidades
+aparecem e se uma falha corrige o caminho antes de acumular outro lote. A
+consequência do primeiro retorno distingue correção oportuna de reabertura tardia.
+Git, branches, trunk-based development, pull request, pipeline ou servidor de
+integração não concedem estágio por presença.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

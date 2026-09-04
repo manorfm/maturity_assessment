@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v15` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v16` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. A pessoa recebe um tronco comum e,
 quando contexto ou perspectiva mudam o que ela consegue observar ou decidir, um
@@ -21,7 +21,7 @@ dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem,
 não a evidência procurada.
 
 A auditoria versionada publica uma linha de base de autoria sem modificar essa
-jornada. Para `evidence-anamnesis-pilot-v15`, ela registra quantidade e tipo de nós,
+jornada. Para `evidence-anamnesis-pilot-v16`, ela registra quantidade e tipo de nós,
 percurso e duração estimados por perspectiva, tronco comum, variantes, probes
 causais, saídas de visibilidade e dívida dos contratos de direção. Esses números
 caracterizam o instrumento para comparar versões futuras; não medem capacidade da

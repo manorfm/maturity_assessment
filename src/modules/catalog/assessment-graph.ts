@@ -1,6 +1,6 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v15';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v16';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -158,7 +158,7 @@ const authoredNodes: AssessmentNode[] = [
   },
   {
     id: 'integration-cadence', type: 'probe', title: 'Quanto tempo a mudança fica isolada?',
-    scenario: 'Pense na última alteração comum, sem emergência. Considere desde o primeiro código utilizável até ele encontrar a versão compartilhada e receber verificações do restante do produto.',
+    scenario: 'Pense na última alteração comum em que o prazo pressionou o trabalho. Considere desde o primeiro código utilizável até ele encontrar a versão compartilhada e receber verificações do restante do produto.',
     prompt: 'Qual descrição representa melhor essa integração no dia a dia?',
     options: [
       { id: 'integrated-daily', label: 'Mudanças pequenas encontram a versão compartilhada no mesmo dia; verificações rápidas protegem o fluxo e falhas são corrigidas antes de acumular.', signals: [{ capability: 'engenharia', pattern: 'integracao-continua-validada', weight: 2 , details: ['continuous-integration', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
@@ -977,10 +977,10 @@ const eventFollowupNodes: AssessmentNode[] = [
     scenario: 'Continue na mesma mudança pequena e considere o primeiro retorno técnico que poderia alterar a decisão de integrá-la.',
     prompt: 'O que ocorreu depois desse primeiro retorno?',
     options: [
-      { id: 'changed-before-integration', factKind: 'consequence', label: 'A mudança foi corrigida ou confirmada antes de ser integrada, enquanto o contexto ainda estava disponível.', signals: [{ capability: 'engenharia', pattern: 'feedback-tecnico-rapido', weight: 2, details: ['sdlc-automation'], layer: 'outcome', constraint: 'none' }, { capability: 'fluxo', pattern: 'discovery-testa-problema-e-decisao', weight: 2, details: ['planning-refinement'], layer: 'outcome', constraint: 'none' }] },
-      { id: 'rework-after-integration', factKind: 'consequence', label: 'O retorno chegou depois da integração e exigiu reabrir a mudança ou refazer parte do trabalho.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation'], layer: 'outcome', constraint: 'undetermined' }, { capability: 'fluxo', pattern: 'qualidade-tardia', weight: -1, details: ['planning-refinement'], layer: 'outcome', constraint: 'undetermined' }] },
-      { id: 'continued-without-result', factKind: 'consequence', label: 'O grupo avançou sem o resultado porque esperar eliminaria o tempo restante para concluir.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation'], layer: 'outcome', constraint: 'undetermined' }, { capability: 'fluxo', pattern: 'qualidade-tardia', weight: -1, details: ['planning-refinement'], layer: 'outcome', constraint: 'undetermined' }] },
-      { id: 'effect-found-later', factKind: 'consequence', label: 'Um efeito da mudança só apareceu em uma verificação posterior ou depois de chegar a quem a utiliza.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation'], layer: 'outcome', constraint: 'undetermined' }, { capability: 'fluxo', pattern: 'qualidade-tardia', weight: -1, details: ['planning-refinement'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'changed-before-integration', factKind: 'consequence', label: 'A mudança foi corrigida ou confirmada antes de ser integrada, enquanto o contexto ainda estava disponível.', signals: [{ capability: 'engenharia', pattern: 'feedback-tecnico-rapido', weight: 2, details: ['sdlc-automation', 'continuous-integration'], layer: 'outcome', constraint: 'none' }, { capability: 'fluxo', pattern: 'discovery-testa-problema-e-decisao', weight: 2, details: ['planning-refinement'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'rework-after-integration', factKind: 'consequence', label: 'O retorno chegou depois da integração e exigiu reabrir a mudança ou refazer parte do trabalho.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation', 'continuous-integration'], layer: 'outcome', constraint: 'undetermined' }, { capability: 'fluxo', pattern: 'qualidade-tardia', weight: -1, details: ['planning-refinement'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'continued-without-result', factKind: 'consequence', label: 'O grupo avançou sem o resultado porque esperar eliminaria o tempo restante para concluir.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation', 'continuous-integration'], layer: 'outcome', constraint: 'undetermined' }, { capability: 'fluxo', pattern: 'qualidade-tardia', weight: -1, details: ['planning-refinement'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'effect-found-later', factKind: 'consequence', label: 'Um efeito da mudança só apareceu em uma verificação posterior ou depois de chegar a quem a utiliza.', signals: [{ capability: 'engenharia', pattern: 'automacao-sem-feedback', weight: -1, details: ['sdlc-automation', 'continuous-integration'], layer: 'outcome', constraint: 'undetermined' }, { capability: 'fluxo', pattern: 'qualidade-tardia', weight: -1, details: ['planning-refinement'], layer: 'outcome', constraint: 'undetermined' }] },
     ], next: 'team-pressure',
   },
   {
