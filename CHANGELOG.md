@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.66.0
+
+- Publicou `capability-reference-v17` com a rubrica 0–4 de estratégia de qualidade
+  proporcional ao risco.
+- Passou a comparar participação, exemplos, dados, feedback, escapes e adaptação da
+  proteção sem pontuar volume de testes ou especialização por presença.
+- Publicou `evidence-anamnesis-pilot-v17`, explicitando pressão equivalente no
+  contraste entre mudanças de impactos distintos sem adicionar pergunta ou sinal.
+
 ## 0.65.0
 
 - Publicou `capability-reference-v16` com a rubrica 0–4 de design sustentável da

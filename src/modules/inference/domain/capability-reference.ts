@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v16' as const;
+export const capabilityReferenceVersion = 'capability-reference-v17' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -436,6 +436,24 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Design incremental orientado por coesão, testabilidade e decisões reversíveis.', 'Refatoração contínua, caracterização de comportamento e melhoria guiada pelo custo real da mudança.'],
     optionalToolFamilies: ['Análise de dependências, estrutura, cobertura e evolução do código.', 'Testes, ambientes e observabilidade capazes de verificar comportamento durante a mudança.'],
     interpretationLimits: ['SOLID, Clean Architecture, padrão, linguagem, framework ou ferramenta não produzem estágio por presença.', 'Tecnologia antiga ou legado não reduzem estágio por idade; pesam apenas dependência, risco, espera e custo demonstrados na mudança.'],
+  },
+  {
+    capabilityId: 'quality-strategy', title: 'Estratégia de qualidade',
+    purpose: 'Proteger o resultado de cada mudança de forma proporcional ao risco, produzindo feedback útil durante o trabalho e usando escapes para adaptar prevenção, verificação e observação.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quais riscos foram considerados, que verificações ocorreram ou qual evidência permitiu considerar a última mudança segura.', 'Defeito, espera e escape não podem ser ligados à decisão de qualidade, ao contexto da mudança ou ao resultado afetado.', 'Sob pressão, a liberação depende de memória, aceite informal ou atividade não recuperável e não deixa critério para revisão.'),
+      stage(1, 'Reativo', 'Qualidade entra como etapa ou responsabilidade concentrada em QA; casos dependem de memória, checklist e regressão depois que a solução já está pronta.', 'Feedback chega tarde, filas crescem e defeitos escapam ou geram ciclos extensos de correção sem alterar como o risco foi tratado.', 'Sob pressão, verificações são reduzidas, o caso feliz prevalece e responsabilidade pelo risco é transferida para a etapa final.'),
+      stage(2, 'Repetível', 'Existem exemplos, automação e participação antecipada em parte das mudanças, mas suíte padrão, dados frágeis ou julgamento especializado ainda determinam a proteção.', 'Riscos conhecidos recebem retorno, enquanto variação entre produtos e ambientes mantém espera, cobertura incidental e escapes recorrentes.', 'Sob pressão, a estratégia volta ao conjunto disponível de testes ou à decisão de quem possui tempo e acesso para verificar.'),
+      stage(3, 'Gerenciado', 'Risco, impacto, exemplos e histórico definem prevenção, feedback e observação, com responsabilidades compartilhadas desde a decisão até o resultado.', 'Defeitos relevantes aparecem cedo, verificações permanecem proporcionais e escapes possuem owner e consequência capaz de mudar o fluxo.', 'Sob pressão, o grupo reduz escopo e preserva as proteções essenciais ao risco, explicitando qualquer exceção e sua reconciliação.'),
+      stage(4, 'Adaptativo', 'Feedback de escapes, incidentes, uso e resultados modifica continuamente a estratégia, removendo verificações sem valor e fortalecendo riscos descobertos.', 'Aprendizado reduz recorrência e espera sem inflar suíte ou controle, melhorando a proteção da mudança seguinte com custo sustentável.', 'Sob pressão, simplificações continuam observáveis e seu efeito ajusta prevenção, detecção e resposta antes do próximo caso equivalente.'),
+    ],
+    evidenceRequired: ['Uma mudança recente com risco, exemplos, dados, verificações, responsáveis e decisão de avançar.', 'Um escape ou resultado posterior mostrando como a estratégia foi mantida ou alterada na mudança seguinte.'],
+    enablingConditions: ['Competências de produto, engenharia, qualidade, segurança e operação acessíveis conforme o risco.', 'Dados, ambientes e feedback rápidos o bastante para orientar a mudança enquanto o contexto está disponível.'],
+    regressionSignals: ['Qualidade volta a ser uma etapa final ou responsabilidade exclusiva de QA.', 'Suíte, cobertura ou checklist crescem sem reduzir escape, espera ou incerteza relevante.'],
+    compatiblePractices: ['Estratégia de testes e qualidade orientada por risco e exemplos.', 'Prevenção, verificação contínua e observação em produção com aprendizado sobre escapes.'],
+    optionalToolFamilies: ['Automação de testes, análise e verificação de segurança ou qualidade.', 'Gestão de dados de teste, ambientes, observabilidade e análise de escapes.'],
+    interpretationLimits: ['Cobertura, quantidade de testes, suíte, scanner, pirâmide, shift-left ou ferramenta não produzem estágio por presença.', 'QA ou especialista dedicado não é fragilidade por existir; pesa quando a organização transforma sua participação em etapa, fila ou transferência de responsabilidade.'],
   },
 ];
 

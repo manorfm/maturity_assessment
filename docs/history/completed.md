@@ -6,6 +6,15 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de estratégia de qualidade
+
+- Publicado `capability-reference-v17` com cinco estágios para proteção proporcional,
+  feedback e aprendizado por escapes, e `evidence-anamnesis-pilot-v17` com pressão
+  explícita no contraste de risco; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md),
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de design sustentável
 
 - Publicado `capability-reference-v16` com cinco estágios para melhoria incremental,

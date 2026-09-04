@@ -116,11 +116,11 @@ condições habilitadoras, efeitos, evidências, reação sob pressão, sinais d
 regressão e limites de interpretação. Uma folha sem esse contrato continua com a
 estimativa direcional vigente, mas não pode alegar comparação normativa completa.
 
-A referência vigente `capability-reference-v16` materializa rubricas para
+A referência vigente `capability-reference-v17` materializa rubricas para
 `discovery-validation`, `sdlc-automation`, `release-feedback`,
 `platform-autonomy`, `technical-capability`, `software-security` e
 `evolvability`, `organizational-learning`, `team-ownership`,
-`enabling-governance`, `leadership-management`, `collaboration`, `product-direction`, `portfolio-management`, `work-management`, `planning-refinement`, `continuous-integration`, `sustainable-design` e
+`enabling-governance`, `leadership-management`, `collaboration`, `product-direction`, `portfolio-management`, `work-management`, `planning-refinement`, `continuous-integration`, `sustainable-design`, `quality-strategy` e
 `organizational-system`. Cada contrato possui propósito, cinco âncoras de
 comportamento, efeito e reação sob pressão, evidências necessárias, condições
 habilitadoras, regressões, práticas compatíveis, famílias de ferramenta opcionais
@@ -136,7 +136,7 @@ resultado ou pressão. “Cobertura mínima” significa apenas dois padrões, o
 do comportamento ou sistema, consequência e situação de pressão; não valida todos
 os textos da rubrica nem autoriza recalibrar o estágio.
 
-No corte atual, as dezenove referências atingem cobertura mínima. Em gestão do
+No corte atual, as vinte referências atingem cobertura mínima. Em gestão do
 trabalho, sete eventos distintos cobrem dez padrões sob as lentes de todas as
 perspectivas, distinguindo fluxo até uma consequência útil de ocupação, início
 contínuo e espera normalizada. Limites de trabalho, retirada de compromisso e
@@ -240,6 +240,13 @@ são práticas compatíveis quando produzem esse efeito; dívida em backlog ou e
 por reescrita não demonstram capacidade por si. SOLID, Clean Architecture, padrão,
 linguagem, framework, ferramenta ou idade da tecnologia não concedem nem retiram
 estágio por presença.
+
+Em estratégia de qualidade, o estágio observa como risco, impacto, exemplos e
+histórico alteram prevenção, feedback e observação, e se escapes modificam a
+proteção seguinte. Especialização de QA pode ser habilitadora; torna-se fragilidade
+quando vira etapa, fila ou transferência de responsabilidade. Cobertura, quantidade
+de testes, suíte, pirâmide, shift-left, scanner ou ferramenta não concedem estágio
+por presença.
 
 O nível 4 exige comportamento adaptativo sustentado e consequência observada. Não
 é concedido por CI/CD, GitOps, SRE, plataforma, cloud, DDD, Scrum, Vault ou qualquer

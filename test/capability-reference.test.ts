@@ -27,10 +27,11 @@ const initialCapabilities = [
   'planning-refinement',
   'continuous-integration',
   'sustainable-design',
+  'quality-strategy',
 ];
 
-test('catálogo publica dezenove referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v16');
+test('catálogo publica vinte referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v17');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -49,6 +50,17 @@ test('catálogo publica dezenove referências comportamentais versionadas', () =
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('estratégia de qualidade mede proteção proporcional, não volume de testes', () => {
+  const reference = capabilityReferenceCatalog['quality-strategy'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /QA|etapa|memória|regressão|checklist/i);
+  assert.match(reference.stage(3).behavior, /risco|impacto|exemplo|feedback|respons/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /escape|incidente|resultado|estratégia|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /shift-left|pirâmide de testes|Sonar|Selenium/i);
+  assert.ok(reference.interpretationLimits.some((item) => /cobertura|suíte|scanner|ferramenta|quantidade/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /QA|especialista|etapa/i.test(item)));
 });
 
 test('design sustentável mede custo da mudança seguinte, não estilo arquitetural', () => {

@@ -1,6 +1,6 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v16';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v17';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -725,7 +725,7 @@ const authoredNodes: AssessmentNode[] = [
   },
   {
     id: 'quality-risk-strategy', title: 'Estratégia de qualidade baseada em risco',
-    scenario: 'Uma mudança pequena afeta jornada crítica e outra mudança grande afeta área pouco utilizada.', prompt: 'Como as verificações costumam ser definidas?',
+    scenario: 'Sob o mesmo prazo, uma mudança pequena afeta jornada crítica e outra mudança grande afeta área pouco utilizada.', prompt: 'Como as verificações costumam ser definidas?',
     options: [
       { id: 'risk-shaped', label: 'Risco, impacto e histórico definem combinações de prevenção, testes e observação depois da entrega.', signals: [{ capability: 'qualidade', pattern: 'qualidade-proporcional-ao-risco', weight: 2, details: ['quality-strategy', 'planning-refinement'], layer: 'practice' , constraint: 'none' }] },
       { id: 'standard-suite', label: 'Uma suíte e checklist comuns protegem todas as mudanças, com complementos quando alguém identifica risco especial.', signals: [{ capability: 'qualidade', pattern: 'qualidade-por-suite-padrao', weight: -1, details: ['quality-strategy', 'sdlc-automation'], layer: 'practice', constraint: 'process'  }] },

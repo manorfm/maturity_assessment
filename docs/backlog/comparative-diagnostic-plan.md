@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `quality-strategy`, distinguindo proteção
-proporcional ao risco de volume de testes, checklist ou etapa final concentrada em
-QA. Os estágios devem observar participação antecipada, exemplos, dados, retorno,
-escapes e efeito na estratégia seguinte sem premiar cobertura, suíte, pirâmide,
-shift-left, scanner ou ferramenta por presença.
+Escrever a próxima rubrica para `domain-alignment`, distinguindo linguagem e
+limites reconstruídos no trabalho de glossário, modelagem ou arquitetura apenas
+declarados. Os estágios devem observar significado compartilhado, conflito,
+ownership, efeito na mudança e adaptação do limite sem premiar DDD, bounded context,
+event storming, glossário, diagrama ou ferramenta por presença.
