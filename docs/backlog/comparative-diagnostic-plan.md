@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `architecture-decisions`, distinguindo contexto,
-alternativas, trade-offs, reversibilidade, autoridade e revisão pelo efeito de ADR,
-comitê, framework ou ferramenta apenas declarados. Os estágios devem observar uma
-decisão recente e sua consequência na mudança seguinte sem premiar governança ou
-documentação arquitetural por presença.
+Escrever a próxima rubrica para `integration-data`, distinguindo contratos,
+compatibilidade, significado, migração, ownership e recuperação observados de API,
+broker, banco, ETL, schema registry ou ferramenta apenas declarados. Os estágios
+devem reconstruir uma mudança entre produtores e consumidores e seu efeito sem
+premiar tecnologia, padrão de integração ou governança nominal por presença.

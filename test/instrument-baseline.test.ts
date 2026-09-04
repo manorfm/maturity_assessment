@@ -10,7 +10,7 @@ const interventions = { ...interventionCatalog, ...evolutionCatalog };
 test('linha de base mede percurso, autoria e profundidade por perspectiva', () => {
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
-  assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v18');
+  assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v19');
   assert.equal(baseline.nodes.total, 89);
   assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 57, probe: 25 });
   assert.equal(Object.keys(baseline.routes).length, profileIds.length);
@@ -39,11 +39,11 @@ test('linha de base torna visível dívida de fundamentos e contratos de direç�
   assert.ok(baseline.direction.repeatedFoundationGroups.some((group) => group.count >= 10));
   assert.ok(baseline.direction.withoutExplicitGuidance > 0);
   assert.ok(baseline.direction.withoutPrerequisiteContract > 0);
-  assert.equal(baseline.comparison.version, 'capability-reference-v18');
-  assert.equal(baseline.comparison.references, 21);
-  assert.equal(baseline.comparison.taxonomyCoverage, 21);
+  assert.equal(baseline.comparison.version, 'capability-reference-v19');
+  assert.equal(baseline.comparison.references, 22);
+  assert.equal(baseline.comparison.taxonomyCoverage, 22);
   assert.equal(baseline.comparison.coverageVersion, 'capability-reference-coverage-v1');
-  assert.equal(baseline.comparison.coverage.length, 21);
+  assert.equal(baseline.comparison.coverage.length, 22);
   assert.deepEqual(
     [...baseline.direction.patternsWithGenericFoundation].sort(),
     Object.entries(interventionFoundations)

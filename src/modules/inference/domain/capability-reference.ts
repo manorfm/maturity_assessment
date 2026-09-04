@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v18' as const;
+export const capabilityReferenceVersion = 'capability-reference-v19' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -472,6 +472,24 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Descoberta colaborativa de domínio e modelagem orientada por eventos, exemplos e conflitos reais.', 'Exemplos executáveis, contratos verificáveis e revisão incremental de linguagem, limites e ownership.'],
     optionalToolFamilies: ['Modelagem colaborativa, registro de decisões e mapeamento de dependências, ownership e impacto.', 'Catálogos, documentação viva, contratos e rastreabilidade capazes de ligar significado ao comportamento observado.'],
     interpretationLimits: ['DDD, bounded context, event storming, glossário, diagrama, linguagem formal ou ferramenta não produzem estágio por presença.', 'Divergência ou desacordo não é fragilidade por si só; fronteiras deliberadas e traduções explícitas podem preservar significados diferentes com bom efeito.'],
+  },
+  {
+    capabilityId: 'architecture-decisions', title: 'Decisões arquiteturais',
+    purpose: 'Escolher e revisar caminhos técnicos pelo contexto, consequências e efeito no sistema, preservando autoridade adequada, alternativas reais e reversibilidade proporcional ao risco.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quem tomou uma decisão relevante, quais necessidades e restrições importaram, que alternativa existia ou que consequência foi aceita.', 'Resultado e custo técnico não podem ser relacionados à escolha, impedindo distinguir decisão ausente, implícita, bloqueada ou apenas não documentada.', 'Sob pressão, o trabalho segue pelo caminho disponível sem tornar explícitos risco, autoridade ou condição capaz de revisar a escolha.'),
+      stage(1, 'Reativo', 'A solução vem definida, depende da experiência de um especialista ou segue por inércia o padrão conhecido; alternativas e consequências aparecem quando o caminho falha.', 'Implementação e operação absorvem premissas ocultas, enquanto concentração decisória, retrabalho e complexidade reaparecem em casos equivalentes.', 'Sob pressão, autoridade informal ou urgência encerra a discussão, e registrar justificativa ou revisão fica para depois da entrega.'),
+      stage(2, 'Repetível', 'Algumas escolhas comparam contexto, risco e alternativas, mas profundidade, participação e revisão variam conforme pessoa, área, prazo ou importância percebida.', 'Decisões conhecidas orientam parte do trabalho, porém exceções, dependências e custos posteriores nem sempre retornam ao critério que escolheu o caminho.', 'Sob pressão, prevalece a convenção aprovada ou a decisão de quem está disponível, com trade-offs aceitos sem condição consistente de retorno.'),
+      stage(3, 'Gerenciado', 'Contexto, alternativas, trade-offs, reversibilidade e autoridade ficam explícitos na mudança; consequências relevantes possuem responsável e sinal de revisão proporcional.', 'O grupo executa escolhas compreensíveis, reduz surpresa entre partes e consegue manter, ajustar ou desfazer o caminho quando a evidência contradiz premissas.', 'Sob pressão, reduz escopo ou escolhe opção reversível, explicita risco residual e preserva o retorno necessário para reconciliar a decisão.'),
+      stage(4, 'Adaptativo', 'Feedback do efeito, da mudança seguinte, de falhas e do custo real modifica critérios, limites e decisões arquiteturais, inclusive desfazendo escolhas antes válidas.', 'Aprendizado melhora decisões futuras e reduz complexidade ou coordenação sem transformar um caso bem-sucedido em padrão universal obrigatório.', 'Sob pressão, exceções permanecem observáveis e o resultado realimenta a decisão no horizonte acordado, com autoridade para adaptar regra e caminho.'),
+    ],
+    evidenceRequired: ['Uma decisão técnica recente com contexto, participantes, autoridade, alternativas, trade-offs, consequência aceita e condição de revisão reconstruíveis.', 'Um efeito posterior ou mudança equivalente mostrando se a escolha foi mantida, ajustada, desfeita ou apenas compensada por coordenação e contorno.'],
+    enablingConditions: ['Acesso durante a decisão às perspectivas de produto, domínio, engenharia, operação, segurança ou dados afetadas pelo risco.', 'Autoridade e feedback suficientes para testar uma opção reversível e revisar padrões ou restrições quando o efeito contradiz a premissa.'],
+    regressionSignals: ['Padrão, aprovação ou opinião de especialista volta a encerrar a escolha sem alternativa, consequência ou condição de revisão.', 'Registros acumulam decisões históricas enquanto falhas, custo e contornos não alteram critérios nem o caminho seguinte.'],
+    compatiblePractices: ['Registro leve de decisão ligado a contexto, alternativas, trade-offs, consequências e sinais de revisão.', 'Experimentos arquiteturais, fitness functions e decisões reversíveis com revisão pelo efeito observado.'],
+    optionalToolFamilies: ['Registros de decisão, modelagem colaborativa e mapeamento de dependências, risco e impacto.', 'Observabilidade técnica, análise de arquitetura e verificações automatizadas capazes de testar premissas e consequências.'],
+    interpretationLimits: ['ADR, comitê, framework, documentação arquitetural, catálogo ou ferramenta não produzem estágio por presença.', 'Decisão centralizada em especialista ou autoridade formal não é fragilidade por si só quando obrigação, contexto, consequência e retorno são proporcionais e verificáveis.'],
   },
 ];
 

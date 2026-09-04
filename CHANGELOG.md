@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.68.0
+
+- Publicou `capability-reference-v19` com a rubrica 0–4 de decisões arquiteturais.
+- Passou a comparar contexto, alternativas, trade-offs, autoridade, reversibilidade
+  e revisão pelo efeito sem pontuar ADR, comitê, framework ou ferramenta.
+- Publicou `evidence-anamnesis-pilot-v19`, reutilizando a consequência da decisão
+  entre fronteiras sem adicionar pergunta ou sinal.
+
 ## 0.67.0
 
 - Publicou `capability-reference-v18` com a rubrica 0–4 de alinhamento ao domínio.

@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v18` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v19` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. A pessoa recebe um tronco comum e,
 quando contexto ou perspectiva mudam o que ela consegue observar ou decidir, um
@@ -21,16 +21,18 @@ dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem,
 não a evidência procurada.
 
 A auditoria versionada publica uma linha de base de autoria sem modificar essa
-jornada. Para `evidence-anamnesis-pilot-v18`, ela registra quantidade e tipo de nós,
+jornada. Para `evidence-anamnesis-pilot-v19`, ela registra quantidade e tipo de nós,
 percurso e duração estimados por perspectiva, tronco comum, variantes, probes
 causais, saídas de visibilidade e dívida dos contratos de direção. Esses números
 caracterizam o instrumento para comparar versões futuras; não medem capacidade da
 organização e não entram na inferência.
 
 Essa versão reaproveita o aprendizado factual da mudança equivalente entre
-fronteiras para `domain-alignment`. Ela completa a camada de resultado sem adicionar
+fronteiras para `domain-alignment` e `architecture-decisions`. Ela completa a camada de resultado sem adicionar
 pergunta ou sinal e sem tratar modelagem, glossário ou abordagem arquitetural como
-evidência de capacidade.
+evidência de capacidade. A decisão passa a ser comparada por contexto, alternativas,
+trade-offs, autoridade, reversibilidade e revisão pelo efeito, nunca pelo registro
+ou fórum nominal.
 
 O contrato `ObservedEvent` sustenta a autoria da reconstrução factual vigente.
 Ele exige ao menos dois fatos em ordem temporal e registra gatilho, recência,

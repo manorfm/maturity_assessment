@@ -1,6 +1,6 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v18';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v19';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -1021,10 +1021,10 @@ const eventFollowupNodes: AssessmentNode[] = [
     scenario: 'Continue na mesma mudança recente que exigiu coordenação entre componentes ou grupos.',
     prompt: 'Na entrega equivalente seguinte, qual fato mostrou o efeito da decisão tomada?',
     options: [
-      { id: 'coordination-reduced', factKind: 'learning', label: 'Menos grupos ou esperas foram necessários e o resultado foi comparado com o caso anterior.', signals: [{ capability: 'arquitetura', pattern: 'arquitetura-evolutiva', weight: 2, details: ['evolvability', 'domain-alignment'], layer: 'outcome', constraint: 'none' }] },
-      { id: 'meetings-remained', factKind: 'learning', label: 'A mesma coordenação reapareceu, agora com mais agenda, calendário ou responsáveis.', signals: [{ capability: 'arquitetura', pattern: 'acoplamento-coordenado', weight: -1, details: ['evolvability', 'domain-alignment'], layer: 'outcome', constraint: 'undetermined' }] },
-      { id: 'workaround-repeated', factKind: 'learning', label: 'Outro contorno local foi criado enquanto a mudança estrutural continuou aguardando.', signals: [{ capability: 'arquitetura', pattern: 'evolucao-em-grande-lote', weight: -1, details: ['evolvability', 'domain-alignment'], layer: 'outcome', constraint: 'undetermined' }] },
-      { id: 'ownership-still-disputed', factKind: 'learning', label: 'A decisão voltou a depender de quem sofria o impacto e de quem podia priorizar cada parte.', signals: [{ capability: 'organizacao', pattern: 'ownership-fragmentado', weight: -1, details: ['team-ownership', 'domain-alignment'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'coordination-reduced', factKind: 'learning', label: 'Menos grupos ou esperas foram necessários e o resultado foi comparado com o caso anterior.', signals: [{ capability: 'arquitetura', pattern: 'arquitetura-evolutiva', weight: 2, details: ['evolvability', 'domain-alignment', 'architecture-decisions'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'meetings-remained', factKind: 'learning', label: 'A mesma coordenação reapareceu, agora com mais agenda, calendário ou responsáveis.', signals: [{ capability: 'arquitetura', pattern: 'acoplamento-coordenado', weight: -1, details: ['evolvability', 'domain-alignment', 'architecture-decisions'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'workaround-repeated', factKind: 'learning', label: 'Outro contorno local foi criado enquanto a mudança estrutural continuou aguardando.', signals: [{ capability: 'arquitetura', pattern: 'evolucao-em-grande-lote', weight: -1, details: ['evolvability', 'domain-alignment', 'architecture-decisions'], layer: 'outcome', constraint: 'undetermined' }] },
+      { id: 'ownership-still-disputed', factKind: 'learning', label: 'A decisão voltou a depender de quem sofria o impacto e de quem podia priorizar cada parte.', signals: [{ capability: 'organizacao', pattern: 'ownership-fragmentado', weight: -1, details: ['team-ownership', 'domain-alignment', 'architecture-decisions'], layer: 'outcome', constraint: 'undetermined' }] },
     ], next: 'team-pressure',
   },
   {

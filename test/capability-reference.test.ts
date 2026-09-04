@@ -29,10 +29,11 @@ const initialCapabilities = [
   'sustainable-design',
   'quality-strategy',
   'domain-alignment',
+  'architecture-decisions',
 ];
 
-test('catálogo publica vinte e uma referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v18');
+test('catálogo publica vinte e duas referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v19');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -51,6 +52,17 @@ test('catálogo publica vinte e uma referências comportamentais versionadas', (
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('decisão arquitetural mede escolha e revisão pelo efeito, não registro nominal', () => {
+  const reference = capabilityReferenceCatalog['architecture-decisions'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /especialista|inércia|padrão|solução|consequência/i);
+  assert.match(reference.stage(3).behavior, /contexto|alternativa|trade-off|revers|autoridade/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|efeito|mudança seguinte|decis|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /\bADR\b|TOGAF|architecture board|comitê de arquitetura/i);
+  assert.ok(reference.interpretationLimits.some((item) => /ADR|comitê|framework|documentação|ferramenta/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /especialista|centraliz|obrigação|autoridade/i.test(item)));
 });
 
 test('alinhamento ao domínio mede significado na mudança, não vocabulário nominal', () => {
