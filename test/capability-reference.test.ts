@@ -26,10 +26,11 @@ const initialCapabilities = [
   'work-management',
   'planning-refinement',
   'continuous-integration',
+  'sustainable-design',
 ];
 
-test('catálogo publica dezoito referências comportamentais versionadas', () => {
-  assert.equal(capabilityReferenceVersion, 'capability-reference-v15');
+test('catálogo publica dezenove referências comportamentais versionadas', () => {
+  assert.equal(capabilityReferenceVersion, 'capability-reference-v16');
   assert.deepEqual(Object.keys(capabilityReferenceCatalog), initialCapabilities);
 
   for (const capabilityId of initialCapabilities) {
@@ -48,6 +49,17 @@ test('catálogo publica dezoito referências comportamentais versionadas', () =>
       assert.ok(stage.underPressure.length >= 40, `${capabilityId}/${stage.level}/underPressure`);
     }
   }
+});
+
+test('design sustentável mede custo da mudança seguinte, não estilo arquitetural', () => {
+  const reference = capabilityReferenceCatalog['sustainable-design'];
+  assert.ok(reference);
+  assert.match(reference.stage(1).behavior, /contorno|especialista|tentativa|reescrita|dívida/i);
+  assert.match(reference.stage(3).behavior, /pequen|segur|test|revers|mudança/i);
+  assert.match(`${reference.stage(4).behavior} ${reference.stage(4).effect}`, /feedback|defeito|custo|mudança seguinte|aprend/i);
+  assert.doesNotMatch(reference.stages.map((item) => `${item.behavior} ${item.effect}`).join(' '), /SOLID|Clean Architecture|hexagonal|microsserviço/i);
+  assert.ok(reference.interpretationLimits.some((item) => /SOLID|Clean Architecture|padrão|linguagem|ferramenta/i.test(item)));
+  assert.ok(reference.interpretationLimits.some((item) => /antiga|legado|idade|tecnologia/i.test(item)));
 });
 
 test('integração contínua mede composição e correção, não branch ou ferramenta', () => {

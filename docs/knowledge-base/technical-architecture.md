@@ -195,11 +195,11 @@ níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmen
 escopo da unidade, permitindo navegação macro→micro sem perder o recorte.
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
-`capability-reference-v15`. `CapabilityReference` rejeita base de avaliação nominal,
+`capability-reference-v16`. `CapabilityReference` rejeita base de avaliação nominal,
 estágios ausentes e dimensões observacionais incompletas. A linha de base do
 instrumento publica quantidade de referências e quantas pertencem à taxonomia. O
 catálogo cobre descoberta/validação, feedback técnico repetível, release e feedback,
-autonomia de plataforma, competência técnica, segurança de software, evolutibilidade, aprendizado organizacional, ownership, governança habilitadora, liderança, colaboração, direção de produto, gestão de portfólio, gestão do trabalho, planejamento/refinamento, integração contínua e o meta-sistema organizacional; inferência e relatório ainda não
+autonomia de plataforma, competência técnica, segurança de software, evolutibilidade, aprendizado organizacional, ownership, governança habilitadora, liderança, colaboração, direção de produto, gestão de portfólio, gestão do trabalho, planejamento/refinamento, integração contínua, design sustentável e o meta-sistema organizacional; inferência e relatório ainda não
 consomem essas rubricas nesta versão.
 
 `capability-reference-coverage.ts` produz a projeção auditável
@@ -211,7 +211,7 @@ capacidade da organização avaliada.
 
 O grafo `evidence-anamnesis-pilot-v16` confronta integração frequente com a
 consequência factual do primeiro retorno e explicita pressão de prazo no evento de
-isolamento, sem criar pergunta, duplicar sinal ou selecionar causa. As dezoito referências vigentes atingem
+isolamento, sem criar pergunta, duplicar sinal ou selecionar causa. As dezenove referências vigentes atingem
 cobertura mínima na matriz; esse estado mede somente suficiência estrutural do
 instrumento, não maturidade, acurácia ou calibração empírica.
 

@@ -81,8 +81,8 @@ pré-declarados atendidos antes de alegar robustez ou benchmark.
 
 ## Menor próximo experimento
 
-Escrever a próxima rubrica para `sustainable-design`, distinguindo mudança pequena
-e segura de desenho que acumula dependência, contorno e dívida até exigir grande
-reescrita. Os estágios devem observar coesão, testabilidade, custo de alteração,
-decisões reversíveis e efeito na mudança seguinte sem premiar SOLID, Clean
-Architecture, padrão, linguagem ou ferramenta por presença.
+Escrever a próxima rubrica para `quality-strategy`, distinguindo proteção
+proporcional ao risco de volume de testes, checklist ou etapa final concentrada em
+QA. Os estágios devem observar participação antecipada, exemplos, dados, retorno,
+escapes e efeito na estratégia seguinte sem premiar cobertura, suíte, pirâmide,
+shift-left, scanner ou ferramenta por presença.

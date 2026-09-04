@@ -4,7 +4,7 @@ import { graph, nodeVariants } from '../src/modules/catalog/assessment-graph.js'
 import { capabilityReferenceCatalog } from '../src/modules/inference/domain/capability-reference.js';
 import { mapCapabilityReferenceCoverage } from '../src/modules/catalog/capability-reference-coverage.js';
 
-test('matriz relaciona as dezoito referências a sinais tipados sem inferência textual', () => {
+test('matriz relaciona as dezenove referências a sinais tipados sem inferência textual', () => {
   const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
   assert.equal(matrix.version, 'capability-reference-coverage-v1');
   assert.deepEqual(matrix.references.map((item) => item.capabilityId), Object.keys(capabilityReferenceCatalog));
@@ -15,6 +15,16 @@ test('matriz relaciona as dezoito referências a sinais tipados sem inferência 
     assert.equal(item.desirabilityCues, 0, item.capabilityId);
     assert.ok(item.gaps.length > 0 || item.status === 'minimum-covered', item.capabilityId);
   }
+});
+
+test('design sustentável cobre mudança, pressão, bloqueio e efeito posterior', () => {
+  const matrix = mapCapabilityReferenceCoverage(graph, nodeVariants, capabilityReferenceCatalog);
+  const design = matrix.references.find((item) => item.capabilityId === 'sustainable-design');
+  assert.ok(design);
+  assert.equal(design.status, 'minimum-covered');
+  assert.ok(design.direct.nodes >= 8);
+  assert.ok(design.direct.patterns >= 16);
+  assert.deepEqual(design.layers, ['knowledge', 'outcome', 'practice', 'system']);
 });
 
 test('integração contínua cobre composição, restrição e consequência', () => {

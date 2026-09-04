@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-03 — Referência comportamental de design sustentável
+
+- Publicado `capability-reference-v16` com cinco estágios para melhoria incremental,
+  testabilidade, dívida e custo da mudança seguinte, preservando o grafo vigente;
+  ver [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-03 — Referência comportamental de integração contínua
 
 - Publicado `capability-reference-v15` com cinco estágios para isolamento,

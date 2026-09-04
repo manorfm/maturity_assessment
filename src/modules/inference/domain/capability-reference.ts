@@ -1,6 +1,6 @@
 import { DomainValidationError } from '../../../shared/errors.js';
 
-export const capabilityReferenceVersion = 'capability-reference-v15' as const;
+export const capabilityReferenceVersion = 'capability-reference-v16' as const;
 
 export type CapabilityStageLevel = 0 | 1 | 2 | 3 | 4;
 export type CapabilityStageReference = Readonly<{
@@ -418,6 +418,24 @@ const definitions: CapabilityReferenceInput[] = [
     compatiblePractices: ['Composição frequente de mudanças pequenas com correção imediata de falhas.', 'Verificações de contrato, configuração e compatibilidade posicionadas antes do acúmulo.'],
     optionalToolFamilies: ['Controle de versão e revisão colaborativa de mudanças.', 'Integração, build, análise e verificação automatizada de contratos e compatibilidade.'],
     interpretationLimits: ['Git, branch, pipeline, servidor de integração ou ferramenta não produzem estágio por presença.', 'Trunk-based development, pull request ou frequência declarada não demonstram integração quando mudanças continuam isoladas, quebradas ou sem retorno acionável.'],
+  },
+  {
+    capabilityId: 'sustainable-design', title: 'Design sustentável da mudança',
+    purpose: 'Manter o sistema seguro e econômico para mudar por meio de melhorias proporcionais em cada alteração, reduzindo dependência, contorno, defeito e grandes substituições futuras.',
+    assessmentBasis: 'behavior-and-effect-only',
+    stages: [
+      stage(0, 'Opaco', 'Não é possível reconstruir quais partes, comportamentos e dependências uma mudança afetou nem qual evidência permitiu considerá-la segura.', 'Custo, defeito e retrabalho não podem ser ligados a decisões de desenho, impedindo distinguir complexidade necessária de fragilidade acumulada.', 'Sob pressão, a alteração avança por tentativa ou acesso individual e não deixa uma base confiável para o próximo caso.'),
+      stage(1, 'Reativo', 'Mudanças avançam por contorno, tentativa ou ajuda de especialista; dívida é adiada até reescrita, projeto dedicado ou impacto grande.', 'Cada alteração aumenta dependência, variação e conhecimento concentrado, tornando a próxima mudança mais arriscada e cara.', 'Sob pressão, apenas o caso visível é corrigido e reconciliação, testabilidade ou melhoria estrutural ficam para uma iniciativa futura.'),
+      stage(2, 'Repetível', 'Algumas áreas recebem testes e melhoria incremental, mas a prática varia com pessoa, prazo e familiaridade; partes frágeis continuam protegidas por especialistas.', 'O custo diminui localmente, enquanto contornos, dados difíceis e limites implícitos ainda acumulam retrabalho em mudanças cruzadas.', 'Sob pressão, melhorias proporcionais cedem, dívida volta ao backlog separado e soluções temporárias permanecem sem revisão.'),
+      stage(3, 'Gerenciado', 'Cada mudança relevante reserva melhoria proporcional, usa exemplos e testes para alterar uma parte pequena e preserva decisões reversíveis com ownership claro.', 'Defeitos, dependências e custo de alteração diminuem ao longo das mudanças sem exigir congelamento ou substituição completa.', 'Sob pressão, o grupo reduz escopo, explicita risco e mantém a menor proteção que permite avançar e reconciliar o desenho com segurança.'),
+      stage(4, 'Adaptativo', 'Feedback de defeitos, escapes, tempo e custo da mudança seguinte modifica continuamente limites, testes, modelos e decisões de desenho.', 'Aprendizado reduz recorrência e torna áreas antes frágeis mais simples de compreender, testar e alterar por pessoas diferentes.', 'Sob pressão, exceções permanecem observáveis e seu efeito orienta a próxima melhoria sem criar regra ou arquitetura universal.'),
+    ],
+    evidenceRequired: ['Uma mudança recente com partes afetadas, contornos, decisões, verificações, responsáveis e custo para avançar.', 'Uma mudança seguinte equivalente mostrando efeito em defeito, tempo, retrabalho, dependência ou segurança.'],
+    enablingConditions: ['Capacidade protegida para melhoria proporcional dentro da mudança.', 'Evidência reproduzível e competência acessível para compreender, testar e alterar o comportamento.'],
+    regressionSignals: ['Dívida volta a depender de backlog separado, projeto futuro ou reescrita completa.', 'Áreas críticas voltam a ser alteradas somente por especialista, tentativa ou correção direta de estado.'],
+    compatiblePractices: ['Design incremental orientado por coesão, testabilidade e decisões reversíveis.', 'Refatoração contínua, caracterização de comportamento e melhoria guiada pelo custo real da mudança.'],
+    optionalToolFamilies: ['Análise de dependências, estrutura, cobertura e evolução do código.', 'Testes, ambientes e observabilidade capazes de verificar comportamento durante a mudança.'],
+    interpretationLimits: ['SOLID, Clean Architecture, padrão, linguagem, framework ou ferramenta não produzem estágio por presença.', 'Tecnologia antiga ou legado não reduzem estágio por idade; pesam apenas dependência, risco, espera e custo demonstrados na mudança.'],
   },
 ];
 

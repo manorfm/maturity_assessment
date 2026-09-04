@@ -5,6 +5,15 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.65.0
+
+- Publicou `capability-reference-v16` com a rubrica 0–4 de design sustentável da
+  mudança.
+- Passou a comparar melhoria incremental, testabilidade, contornos, dívida,
+  conhecimento concentrado e custo da alteração seguinte.
+- Preservou `evidence-anamnesis-pilot-v16`: os eventos existentes já cobriam
+  comportamento, pressão, sistema e consequência sem exigir nova pergunta.
+
 ## 0.64.0
 
 - Publicou `capability-reference-v15` com a rubrica 0–4 de integração contínua
