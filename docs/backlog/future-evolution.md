@@ -41,6 +41,8 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
   força desfecho “discriminar”. Validar no piloto se isso esconde um experimento
   já isolado no limitador ou se triangular a divergência deve mesmo preceder a
   correção;
+- saturação de evidência por tamanho da organização, quantidade de produtos e
+  geografia, além dos gates vigentes de 8/10/18/45/50–100;
 - executar o
   [`roadmap de piloto`](probabilistic-inference-roadmap.md) com entrevistas e
   rótulos reais; o gate e as métricas já estão no produto;

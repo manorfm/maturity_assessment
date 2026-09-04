@@ -149,6 +149,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const report = inference.report(projectId, Number(auth.project.minimum_group_size));
     const batches = invitations.listBatches(projectId);
     const cognitiveReadiness = pilot.cognitiveReadiness(projectId, INITIAL_COGNITIVE_PILOT_SIZE, Number(auth.project.minimum_group_size));
+    const sampleProgress = pilot.sampleProgress(projectId);
     const humanShowcaseValidation = pilot.humanShowcaseValidation();
     const unitOptions = units.filter((unit) => unit.isLeaf).map((unit) => `<option value="${escapeHtml(unit.id)}">${escapeHtml(unit.path)}</option>`).join('');
     const reportAvailability = report.completed < report.minimum
@@ -190,7 +191,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
       ${previous}
       ${scopeReports ? `<section id="report-units"><p class="eyebrow">Mapa por estrutura</p><h2>Leituras por unidade</h2><p class="muted">Somente unidades que mudam o diagnóstico em relação à visão global aparecem.</p>${scopeReports}</section>` : ''}
-      <details class="methodology"><summary>Instrumento e calibração</summary>${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details>
+      <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details>
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
   });
 
@@ -276,6 +277,13 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     });
     return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
   });
+}
+
+function renderSampleProgress(progress: import('../inference/domain/diagnostic-sample-plan.js').SampleProgress): string {
+  const status = progress.readyToDiagnose ? 'Amostra suficiente para o diagnóstico organizacional.' : 'Amostra ainda insuficiente para o experimento real.';
+  const roles = progress.target.units.map((unit) => `<li>${escapeHtml(unit.id)}: ${unit.people} pessoas — ${escapeHtml([...new Set(unit.roles.map((role) => role.workContext))].join(', '))}</li>`).join('');
+  const blockers = progress.blockers.length ? `<ul>${progress.blockers.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : '';
+  return `<section class="card sample-progress"><h2>Amostra para o experimento real</h2><p><strong>${escapeHtml(status)}</strong> ${escapeHtml(progress.summary)}</p><p>${progress.completed} respostas concluídas · ${progress.invited} convites ativos · alvo ${progress.target.totalPeople} pessoas em duas unidades.</p>${blockers}<p class="muted">Checagem de linguagem: 8 pessoas em uma unidade. Comparação entre squads: 10 pessoas (5+5). Triangulação das nove lentes: 45. Calibração: 50–100 jornadas rotuladas. Um radar de quinze eixos não aumenta precisão; o que publica pilares é trilha complementar e dois padrões independentes por folha.</p><details><summary>Composição sugerida</summary><ul>${roles}</ul></details></section>`;
 }
 
 function renderCognitivePilotReadiness(readiness: import('../inference/domain/cognitive-pilot-readiness.js').CognitivePilotReadinessReport): string {
@@ -594,13 +602,20 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
       return item({ ...finding, title: `${candidate.title} — ${candidate.condition}` });
     }).join('')}</ol></section>`
     : '';
-  const noun = primaryPattern ? (total === 1 ? 'outro padrão' : 'outros padrões confirmados') : (total === 1 ? 'padrão confirmado' : 'padrões confirmados');
+  const readyCount = portfolio.sequence.length;
+  const investigateCount = portfolio.conditioned.length;
   const visibleCount = visibleSteps.length + visibleConditioned.length;
   const truncation = total > visibleCount ? ` O relatório está mostrando os ${visibleCount} mais prioritários.` : '';
+  const attention = readyCount
+    ? `${readyCount} ${primaryPattern ? (readyCount === 1 ? 'outra decisão pronta exige' : 'outras decisões prontas exigem') : (readyCount === 1 ? 'decisão pronta exige' : 'decisões prontas exigem')} atenção.`
+    : 'Ainda não há decisão pronta neste recorte.';
+  const uncertainty = investigateCount
+    ? ` ${investigateCount} ${investigateCount === 1 ? 'padrão ainda pede' : 'padrões ainda pedem'} discriminação de causa — isso não entra como decisão para diretoria.`
+    : '';
   const systemSummary = systems.length < uniqueFindings.length
     ? `<p><strong>${uniqueFindings.length} padrões formam ${systems.length} ${systems.length === 1 ? 'frente diagnóstica' : 'frentes diagnósticas'}:</strong> ${systems.map((system) => `${escapeHtml(system.label)} (${system.findings.length})`).join(' · ')}. O agrupamento organiza padrões relacionados; não declara que uma causa única já foi comprovada.</p>`
     : '';
-  return `<section class="card finding-portfolio"><p class="eyebrow">Panorama de comportamentos recorrentes</p><h2>${primaryPattern ? 'Outros problemas que exigem decisão' : 'Problemas que exigem decisão'}</h2>${systemSummary}<p>${total} ${noun} ${total === 1 ? 'exige' : 'exigem'} atenção.${truncation}</p><h3>Sequência de transformação</h3><p>A ordem considera dependências, risco e quem possui autoridade. Ela não autoriza todas as frentes ao mesmo tempo.</p>${sequencedItems}${conditionedItems}</section>`;
+  return `<section class="card finding-portfolio"><p class="eyebrow">Panorama de comportamentos recorrentes</p><h2>${primaryPattern ? 'Outros problemas que exigem decisão' : 'Problemas que exigem decisão'}</h2>${systemSummary}<p>${escapeHtml(attention)}${escapeHtml(uncertainty)}${escapeHtml(truncation)}</p>${readyCount ? '<h3>Sequência de transformação</h3><p>A ordem considera dependências, risco e quem possui autoridade. Ela não autoriza todas as frentes ao mesmo tempo.</p>' : ''}${sequencedItems}${conditionedItems}</section>`;
 }
 
 function renderScopeCompanionFindings(findings: OutcomeFinding[], primaryPattern: string | undefined, capabilityBase: string, scopeId: string): string {

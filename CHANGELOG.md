@@ -5,6 +5,28 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.71.0
+
+- O first screen organizacional passou a fechar a decisão pronta (corrigir ou
+  evoluir) em vez de abrir na folha mais fraca sem causa.
+- Os sintéticos da POC usam os estágios do modelo — opaco, repetível e
+  adaptativo — e o panorama separa decisão de diretoria de padrão ainda sem causa.
+
+## 0.70.0
+
+- Substituiu os casos isolados do showcase por três relatórios organizacionais
+  sintéticos — comportamento frágil, prática intermediária e prática sustentada.
+- Cada relatório usa 18 pessoas em duas unidades, com visão global, diretoria e
+  ação de área, e uma barra de qualidade que recusa limitador contraditório.
+
+## 0.69.0
+
+- Publicou o plano de amostra do experimento real: 18 pessoas em duas unidades com
+  trilhas complementares, separado da checagem de linguagem (8) e da calibração.
+- Adicionou o sintético organizacional com respostas coerentes por unidade, visão
+  global, briefing de diretoria e ações de área.
+- Deixou explícito que expandir o radar não aumenta precisão.
+
 ## 0.68.0
 
 - Publicou `capability-reference-v19` com a rubrica 0–4 de decisões arquiteturais.

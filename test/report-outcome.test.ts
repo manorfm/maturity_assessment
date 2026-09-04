@@ -77,7 +77,7 @@ test('limitador baixo sem padrão amarrado declara fragilidade dispersa', () => 
   assert.match(outcome.reading, /não inventa uma causa/i);
 });
 
-test('limitador baixo sem causa vira coleta, não vazio', () => {
+test('home fecha a decisão pronta mesmo quando a folha mais fraca ainda não tem causa', () => {
   const outcome = decideReportOutcome({
     classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Descoberta e validação'] },
     branches: [
@@ -86,10 +86,71 @@ test('limitador baixo sem causa vira coleta, não vazio', () => {
     ],
     findings: [{ kind: 'correction', pattern: 'causa-melhoria-sem-capacidade', detailCapability: 'portfolio-management', title: 'Entregas consomem melhoria', cause: '', intervention: 'Pare uma iniciativa', confidence: .9, priority: .9 }],
   });
+  assert.equal(outcome.kind, 'correct');
+  assert.equal(outcome.limiterLabel, 'Gestão de portfólio');
+  assert.equal(outcome.finding?.pattern, 'causa-melhoria-sem-capacidade');
+});
+
+test('na folha focada, limitador sem causa continua coleta', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Descoberta e validação'] },
+    branches: [
+      leaf('discovery-validation', 'Descoberta e validação', 1),
+      leaf('portfolio-management', 'Gestão de portfólio', 2.2),
+    ],
+    findings: [{ kind: 'correction', pattern: 'causa-melhoria-sem-capacidade', detailCapability: 'portfolio-management', title: 'Entregas consomem melhoria', cause: '', intervention: 'Pare uma iniciativa', confidence: .9, priority: .9 }],
+    focusId: 'discovery-validation',
+  });
   assert.equal(outcome.kind, 'discriminate');
   assert.equal(outcome.limiterLabel, 'Descoberta e validação');
   assert.match(outcome.nextStepBody, /última ideia levada à construção/i);
   assert.equal(outcome.finding, undefined);
+});
+
+test('decisão pronta em folha ainda não avaliada vence coleta no piso', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Fluxo de trabalho'] },
+    branches: [leaf('work-management', 'Fluxo de trabalho', 1)],
+    findings: [
+      {
+        kind: 'correction', pattern: 'espera-normalizada', detailCapability: 'work-management',
+        title: 'O time compensa espera iniciando mais trabalho', cause: '', intervention: '', confidence: .8, priority: .7,
+        prescription: { status: 'investigate', reason: 'Ainda falta discriminar o mecanismo.' },
+      },
+      {
+        kind: 'correction', pattern: 'causa-capacidade-tomada-pela-proxima-iniciativa', detailCapability: 'portfolio-management',
+        title: 'A próxima iniciativa consome a capacidade de aprender', cause: '', intervention: 'Proteja capacidade', confidence: .9, priority: .9,
+        prescription: { status: 'ready', reason: 'Prioridade confirmada.' },
+      },
+    ],
+  });
+  assert.equal(outcome.kind, 'correct');
+  assert.equal(outcome.finding?.pattern, 'causa-capacidade-tomada-pela-proxima-iniciativa');
+});
+
+test('finding só de investigação no piso não vence decisão pronta em outra folha', () => {
+  const outcome = decideReportOutcome({
+    classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Release e feedback'] },
+    branches: [
+      leaf('release-feedback', 'Release e feedback', 0.4),
+      leaf('team-ownership', 'Estrutura e ownership', 2.8),
+    ],
+    findings: [
+      {
+        kind: 'correction', pattern: 'empacotamento-manual', detailCapability: 'release-feedback',
+        title: 'Preparação concentra espera', cause: '', intervention: '', confidence: .9, priority: .95,
+        prescription: { status: 'investigate', reason: 'Ainda falta discriminar o mecanismo.' },
+      },
+      {
+        kind: 'correction', pattern: 'causa-responsabilidade-encerra-no-aceite', detailCapability: 'team-ownership',
+        title: 'A responsabilidade termina quando o escopo é aceito', cause: '', intervention: 'Nomeie o owner', confidence: .9, priority: .8,
+        prescription: { status: 'ready', reason: 'Contenção estrutural confirmada.' },
+      },
+    ],
+  });
+  assert.equal(outcome.kind, 'correct');
+  assert.equal(outcome.finding?.pattern, 'causa-responsabilidade-encerra-no-aceite');
+  assert.doesNotMatch(outcome.nextStepTitle, /espera|investigar impacto/i);
 });
 
 test('contradição no limitador não receita várias frentes', () => {

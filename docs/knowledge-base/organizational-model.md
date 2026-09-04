@@ -118,3 +118,42 @@ O motor agrega `ProblemPattern`s semelhantes por escopo e origem provável. Exem
 
 Findings devem atribuir o nível mais plausível da restrição e indicar incerteza. O
 relatório nunca identifica qual participante originou um sinal.
+
+## Amostra para o experimento real
+
+O tamanho da amostra não é um número único e não aumenta com a quantidade de eixos
+no radar. Os gates vigentes são:
+
+1. **Checagem de linguagem:** 8 pessoas em uma unidade. Avalia compreensão, não
+   publica os oito pilares nem compara squads.
+2. **Diagnóstico de uma unidade:** 5 pessoas na mesma folha da hierarquia. Pode
+   publicar findings locais; pilares sem dois padrões independentes permanecem não
+   avaliados.
+3. **Comparação entre unidades:** 10 pessoas, 5 em cada uma de duas unidades. Separa
+   problema local de restrição compartilhada.
+4. **Diagnóstico organizacional:** 18 pessoas em duas unidades, com trilhas
+   complementares (entrega, ciclo completo, risco, plataforma, arquitetura, produto,
+   portfólio, dados/experiência). Cada papel aparece pelo menos duas vezes para
+   sustentar um padrão. A visão global é o cartão da organização; o detalhe de cada
+   pilar e de cada unidade traz ações de área, diretoria ou escalada. Essa amostra
+   é a população mínima para um relatório executivo quando o first screen fecha
+   **corrigir**, **evoluir** ou **preservar**. Discriminar no cartão principal
+   significa que a causa ainda não foi amarrada — não apresente à diretoria e não
+   resolva só com mais eixos ou mais gente.
+5. **Triangulação das nove lentes:** 45 pessoas (5 por perspectiva no mesmo recorte).
+6. **Calibração:** 50 a 100 jornadas rotuladas por especialistas. Massa sintética
+   não abre este gate.
+
+A entrevista curta percorre de dois a quatro eventos. Aprofundamentos de perfil
+(discovery, FinOps/cloud, qualidade profunda) ficam fora desse orçamento; a
+ausência vira “não avaliado”, nunca nível zero. Expandir o radar para quinze eixos
+aumentaria a fração não avaliada sem aumentar precisão: precisão vem de padrões
+independentes, concordância e discriminação de causa.
+
+O showcase da POC gera três organizações sintéticas de 18 pessoas, nomeadas pelos
+estágios do modelo: **opaco**, **repetível** e **adaptativo**. Cada uma publica um
+first screen que um diretor consegue usar — problema, causa e experimento, ou
+preservação da prática. Folhas sem causa amarrada continuam no detalhe ou no
+panorama como incerteza, não no cartão principal. Concordar num único padrão
+adaptativo não publica o pilar; a ausência continua “não avaliado”.
+

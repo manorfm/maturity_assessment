@@ -54,6 +54,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(dashboard.body, /Cobertura humana dos seis contrastes/);
   assert.match(dashboard.body, /name="showcaseCaseId"/);
   assert.match(dashboard.body, /Preflight do piloto inicial/);
+  assert.match(dashboard.body, /Amostra para o experimento real/);
   assert.match(dashboard.body, /Ainda faltam 8 convites/);
   const review = await app.inject({
     method: 'POST', url: `${managementUrl}/item-reviews`,

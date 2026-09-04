@@ -6,6 +6,28 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-04 — First screen executivo fecha decisão pronta
+
+- O cartão principal da organização deixou de abrir em coleta quando já existe
+  finding com mecanismo e contenção; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
+## 2026-09-04 — Relatórios sintéticos da POC em três bandas
+
+- Removidos os casos isolados do showcase; a barra de qualidade passou a ser três
+  organizações de 18 pessoas (frágil, intermediária e sustentada), com visão
+  global, diretoria e ação de área; ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-09-04 — Plano de amostra e sintético organizacional
+
+- Publicado `DiagnosticSamplePlanner` com gates de 8, 10, 18, 45 e 50–100 pessoas,
+  e o sintético organizacional de 18 jornadas coerentes; ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-04 — Referência comportamental de decisões arquiteturais
 
 - Publicado `capability-reference-v19` com cinco estágios para contexto,

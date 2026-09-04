@@ -50,6 +50,13 @@
   usada para triangulação sem identificar o participante.
 - **PilotLabel:** julgamento cego de causa por disciplina avaliadora, sem vínculo
   com participação, convite ou resposta.
+- **DiagnosticSamplePlan:** plano versionado de amostra por gate (linguagem,
+  unidade, comparação, diagnóstico organizacional, triangulação, calibração).
+  Declara total de pessoas, distribuição por unidade e trilha, pilares observáveis
+  e o que permanece não avaliado. Não trata quantidade de eixos como precisão.
+- **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades, numa
+  banda de comportamento frágil, intermediário ou sustentado, usada para a barra
+  de qualidade da POC. Não substitui calibração nem entrevista real.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
   termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da

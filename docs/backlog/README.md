@@ -32,8 +32,11 @@ expansão das rubricas, as jornadas faltantes, o contrato explícito de compara�
 a integração posterior de telemetria estão no
 [`plano comparativo`](comparative-diagnostic-plan.md).
 O preflight operacional para uma coorte cognitiva inicial de oito pessoas também
-está vigente. A coleta deve ocorrer numa única unidade para preservar o limiar; uma
-comparação entre duas squads exige ao menos dez pessoas, cinco em cada unidade.
+está vigente. O plano de amostra do experimento real — 18 pessoas em duas unidades
+com trilhas complementares — está na base de conhecimento. A coleta de linguagem
+deve ocorrer numa única unidade para preservar o limiar; uma comparação entre duas
+squads exige ao menos dez pessoas, cinco em cada unidade. Calibração continua 50–100
+jornadas rotuladas e não é substituída por sintéticos.
 
 A decisão de deixar de se apresentar como framework de maturidade e passar a
 ser um diagnóstico de engenharia está em
@@ -54,8 +57,10 @@ técnica em camadas está em
 preserva a taxonomia e proíbe pontuar ferramentas; esteira, SAST, ambiente seguro,
 descoberta de domínio, mapeamento arquitetural e ferramentas homologadas aparecem
 somente como técnicas ou famílias condicionadas ao mecanismo demonstrado.
-As ondas 2 a 5 e o showcase contrastante da onda 6 estão na base vigente; a próxima
-etapa aberta é executar a validação humana da linguagem sem contar massa sintética.
+As ondas 2 a 5 estão na base vigente. O showcase da POC agora gera três
+relatórios organizacionais; os seis contrastes da onda 6 permanecem o protocolo
+de validação humana no painel. A próxima etapa aberta é executar essa validação
+sem contar massa sintética.
 O painel já operacionaliza essa coleta com rastreabilidade anônima por contraste e
 perspectiva; os registros reais ainda precisam ser produzidos nas entrevistas.
 

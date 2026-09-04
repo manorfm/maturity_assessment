@@ -14,14 +14,15 @@ não pontuam por presença. O repositório ainda se chama `maturity_assessment`;
 não define o propósito.
 
 O MVP está concluído e pronto para piloto controlado. O first screen do relatório já é o diagnóstico
-([plano](docs/backlog/engineering-diagnostic-plan.md)). O instrumento ainda precisa
-de jornadas reais, revisão com especialistas e calibração, sem transformar o
+([plano](docs/backlog/engineering-diagnostic-plan.md)). O experimento real pede **18 pessoas em
+duas unidades**, com trilhas complementares; oito pessoas numa unidade só checam linguagem.
+O instrumento ainda precisa de jornadas reais, revisão com especialistas e calibração, sem transformar o
 resultado em ranking de pessoas ou times.
 
-O showcase sintético cobre seis contrastes operacionais e explicita a diferença
-entre cobertura demonstrável e validação humana. O registro cognitivo observa também
-autonomia reconhecida, utilidade, segurança e explicação do fundamento; somente
-entrevistas reais contam para o gate de cinco por perspectiva.
+O showcase sintético da POC gera três relatórios organizacionais — comportamento
+frágil, prática intermediária e prática sustentada — com 18 pessoas em duas
+unidades. Os seis contrastes da onda 6 permanecem o protocolo de validação humana;
+somente entrevistas reais contam para o gate de cinco por perspectiva.
 No índice, cenário simulado, comportamento esperado e resultado produzido aparecem
 separados; a execução demonstra coerência sintética, não acurácia empírica.
 O painel administrativo registra qual contraste foi validado e mostra cobertura e
@@ -370,8 +371,8 @@ tirá-lo do primeiro plano está no
 - entidades e value objects nas fronteiras com invariantes;
 - schema vigente sem camada de retrocompatibilidade legada;
 - testes de domínio, integração, HTTP e jornada completa com Playwright;
-- showcase automatizado com seis casos inspecionáveis, incluindo contraste de
-  contenção e problema local isolado.
+- showcase automatizado com três relatórios organizacionais da POC (frágil,
+  intermediário e sustentado), cada um com 18 pessoas em duas unidades.
 
 ## Arquitetura
 
@@ -423,16 +424,11 @@ abertos para investigação manual de textos e resultados:
 npm run demo
 ```
 
-O comando recria somente o SQLite temporário do showcase, percorre as jornadas em
-Chromium, grava o índice em `/private/tmp/maturity-assessment-showcase-pilot-v1.html`,
-imprime os links e mantém a aplicação na porta `3217`. Abra
-`http://127.0.0.1:3217/showcase` para as histórias, o que procurar, trechos
-observados e convites ociosos (entrevista à mão e o experimento do mapa por
-estrutura). `npm run showcase` é um alias do mesmo fluxo.
-
-Além dos casos frágil, emergente, sustentável e divergente, o índice compara duas
-squads com integração tardia causada por mecanismos diferentes e uma organização
-com comportamento sustentado em que somente uma squad possui um problema local.
+O comando recria o SQLite temporário, semeia as três organizações da POC, inspeciona
+os relatórios no Chromium e grava o índice em
+`/private/tmp/maturity-assessment-showcase-pilot-v1.html`. Abra
+`http://127.0.0.1:3217/showcase` para as histórias, o que procurar e os trechos
+observados. `npm run showcase` é um alias do mesmo fluxo.
 
 Para uma execução paralela, `E2E_DATABASE_PATH`, `E2E_SHOWCASE_GUIDE`, `E2E_PORT`
 e `SHOWCASE_PUBLIC_URL` isolam banco, guia e portas sem apagar um showcase que já

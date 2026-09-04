@@ -40,7 +40,8 @@ maturidade — está no
 [`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md). A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma
 referência de alta performance está no
-[`plano comparativo`](../backlog/comparative-diagnostic-plan.md).
+[`plano comparativo`](../backlog/comparative-diagnostic-plan.md). O plano de amostra
+do experimento real está em `organizational-model.md`.
 
 ## Princípio central
 

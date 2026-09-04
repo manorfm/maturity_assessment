@@ -318,8 +318,11 @@ decisões organizacionais, capacidades compartilhadas, problemas locais e conten
 ainda indeterminada; cada item navega para o finding canônico no detalhamento.
 
 A apresentação é uma projeção determinística do mesmo finding, não um segundo motor
-de recomendação. No first screen, o cartão vem antes do estágio e do mapa de
-contraste. Ele traduz o contrato para linguagem operacional nesta ordem:
+de recomendação. No first screen da organização, o cartão prefere a decisão pronta
+— finding com mecanismo e contenção — mesmo quando outra folha publicada está
+num estágio mais baixo sem causa amarrada. Discriminar fica no detalhe dessa folha
+ou no panorama, não no cartão que a diretoria lê primeiro. O cartão vem antes do
+estágio e do mapa de contraste. Ele traduz o contrato para linguagem operacional nesta ordem:
 situação observada, base das entrevistas, capacidade atual para agir, teste proposto,
 critério de sucesso e limite da decisão. Quando o limitador é do sistema
 organizacional, o texto lembra que aquele pilar é um meta-sistema, não um oitavo

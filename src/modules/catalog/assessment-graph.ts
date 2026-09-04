@@ -1347,13 +1347,19 @@ export function estimatePathScenarios(fromNodeId: string, answers: Readonly<Reco
 }
 
 export function estimateTrackScenarios(track: InterviewTrack, profile: Profile = 'engineering', fromNodeId = 'work-context'): number {
+  return interviewTrackPath(track, profile, fromNodeId).length;
+}
+
+export function interviewTrackPath(track: InterviewTrack, profile: Profile = 'engineering', fromNodeId = 'work-context'): string[] {
+  const path: string[] = [];
   const seen = new Set<string>();
   let current: string | undefined = fromNodeId;
   while (current && !seen.has(current)) {
+    path.push(current);
     seen.add(current);
     current = trackSuccessor(current, track, profile);
   }
-  return seen.size;
+  return path;
 }
 
 function trackSuccessor(from: string, track: InterviewTrack, profile: Profile): string | undefined {

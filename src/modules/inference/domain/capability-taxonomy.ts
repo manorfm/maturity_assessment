@@ -38,6 +38,15 @@ const taxonomy: TaxonomyNode[] = [
 
 export const capabilityLeafIds = collectLeaves(taxonomy);
 export const capabilityIds = collectNodes(taxonomy);
+export const capabilityPillarIds = taxonomy.map((node) => node.id);
+
+export function pillarIdForLeaf(leafId: string): string | undefined {
+  return taxonomy.find((pillar) => pillar.children?.some((child) => child.id === leafId))?.id;
+}
+
+export function leavesOfPillar(pillarId: string): string[] {
+  return taxonomy.find((pillar) => pillar.id === pillarId)?.children?.map((child) => child.id) ?? [];
+}
 
 export const cloudCapabilityIds = new Set([
   'cloud-infrastructure', 'reproducible-infrastructure', 'cloud-security', 'cloud-reliability', 'cloud-efficiency',

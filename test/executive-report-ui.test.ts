@@ -291,7 +291,7 @@ test('panorama mostra outros comportamentos recorrentes sem alegar causa confirm
     { kind: 'correction', pattern: 'pipeline', detailCapability: 'sdlc-automation', title: 'A esteira devolve feedback tarde', cause: '', intervention: '', confidence: .9, priority: .7 },
   ], 'pipeline');
   assert.match(html, /Panorama de comportamentos recorrentes/);
-  assert.match(html, /1 outro padrão exige atenção/);
+  assert.match(html, /1 outra decisão pronta exige atenção/);
   assert.match(html, /Dependências exigem coordenação constante/);
   assert.match(html, /Colaboração/);
   assert.match(html, /7 de 10 pessoas/);
@@ -307,7 +307,7 @@ test('panorama informa o total confirmado mesmo quando limita a lista executiva'
     cause: '', intervention: '', confidence: .9, priority: 1 - index / 10,
   }));
   const html = renderFindingPortfolio(findings, 'pattern-0');
-  assert.match(html, /6 outros padrões confirmados/);
+  assert.match(html, /6 outras decisões prontas exigem atenção/);
   assert.match(html, /mostrando os 4 mais prioritários/i);
   assert.equal((html.match(/<li>/g) ?? []).length, 4);
 });
@@ -354,6 +354,7 @@ test('panorama apresenta uma sequência de transformação em vez de uma lista s
   assert.match(html, /Antes de ampliar/);
   assert.ok(html.indexOf('Serviço sem responsável') < html.indexOf('Integração tardia'));
   assert.match(html, /Localize a restrição antes de escolher a solução/);
+  assert.match(html, /não entra como decisão para diretoria/i);
 });
 
 test('navegação por público explica a decisão de cada leitura sem duplicar motores', () => {

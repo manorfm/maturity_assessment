@@ -264,7 +264,9 @@ de aprender.
 
 Não haverá média simples entre pilares. O relatório deve destacar capacidades
 limitantes, relações causais plausíveis e confiança. Uma nota agregada, se existir,
-será secundária e explicável.
+será secundária e explicável. Acrescentar eixos ao radar (por exemplo quinze
+dimensões nomeadas) não aumenta precisão: cada eixo novo exige dois padrões
+independentes e população elegível; sem isso o mapa só ganha mais marcadores “?”.
 
 O relatório preserva três leituras independentes:
 

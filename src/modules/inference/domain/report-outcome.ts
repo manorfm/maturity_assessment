@@ -1,4 +1,4 @@
-import { cloudCapabilityIds, type CapabilityBranch } from './capability-taxonomy.js';
+import { CapabilityTaxonomy, cloudCapabilityIds, type CapabilityBranch } from './capability-taxonomy.js';
 import { investigationFor, preservationFor } from './capability-narrative.js';
 
 export type ReportOutcomeKind = 'insufficient' | 'preserve' | 'correct' | 'evolve' | 'discriminate';
@@ -222,13 +222,25 @@ function flattenNodeIds(node: CapabilityBranch): string[] {
 }
 
 function decisionLimiter(leaves: CapabilityBranch[], stageLevel: number, findings: OutcomeFinding[]): CapabilityBranch | undefined {
+  const known = new Set(leaves.map((leaf) => leaf.id));
+  const virtualReady = findings
+    .filter((finding) => finding.prescription?.status !== 'investigate' && !known.has(finding.detailCapability))
+    .map((finding) => virtualLeaf(finding));
+  const searchable = [...leaves, ...virtualReady];
   const atFloor = leaves.filter((leaf) => Math.floor(leaf.level) === stageLevel);
   const pool = atFloor.length ? atFloor : leaves;
-  const boundTo = (leaf: CapabilityBranch) => findings.some((finding) => finding.detailCapability === leaf.id || finding.affectedCapabilities?.includes(leaf.id));
+  const boundTo = (leaf: CapabilityBranch, readyOnly = false) => findings.some((finding) => {
+    const attached = finding.detailCapability === leaf.id || finding.affectedCapabilities?.includes(leaf.id);
+    return attached && (!readyOnly || finding.prescription?.status !== 'investigate');
+  });
   const notCloud = (items: CapabilityBranch[]) => items.filter((item) => !cloudCapabilityIds.has(item.id));
   const coherent = (items: CapabilityBranch[]) => items.filter((item) => !item.hasContradiction && item.confidence >= .5);
-  const withFinding = pool.filter(boundTo);
-  const ranked = pick(coherent(notCloud(withFinding)))
+  const readyOnFloor = pool.filter((leaf) => boundTo(leaf, true));
+  const readyAnywhere = searchable.filter((leaf) => boundTo(leaf, true));
+  const withFinding = pool.filter((leaf) => boundTo(leaf));
+  const ranked = pick(coherent(notCloud(readyOnFloor)))
+    ?? pick(notCloud(readyAnywhere))
+    ?? pick(coherent(notCloud(withFinding)))
     ?? pick(notCloud(withFinding))
     ?? pick(withFinding)
     ?? pick(coherent(notCloud(pool)))
@@ -240,6 +252,22 @@ function decisionLimiter(leaves: CapabilityBranch[], stageLevel: number, finding
 function pick(items: CapabilityBranch[]): CapabilityBranch | undefined {
   if (!items.length) return undefined;
   return [...items].sort((left, right) => left.level - right.level || right.confidence - left.confidence)[0];
+}
+
+function virtualLeaf(finding: OutcomeFinding): CapabilityBranch {
+  return {
+    id: finding.detailCapability,
+    label: CapabilityTaxonomy.labelFor(finding.detailCapability),
+    level: 2,
+    confidence: .8,
+    evidence: finding.recommendationEvidence?.supportingParticipants ?? 2,
+    hasContradiction: false,
+    assessed: true,
+    coverage: 1,
+    children: [],
+    observers: finding.recommendationEvidence?.supportingParticipants ?? 2,
+    interval: { lower: 2, upper: 2 },
+  };
 }
 
 function findNode(nodes: CapabilityBranch[], id: string): CapabilityBranch | undefined {

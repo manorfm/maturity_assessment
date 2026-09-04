@@ -223,48 +223,23 @@ evidência positiva agregada do recorte; não altera a nota da capacidade nem o
 posterior causal. O finding sanitizado carrega capacidade de solução e prontidão
 junto ao experimento.
 
-O showcase E2E gera seis relatórios inspecionáveis e os relaciona aos seis contratos
-contrastantes da onda 6: baixa autonomia com handoffs, time full-cycle sem SRE,
-organização com especialidades, mesmo sintoma com causas distintas, parque sem
-ownership/impacto recuperáveis e prática forte com mecanismo simples. Os relatórios
-continuam sendo linha sob pressão (com partição irmã abaixo do grupo mínimo), prática
-local intermediária, operação adaptativa com as nove lentes, contraste entre gestão
-e engenharia sobre a mesma responsabilidade, integração tardia com contenção em tooling, política e
-arquitetura e organização sustentada com um problema contido em uma única squad.
-Percorre o grafo em Chromium,
-grava um índice com histórias, trechos observados e convites ociosos, valida a
-ordenação, um único limitador (sem cloud por default), homes distintos entre
-frágil e emergente, preservação de prática forte sem exigir ordinal, isolamento local,
-autoridade distinta para o mesmo sintoma e cobertura explícita da matriz, e deixa a mesma base servida em `3217` — inclusive
-em `/showcase` — quando iniciado por `npm run demo`. O Playwright sobe
-`demo:test-server` e recria o SQLite; `demo:serve` só reabre a mesma base na porta
-3217, evitando recursão entre scripts.
+O showcase da POC gera três relatórios organizacionais de 18 pessoas em duas
+unidades: comportamento frágil, prática intermediária e prática sustentada. O
+servidor de demonstração semeia as jornadas no SQLite; o Playwright só inspeciona
+os relatórios e grava o índice em `/showcase`. A barra de qualidade fica nos
+testes de domínio: pilares publicados ou folhas fortes, limitador sem contradição,
+leitura distinta entre as bandas, briefing de diretoria e ação de área quando há
+problema. Os seis contrastes da onda 6 permanecem o protocolo de validação humana
+no painel; não são mais gerados como projetos isolados de entrevista curta.
 
-O índice separa explicitamente cenário simulado, comportamento esperado do
-diagnóstico e resultado efetivamente produzido. O resultado registra decisão,
-consistência e localização por campos próprios; não coleta etiquetas genéricas da
-página como se pertencessem à mesma categoria. Essa verificação é chamada de
-coerência sintética, nunca de acurácia. O contraste de integração expõe lado a lado
-recorte, mecanismo, contenção, autoridade e menor teste para feedback técnico,
-política de lote e acoplamento arquitetural. Nomes dos projetos de demonstração não
-antecipam estágio ordinal quando esse estágio é justamente o resultado inspecionado.
+O índice separa cenário simulado, comportamento esperado e resultado produzido.
+Essa verificação é coerência sintética, nunca acurácia. `demo:test-server` recria
+o SQLite e semeia as três organizações; `demo:serve` reabre a mesma base na porta
+3217. O catálogo `capability-narrative.ts` continua o único contrato de prosa para
+investigação e preservação.
 
-O catálogo `capability-narrative.ts` é o único contrato de prosa para investigação
-e preservação. Cada folha declara situação incerta, evento recente, comportamento
-sustentado e regressão; não existe fallback que encaixe o rótulo da capacidade em
-uma frase. A auditoria do instrumento protege evento recuperável, saída de
-visibilidade e vocabulário acessível antes da publicação.
-O caso principal possui dois times de dez pessoas cada: um SRE, quatro pessoas de
-engenharia, uma de QA, duas de produto, uma de arquitetura e uma de gestão. Os casos
-selecionam contexto de trabalho coerente com responsabilidade, autonomia e história,
-e fixam escolhas narrativas somente nos eventos que definem seu contraste central. Um
-time concentra esteira, regressão e ambiente; o outro, dependências, serviço sem
-responsável, legado desconhecido e coordenação. As demais respostas ficam em faixas intermediárias e variam por
-perspectiva. Assim o showcase valida coerência entre resposta e diagnóstico, sem
-reutilizar o recomendador para fabricar a própria expectativa.
-
-Banco, guia e porta do E2E podem ser isolados com `E2E_DATABASE_PATH`,
-`E2E_SHOWCASE_GUIDE` e `E2E_PORT`; `SHOWCASE_PUBLIC_URL` define a origem gravada
+Banco, guia, manifesto e porta do E2E podem ser isolados com `E2E_DATABASE_PATH`,
+`E2E_SHOWCASE_GUIDE`, `SHOWCASE_MANIFEST` e `E2E_PORT`; `SHOWCASE_PUBLIC_URL` define a origem gravada
 nos links preservados para inspeção. Assim uma nova execução não precisa tocar em
 um showcase manual já aberto.
 
@@ -276,6 +251,13 @@ não sustenta comparação local porque nenhuma alcança o limiar de anonimato d
 Duas unidades comparáveis exigem pelo menos cinco participantes em cada uma. O
 preflight nunca declara calibração: priors e posterior continuam provisórios até o
 gate empírico próprio ser atendido.
+
+`DiagnosticSamplePlanner` publica o gate do experimento real: 18 pessoas em duas
+unidades com trilhas complementares. O painel mostra progresso de convites e
+respostas contra esse alvo, separado da checagem de linguagem (8) e da calibração
+(50–100). O sintético organizacional `organizational-synthetic` usa o mesmo plano,
+com respostas coerentes por unidade — não rotaciona alternativas frágeis entre
+pessoas — para produzir visão global, briefing de diretoria e ações de área.
 
 O registro cognitivo usa `cognitive-validation-v1` e observa compreensão, recuperação
 de evento, encaixe e sobreposição, termo artificial, resposta desejável, autonomia
