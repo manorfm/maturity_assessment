@@ -107,11 +107,14 @@ controle proporcional, não moda.
 
 O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
 `reinforces`. O grafo `v20` afunila o próximo probe para confirmar ou
-matar hipótese já reforçada. O projetor `finding-narrative-v1` ainda
-publica um limitador e discriminação por contradição. A onda 3 do
-[`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md)
-materializa o relatório. Não se expande o comportamento antigo de
-apresentação.
+matar hipótese já reforçada. O projetor `front-inventory-v1` publica,
+abaixo da primeira decisão, uma ação por frente (Produto, Engenharia,
+Operação, Gestão) com mecanismo e crença relativa provisória. Relatos
+opostos no mesmo evento são adoção desigual: as hipóteses competem com
+suporte. O briefing de política descreve o que parar de autorizar no
+recorte de medo e o caminho técnico do mesmo evento. A massa sintética
+de baixa prática permanece na onda 4 do
+[`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
 
 ## Atualização e explicação
 
@@ -414,14 +417,21 @@ texto diz apenas que as entrevistas ainda não mostraram o caminho funcionando;
 nunca conclui inexistência. As perspectivas que sustentam a leitura são nomeadas,
 contradição zero é explícita e o recorte se explica pela autoridade, não pelo
 rótulo da folha.
-A first screen agrupa os demais padrões publicados em **Outras restrições**,
-por frente diagnóstica — integração e feedback, plataforma, melhoria sem
-fechamento, fluxo — e mostra o mecanismo de cada uma. Padrões da mesma
-família do limitador aparecem como variações, não como problemas novos.
-Tratar só o ponto principal não remove as outras frentes. Decidir e investigar continuam
-distintos. Briefings por público continuam a projetar a mesma
-restrição — autorizar, recusar ou escalar, não comprar ferramenta — sem
-segundo motor, no rodapé administrativo.
+Abaixo da primeira decisão, o inventário `front-inventory-v1` lista
+Produto, Engenharia, Operação e Gestão com mecanismo, crença relativa
+provisória e a ação daquela contenção. Quando o mecanismo é desenho,
+oferece instituir capacidade compartilhada **ou** desfazer fronteira,
+com antipadrão ao lado. A first screen agrupa os demais padrões
+publicados em **Outras restrições**, por frente diagnóstica — integração
+e feedback, plataforma, melhoria sem fechamento, fluxo — e mostra o
+mecanismo de cada uma. Padrões da mesma família do limitador aparecem
+como variações, não como problemas novos. Tratar só o ponto principal
+não remove as outras frentes. Decidir e investigar continuam distintos.
+O briefing de política, no recorte de medo, diz o que esconder/war room
+produz, o que parar de autorizar, o menor teste sem nome e como saber.
+Engenharia recebe o caminho técnico do mesmo evento. Briefings por
+público continuam a projetar a mesma restrição — autorizar, recusar ou
+escalar, não comprar ferramenta — sem segundo motor.
 
 Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
 expressa força da hipótese; prioridade combina alcance e severidade. Métrica,

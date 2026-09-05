@@ -37,8 +37,8 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   Relatos opostos entre observadores são adoção desigual. Clima, incentivo e
   liderança descrevem o local, nunca a pessoa. Cerimônia e post-mortem só
   pontuam pelo efeito no próximo evento equivalente. O grafo `v20` já
-  afunila por reforço. O relatório publicado ainda materializa um
-  limitador e discriminação por contradição; a onda 3 do plano multiárea
-  cobre inventário e briefing de política.
+  afunila por reforço. O relatório publica inventário por frente e
+  briefing de política. A onda 4 do plano multiárea cobre a massa
+  sintética de baixa prática de engenharia.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

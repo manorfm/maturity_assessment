@@ -113,7 +113,8 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
-compõe um cartão compacto (`density: compact`), a amostra desta leitura, os
+compõe um cartão compacto (`density: compact`), o inventário por frente,
+a amostra desta leitura, os
 três sistemas no mesmo peso e o radar de cobertura dos pilares; Gestão é faixa.
 Amostra, sistemas, radar, outras restrições e unidades compartilham o mesmo
 cartão de superfície; os blocos internos usam o fundo da página, não ficam
@@ -193,6 +194,11 @@ inferência, recebe findings e portfólio prontos e não depende de HTTP ou HTML
 serializa suas projeções; as rotas apenas traduzem os mesmos objetos para briefings
 e leitura local. Não existem motores, catálogos ou prioridades específicos por
 público.
+
+`projectFrontInventory` produz `front-inventory-v1` a partir dos mesmos
+findings e dos packs de família. A rota só renderiza as linhas. O briefing
+de política no recorte de medo usa o mesmo catálogo; não cria um segundo
+motor nem nomeia pessoa.
 
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade

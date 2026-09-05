@@ -153,7 +153,7 @@ test('finding só de investigação no piso não vence decisão pronta em outra 
   assert.doesNotMatch(outcome.nextStepTitle, /espera|investigar impacto/i);
 });
 
-test('contradição no limitador não receita várias frentes', () => {
+test('contradição no limitador publica a causa líder e não receita várias frentes', () => {
   const outcome = decideReportOutcome({
     classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Aprendizado e adaptação'] },
     branches: [leaf('organizational-learning', 'Aprendizado e adaptação', 1.7, { hasContradiction: true, confidence: .4 })],
@@ -162,9 +162,10 @@ test('contradição no limitador não receita várias frentes', () => {
       { kind: 'correction', pattern: 'automacao-sem-feedback', detailCapability: 'organizational-learning', title: 'Automação lenta', cause: '', intervention: 'Meça a pipeline', confidence: .9, priority: .8 },
     ],
   });
-  assert.equal(outcome.kind, 'discriminate');
-  assert.equal(outcome.finding, undefined);
-  assert.match(outcome.nextStepBody, /sem abrir várias frentes/);
+  assert.equal(outcome.kind, 'correct');
+  assert.equal(outcome.finding?.pattern, 'retrospectiva-sem-fechamento');
+  assert.match(outcome.reading, /adoção desigual|hipóteses competem/i);
+  assert.doesNotMatch(outcome.nextStepBody, /Meça a pipeline/);
 });
 
 test('causa no limitador vira um experimento', () => {

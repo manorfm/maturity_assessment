@@ -172,9 +172,9 @@ export function decideReportOutcome(input: {
     const preservation = preservationFor(preservedLeaf.id);
     return { ...outcome('preserve', focus.label, preservation.reading, 'Preservar antes de intervir', preservation.nextStep), limiterId: focus.id };
   }
-  if (mixed) {
+  if (mixed && !leading) {
     return {
-      ...outcome('discriminate', limiterLabel, `${limiterLabel} está em ${stageLabel.toLowerCase()}, mas as evidências deste elo ainda se misturam.`, 'Discriminar a restrição do limitador', `${limiterLabel} mistura evidências. A próxima rodada deve reconstruir um evento recente e isolar se a restrição é capacidade, autonomia, processo ou estrutura — sem abrir várias frentes.`),
+      ...outcome('discriminate', limiterLabel, `${limiterLabel} está em ${stageLabel.toLowerCase()}, com relatos em direções opostas. Isso é adoção desigual: as hipóteses competem com suporte, não ficam sem causa.`, 'Ler as hipóteses com suporte cruzado', `${limiterLabel} tem relatos opostos entre quem observou o mesmo evento. Publique as causas possíveis com suporte; não trate a divergência como inconclusivo.`),
       ...limiterId(limiter),
     };
   }
@@ -188,8 +188,11 @@ export function decideReportOutcome(input: {
     }
     const kind = leading.kind === 'evolution' ? 'evolve' : 'correct';
     const action = leading.experiment?.action ?? leading.intervention;
+    const reading = mixed
+      ? `${leading.title}. Relatos opostos no mesmo elo são adoção desigual: as hipóteses competem com suporte.`
+      : `${leading.title}. Isso aparece em ${limiterLabel} (${stageLabel.toLowerCase()}).`;
     return {
-      ...outcome(kind, limiterLabel, `${leading.title}. Isso aparece em ${limiterLabel} (${stageLabel.toLowerCase()}).`, leading.title, action),
+      ...outcome(kind, limiterLabel, reading, leading.title, action),
       ...limiterId(limiter),
       finding: leading,
     };

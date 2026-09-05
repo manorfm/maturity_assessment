@@ -50,6 +50,11 @@ const technicalCapabilities = new Set([
 ]);
 
 export function audienceAsk(finding: OutcomeFinding, audience: 'executive' | 'unit-management' | 'technology-leadership'): string {
+  if (finding.pattern === 'war-room-como-gestao' || finding.pattern === 'culpa-e-controle') {
+    if (audience === 'executive') return 'Parar de autorizar caça ao culpado, meta que pune relato e celebração só de quem salvou.';
+    if (audience === 'unit-management') return 'Recuse o próximo item sem a análise do incidente; a restrição não se resolve no time.';
+    return 'Trate o caminho técnico do mesmo evento — origem, reversão e permissão no recurso. Não peça um workshop de conversa protegida.';
+  }
   if (finding.pattern === 'causa-capacidade-tomada-pela-proxima-iniciativa') {
     if (audience === 'executive') return 'Pare de autorizar o ciclo seguinte sem reservar pessoas para manter, cortar ou redirecionar o anterior.';
     if (audience === 'unit-management') return 'O time não falhou em aprender. Recuse iniciar o próximo item sem a revisão, ou escale a restrição.';

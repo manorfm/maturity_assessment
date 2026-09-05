@@ -175,3 +175,8 @@ restrições compartilhadas; a técnica seleciona restrições sistêmicas; a lo
 separa ação própria, restrição recebida e escalada; a especialista preserva o
 contrato completo. Projeções carregam referências sem criar uma nova identidade de
 problema ou uma regra alternativa de recomendação.
+
+`projectFrontInventory` produz `front-inventory-v1`: uma linha por frente
+de apresentação, com mecanismo, crença relativa provisória e ação da
+contenção. O briefing de política no recorte de medo e o fork de desenho
+organizacional saem do mesmo catálogo de família, sem nomear pessoa.

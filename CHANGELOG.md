@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.87.0
+
+- O relatório passou a publicar inventário por frente, com ação de
+  cada contenção e crença relativa provisória. Relatos opostos no
+  mesmo evento são adoção desigual. O briefing de política descreve o
+  que parar de autorizar no recorte de medo e o caminho técnico do
+  mesmo evento.
+
 ## 0.86.0
 
 - O grafo `v20` passou a afunilar por reforço: o próximo probe confirma

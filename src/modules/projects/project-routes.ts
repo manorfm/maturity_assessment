@@ -19,6 +19,7 @@ import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../infere
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
 import { AudienceReportProjector, audienceAsk, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
 import { projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
+import { policyBriefingFor, projectFrontInventory, type FrontInventory } from '../inference/domain/multi-front-inventory.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
 
 type Params = { publicId: string; adminSecret: string };
@@ -43,10 +44,14 @@ export function renderAudienceBriefs(reports: AudienceReports, capabilityBase: s
     const everyday = happening && happening !== finding.title ? `<p>${escapeHtml(happening)}</p>` : '';
     return `<article class="audience-brief-card"><h3>${escapeHtml(finding.title)}</h3>${everyday}<p><strong>O que essa pessoa precisa decidir.</strong> ${escapeHtml(ask)}</p><p class="muted"><strong>Quem autoriza:</strong> ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))}.</p><p><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}">Ver detalhe</a></p></article>`;
   }).join('');
+  const policy = reports.specialist.findings.map((finding) => policyBriefingFor(finding.pattern)).find((item) => item);
+  const policyCard = policy
+    ? `<article class="card" id="report-policy"><p class="eyebrow">Clima e incentivo do local</p><h2>Briefing de política</h2><p><strong>O que esconder e gerir por crise produz.</strong> ${escapeHtml(policy.produces)}</p><p><strong>O que parar de autorizar.</strong> ${escapeHtml(policy.stopAuthorizing)}</p><p><strong>Menor teste.</strong> ${escapeHtml(policy.smallestTest)}</p><p><strong>Como saber.</strong> ${escapeHtml(policy.howToKnow)}</p><h3>Caminho técnico do mesmo evento</h3><p>Engenharia recebe origem, reversão e permissão no recurso — não um workshop de conversa protegida. ${escapeHtml(policy.technicalPath)}</p></article>`
+    : '';
   const executiveHasContent = reports.executive.decisions.length > 0 || reports.executive.sharedConstraints.length > 0;
   const executive = executiveHasContent ? `<article class="card" id="report-executive"><p class="eyebrow">O que a diretoria precisa decidir</p><h2>Briefing para diretoria</h2>${reports.executive.decisions.length ? `<h3>Decisões organizacionais</h3>${cards(reports.executive.decisions, 'executive')}` : ''}${reports.executive.sharedConstraints.length ? `<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${cards(reports.executive.sharedConstraints, 'executive')}` : ''}</article>` : '';
   const technology = reports.technology.systemicConstraints.length ? `<article class="card" id="report-technology"><p class="eyebrow">O que a liderança técnica precisa decidir</p><h2>Briefing para liderança de tecnologia</h2>${cards(reports.technology.systemicConstraints, 'technology-leadership')}</article>` : '';
-  return executive || technology ? `<section class="audience-briefs">${executive}${technology}</section>` : '';
+  return executive || technology || policyCard ? `<section class="audience-briefs">${policyCard}${executive}${technology}</section>` : '';
 }
 
 const projectForm = () => layout('Novo projeto', `
@@ -451,11 +456,21 @@ export function renderFirstScreen(input: {
     ...(competingFinding ? { competingFinding } : {}),
   });
   const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
+  const inventory = renderFrontInventory(projectFrontInventory(ordered));
   const systems = `<section class="card first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase })}</section>`;
   const radar = input.capabilityGroups?.length
     ? renderCapabilityRadar(input.capabilityGroups, input.capabilityBase)
     : '';
-  return `${card}${renderSampleStrip(input.sample)}${systems}${radar}${renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase)}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
+  return `${card}${inventory}${renderSampleStrip(input.sample)}${systems}${radar}${renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase)}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
+}
+
+function renderFrontInventory(inventory: FrontInventory): string {
+  if (!inventory.rows.length) return '';
+  const rows = inventory.rows.map((row) => `<article class="front-inventory-row"><h3>${escapeHtml(row.label)}</h3><p>${escapeHtml(row.mechanism)}</p><p class="muted">${escapeHtml(row.relativeBelief)}</p><p><strong>Ação desta contenção.</strong> ${escapeHtml(row.action)}</p></article>`).join('');
+  const fork = inventory.orgDesignFork
+    ? `<aside class="notice"><p><strong>Quando o mecanismo é desenho.</strong> ${escapeHtml(inventory.orgDesignFork.institute)} ${escapeHtml(inventory.orgDesignFork.dismantle)}</p><p><strong>Antipadrão:</strong> ${escapeHtml(inventory.orgDesignFork.antiPattern)}</p><p class="muted">${escapeHtml(inventory.orgDesignFork.preserveObligation)}</p></aside>`
+    : '';
+  return `<section class="card front-inventory"><h2>Inventário por frente</h2><p class="muted">Hipóteses competem com suporte cruzado. Relatos opostos no mesmo evento são adoção desigual no local, não um laudo sem causa.</p><div class="grid">${rows}</div>${fork}</section>`;
 }
 
 function renderSampleStrip(sample?: { completed: number; units: Array<{ path: string; completed: number }> }): string {
@@ -640,7 +655,7 @@ function renderRecommendationEvidence(evidence: NonNullable<OutcomeFinding['reco
 function renderCausalAnalysis(causal?: OutcomeFinding['causalAnalysis']): string {
   if (!causal) return '';
   const alternatives = causal.alternatives.length
-    ? `<h4>Outras explicações que ainda competem</h4><ul>${causal.alternatives.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
+    ? `<h4>Outras explicações que ainda competem</h4><p class="muted">Hipóteses competem com suporte cruzado. Relatos opostos são adoção desigual, não um laudo sem causa.</p><ul>${causal.alternatives.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
     : '<p>Nenhuma hipótese concorrente foi materializada para este padrão.</p>';
   const contrary = causal.evidenceAgainst.length
     ? `<ul>${causal.evidenceAgainst.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
@@ -693,7 +708,7 @@ function interviewReading(outcome: ReportOutcome): string {
   if (outcome.kind === 'insufficient') return 'Ainda não há evidência coletiva suficiente — variedade temática ou grupo mínimo — para publicar um diagnóstico.';
   if (outcome.kind === 'preserve') return 'As entrevistas convergem para execução consistente, com revisão de efeito e adaptação do modo de trabalhar.';
   if (/divergem|não descrevem o mesmo sistema/i.test(outcome.reading)) return 'As lentes descrevem sistemas diferentes. Isso é o finding, não uma fragilidade automática.';
-  if (/misturam/i.test(outcome.reading)) return 'Há relatos em direções opostas no mesmo elo; a contradição impede escolher uma causa.';
+  if (/misturam|adoção desigual/i.test(outcome.reading)) return 'Há relatos em direções opostas no mesmo elo; isso é adoção desigual no local. As hipóteses competem com suporte cruzado.';
   if (/dispersas/i.test(outcome.reading)) return 'Há sinais frágeis, mas nenhum padrão se repetiu o suficiente para amarrar uma causa. O relatório não inventa uma causa.';
   return 'As entrevistas indicam fragilidade, mas ainda competem várias explicações.';
 }
@@ -1071,7 +1086,7 @@ function renderProbabilisticSummary(posteriors: DiagnosticPosterior[], modelVers
   const unique = uniqueConfirmedCauses(confirmed);
   if (!unique.length) return '';
   const items = unique.map((cause) => `<li><strong>${escapeHtml(cause.label)}</strong><br><span class="muted">${escapeHtml(causeEvidenceReading(cause))} · ${cause.support} de ${cause.applicable} pessoas que poderiam observar a situação, em ${cause.profiles} perspectiva(s) · ${escapeHtml(CapabilityTaxonomy.labelFor(cause.capability))}.</span></li>`).join('');
-  return `<section><h2>${title}</h2><p class="muted">Hipóteses distintas com suporte da opção observada. Cada padrão aparece uma vez. Use-as para entender o recorte, não para avaliar pessoas.</p><article class="card diagnostic-hypothesis"><span class="tag">leitura das causas</span><ul>${items}</ul></article><details class="methodology"><summary>Sobre a precisão desta análise</summary><p>Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. As faixas são julgamentos especialistas apoiados pelas evidências; não representam probabilidade calibrada até o piloto produzir massa revisada.</p></details></section>`;
+  return `<section><h2>${title}</h2><p class="muted">Hipóteses competem com suporte cruzado. Relatos opostos no mesmo evento são adoção desigual no local. Cada padrão aparece uma vez. Use-as para entender o recorte, não para avaliar pessoas.</p><article class="card diagnostic-hypothesis"><span class="tag">leitura das causas</span><ul>${items}</ul></article><details class="methodology"><summary>Sobre a precisão desta análise</summary><p>Modelo ${escapeHtml(modelVersion ?? 'não publicado')}. As faixas são julgamentos especialistas apoiados pelas evidências; não representam probabilidade calibrada até o piloto produzir massa revisada.</p></details></section>`;
 }
 
 function causeEvidenceReading(cause: ConfirmedCause): string {
@@ -1104,7 +1119,7 @@ export function renderCapabilityDiagnosis(findings: ReportFinding[], capability:
       return `<article id="${findingAnchor(finding.pattern)}" class="card diagnostic-problem"><span class="tag">${urgency} · ${escapeHtml(diagnosticStrength(finding.confidence ?? 0))}</span><h3>${escapeHtml(finding.title)}</h3><div class="executive-action-grid"><div><h4>Impacto no negócio</h4><p>${escapeHtml(executiveImpact(finding))}</p></div><div><h4>Ação recomendada</h4><p>${escapeHtml(experiment?.action ?? finding.intervention)}</p></div><div><h4>Como acompanhar</h4><p>${escapeHtml(experiment?.metric ?? 'Observe a redução de espera, falhas e retrabalho no fluxo afetado.')}</p></div></div>${readiness}${causal}${experiment ? `<dl class="diagnostic-experiment"><dt>Responsável sugerido</dt><dd>${escapeHtml(experiment.owner)}</dd><dt>Prazo de revisão</dt><dd>${escapeHtml(experiment.reviewHorizon)}</dd><dt>Resultado esperado</dt><dd>${escapeHtml(experiment.successCriterion)}</dd></dl>` : ''}<details class="methodology"><summary>Ver diagnóstico, evidências e fundamento</summary>${finding.cause ? `<h4>Causa provável</h4><p>${escapeHtml(finding.cause)}</p>` : ''}${finding.foundation ? `<h4>Fundamento</h4><p>${escapeHtml(finding.foundation.source)} — ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}${finding.constraint && finding.constraint !== 'none' ? `<p>Tipo de restrição: ${escapeHtml(finding.constraint)}</p>` : ''}<ul>${(finding.reasons ?? []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul></details></article>`;
     }).join('')}</div>`).join('')}</section>`;
   }
-  if (capability.hasContradiction) return '<p class="notice">Os sinais divergem e ainda não sustentam uma recomendação. A próxima entrevista deve discriminar contexto, acesso, competência, processo e estrutura.</p>';
+  if (capability.hasContradiction) return '<p class="notice">Relatos opostos no mesmo evento são adoção desigual no local. As hipóteses competem com suporte cruzado. Isso não é um laudo sem causa.</p>';
   if (capability.confidence < .5) return '<p class="notice">A evidência ainda é insuficiente para afirmar ausência de problema ou recomendar preservação da prática.</p>';
   if (capability.level < 1) return `<article class="card diagnostic-problem"><span class="tag">atenção prioritária</span><h2>Capacidade em estado crítico</h2><p>${capability.evidence} sinais convergem para fragilidade, mas estão distribuídos entre padrões que não alcançaram recorrência mínima isoladamente. O relatório não atribui uma causa sem sustentação coletiva.</p><h3>Próximo aprofundamento</h3><p>Recolha outra rodada dirigida aos comportamentos divergentes antes de selecionar uma intervenção estrutural.</p></article>`;
   if (capability.level < 2) return '<p class="notice">A capacidade apresenta comportamento predominantemente reativo. A evidência confirma fragilidade, mas ainda não isolou uma causa recorrente para orientar uma correção específica.</p>';

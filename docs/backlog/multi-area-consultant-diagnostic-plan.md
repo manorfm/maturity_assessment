@@ -1,8 +1,9 @@
 # Plano: diagnóstico em várias áreas, no formato de consultoria
 
-Status: ondas 0–2 incorporadas (0.86.0). O catálogo dos cinco packs,
-`causal-catalog-v10` e o grafo `v20` (funil por reforço) estão vigentes.
-Relatório e sintético permanecem nas ondas 3–4.
+Status: ondas 0–3 incorporadas (0.87.0). O catálogo dos cinco packs,
+`causal-catalog-v10`, o grafo `v20` e o relatório multiárea
+(inventário, adoção desigual, briefing de política) estão vigentes.
+A massa sintética de baixa prática permanece na onda 4.
 
 Este plano não substitui
 [`specialist-diagnostic-platform-plan.md`](specialist-diagnostic-platform-plan.md)
@@ -210,6 +211,8 @@ responde. Auditoria vigente permanece (`deploy`, `rollback` etc. não
 aparecem na pergunta).
 
 ### Onda 3 — Relatório
+
+Status: **vigente** (0.87.0). Projetor `front-inventory-v1`.
 
 First screen: problema cotidiano, hipótese, primeira decisão. Abaixo:
 inventário por frente (Produto, Engenharia, Operação, Gestão),

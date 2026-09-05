@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Relatório multiárea e briefing de política
+
+- First screen publica inventário por frente; contradição no mesmo
+  evento vira adoção desigual com a causa líder; diretoria recebe o
+  que parar de autorizar no recorte de medo e engenharia o caminho
+  técnico; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-05 — Grafo que afunila por reforço
 
 - Publicado `evidence-anamnesis-pilot-v20`: o seletor prefere o probe

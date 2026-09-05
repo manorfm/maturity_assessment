@@ -48,7 +48,9 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-home header { margin-bottom:16px }
     .report-home h1 { font-size:clamp(1.55rem,3.2vw,2.15rem); margin:.1rem 0 .35rem }
     .report-home .card > h2 { margin-top:0 }
-    .report-home .first-screen-systems h2,.report-home .finding-index h2,.report-home .scope-index h2 { margin-top:0 }
+    .report-home .first-screen-systems h2,.report-home .finding-index h2,.report-home .scope-index h2,.report-home .front-inventory h2 { margin-top:0 }
+    .front-inventory-row { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:16px }
+    .front-inventory-row h3 { margin:.1rem 0 .4rem }
     .sample-strip p { margin:.2rem 0 }
     .outcome-card.compact { padding:14px 16px; margin:8px 0 12px }
     .outcome-card.compact > h2 { font-size:clamp(1.2rem,2.2vw,1.45rem); margin:.15rem 0 .4rem }
