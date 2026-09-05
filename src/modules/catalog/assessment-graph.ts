@@ -118,7 +118,10 @@ const authoredNodes: AssessmentNode[] = [
     prompt: 'Onde costuma estar a maior parte do tempo até a mudança operar?',
     options: [
       { id: 'small-automated', label: 'O fluxo é curto e repetível; a maior espera é uma decisão consciente de produto ou risco.', signals: [{ capability: 'entrega', pattern: 'entrega-repetivel', weight: 2 , details: ['release-feedback'], layer: 'practice', constraint: 'none' }] },
-      { id: 'manual-package', label: 'Em preparar, conferir ou transportar versões e configurações entre ambientes.', signals: [{ capability: 'entrega', pattern: 'empacotamento-manual', weight: -2 , details: ['release-feedback'], layer: 'practice', constraint: 'none' }] },
+      { id: 'manual-package', label: 'Em preparar, conferir ou transportar versões e configurações entre ambientes.', signals: [
+        { capability: 'entrega', pattern: 'empacotamento-manual', weight: -2 , details: ['release-feedback'], layer: 'practice', constraint: 'none' },
+        { capability: 'engenharia', pattern: 'caminho-de-versao-sem-origem', weight: -2 , details: ['release-feedback', 'sdlc-automation'], layer: 'practice', constraint: 'none' },
+      ] },
       { id: 'test-queue', label: 'Na fila de regressão, obtenção de dados de teste ou disponibilidade de ambiente e pessoas.', signals: [{ capability: 'qualidade', pattern: 'qualidade-como-fase', weight: -2 , details: ['quality-strategy'], layer: 'practice', constraint: 'none' }] },
       { id: 'approval', label: 'Em aprovações e permissões cujo tempo varia e cuja decisão raramente muda com novas evidências.', signals: [{ capability: 'governanca', pattern: 'controle-sem-feedback', weight: -2 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
     ],
@@ -275,7 +278,10 @@ const authoredNodes: AssessmentNode[] = [
     options: [
       { id: 'reproducible-change', label: 'A menor correção percorre um caminho verificável; código, configuração, estrutura de dados e infraestrutura mantêm uma origem que outra pessoa consegue reproduzir e observar.', signals: [{ capability: 'confiabilidade', pattern: 'correcao-reproduzivel', weight: 2 , details: ['incident-management', 'reproducible-infrastructure'], layer: 'practice', constraint: 'none' }] },
       { id: 'controlled-emergency', label: 'Uma alteração emergencial é feita com dupla verificação e trilha; logo depois é reconciliada na fonte e validada contra divergência.', signals: [{ capability: 'governanca', pattern: 'mudanca-emergencial-reconciliada', weight: 1 , details: ['enabling-governance'], layer: 'practice', constraint: 'none' }] },
-      { id: 'live-console-change', label: 'Uma pessoa experiente altera configuração ou recurso diretamente e depois documenta ou tenta reproduzir a correção.', signals: [{ capability: 'plataforma', pattern: 'correcao-direta-na-producao', weight: -2 , details: ['incident-management'], layer: 'practice', constraint: 'none' }] },
+      { id: 'live-console-change', label: 'Uma pessoa experiente altera configuração ou recurso diretamente e depois documenta ou tenta reproduzir a correção.', signals: [
+        { capability: 'plataforma', pattern: 'correcao-direta-na-producao', weight: -2 , details: ['incident-management'], layer: 'practice', constraint: 'none' },
+        { capability: 'confiabilidade', pattern: 'reversao-nao-reproduzivel', weight: -2 , details: ['incident-management'], layer: 'practice', constraint: 'none' },
+      ] },
       { id: 'live-data-change', label: 'Dados ou estruturas são ajustados diretamente para recuperar o serviço; validação e reconciliação dependem do contexto de quem executa.', signals: [{ capability: 'engenharia', pattern: 'correcao-manual-de-dados', weight: -2 , details: ['sustainable-design', 'integration-data', 'incident-management'], layer: 'practice', constraint: 'none' }] },
     ], next: 'recurrence',
   },
@@ -398,8 +404,14 @@ const authoredNodes: AssessmentNode[] = [
     options: [
       { id: 'system-learning', label: 'Reconstrói condições e decisões sem buscar culpado, protege relatos difíceis e muda o sistema com responsáveis e sinais de efeito.', signals: [{ capability: 'organizacao', pattern: 'aprendizado-blameless', weight: 2 , details: ['organizational-learning'], layer: 'outcome', constraint: 'none' }] },
       { id: 'accountability-person', label: 'Concentra a análise na etapa em que a falha escapou e acrescenta revisão, orientação ou aprovação para reduzir nova ocorrência.', signals: [{ capability: 'organizacao', pattern: 'culpa-e-controle', weight: -2 , details: ['enabling-governance', 'leadership-management'], layer: 'practice', constraint: 'none' }] },
-      { id: 'private-resolution', label: 'Lideranças e especialistas resolvem o caso em um grupo pequeno para reduzir exposição e recuperar a entrega.', signals: [{ capability: 'aprendizado', pattern: 'aprendizado-restrito', weight: -2 , details: ['organizational-learning'], layer: 'outcome', constraint: 'none' }] },
-      { id: 'move-on', label: 'Corrige o efeito imediato; com a pressão seguinte, a análise mais ampla perde prioridade.', signals: [{ capability: 'confiabilidade', pattern: 'incidente-sem-aprendizado', weight: -2 , details: ['incident-management', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { id: 'private-resolution', label: 'Lideranças e especialistas resolvem o caso em um grupo pequeno para reduzir exposição e recuperar a entrega.', signals: [
+        { capability: 'aprendizado', pattern: 'aprendizado-restrito', weight: -2 , details: ['organizational-learning'], layer: 'outcome', constraint: 'none' },
+        { capability: 'organizacao', pattern: 'war-room-como-gestao', weight: -2 , details: ['leadership-management', 'incident-management'], layer: 'practice', constraint: 'organization' },
+      ] },
+      { id: 'move-on', label: 'Corrige o efeito imediato; com a pressão seguinte, a análise mais ampla perde prioridade.', signals: [
+        { capability: 'confiabilidade', pattern: 'incidente-sem-aprendizado', weight: -2 , details: ['incident-management', 'organizational-learning'], layer: 'outcome', constraint: 'none' },
+        { capability: 'aprendizado', pattern: 'postmortem-sem-efeito', weight: -1 , details: ['organizational-learning'], layer: 'outcome', constraint: 'none' },
+      ] },
     ], next: 'improvement-loop',
   },
   {
@@ -418,6 +430,7 @@ const authoredNodes: AssessmentNode[] = [
       ] },
       { id: 'ceremony-report', label: 'O encontro acontece no calendário e registra percepções, porém raramente muda decisão, processo ou capacidade reservada.', signals: [
         { capability: 'aprendizado', pattern: 'cerimonia-sem-adaptacao', weight: -2 , details: ['organizational-learning'], layer: 'practice', constraint: 'none' },
+        { capability: 'aprendizado', pattern: 'postmortem-sem-efeito', weight: -2 , details: ['organizational-learning'], layer: 'outcome', constraint: 'none' },
         { capability: 'organizacao', pattern: 'processo-sem-autonomia', weight: -1 , details: ['team-ownership'], layer: 'practice', constraint: 'none' },
       ] },
       { id: 'only-after-crisis', label: 'Mudanças no modo de trabalhar surgem principalmente após crise ou cobrança externa, conduzidas por liderança ou especialistas.', signals: [
@@ -460,6 +473,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'overwritten-change', label: 'Uma versão, configuração ou pacote já foi sobrescrito ou substituído sem que o outro grupo percebesse a tempo.', signals: [
         { capability: 'entrega', pattern: 'mudanca-sobrescrita', weight: -2 , details: ['continuous-integration'], layer: 'practice', constraint: 'none' },
         { capability: 'engenharia', pattern: 'fonte-nao-confiavel', weight: -2 , details: ['continuous-integration', 'sdlc-automation'], layer: 'practice', constraint: 'none' },
+        { capability: 'engenharia', pattern: 'caminho-de-versao-sem-origem', weight: -2 , details: ['continuous-integration', 'sdlc-automation'], layer: 'practice', constraint: 'none' },
         { capability: 'organizacao', pattern: 'comunicacao-de-mudanca-fragil', weight: -1 , details: ['collaboration', 'organizational-learning'], layer: 'practice', constraint: 'none' },
       ] },
       { id: 'late-integration-conflict', label: 'Conflitos e regressões aparecem ao reunir versões ou preparar a liberação, exigindo decisão conjunta sob pressão.', signals: [
@@ -592,7 +606,10 @@ const authoredNodes: AssessmentNode[] = [
     options: [
       { id: 'scoped-identity', label: 'Há um caminho repetível: a identidade tem escopo, expiração e trilha; outra pessoa consegue repetir sem herdar acesso permanente.', signals: [{ capability: 'plataforma', pattern: 'identidade-com-escopo-e-expiracao', weight: 2, details: ['cloud-security', 'software-security', 'platform-autonomy'], layer: 'practice', constraint: 'none' }] },
       { id: 'handoff-secret', label: 'Alguém com acesso coloca o valor e avisa por ticket, chat ou conversa; o tempo depende de quem está disponível.', signals: [{ capability: 'plataforma', pattern: 'credencial-por-handoff', weight: -2, details: ['cloud-security', 'platform-autonomy'], layer: 'practice', constraint: 'none' }] },
-      { id: 'config-secret', label: 'O valor viaja em configuração, arquivo ou variável compartilhada para destravar a mudança.', signals: [{ capability: 'engenharia', pattern: 'credencial-em-configuracao', weight: -3, details: ['cloud-security', 'software-security'], layer: 'practice', constraint: 'none' }] },
+      { id: 'config-secret', label: 'O valor viaja em configuração, arquivo ou variável compartilhada para destravar a mudança.', signals: [
+        { capability: 'engenharia', pattern: 'credencial-em-configuracao', weight: -3, details: ['cloud-security', 'software-security'], layer: 'practice', constraint: 'none' },
+        { capability: 'plataforma', pattern: 'identidade-sem-autorizacao-no-recurso', weight: -2, details: ['cloud-security'], layer: 'practice', constraint: 'access' },
+      ] },
       { id: 'shared-identity', label: 'Usa-se uma conta ou chave já conhecida por várias pessoas, porque é o caminho mais rápido.', signals: [{ capability: 'plataforma', pattern: 'identidade-compartilhada', weight: -2, details: ['cloud-security', 'enabling-governance'], layer: 'practice', constraint: 'none' }] },
     ], next: 'dependency-context',
   },

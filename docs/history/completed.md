@@ -6,6 +6,15 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Catálogo dos cinco packs e reforço entre ramos
+
+- Publicado `causal-catalog-v10` com origem da versão, autorização no
+  recurso, reversão, post-mortem sem efeito e war room como gestão;
+  duas respostas em ramos distintos aumentam a mesma hipótese; o rito
+  sem mudança no próximo evento não pontua aprendizado; a família se
+  publica sem marca; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-05 — Contrato multiárea vigente na base
 
 - Família de capacidade ≠ marca; ausência no evento ocorrido é falta de

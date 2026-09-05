@@ -49,11 +49,10 @@ dizer, sem resenha das respostas. A first screen empilha cartões da
 decisão até as unidades. O radar
 dos pilares vem depois dos sistemas; as demais restrições aparecem por
 frente diagnóstica, não como o mesmo efeito, e “?” não pede mais pessoas.
-O contrato de família de capacidade, ausência no evento, adoção desigual,
-clima/liderança no local e cerimônia pelo efeito está na base
-(`recommendation-model.md`, `question-design.md`, `assessment-model.md`).
-O runtime ainda publica um limitador e discriminação por contradição. As
-ondas 1–4 (catálogo, grafo, relatório, sintético) permanecem no
+O contrato de família de capacidade e o catálogo dos cinco packs
+(`causal-catalog-v10`) estão na base. O grafo `v19` já emite os novos
+padrões em nós existentes. Roteamento por reforço, relatório multiárea e
+sintético permanecem no
 [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
 A sequência aberta do relatório apresentável (folhas candidatas) está no
 [`plano de apresentação`](../backlog/report-presentation-plan.md). A evolução

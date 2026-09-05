@@ -1,10 +1,11 @@
+import { reinforcementEdges } from './capability-family.js';
 import type { InterventionDefinition } from './group-recommendation-engine.js';
 import { diagnosticSystemFor } from './problem-system.js';
 import { hasTechnicalContract } from './technical-practice-library.js';
 
-export const CAUSAL_KNOWLEDGE_VERSION = 'causal-catalog-v9';
+export const CAUSAL_KNOWLEDGE_VERSION = 'causal-catalog-v10';
 
-export type CausalRelation = 'observed_as' | 'may_be_explained_by' | 'supported_by' | 'contradicted_by' | 'addressed_by' | 'grounded_in' | 'may_enable';
+export type CausalRelation = 'observed_as' | 'may_be_explained_by' | 'supported_by' | 'contradicted_by' | 'reinforces' | 'amplifies' | 'addressed_by' | 'grounded_in' | 'may_enable';
 export type CausalEdge = { from: string; relation: CausalRelation; to: string };
 export type CausalPath = {
   pattern: string;
@@ -40,6 +41,7 @@ export class CausalKnowledgeGraph {
         ...evidenceAgainst.map((evidence) => ({ from: `cause:${pattern}`, relation: 'contradicted_by' as const, to: `evidence:${evidence}` })),
         { from: `cause:${pattern}`, relation: 'addressed_by', to: `intervention:${pattern}` },
         ...(hasTechnicalContract(pattern) ? [{ from: `cause:${pattern}`, relation: 'may_enable' as const, to: `technical-contract:${pattern}` }] : []),
+        ...reinforcementEdges().filter((edge) => edge.to === `cause:${pattern}`),
         { from: `intervention:${pattern}`, relation: 'grounded_in', to: `foundation:${item.foundation.source}` },
       ],
       } satisfies CausalPath];

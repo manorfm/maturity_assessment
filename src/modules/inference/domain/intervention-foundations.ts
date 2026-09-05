@@ -1115,5 +1115,30 @@ export const interventionFoundations: Record<string, ExplicitFoundation> = {
     "source": "Qualidade no fluxo",
     "principle": "Risco entra cedo; verificação é feedback, não fase",
     "why": "Suíte ou scanner presente não prova estratégia de qualidade."
+  },
+  "caminho-de-versao-sem-origem": {
+    "source": "Continuous Delivery / SLSA",
+    "principle": "Proveniência e promoção do mesmo artefato",
+    "why": "Sem origem identificável a promoção depende de memória e de caminho paralelo."
+  },
+  "identidade-sem-autorizacao-no-recurso": {
+    "source": "NIST Zero Trust / Well-Architected Security",
+    "principle": "Autenticação não é autorização",
+    "why": "Token válido sem checagem do recurso amplia o blast radius da mudança."
+  },
+  "reversao-nao-reproduzivel": {
+    "source": "SRE",
+    "principle": "Mitigação antes da causa; reversão no caminho da mudança",
+    "why": "Dependência de herói transforma incidente em espera por uma pessoa."
+  },
+  "postmortem-sem-efeito": {
+    "source": "SRE / blameless postmortem",
+    "principle": "Aprendizado é mudança revista, não o rito",
+    "why": "Ata sem dono e sem efeito no próximo evento equivalente não fecha o ciclo."
+  },
+  "war-room-como-gestao": {
+    "source": "SRE / blameless postmortem",
+    "principle": "Culpa local preserva as condições do erro",
+    "why": "Gerir por crise reconhece o herói e esconde o risco até quebrar."
   }
 };

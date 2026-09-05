@@ -13,9 +13,8 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
-O contrato multiárea (família vs marca, ausência no evento, adoção
-desigual, clima no local, cerimônia pelo efeito) já está na base
-(0.84.0). Restam catálogo, grafo, relatório e massa sintética no
+O contrato e o catálogo dos cinco packs já estão na base (0.85.0).
+Restam grafo que afunila, relatório e massa sintética no
 [`multi-area-consultant-diagnostic-plan.md`](multi-area-consultant-diagnostic-plan.md).
 
 O objetivo integrado de transformar o produto em uma plataforma especialista —

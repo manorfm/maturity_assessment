@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.85.0
+
+- O catálogo passou a ter cinco packs de família de capacidade, com
+  reforço entre ramos. Post-mortem sem efeito no próximo evento não
+  pontua aprendizado. Falta de caminho de artefato publica a família,
+  sem nome de produto.
+
 ## 0.84.0
 
 - O contrato vigente passou a distinguir família de capacidade e marca,

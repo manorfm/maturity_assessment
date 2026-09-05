@@ -1,9 +1,9 @@
 # Plano: diagnóstico em várias áreas, no formato de consultoria
 
-Status: onda 0 incorporada à base de conhecimento (0.84.0). O contrato
-já é normativo para autoria nova. Catálogo, grafo e relatório ainda
-seguem `v19` / `finding-narrative-v1` até as ondas 1–3. Nada das ondas
-restantes altera o instrumento publicado sem TDD e versão nova do grafo.
+Status: ondas 0 e 1 incorporadas (0.85.0). O catálogo dos cinco packs
+e `causal-catalog-v10` estão vigentes. O grafo ainda é `v19` com os
+novos padrões amarrados a nós existentes; roteamento por reforço,
+relatório e sintético permanecem nas ondas 2–4.
 
 Este plano não substitui
 [`specialist-diagnostic-platform-plan.md`](specialist-diagnostic-platform-plan.md)
@@ -173,6 +173,10 @@ publicação nem arestas `reinforces`.
 Pergunta “vocês têm post-mortem / ECR / Vault?”.
 
 ### Onda 1 — Catálogo e texto
+
+Status: **vigente** (0.85.0). Cinco packs em `capability-family.ts`;
+hipóteses com contrato explícito; arestas `reinforces` em
+`causal-catalog-v10`. Sinais publicados em nós já existentes do `v19`.
 
 Cinco packs, cada um com fatos do cotidiano, hipóteses, `reinforces`,
 prática-alvo, família de ferramenta opcional e fundamento:

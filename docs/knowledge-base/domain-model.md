@@ -34,9 +34,10 @@
 - **Profile:** lente configurável sobre responsabilidades, visibilidade e decisões;
   seleciona cenários, mas não cria uma escala de capacidade por cargo.
 - **Response:** resposta bruta e metadados consentidos.
-- **CapabilityFamily:** caminho de trabalho exigido pelo evento (origem da
-  versão, artefato, imagem, esteira, autorização no recurso, reversão,
-  aprendizado que fecha). Não é marca e não vira eixo do radar.
+- **CapabilityFamily:** caminho de trabalho exigido pelo evento. Os cinco
+  packs publicados são origem/promoção da versão, acesso em nuvem,
+  incidente/reversão, cerimônia com efeito e clima/liderança. Não é marca
+  e não vira eixo do radar.
 - **Finding:** hipótese explicável, evidências, contradições e confiança;
   capacidade principal, efeitos por sistema e uma ação por contenção visível.
   Relatos opostos entre quem observou o mesmo evento são adoção desigual, não

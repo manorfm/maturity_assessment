@@ -17,8 +17,8 @@ futuro integra o comportamento vigente até ser promovido à base de conheciment
 - Este plano integra essas linhas e acrescenta operating model, funding, workforce,
   plataforma interna, portfólio de transformação e relatórios por autoridade.
 - [`multi-area-consultant-diagnostic-plan.md`](multi-area-consultant-diagnostic-plan.md)
-  sequencia o incremento: a onda 0 (contrato) já está na base; restam
-  catálogo, grafo, relatório e sintético.
+  sequencia o incremento: ondas 0 e 1 (contrato e catálogo) já estão
+  na base; restam grafo, relatório e sintético.
 
 ## Problema e públicos
 

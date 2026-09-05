@@ -281,6 +281,11 @@ const interventionSeeds: Record<string, InterventionSeed> = {
   'capacitacao-medida-por-presenca': { title: 'Presença comprova o curso, mas não a mudança de execução', intervention: 'Escolha uma demanda equivalente e verifique conclusão, ajuda, erro e tempo antes de repetir ou ampliar o programa.' },
   'matriz-de-competencia-sem-aplicacao': { title: 'Conhecimento declarado não muda a distribuição do trabalho', intervention: 'Use uma tarefa real para validar uma habilidade declarada e atualize responsabilidade e apoio conforme o resultado observado.' },
   'desenvolvimento-reforca-especialista': { title: 'O desenvolvimento devolve trabalho à pessoa especialista', intervention: 'Mude o próximo caso para colaboração em vez de correção posterior e preserve prazo reduzindo escopo, não retomando toda a execução.' },
+  'caminho-de-versao-sem-origem': { title: 'A versão promovida não tem caminho de origem identificável', intervention: 'Na próxima promoção, use uma origem única e o mesmo artefato entre ambientes; retire o caminho que ainda vive na máquina de alguém.' },
+  'identidade-sem-autorizacao-no-recurso': { title: 'A identidade passa, mas não autoriza o recurso alterado', intervention: 'Na próxima mudança comum, exija que a identidade cubra só aquele recurso, com tempo limitado e trilha.' },
+  'reversao-nao-reproduzivel': { title: 'A reversão depende de um herói e não do caminho', intervention: 'Exercite a volta de uma mudança pequena pelo caminho, sem a pessoa que costuma salvar o incidente.' },
+  'postmortem-sem-efeito': { title: 'O post-mortem existe e o próximo incidente não muda', intervention: 'Escolha um evento recente, feche uma mudança no sistema com dono e revise o efeito no caso seguinte — sem avaliar pessoa.' },
+  'war-room-como-gestao': { title: 'O war room virou o modo de ver e gerir o sistema', intervention: 'Pare de autorizar caça ao culpado no próximo incidente; reserve capacidade para a análise e meça se o relato chega antes da crise.' },
 };
 
 export const interventionCatalog = defineInterventionCatalog(interventionSeeds, {
@@ -295,6 +300,11 @@ export const interventionCatalog = defineInterventionCatalog(interventionSeeds, 
   'causa-permissao-sem-autonomia': { evidencePatterns: ['causa-permissao-sem-autonomia', 'acesso-artesanal'], contradictionPatterns: ['governanca-proporcional'] },
   'causa-prioridade-entre-times': { evidencePatterns: ['causa-prioridade-entre-times', 'espera-normalizada'], contradictionPatterns: ['bloqueio-tratado-pelo-sistema'] },
   'causa-dependencia-arquitetural': { evidencePatterns: ['causa-dependencia-arquitetural', 'dependencia-coordenada'], contradictionPatterns: ['ownership-compartilhado-explicito'] },
+  'caminho-de-versao-sem-origem': { evidencePatterns: ['caminho-de-versao-sem-origem', 'empacotamento-manual', 'fonte-nao-confiavel'] },
+  'identidade-sem-autorizacao-no-recurso': { evidencePatterns: ['identidade-sem-autorizacao-no-recurso', 'causa-permissao-sem-autonomia', 'credencial-em-configuracao'] },
+  'reversao-nao-reproduzivel': { evidencePatterns: ['reversao-nao-reproduzivel', 'correcao-direta-na-producao', 'dependencia-de-heroi'] },
+  'postmortem-sem-efeito': { evidencePatterns: ['postmortem-sem-efeito', 'cerimonia-sem-adaptacao', 'retrospectiva-sem-fechamento'] },
+  'war-room-como-gestao': { evidencePatterns: ['war-room-como-gestao', 'culpa-e-controle', 'causa-capacidade-tomada-pela-proxima-iniciativa'] },
 });
 
 const evolutionSeeds: Record<string, InterventionSeed> = {

@@ -105,12 +105,12 @@ mecanismo demonstrado. Antipadrão: plataforma que opera a mesma fila; “somos
 modernos, logo não há N2”. Segregação exigida por obrigação permanece
 controle proporcional, não moda.
 
-O runtime `finding-narrative-v1` e o grafo `evidence-anamnesis-pilot-v19`
-ainda publicam um limitador e discriminação por contradição. Autoria e
-inferência novas seguem este contrato; as ondas 1–3 do
+O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
+`reinforces`. O projetor `finding-narrative-v1` ainda publica um
+limitador e discriminação por contradição. As ondas 2–3 do
 [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md)
-materializam catálogo, grafo e relatório. Não se expande o comportamento
-antigo.
+materializam o roteamento e o relatório. Não se expande o comportamento
+antigo de apresentação.
 
 ## Atualização e explicação
 
@@ -133,7 +133,7 @@ inception; priorização à gestão tática ou organizacional). Toda intervenç�
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v9` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v10` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência
