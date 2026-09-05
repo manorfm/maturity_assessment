@@ -340,12 +340,30 @@ test('fluxo de trabalho investiga objetivo bloqueio e decisão antes da constru�
   const db = createDatabase(':memory:');
   const catalog = new CatalogService(db);
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'recent-need', 'small-evidence'), 'iteration-purpose');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'iteration-purpose', 'urgent-priority'), 'priority-containment');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'iteration-purpose', 'fill-capacity'), 'priority-containment');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'iteration-purpose', 'outcome-goal'), 'blocked-work');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'priority-containment', 'tactical-start'), 'blocked-work');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-work', 'team-resolves'), 'decision-context');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-work', 'waiting-external'), 'blocked-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'blocked-cause', 'permission-policy'), 'decision-context');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'decision-context', 'options-recorded'), 'change-verification');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'change-verification', 'repeatable-checks'), 'technical-feedback-consequence');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'technical-feedback-consequence', 'changed-before-integration'), 'team-pressure');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'team-pressure', 'private-resolution'), 'war-room-thread');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'team-pressure', 'system-learning'), 'improvement-loop');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'war-room-thread', 'live-fix'), 'improvement-loop');
+});
+
+test('war room no mesmo fio abre clima e o lado técnico', () => {
+  const db = createDatabase(':memory:');
+  const catalog = new CatalogService(db);
+  const node = catalog.getNode(GRAPH_VERSION, 'war-room-thread')!;
+  const patterns = new Set(node.options.flatMap((option) => option.signals.map((signal) => signal.pattern)));
+  assert.ok(patterns.has('war-room-como-gestao'));
+  assert.ok(patterns.has('causa-processo-lote'));
+  assert.ok(patterns.has('reversao-nao-reproduzivel'));
+  assert.ok(patterns.has('identidade-sem-autorizacao-no-recurso'));
 });
 
 test('aprendizado gera sinais cruzados e compartilhamento aprofunda apenas quando aplicável', () => {
@@ -358,7 +376,9 @@ test('aprendizado gera sinais cruzados e compartilhamento aprofunda apenas quand
   assert.equal(context.options.every((option) => option.signals.length === 0), true);
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-context', 'single-owner'), 'service-ownership-continuity');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-context', 'multiple-teams'), 'shared-surface-risk');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-risk', 'overwritten-change'), 'shared-surface-cause');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-risk', 'overwritten-change'), 'batch-or-frontier');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'batch-or-frontier', 'accumulated-batch'), 'shared-surface-cause');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'shared-surface-risk', 'late-integration-conflict'), 'shared-surface-cause');
 });
 
 test('validador rejeita ciclos e nós inalcançáveis antes da publicação', () => {
@@ -389,7 +409,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 337);
+  assert.equal(signals.length, 350);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

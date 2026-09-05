@@ -94,7 +94,7 @@ de domínio permanece relacional e não exige banco de grafos.
 4. Persistir respostas e gerar sinais explicáveis.
 5. Exibir consolidação apenas quando o limite mínimo de participantes for atingido.
 
-O corte vigente implementa esses cinco passos com 89 nós, aprofundamentos
+O corte vigente implementa esses cinco passos com 92 nós, aprofundamentos
 condicionais e nove perspectivas — gestão, produto, qualidade, engenharia,
 plataforma/operações, arquitetura, segurança, dados e design — escolhidas durante
 a entrevista. Um contexto neutro adicional registra responsabilidades exercidas,
@@ -226,7 +226,7 @@ capacidade e não altera sinal, peso, inferência ou relatório. A linha de base
 a matriz completa para que uma lacuna de autoria não seja confundida com baixa
 capacidade da organização avaliada.
 
-O grafo `evidence-anamnesis-pilot-v19` associa o aprendizado da decisão entre
+O grafo `evidence-anamnesis-pilot-v20` associa o aprendizado da decisão entre
 fronteiras ao alinhamento de domínio e às decisões arquiteturais, e explicita o mesmo prazo em mudanças de
 impactos distintos para observar se a proteção responde ao risco, sem criar
 pergunta, sinal ou causa. As vinte e duas referências vigentes atingem

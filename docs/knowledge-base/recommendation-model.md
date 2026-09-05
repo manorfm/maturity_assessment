@@ -106,11 +106,12 @@ modernos, logo não há N2”. Segregação exigida por obrigação permanece
 controle proporcional, não moda.
 
 O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
-`reinforces`. O projetor `finding-narrative-v1` ainda publica um
-limitador e discriminação por contradição. As ondas 2–3 do
+`reinforces`. O grafo `v20` afunila o próximo probe para confirmar ou
+matar hipótese já reforçada. O projetor `finding-narrative-v1` ainda
+publica um limitador e discriminação por contradição. A onda 3 do
 [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md)
-materializam o roteamento e o relatório. Não se expande o comportamento
-antigo de apresentação.
+materializa o relatório. Não se expande o comportamento antigo de
+apresentação.
 
 ## Atualização e explicação
 

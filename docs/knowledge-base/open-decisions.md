@@ -36,8 +36,9 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   evento ocorrido é falta de prática; “não observo” continua visibilidade.
   Relatos opostos entre observadores são adoção desigual. Clima, incentivo e
   liderança descrevem o local, nunca a pessoa. Cerimônia e post-mortem só
-  pontuam pelo efeito no próximo evento equivalente. O runtime `v19` ainda
-  materializa um limitador e discriminação por contradição; catálogo, grafo e
-  relatório seguem as ondas 1–3 do plano multiárea.
+  pontuam pelo efeito no próximo evento equivalente. O grafo `v20` já
+  afunila por reforço. O relatório publicado ainda materializa um
+  limitador e discriminação por contradição; a onda 3 do plano multiárea
+  cobre inventário e briefing de política.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

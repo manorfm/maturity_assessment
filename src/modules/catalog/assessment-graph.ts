@@ -1,6 +1,6 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v19';
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v20';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -321,6 +321,16 @@ const authoredNodes: AssessmentNode[] = [
     ], next: 'blocked-work',
   },
   {
+    id: 'priority-containment', type: 'probe', title: 'Onde a prioridade se decide?',
+    scenario: 'O grupo começa mais trabalho do que consegue terminar. Urgências e pedidos novos competem com o que já estava em curso.',
+    prompt: 'Na última vez em que isso aconteceu, o que mais definiu o que avançou?',
+    options: [
+      { id: 'tactical-start', label: 'O próprio grupo continuou iniciando itens novos para absorver pedidos; o ciclo em curso não fechou.', signals: [{ capability: 'organizacao', pattern: 'ocupacao-como-progresso', weight: -2, details: ['leadership-management', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
+      { id: 'org-authorization', label: 'Quem autoriza o próximo ciclo já havia comprometido pessoas e prazo; o grupo não podia recusar o início.', signals: [{ capability: 'governanca', pattern: 'causa-capacidade-tomada-pela-proxima-iniciativa', weight: -1, details: ['portfolio-management', 'work-management'], layer: 'system', constraint: 'priority' }] },
+      { id: 'explicit-interrupt', label: 'Antes de iniciar, o grupo e quem autoriza compararam o que seria interrompido e tornaram essa troca visível.', signals: [{ capability: 'governanca', pattern: 'portfolio-explicita-tradeoffs', weight: 2, details: ['portfolio-management', 'product-direction'], layer: 'practice', constraint: 'none' }] },
+    ], next: 'blocked-work',
+  },
+  {
     id: 'blocked-work', type: 'probe', title: 'Quando o trabalho para',
     scenario: 'Uma atividade importante não consegue avançar por depender de decisão, acesso, ambiente ou conhecimento fora de quem a iniciou.',
     prompt: 'O que costuma acontecer nas horas e dias seguintes?',
@@ -415,6 +425,26 @@ const authoredNodes: AssessmentNode[] = [
     ], next: 'improvement-loop',
   },
   {
+    id: 'war-room-thread', type: 'probe', title: 'O que a reunião de crise resolveu?',
+    scenario: 'Depois da falha, um grupo menor se reuniu para recuperar o serviço. Pense nas horas seguintes, não no nome da reunião.',
+    prompt: 'O que mais descreve o que aconteceu nessa reunião e depois dela?',
+    options: [
+      { id: 'climate-hunt', label: 'A conversa girou em quem autorizou ou executou o passo; a restrição não subiu como decisão de política.', signals: [
+        { capability: 'organizacao', pattern: 'culpa-e-controle', weight: -2, details: ['enabling-governance', 'leadership-management'], layer: 'practice', constraint: 'none' },
+        { capability: 'organizacao', pattern: 'war-room-como-gestao', weight: -2, details: ['leadership-management', 'incident-management'], layer: 'practice', constraint: 'organization' },
+      ] },
+      { id: 'batch-unknown', label: 'Várias mudanças tinham saído juntas; ninguém sabia qual versão voltar sem risco de piorar.', signals: [{ capability: 'governanca', pattern: 'causa-processo-lote', weight: -1, details: ['enabling-governance'], layer: 'system', constraint: 'policy' }] },
+      { id: 'live-fix', label: 'Uma pessoa com acesso alterou o ambiente na hora; outra pessoa não conseguiria repetir o mesmo passo.', signals: [
+        { capability: 'plataforma', pattern: 'correcao-direta-na-producao', weight: -2, details: ['incident-management'], layer: 'practice', constraint: 'none' },
+        { capability: 'confiabilidade', pattern: 'reversao-nao-reproduzivel', weight: -2, details: ['incident-management'], layer: 'practice', constraint: 'none' },
+      ] },
+      { id: 'permission-gap', label: 'Quem viu o impacto não podia alterar o recurso afetado; esperou alguém com a credencial ou a permissão.', signals: [
+        { capability: 'governanca', pattern: 'causa-permissao-sem-autonomia', weight: -1, details: ['enabling-governance'], layer: 'system', constraint: 'access' },
+        { capability: 'plataforma', pattern: 'identidade-sem-autorizacao-no-recurso', weight: -2, details: ['software-security', 'cloud-security'], layer: 'practice', constraint: 'access' },
+      ] },
+    ], next: 'improvement-loop',
+  },
+  {
     id: 'improvement-loop', title: 'O que muda após refletir sobre o trabalho?',
     scenario: 'Pense nas últimas vezes em que o grupo parou para revisar entrega, colaboração, incidentes ou forma de trabalhar. O encontro pode ter qualquer nome e frequência.',
     prompt: 'Qual consequência aparece com mais consistência nas semanas seguintes?',
@@ -485,6 +515,16 @@ const authoredNodes: AssessmentNode[] = [
         { capability: 'fluxo', pattern: 'planejamento-compensa-acoplamento', weight: -1 , details: ['evolvability'], layer: 'practice', constraint: 'none' },
       ] },
     ],
+  },
+  {
+    id: 'batch-or-frontier', type: 'probe', title: 'O que impediu a mudança de permanecer pequena?',
+    scenario: 'Uma origem da versão já se mostrou pouco confiável. Pense na última vez em que duas mudanças precisaram funcionar juntas depois disso.',
+    prompt: 'O que mais manteve o trabalho grande ou dependente de vários grupos?',
+    options: [
+      { id: 'accumulated-batch', label: 'O grupo acumulou várias alterações e só as reuniu no fim; voltar uma delas sem as outras era arriscado.', signals: [{ capability: 'governanca', pattern: 'causa-processo-lote', weight: -1, details: ['enabling-governance'], layer: 'system', constraint: 'policy' }] },
+      { id: 'team-frontier', label: 'Concluir exigia combinar agendas e decisões de grupos diferentes; uma parte sozinha não fechava o resultado.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-times', weight: -1, details: ['team-ownership'], layer: 'system', constraint: 'organization' }] },
+      { id: 'small-clear', label: 'As mudanças continuaram pequenas e cada grupo pôde verificar a sua parte sem esperar o lote final.', signals: [{ capability: 'engenharia', pattern: 'integracao-continua-validada', weight: 2, details: ['continuous-integration', 'organizational-learning'], layer: 'practice', constraint: 'none' }] },
+    ], next: 'shared-surface-cause',
   },
   {
     id: 'shared-surface-cause', type: 'probe', title: 'Por que a colisão continua possível?',
@@ -1243,9 +1283,18 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, optionId: 'unknown-ownership', to: 'shared-surface-risk' },
     ...skipEdges(node, skipObservational[node.id]!),
   ];
+  if (node.id === 'iteration-purpose') return [
+    { from: node.id, optionId: 'urgent-priority', to: 'priority-containment' },
+    { from: node.id, optionId: 'fill-capacity', to: 'priority-containment' },
+    { from: node.id, to: 'blocked-work' },
+  ];
+  if (node.id === 'team-pressure') return [
+    { from: node.id, optionId: 'private-resolution', to: 'war-room-thread' },
+    { from: node.id, to: 'improvement-loop' },
+  ];
   if (node.id === 'shared-surface-risk') return [
     { from: node.id, optionId: 'early-contract-feedback', to: 'service-ownership-continuity' },
-    { from: node.id, optionId: 'overwritten-change', to: 'shared-surface-cause' },
+    { from: node.id, optionId: 'overwritten-change', to: 'batch-or-frontier' },
     { from: node.id, optionId: 'late-integration-conflict', to: 'shared-surface-cause' },
     { from: node.id, optionId: 'manual-coordination', to: 'shared-surface-cause' },
     ...skipEdges(node, skipObservational[node.id]!),

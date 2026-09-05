@@ -50,8 +50,10 @@ decisão até as unidades. O radar
 dos pilares vem depois dos sistemas; as demais restrições aparecem por
 frente diagnóstica, não como o mesmo efeito, e “?” não pede mais pessoas.
 O contrato de família de capacidade e o catálogo dos cinco packs
-(`causal-catalog-v10`) estão na base. O grafo `v19` já emite os novos
-padrões em nós existentes. Roteamento por reforço, relatório multiárea e
+(`causal-catalog-v10`) estão na base. O grafo `v20` afunila por reforço:
+próximo probe confirma ou mata hipótese já aberta; inception amarra
+lote/fronteira; priorização discrimina gestão tática da organizacional;
+war room abre clima e o lado técnico no mesmo fio. Relatório multiárea e
 sintético permanecem no
 [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
 A sequência aberta do relatório apresentável (folhas candidatas) está no

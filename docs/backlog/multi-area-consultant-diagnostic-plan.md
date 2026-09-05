@@ -1,9 +1,8 @@
 # Plano: diagnóstico em várias áreas, no formato de consultoria
 
-Status: ondas 0 e 1 incorporadas (0.85.0). O catálogo dos cinco packs
-e `causal-catalog-v10` estão vigentes. O grafo ainda é `v19` com os
-novos padrões amarrados a nós existentes; roteamento por reforço,
-relatório e sintético permanecem nas ondas 2–4.
+Status: ondas 0–2 incorporadas (0.86.0). O catálogo dos cinco packs,
+`causal-catalog-v10` e o grafo `v20` (funil por reforço) estão vigentes.
+Relatório e sintético permanecem nas ondas 3–4.
 
 Este plano não substitui
 [`specialist-diagnostic-platform-plan.md`](specialist-diagnostic-platform-plan.md)
@@ -127,7 +126,7 @@ entrega e CD — não um eixo “Agile”.
 
 | Motor | Papel neste plano | Algoritmo vigente a estender |
 |---|---|---|
-| Perguntas | Evento → fato → ramo que **reforça** hipótese já aberta (entrega amarra inception; priorização amarra gestão tática vs organizacional) | Grafo `v19` + ranking de entropia; falta aresta `reinforces` entre eixos |
+| Perguntas | Evento → fato → ramo que **reforça** hipótese já aberta (entrega amarra inception; priorização amarra gestão tática vs organizacional) | Grafo `v20` + ranking com bônus de reforço |
 | Diagnóstico | Uma hipótese, várias áreas; ausência e desigualdade publicáveis; crença relativa provisória | Bayes em log-espaço; hoje colapsa em um limitador e empata na contradição |
 | Intervenção | Uma ação por contenção; diretoria ≠ engenharia; operating model quando o mecanismo for desenho | `transformation-portfolio-v1` + `audience-report-v1`; hoje uma ação ou “investigar” |
 
@@ -197,12 +196,14 @@ publica falta da família, sem nome de produto.
 
 ### Onda 2 — Grafo
 
+Status: **vigente** (0.86.0). Grafo `evidence-anamnesis-pilot-v20`.
+
 O próximo nó prefere o probe que confirma ou mata hipótese já
 reforçada. Entrega depois de inception amarra lote/fronteira, não
 abre um eixo solto. Priorização discrimina gestão tática (o time não
 para de iniciar) de organizacional (quem autoriza o ciclo). War room
-abre o pack 5 **e** o lado técnico (lote, rollback, IAM) no mesmo
-fio.
+abre o pack 5 **e** o lado técnico (lote, reversão, permissão no
+recurso) no mesmo fio.
 
 Texto: cotidiano, um fato por alternativa, sem jargão na boca de quem
 responde. Auditoria vigente permanece (`deploy`, `rollback` etc. não

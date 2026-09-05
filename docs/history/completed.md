@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Grafo que afunila por reforço
+
+- Publicado `evidence-anamnesis-pilot-v20`: o seletor prefere o probe
+  que confirma ou mata hipótese já reforçada; origem pouco confiável
+  amarra lote ou fronteira; priorização discrimina gestão tática da
+  organizacional; war room abre clima e o lado técnico no mesmo fio;
+  ver [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-09-05 — Catálogo dos cinco packs e reforço entre ramos
 
 - Publicado `causal-catalog-v10` com origem da versão, autorização no

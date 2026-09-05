@@ -3,6 +3,7 @@ import { id } from '../../shared/ids.js';
 import { AdaptiveQuestionSelector, type QuestionCandidate } from '../inference/domain/adaptive-question-selector.js';
 import { BayesianInferenceEngine } from '../inference/domain/bayesian-inference-engine.js';
 import { DiagnosticModel } from '../inference/domain/diagnostic-model.js';
+import { preferredProbeIds } from '../inference/domain/reinforcement-routing.js';
 
 type HypothesisRow = { family_key: string; capability: string; hypothesis_key: string; label: string; prior: number };
 type LikelihoodRow = { pattern: string; evidence_group: string; hypothesis_key: string; likelihood: number };
@@ -15,9 +16,10 @@ export class AdaptiveJourneyService {
     if (adaptiveQuestions >= 5) return undefined;
     const modelVersion = (this.db.prepare("SELECT version FROM inference_model_versions WHERE graph_version = ? AND status = 'published' LIMIT 1").get(graphVersion) as { version: string } | undefined)?.version;
     if (!modelVersion) return undefined;
+    const preferredIds = preferredProbeIds(this.observedPatterns(participationId));
     const ranked = this.uncertainFamilies(modelVersion, participationId).flatMap((family) => {
       const candidates = this.questionCandidates(modelVersion, family.capability, participationId, profile, family.hypotheses.map((item) => item.id));
-      const selected = new AdaptiveQuestionSelector().select(family, candidates);
+      const selected = new AdaptiveQuestionSelector().select(family, candidates, { preferredIds });
       return selected ? [{ family, selected }] : [];
     }).sort((left, right) => right.selected.score - left.selected.score || right.selected.informationGain - left.selected.informationGain);
     const choice = ranked[0];
@@ -66,5 +68,9 @@ export class AdaptiveJourneyService {
       const weights = options.flatMap((item) => item.weight === null ? [] : [Number(item.weight)]);
       return { id: row.node_key, cost: Number(row.cost), coverage: 0, validationNeed: weights.some((value) => value > 0) && weights.some((value) => value < 0) ? 1 : .5, outcomes };
     });
+  }
+
+  private observedPatterns(participationId: string): string[] {
+    return (this.db.prepare('SELECT DISTINCT s.pattern FROM responses r JOIN participations p ON p.id = r.participation_id JOIN assessment_signals s ON s.graph_version = p.graph_version AND s.node_key = r.node_id AND s.option_key = r.option_id WHERE p.id = ?').all(participationId) as unknown as Array<{ pattern: string }>).map((row) => row.pattern);
   }
 }

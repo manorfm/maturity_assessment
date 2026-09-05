@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.86.0
+
+- O grafo `v20` passou a afunilar por reforço: o próximo probe confirma
+  ou mata hipótese já aberta. Inception amarra lote ou fronteira;
+  priorização discrimina gestão tática da organizacional; war room
+  pergunta clima e o lado técnico no mesmo fio.
+
 ## 0.85.0
 
 - O catálogo passou a ter cinco packs de família de capacidade, com

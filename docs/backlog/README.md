@@ -13,8 +13,8 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
-O contrato e o catálogo dos cinco packs já estão na base (0.85.0).
-Restam grafo que afunila, relatório e massa sintética no
+O contrato, o catálogo dos cinco packs e o grafo que afunila por
+reforço já estão na base (0.86.0). Restam relatório e massa sintética no
 [`multi-area-consultant-diagnostic-plan.md`](multi-area-consultant-diagnostic-plan.md).
 
 O objetivo integrado de transformar o produto em uma plataforma especialista —
@@ -91,7 +91,7 @@ infraestrutura de calibração já estão na base de conhecimento.
 
 Hipóteses ainda não sequenciadas (plataforma, pesquisa, aprofundamento adicional) estão em
 `future-evolution.md`. O que depende de massa real e revisão externa está em
-`probabilistic-inference-roadmap.md` e só deve correr depois das ondas 0 e 1 do
+`probabilistic-inference-roadmap.md` e só deve correr depois das ondas 0–2 do
 plano; o motor necessário ao piloto já está na base de conhecimento e não
 permanece duplicado como trabalho futuro.
 

@@ -11,7 +11,7 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
-A versão pré-piloto vigente `evidence-anamnesis-pilot-v19` começa por uma escolha neutra de
+A versão pré-piloto vigente `evidence-anamnesis-pilot-v20` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. A pessoa recebe um tronco comum e,
 quando contexto ou perspectiva mudam o que ela consegue observar ou decidir, um
@@ -21,7 +21,7 @@ dedicados. Variantes de texto ficam restritas aos casos em que muda a linguagem,
 não a evidência procurada.
 
 A auditoria versionada publica uma linha de base de autoria sem modificar essa
-jornada. Para `evidence-anamnesis-pilot-v19`, ela registra quantidade e tipo de nós,
+jornada. Para `evidence-anamnesis-pilot-v20`, ela registra quantidade e tipo de nós,
 percurso e duração estimados por perspectiva, tronco comum, variantes, probes
 causais, saídas de visibilidade e dívida dos contratos de direção. Esses números
 caracterizam o instrumento para comparar versões futuras; não medem capacidade da
@@ -102,7 +102,7 @@ Perfil, unidade organizacional e contexto selecionam nós elegíveis; eles não 
 sinais de capacidade por si mesmos. Um cenário pode ter variantes para gestão, PM,
 QA ou engenharia que alimentam a mesma capacidade por `EvidenceFacet`s diferentes.
 
-O catálogo atual contém 89 nós e cobre contexto de trabalho e eventos de priorização, integração,
+O catálogo atual contém 92 nós e cobre contexto de trabalho e eventos de priorização, integração,
 entrega, qualidade, observabilidade, recorrência, descoberta, feedback técnico,
 ambientes, segurança, arquitetura, dados, experiência de uso e aprendizado após falhas. Quantidade de perguntas
 não é meta de diagnóstico: novas versões devem ampliar profundidade e discriminação
@@ -252,11 +252,17 @@ faixas verbais de sustentação para não simular probabilidade calibrada. Sua d
 que explicita ação, responsável provável, métrica, revisão e critério de sucesso.
 
 Após uma saída declarativa, o motor compara probes ainda não respondidos, visíveis
-à perspectiva e habilitados por padrões de contexto já observados. O ranking combina 50% de ganho esperado de informação, 25% de
-cobertura, 15% de validação e 10% de custo invertido. A extensão termina sem pergunta
-útil acima de 0,01 bit ou após cinco probes, e persiste versão, posterior e motivo
+à perspectiva e habilitados por padrões de contexto já observados. O ranking combina ganho esperado de informação, cobertura, validação, custo invertido e um bônus
+quando o candidato confirma ou mata uma hipótese já aberta por `reinforces`.
+A extensão termina sem pergunta útil acima de 0,01 bit ou após cinco probes, e persiste versão, posterior e motivo
 da escolha sem expor a jornada individual no relatório. Probes de causa só são
 elegíveis quando um sintoma declarado em sua aplicabilidade foi observado.
+
+Três funis declarativos amarram o próximo fato ao ramo já aberto: origem pouco
+confiável segue para lote ou fronteira; prioridade sem foco discrimina gestão
+tática (o time não para de iniciar) da organizacional (quem autoriza o ciclo);
+war room no mesmo fio pergunta clima e o lado técnico (lote, reversão, permissão
+no recurso).
 
 Não existe mapeamento “resposta X = compre ferramenta Y”. Duas populações com a
 mesma nota podem receber intervenções diferentes porque as combinações de causas,

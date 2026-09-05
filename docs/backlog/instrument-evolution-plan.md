@@ -13,7 +13,7 @@ recalibrar o modelo publicado sozinho, ramos de arquitetura, segurança, dados e
 design, carga cognitiva, linguagem na mudança e caminho até capacidade de
 plataforma, higiene de linguagem, ordem determinística por participação, separação
 entre título e mecanismo causal, fundamentos explícitos por padrão e experimentos
-contextuais. Grafo pré-piloto vigente: `evidence-anamnesis-pilot-v19`.
+contextuais. Grafo pré-piloto vigente: `evidence-anamnesis-pilot-v20`.
 
 A decisão de apresentar o produto como diagnóstico de engenharia — sem expandir
 a árvore nem pontuar prática — está em
