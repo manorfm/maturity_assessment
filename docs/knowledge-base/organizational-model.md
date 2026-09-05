@@ -151,9 +151,10 @@ aumentaria a fração não avaliada sem aumentar precisão: precisão vem de pad
 independentes, concordância e discriminação de causa.
 
 O showcase da POC gera três organizações sintéticas de 18 pessoas, nomeadas pelos
-estágios do modelo: **opaco**, **repetível** e **adaptativo**. Cada uma publica um
-first screen que um diretor consegue usar — problema, causa e experimento, ou
-preservação da prática. Folhas sem causa amarrada continuam no detalhe ou no
+estágios observados: **opaco**, **reativo** e **adaptativo**. O nome não alega
+prática repetível quando a classificação é Reativo. Cada uma publica um first
+screen que um diretor consegue usar — decisão, valor ou a falta dele, e teste,
+ou preservação da prática. Folhas sem causa amarrada continuam no detalhe ou no
 panorama como incerteza, não no cartão principal. Concordar num único padrão
 adaptativo não publica o pilar; a ausência continua “não avaliado”.
 

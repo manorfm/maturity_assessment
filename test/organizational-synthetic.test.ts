@@ -21,7 +21,7 @@ test('sintético opaco fecha uma decisão executiva, não uma coleta de impacto'
   assertDirectorateAndUnits(report);
 });
 
-test('sintético repetível fecha problema e solução que um diretor consegue usar', () => {
+test('sintético intermediário fecha problema e solução que um diretor consegue usar', () => {
   const { plan, report } = runOrganizationalSynthetic(createDatabase(':memory:'), { band: 'medium' });
   assertPresentableReport(report, plan.totalPeople, 'medium');
   assert.ok((report.classification?.level ?? 0) >= 1);

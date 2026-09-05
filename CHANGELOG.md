@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.73.0
+
+- O cartão executivo passou a pedir decisão e quem autoriza, sem fabricar
+  impacto DORA. O panorama lista todos os padrões publicados. O sintético
+  médio deixou de se chamar prática repetível.
+
 ## 0.72.0
 
 - A home do relatório passou a indexar Produto, Engenharia e Operação. Qualidade,

@@ -7,7 +7,7 @@ test('abrangência não determina contenção quando o mecanismo é desconhecido
   assert.equal(context.containment, 'undetermined');
   assert.equal(context.mechanism, 'undetermined');
   assert.match(context.missingEvidence, /mecanismo/i);
-  assert.ok(context.impacts.includes('delivery-speed'));
+  assert.deepEqual(context.impacts, []);
   assert.equal(context.severity, 'undetermined');
 });
 

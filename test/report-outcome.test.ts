@@ -119,7 +119,7 @@ test('decisão pronta em folha ainda não avaliada vence coleta no piso', () => 
       },
       {
         kind: 'correction', pattern: 'causa-capacidade-tomada-pela-proxima-iniciativa', detailCapability: 'portfolio-management',
-        title: 'A próxima iniciativa consome a capacidade de aprender', cause: '', intervention: 'Proteja capacidade', confidence: .9, priority: .9,
+        title: 'A próxima iniciativa ocupa a capacidade de revisar o resultado anterior', cause: '', intervention: 'Proteja capacidade', confidence: .9, priority: .9,
         prescription: { status: 'ready', reason: 'Prioridade confirmada.' },
       },
     ],

@@ -1,9 +1,9 @@
 # Plano: cartão executivo que fecha decisão e valor
 
-Hipótese ainda não incorporada. É a **onda B** de
-[`report-presentation-plan.md`](report-presentation-plan.md), depois do
-mapa de apresentação. Não altera o comportamento vigente até entrar na
-base.
+A onda B já está vigente. Este arquivo guarda a evidência que justificou
+o cartão e as perguntas por audiência. A especificação passou para
+`recommendation-model.md`. A first screen visual continua na onda C de
+[`report-presentation-plan.md`](report-presentation-plan.md).
 
 ## Problema e público
 

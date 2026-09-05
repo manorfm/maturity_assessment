@@ -38,9 +38,9 @@ validação de linguagem com as disciplinas, evidência externa) está no
 apresentar o produto como diagnóstico de engenharia — e não como framework de
 maturidade — está no
 [`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
-A home já projeta Produto, Engenharia e Operação. A sequência aberta do
-relatório apresentável (cartão, UX e sintéticos de validação, sem
-calibração) está no
+A home já projeta Produto, Engenharia e Operação. O cartão já fecha
+decisão sem fabricar impacto. A sequência aberta do relatório
+apresentável (UX e sintéticos de validação, sem calibração) está no
 [`plano de apresentação`](../backlog/report-presentation-plan.md). A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma
 referência de alta performance está no

@@ -149,12 +149,12 @@ o catálogo omite esse contrato.
 ## Recomendações
 
 O projetor `finding-narrative-v1` organiza cada finding nesta ordem pública:
-observação, consequência/alcance, evidência favorável e contrária, hipótese e
-lacuna, contenção/autoridade, capacidade que já funciona, experimento, opções
-técnicas e metodologia. A rota percorre os IDs dessa projeção; não decide uma ordem
-própria nem recalcula inferência. O resumo factual aparece uma vez. Detalhes
-progressivos explicam força da evidência, alternativas e método sem repetir a
-mesma contagem.
+decisão pedida, observação, valor ou ausência honesta de impacto, por que o
+recorte, experimento, evidência favorável e contrária, hipótese e lacuna,
+contenção/autoridade, capacidade que já funciona, opções técnicas e metodologia.
+A rota percorre os IDs dessa projeção; não decide uma ordem própria nem
+recalcula inferência. O resumo factual aparece uma vez. Detalhes progressivos
+explicam força da evidência, alternativas e método sem repetir a mesma contagem.
 
 Findings investigativos substituem experimento e opções técnicas por uma próxima
 investigação. Padrões virtuosos publicam condição de sustentação e sinal de
@@ -306,7 +306,9 @@ causa por proximidade temática.
 
 Além de abrangência, o contrato publicado inclui mecanismo de restrição, contenção,
 impactos, severidade e evidência faltante. Severidade permanece indeterminada até
-existir evidência própria de impacto; ela não deriva do peso da alternativa.
+existir evidência própria de impacto; ela não deriva do peso da alternativa nem
+da folha. Enquanto a gravidade for indeterminada, `impacts` fica vazio e o cartão
+não lista custo, velocidade ou previsibilidade.
 Abrangência descreve onde o padrão foi
 observado; contenção descreve quem ou o que provavelmente consegue removê-lo. Se a
 entrevista não discriminou isso, o resultado permanece indeterminado.
@@ -323,14 +325,22 @@ de recomendação. No first screen da organização, o cartão prefere a decisã
 num estágio mais baixo sem causa amarrada. Discriminar fica no detalhe dessa folha
 ou no panorama, não no cartão que a diretoria lê primeiro. O cartão vem antes do
 estágio e do mapa de sistemas. Ele traduz o contrato para linguagem operacional nesta ordem:
-situação observada, base das entrevistas, capacidade atual para agir, teste proposto,
-critério de sucesso e limite da decisão. Quando o limitador é do sistema
-organizacional, o texto lembra que aquele pilar é um meta-sistema, não um oitavo
-eixo técnico. Classe de solução, referência e opções ficam sob demanda. Quando a prontidão não foi demonstrada, o texto diz apenas que as
-entrevistas ainda não mostraram o caminho funcionando; nunca conclui inexistência.
-As perspectivas que sustentam a leitura são nomeadas, contradição zero é explícita e
-capacidade principal fica separada dos efeitos relacionados. O fundamento mostra
-fonte, princípio aplicado e vínculo com a evidência, além da classe de solução.
+decisão pedida (verbo, quem autoriza e horizonte), situação observada sem culpar o
+time quando a restrição é política, valor em risco só com evidência de impacto —
+ou a declaração de que o impacto ainda não foi medido —, por que o recorte é esse
+(autoridade, não jargão), teste, critério, o que não resolve e antipadrão.
+Fundamento e classe de solução sobem ao primeiro plano. Quando o limitador é do
+sistema organizacional, o texto lembra que aquele pilar é um meta-sistema, não um
+oitavo eixo técnico. Evidência agregada, hipóteses concorrentes e vocabulário
+metodológico ficam depois do teste. Quando a prontidão não foi demonstrada, o
+texto diz apenas que as entrevistas ainda não mostraram o caminho funcionando;
+nunca conclui inexistência. As perspectivas que sustentam a leitura são nomeadas,
+contradição zero é explícita e o recorte se explica pela autoridade, não pelo
+rótulo da folha. O fundamento mostra fonte, princípio aplicado e vínculo com a
+evidência, além da classe de solução.
+O panorama lista todos os padrões publicados e separa decidir de investigar. O
+mesmo finding chega a diretoria, gerência e tecnologia com a pergunta de cada um
+— autorizar, recusar ou escalar, não comprar ferramenta — sem segundo motor.
 
 Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
 expressa força da hipótese; prioridade combina alcance e severidade. Métrica,

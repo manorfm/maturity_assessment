@@ -229,7 +229,7 @@ posterior causal. O finding sanitizado carrega capacidade de solução e prontid
 junto ao experimento.
 
 O showcase da POC gera três relatórios organizacionais de 18 pessoas em duas
-unidades: comportamento frágil, prática intermediária e prática sustentada. O
+unidades: comportamento frágil, sistema reativo e prática sustentada. O
 servidor de demonstração semeia as jornadas no SQLite; o Playwright inspeciona
 os três relatórios em paralelo — leituras no mesmo banco — e grava o índice em
 `/showcase`. O E2E permanece em um worker porque o seed escreve um único SQLite.

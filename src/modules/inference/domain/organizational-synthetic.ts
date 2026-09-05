@@ -27,7 +27,7 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
   },
   {
     band: 'medium',
-    name: 'POC — prática repetível',
+    name: 'POC — sistema reativo',
     hierarchy: 'Produto em transição/Gama\nProduto em transição/Delta',
     units: ['Gama', 'Delta'],
     story: 'Dezoito pessoas em duas unidades. Há acordo local e alguns ciclos se fecham. O cartão principal traz um problema com causa e experimento, não uma disputa de explicações.',

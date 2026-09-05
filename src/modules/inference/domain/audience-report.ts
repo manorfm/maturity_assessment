@@ -49,6 +49,21 @@ const technicalCapabilities = new Set([
   'team-ownership', 'enabling-governance', 'collaboration', 'organizational-learning',
 ]);
 
+export function audienceAsk(finding: OutcomeFinding, audience: 'executive' | 'unit-management' | 'technology-leadership'): string {
+  if (finding.pattern === 'causa-capacidade-tomada-pela-proxima-iniciativa') {
+    if (audience === 'executive') return 'Pare de autorizar o ciclo seguinte sem reservar pessoas para manter, cortar ou redirecionar o anterior.';
+    if (audience === 'unit-management') return 'O time não falhou em aprender. Recuse iniciar o próximo item sem a revisão, ou escale a restrição.';
+    return 'Não é ferramenta, cerimônia nem treinamento. É restrição de autorização de capacidade.';
+  }
+  if (audience === 'executive') return 'Autorizar, recusar ou redirecionar o compromisso que sustenta este padrão.';
+  if (audience === 'unit-management') {
+    return finding.containment === 'organizational-policy' || finding.containment === 'organizational-structure'
+      ? 'A restrição não se resolve no time. Recuse o compromisso local ou escale quem autoriza.'
+      : 'Há ação local possível neste recorte. Execute ou recuse o próximo item com o critério do finding.';
+  }
+  return 'Não compre ferramenta para um problema de autorização, política ou desenho.';
+}
+
 export class AudienceReportProjector {
   static project(input: { findings: OutcomeFinding[]; portfolio: TransformationPortfolio }): AudienceReports {
     const ready = input.findings.filter((finding) => finding.prescription?.status !== 'investigate');

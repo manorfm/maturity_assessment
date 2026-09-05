@@ -16,38 +16,6 @@ export type DiagnosticContext = {
   prescription: PrescriptionDecision;
 };
 
-const impactsByCapability: Record<string, ImpactKind[]> = {
-  'product-direction': ['customer-experience', 'predictability'],
-  'discovery-validation': ['customer-experience', 'cost', 'change-capability'],
-  'portfolio-management': ['cost', 'delivery-speed', 'predictability'],
-  'planning-refinement': ['quality', 'delivery-speed', 'predictability'],
-  'work-management': ['delivery-speed', 'predictability', 'engineering-experience'],
-  'continuous-integration': ['delivery-speed', 'quality', 'change-capability'],
-  'release-feedback': ['delivery-speed', 'reliability', 'customer-experience'],
-  'sustainable-design': ['quality', 'change-capability', 'engineering-experience'],
-  'quality-strategy': ['quality', 'reliability', 'security'],
-  'sdlc-automation': ['quality', 'delivery-speed', 'engineering-experience'],
-  'technical-capability': ['quality', 'delivery-speed', 'engineering-experience'],
-  'domain-alignment': ['change-capability', 'predictability', 'delivery-speed'],
-  'architecture-decisions': ['change-capability', 'reliability', 'cost'],
-  evolvability: ['change-capability', 'delivery-speed', 'cost'],
-  'integration-data': ['quality', 'reliability', 'change-capability'],
-  'observability-practice': ['reliability', 'customer-experience', 'delivery-speed'],
-  'reliability-practice': ['reliability', 'customer-experience'],
-  'incident-management': ['reliability', 'customer-experience', 'engineering-experience'],
-  'cloud-reliability': ['reliability', 'customer-experience'],
-  'platform-autonomy': ['delivery-speed', 'engineering-experience', 'change-capability'],
-  'reproducible-infrastructure': ['reliability', 'change-capability', 'engineering-experience'],
-  'cloud-efficiency': ['cost', 'reliability'],
-  'software-security': ['security', 'quality'],
-  'cloud-security': ['security', 'reliability'],
-  'team-ownership': ['delivery-speed', 'predictability', 'engineering-experience'],
-  'enabling-governance': ['delivery-speed', 'security', 'predictability'],
-  'leadership-management': ['predictability', 'engineering-experience', 'change-capability'],
-  collaboration: ['delivery-speed', 'quality', 'engineering-experience'],
-  'organizational-learning': ['change-capability', 'reliability', 'quality'],
-};
-
 export function buildDiagnosticContext(input: { capability: string; constraint: ConstraintKind }): DiagnosticContext {
   const mechanism = input.constraint === 'none' || input.constraint === 'culture' ? 'undetermined' : input.constraint;
   const containment = containmentFor(mechanism);
@@ -57,7 +25,7 @@ export function buildDiagnosticContext(input: { capability: string; constraint: 
     missingEvidence: input.constraint === 'culture'
       ? 'Ainda falta ligar a explicação cultural a uma decisão, incentivo, política, fronteira de poder ou consequência observada.'
       : missingEvidenceFor(mechanism),
-    impacts: impactsByCapability[input.capability] ?? ['change-capability'],
+    impacts: [],
     severity: 'undetermined',
     decisionAuthority: authorityFor(mechanism),
     prescription: prescriptionFor(mechanism, containment),

@@ -1,6 +1,6 @@
 import type { OutcomeFinding } from './report-outcome.js';
 
-export type FindingNarrativeSectionId = 'observation' | 'importance' | 'evidence' | 'mechanism' | 'containment' | 'existing-strength' | 'experiment' | 'investigation' | 'technical-options' | 'methodology';
+export type FindingNarrativeSectionId = 'decision' | 'observation' | 'importance' | 'capability' | 'evidence' | 'mechanism' | 'containment' | 'existing-strength' | 'experiment' | 'investigation' | 'technical-options' | 'methodology';
 export type FindingNarrativeSection = { id: FindingNarrativeSectionId; title: string; body: string };
 export type FindingNarrative = { version: 'finding-narrative-v1'; sections: FindingNarrativeSection[] };
 
@@ -23,30 +23,58 @@ const authorityLabels: Record<string, string> = {
 const profileLabels: Record<string, string> = { management: 'Gestão', product: 'Produto', quality: 'Qualidade / QA', engineering: 'Engenharia', platform: 'Plataforma / Operações', architecture: 'Arquitetura', security: 'Segurança', data: 'Dados', design: 'Design / Experiência' };
 
 export function projectFindingNarrative(finding: OutcomeFinding): FindingNarrative {
-  const sections: FindingNarrativeSection[] = [
+  const ready = finding.prescription?.status === 'ready' || (!finding.prescription && Boolean(finding.experiment || finding.technicalDirection));
+  const sections: FindingNarrativeSection[] = [];
+  if (ready) sections.push(section('decision', 'Decisão pedida', decisionBody(finding)));
+  sections.push(
     section('observation', 'O que observamos', finding.title),
     section('importance', 'Por que importa', importanceBody(finding)),
+    section('capability', 'Por que este recorte', capabilityBody(finding)),
+  );
+  if (ready) {
+    if (finding.experiment) sections.push(section('experiment', 'Próximo experimento', `${finding.experiment.action} Responsável: ${finding.experiment.owner}. Revisão ${finding.experiment.reviewHorizon}. Indicador: ${finding.experiment.metric}. Critério: ${finding.experiment.successCriterion}`));
+  } else {
+    sections.push(section('investigation', 'Próxima investigação', `${finding.prescription?.reason ?? 'Ainda falta discriminar o mecanismo e a contenção.'} ${finding.missingEvidence ?? ''}`.trim()));
+  }
+  sections.push(
     section('evidence', 'O que sustenta ou contradiz', evidenceBody(finding)),
     section('mechanism', 'O que pode manter o padrão', mechanismBody(finding)),
     section('containment', 'Onde a restrição está contida', containmentBody(finding)),
     section('existing-strength', 'O que já funciona', existingStrengthBody(finding)),
-  ];
-  const ready = finding.prescription?.status === 'ready' || (!finding.prescription && Boolean(finding.experiment || finding.technicalDirection));
-  if (ready) {
-    if (finding.experiment) sections.push(section('experiment', 'Próximo experimento', `${finding.experiment.action} Responsável: ${finding.experiment.owner}. Revisão ${finding.experiment.reviewHorizon}. Indicador: ${finding.experiment.metric}. Critério: ${finding.experiment.successCriterion}`));
-    if (finding.technicalDirection) sections.push(section('technical-options', 'Opções técnicas', `${finding.technicalDirection.practiceTarget}. ${finding.technicalDirection.enablingMechanism}`));
-  } else {
-    sections.push(section('investigation', 'Próxima investigação', `${finding.prescription?.reason ?? 'Ainda falta discriminar o mecanismo e a contenção.'} ${finding.missingEvidence ?? ''}`.trim()));
-  }
+  );
+  if (ready && finding.technicalDirection) sections.push(section('technical-options', 'Opções técnicas', `${finding.technicalDirection.practiceTarget}. ${finding.technicalDirection.enablingMechanism}`));
   sections.push(section('methodology', 'Detalhes metodológicos', methodologyBody(finding)));
   return { version: 'finding-narrative-v1', sections };
 }
 
 function section(id: FindingNarrativeSectionId, title: string, body: string): FindingNarrativeSection { return { id, title, body }; }
 
+function decisionBody(finding: OutcomeFinding): string {
+  const action = finding.experiment?.action ?? finding.intervention;
+  const authority = authorityLabels[finding.decisionAuthority ?? 'undetermined'] ?? finding.decisionAuthority ?? 'ainda não determinada';
+  const horizon = finding.experiment?.reviewHorizon;
+  return horizon
+    ? `${action} Quem autoriza: ${authority}. Horizonte: ${horizon}.`
+    : `${action} Quem autoriza: ${authority}.`;
+}
+
 function importanceBody(finding: OutcomeFinding): string {
-  const impacts = (finding.impacts ?? []).map((impact) => impactLabels[impact] ?? impact);
-  return impacts.length ? `A consequência alcança ${joinNatural(impacts)} no recorte observado.` : 'A consequência e seu alcance ainda precisam ser discriminados no recorte observado.';
+  const measured = finding.severity && finding.severity !== 'undetermined' && (finding.impacts?.length ?? 0) > 0;
+  if (measured) {
+    const impacts = (finding.impacts ?? []).map((impact) => impactLabels[impact] ?? impact);
+    return `A consequência alcança ${joinNatural(impacts)} no recorte observado.`;
+  }
+  const authority = authorityLabels[finding.decisionAuthority ?? 'undetermined'] ?? finding.decisionAuthority ?? 'ainda não determinada';
+  return `Se o padrão continuar, a decisão fica com ${authority}. O impacto ainda não foi medido nas entrevistas.`;
+}
+
+function capabilityBody(finding: OutcomeFinding): string {
+  const authority = authorityLabels[finding.decisionAuthority ?? 'undetermined'] ?? finding.decisionAuthority ?? 'ainda não determinada';
+  const containment = containmentLabels[finding.containment ?? 'undetermined'] ?? finding.containment ?? 'ainda não determinada';
+  if (finding.containment === 'organizational-policy' || finding.containment === 'organizational-structure' || finding.decisionAuthority === 'portfolio-leadership') {
+    return `A restrição é ${containment}. Quem autoriza a mudança é ${authority}, não o time ocupado.`;
+  }
+  return `A evidência e o tratamento se ligam a este recorte. Quem autoriza: ${authority}.`;
 }
 
 function evidenceBody(finding: OutcomeFinding): string {

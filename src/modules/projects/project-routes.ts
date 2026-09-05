@@ -17,7 +17,7 @@ import { DomainValidationError, ResourceNotFoundError } from '../../shared/error
 import { groupFindingsByDiagnosticSystem } from '../inference/domain/problem-system.js';
 import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../inference/domain/diagnostic-portfolio.js';
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
-import { AudienceReportProjector, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
+import { AudienceReportProjector, audienceAsk, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
 import { projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
 
@@ -37,10 +37,10 @@ export function renderAudienceNavigation(counts: { executiveDecisions: number; t
 }
 
 export function renderAudienceBriefs(reports: AudienceReports, capabilityBase: string): string {
-  const list = (findings: OutcomeFinding[]) => `<ol>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a><br><span class="muted">Decisão: ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))} · efeitos: ${escapeHtml((finding.impacts ?? []).map(impactLabel).join(' · ') || 'a confirmar')}</span></li>`).join('')}</ol>`;
+  const list = (findings: OutcomeFinding[], audience: 'executive' | 'technology-leadership') => `<ol>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a><br><span class="muted">${escapeHtml(audienceAsk(finding, audience))} Decisão: ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))}.</span></li>`).join('')}</ol>`;
   const executiveHasContent = reports.executive.decisions.length > 0 || reports.executive.sharedConstraints.length > 0;
-  const executive = executiveHasContent ? `<article class="card" id="report-executive"><p class="eyebrow">Decisões de política, estrutura e investimento</p><h2>Briefing para diretoria</h2>${reports.executive.threatenedOutcomes.length ? `<p><strong>Resultados ameaçados:</strong> ${reports.executive.threatenedOutcomes.map(impactLabel).map(escapeHtml).join(' · ')}.</p>` : ''}${reports.executive.decisions.length ? `<h3>Decisões organizacionais</h3>${list(reports.executive.decisions)}` : ''}${reports.executive.sharedConstraints.length ? `<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${list(reports.executive.sharedConstraints)}` : ''}</article>` : '';
-  const technology = reports.technology.systemicConstraints.length ? `<article class="card" id="report-technology"><p class="eyebrow">Restrições técnicas compartilhadas</p><h2>Briefing para liderança de tecnologia</h2>${list(reports.technology.systemicConstraints)}</article>` : '';
+  const executive = executiveHasContent ? `<article class="card" id="report-executive"><p class="eyebrow">Decisões de política, estrutura e investimento</p><h2>Briefing para diretoria</h2>${reports.executive.decisions.length ? `<h3>Decisões organizacionais</h3>${list(reports.executive.decisions, 'executive')}` : ''}${reports.executive.sharedConstraints.length ? `<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${list(reports.executive.sharedConstraints, 'executive')}` : ''}</article>` : '';
+  const technology = reports.technology.systemicConstraints.length ? `<article class="card" id="report-technology"><p class="eyebrow">Restrições técnicas compartilhadas</p><h2>Briefing para liderança de tecnologia</h2>${list(reports.technology.systemicConstraints, 'technology-leadership')}</article>` : '';
   return executive || technology ? `<section class="audience-briefs">${executive}${technology}</section>` : '';
 }
 
@@ -444,9 +444,9 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
   const readinessBlock = readiness ? `<section><h3>A organização já consegue fazer isso?</h3><p><strong>${escapeHtml(outcome.finding?.solutionCapability ?? 'Capacidade coletiva compatível com a causa.')}</strong></p><p>${escapeHtml(readinessText)}</p></section>` : '';
   const relatedCapabilities = outcome.finding?.affectedCapabilities?.filter((id) => id !== outcome.finding?.detailCapability) ?? [];
   const affected = outcome.finding
-    ? `<p class="muted"><strong>Capacidade principal:</strong> ${escapeHtml(CapabilityTaxonomy.labelFor(outcome.finding.detailCapability))}.${relatedCapabilities.length ? ` <strong>Efeitos relacionados:</strong> ${relatedCapabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')}.` : ''}</p>` : '';
+    ? `<p class="muted">${relatedCapabilities.length ? `<strong>Efeitos relacionados:</strong> ${relatedCapabilities.map((id) => escapeHtml(CapabilityTaxonomy.labelFor(id))).join(' · ')}.` : ''}</p>` : '';
   const diagnosticContext = outcome.finding?.mechanism
-    ? `<details class="methodology diagnostic-context-detail"><summary>${outcome.finding.prescription?.status === 'investigate' ? 'Por que ainda não indicamos uma solução' : 'Por que esta orientação cabe aqui'}</summary><dl class="diagnostic-context"><div><dt>O que parece manter o problema</dt><dd>${escapeHtml(restrictionLabel(outcome.finding.mechanism))}</dd></div><div><dt>Onde a mudança precisa acontecer</dt><dd>${escapeHtml(containmentLabel(outcome.finding.containment ?? 'undetermined'))}</dd></div><div><dt>Quem pode decidir</dt><dd>${escapeHtml(authorityLabel(outcome.finding.decisionAuthority ?? 'undetermined'))}</dd></div><div><dt>Gravidade demonstrada</dt><dd>${escapeHtml(severityLabel(outcome.finding.severity ?? 'undetermined'))}</dd></div><div><dt>O que pode ser afetado</dt><dd>${escapeHtml((outcome.finding.impacts ?? []).map(impactLabel).join(' · ') || 'Ainda não discriminado')}</dd></div></dl><p><strong>O que ainda precisamos confirmar:</strong> ${escapeHtml(outcome.finding.missingEvidence ?? 'Ainda falta confirmar onde a restrição é contida.')}</p>${outcome.finding.prescription ? `<p><strong>Por que ${outcome.finding.prescription.status === 'investigate' ? 'investigar primeiro' : 'podemos testar'}:</strong> ${escapeHtml(outcome.finding.prescription.reason)}</p>` : ''}</details>`
+    ? `<details class="methodology diagnostic-context-detail"><summary>${outcome.finding.prescription?.status === 'investigate' ? 'Por que ainda não indicamos uma solução' : 'Por que esta orientação cabe aqui'}</summary><dl class="diagnostic-context"><div><dt>O que parece manter o problema</dt><dd>${escapeHtml(restrictionLabel(outcome.finding.mechanism))}</dd></div><div><dt>Onde a mudança precisa acontecer</dt><dd>${escapeHtml(containmentLabel(outcome.finding.containment ?? 'undetermined'))}</dd></div><div><dt>Quem pode decidir</dt><dd>${escapeHtml(authorityLabel(outcome.finding.decisionAuthority ?? 'undetermined'))}</dd></div><div><dt>Gravidade demonstrada</dt><dd>${escapeHtml(severityLabel(outcome.finding.severity ?? 'undetermined'))}</dd></div><div><dt>O que pode ser afetado</dt><dd>${escapeHtml(outcome.finding.severity && outcome.finding.severity !== 'undetermined' && (outcome.finding.impacts?.length ?? 0) ? (outcome.finding.impacts ?? []).map(impactLabel).join(' · ') : 'Impacto ainda não medido nas entrevistas')}</dd></div></dl><p><strong>O que ainda precisamos confirmar:</strong> ${escapeHtml(outcome.finding.missingEvidence ?? 'Ainda falta confirmar onde a restrição é contida.')}</p>${outcome.finding.prescription ? `<p><strong>Por que ${outcome.finding.prescription.status === 'investigate' ? 'investigar primeiro' : 'podemos testar'}:</strong> ${escapeHtml(outcome.finding.prescription.reason)}</p>` : ''}</details>`
     : '';
   const causalAnalysis = renderCausalAnalysis(outcome.finding?.causalAnalysis);
   const technicalDirection = renderTechnicalDirection(outcome.finding?.technicalDirection);
@@ -477,16 +477,23 @@ function renderNarrativeSection(section: FindingNarrativeSection, finding: Outco
   guidance: SolutionGuidance; affected: string; priority: string; evidenceBlock: string; causalAnalysis: string;
   readinessBlock: string; technicalDirection: string; metaSystem: string;
 }): string {
+  if (section.id === 'decision') return `<section data-narrative="decision" class="decision-request"><p class="eyebrow">Decisão pedida</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? finding.intervention)}</strong></p><p>${escapeHtml(section.body)}</p></section>`;
   if (section.id === 'observation') return `<section data-narrative="observation"><h3>${section.title}</h3><p class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</p></section>`;
-  if (section.id === 'importance') return `<section data-narrative="importance"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.affected}${fragments.priority}${fragments.metaSystem}</section>`;
+  if (section.id === 'importance') return `<section data-narrative="importance"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.priority}${fragments.metaSystem}</section>`;
+  if (section.id === 'capability') return `<section data-narrative="capability"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.affected}</section>`;
   if (section.id === 'evidence') return `<section data-narrative="evidence"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.evidenceBlock}</section>`;
   if (section.id === 'mechanism') return `<section data-narrative="mechanism"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.causalAnalysis}</section>`;
   if (section.id === 'containment') return `<section data-narrative="containment"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p></section>`;
   if (section.id === 'existing-strength') return `<section data-narrative="existing-strength"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.readinessBlock}</section>`;
-  if (section.id === 'experiment') return `<section data-narrative="experiment" class="decision-request"><p class="eyebrow">Decisão solicitada</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? section.body)}</strong></p><p>Quem conduz: ${escapeHtml(finding.experiment?.owner ?? 'Pessoas responsáveis pelo recorte com o grupo afetado')} · revisão ${escapeHtml(finding.experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p><p><strong>Como saber se funcionou:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}. Critério: ${escapeHtml(finding.experiment?.successCriterion ?? fragments.guidance.successCriterion)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p></section>`;
+  if (section.id === 'experiment') {
+    const foundation = finding.foundation
+      ? `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p><strong>Princípio aplicado:</strong> ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)} Fonte: ${escapeHtml(finding.foundation.source)}.</p>`
+      : `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(fragments.guidance.matureReference)}.</p>`;
+    return `<section data-narrative="experiment" class="decision-request"><p class="eyebrow">Decisão solicitada</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? section.body)}</strong></p><p>Quem conduz: ${escapeHtml(finding.experiment?.owner ?? 'Pessoas responsáveis pelo recorte com o grupo afetado')} · revisão ${escapeHtml(finding.experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p><p><strong>Como saber se funcionou:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}. Critério: ${escapeHtml(finding.experiment?.successCriterion ?? fragments.guidance.successCriterion)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>${foundation}</section>`;
+  }
   if (section.id === 'investigation') return `<section data-narrative="investigation"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p></section>`;
   if (section.id === 'technical-options') return `<section data-narrative="technical-options"><h3>${section.title}</h3>${fragments.technicalDirection}</section>`;
-  return `<details class="methodology" data-narrative="methodology"><summary>${section.title}</summary><p>${escapeHtml(section.body)}</p><p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(finding.foundation?.source ?? fragments.guidance.matureReference)}.</p>${finding.foundation ? `<p><strong>Princípio aplicado:</strong> ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)}</p>` : ''}<p>Exemplo de mecanismo: ${escapeHtml(fragments.guidance.examples)}</p></details>`;
+  return `<details class="methodology" data-narrative="methodology"><summary>${section.title}</summary><p>${escapeHtml(section.body)}</p><p>Exemplo de mecanismo: ${escapeHtml(fragments.guidance.examples)}</p></details>`;
 }
 
 function renderTechnicalDirection(direction?: OutcomeFinding['technicalDirection']): string {
@@ -591,8 +598,8 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
   const allSecondary = uniqueFindings.filter((finding) => finding.pattern !== primaryPattern);
   if (!allSecondary.length) return '';
   const portfolio = TransformationPortfolioPlanner.plan(allSecondary);
-  const visibleSteps = portfolio.sequence.slice(0, 4);
-  const visibleConditioned = portfolio.conditioned.slice(0, Math.max(0, 4 - visibleSteps.length));
+  const visibleSteps = portfolio.sequence;
+  const visibleConditioned = portfolio.conditioned;
   const total = allSecondary.length;
   const item = (finding: OutcomeFinding) => {
     const evidence = finding.recommendationEvidence;
@@ -633,7 +640,7 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
   const readyCount = portfolio.sequence.length;
   const investigateCount = portfolio.conditioned.length;
   const visibleCount = visibleSteps.length + visibleConditioned.length;
-  const truncation = total > visibleCount ? ` O relatório está mostrando os ${visibleCount} mais prioritários.` : '';
+  const truncation = total > visibleCount ? ` O relatório está mostrando os ${visibleCount} de ${total} padrões publicados.` : '';
   const attention = readyCount
     ? `${readyCount} ${primaryPattern ? (readyCount === 1 ? 'outra decisão pronta exige' : 'outras decisões prontas exigem') : (readyCount === 1 ? 'decisão pronta exige' : 'decisões prontas exigem')} atenção.`
     : 'Ainda não há decisão pronta neste recorte.';
@@ -649,9 +656,8 @@ export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPatter
 function renderScopeCompanionFindings(findings: OutcomeFinding[], primaryPattern: string | undefined, capabilityBase: string, scopeId: string): string {
   const companions = uniqueFindingsByPattern(findings).filter((finding) => finding.pattern !== primaryPattern);
   if (!companions.length) return '';
-  const items = companions.slice(0, 4).map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding, scopeId))}">${escapeHtml(finding.title)}</a></li>`).join('');
-  const remaining = companions.length - Math.min(companions.length, 4);
-  const truncation = remaining ? `<p class="muted">Mais ${remaining} ${remaining === 1 ? 'comportamento permanece' : 'comportamentos permanecem'} no panorama global priorizado.</p>` : '';
+  const items = companions.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding, scopeId))}">${escapeHtml(finding.title)}</a></li>`).join('');
+  const truncation = '';
   return `<section class="scope-companion-findings"><h3>Outros comportamentos neste recorte</h3><ul>${items}</ul>${truncation}</section>`;
 }
 
@@ -692,7 +698,7 @@ export function renderScopeReport(scope: ScopeReportView, capabilityBase: string
 
 function renderUnitManagementReport(report: UnitManagementReport, capabilityBase: string): string {
   const list = (findings: OutcomeFinding[], empty: string) => findings.length
-    ? `<ul>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding, report.id))}">${escapeHtml(finding.title)}</a></li>`).join('')}</ul>`
+    ? `<ul>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding, report.id))}">${escapeHtml(finding.title)}</a><br><span class="muted">${escapeHtml(audienceAsk(finding, 'unit-management'))}</span></li>`).join('')}</ul>`
     : `<p class="muted">${escapeHtml(empty)}</p>`;
   const escalation = report.escalations.length
     ? `<ul>${report.escalations.map((step) => `<li>${escapeHtml(step.title)} — escalar para ${escapeHtml(authorityLabel(step.authority))}</li>`).join('')}</ul>`

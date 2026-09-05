@@ -17,16 +17,16 @@ const finding: OutcomeFinding = {
   },
 };
 
-test('narrativa ordena observação, impacto, evidência, causa, contenção, força, experimento, técnica e método', () => {
+test('narrativa ordena decisão, observação, impacto, recorte, experimento, evidência, causa, contenção, força, técnica e método', () => {
   const narrative = projectFindingNarrative(finding);
   assert.deepEqual(narrative.sections.map((section) => section.id), [
-    'observation', 'importance', 'evidence', 'mechanism', 'containment', 'existing-strength', 'experiment', 'technical-options', 'methodology',
+    'decision', 'observation', 'importance', 'capability', 'experiment', 'evidence', 'mechanism', 'containment', 'existing-strength', 'technical-options', 'methodology',
   ]);
-  assert.match(narrative.sections[0]!.body, /retorno técnico/i);
-  assert.match(narrative.sections[1]!.body, /velocidade de entrega.*qualidade/i);
-  assert.match(narrative.sections[2]!.body, /4 de 6/i);
-  assert.match(narrative.sections[4]!.body, /serviço compartilhado.*plataforma/i);
-  assert.match(narrative.sections[5]!.body, /já funciona|Local/i);
+  assert.match(narrative.sections.find((section) => section.id === 'observation')!.body, /retorno técnico/i);
+  assert.match(narrative.sections.find((section) => section.id === 'importance')!.body, /velocidade de entrega.*qualidade/i);
+  assert.match(narrative.sections.find((section) => section.id === 'evidence')!.body, /4 de 6/i);
+  assert.match(narrative.sections.find((section) => section.id === 'containment')!.body, /serviço compartilhado.*plataforma/i);
+  assert.match(narrative.sections.find((section) => section.id === 'existing-strength')!.body, /já funciona|Local/i);
 });
 
 test('projeção mantém contradição, lacuna e limite sem converter silêncio em consenso', () => {

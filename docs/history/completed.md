@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-04 — Cartão executivo fecha decisão sem impacto fabricado
+
+- Gravidade indeterminada não lista custo, velocidade nem previsibilidade; o
+  cartão pede decisão, recorte pela autoridade e teste; o panorama mostra todos
+  os padrões; o sintético médio chama-se sistema reativo; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-04 — Home projeta três sistemas em vez dos oito pilares
 
 - `OrganizationalAreaProjector` desenha Produto, Engenharia e Operação; qualidade,

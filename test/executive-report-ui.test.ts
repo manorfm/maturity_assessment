@@ -27,12 +27,13 @@ test('primeiro plano é o diagnóstico, não o estágio nem o radar', () => {
     findings: [outcome.finding],
     confirmedProblemCount: 2,
   });
+  const decision = html.indexOf('Decisão pedida');
   const diagnosis = html.indexOf('O que observamos');
-  const interviews = html.indexOf('O que sustenta ou contradiz');
+  const importance = html.indexOf('Por que importa');
   const test = html.indexOf('Próximo experimento');
   const success = html.indexOf('Como saber se funcionou');
   const consistency = html.indexOf('Consistência do comportamento no elo limitante');
-  assert.ok(diagnosis >= 0 && interviews > diagnosis && test > interviews && success > test);
+  assert.ok(decision >= 0 && diagnosis > decision && importance > diagnosis && test > importance && success > test);
   assert.ok(consistency > success);
   assert.match(html, /Quem conduz: Fluxo/);
   assert.doesNotMatch(html, /Resumo executivo/);
@@ -126,7 +127,6 @@ test('cartão de correção mostra o universo da solução', () => {
   assert.match(html, /Integração em tronco/);
   assert.match(html, /Decisão solicitada/);
   assert.match(html, /A organização já consegue fazer isso/);
-  assert.match(html, /Capacidade principal:<\/strong> Integração contínua/);
   assert.match(html, /Efeitos relacionados:<\/strong> Evolutibilidade/);
   assert.match(html, /Decisão solicitada/);
   assert.match(html, /5 de 9 pessoas que poderiam observar/);
@@ -308,8 +308,8 @@ test('panorama informa o total confirmado mesmo quando limita a lista executiva'
   }));
   const html = renderFindingPortfolio(findings, 'pattern-0');
   assert.match(html, /6 outras decisões prontas exigem atenção/);
-  assert.match(html, /mostrando os 4 mais prioritários/i);
-  assert.equal((html.match(/<li>/g) ?? []).length, 4);
+  assert.doesNotMatch(html, /mostrando os 4/);
+  assert.equal((html.match(/<li>/g) ?? []).length, 6);
 });
 
 test('panorama agrupa padrões relacionados sem declará-los como causa única', () => {
@@ -396,7 +396,8 @@ test('briefings de diretoria e tecnologia mostram somente decisões da sua autor
   assert.match(html, /Política acumula mudanças pequenas/);
   assert.match(html, /Briefing para liderança de tecnologia/);
   assert.match(html, /Feedback técnico chega tarde/);
-  assert.match(html, /Velocidade de entrega/);
+  assert.doesNotMatch(html, /Velocidade de entrega/);
+  assert.match(html, /Não compre ferramenta/);
 });
 
 test('briefings vazios são omitidos em vez de repetir ausência de decisão', () => {

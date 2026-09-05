@@ -31,7 +31,7 @@ exercitam o mapa e o cartão sem se chamar o que a classificação não é.
 | Onda | Entrega | Aceite |
 | --- | --- | --- |
 | A | Projetor do mapa | **Vigente.** Home: Produto, Engenharia, Operação; qualidade e segurança sob Engenharia |
-| B | Cartão executivo | Diretor reformula problema, valor (ou a falta dele) e teste |
+| B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
 | C | UX minimalista | First screen cabe em uma tela; metodologia some do primeiro plano |
 | D | Massa sintética | Três orgs + um caso de fronteira de times passam a barra do produto |
 | E | Folhas candidatas | Só depois de B–D; lacunas viram folha com contrato, uma de cada vez |
@@ -53,19 +53,9 @@ A árvore com lacunas (onda E) permanece em
 
 ## Onda B — Cartão que fecha decisão
 
-Ordem interna em
-[`executive-decision-narrative-plan.md`](executive-decision-narrative-plan.md):
-
-1. Impacto deixa de nascer da folha. Gravidade indeterminada não lista
-   custo, velocidade nem previsibilidade.
-2. Primeiro plano: decisão + quem autoriza; situação sem culpar o time
-   quando a restrição é política; valor só com evidência; por que a
-   folha é essa; teste, limite, antipadrão. Fundamento sobe do rodapé.
-3. Panorama mostra todos os padrões publicados. Investigar ≠ decidir.
-   Nome do sintético não diz “prática repetível” se a classificação é
-   Reativo.
-4. Diretoria, gerência e tecnologia leem a mesma restrição com a
-   pergunta de cada um.
+**Entregue.** A especificação vigente está em `recommendation-model.md`.
+O detalhe histórico permanece em
+[`executive-decision-narrative-plan.md`](executive-decision-narrative-plan.md).
 
 ---
 
@@ -136,7 +126,7 @@ Showcase inspeciona first screen e índice.
 | Caso | O que o sintético precisa produzir | Barra |
 | --- | --- | --- |
 | Opaco | Finding pronto de responsabilidade + vários investigate | Home em Corrigir; Engenharia e faixa acesas; nome não mente o estágio |
-| Intermediário | Seis padrões, um pronto (portfólio) | Cartão sem metáfora de aprender; cinco visíveis; mapa em Produto + Engenharia; classificação Reativo se o elo for fluxo |
+| Intermediário | Seis padrões, um pronto (portfólio) | Cartão sem metáfora de aprender; cinco visíveis; mapa em Produto + Engenharia; nome não alega prática repetível |
 | Sustentável | Folhas fortes, pilares sem cobertura | Preservar; sistemas sem cobertura = não observado; não “organização adaptativa” |
 | Fronteira de times | Duas unidades no mesmo artefato, causas diferentes | Finding de responsabilidade/fronteira; ancora em Entrega e na faixa; não some no corte de quatro |
 | Segurança ≠ governança | Uma unidade: ameaça muda o caminho; outra: mesma aprovação | Segurança acende em Engenharia; governança na faixa; não um único slogan |
@@ -176,6 +166,6 @@ cada vez. Tuckman continua interpretação, não filho.
 
 ## Mudanças na base, quando cada onda fechar
 
-A já está na base. B: `recommendation-model.md`. C: `technical-architecture.md`
-(first screen). D: `organizational-model.md` (sintético valida
-apresentação, não acurácia). E: `assessment-model.md` por folha nova.
+A e B já estão na base. C: `technical-architecture.md` (first screen).
+D: `organizational-model.md` (sintético valida apresentação, não
+acurácia). E: `assessment-model.md` por folha nova.

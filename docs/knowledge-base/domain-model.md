@@ -142,8 +142,10 @@ Todo finding precisa informar:
   ferramenta opcional, pré-condições, limites, custo/risco e experimento como
   conceitos separados; ausência nominal não produz direção.
 - `FindingNarrative`, projeção versionada que ordena a leitura sem alterar o
-  finding, omite playbook em investigação e preserva força local e regressão de
-  padrões virtuosos.
+  finding: decisão, situação, valor só com evidência, recorte pela autoridade,
+  teste e fundamento no primeiro plano. Omite playbook em investigação e
+  preserva força local e regressão de padrões virtuosos. `audienceAsk` projeta
+  a mesma restrição para diretoria, gerência e tecnologia.
 
 Recorrência e contenção são invariantes diferentes. A primeira informa onde o
 padrão apareceu; a segunda informa onde a restrição pode ser removida. O domínio
