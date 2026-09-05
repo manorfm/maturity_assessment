@@ -43,7 +43,7 @@ O relatório apresenta primeiro um diagnóstico explicável:
 Depois, apresenta a distância comportamental para a referência de alta
 performance. O estágio ordinal 0–4 é uma leitura auxiliar por capacidade: resume
 consistência observada, não adoção de ferramenta, valor de uma pessoa ou uma nota
-global da empresa. O mapa de contraste localiza cobertura e diferenças; ambos
+global da empresa. O mapa de sistemas localiza cobertura e diferenças; ambos
 ficam depois do cartão de diagnóstico e continuam acompanhados de confiança e
 lacunas.
 

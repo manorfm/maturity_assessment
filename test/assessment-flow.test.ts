@@ -157,6 +157,8 @@ test('relatório respeita limiar e encontra padrão agregado', () => {
   assert.equal(report.capabilityGroups.some((group) => group.id === 'engineering-quality'), true);
   assert.equal(report.capabilityGroups.some((group) => group.id === 'architecture-evolution' && group.children.length > 0), true);
   assert.equal(report.capabilityGroups.length, 8);
+  assert.deepEqual(report.organizationalAreas.systems.map((system) => system.id), ['product', 'engineering', 'operations']);
+  assert.equal(report.organizationalAreas.systems.some((system) => system.id === 'engineering' && system.observed), true);
   const engineeringArea = report.areas.find((area) => area.id === 'delivery-flow');
   assert.ok(engineeringArea);
   assert.equal(engineeringArea.label, 'Fluxo de entrega');

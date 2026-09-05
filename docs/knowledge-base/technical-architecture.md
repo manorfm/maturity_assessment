@@ -189,10 +189,14 @@ O módulo `assessments` pede ao seletor adaptativo um aprofundamento somente dep
 do tronco obrigatório; no máximo cinco probes adicionais são escolhidos por entropia,
 cobertura, validação e custo. Snapshots dessa decisão permanecem privados.
 
-`CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos. O radar
-superior e os radares de aprofundamento consomem a mesma árvore; a UI não recalcula
-níveis. Cada capacidade possui URL administrativa própria e recebe opcionalmente o
-escopo da unidade, permitindo navegação macro→micro sem perder o recorte.
+`CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos dos oito
+pilares. `OrganizationalAreaProjector` consome as mesmas 29 folhas e os findings
+e desenha a home em três sistemas (Produto, Engenharia, Operação) mais a faixa de
+Gestão, sem recalcular nível nem reparentar o motor. Um sistema acende com folha
+publicada ou finding, mesmo quando o pilar correspondente não fecha duas crianças.
+O drill-down de área usa `/areas/:id`; folhas continuam em `/capabilities/:id`.
+Radares de recorte de unidade ainda consomem `capabilityGroups`. A UI não
+recalcula níveis.
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
 `capability-reference-v19`. `CapabilityReference` rejeita base de avaliação nominal,
@@ -216,9 +220,10 @@ pergunta, sinal ou causa. As vinte e duas referências vigentes atingem
 cobertura mínima na matriz; esse estado mede somente suficiência estrutural do
 instrumento, não maturidade, acurácia ou calibração empírica.
 
-A taxonomia executiva possui oito pilares. Operação/confiabilidade,
-plataforma/experiência de engenharia e segurança/risco são ramos separados, embora
-um mesmo sinal possa afetar folhas de todos eles. `SolutionReadiness` é derivado de
+A taxonomia do motor possui oito pilares. Na home, plataforma e segurança não
+rivalizam com Engenharia: são disciplinas dentro dela. Operação/confiabilidade,
+plataforma/experiência e segurança/risco continuam ramos separados no motor,
+embora um mesmo sinal possa afetar folhas de todos eles. `SolutionReadiness` é derivado de
 evidência positiva agregada do recorte; não altera a nota da capacidade nem o
 posterior causal. O finding sanitizado carrega capacidade de solução e prontidão
 junto ao experimento.

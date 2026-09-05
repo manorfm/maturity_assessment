@@ -9,6 +9,7 @@ import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
 import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
 import { CapabilityTaxonomy, organizationalCapabilityIds } from '../inference/domain/capability-taxonomy.js';
+import { findAreaPath, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { decideReportOutcome, distinctiveScopes, findingScopeOccurrences, uniqueConfirmedCauses, uniqueFindingsByPattern, type ConfirmedCause, type FindingScopeOccurrence, type OutcomeFinding, type ReportOutcome } from '../inference/domain/report-outcome.js';
 import { guidanceFor, type SolutionGuidance } from '../inference/domain/solution-guidance.js';
 import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
@@ -162,7 +163,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ? `<article class="card"><span class="tag">reaplicação</span><h3>Comparação com a medição anterior</h3><p class="muted">${report.previousMeasurement.previousCompleted} jornadas na captura anterior. Padrões abaixo mostram suporte coletivo, nunca pessoas.</p>${report.previousMeasurement.patternDeltas.length ? `<ul>${report.previousMeasurement.patternDeltas.map((delta) => `<li><code>${escapeHtml(delta.pattern)}</code>: ${delta.previous} → ${delta.current}</li>`).join('')}</ul>` : '<p>O suporte dos padrões publicados não mudou entre as capturas.</p>'}</article>`
       : '';
     const capabilityBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/capabilities`;
-    const capabilityMap = renderCapabilityRadar(report.capabilityGroups, capabilityBase);
+    const areaBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/areas`;
+    const capabilityMap = renderOrganizationalAreaMap(report.organizationalAreas, { areaBase, capabilityBase });
     const scopeOccurrences = findingScopeOccurrences(report.scopes);
     const primaryOccurrence = scopeOccurrences.find((item) => item.pattern === report.outcome.finding?.pattern);
     const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
@@ -181,7 +183,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
       <section id="report-diagnosis"><h2>Decisão prioritária</h2>${firstPlane}${reportAvailability}${perspectives}</section>
       ${audienceNavigation}${audienceBriefs}${globalPortfolio ? `<div id="report-portfolio">${globalPortfolio}</div>` : ''}
-      <section><h2>Mapa de contraste</h2>${capabilityMap}</section>
+      <section><h2>Sistemas da organização</h2>${capabilityMap}</section>
       <details class="methodology"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
         <label for="unitId">Unidade final</label><select id="unitId" name="unitId">${unitOptions}</select>
@@ -234,6 +236,32 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : '';
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
     return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOutcome(outcome)}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}`));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/areas/:areaId', async (request, reply) => {
+    const params = request.params as Params & { areaId: string };
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const scopeId = (request.query as { scope?: string }).scope;
+    const source = scopeId ? report.scopes.find((scope) => scope.id === scopeId) : undefined;
+    if (scopeId && !source) throw new ResourceNotFoundError('Recorte não disponível.');
+    const map = source?.organizationalAreas ?? report.organizationalAreas;
+    const path = findAreaPath(map, params.areaId);
+    if (!path) throw new ResourceNotFoundError('Área não encontrada.');
+    const selected = path.at(-1)!;
+    const areaBase = `/projects/${params.publicId}/manage/${params.adminSecret}/areas`;
+    const capabilityBase = `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`;
+    const scopeQuery = scopeId ? `?scope=${encodeURIComponent(scopeId)}` : '';
+    if (selected.kind === 'leaf' && !selected.children.some((child) => child.observed)) {
+      return reply.redirect(`${capabilityBase}/${selected.leafId ?? selected.id}${scopeQuery}`);
+    }
+    const dashboardUrl = `/projects/${params.publicId}/manage/${params.adminSecret}`;
+    const parent = path.at(-2);
+    const backUrl = parent ? `${areaBase}/${parent.id}${scopeQuery}` : dashboardUrl;
+    const breadcrumbItems = path.map((item, index) => index === path.length - 1
+      ? `<span class="breadcrumb-current" aria-current="page">${escapeHtml(item.label)}</span>`
+      : `<a href="${areaBase}/${item.id}${scopeQuery}">${escapeHtml(item.label)}</a>`).join('<span class="breadcrumb-separator" aria-hidden="true">›</span>');
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOrganizationalAreaIndex(path, { areaBase, capabilityBase, scopeQuery })}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -694,6 +722,56 @@ function summarizeLimiters(limiters: string[]): string {
 }
 
 type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; observers?: number; interval?: { lower: number; upper: number }; hasContradiction: boolean; assessed: boolean; coverage: number; children: CapabilityRadarNode[] };
+
+export function renderOrganizationalAreaMap(
+  map: OrganizationalAreaMap,
+  urls: { areaBase: string; capabilityBase: string; scopeQuery?: string },
+): string {
+  const query = urls.scopeQuery ?? '';
+  const tiles = map.systems.map((system) => {
+    const chips = system.children.filter((child) => child.observed).map((child) => (
+      `<a class="area-chip" href="${escapeHtml(areaChildHref(child, urls) + query)}">${escapeHtml(child.label)}</a>`
+    )).join('');
+    const status = system.observed
+      ? (system.findingCount ? `${system.findingCount} ${system.findingCount === 1 ? 'problema' : 'problemas'}` : 'observado')
+      : 'não observado';
+    const heading = system.observed
+      ? `<a href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}"><h3>${escapeHtml(system.label)}</h3></a>`
+      : `<h3>${escapeHtml(system.label)}</h3>`;
+    return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}<p class="muted">${escapeHtml(status)}</p>${chips ? `<p class="area-chips">${chips}</p>` : ''}</article>`;
+  }).join('');
+  const bandChildren = map.band.children.filter((child) => child.observed);
+  const band = map.band.observed
+    ? `<nav class="area-band" aria-label="Gestão"><p class="eyebrow">Gestão</p><p>${bandChildren.map((child) => `<a href="${escapeHtml(`${urls.capabilityBase}/${child.leafId ?? child.id}${query}`)}">${escapeHtml(child.label)}</a>`).join(' · ')}</p></nav>`
+    : '';
+  return `<section class="area-map" aria-label="Sistemas da organização"><div class="area-map-systems">${tiles}</div>${band}</section>`;
+}
+
+export function renderOrganizationalAreaIndex(
+  path: OrganizationalAreaNode[],
+  urls: { areaBase: string; capabilityBase: string; scopeQuery?: string },
+): string {
+  const selected = path.at(-1);
+  if (!selected) return '';
+  const query = urls.scopeQuery ?? '';
+  const detailOf = (node: OrganizationalAreaNode) => node.findingCount
+    ? `${node.findingCount} ${node.findingCount === 1 ? 'problema' : 'problemas'}`
+    : 'observado';
+  const self = selected.kind === 'leaf'
+    ? `<a class="area-index-link" href="${escapeHtml(`${urls.capabilityBase}/${selected.leafId ?? selected.id}${query}`)}"><strong>${escapeHtml(selected.label)}</strong><span>${escapeHtml(detailOf(selected))}</span></a>`
+    : '';
+  const items = selected.children.filter((child) => child.observed).map((child) => (
+    `<a class="area-index-link" href="${escapeHtml(areaChildHref(child, urls) + query)}"><strong>${escapeHtml(child.label)}</strong><span>${escapeHtml(detailOf(child))}</span></a>`
+  )).join('');
+  return `<nav class="area-index" aria-label="Disciplinas de ${escapeHtml(selected.label)}">${self}${items || (self ? '' : '<p class="muted">Nenhuma disciplina observada neste recorte.</p>')}</nav>`;
+}
+
+function areaChildHref(node: OrganizationalAreaNode, urls: { areaBase: string; capabilityBase: string }): string {
+  if (node.kind === 'leaf' && !node.children.some((child) => child.observed)) {
+    return `${urls.capabilityBase}/${node.leafId ?? node.id}`;
+  }
+  return `${urls.areaBase}/${node.id}`;
+}
 
 export function renderCapabilityRadar(
   capabilities: CapabilityRadarNode[],

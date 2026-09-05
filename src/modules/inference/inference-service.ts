@@ -5,6 +5,7 @@ import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { CausalKnowledgeGraph, type CausalPath } from './domain/causal-knowledge-graph.js';
 import { TeamClassification } from './domain/team-classification.js';
 import { CapabilityTaxonomy } from './domain/capability-taxonomy.js';
+import { OrganizationalAreaProjector } from './domain/organizational-areas.js';
 import { decideReportOutcome, uniqueFindingsByPattern } from './domain/report-outcome.js';
 import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed, type RecommendationEvidence } from './domain/group-recommendation-engine.js';
 import type { SolutionReadiness } from './domain/solution-readiness.js';
@@ -319,7 +320,7 @@ export class InferenceService {
     const modelVersion = this.modelVersion();
     if (completed < minimum) {
       const transformationPortfolio = TransformationPortfolioPlanner.plan([]);
-      return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
+      return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], organizationalAreas: OrganizationalAreaProjector.empty(), perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
     }
     const findings = uniqueFindingsByPattern(this.findings(projectId, completed));
     this.persistTransformation(projectId, completed, findings);
@@ -344,14 +345,14 @@ export class InferenceService {
         .filter((candidate) => candidate.path.startsWith(`${scope.path}/`))
         .map((candidate) => TeamClassification.at(TeamClassification.from(candidate.capabilities).level, [candidate.path]));
       const transformationPortfolio = TransformationPortfolioPlanner.plan(scope.findings);
-      return { ...scope, transformationPortfolio, audienceReport: AudienceReportProjector.projectUnit({ id: scope.id, path: scope.path, findings: scope.findings, portfolio: transformationPortfolio }), areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize(scope.capabilities), classification: local.constrainedBy(descendants) };
+      return { ...scope, transformationPortfolio, audienceReport: AudienceReportProjector.projectUnit({ id: scope.id, path: scope.path, findings: scope.findings, portfolio: transformationPortfolio }), areas: this.diagnosticAreas(scope.findings), capabilityGroups: CapabilityTaxonomy.organize(scope.capabilities), organizationalAreas: OrganizationalAreaProjector.project({ capabilities: scope.capabilities, findings: scope.findings }), classification: local.constrainedBy(descendants) };
     });
     const classification = TeamClassification.from(capabilities).constrainedBy(
       rawScopes.map((scope) => TeamClassification.at(TeamClassification.from(scope.capabilities).level, [scope.path])),
     );
     const outcome = decideReportOutcome({ classification, branches: capabilityGroups, findings, perspectiveGaps });
     const transformationPortfolio = TransformationPortfolioPlanner.plan(findings);
-    return { completed, minimum, modelVersion, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), scopes, outcome };
+    return { completed, minimum, modelVersion, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), scopes, outcome };
   }
 
   private calibration(modelVersion: string | null): PilotReport {
@@ -756,4 +757,4 @@ const rootCapabilityByDetail = Object.fromEntries([
   ['organizational-system', ['team-ownership', 'enabling-governance', 'leadership-management', 'collaboration', 'organizational-learning']],
 ].flatMap(([root, details]) => (details as string[]).map((detail) => [detail, root]))) as Record<string, string>;
 
-type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; transformationPortfolio: TransformationPortfolio; audienceReport: UnitManagementReport; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; perspectiveGaps: PerspectiveGap[]; hypotheses: DiagnosticPosterior[] };
+type ScopeReport = { id: string; path: string; completed: number; classification: TeamClassification; findings: Finding[]; transformationPortfolio: TransformationPortfolio; audienceReport: UnitManagementReport; areas: DiagnosticArea[]; capabilities: CapabilityLevel[]; capabilityGroups: ReturnType<typeof CapabilityTaxonomy.organize>; organizationalAreas: ReturnType<typeof OrganizationalAreaProjector.project>; perspectiveGaps: PerspectiveGap[]; hypotheses: DiagnosticPosterior[] };

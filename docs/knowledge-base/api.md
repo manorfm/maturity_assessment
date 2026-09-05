@@ -14,9 +14,11 @@ com nível, rótulo e capacidades ou unidades limitantes.
 O objeto `areas` agrupa os problemas por capacidade e informa `diagnosis`,
 `correction`, evidência agregada e se o padrão representa comportamento ou
 restrição. O mesmo formato existe nos recortes hierárquicos elegíveis.
-`capabilityGroups` expõe a árvore recursiva usada pelos radares; cada ramo inclui
-nível limitante, intervalo, observadores, evidência, contradição e filhos
-observados.
+`capabilityGroups` expõe a árvore recursiva dos oito pilares usada pelos radares
+de recorte; cada ramo inclui nível limitante, intervalo, observadores, evidência,
+contradição e filhos observados. `organizationalAreas` expõe a projeção da home
+(`organizational-areas-v1`): três sistemas, disciplinas de Engenharia e a faixa
+de Gestão, com `observed` e `findingCount`. Não substitui `capabilityGroups`.
 
 Cada finding também expõe `cause`, `priority`, `recommendationEvidence`,
 `experiment`, `foundation`, `affectedCapabilities`, `solutionCapability` e

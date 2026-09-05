@@ -32,7 +32,20 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .capability-navigation { display:flex; align-items:center; gap:16px; margin:0 0 30px; padding:10px 14px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.72); box-shadow:0 5px 20px rgba(25,34,29,.035) }.back-link { flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:8px; background:var(--soft); color:var(--accent); font-weight:750; text-decoration:none }.back-link:hover,.back-link:focus-visible { background:#dcebe3; outline:2px solid transparent }.breadcrumb { display:flex; align-items:center; gap:8px; min-width:0; color:var(--muted); font-size:.9rem; overflow-x:auto; white-space:nowrap; scrollbar-width:thin }.breadcrumb a { color:var(--muted); text-decoration:none }.breadcrumb a:hover,.breadcrumb a:focus-visible { color:var(--accent); text-decoration:underline }.breadcrumb-separator { color:#9aa49e }.breadcrumb-current { color:var(--ink); font-weight:700 }
     .coverage { display:grid; grid-template-columns:auto minmax(120px,1fr); align-items:center; gap:12px; color:var(--muted); font-size:.9rem }.coverage-track { display:block; height:8px; overflow:hidden; border-radius:999px; background:var(--line) }.coverage-track span { display:block; height:100%; border-radius:inherit; background:var(--accent) }
     fieldset { border:0; padding:0; margin:24px 0 } legend { font-weight:750; font-size:1.15rem }.hierarchy-row { margin:10px 0 10px min(calc(var(--level) * 28px),45%); padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--bg); display:grid; grid-template-columns:24px minmax(180px,1fr) auto; gap:10px; align-items:center }.hierarchy-branch { color:var(--accent); font-weight:800 }.hierarchy-actions { display:flex; gap:7px; flex-wrap:wrap }.hierarchy-actions button,.compact { margin:0; padding:8px 11px; font-size:.88rem }.button.danger { background:#f5e9e7; color:#8a3026 }.form-error { color:#9a2e22; min-height:1.5em; font-weight:650 }
-    @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px} }
+    .area-map-systems { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:18px 0 }
+    .area-tile { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px }
+    .area-tile.unobserved { color:var(--muted) }
+    .area-tile.observed { border-color:var(--accent) }
+    .area-tile h3 { margin:.1rem 0 .35rem }
+    .area-tile a { color:inherit; text-decoration:none }
+    .area-chips { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 0 }
+    .area-chip { border:1px solid var(--line); border-radius:999px; padding:4px 10px; color:var(--accent); text-decoration:none; font-size:.85rem; font-weight:650 }
+    .area-band { margin:8px 0 24px; padding:14px 4px 0; border-top:1px solid var(--line) }
+    .area-band a { color:var(--accent); font-weight:650; text-decoration:none }
+    .area-index { display:grid; gap:10px; margin:18px 0 }
+    .area-index-link { display:flex; justify-content:space-between; gap:12px; padding:16px 18px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); text-decoration:none }
+    .area-index-link span { color:var(--muted) }
+    @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>
 <body><main>${content}</main></body>

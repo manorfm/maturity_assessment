@@ -91,11 +91,12 @@ function sanitizeReport(report: ReturnType<InferenceService['report']>) {
     areas: report.areas,
     capabilities: report.capabilities,
     capabilityGroups: report.capabilityGroups,
+    organizationalAreas: report.organizationalAreas,
     perspectiveGaps: report.perspectiveGaps,
     visibilityGaps: report.visibilityGaps,
     previousMeasurement: report.previousMeasurement,
     calibration: report.calibration,
-    scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, hypotheses: scope.hypotheses.map(sanitizePosterior), findings: scope.findings.map(finding), areas: scope.areas, capabilities: scope.capabilities, capabilityGroups: scope.capabilityGroups, perspectiveGaps: scope.perspectiveGaps })),
+    scopes: report.scopes.map((scope) => ({ path: scope.path, classification: scope.classification, hypotheses: scope.hypotheses.map(sanitizePosterior), findings: scope.findings.map(finding), areas: scope.areas, capabilities: scope.capabilities, capabilityGroups: scope.capabilityGroups, organizationalAreas: scope.organizationalAreas, perspectiveGaps: scope.perspectiveGaps })),
   };
 }
 

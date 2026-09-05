@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.72.0
+
+- A home do relatório passou a indexar Produto, Engenharia e Operação. Qualidade,
+  plataforma e segurança deixam de rivalizar como fatias; Gestão é faixa
+  transversal. O motor dos oito pilares permanece intacto.
+
 ## 0.71.0
 
 - O first screen organizacional passou a fechar a decisão pronta (corrigir ou

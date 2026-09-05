@@ -38,6 +38,15 @@ deve ocorrer numa única unidade para preservar o limiar; uma comparação entre
 squads exige ao menos dez pessoas, cinco em cada unidade. Calibração continua 50–100
 jornadas rotuladas e não é substituída por sintéticos.
 
+A home já projeta três sistemas e a faixa de Gestão. A sequência aberta
+do relatório apresentável — cartão, UX minimalista e massa sintética de
+validação, sem calibração por sintético — está em
+[`report-presentation-plan.md`](report-presentation-plan.md). O detalhe
+das lacunas do mapa permanece em
+[`organizational-area-map-plan.md`](organizational-area-map-plan.md); o
+do cartão, em
+[`executive-decision-narrative-plan.md`](executive-decision-narrative-plan.md).
+
 A decisão de deixar de se apresentar como framework de maturidade e passar a
 ser um diagnóstico de engenharia está em
 [`engineering-diagnostic-plan.md`](engineering-diagnostic-plan.md). As ondas 0 a

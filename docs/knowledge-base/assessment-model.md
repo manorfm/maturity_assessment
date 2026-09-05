@@ -39,10 +39,10 @@ mantém a mesma resposta como origem explicável; não se duplica uma nota gené
 Cada nó pode possuir filhos e produzir outro radar. Seu nível é limitado pelo filho
 com evidência mais frágil. Cada clique abre uma página própria, preserva o recorte
 organizacional e apresenta um breadcrumb do macro ao micro; folhas mostram problemas
-e correções. Os oito eixos macro permanecem visíveis,
-mas ausência de evidência é
-rotulada como “não avaliado”, nunca como nível zero. A taxonomia não duplica o mesmo
-sinal para preencher frameworks diferentes.
+e correções. A home não indexa os oito pilares do motor: ela projeta três sistemas
+— Produto, Engenharia e Operação — e uma faixa transversal de Gestão. Ausência de
+evidência é rotulada como “não observado” ou “não avaliado”, nunca como nível zero.
+A taxonomia não duplica o mesmo sinal para preencher frameworks diferentes.
 
 Cloud é contexto de arquitetura e operação, não um diagnóstico autônomo. Quando o
 catálogo possuir evidência discriminativa suficiente, workloads cloud poderão
@@ -281,19 +281,24 @@ Confiança e cobertura acompanham as três leituras e nunca são fundidas num sc
 único. Categoria de performance DORA depende das métricas vigentes por aplicação
 ou serviço e de referência comparável; não deriva do estágio 0–4.
 
-O relatório vigente apresenta, no mapa global e nos recortes hierárquicos seguros,
-os oito eixos macro. A leitura começa pelo cartão de diagnóstico. Estágio ordinal
-e mapa de contraste são auxiliares: o produto é o problema e o teste, não o
-nível. Cada eixo avaliado é uma estimativa direcional de 0 a 4 calculada
-dentro da capacidade, acompanhada do volume de evidência. Um eixo ausente significa
-evidência insuficiente, aparece com marcador neutro “?” e nunca é interpretado como
-zero ou fragilidade. Esse estado não permite aprofundamento até atingir cobertura;
-vermelho é reservado a uma fragilidade efetivamente avaliada. O radar não combina pilares
-em uma nota global e não substitui findings, bloqueios ou recomendações.
-Quando nenhum pilar possui cobertura temática suficiente, a interface não desenha
-um radar com marcadores sobrepostos. Ela informa o estado de cobertura em texto e
-explica que uma folha ou prática específica ainda pode sustentar preservação ou
-investigação sem autorizar uma classificação macro.
+O relatório vigente apresenta, na home, um mapa de apresentação com três sistemas
+— **Produto**, **Engenharia** e **Operação**. Engenharia abre entrega, qualidade de
+software, arquitetura, plataforma e segurança. Observabilidade fica sob Publicação,
+dentro de Entrega. Gestão (responsabilidade, governança, liderança, colaboração e
+aprendizado) é faixa transversal, não um quarto azulejo. `planning-refinement`
+permanece no pilar `delivery-flow` do motor e aparece em Produto só na projeção.
+A leitura começa pelo cartão de diagnóstico. Estágio ordinal e o mapa de sistemas
+são auxiliares: o produto é o problema e o teste, não o nível. Os oito pilares
+continuam a árvore que `CapabilityTaxonomy.organize` agrega; não indexam a home.
+Um sistema ou disciplina **aparece** quando há folha publicada (cobertura ≥ 1) ou
+finding; não some porque o pilar antigo não fechou duas crianças. Pasta sem folha
+nem finding permanece “não observado”, nunca zero. Recortes de unidade ainda podem
+mostrar o radar dos oito pilares para localizar cobertura interna. Cada eixo
+avaliado do motor é uma estimativa direcional de 0 a 4 calculada dentro da
+capacidade, acompanhada do volume de evidência. Um eixo ausente significa
+evidência insuficiente e nunca é interpretado como zero ou fragilidade.
+Vermelho é reservado a uma fragilidade efetivamente avaliada. O mapa não combina
+sistemas em uma nota global e não substitui findings, bloqueios ou recomendações.
 
 O cálculo pré-piloto converte pesos em níveis ordinais, agrega primeiro por pessoa e
 só então estima o recorte. Isso impede que várias respostas correlacionadas da mesma
@@ -334,8 +339,8 @@ isso evita que uma squad forte esconda outra bloqueada.
 O primeiro plano é o diagnóstico: o que está acontecendo, o que as entrevistas
 mostraram, o que testar e como saber se funcionou. O estágio ordinal descreve a
 consistência do comportamento no elo limitante e fica em detalhe, não no
-cabeçalho. O mapa de contraste (radar) localiza cobertura e diferença entre
-pilares; não publica “N de 4” no primeiro plano.
+cabeçalho. O mapa da home localiza sistemas observados (Produto, Engenharia,
+Operação) e a faixa de Gestão; não publica “N de 4” no primeiro plano.
 
 Quando perspectivas elegíveis descrevem sistemas incompatíveis, o primeiro plano
 fica `Inconclusivo`: a divergência suspende a classificação ordinal até distinguir
@@ -373,14 +378,14 @@ estágio daquela folha, não o rótulo global. Divergência de perspectiva no ho
 o finding (as lentes não veem o mesmo sistema); contradição só discrimina quando
 está no limitador escolhido. A mesma suspensão vale no detalhamento: uma hipótese
 candidata pode ser mostrada para investigação, mas não autoriza intervenção antes
-da triangulação. Radar, mapa por estrutura, calibração e revisão
+da triangulação. Mapa de sistemas, mapa por estrutura, calibração e revisão
 cognitiva permanecem visíveis, mas não competem com a decisão: administração e
 instrumento ficam em `details`; o mapa por estrutura omite recortes que só duplicam o
 diagnóstico global. Nota, confiança, população, incerteza e versão do modelo são
 informações secundárias e explicáveis. Ferramenta, framework e nome de time
 continuam sem pontuar.
 
-O mapa de contraste e o detalhe das capacidades usam estágios qualitativos e **cobertura
+O mapa de sistemas e o detalhe das capacidades usam estágios qualitativos e **cobertura
 temática**, sem decimal, percentual ou “N de 4” no primeiro plano. Cobertura informa quantos
 aspectos do tema foram observados; não significa força causal, consenso nem tamanho
 da amostra. Ordinal, intervalo e

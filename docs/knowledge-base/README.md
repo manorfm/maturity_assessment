@@ -37,7 +37,11 @@ validação de linguagem com as disciplinas, evidência externa) está no
 [`plano de evolução`](../backlog/instrument-evolution-plan.md). A decisão de
 apresentar o produto como diagnóstico de engenharia — e não como framework de
 maturidade — está no
-[`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md). A evolução
+[`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
+A home já projeta Produto, Engenharia e Operação. A sequência aberta do
+relatório apresentável (cartão, UX e sintéticos de validação, sem
+calibração) está no
+[`plano de apresentação`](../backlog/report-presentation-plan.md). A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma
 referência de alta performance está no
 [`plano comparativo`](../backlog/comparative-diagnostic-plan.md). O plano de amostra
