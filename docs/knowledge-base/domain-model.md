@@ -62,8 +62,8 @@
 - **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.
   Três bandas (opaco, reativo, adaptativo) e dois contrastes de apresentação
   (fronteira de times; segurança distinta de governança). Cada caso declara
-  `lookFor` executivo. Valida coerência do produto; não calibra o posterior
-  nem substitui entrevista real.
+  `lookFor` executivo. Valida coerência do produto e alimenta o deck em
+  `/showcase`; não calibra o posterior nem substitui entrevista real.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
   termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da

@@ -36,7 +36,7 @@ test('sintético de alta preserva prática sustentada sem inventar transformaç�
   assertPresentableReport(report, plan.totalPeople, 'high');
   assert.ok((report.classification?.level ?? 0) >= 3);
   assert.equal(report.outcome.kind, 'preserve');
-  assert.match(report.outcome.kindLabel, /preservar/i);
+  assert.match(report.outcome.kindLabel, /manter o que funciona/i);
 });
 
 test('as três bandas da POC produzem relatórios distintos e apresentáveis', () => {

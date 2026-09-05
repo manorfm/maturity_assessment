@@ -113,16 +113,29 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
-compõe um cartão compacto (`density: compact`) e os três sistemas no mesmo
-peso; Gestão é faixa. O cartão visível traz decisão, situação, valor (ou a
-falta medida), teste, o que não resolve e o antipadrão. Fundamento, evidência,
-prioridade e vocabulário metodológico ficam em `details`. Os demais problemas
-aparecem como lista de uma linha (título · sistema organizacional · decidir
-ou investigar). Unidades distintivas ocupam uma linha e não reimprimem o
-cartão. Briefings por público, convites, hipóteses e calibração ficam no
-rodapé administrativo, fechados. O drill-down de área repete o cartão
-compacto e lista os filhos. Não há framework de frontend nem radar no
-primeiro plano. IDs de navegação pertencem apenas ao
+compõe um cartão compacto (`density: compact`), a amostra desta leitura, os
+três sistemas no mesmo peso e o radar de cobertura dos pilares; Gestão é faixa.
+Amostra, sistemas, radar, outras restrições e unidades compartilham o mesmo
+cartão de superfície; os blocos internos usam o fundo da página, não ficam
+soltos no cinza.
+O cartão visível traz decisão,
+situação cotidiana, por que o padrão se repete, o que fazer agora, teste,
+o que não resolve e o antipadrão, sem abrir pela tag de correção. A amostra
+declara pessoas, unidades e o contrato para
+repetir o diagnóstico com dados reais. Fundamento, evidência,
+prioridade e vocabulário metodológico ficam em `details`. Os demais achados
+aparecem em **Outras restrições**, agrupados por frente diagnóstica, com o
+mecanismo visível. Itens da mesma família do limitador ficam como variações;
+as demais frentes não se apresentam como o mesmo efeito.
+Um eixo com “?” no radar significa cobertura temática insuficiente — a
+entrevista não atravessou dois padrões daquela disciplina — e não pede mais
+pessoas nem declara fragilidade. Unidades
+distintivas ocupam uma linha, com link para a cobertura do time, e não
+reimprimem o cartão. Briefings por público são cartões com o pedido de
+decisão, não listas de âncoras; convites, hipóteses e calibração ficam no
+rodapé administrativo, fechados. O drill-down de área mostra o recorte, as
+disciplinas e o radar das crianças. Não há framework de frontend nem radar de
+quinze eixos. IDs de navegação pertencem apenas ao
 relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam
 amarradas ao limitador. Probabilidades, ordinal exato, cobertura percentual, versão,
@@ -134,6 +147,8 @@ do motor. A rota apenas projeta o desfecho já decidido; não infere causa nem e
 solução por texto. O catálogo de orientação vive em `solution-guidance.ts`; a
 composição do desfecho em `report-outcome.ts`.
 Contratos de investigação e preservação ficam em `capability-narrative.ts`. A
+prosa de discriminação descreve o efeito observado e o que ainda não dá para
+dizer; não usa “as respostas mostram que” nem “ainda competem”. A
 triangulação agrega sinais por perfil e folha declarada em `detail_capabilities`;
 não tenta converter capacidades amplas em folhas por nome ou regex.
 
@@ -226,25 +241,30 @@ evidência positiva agregada do recorte; não altera a nota da capacidade nem o
 posterior causal. O finding sanitizado carrega capacidade de solução e prontidão
 junto ao experimento.
 
-O showcase da POC gera três relatórios organizacionais de 18 pessoas em duas
-unidades: comportamento frágil, sistema reativo e prática sustentada. A barra
-de apresentação acrescenta fronteira de times e segurança distinta de
-governança; o showcase semeia as três bandas e a fronteira. O servidor de
-demonstração semeia as jornadas no SQLite; o Playwright inspeciona os três
-relatórios em paralelo, percorre home → sistema → disciplina ou folha nesses
-três mais a fronteira, e grava o índice em `/showcase`. O E2E permanece em um
-worker porque o seed escreve um único SQLite.
+O showcase da POC é uma apresentação do produto, não um índice de inspeção.
+Gera três relatórios organizacionais de 18 pessoas em duas unidades:
+comportamento frágil, sistema reativo e prática sustentada. A barra de
+apresentação acrescenta fronteira de times e segurança distinta de
+governança; o seed inclui as três bandas e a fronteira. O servidor de
+demonstração semeia as jornadas no SQLite pelo mesmo caminho de
+`ParticipationService.answer`. O Playwright percorre o produto ao vivo —
+criar projeto, gerar convites, abrir o link e concluir uma entrevista —
+depois lê os três relatórios em paralelo, percorre home → sistema →
+disciplina ou folha nesses três mais a fronteira, e grava o deck em
+`/showcase`. O E2E permanece em um worker porque o seed escreve um único
+SQLite. Instrumento e calibração ficam dentro de Operação do piloto, fechados.
 A barra de qualidade fica nos
 testes de domínio: pilares publicados ou folhas fortes, limitador sem contradição,
 leitura distinta entre as bandas, briefing de diretoria e ação de área quando há
 problema, e os `lookFor` dos cinco casos de validação. Os seis contrastes da onda 6 permanecem o protocolo de validação humana
 no painel; não são mais gerados como projetos isolados de entrevista curta.
 
-O índice separa cenário simulado, comportamento esperado e resultado produzido.
-Essa verificação é coerência sintética, nunca acurácia. `demo:test-server` recria
-o SQLite e semeia as três bandas mais a fronteira de times; `demo:serve` reabre a mesma base na porta
-3217. O catálogo `capability-narrative.ts` continua o único contrato de prosa para
-investigação e preservação.
+O deck apresenta o percurso do produto e os três casos concluídos. Notas de
+inspeção e `lookFor` ficam recolhidas. Essa verificação é coerência
+sintética, nunca acurácia. `demo:test-server` recria o SQLite e semeia as
+três bandas mais a fronteira de times; `demo:serve` reabre a mesma base na
+porta 3217. O catálogo `capability-narrative.ts` continua o único contrato
+de prosa para investigação e preservação.
 
 Banco, guia, manifesto e porta do E2E podem ser isolados com `E2E_DATABASE_PATH`,
 `E2E_SHOWCASE_GUIDE`, `SHOWCASE_MANIFEST` e `E2E_PORT`; `SHOWCASE_PUBLIC_URL` define a origem gravada

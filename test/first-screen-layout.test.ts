@@ -1,7 +1,17 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
-import { renderFirstScreen, renderOrganizationalAreaIndex, renderOutcome, renderScopeIndex } from '../src/modules/projects/project-routes.js';
+import { AudienceReportProjector } from '../src/modules/inference/domain/audience-report.js';
+import { TransformationPortfolioPlanner } from '../src/modules/inference/domain/transformation-portfolio.js';
+import {
+  renderAudienceBriefs,
+  renderFirstScreen,
+  renderOrganizationalAreaIndex,
+  renderOrganizationalAreaMap,
+  renderOutcome,
+  renderScopeIndex,
+  renderAreaRecorte,
+} from '../src/modules/projects/project-routes.js';
 import type { OutcomeFinding } from '../src/modules/inference/domain/report-outcome.js';
 
 const readyFinding: OutcomeFinding = {
@@ -27,6 +37,13 @@ const readyFinding: OutcomeFinding = {
   recommendationEvidence: {
     supportingParticipants: 6, applicablePopulation: 6, contradictingParticipants: 0,
     patterns: ['causa-capacidade-tomada-pela-proxima-iniciativa'], layers: ['system'], profiles: ['product', 'management', 'data'],
+    strength: {
+      executiveStatus: 'directional',
+      convergence: 'high',
+      populationBreadth: 'medium',
+      perspectiveDiversity: 'medium',
+      causalCoverage: 'low',
+    },
   },
 };
 
@@ -36,7 +53,7 @@ const investigate = (pattern: string, title: string, detailCapability: string): 
 };
 
 const outcome = {
-  kind: 'correct' as const, kindLabel: 'Corrigir o limitador', limiterLabel: 'Gestão de portfólio',
+  kind: 'correct' as const, kindLabel: 'Precisa de correção', limiterLabel: 'Gestão de portfólio',
   reading: '', nextStepTitle: readyFinding.title, nextStepBody: readyFinding.intervention, finding: readyFinding,
 };
 
@@ -72,55 +89,115 @@ function firstScreen(overrides: Partial<Parameters<typeof renderFirstScreen>[0]>
     }],
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    capabilityGroups: overrides.capabilityGroups ?? [
+      leaf('work-management', 'Fluxo'),
+      { ...leaf('continuous-integration', 'Integração'), assessed: false, coverage: .2, evidence: 0 },
+    ],
     ...overrides,
   });
 }
 
-test('cartão compacto mostra decisão, valor e teste sem abrir metodologia', () => {
+test('cartão compacto começa pelo problema e só depois pede a ação', () => {
   const html = renderOutcome(outcome, { density: 'compact' });
   const firstPlane = html.slice(0, html.search(/<details[^>]*class="[^"]*methodology/));
-  assert.match(firstPlane, /Decisão pedida/);
-  assert.match(firstPlane, /O que observamos/);
-  assert.match(firstPlane, /Por que importa/);
-  assert.match(firstPlane, /ainda não foi medido/i);
+  const happening = firstPlane.indexOf('O que está acontecendo');
+  const repeats = firstPlane.indexOf('Por que isso se repete');
+  const action = firstPlane.indexOf('O que fazer agora');
+  assert.ok(happening >= 0 && repeats > happening && action > repeats);
+  assert.match(firstPlane, /comprometidas com a próxima iniciativa|já foram alocadas/);
+  assert.doesNotMatch(firstPlane, /aposta já comeu|comeu as pessoas/);
+  assert.doesNotMatch(firstPlane, /<h2>A próxima iniciativa ocupa a capacidade/);
+  assert.match(firstPlane, /Novos compromissos ocupam toda a capacidade/);
   assert.match(firstPlane, /Não autorizar todo o próximo ciclo/);
+  assert.match(firstPlane, /Como saber se funcionou|Teste:/);
   assert.match(firstPlane, /O que esta decisão não resolve/);
   assert.match(firstPlane, /Não faça/);
+  assert.match(firstPlane, /Precisa de correção/);
+  assert.doesNotMatch(firstPlane, /Próxima decisão/);
+  assert.doesNotMatch(firstPlane, /Corrigir o limitador/);
+  assert.doesNotMatch(firstPlane, /Decisão pedida/);
   assert.match(html, /<details[^>]*>[\s\S]*Lean portfolio/);
   assert.match(html, /<details[^>]*>[\s\S]*Fundamento e evidência/);
   assert.doesNotMatch(firstPlane, /Lean portfolio/);
   assert.doesNotMatch(firstPlane, /Detalhes metodológicos/);
   assert.doesNotMatch(firstPlane, /A organização já consegue fazer isso/);
+  const actionBlock = firstPlane.slice(action);
+  assert.equal((actionBlock.match(/Não autorizar todo o próximo ciclo/g) ?? []).length, 1);
 });
 
-test('first screen coloca decisão e três sistemas antes de lista, unidades e administração', () => {
-  const html = firstScreen();
-  const decision = html.indexOf('Decisão pedida');
+test('força da evidência fala em confirmação, não em evidência direcional', () => {
+  const html = renderOutcome(outcome, { density: 'full' });
+  assert.doesNotMatch(html, /Evidência direcional/);
+  assert.match(html, /Os relatos apontam nesta direção\. Ainda não é confirmação/);
+  assert.match(html, /Acordo entre os relatos/);
+  assert.match(html, /quantas pessoas|Tamanho da base/i);
+});
+
+test('first screen mostra a amostra que o experimento real precisa repetir', () => {
+  const html = firstScreen({
+    sample: {
+      completed: 18,
+      units: [
+        { path: 'Produto em transição/Gama', completed: 9 },
+        { path: 'Produto em transição/Delta', completed: 9 },
+      ],
+    },
+  });
+  assert.match(html, /18 pessoas em 2 unidades/);
+  assert.match(html, /Gama \(9\)/);
+  assert.match(html, /Delta \(9\)/);
+  assert.match(html, /Para repetir com dados reais/);
+  assert.match(html, /18 pessoas em duas unidades/);
+  const sample = html.indexOf('Amostra desta leitura');
   const systems = html.indexOf('Sistemas da organização');
-  const others = html.indexOf('Outros problemas');
+  assert.ok(sample >= 0 && sample < systems);
+});
+
+test('first screen coloca o problema e três sistemas antes da lista, unidades e administração', () => {
+  const html = firstScreen();
+  const problem = html.indexOf('O que está acontecendo');
+  const systems = html.indexOf('Sistemas da organização');
+  const others = html.indexOf('Outras restrições');
   const units = html.indexOf('Unidades');
   const admin = html.search(/Administrar|Instrumento e calibração|Leituras por público/);
-  assert.ok(decision >= 0 && systems > decision && others > systems && units > others);
+  assert.ok(problem >= 0 && systems > problem && others > systems && units > others);
   assert.ok(admin < 0 || admin > units);
   assert.match(html, />Produto</);
   assert.match(html, />Engenharia</);
   assert.match(html, />Operação</);
-  assert.doesNotMatch(html, /<svg/);
-  assert.doesNotMatch(html, /<article class="area-tile[^"]*">[\s\S]*?<h3>Gestão<\/h3>/);
+  assert.match(html, /Ver disciplinas/);
+  assert.match(html, /class="card first-screen-systems"/);
+  assert.match(html, /class="card finding-index"/);
+  assert.match(html, /class="card scope-index"/);
+  assert.match(html, /Mapa de contraste e cobertura/);
+  assert.match(html, /<svg/);
+  assert.ok(html.indexOf('Sistemas da organização') < html.indexOf('Mapa de contraste e cobertura'));
+  assert.doesNotMatch(html, /Outros problemas/);
+  assert.doesNotMatch(html, /Aguarde mais respostas/);
+  assert.doesNotMatch(html, /<article class="area-tile[^"]*">\s*(?:<a[^>]*>)?<h3>Gestão<\/h3>/);
   assert.match(html, /<nav class="area-band" aria-label="Gestão"/);
 });
 
-test('outros problemas cabem em uma linha: título, sistema e decidir ou investigar', () => {
+test('outras restrições separam mecanismos e mostram o que cada um faz', () => {
   const html = firstScreen();
+  assert.match(html, /Outras restrições/);
+  assert.match(html, /Cada grupo é um mecanismo distinto/);
+  assert.match(html, /não remove as frentes abaixo/);
+  assert.match(html, /Integração e feedback tardios|Ambientes, acesso e capacidade compartilhada|Melhoria sem fechamento/);
   assert.match(html, /Preparação concentra espera/);
+  assert.match(html, /sabe empacotar|abre um chamado|Reunir e anotar não é melhorar/);
   assert.match(html, /A lista de melhoria não fecha/);
-  assert.match(html, /Engenharia · investigar/);
-  assert.match(html, /Gestão · investigar/);
+  assert.match(html, /investigar/);
+  assert.match(html, /<article class="observation-card"/);
+  assert.doesNotMatch(html, /sustentam o mesmo efeito/);
+  assert.doesNotMatch(html, /O que alimenta este efeito/);
+  assert.doesNotMatch(html, /<section class="finding-index"[^>]*>[\s\S]*?<ul>[\s\S]*?<li><a/);
   assert.doesNotMatch(html, /Sequência de transformação/);
   assert.doesNotMatch(html, /mostrando os 4/);
+  assert.doesNotMatch(html, /Também observado nas entrevistas/);
 });
 
-test('unidades ocupam uma linha e não reimprimem o cartão nem o radar', () => {
+test('unidades ocupam uma linha, apontam cobertura e não reimprimem o cartão nem o radar', () => {
   const html = renderScopeIndex([{
     id: 'alfa', path: 'Empresa/Squad Alfa',
     classification: { level: 0, label: 'Opaco', limitingCapabilities: ['Integração contínua'] },
@@ -134,13 +211,15 @@ test('unidades ocupam uma linha e não reimprimem o cartão nem o radar', () => 
   assert.match(html, /Empresa\/Squad Alfa/);
   assert.match(html, /Opaco/);
   assert.match(html, /A esteira devolve feedback tarde/);
+  assert.match(html, /Ver cobertura deste time/);
+  assert.match(html, /href="\/capabilities\/continuous-integration\?scope=alfa"/);
   assert.doesNotMatch(html, /outcome-card/);
   assert.doesNotMatch(html, /Próxima decisão/);
   assert.doesNotMatch(html, /Mapa de contraste e cobertura/);
   assert.doesNotMatch(html, /<svg/);
 });
 
-test('drill-down da área repete o cartão curto e lista os filhos', () => {
+test('página de área mostra o recorte, as disciplinas e o radar', () => {
   const map = OrganizationalAreaProjector.project({
     capabilities: [
       { id: 'work-management', label: 'Fluxo', level: 1, confidence: .8, evidence: 4, hasContradiction: false, coverage: 1 },
@@ -149,12 +228,85 @@ test('drill-down da área repete o cartão curto e lista os filhos', () => {
     findings: [readyFinding],
   });
   const path = map.systems.filter((system) => system.id === 'engineering');
-  const card = renderOutcome(outcome, { density: 'compact' });
-  const index = renderOrganizationalAreaIndex(path, { areaBase: '/areas', capabilityBase: '/capabilities' });
-  const html = `${card}${index}`;
-  assert.match(html, /outcome-card compact/);
-  assert.match(html, /Decisão pedida/);
+  const html = renderAreaRecorte(path, {
+    areaBase: '/areas',
+    capabilityBase: '/capabilities',
+    capabilities: [
+      leaf('work-management', 'Fluxo de trabalho'),
+      leaf('platform-autonomy', 'Acesso a capacidades'),
+    ],
+  });
+  assert.match(html, /Recorte: Engenharia|Disciplinas de Engenharia/);
   assert.match(html, /href="\/areas\/delivery"/);
   assert.match(html, /href="\/areas\/platform"/);
-  assert.doesNotMatch(html.slice(0, html.search(/<details/)), /Detalhes metodológicos/);
+  assert.match(html, /Mapa de contraste e cobertura/);
+  assert.match(html, /<svg/);
+  assert.doesNotMatch(html, /outcome-card/);
+  assert.doesNotMatch(html, /Próxima decisão/);
+});
+
+test('cartão compacto não lista hipóteses concorrentes da mesma família', () => {
+  const html = firstScreen({
+    outcome: {
+      ...outcome,
+      finding: {
+        ...readyFinding,
+        causalAnalysis: {
+          knowledgeVersion: 'test',
+          hypothesis: 'A hipótese principal explica o recorte.',
+          alternatives: ['Outra leitura da mesma família.', 'Terceira variação do mesmo limitador.'],
+          evidenceFor: [],
+          evidenceAgainst: [],
+          missingEvidence: 'Falta um evento.',
+          limitations: 'Não cria capacidade.',
+        },
+      },
+    },
+  });
+  const compact = html.slice(0, html.indexOf('Fundamento e evidência'));
+  assert.match(compact, /A hipótese principal explica o recorte/);
+  assert.doesNotMatch(compact, /Hipóteses concorrentes/);
+  assert.doesNotMatch(compact, /Outra leitura da mesma família/);
+});
+
+test('mapa da home aponta Ver disciplinas no sistema observado', () => {
+  const map = OrganizationalAreaProjector.project({
+    capabilities: [
+      { id: 'work-management', label: 'Fluxo', level: 1, confidence: .8, evidence: 4, hasContradiction: false, coverage: 1 },
+    ],
+    findings: [readyFinding],
+  });
+  const html = renderOrganizationalAreaMap(map, { areaBase: '/areas', capabilityBase: '/capabilities' });
+  assert.match(html, /Ver disciplinas/);
+  assert.match(html, /href="\/areas\/engineering"/);
+});
+
+test('briefing de diretoria é um cartão com o pedido, não uma lista de links', () => {
+  const findings = [
+    { ...readyFinding },
+    { kind: 'correction' as const, pattern: 'policy', detailCapability: 'enabling-governance', title: 'Política acumula mudanças pequenas', cause: '', intervention: '', confidence: .9, priority: .9, mechanism: 'policy' as const, containment: 'organizational-policy' as const, decisionAuthority: 'organizational-governance' as const, prescription: { status: 'ready' as const, reason: 'confirmado' } },
+  ];
+  const reports = AudienceReportProjector.project({ findings, portfolio: TransformationPortfolioPlanner.plan(findings) });
+  const html = renderAudienceBriefs(reports, '/capabilities');
+  assert.match(html, /Briefing para diretoria/);
+  assert.match(html, /article class="audience-brief-card"/);
+  assert.match(html, /Pare de autorizar o ciclo seguinte|Autorizar, recusar ou redirecionar/);
+  assert.match(html, /Quem autoriza/);
+  assert.match(html, /Ver detalhe/);
+  assert.doesNotMatch(html, /<ol>[\s\S]*?<li><a href="\/capabilities/);
+});
+
+test('índice de área continua listando filhos sem nota de grupo', () => {
+  const map = OrganizationalAreaProjector.project({
+    capabilities: [
+      { id: 'work-management', label: 'Fluxo', level: 1, confidence: .8, evidence: 4, hasContradiction: false, coverage: 1 },
+      { id: 'platform-autonomy', label: 'Plataforma', level: 1, confidence: .8, evidence: 4, hasContradiction: false, coverage: 1 },
+    ],
+    findings: [readyFinding],
+  });
+  const path = map.systems.filter((system) => system.id === 'engineering');
+  const index = renderOrganizationalAreaIndex(path, { areaBase: '/areas', capabilityBase: '/capabilities' });
+  assert.match(index, /href="\/areas\/delivery"/);
+  assert.match(index, /href="\/areas\/platform"/);
+  assert.doesNotMatch(index, /de 4/);
 });

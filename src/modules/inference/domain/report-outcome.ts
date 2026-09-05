@@ -70,9 +70,9 @@ export type ReportOutcome = {
 
 const kindLabels: Record<ReportOutcomeKind, string> = {
   insufficient: 'Evidência insuficiente',
-  preserve: 'Preservar a prática',
-  correct: 'Corrigir o limitador',
-  evolve: 'Evoluir a prática',
+  preserve: 'Manter o que funciona',
+  correct: 'Precisa de correção',
+  evolve: 'Pode evoluir',
   discriminate: 'Entender a causa antes de agir',
 };
 

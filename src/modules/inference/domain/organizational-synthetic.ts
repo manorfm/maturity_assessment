@@ -27,11 +27,11 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
     name: 'POC — sistema opaco',
     hierarchy: 'Linha sob restrição/Alpha\nLinha sob restrição/Beta',
     units: ['Alpha', 'Beta'],
-    story: 'Dezoito pessoas em duas unidades. Alpha espera esteira, regressão e empacotamento; Beta espera aprovação, ownership e coordenação. O first screen fecha uma restrição sistêmica, não uma coleta.',
+    story: 'Dezoito pessoas em duas unidades. Alpha espera esteira, regressão e empacotamento; Beta espera aprovação, ownership e coordenação. O first screen fecha a restrição sistêmica e mostra o que a alimenta — não um slogan único.',
     lookFor: [
       'Home em Corrigir, com finding pronto de responsabilidade.',
-      'Engenharia e a faixa de Gestão acesas; impacto ainda não medido.',
-      'Nome descreve o estágio opaco; não alega prática repetível nem Agilidade.',
+      'O efeito se apoia em espera de esteira, empacotamento e aprovação, não num slogan único.',
+      'Radar na first screen; “?” é cobertura temática, não falta de gente.',
     ],
   },
   {

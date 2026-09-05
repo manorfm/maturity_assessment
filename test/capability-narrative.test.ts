@@ -13,7 +13,16 @@ test('cada capacidade publicável possui investigação e preservação escritas
     assert.ok(preservation.reading.length >= 60, capabilityId);
     assert.ok(preservation.nextStep.length >= 60, capabilityId);
     assert.notEqual(investigation.uncertainty, `As respostas indicam fragilidade em ${label}, mas ainda não permitem escolher entre capacidade, autonomia, processo ou estrutura como explicação principal.`);
+    assert.doesNotMatch(investigation.uncertainty, /As respostas mostram que/i, capabilityId);
+    assert.doesNotMatch(investigation.uncertainty, /ainda competem/i, capabilityId);
   }
+});
+
+test('integração descreve o que acontece, sem resenha nem lista de hipóteses', () => {
+  const investigation = investigationFor('continuous-integration');
+  assert.match(investigation.uncertainty, /separad|junta as partes|conflito/i);
+  assert.match(investigation.uncertainty, /Ainda não dá para dizer/);
+  assert.doesNotMatch(investigation.uncertainty, /As respostas mostram que Mudanças permanecem/i);
 });
 
 test('capacidade sem narrativa falha na autoria em vez de gerar frase mecânica', () => {

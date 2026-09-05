@@ -14,7 +14,7 @@ import { decideReportOutcome, distinctiveScopes, findingScopeOccurrences, unique
 import { guidanceFor, type SolutionGuidance } from '../inference/domain/solution-guidance.js';
 import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
 import { DomainValidationError, ResourceNotFoundError } from '../../shared/errors.js';
-import { groupFindingsByDiagnosticSystem } from '../inference/domain/problem-system.js';
+import { diagnosticSystemFor, groupFindingsByDiagnosticSystem } from '../inference/domain/problem-system.js';
 import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../inference/domain/diagnostic-portfolio.js';
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
 import { AudienceReportProjector, audienceAsk, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
@@ -37,10 +37,15 @@ export function renderAudienceNavigation(counts: { executiveDecisions: number; t
 }
 
 export function renderAudienceBriefs(reports: AudienceReports, capabilityBase: string): string {
-  const list = (findings: OutcomeFinding[], audience: 'executive' | 'technology-leadership') => `<ol>${findings.map((finding) => `<li><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a><br><span class="muted">${escapeHtml(audienceAsk(finding, audience))} Decisão: ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))}.</span></li>`).join('')}</ol>`;
+  const cards = (findings: OutcomeFinding[], audience: 'executive' | 'technology-leadership') => findings.map((finding) => {
+    const ask = audienceAsk(finding, audience);
+    const happening = guidanceFor(finding.pattern, finding.foundation, finding.title).plainExplanation;
+    const everyday = happening && happening !== finding.title ? `<p>${escapeHtml(happening)}</p>` : '';
+    return `<article class="audience-brief-card"><h3>${escapeHtml(finding.title)}</h3>${everyday}<p><strong>O que essa pessoa precisa decidir.</strong> ${escapeHtml(ask)}</p><p class="muted"><strong>Quem autoriza:</strong> ${escapeHtml(authorityLabel(finding.decisionAuthority ?? 'undetermined'))}.</p><p><a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}">Ver detalhe</a></p></article>`;
+  }).join('');
   const executiveHasContent = reports.executive.decisions.length > 0 || reports.executive.sharedConstraints.length > 0;
-  const executive = executiveHasContent ? `<article class="card" id="report-executive"><p class="eyebrow">Decisões de política, estrutura e investimento</p><h2>Briefing para diretoria</h2>${reports.executive.decisions.length ? `<h3>Decisões organizacionais</h3>${list(reports.executive.decisions, 'executive')}` : ''}${reports.executive.sharedConstraints.length ? `<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${list(reports.executive.sharedConstraints, 'executive')}` : ''}</article>` : '';
-  const technology = reports.technology.systemicConstraints.length ? `<article class="card" id="report-technology"><p class="eyebrow">Restrições técnicas compartilhadas</p><h2>Briefing para liderança de tecnologia</h2>${list(reports.technology.systemicConstraints, 'technology-leadership')}</article>` : '';
+  const executive = executiveHasContent ? `<article class="card" id="report-executive"><p class="eyebrow">O que a diretoria precisa decidir</p><h2>Briefing para diretoria</h2>${reports.executive.decisions.length ? `<h3>Decisões organizacionais</h3>${cards(reports.executive.decisions, 'executive')}` : ''}${reports.executive.sharedConstraints.length ? `<h3>Restrições compartilhadas que podem exigir investimento comum</h3>${cards(reports.executive.sharedConstraints, 'executive')}` : ''}</article>` : '';
+  const technology = reports.technology.systemicConstraints.length ? `<article class="card" id="report-technology"><p class="eyebrow">O que a liderança técnica precisa decidir</p><h2>Briefing para liderança de tecnologia</h2>${cards(reports.technology.systemicConstraints, 'technology-leadership')}</article>` : '';
   return executive || technology ? `<section class="audience-briefs">${executive}${technology}</section>` : '';
 }
 
@@ -178,8 +183,15 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       areaBase,
       capabilityBase,
       confirmedProblemCount: orderedFindings.length,
+      sample: {
+        completed: report.completed,
+        units: report.scopes
+          .filter((scope) => scope.path.split('/').length > 1)
+          .map((scope) => ({ path: scope.path, completed: scope.completed })),
+      },
       ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}),
       ...(competingFinding ? { competingFinding } : {}),
+      capabilityGroups: report.capabilityGroups,
     });
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
@@ -192,16 +204,16 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       <div class="report-home">
       <header><p class="eyebrow">Diagnóstico</p><h1>${escapeHtml(auth.project.name)}</h1></header>
       <section id="report-diagnosis">${firstScreen}${reportAvailability}</section>
-      <details class="methodology admin-footer"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
+      <details class="methodology admin-footer"><summary>Operação do piloto</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
         <label for="unitId">Unidade final</label><select id="unitId" name="unitId">${unitOptions}</select>
         <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
         <button type="submit">Gerar links</button></form></section>
-      ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}</details>
+      ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
+      <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details></details>
       ${audienceArchive}
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
       ${previous}
-      <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details>
       <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>
       </div>`));
   });
@@ -242,7 +254,11 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const status = selected.assessed
       ? `<div class="classification-level">${executiveStage(selected.level)}</div>${coverage}<p class="executive-reading">${escapeHtml(capabilityReading(selected.level))}</p><details class="methodology"><summary>Ver evidências da avaliação</summary><p>Estimativa ordinal interna: ${formatMaturityLevel(selected.level)} de 4. Faixa compatível com as evidências: ${formatMaturityLevel(selected.interval?.lower ?? selected.level)} a ${formatMaturityLevel(selected.interval?.upper ?? selected.level)} · ${selected.observers ?? 0} pessoas e ${selected.evidence} sinais agregados · cobertura temática ${Math.round(selected.coverage * 100)}%.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p></details>`
       : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
-    const diagnosis = selected.children.length ? renderCapabilityRadar(selected.children, base, scopeId) : '';
+    const diagnosis = selected.children.length
+      ? renderCapabilityRadar(selected.children, base, scopeId)
+      : scopeId && groups.length
+        ? renderCapabilityRadar(groups, base, scopeId)
+        : '';
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
     return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOutcome(outcome)}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}`));
   });
@@ -270,7 +286,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const breadcrumbItems = path.map((item, index) => index === path.length - 1
       ? `<span class="breadcrumb-current" aria-current="page">${escapeHtml(item.label)}</span>`
       : `<a href="${areaBase}/${item.id}${scopeQuery}">${escapeHtml(item.label)}</a>`).join('<span class="breadcrumb-separator" aria-hidden="true">›</span>');
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOutcome(report.outcome, { density: 'compact' })}${renderOrganizationalAreaIndex(path, { areaBase, capabilityBase, scopeQuery })}`));
+    const groups = source?.capabilityGroups ?? report.capabilityGroups;
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderAreaRecorte(path, { areaBase, capabilityBase, scopeQuery, capabilities: groups })}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -387,7 +404,7 @@ export function renderClassification(classification: { level: number; label: str
   const reading = divergent
     ? 'Não há uma leitura única segura enquanto as perspectivas descrevem sistemas diferentes.'
     : 'Este estágio descreve o elo que limita o sistema, não a organização inteira. Os demais pilares podem estar em estágios diferentes.';
-  return `<details class="methodology consistency-detail ${divergent ? 'maturity-inconclusive' : `maturity-level-${classification.level}`}"><summary>Consistência do comportamento no elo limitante</summary><div class="classification-level">${escapeHtml(label)}</div><p>${escapeHtml(reading)}</p><dl class="executive-facts"><div><dt>Elo limitante</dt><dd>${escapeHtml(limiter)}</dd></div></dl><p class="muted">${escapeHtml(explanation)}</p></details>`;
+  return `<details class="card methodology consistency-detail ${divergent ? 'maturity-inconclusive' : `maturity-level-${classification.level}`}"><summary>Consistência do comportamento no elo limitante</summary><div class="classification-level">${escapeHtml(label)}</div><p>${escapeHtml(reading)}</p><dl class="executive-facts"><div><dt>Elo limitante</dt><dd>${escapeHtml(limiter)}</dd></div></dl><p class="muted">${escapeHtml(explanation)}</p></details>`;
 }
 
 export function renderDiagnosticFirstPlane(input: {
@@ -422,6 +439,8 @@ export function renderFirstScreen(input: {
   confirmedProblemCount?: number;
   occurrence?: FindingScopeOccurrence;
   competingFinding?: OutcomeFinding;
+  sample?: { completed: number; units: Array<{ path: string; completed: number }> };
+  capabilityGroups?: CapabilityRadarNode[];
 }): string {
   const ordered = uniqueFindingsByPattern(input.findings);
   const competingFinding = input.competingFinding ?? ordered.find((finding) => finding.pattern !== input.outcome.finding?.pattern);
@@ -432,8 +451,21 @@ export function renderFirstScreen(input: {
     ...(competingFinding ? { competingFinding } : {}),
   });
   const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
-  const systems = `<section class="first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase })}</section>`;
-  return `${card}${systems}${renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase)}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
+  const systems = `<section class="card first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase })}</section>`;
+  const radar = input.capabilityGroups?.length
+    ? renderCapabilityRadar(input.capabilityGroups, input.capabilityBase)
+    : '';
+  return `${card}${renderSampleStrip(input.sample)}${systems}${radar}${renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase)}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
+}
+
+function renderSampleStrip(sample?: { completed: number; units: Array<{ path: string; completed: number }> }): string {
+  if (!sample || sample.completed < 1) return '';
+  const units = sample.units.map((unit) => {
+    const name = unit.path.split('/').at(-1) ?? unit.path;
+    return `${escapeHtml(name)} (${unit.completed})`;
+  }).join(' · ');
+  const unitCount = sample.units.length || 1;
+  return `<section class="card sample-strip" aria-label="Amostra desta leitura"><p><strong>Amostra desta leitura.</strong> ${sample.completed} pessoas em ${unitCount} ${unitCount === 1 ? 'unidade' : 'unidades'}${units ? ` — ${units}` : ''}. Trilhas complementares: entrega, ciclo completo, risco, plataforma, arquitetura, produto, portfólio e dados; cada papel ao menos duas vezes.</p><p class="muted">Para repetir com dados reais: 18 pessoas em duas unidades, no mínimo 5 em cada uma. Sem essa composição o cartão não fecha decisão. Calibração (50–100 jornadas rotuladas) é um gate separado.</p></section>`;
 }
 
 type PerspectiveGapView = { title: string; capability: string; strongerProfiles: string[]; constrainedProfiles: string[] };
@@ -495,12 +527,15 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
   const briefing = guidance && outcome.finding && (outcome.kind === 'correct' || outcome.kind === 'evolve')
     ? renderFindingNarrative(outcome.finding, { guidance, affected, priority, evidenceBlock: narrativeEvidenceBlock, causalAnalysis, readinessBlock, technicalDirection, metaSystem }, compact)
     : compact
-      ? `<section><h3>O que observamos</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section><section class="decision-request"><h3>O que recomendamos testar</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>`
+      ? `<section data-narrative="observation"><h3>O que está acontecendo</h3><h2 class="executive-reading">${escapeHtml(outcome.reading || outcome.finding?.title || outcome.nextStepTitle)}</h2></section><section class="decision-request"><h3>O que fazer agora</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>`
       : `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section>${affected}${priority}${evidenceBlock}${diagnosticContext}${causalAnalysis}
       ${evidenceBlock ? '' : `<section><h3>O que as entrevistas mostraram</h3><p>${escapeHtml(interviewReading(outcome))}</p></section>`}${metaSystem}
-      <section><h3>O que recomendamos testar</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>
+      <section><h3>O que fazer agora</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>
       <section><h3>Como saber se funcionou</h3><p>${escapeHtml(successReading(outcome))}</p></section>`;
-  return `<article class="card outcome-card${compact ? ' compact' : ''}"><p class="eyebrow">Próxima decisão</p><p class="tag">${escapeHtml(outcome.kindLabel)}</p><h2>${escapeHtml(outcome.finding?.title ?? outcome.nextStepTitle)}</h2>${briefing}<p class="muted outcome-scope">Onde aparece: ${escapeHtml(outcome.limiterLabel)}</p></article>`;
+  const headline = guidance?.plainExplanation && compact
+    ? ''
+    : `<h2>${escapeHtml(outcome.finding?.title ?? outcome.nextStepTitle)}</h2>`;
+  return `<article class="card outcome-card${compact ? ' compact' : ''}"><p class="eyebrow">O que as entrevistas mostraram</p><p class="tag">${escapeHtml(outcome.kindLabel)}</p>${headline}${briefing}<p class="muted outcome-scope">Onde aparece: ${escapeHtml(outcome.limiterLabel)}</p></article>`;
 }
 
 function renderFindingNarrative(finding: OutcomeFinding, fragments: {
@@ -509,7 +544,7 @@ function renderFindingNarrative(finding: OutcomeFinding, fragments: {
 }, compact = false): string {
   const narrative = projectFindingNarrative(finding);
   if (!compact) return narrative.sections.map((section) => renderNarrativeSection(section, finding, fragments)).join('');
-  const visible = new Set(['decision', 'observation', 'importance', 'experiment', 'investigation']);
+  const visible = new Set(['observation', 'mechanism', 'decision', 'experiment', 'investigation']);
   const foreground = narrative.sections.filter((section) => visible.has(section.id));
   const rest = narrative.sections.filter((section) => !visible.has(section.id));
   const compactFragments = { ...fragments, affected: '', priority: '', evidenceBlock: '', causalAnalysis: '', readinessBlock: '', technicalDirection: '', metaSystem: '' };
@@ -534,14 +569,29 @@ function renderNarrativeSection(section: FindingNarrativeSection, finding: Outco
   guidance: SolutionGuidance; affected: string; priority: string; evidenceBlock: string; causalAnalysis: string;
   readinessBlock: string; technicalDirection: string; metaSystem: string;
 }, compact = false): string {
-  if (section.id === 'decision') return compact
-    ? `<section data-narrative="decision" class="decision-request"><p class="eyebrow">Decisão pedida</p><p><strong>${escapeHtml(finding.experiment?.action ?? finding.intervention)}</strong></p><p>${escapeHtml(section.body)}</p></section>`
-    : `<section data-narrative="decision" class="decision-request"><p class="eyebrow">Decisão pedida</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? finding.intervention)}</strong></p><p>${escapeHtml(section.body)}</p></section>`;
-  if (section.id === 'observation') return `<section data-narrative="observation"><h3>${section.title}</h3><p class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</p></section>`;
+  if (section.id === 'decision') {
+    const action = finding.experiment?.action ?? finding.intervention;
+    const remainder = section.body.startsWith(action) ? section.body.slice(action.length).trim() : section.body;
+    const extra = remainder && remainder !== action ? `<p>${escapeHtml(remainder)}</p>` : '';
+    return compact
+      ? `<section data-narrative="decision" class="decision-request"><h3>${section.title}</h3><p><strong>${escapeHtml(action)}</strong></p>${extra}</section>`
+      : `<section data-narrative="decision" class="decision-request"><h3>${section.title}</h3><p><strong>${escapeHtml(action)}</strong></p>${extra}</section>`;
+  }
+  if (section.id === 'observation') {
+    const catalog = finding.title && finding.title !== fragments.guidance.plainExplanation
+      ? `<p class="muted catalog-title">${escapeHtml(finding.title)}</p>`
+      : '';
+    return compact
+      ? `<section data-narrative="observation"><h3>${section.title}</h3><h2 class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</h2>${catalog}</section>`
+      : `<section data-narrative="observation"><h3>${section.title}</h3><p class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</p>${catalog}</section>`;
+  }
   if (section.id === 'importance') return `<section data-narrative="importance"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.priority}${fragments.metaSystem}</section>`;
   if (section.id === 'capability') return `<section data-narrative="capability"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.affected}</section>`;
   if (section.id === 'evidence') return `<section data-narrative="evidence"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.evidenceBlock}</section>`;
-  if (section.id === 'mechanism') return `<section data-narrative="mechanism"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.causalAnalysis}</section>`;
+  if (section.id === 'mechanism') {
+    const body = compact ? section.body.split(' Hipóteses concorrentes:')[0] ?? section.body : section.body;
+    return `<section data-narrative="mechanism"><h3>${section.title}</h3><p>${escapeHtml(body)}</p>${compact ? '' : fragments.causalAnalysis}</section>`;
+  }
   if (section.id === 'containment') return `<section data-narrative="containment"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p></section>`;
   if (section.id === 'existing-strength') return `<section data-narrative="existing-strength"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.readinessBlock}</section>`;
   if (section.id === 'experiment') {
@@ -549,7 +599,7 @@ function renderNarrativeSection(section: FindingNarrativeSection, finding: Outco
       ? `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p><strong>Princípio aplicado:</strong> ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)} Fonte: ${escapeHtml(finding.foundation.source)}.</p>`
       : `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(fragments.guidance.matureReference)}.</p>`;
     const testBody = compact
-      ? `<p><strong>Teste:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>`
+      ? `<h3>${section.title}</h3><p><strong>Teste:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>`
       : `<p class="eyebrow">Decisão solicitada</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? section.body)}</strong></p><p>Quem conduz: ${escapeHtml(finding.experiment?.owner ?? 'Pessoas responsáveis pelo recorte com o grupo afetado')} · revisão ${escapeHtml(finding.experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p><p><strong>Como saber se funcionou:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}. Critério: ${escapeHtml(finding.experiment?.successCriterion ?? fragments.guidance.successCriterion)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>${foundation}`;
     return `<section data-narrative="experiment"${compact ? '' : ' class="decision-request"'}>${testBody}</section>`;
   }
@@ -569,8 +619,8 @@ function renderTechnicalDirection(direction?: OutcomeFinding['technicalDirection
 
 function renderEvidenceStrength(strength: NonNullable<NonNullable<OutcomeFinding['recommendationEvidence']>['strength']>): string {
   const label = (value: 'low' | 'medium' | 'high') => ({ low: 'Baixa', medium: 'Média', high: 'Alta' })[value];
-  const status = ({ 'local-hypothesis': 'Hipótese local para investigação', directional: 'Evidência direcional', triangulated: 'Evidência triangulada' })[strength.executiveStatus];
-  return `<div class="evidence-assessment"><p><strong>${status}.</strong> Os quatro indicadores respondem perguntas diferentes; nenhum deles, isoladamente, confirma a hipótese.</p><dl class="evidence-strength"><div><dt>Acordo entre os relatos</dt><dd><strong>${label(strength.convergence)}</strong> — proporção das respostas classificáveis que aponta na mesma direção.</dd></div><div><dt>Tamanho da base</dt><dd><strong>${label(strength.populationBreadth)}</strong> — quantidade absoluta de pessoas que sustenta a leitura; por isso 7 de 7 ainda pode ser uma base moderada.</dd></div><div><dt>Variedade de lentes</dt><dd><strong>${label(strength.perspectiveDiversity)}</strong> — quantas responsabilidades diferentes observaram o comportamento.</dd></div><div><dt>Explicação do mecanismo</dt><dd><strong>${label(strength.causalCoverage)}</strong> — se as entrevistas explicam por que o comportamento acontece, e não apenas que ele ocorreu.</dd></div></dl></div>`;
+  const status = ({ 'local-hypothesis': 'Ainda é uma hipótese local', directional: 'Os relatos apontam nesta direção. Ainda não é confirmação', triangulated: 'Várias perspectivas descrevem o mesmo comportamento' })[strength.executiveStatus];
+  return `<div class="evidence-assessment"><p><strong>${status}.</strong></p><dl class="evidence-strength"><div><dt>Acordo entre os relatos</dt><dd><strong>${label(strength.convergence)}</strong> — quantas respostas classificáveis apontam na mesma direção.</dd></div><div><dt>Tamanho da base</dt><dd><strong>${label(strength.populationBreadth)}</strong> — quantas pessoas sustentam a leitura; por isso 7 de 7 ainda pode ser uma base moderada.</dd></div><div><dt>Variedade de funções</dt><dd><strong>${label(strength.perspectiveDiversity)}</strong> — quantas funções diferentes observaram o comportamento.</dd></div><div><dt>Se alguém explicou o porquê</dt><dd><strong>${label(strength.causalCoverage)}</strong> — se as entrevistas explicam por que o comportamento acontece, e não apenas que ele ocorreu.</dd></div></dl></div>`;
 }
 
 function renderRecommendationEvidence(evidence: NonNullable<OutcomeFinding['recommendationEvidence']>, findingTitle: string): string {
@@ -654,18 +704,32 @@ function successReading(outcome: ReportOutcome): string {
   return 'A próxima rodada fecha quando uma restrição recorrente fica visível ou a hipótese é encerrada.';
 }
 
-export function renderFindingIndex(findings: OutcomeFinding[], primaryPattern: string | undefined, map: OrganizationalAreaMap, capabilityBase?: string): string {
+export function renderFindingIndex(findings: OutcomeFinding[], primaryPattern: string | undefined, _map: OrganizationalAreaMap, capabilityBase?: string): string {
   const unique = uniqueFindingsByPattern(findings).filter((finding) => finding.pattern !== primaryPattern);
   if (!unique.length) return '';
-  const items = unique.map((finding) => {
-    const system = findAreaPath(map, finding.detailCapability)?.[0]?.label ?? CapabilityTaxonomy.labelFor(finding.detailCapability);
+  const primarySystem = primaryPattern ? diagnosticSystemFor(primaryPattern) : undefined;
+  const systems = groupFindingsByDiagnosticSystem(unique);
+  const related = systems.filter((system) => primarySystem && system.id === primarySystem.id);
+  const independent = systems.filter((system) => !primarySystem || system.id !== primarySystem.id);
+  const card = (finding: OutcomeFinding) => {
     const stance = finding.prescription?.status === 'investigate' ? 'investigar' : 'decidir';
     const title = capabilityBase
       ? `<a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a>`
       : `<strong>${escapeHtml(finding.title)}</strong>`;
-    return `<li>${title} <span class="muted">· ${escapeHtml(system)} · ${escapeHtml(stance)}</span></li>`;
-  }).join('');
-  return `<section class="finding-index" id="report-portfolio"><h2>Outros problemas</h2><ul>${items}</ul></section>`;
+    const explanation = guidanceFor(finding.pattern, finding.foundation, finding.title).plainExplanation;
+    const mechanism = explanation && explanation !== finding.title ? `<p>${escapeHtml(explanation)}</p>` : '';
+    return `<article class="observation-card">${title}${mechanism}<p class="muted">${escapeHtml(stance)}</p></article>`;
+  };
+  const group = (label: string, items: OutcomeFinding[], note?: string) => (
+    `<div class="observation-group"><h3>${escapeHtml(label)}</h3>${note ? `<p class="muted">${escapeHtml(note)}</p>` : ''}<div class="observation-grid">${items.map(card).join('')}</div></div>`
+  );
+  const relatedBlock = related.map((system) => group(
+    'Variações deste mecanismo',
+    system.findings,
+    'Não são problemas novos: são o mesmo limitador visto em outro recorte.',
+  ));
+  const independentBlock = independent.map((system) => group(system.label, system.findings));
+  return `<section class="card finding-index" id="report-portfolio"><h2>Outras restrições</h2><p>Tratar só o ponto acima não remove as frentes abaixo. Cada grupo é um mecanismo distinto — empacotamento, fila, lote, cerimônia sem fechamento ou fluxo que esconde espera.</p>${relatedBlock.join('')}${independentBlock.join('')}</section>`;
 }
 
 export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPattern?: string, occurrences: FindingScopeOccurrence[] = [], capabilityBase?: string, scopeId?: string): string {
@@ -765,9 +829,13 @@ export function renderScopeIndex(scopes: ScopeReportView[], _capabilityBase: str
   const items = scopes.map((scope) => {
     const outcome = decideReportOutcome({ classification: scope.classification, branches: scope.capabilityGroups, findings: scope.findings, perspectiveGaps: scope.perspectiveGaps });
     const change = outcome.finding?.title ?? outcome.nextStepTitle;
-    return `<li class="scope-line"><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span> <span class="muted">${escapeHtml(change)}</span></li>`;
+    const firstCapability = flattenRadarNodes(scope.capabilityGroups)[0];
+    const coverage = firstCapability
+      ? `<a href="${escapeHtml(`${_capabilityBase}/${firstCapability.id}?scope=${encodeURIComponent(scope.id)}`)}">Ver cobertura deste time</a>`
+      : '';
+    return `<li class="scope-line"><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span> <span class="muted">${escapeHtml(change)}</span> ${coverage}</li>`;
   }).join('');
-  return `<section class="scope-index" id="report-units"><h2>Unidades</h2><ul>${items}</ul></section>`;
+  return `<section class="card scope-index" id="report-units"><h2>Unidades</h2><ul>${items}</ul></section>`;
 }
 
 export function renderScopeReport(scope: ScopeReportView, capabilityBase: string): string {
@@ -830,7 +898,10 @@ export function renderOrganizationalAreaMap(
     const heading = system.observed
       ? `<a href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}"><h3>${escapeHtml(system.label)}</h3></a>`
       : `<h3>${escapeHtml(system.label)}</h3>`;
-    return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}<p class="muted">${escapeHtml(status)}</p>${chips ? `<p class="area-chips">${chips}</p>` : ''}</article>`;
+    const drill = system.observed
+      ? `<p><a class="area-drill" href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}">Ver disciplinas</a></p>`
+      : '';
+    return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}<p class="muted">${escapeHtml(status)}</p>${chips ? `<p class="area-chips">${chips}</p>` : ''}${drill}</article>`;
   }).join('');
   const bandChildren = map.band.children.filter((child) => child.observed);
   const band = map.band.observed
@@ -858,6 +929,49 @@ export function renderOrganizationalAreaIndex(
   return `<nav class="area-index" aria-label="Disciplinas de ${escapeHtml(selected.label)}">${self}${items || (self ? '' : '<p class="muted">Nenhuma disciplina observada neste recorte.</p>')}</nav>`;
 }
 
+export function renderAreaRecorte(
+  path: OrganizationalAreaNode[],
+  urls: { areaBase: string; capabilityBase: string; scopeQuery?: string; capabilities?: CapabilityRadarNode[] },
+): string {
+  const selected = path.at(-1);
+  if (!selected) return '';
+  const index = renderOrganizationalAreaIndex(path, urls);
+  const radarNodes = areaChildrenAsRadar(selected, urls.capabilities ?? []);
+  const radar = radarNodes.length ? renderCapabilityRadar(radarNodes, urls.capabilityBase, urls.scopeQuery ? new URLSearchParams(urls.scopeQuery.replace(/^\?/, '')).get('scope') ?? undefined : undefined) : '';
+  return `<section class="area-recorte"><p class="eyebrow">Recorte: ${escapeHtml(selected.label)}</p><h2>Disciplinas de ${escapeHtml(selected.label)}</h2><p>Abra uma disciplina para ver o que as entrevistas sustentam neste sistema. O mapa abaixo localiza cobertura; “?” não é fragilidade.</p>${index}${radar}</section>`;
+}
+
+function areaLeafIds(node: OrganizationalAreaNode): string[] {
+  if (node.leafId && !node.children.length) return [node.leafId];
+  const nested = node.children.flatMap(areaLeafIds);
+  return node.leafId ? [node.leafId, ...nested] : nested;
+}
+
+function flattenRadarNodes(nodes: CapabilityRadarNode[]): CapabilityRadarNode[] {
+  return nodes.flatMap((node) => [node, ...flattenRadarNodes(node.children)]);
+}
+
+function areaChildrenAsRadar(selected: OrganizationalAreaNode, capabilities: CapabilityRadarNode[]): CapabilityRadarNode[] {
+  const flat = flattenRadarNodes(capabilities);
+  const children = selected.children.length ? selected.children : [selected];
+  return children.map((child) => {
+    const ids = new Set(areaLeafIds(child));
+    const matches = flat.filter((node) => ids.has(node.id));
+    const assessed = matches.filter((node) => node.assessed);
+    return {
+      id: child.leafId ?? child.id,
+      label: child.label,
+      level: assessed.length ? Math.min(...assessed.map((node) => node.level)) : 0,
+      confidence: assessed[0]?.confidence ?? 0,
+      evidence: assessed.reduce((sum, node) => sum + node.evidence, 0),
+      hasContradiction: assessed.some((node) => node.hasContradiction),
+      assessed: assessed.length > 0,
+      coverage: assessed.length ? assessed.reduce((sum, node) => sum + node.coverage, 0) / assessed.length : 0,
+      children: [],
+    };
+  });
+}
+
 function areaChildHref(node: OrganizationalAreaNode, urls: { areaBase: string; capabilityBase: string }): string {
   if (node.kind === 'leaf' && !node.children.some((child) => child.observed)) {
     return `${urls.capabilityBase}/${node.leafId ?? node.id}`;
@@ -871,7 +985,7 @@ export function renderCapabilityRadar(
   scopeId?: string,
 ): string {
   if (!capabilities.some((capability) => capability.assessed)) {
-    return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p><strong>Nenhum pilar possui cobertura temática suficiente.</strong></p><p class="muted">Isso não contradiz o diagnóstico: uma prática específica ainda pode ter evidência suficiente para orientar preservação ou investigação, enquanto os pilares amplos permanecem não avaliados.</p></article>`;
+    return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p><strong>Nenhum pilar possui cobertura temática suficiente.</strong></p><p class="muted">Isso não pede mais gente: as entrevistas não atravessaram dois padrões distintos nestes pilares. Isso não contradiz o diagnóstico: uma prática específica ainda pode ter evidência suficiente para orientar preservação ou investigação, enquanto os pilares amplos permanecem não avaliados.</p></article>`;
   }
   const center = 210;
   const radius = 130;
@@ -887,14 +1001,14 @@ export function renderCapabilityRadar(
   const labels = capabilities.map((capability, index) => {
     const [labelX, labelY] = point(index, 1.14).split(',');
     if (!capability.assessed) {
-      return `<text class="radar-axis-label radar-axis-unassessed" x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}<tspan x="${labelX}" dy="12">evidência insuficiente</tspan></text>`;
+      return `<text class="radar-axis-label radar-axis-unassessed" x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}<tspan x="${labelX}" dy="12">sem cobertura temática</tspan></text>`;
     }
     return `<text class="radar-axis-label" x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}</text>`;
   }).join('');
   const markers = capabilities.map((capability, index) => {
     if (!capability.assessed) {
       const [x, y] = point(index, .12).split(',');
-      return `<g class="radar-marker radar-marker-unassessed" tabindex="0" role="img" aria-label="${escapeHtml(capability.label)}: evidência insuficiente; detalhe indisponível"><circle cx="${x}" cy="${y}" r="9"/><text class="radar-question" x="${x}" y="${Number(y) + 4}">?</text>${radarTooltip(x!, y!, capability.label, 'Evidência insuficiente', 'Aguarde mais respostas para detalhar.')}</g>`;
+      return `<g class="radar-marker radar-marker-unassessed" tabindex="0" role="img" aria-label="${escapeHtml(capability.label)}: sem cobertura temática; detalhe indisponível"><circle cx="${x}" cy="${y}" r="9"/><text class="radar-question" x="${x}" y="${Number(y) + 4}">?</text>${radarTooltip(x!, y!, capability.label, 'Sem cobertura temática', 'As entrevistas não passaram por dois padrões distintos nesta disciplina. Não é falta de pessoas.')}</g>`;
     }
     const [x, y] = point(index, Math.max(.12, capability.level / 4)).split(',');
     const status = radarStatus(capability.level);
@@ -902,8 +1016,8 @@ export function renderCapabilityRadar(
   }).join('');
   const drillNavigation = capabilities.map((capability) => capability.assessed
     ? `<a class="radar-drill-link radar-status-${radarStatus(capability.level).id}" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${executiveStage(capability.level)} · ${coverageLabel(capability.coverage)}</span></a>`
-    : `<span class="radar-drill-link disabled" aria-disabled="true">${escapeHtml(capability.label)} <span>Evidência insuficiente</span></span>`).join('');
-  return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p class="muted">Use o mapa para localizar contraste e aprofundar, não para comparar décimos. Os rótulos mostram estágio e cobertura temática; “?” significa evidência insuficiente, não fragilidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Mapa de contraste das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
+    : `<span class="radar-drill-link disabled" aria-disabled="true">${escapeHtml(capability.label)} <span>Sem cobertura temática</span></span>`).join('');
+  return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p class="muted">Use o mapa para localizar contraste e aprofundar, não para comparar décimos. “?” significa que a entrevista não cobriu dois padrões desta disciplina. Não é falta de pessoas nem fragilidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Mapa de contraste das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
 }
 
 function radarStatus(level: number): { id: string; summary: string } {

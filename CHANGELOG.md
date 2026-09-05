@@ -5,6 +5,57 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.83.0
+
+- A observação compacta passou a explicar o evento de trabalho, sem
+  slogan. O caso de capacidade tomada pela próxima iniciativa deixou
+  “a próxima aposta já comeu as pessoas”.
+
+## 0.82.0
+
+- A first screen passou a colocar amostra, sistemas, restrições e unidades
+  no mesmo tipo de cartão da decisão, em vez de seções soltas no fundo
+  cinza.
+
+## 0.81.0
+
+- A prosa de discriminação passou a explicar o que acontece e o que ainda
+  não dá para dizer. Saiu o padrão “as respostas mostram que… ainda
+  competem…”.
+
+## 0.80.0
+
+- As demais restrições da first screen passaram a se agrupar por frente
+  diagnóstica, com o mecanismo visível. Variações do limitador não
+  aparecem mais como se fossem o mesmo efeito repetido.
+
+## 0.79.0
+
+- A first screen passou a mostrar o radar depois dos sistemas e a
+  tratar os demais achados como o que alimenta o efeito, não como
+  “outros problemas”. “?” no radar deixou de pedir mais respostas.
+
+## 0.78.0
+
+- O relatório passou a abrir pelo problema cotidiano, pela hipótese de
+  por que ele se repete e pelo que fazer agora. As tags deixaram o jargão
+  de limitador. Os demais achados viraram cartões. O radar voltou nas
+  páginas de sistema; os briefings de público deixaram de ser listas de
+  links.
+
+## 0.77.0
+
+- O `/showcase` passou a ser o deck da demonstração: percurso do produto
+  e três casos concluídos. O E2E cria projeto, gera convite e conclui uma
+  entrevista antes de ler os relatórios. Calibração ficou dentro da
+  operação do piloto.
+
+## 0.76.0
+
+- A first screen passou a declarar a amostra da leitura — pessoas, unidades
+  e o contrato para repetir o diagnóstico com dados reais — e o pedido de
+  decisão deixou de se repetir.
+
 ## 0.75.0
 
 - A massa sintética passou a validar apresentação com cinco casos: as

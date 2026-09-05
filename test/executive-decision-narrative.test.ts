@@ -51,8 +51,10 @@ test('cartão do portfólio fecha decisão sem metáfora de aprender nem culpar 
   });
   const guidance = guidanceFor(portfolioFinding.pattern, portfolioFinding.foundation, portfolioFinding.title);
   assert.match(guidance.plainExplanation, /quem autoriza o próximo ciclo/i);
+  assert.match(guidance.plainExplanation, /comprometidas com a próxima iniciativa|já foram alocadas/i);
+  assert.doesNotMatch(guidance.plainExplanation, /aposta já comeu|comeu as pessoas/i);
   assert.doesNotMatch(guidance.plainExplanation, /a equipe sabe|a equipe já recebeu/i);
-  assert.match(html, /Decisão pedida/);
+  assert.match(html, /O que fazer agora/);
   assert.match(html, /liderança de produto, portfólio e orçamento/i);
   assert.match(html, /ainda não foi medido/i);
   assert.match(html, /Capacidade condicionada à revisão de resultado/);

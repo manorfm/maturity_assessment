@@ -41,9 +41,10 @@ mecanismo e ação são campos distintos.
 
 Para este padrão, a leitura correta não é “o time não aprende”. É:
 
-> A próxima aposta já comeu as pessoas. Revisar se a anterior valeu a
-> pena exigiria atrasar algo prometido. Quem autoriza o próximo ciclo
-> decide isso, não o time lotado.
+> As pessoas já foram comprometidas com a próxima iniciativa. Revisar
+> o resultado anterior atrasaria algo que já foi prometido. Quem
+> autoriza o próximo ciclo decide se essa revisão acontece; o time
+> ocupado não reserva essa capacidade sozinho.
 
 - **Diretor / CPO / CFO:** parar de autorizar o ciclo seguinte sem
   capacidade reservada para manter, cortar ou redirecionar o anterior.

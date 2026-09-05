@@ -257,8 +257,10 @@ test('investigação sem causa descreve incerteza sem encaixar o nome em frase a
     focusId: 'observability-practice',
   });
   assert.equal(outcome.kind, 'discriminate');
-  assert.match(outcome.reading, /as respostas|os relatos/i);
+  assert.match(outcome.reading, /procurar gente|juntar pedaços/);
+  assert.match(outcome.reading, /Ainda não dá para dizer/);
   assert.match(outcome.reading, /informaç|acesso|conhecimento/i);
+  assert.doesNotMatch(outcome.reading, /As respostas mostram que/i);
   assert.doesNotMatch(outcome.reading, /Impacto pode ser investigado está em/i);
   assert.match(outcome.nextStepBody, /incidente|mudança|evento/i);
 });

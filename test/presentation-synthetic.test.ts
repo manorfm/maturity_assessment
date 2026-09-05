@@ -31,6 +31,18 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
   assert.ok(investigate.length >= 3);
   assert.equal(systemObserved(report, 'engineering'), true);
   assert.equal(report.organizationalAreas.band.observed, true);
+  const html = firstScreenOf(report);
+  assert.match(html, /Outras restrições/);
+  assert.match(html, /mecanismo distinto/);
+  assert.match(html, /Integração e feedback tardios/);
+  assert.match(html, /Melhoria sem fechamento/);
+  assert.match(html, /Mapa de contraste e cobertura/);
+  assert.doesNotMatch(html, /Aguarde mais respostas/);
+  assert.doesNotMatch(html, /sustentam o mesmo efeito/);
+  assert.ok(
+    /sabe empacotar|abre um chamado|Reunir e anotar não é melhorar/i.test(html),
+    'opaco precisa distinguir empacotamento, fila e cerimônia, não só reformular ownership',
+  );
   assertPresentationLookFor(report, spec.lookFor);
 });
 
@@ -118,12 +130,14 @@ function firstScreenOf(report: ReturnType<typeof runOrganizationalSynthetic>['re
     scopes: report.scopes.filter((scope) => scope.path.split('/').length > 1),
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    capabilityGroups: report.capabilityGroups,
   });
 }
 
 function assertPresentationLookFor(report: ReturnType<typeof runOrganizationalSynthetic>['report'], lookFor: string[]) {
   const html = firstScreenOf(report);
-  const haystack = `${report.outcome.kindLabel} ${report.outcome.finding?.title ?? report.outcome.nextStepTitle} ${html}`;
+  const withoutRadar = html.replace(/<article class="card radar-card">[\s\S]*?<\/article>/g, '');
+  const haystack = `${report.outcome.kindLabel} ${report.outcome.finding?.title ?? report.outcome.nextStepTitle} ${withoutRadar}`;
   assert.doesNotMatch(haystack, /prática repetível/i);
   assert.doesNotMatch(haystack, /organização adaptativa/i);
   assert.doesNotMatch(html, /A consequência alcança custo/);

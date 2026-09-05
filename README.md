@@ -19,13 +19,14 @@ duas unidades**, com trilhas complementares; oito pessoas numa unidade só checa
 O instrumento ainda precisa de jornadas reais, revisão com especialistas e calibração, sem transformar o
 resultado em ranking de pessoas ou times.
 
-O showcase sintético da POC gera três relatórios organizacionais — comportamento
+O showcase sintético da POC apresenta três relatórios organizacionais — comportamento
 frágil, prática intermediária e prática sustentada — com 18 pessoas em duas
-unidades, e semeia o contraste de fronteira de times para inspecionar o mapa.
+unidades, e semeia o contraste de fronteira de times para validar o mapa.
 Os seis contrastes da onda 6 permanecem o protocolo de validação humana;
 somente entrevistas reais contam para o gate de cinco por perspectiva.
-No índice, cenário simulado, comportamento esperado e resultado produzido aparecem
-separados; a execução demonstra coerência sintética, não acurácia empírica.
+A página `/showcase` é o deck desses três casos; o E2E percorre criar
+projeto, gerar convite e concluir uma entrevista no mesmo produto.
+A execução demonstra coerência sintética, não acurácia empírica.
 O painel administrativo registra qual contraste foi validado e mostra cobertura e
 problemas abertos sem associar a entrevista a convite, participação ou pessoa.
 
@@ -416,18 +417,18 @@ npm run build
 npm run test:e2e
 ```
 
-Para gerar casos sintéticos, um índice de inspeção e manter os relatórios
-abertos para investigação manual de textos e resultados:
+Para gerar os três casos, validar o percurso do produto e deixar a
+apresentação aberta:
 
 ```bash
 npm run demo
 ```
 
-O comando recria o SQLite temporário, semeia as três organizações da POC, inspeciona
-os relatórios no Chromium e grava o índice em
+O comando recria o SQLite temporário, semeia as três organizações da POC, percorre
+criar projeto → convite → entrevista no Chromium, lê os relatórios e grava o deck em
 `/private/tmp/maturity-assessment-showcase-pilot-v1.html`. Abra
-`http://127.0.0.1:3217/showcase` para as histórias, o que procurar e os trechos
-observados. `npm run showcase` é um alias do mesmo fluxo.
+`http://127.0.0.1:3217/showcase` para o percurso e os três casos concluídos.
+`npm run showcase` é um alias do mesmo fluxo.
 
 Para uma execução paralela, `E2E_DATABASE_PATH`, `E2E_SHOWCASE_GUIDE`, `E2E_PORT`
 e `SHOWCASE_PUBLIC_URL` isolam banco, guia e portas sem apagar um showcase que já

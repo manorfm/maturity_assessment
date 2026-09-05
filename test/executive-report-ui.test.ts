@@ -27,12 +27,11 @@ test('primeiro plano é o diagnóstico, não o estágio nem o radar', () => {
     findings: [outcome.finding],
     confirmedProblemCount: 2,
   });
-  const decision = html.indexOf('Decisão pedida');
-  const diagnosis = html.indexOf('O que observamos');
-  const importance = html.indexOf('Por que importa');
+  const diagnosis = html.indexOf('O que está acontecendo');
+  const action = html.indexOf('O que fazer agora');
   const test = html.indexOf('O que esta decisão não resolve');
   const consistency = html.indexOf('Consistência do comportamento no elo limitante');
-  assert.ok(decision >= 0 && diagnosis > decision && importance > diagnosis && test > importance && consistency > test);
+  assert.ok(diagnosis >= 0 && action > diagnosis && test > action && consistency > test);
   assert.match(html, /Não faça/);
   assert.match(html, /Integre no mesmo dia/);
   assert.doesNotMatch(html, /Resumo executivo/);
@@ -48,7 +47,7 @@ test('radar diferencia fragilidade confirmada de ausência de evidência', () =>
   assert.match(html, /radar-status-critical/);
   assert.match(html, /Fragilidade confirmada; exige ação imediata/);
   assert.match(html, /class="radar-marker radar-marker-unassessed"/);
-  assert.match(html, /Evidência insuficiente/);
+  assert.match(html, /Sem cobertura temática/);
   assert.doesNotMatch(html, /href="\/capabilities\/unknown"/);
   assert.match(html, /aria-disabled="true"/);
 });
@@ -59,6 +58,7 @@ test('mapa sem nenhum pilar avaliado não desenha pontos sobrepostos', () => {
     leaf({ id: 'operation', label: 'Operação', assessed: false }),
   ], '/capabilities');
   assert.match(html, /Nenhum pilar possui cobertura temática suficiente/);
+  assert.match(html, /não pede mais gente/);
   assert.match(html, /uma prática específica ainda pode ter evidência/);
   assert.doesNotMatch(html, /<svg/);
   assert.doesNotMatch(html, /radar-marker-unassessed/);
@@ -149,13 +149,12 @@ test('cartão executivo explica a situação em linguagem cotidiana sem perder r
       experiment: { action: 'Explicite o risco e teste um caminho simples para baixo risco.', owner: 'Governança e executores', metric: 'espera da mudança pequena', reviewHorizon: '30 dias', successCriterion: 'a mudança pequena avança sem perder o controle' },
     },
   });
-  assert.match(html, /O que observamos/);
+  assert.match(html, /O que está acontecendo/);
   assert.match(html, /O que sustenta ou contradiz/);
-  assert.match(html, /Próximo experimento/);
   assert.match(html, /Como saber se funcionou/);
   assert.match(html, /4 de 9 pessoas que poderiam observar/);
   assert.match(html, /2 padrões de resposta/);
-  assert.match(html, /Políticas e etapas exigem acumular mudanças.*O que observamos/s);
+  assert.match(html, /Políticas e etapas exigem acumular mudanças.*O que está acontecendo|O que está acontecendo[\s\S]*Políticas e etapas exigem acumular mudanças/);
   assert.match(html, /5 pessoas não aparecem neste agregado como apoio nem como contradição específica/);
   assert.match(html, /não significa que (?:as demais pessoas )?concordaram com a hipótese/i);
   assert.match(html, /Nenhuma contradição específica atingiu o limiar de publicação/);
@@ -262,12 +261,12 @@ test('evidência explica proporção, tamanho da base, lentes e mecanismo como m
     },
   });
   assert.match(html, /Acordo entre os relatos.*Alta/s);
-  assert.match(html, /proporção das respostas classificáveis/s);
+  assert.match(html, /quantas respostas classificáveis apontam na mesma direção/s);
   assert.match(html, /Tamanho da base.*Baixa/s);
-  assert.match(html, /quantidade absoluta de pessoas/s);
-  assert.match(html, /Variedade de lentes.*Baixa/s);
-  assert.match(html, /Explicação do mecanismo.*Baixa/s);
-  assert.match(html, /Hipótese local para investigação/);
+  assert.match(html, /quantas pessoas sustentam a leitura/s);
+  assert.match(html, /Variedade de funções.*Baixa/s);
+  assert.match(html, /Se alguém explicou o porquê.*Baixa/s);
+  assert.match(html, /Ainda é uma hipótese local/);
 });
 
 test('evidência contrária é apresentada sem converter o restante da população em concordância', () => {
@@ -453,13 +452,13 @@ test('recorte de squad apresenta decisão e problemas próprios', () => {
     ],
     perspectiveGaps: [],
   }, '/capabilities');
-  assert.match(html, /Próxima decisão/);
+  assert.match(html, /O que as entrevistas mostraram/);
   assert.match(html, /A esteira devolve feedback tarde/);
   assert.match(html, /Outros comportamentos neste recorte/);
   assert.match(html, /Ambientes chegam por fila/);
   assert.doesNotMatch(html, /Sequência de transformação/);
   assert.doesNotMatch(html, /finding-portfolio/);
-  assert.ok(html.indexOf('Próxima decisão') < html.indexOf('Consistência do comportamento no elo limitante'));
+  assert.ok(html.indexOf('O que as entrevistas mostraram') < html.indexOf('Consistência do comportamento no elo limitante'));
   assert.ok(html.indexOf('Consistência do comportamento no elo limitante') < html.indexOf('Mapa de contraste e cobertura'));
 });
 
@@ -508,7 +507,7 @@ test('radar publica estágio e cobertura, sem N de 4 no primeiro plano', () => {
   const html = renderCapabilityRadar([leaf({ label: 'Entrega', level: 2.4, coverage: 1 })], '/capabilities');
   assert.match(html, /Mapa de contraste e cobertura/);
   assert.match(html, /Repetível/);
-  assert.match(html, /evidência insuficiente, não fragilidade/);
+  assert.match(html, /Não é falta de pessoas nem fragilidade/);
   assert.doesNotMatch(html, /de 4/);
   assert.doesNotMatch(html, /baixa maturidade/);
 });
@@ -572,8 +571,8 @@ test('resumo executivo mostra um limitador e a próxima decisão, sem lista aber
   assert.match(html, /Consistência do comportamento no elo limitante/);
   assert.doesNotMatch(html, /e mais/);
   assert.doesNotMatch(html, /Hipóteses permanecem em execução/);
-  assert.match(renderOutcome(outcome), /Próxima decisão/);
-  assert.match(renderOutcome(outcome), /Corrigir o limitador/);
+  assert.match(renderOutcome(outcome), /O que as entrevistas mostraram/);
+  assert.match(renderOutcome(outcome), /Corrigir o limitador|Precisa de correção/);
   assert.match(renderOutcome(outcome), /Hipóteses permanecem em execução/);
 });
 

@@ -149,9 +149,13 @@ o catálogo omite esse contrato.
 ## Recomendações
 
 O projetor `finding-narrative-v1` organiza cada finding nesta ordem pública:
-decisão pedida, observação, valor ou ausência honesta de impacto, por que o
-recorte, experimento, evidência favorável e contrária, hipótese e lacuna,
-contenção/autoridade, capacidade que já funciona, opções técnicas e metodologia.
+o que está acontecendo, por que isso se repete, o que fazer agora, valor ou
+ausência honesta de impacto, por que o recorte, como saber se funcionou,
+evidência favorável e contrária, contenção/autoridade, capacidade que já
+funciona, opções técnicas e metodologia. O cartão compacto usa a prosa
+cotidiana (`plainExplanation`) como título: o evento de trabalho e quem
+decide, sem slogan nem metáfora. O título de catálogo fica secundário. As tags são **Precisa de correção**, **Pode evoluir** e
+**Manter o que funciona**.
 A rota percorre os IDs dessa projeção; não decide uma ordem própria nem
 recalcula inferência. O resumo factual aparece uma vez. Detalhes progressivos
 explicam força da evidência, alternativas e método sem repetir a mesma contagem.
@@ -271,9 +275,11 @@ fragilidade sem causa amarrada pedem textos diferentes. Discriminar pede
 observação de um evento recente, não um playbook. Um ramo em 4 não herda
 discriminação de um neto de cloud.
 
-Discriminação sem causa isolada usa um contrato narrativo da capacidade: declara o
-sinal observado, as explicações que ainda competem e o evento que precisa ser
-reconstruído. O nome da capacidade nunca é encaixado mecanicamente em uma frase.
+Discriminação sem causa isolada usa um contrato narrativo da capacidade: descreve
+o que está acontecendo em linguagem cotidiana, o que ainda não dá para dizer e o
+evento que precisa ser reconstruído. Não abre com “as respostas mostram que”
+nem lista hipóteses como “ainda competem”. O nome da capacidade nunca é
+encaixado mecanicamente em uma frase.
 Preservação também nomeia o comportamento sustentado e um sinal de regressão; não é
 um elogio genérico nem autoriza intervenção para preencher o relatório.
 Todas as folhas possuem narrativas explícitas de investigação e preservação. Uma
@@ -337,8 +343,12 @@ texto diz apenas que as entrevistas ainda não mostraram o caminho funcionando;
 nunca conclui inexistência. As perspectivas que sustentam a leitura são nomeadas,
 contradição zero é explícita e o recorte se explica pela autoridade, não pelo
 rótulo da folha.
-A first screen lista todos os padrões publicados em uma linha cada e separa
-decidir de investigar. Briefings por público continuam a projetar a mesma
+A first screen agrupa os demais padrões publicados em **Outras restrições**,
+por frente diagnóstica — integração e feedback, plataforma, melhoria sem
+fechamento, fluxo — e mostra o mecanismo de cada uma. Padrões da mesma
+família do limitador aparecem como variações, não como problemas novos.
+Tratar só o ponto principal não remove as outras frentes. Decidir e investigar continuam
+distintos. Briefings por público continuam a projetar a mesma
 restrição — autorizar, recusar ou escalar, não comprar ferramenta — sem
 segundo motor, no rodapé administrativo.
 

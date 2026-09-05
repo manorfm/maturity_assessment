@@ -287,16 +287,21 @@ software, arquitetura, plataforma e segurança. Observabilidade fica sob Publica
 dentro de Entrega. Gestão (responsabilidade, governança, liderança, colaboração e
 aprendizado) é faixa transversal, não um quarto azulejo. `planning-refinement`
 permanece no pilar `delivery-flow` do motor e aparece em Produto só na projeção.
-A leitura começa pelo cartão de diagnóstico. Estágio ordinal e o mapa de sistemas
+A leitura começa pelo problema observado, pela hipótese de por que ele se
+repete e pelo que fazer agora. Estágio ordinal e o mapa de sistemas
 são auxiliares: o produto é o problema e o teste, não o nível. Os oito pilares
 continuam a árvore que `CapabilityTaxonomy.organize` agrega; não indexam a home.
 Um sistema ou disciplina **aparece** quando há folha publicada (cobertura ≥ 1) ou
 finding; não some porque o pilar antigo não fechou duas crianças. Pasta sem folha
-nem finding permanece “não observado”, nunca zero. Recortes de unidade ainda podem
-mostrar o radar dos oito pilares para localizar cobertura interna. Cada eixo
+nem finding permanece “não observado”, nunca zero. Clicar em um sistema abre as
+disciplinas e o radar das crianças. A first screen também mostra o radar dos
+oito pilares depois dos sistemas. Unidades apontam **Ver cobertura deste time**.
+Cada eixo
 avaliado do motor é uma estimativa direcional de 0 a 4 calculada dentro da
 capacidade, acompanhada do volume de evidência. Um eixo ausente significa
-evidência insuficiente e nunca é interpretado como zero ou fragilidade.
+cobertura temática insuficiente — dois padrões distintos da disciplina não
+apareceram nas entrevistas — e nunca é interpretado como falta de pessoas,
+zero ou fragilidade.
 Vermelho é reservado a uma fragilidade efetivamente avaliada. O mapa não combina
 sistemas em uma nota global e não substitui findings, bloqueios ou recomendações.
 
@@ -354,7 +359,8 @@ inconclusivo quando qualquer divergência elegível impede uma leitura única do
 Na interface gerencial, cada página fecha um único cartão de decisão. A first
 screen do relatório global mostra, nesta ordem: o cartão compacto (decisão
 pedida, situação, valor só com evidência ou a falta medida, teste, o que não
-resolve e o que não fazer), os três sistemas (Produto, Engenharia, Operação),
+resolve e o que não fazer), a amostra desta leitura (pessoas, unidades e o
+que repetir no experimento real), os três sistemas (Produto, Engenharia, Operação),
 os demais problemas em uma linha cada (título · sistema · decidir ou
 investigar) e as unidades que mudam o recorte, também em uma linha. Gestão
 nunca é o quarto azulejo. Fundamento, evidência agregada e vocabulário

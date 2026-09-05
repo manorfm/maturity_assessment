@@ -27,7 +27,7 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Cada unidade com ação local, restrição recebida ou escalada.',
       'First screen fecha corrigir ou evoluir — não “distinguir explicações”.',
     ],
-    decision: /Corrigir|Evoluir/i,
+    decision: /Precisa de correção|Pode evoluir/i,
   },
   medium: {
     id: 'poc-media',
@@ -37,7 +37,7 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Diretoria e áreas recebem texto acionável.',
       'O cartão principal tem causa e experimento, não disputa de explicações.',
     ],
-    decision: /Evoluir|Corrigir/i,
+    decision: /Pode evoluir|Precisa de correção/i,
   },
   high: {
     id: 'poc-alta',
@@ -47,32 +47,37 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Folhas fortes com cobertura, pilares sem dois padrões continuam não avaliados.',
       'Não converte ausência de problema em lista de evoluções genéricas.',
     ],
-    decision: /Preservar/i,
+    decision: /Manter o que funciona/i,
   },
 };
 
-test('gera relatórios organizacionais de baixa, média e alta para inspeção da POC', async ({ browser, page, baseURL }) => {
+test('apresenta três casos depois de percorrer o produto e validar os relatórios', async ({ browser, page, baseURL }) => {
+  test.setTimeout(180_000);
   const seeded = JSON.parse(readFileSync(manifestPath, 'utf8')) as SeededOrg[];
   const banded = seeded.filter((org) => isBandedCase(org));
   const boundary = seeded.find((org) => org.caseId === 'boundary');
   expect(banded.map((entry) => entry.band)).toEqual(['low', 'medium', 'high']);
   expect(boundary, 'showcase seed must include the team-boundary contrast').toBeTruthy();
+  await walkApplicationLoop(page);
   const collected = await Promise.all(banded.map((org) => inspectSeededOrg(browser, org, baseURL)));
   const readings = collected.map((entry) => `${entry.observed?.decision}|${entry.observed?.limiter}|${entry.observed?.reading}`);
   expect(new Set(readings).size).toBe(3);
-  expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Preservar/i);
-  expect(collected[2]?.observed?.decision ?? '').toMatch(/Preservar/i);
+  expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Manter o que funciona/i);
+  expect(collected[2]?.observed?.decision ?? '').toMatch(/Manter o que funciona/i);
   await inspectBoundaryOrg(browser, boundary!, baseURL);
 
   writeFileSync(SHOWCASE_GUIDE_PATH, buildShowcaseGuide(collected));
   await page.goto('/showcase');
-  await expect(page.getByRole('heading', { name: 'Índice de inspeção' })).toBeVisible();
-  await expect(page.getByText('não substituem calibração')).toBeVisible();
-  await expect(page.getByText('3 de 3 relatórios organizacionais da POC com coerência sintética.')).toBeVisible();
-  await expect(page.getByText(/Validação humana pendente/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Diagnóstico de engenharia' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Como o sistema funciona' })).toBeVisible();
+  await expect(page.getByText('3 de 3 casos concluídos')).toBeVisible();
+  await expect(page.getByText('entrevistas simuladas')).toBeVisible();
+  await expect(page.getByText('18 pessoas em duas unidades').first()).toBeVisible();
+  await expect(page.getByText(/Validação humana pendente/)).toHaveCount(0);
   for (const entry of collected) await expect(page.getByRole('heading', { name: entry.title })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Abrir relatório' })).toHaveCount(3);
 
-  console.log(`[showcase] índice: ${inspectHost}/showcase`);
+  console.log(`[showcase] apresentação: ${inspectHost}/showcase`);
   for (const entry of collected) console.log(`[showcase] ${entry.id}: ${entry.adminUrl}`);
 });
 
@@ -89,8 +94,17 @@ async function inspectSeededOrg(browser: Browser, org: SeededOrg, baseURL: strin
 async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideCase> {
   const expected = expectations[org.band];
   await page.goto(org.adminPath);
-  await expect(page.getByText('Próxima decisão').first()).toBeVisible();
+  await expect(page.getByText('O que as entrevistas mostraram').first()).toBeVisible();
+  await expect(page.getByText(/Amostra desta leitura/).first()).toBeVisible();
+  await expect(page.getByText(/18 pessoas em 2 unidades/).first()).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
+  await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
+  await expect(page.getByText('Aguarde mais respostas')).toHaveCount(0);
+  if (org.band !== 'high') {
+    await expect(page.getByRole('heading', { name: 'Outras restrições' })).toBeVisible();
+    await expect(page.getByText(/mecanismo distinto/)).toBeVisible();
+  }
+  await expect(page.getByText('Instrumento e calibração')).not.toBeVisible();
   const observed = await observeReport(page);
   if (expected.decision) expect(observed.decision).toMatch(expected.decision);
   expect(observed.limiter).not.toMatch(/e mais/i);
@@ -133,6 +147,35 @@ function isBandedCase(org: SeededOrg): boolean {
   return (org.caseId ?? org.band) === org.band;
 }
 
+async function walkApplicationLoop(page: Page): Promise<void> {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Crie um mapa do sistema de trabalho' })).toBeVisible();
+  await page.getByLabel('Nome do projeto').fill('Demonstração ao vivo');
+  const names = page.locator('[data-hierarchy-tree] input');
+  await names.nth(0).fill('Organização demonstração');
+  await names.nth(1).fill('Time Alfa');
+  await expect(page.getByRole('button', { name: 'Criar projeto' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Criar projeto' }).click();
+  await expect(page.getByRole('heading', { name: 'Demonstração ao vivo' })).toBeVisible();
+  await expect(page.getByText('Operação do piloto')).toBeVisible();
+  await page.getByText('Operação do piloto').click();
+  await page.getByRole('button', { name: 'Gerar links' }).click();
+  await expect(page.getByRole('heading', { name: 'Distribua um link por pessoa' })).toBeVisible();
+  const invite = page.locator('#invitation-links code').first();
+  await expect(invite).toBeVisible();
+  const href = (await invite.textContent())?.trim() ?? '';
+  expect(href).toMatch(/\/invite\//);
+  await page.goto(new URL(href).pathname);
+  for (let step = 0; step < 80; step += 1) {
+    if (await page.getByRole('heading', { name: 'Obrigado pela participação' }).count()) break;
+    const option = page.locator('input[name="optionId"]').first();
+    await expect(option).toBeVisible();
+    await option.check();
+    await page.getByRole('button', { name: 'Continuar' }).click();
+  }
+  await expect(page.getByRole('heading', { name: 'Obrigado pela participação' })).toBeVisible();
+}
+
 async function inspectBoundaryOrg(browser: Browser, org: SeededOrg, baseURL: string | undefined): Promise<void> {
   const context = await browser.newContext(baseURL ? { baseURL } : {});
   const page = await context.newPage();
@@ -152,7 +195,7 @@ async function walkHomeToLeaf(page: Page): Promise<void> {
   const system = page.locator('.area-tile.observed a').first();
   await expect(system).toBeVisible();
   await system.click();
-  await expect(page.locator('.outcome-card.compact')).toBeVisible();
+  await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
   await expect(page.locator('nav.capability-navigation')).toBeVisible();
   const next = page.locator('.area-index-link').first();
   if (await next.count()) {

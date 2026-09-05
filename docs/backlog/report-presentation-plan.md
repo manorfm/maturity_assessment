@@ -22,9 +22,11 @@ médio esconde cinco problemas atrás de um slogan.
 
 Quem abre o relatório vê, em uma tela: a decisão pedida, três sistemas
 (Produto, Engenharia, Operação), a faixa de gestão só quando há
-restrição cruzada, e os demais problemas sem corte oculto. O drill-down
-repete o mesmo cartão, mais curto. Três organizações sintéticas
-exercitam o mapa e o cartão sem se chamar o que a classificação não é.
+restrição cruzada, o radar de cobertura e as outras restrições por
+frente diagnóstica. O drill-down
+repete o mesmo cartão, mais curto. As três bandas e os dois contrastes
+sintéticos exercitam o mapa e o cartão sem se chamar o que a
+classificação não é.
 
 ## Sequência
 
@@ -32,7 +34,7 @@ exercitam o mapa e o cartão sem se chamar o que a classificação não é.
 | --- | --- | --- |
 | A | Projetor do mapa | **Vigente.** Home: Produto, Engenharia, Operação; qualidade e segurança sob Engenharia |
 | B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
-| C | UX minimalista | **Vigente.** First screen: cartão compacto + três sistemas; metodologia no rodapé |
+| C | UX minimalista | **Vigente.** First screen: cartão + sistemas + radar + restrições por frente |
 | D | Massa sintética | **Vigente.** Três bandas + fronteira e segurança≠governança passam a barra |
 | E | Folhas candidatas | Só depois de B–D; lacunas viram folha com contrato, uma de cada vez |
 
@@ -69,27 +71,26 @@ novo. HTML e CSS atuais. Hierarquia visual, não mais prosa.
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│  DECISÃO                             Corrigir · Evoluir │
-│  Uma frase do efeito observado                          │
-│  Por que importa — só evento ou “impacto ainda não      │
-│  medido”. Sem lista DORA inventada.                     │
-│  Pedido: verbo + quem autoriza + horizonte              │
+│  O que está acontecendo              Precisa de correção│
+│  Frase cotidiana do efeito                              │
+│  Por que isso se repete                                 │
+│  O que fazer agora · quem autoriza                      │
 │  Teste · o que não resolve · não faça                   │
 │  [detalhe] fundamento e evidência                       │
 └─────────────────────────────────────────────────────────┘
 
 ┌──────────┐ ┌──────────┐ ┌──────────┐
 │ Produto  │ │Engenharia│ │ Operação │
-│ n dec.   │ │ n dec.   │ │ n dec.   │
+│ Ver disc.│ │ Ver disc.│ │ Ver disc.│
 └──────────┘ └──────────┘ └──────────┘
-     Engenharia aberta: Entrega · Qualidade · Arquitetura
-                        Plataforma · Segurança
+     Radar dos oito pilares (depois dos sistemas)
+     “?” = sem cobertura temática, não falta de gente
 
 ── Gestão ──  só se houver restrição cruzada
    Modelo de times · Responsabilidade · Governança · …
 
-Outros problemas    cada um: título · sistema · decidir|investigar
-Unidades            uma linha por unidade, sem reimprimir o cartão
+Outras restrições   frente diagnóstica · mecanismo · decidir|investigar
+Unidades            uma linha + ver cobertura deste time
 ```
 
 ### Regras de layout
@@ -97,11 +98,14 @@ Unidades            uma linha por unidade, sem reimprimir o cartão
 - Um cartão de decisão. O resto é navegação ou lista.
 - Três sistemas no mesmo peso. Gestão nunca é o quarto azulejo.
 - Folha ou finding acende o sistema; vazio é “não observado”, não zero.
+- Radar vem depois dos sistemas; “?” não pede mais pessoas.
+- Os demais achados são frentes distintas; variações do limitador não
+  fingem ser problemas novos.
 - Drill-down: breadcrumb + o mesmo cartão em metade da altura + filhos.
 - Metodologia, calibração, convites e revisão cognitiva ficam no rodapé
   administrativo, fechados.
 - Unidades não repetem o cartão global. Mostram só o que muda no recorte.
-- Tipografia e espaço do tema vigente; sem radar no primeiro plano.
+- Tipografia e espaço do tema vigente. Sem radar de quinze eixos.
 
 ### Aceite visual
 
@@ -122,7 +126,8 @@ A especificação vigente está em `organizational-model.md` e
 
 Três organizações de 18 pessoas em duas unidades (opaco, intermediário,
 sustentável). Scripts coerentes por unidade, sem rotação frágil.
-Showcase inspeciona first screen e índice.
+O `/showcase` apresenta os três casos; o E2E percorre o produto e a
+first screen.
 
 ### O que falta para validar o produto novo
 

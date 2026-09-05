@@ -39,9 +39,16 @@ apresentar o produto como diagnóstico de engenharia — e não como framework d
 maturidade — está no
 [`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
 A home já projeta Produto, Engenharia e Operação. O cartão já fecha
-decisão sem fabricar impacto. A first screen já cabe decisão e três
-sistemas no primeiro plano. A massa sintética já valida apresentação
+decisão sem fabricar impacto. A first screen já cabe decisão, amostra
+e três sistemas no primeiro plano. A massa sintética já valida apresentação
 — três bandas mais fronteira e segurança≠governança — sem calibração.
+O `/showcase` apresenta esses três casos como deck do produto, depois de
+o E2E percorrer criar projeto, convite e uma entrevista.
+A discriminação descreve o efeito observado e o que ainda não dá para
+dizer, sem resenha das respostas. A first screen empilha cartões da
+decisão até as unidades. O radar
+dos pilares vem depois dos sistemas; as demais restrições aparecem por
+frente diagnóstica, não como o mesmo efeito, e “?” não pede mais pessoas.
 A sequência aberta do relatório apresentável (folhas candidatas) está no
 [`plano de apresentação`](../backlog/report-presentation-plan.md). A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma

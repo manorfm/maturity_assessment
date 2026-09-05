@@ -48,8 +48,10 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(firstRespond.body, /minuto/);
   assert.match(firstRespond.body, /Guarde este endereço para retomar/);
   assert.match(invitationPage.body, /guarde o endereço depois do primeiro acesso/);
-  assert.match(dashboard.body, /Próxima decisão/);
+  assert.match(dashboard.body, /O que as entrevistas mostraram/);
+  assert.match(dashboard.body, /Operação do piloto/);
   assert.match(dashboard.body, /Instrumento e calibração/);
+  assert.ok(dashboard.body.indexOf('Operação do piloto') < dashboard.body.indexOf('Instrumento e calibração'));
   assert.match(dashboard.body, /Revisão cognitiva do instrumento/);
   assert.match(dashboard.body, /Cobertura humana dos seis contrastes/);
   assert.match(dashboard.body, /name="showcaseCaseId"/);
@@ -98,7 +100,8 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(report.body, /Sistemas da organização/);
   assert.match(report.body, /Engenharia/);
   assert.match(report.body, /Diagnóstico/);
-  assert.match(report.body, /Próxima decisão/);
+  assert.match(report.body, /O que as entrevistas mostraram/);
+  assert.match(report.body, /Operação do piloto/);
   assert.match(report.body, /Instrumento e calibração/);
   assert.match(report.body, /Calibração do modelo/);
   assert.match(report.body, /posterior exibido permanece provisório/);
@@ -106,8 +109,8 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(report.body, /Consistência do comportamento no elo limitante/);
   assert.doesNotMatch(report.body, /Risco gerencial/);
   assert.doesNotMatch(report.body, /Resumo executivo/);
-  assert.doesNotMatch(report.body, /Mapa de contraste das capacidades observadas/);
-  assert.ok(report.body.indexOf('O que observamos') < report.body.indexOf('Consistência do comportamento no elo limitante'));
+  assert.match(report.body, /Mapa de contraste e cobertura/);
+  assert.ok(report.body.indexOf('O que está acontecendo') < report.body.indexOf('Consistência do comportamento no elo limitante'));
   assert.ok(report.body.indexOf('Sistemas da organização') < report.body.indexOf('Gerar convites individuais'));
   const areaUrl = report.body.match(/href="([^"]+\/areas\/[^"]+)"/)?.[1];
   const capabilityFromHome = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];

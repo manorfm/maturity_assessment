@@ -382,9 +382,9 @@ Folha nova só com contrato. Esta onda não abre folha.
 
 ## Menor experimento
 
-O projetor da onda A, o cartão da onda B e a first screen da onda C
-estão vigentes. Resta a massa que exercita fronteira de times e
-segurança ≠ governança (onda D).
+O projetor da onda A, o cartão da onda B, a first screen da onda C e a
+massa da onda D estão vigentes. Folha nova (onda E) só com contrato —
+comportamento, restrição e rubrica — uma de cada vez.
 
 ## Mudanças na base
 

@@ -40,8 +40,10 @@ jornadas rotuladas e não é substituída por sintéticos.
 
 A home já projeta três sistemas e a faixa de Gestão. O cartão executivo
 já fecha decisão sem impacto fabricado. A first screen já compacta
-decisão, sistemas, demais problemas e unidades; metodologia fica no
-rodapé. A massa sintética já valida apresentação sem calibração. A
+problema, causa, ação, sistemas, radar e outras restrições por frente;
+metodologia fica no rodapé. “?” no radar é cobertura temática, não falta
+de gente. A massa sintética já valida apresentação sem calibração. O
+`/showcase` já é o deck dos três casos, não um índice de inspeção. A
 sequência aberta do relatório apresentável — folhas candidatas, uma de
 cada vez — está em
 [`report-presentation-plan.md`](report-presentation-plan.md). O detalhe
@@ -69,10 +71,10 @@ técnica em camadas está em
 preserva a taxonomia e proíbe pontuar ferramentas; esteira, SAST, ambiente seguro,
 descoberta de domínio, mapeamento arquitetural e ferramentas homologadas aparecem
 somente como técnicas ou famílias condicionadas ao mecanismo demonstrado.
-As ondas 2 a 5 estão na base vigente. O showcase da POC agora gera três
-relatórios organizacionais; os seis contrastes da onda 6 permanecem o protocolo
-de validação humana no painel. A próxima etapa aberta é executar essa validação
-sem contar massa sintética.
+As ondas 2 a 5 estão na base vigente. O showcase da POC já apresenta três
+relatórios organizacionais como deck do produto; os seis contrastes da onda 6
+permanecem o protocolo de validação humana no painel. A próxima etapa aberta
+é executar essa validação sem contar massa sintética.
 O painel já operacionaliza essa coleta com rastreabilidade anônima por contraste e
 perspectiva; os registros reais ainda precisam ser produzidos nas entrevistas.
 

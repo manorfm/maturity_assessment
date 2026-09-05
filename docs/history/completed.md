@@ -6,6 +6,65 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Observação compacta explica o trabalho, não sloganiza
+
+- O título cotidiano do cartão passou a descrever o evento e quem decide;
+  o recorte de capacidade tomada pela próxima iniciativa deixou a
+  metáfora da “aposta”; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
+## 2026-09-05 — First screen empilha cartões até as unidades
+
+- Amostra, sistemas, restrições e unidades passaram a usar a mesma
+  superfície do cartão de decisão; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-09-05 — Discriminação descreve o que acontece, não resenha as respostas
+
+- A narrativa de investigação de cada folha deixou o prefixo jornalístico e
+  o “ainda competem”; passa a dizer o efeito e o que ainda não dá para
+  isolar; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
+## 2026-09-05 — Outras restrições separam frentes, não repetem o limitador
+
+- A lista da first screen passou a agrupar por frente diagnóstica e a
+  mostrar o mecanismo; variações do mesmo limitador não aparecem como
+  problemas novos; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-09-05 — First screen mostra o que alimenta o efeito e o radar
+
+- Os demais achados deixam de parecer “outros problemas” e passam a
+  alimentar o efeito principal; o radar volta depois dos sistemas; “?”
+  explica cobertura temática, não falta de gente; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-09-05 — Relatório lê problema, causa e ação sem jargão de motor
+
+- A first screen abre por o que está acontecendo e por que se repete;
+  o radar volta no sistema; briefings de público são cartões; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-09-05 — Showcase apresenta três casos como deck do produto
+
+- `/showcase` explica o percurso e publica os três relatórios; o E2E
+  percorre criar projeto, convite e uma entrevista; calibração fica
+  dentro de Operação do piloto; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
+## 2026-09-05 — First screen declara a amostra do experimento real
+
+- O cartão compacto é seguido pela composição da leitura (pessoas e
+  unidades) e pelo contrato de 18 pessoas em duas unidades; o pedido de
+  decisão aparece uma vez; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-05 — Sintéticos validam apresentação, não acurácia
 
 - Três bandas mais fronteira de times e segurança≠governança passam a

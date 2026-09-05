@@ -150,13 +150,21 @@ ausência vira “não avaliado”, nunca nível zero. Expandir o radar para qui
 aumentaria a fração não avaliada sem aumentar precisão: precisão vem de padrões
 independentes, concordância e discriminação de causa.
 
-O showcase da POC gera três organizações sintéticas de 18 pessoas, nomeadas pelos
-estágios observados: **opaco**, **reativo** e **adaptativo**. O nome não alega
+A first screen declara a amostra da leitura — quantas pessoas, em quais
+unidades — e o contrato para repetir o diagnóstico com dados reais: 18
+pessoas em duas unidades, no mínimo 5 em cada, com trilhas complementares.
+Calibração continua 50–100 jornadas rotuladas e não se mistura com essa barra.
+
+O showcase da POC apresenta três organizações sintéticas de 18 pessoas, nomeadas pelos
+estágios observados: **opaco**, **reativo** e **adaptativo**. As entrevistas
+são simuladas no mesmo motor da jornada real. O nome não alega
 prática repetível quando a classificação é Reativo. Cada uma publica um first
 screen que um diretor consegue usar — decisão, valor ou a falta dele, e teste,
 ou preservação da prática. Folhas sem causa amarrada continuam no detalhe ou no
 panorama como incerteza, não no cartão principal. Concordar num único padrão
 adaptativo não publica o pilar; a ausência continua “não avaliado”.
+A página `/showcase` é o deck desses três casos; calibração e notas de
+inspeção não abrem a apresentação.
 
 A barra de apresentação acrescenta dois contrastes, sem rotular jornada nem
 mover prior: **fronteira de times** (mesmo artefato, causas diferentes;

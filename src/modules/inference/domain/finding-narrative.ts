@@ -24,21 +24,22 @@ const profileLabels: Record<string, string> = { management: 'Gestão', product: 
 
 export function projectFindingNarrative(finding: OutcomeFinding): FindingNarrative {
   const ready = finding.prescription?.status === 'ready' || (!finding.prescription && Boolean(finding.experiment || finding.technicalDirection));
-  const sections: FindingNarrativeSection[] = [];
-  if (ready) sections.push(section('decision', 'Decisão pedida', decisionBody(finding)));
+  const sections: FindingNarrativeSection[] = [
+    section('observation', 'O que está acontecendo', finding.title),
+    section('mechanism', 'Por que isso se repete', mechanismBody(finding)),
+  ];
+  if (ready) sections.push(section('decision', 'O que fazer agora', decisionBody(finding)));
   sections.push(
-    section('observation', 'O que observamos', finding.title),
     section('importance', 'Por que importa', importanceBody(finding)),
     section('capability', 'Por que este recorte', capabilityBody(finding)),
   );
   if (ready) {
-    if (finding.experiment) sections.push(section('experiment', 'Próximo experimento', `${finding.experiment.action} Responsável: ${finding.experiment.owner}. Revisão ${finding.experiment.reviewHorizon}. Indicador: ${finding.experiment.metric}. Critério: ${finding.experiment.successCriterion}`));
+    if (finding.experiment) sections.push(section('experiment', 'Como saber se funcionou', `${finding.experiment.action} Responsável: ${finding.experiment.owner}. Revisão ${finding.experiment.reviewHorizon}. Indicador: ${finding.experiment.metric}. Critério: ${finding.experiment.successCriterion}`));
   } else {
-    sections.push(section('investigation', 'Próxima investigação', `${finding.prescription?.reason ?? 'Ainda falta discriminar o mecanismo e a contenção.'} ${finding.missingEvidence ?? ''}`.trim()));
+    sections.push(section('investigation', 'O que ainda precisamos esclarecer', `${finding.prescription?.reason ?? 'Ainda falta discriminar o mecanismo e a contenção.'} ${finding.missingEvidence ?? ''}`.trim()));
   }
   sections.push(
     section('evidence', 'O que sustenta ou contradiz', evidenceBody(finding)),
-    section('mechanism', 'O que pode manter o padrão', mechanismBody(finding)),
     section('containment', 'Onde a restrição está contida', containmentBody(finding)),
     section('existing-strength', 'O que já funciona', existingStrengthBody(finding)),
   );
@@ -96,7 +97,7 @@ function mechanismBody(finding: OutcomeFinding): string {
   const alternatives = causal?.alternatives.length ? ` Hipóteses concorrentes: ${causal.alternatives.join(' · ')}.` : '';
   const missing = causal?.missingEvidence || finding.missingEvidence;
   const limitation = causal?.limitations;
-  return `Hipótese principal: ${hypothesis}${alternatives}${missing ? ` Ainda falta: ${missing}.` : ''}${limitation ? ` Limite: ${limitation}.` : ''}`;
+  return `${hypothesis}${alternatives}${missing ? ` Ainda falta: ${missing}.` : ''}${limitation ? ` Limite: ${limitation}.` : ''}`;
 }
 
 function containmentBody(finding: OutcomeFinding): string {

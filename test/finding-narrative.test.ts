@@ -17,10 +17,10 @@ const finding: OutcomeFinding = {
   },
 };
 
-test('narrativa ordena decisão, observação, impacto, recorte, experimento, evidência, causa, contenção, força, técnica e método', () => {
+test('narrativa ordena problema, causa, decisão, impacto, recorte, experimento, evidência, contenção, força, técnica e método', () => {
   const narrative = projectFindingNarrative(finding);
   assert.deepEqual(narrative.sections.map((section) => section.id), [
-    'decision', 'observation', 'importance', 'capability', 'experiment', 'evidence', 'mechanism', 'containment', 'existing-strength', 'technical-options', 'methodology',
+    'observation', 'mechanism', 'decision', 'importance', 'capability', 'experiment', 'evidence', 'containment', 'existing-strength', 'technical-options', 'methodology',
   ]);
   assert.match(narrative.sections.find((section) => section.id === 'observation')!.body, /retorno técnico/i);
   assert.match(narrative.sections.find((section) => section.id === 'importance')!.body, /velocidade de entrega.*qualidade/i);

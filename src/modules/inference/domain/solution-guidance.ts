@@ -565,7 +565,7 @@ const explicit: Record<string, SolutionGuidance> = {
   },
   'causa-capacidade-tomada-pela-proxima-iniciativa': {
     mechanism: 'Novos compromissos ocupam toda a capacidade antes da revisão do trabalho anterior, portanto aprender exige atrasar algo que já foi prometido.',
-    constraintKind: 'priority', plainExplanation: 'A próxima aposta já comeu as pessoas. Revisar se a anterior valeu a pena exigiria atrasar algo prometido. Quem autoriza o próximo ciclo decide isso, não o time lotado.',
+    constraintKind: 'priority', plainExplanation: 'As pessoas já foram comprometidas com a próxima iniciativa. Revisar o resultado anterior atrasaria algo que já foi prometido. Quem autoriza o próximo ciclo decide se essa revisão acontece; o time ocupado não reserva essa capacidade sozinho.',
     solutionKind: 'policy', solutionClass: 'Capacidade condicionada à revisão de resultado', matureReference: 'Lean portfolio management',
     whyItWorks: 'A revisão passa a disputar capacidade antes dos novos compromissos, quando ainda é possível mudar a decisão.', doesNotSolve: 'Não ajuda se a evidência de resultado não existe ou não é confiável.',
     examples: 'Reservar capacidade antes de autorizar todo o próximo ciclo de investimento.', antiPattern: 'Adicionar uma reunião de métricas sem liberar capacidade para agir.',
