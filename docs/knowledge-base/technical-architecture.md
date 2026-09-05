@@ -227,19 +227,22 @@ posterior causal. O finding sanitizado carrega capacidade de solução e prontid
 junto ao experimento.
 
 O showcase da POC gera três relatórios organizacionais de 18 pessoas em duas
-unidades: comportamento frágil, sistema reativo e prática sustentada. O
-servidor de demonstração semeia as jornadas no SQLite; o Playwright inspeciona
-os três relatórios em paralelo — leituras no mesmo banco — e grava o índice em
-`/showcase`. O E2E permanece em um worker porque o seed escreve um único SQLite.
+unidades: comportamento frágil, sistema reativo e prática sustentada. A barra
+de apresentação acrescenta fronteira de times e segurança distinta de
+governança; o showcase semeia as três bandas e a fronteira. O servidor de
+demonstração semeia as jornadas no SQLite; o Playwright inspeciona os três
+relatórios em paralelo, percorre home → sistema → disciplina ou folha nesses
+três mais a fronteira, e grava o índice em `/showcase`. O E2E permanece em um
+worker porque o seed escreve um único SQLite.
 A barra de qualidade fica nos
 testes de domínio: pilares publicados ou folhas fortes, limitador sem contradição,
 leitura distinta entre as bandas, briefing de diretoria e ação de área quando há
-problema. Os seis contrastes da onda 6 permanecem o protocolo de validação humana
+problema, e os `lookFor` dos cinco casos de validação. Os seis contrastes da onda 6 permanecem o protocolo de validação humana
 no painel; não são mais gerados como projetos isolados de entrevista curta.
 
 O índice separa cenário simulado, comportamento esperado e resultado produzido.
 Essa verificação é coerência sintética, nunca acurácia. `demo:test-server` recria
-o SQLite e semeia as três organizações; `demo:serve` reabre a mesma base na porta
+o SQLite e semeia as três bandas mais a fronteira de times; `demo:serve` reabre a mesma base na porta
 3217. O catálogo `capability-narrative.ts` continua o único contrato de prosa para
 investigação e preservação.
 

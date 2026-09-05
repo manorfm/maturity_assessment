@@ -59,9 +59,11 @@
   entrega, qualidade de software, arquitetura, plataforma e segurança; Gestão é
   faixa. Não reparenta `CapabilityTaxonomy` nem cria folha. Sistema ou disciplina
   aparece se houver folha publicada ou finding.
-- **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades, numa
-  banda de comportamento frágil, intermediário ou sustentado, usada para a barra
-  de qualidade da POC. Não substitui calibração nem entrevista real.
+- **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.
+  Três bandas (opaco, reativo, adaptativo) e dois contrastes de apresentação
+  (fronteira de times; segurança distinta de governança). Cada caso declara
+  `lookFor` executivo. Valida coerência do produto; não calibra o posterior
+  nem substitui entrevista real.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
   termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da

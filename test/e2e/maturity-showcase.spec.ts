@@ -1,12 +1,13 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import { buildShowcaseGuide, SHOWCASE_GUIDE_PATH, type ShowcaseGuideCase } from './showcase-guide.js';
-import type { MaturityBand } from '../../src/modules/inference/domain/organizational-synthetic.js';
+import type { MaturityBand, SyntheticCaseId } from '../../src/modules/inference/domain/organizational-synthetic.js';
 
 const inspectHost = process.env.SHOWCASE_PUBLIC_URL ?? 'http://127.0.0.1:3217';
 const manifestPath = process.env.SHOWCASE_MANIFEST ?? '/private/tmp/maturity-assessment-showcase-poc.json';
 
 type SeededOrg = {
+  caseId?: SyntheticCaseId;
   band: MaturityBand;
   title: string;
   story: string;
@@ -52,12 +53,16 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
 
 test('gera relatórios organizacionais de baixa, média e alta para inspeção da POC', async ({ browser, page, baseURL }) => {
   const seeded = JSON.parse(readFileSync(manifestPath, 'utf8')) as SeededOrg[];
-  expect(seeded.map((entry) => entry.band)).toEqual(['low', 'medium', 'high']);
-  const collected = await Promise.all(seeded.map((org) => inspectSeededOrg(browser, org, baseURL)));
+  const banded = seeded.filter((org) => isBandedCase(org));
+  const boundary = seeded.find((org) => org.caseId === 'boundary');
+  expect(banded.map((entry) => entry.band)).toEqual(['low', 'medium', 'high']);
+  expect(boundary, 'showcase seed must include the team-boundary contrast').toBeTruthy();
+  const collected = await Promise.all(banded.map((org) => inspectSeededOrg(browser, org, baseURL)));
   const readings = collected.map((entry) => `${entry.observed?.decision}|${entry.observed?.limiter}|${entry.observed?.reading}`);
   expect(new Set(readings).size).toBe(3);
   expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Preservar/i);
   expect(collected[2]?.observed?.decision ?? '').toMatch(/Preservar/i);
+  await inspectBoundaryOrg(browser, boundary!, baseURL);
 
   writeFileSync(SHOWCASE_GUIDE_PATH, buildShowcaseGuide(collected));
   await page.goto('/showcase');
@@ -72,7 +77,7 @@ test('gera relatórios organizacionais de baixa, média e alta para inspeção d
 });
 
 async function inspectSeededOrg(browser: Browser, org: SeededOrg, baseURL: string | undefined): Promise<ShowcaseGuideCase> {
-  const context = await browser.newContext({ baseURL });
+  const context = await browser.newContext(baseURL ? { baseURL } : {});
   const page = await context.newPage();
   try {
     return await readSeededOrg(page, org);
@@ -95,13 +100,14 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
     await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
   }
+  await walkHomeToLeaf(page);
   return {
     id: expected.id,
     scenarioIds: [],
     title: org.title,
     story: org.story,
     expectedOutcome: expected.expectedOutcome,
-    lookFor: expected.lookFor,
+    lookFor: org.lookFor?.length ? org.lookFor : expected.lookFor,
     adminUrl: toInspectUrl(org.adminPath),
     publicUrl: toInspectUrl(org.publicPath),
     observed,
@@ -121,4 +127,41 @@ async function observeReport(page: Page) {
 
 function toInspectUrl(path: string): string {
   return `${inspectHost}${path}`;
+}
+
+function isBandedCase(org: SeededOrg): boolean {
+  return (org.caseId ?? org.band) === org.band;
+}
+
+async function inspectBoundaryOrg(browser: Browser, org: SeededOrg, baseURL: string | undefined): Promise<void> {
+  const context = await browser.newContext(baseURL ? { baseURL } : {});
+  const page = await context.newPage();
+  try {
+    await page.goto(org.adminPath);
+    await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
+    await expect(page.locator('.area-tile.observed a', { hasText: 'Engenharia' })).toBeVisible();
+    await expect(page.locator('.area-band', { hasText: 'Gestão' })).toBeVisible();
+    await expect(page.getByText(/responsab|fronteira|ownership/i).first()).toBeVisible();
+    await walkHomeToLeaf(page);
+  } finally {
+    await context.close();
+  }
+}
+
+async function walkHomeToLeaf(page: Page): Promise<void> {
+  const system = page.locator('.area-tile.observed a').first();
+  await expect(system).toBeVisible();
+  await system.click();
+  await expect(page.locator('.outcome-card.compact')).toBeVisible();
+  await expect(page.locator('nav.capability-navigation')).toBeVisible();
+  const next = page.locator('.area-index-link').first();
+  if (await next.count()) {
+    await next.click();
+    await expect(page.locator('h1')).toBeVisible();
+  }
+  if (page.url().includes('/areas/') && await page.locator('.area-index-link').count()) {
+    await page.locator('.area-index-link').first().click();
+    await expect(page.locator('h1')).toBeVisible();
+  }
+  expect(page.url()).toMatch(/\/(areas|capabilities)\//);
 }

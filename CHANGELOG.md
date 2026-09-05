@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.75.0
+
+- A massa sintética passou a validar apresentação com cinco casos: as
+  três bandas da POC, fronteira de times e segurança distinta de
+  governança. Cada caso declara `lookFor` executivo. Isso não calibra o
+  posterior.
+
 ## 0.74.0
 
 - A first screen do relatório passou a mostrar o cartão compacto e os

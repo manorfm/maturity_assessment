@@ -21,7 +21,8 @@ resultado em ranking de pessoas ou times.
 
 O showcase sintético da POC gera três relatórios organizacionais — comportamento
 frágil, prática intermediária e prática sustentada — com 18 pessoas em duas
-unidades. Os seis contrastes da onda 6 permanecem o protocolo de validação humana;
+unidades, e semeia o contraste de fronteira de times para inspecionar o mapa.
+Os seis contrastes da onda 6 permanecem o protocolo de validação humana;
 somente entrevistas reais contam para o gate de cinco por perspectiva.
 No índice, cenário simulado, comportamento esperado e resultado produzido aparecem
 separados; a execução demonstra coerência sintética, não acurácia empírica.

@@ -3,7 +3,7 @@
 A onda B já está vigente. Este arquivo guarda a evidência que justificou
 o cartão e as perguntas por audiência. A especificação passou para
 `recommendation-model.md`. A first screen compacta já está vigente; a
-massa sintética de validação continua na onda D de
+massa sintética de validação já está vigente; a onda E permanece em
 [`report-presentation-plan.md`](report-presentation-plan.md).
 
 ## Problema e público

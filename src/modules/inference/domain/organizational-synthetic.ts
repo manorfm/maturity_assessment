@@ -8,36 +8,87 @@ import { DiagnosticSamplePlanner, type SampleRole } from './diagnostic-sample-pl
 import { InferenceService } from '../inference-service.js';
 
 export type MaturityBand = 'low' | 'medium' | 'high';
+export type SyntheticCaseId = MaturityBand | 'boundary' | 'security-governance';
 
 export type PocSyntheticOrg = {
+  id: SyntheticCaseId;
   band: MaturityBand;
   name: string;
   hierarchy: string;
   units: readonly [string, string];
   story: string;
+  lookFor: string[];
 };
 
 export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
   {
+    id: 'low',
     band: 'low',
     name: 'POC — sistema opaco',
     hierarchy: 'Linha sob restrição/Alpha\nLinha sob restrição/Beta',
     units: ['Alpha', 'Beta'],
     story: 'Dezoito pessoas em duas unidades. Alpha espera esteira, regressão e empacotamento; Beta espera aprovação, ownership e coordenação. O first screen fecha uma restrição sistêmica, não uma coleta.',
+    lookFor: [
+      'Home em Corrigir, com finding pronto de responsabilidade.',
+      'Engenharia e a faixa de Gestão acesas; impacto ainda não medido.',
+      'Nome descreve o estágio opaco; não alega prática repetível nem Agilidade.',
+    ],
   },
   {
+    id: 'medium',
     band: 'medium',
     name: 'POC — sistema reativo',
     hierarchy: 'Produto em transição/Gama\nProduto em transição/Delta',
     units: ['Gama', 'Delta'],
     story: 'Dezoito pessoas em duas unidades. Há acordo local e alguns ciclos se fecham. O cartão principal traz um problema com causa e experimento, não uma disputa de explicações.',
+    lookFor: [
+      'Cartão de portfólio: quem autoriza o ciclo, valor ainda não medido, teste visível.',
+      'Cinco outros padrões visíveis; mapa em Produto e Engenharia.',
+      'Nome não alega prática repetível; a restrição não culpa o time.',
+    ],
   },
   {
+    id: 'high',
     band: 'high',
     name: 'POC — prática adaptativa',
     hierarchy: 'Operação sustentável/Plataforma\nOperação sustentável/Produto',
     units: ['Plataforma', 'Produto'],
     story: 'Dezoito pessoas em duas unidades full-cycle. Entrega, operação e aprendizado resistem à urgência. O first screen preserva a prática, sem inventar transformação.',
+    lookFor: [
+      'Decisão de preservar a prática observada.',
+      'Sistemas sem cobertura aparecem como não observado, não como zero.',
+      'Nome não chama a organização de adaptativa; não inventa evoluções genéricas.',
+    ],
+  },
+];
+
+export const POC_VALIDATION_ORGS: readonly PocSyntheticOrg[] = [
+  ...POC_SYNTHETIC_ORGS,
+  {
+    id: 'boundary',
+    band: 'low',
+    name: 'POC — fronteira de times',
+    hierarchy: 'Mesmo artefato/Entrega\nMesmo artefato/Sustentação',
+    units: ['Entrega', 'Sustentação'],
+    story: 'Dezoito pessoas em duas unidades alteram o mesmo artefato. Entrega vê espera de integração; Sustentação vê decisão e ownership fragmentados. As causas diferem; o recorte é um só.',
+    lookFor: [
+      'Finding de responsabilidade ou fronteira, ancorado em Entrega e na faixa.',
+      'Os dois recortes aparecem; o padrão não some atrás de um corte de quatro.',
+      'Não trata a divergência como fragilidade automática do time.',
+    ],
+  },
+  {
+    id: 'security-governance',
+    band: 'medium',
+    name: 'POC — segurança distinta de governança',
+    hierarchy: 'Risco no fluxo/Ameaça\nRisco no fluxo/Aprovação',
+    units: ['Ameaça', 'Aprovação'],
+    story: 'Dezoito pessoas em duas unidades. Em Ameaça o risco muda o caminho da entrega; em Aprovação o mesmo controle trata riscos diferentes. Segurança e governança não viram um slogan.',
+    lookFor: [
+      'Segurança acende em Engenharia; governança na faixa de Gestão.',
+      'Uma unidade mostra ameaça alterando o caminho; a outra, a mesma aprovação.',
+      'Não funde os dois recortes num único slogan de controle.',
+    ],
   },
 ];
 
@@ -238,27 +289,143 @@ const highShared: Record<string, string> = {
   'improvement-event-consequence': 'effect-rechecked',
 };
 
-const scripts: Record<MaturityBand, { shared: Record<string, string>; units: Record<number, Record<string, string>> }> = {
+const boundaryShared: Record<string, string> = {
+  ...contextOccurs,
+  'urgent-change': 'manager-coordinates',
+  'shared-change': 'before-release',
+  'ready-to-release': 'small-automated',
+  'deployment-probe': 'shared-script',
+  'quality-probe': 'risk-together',
+  'integration-cadence': 'isolated-days',
+  'change-verification': 'slow-suite',
+  'environment-access': 'self-service',
+  'credential-practice': 'scoped-identity',
+  'dependency-practice': 'cosmetic-limit',
+  'incentive-practice': 'delivery-weighted',
+  'ai-practice': 'proportional-review',
+  'security-change': 'team-best-effort',
+  'improvement-loop': 'action-list-fades',
+  'blocked-work': 'waiting-external',
+  'decision-context': 'expert-decides',
+  degradation: 'impact-change',
+  'incident-intake': 'impact-routed',
+  'incident-diagnosis': 'correlated-telemetry',
+  'incident-remediation': 'controlled-emergency',
+  'platform-path-to-capability': 'docs-instead-of-path',
+  'platform-cloud-reliability': 'provider-runbook',
+  'product-discovery-depth': 'solution-refinement',
+  'product-outcome-depth': 'optimize-feature',
+  'management-portfolio': 'executive-priority',
+  'management-safety': 'risk-recorded',
+  'quality-risk-strategy': 'standard-suite',
+  'service-ownership-continuity': 'no-accountable-group',
+  'team-health': 'add-coordination',
+  'leadership-enablement': 'escalation-followup',
+};
+
+const boundaryUnits: Record<number, Record<string, string>> = {
+  0: {
+    'shared-change': 'before-release',
+    'integration-cadence': 'isolated-days',
+    'delivery-cause': 'architecture-coupling',
+    'architecture-pressure': 'planning-sync',
+    'blocked-work': 'facilitator-chases',
+    'service-ownership-continuity': 'code-only-owner',
+  },
+  1: {
+    'shared-change': 'coordination',
+    'integration-cadence': 'coordinated-window',
+    'delivery-cause': 'team-boundary',
+    'architecture-pressure': 'ownership-dispute',
+    'blocked-work': 'waiting-external',
+    'blocked-cause': 'architecture-dependency',
+    'service-ownership-continuity': 'no-accountable-group',
+    'urgent-change': 'manager-coordinates',
+  },
+};
+
+const securityGovernanceShared: Record<string, string> = {
+  ...contextOccurs,
+  'urgent-change': 'replan-together',
+  'shared-change': 'continuous',
+  'ready-to-release': 'small-automated',
+  'deployment-probe': 'shared-script',
+  'quality-probe': 'risk-together',
+  'integration-cadence': 'integrated-few-days',
+  'change-verification': 'repeatable-checks',
+  'environment-access': 'self-service',
+  'credential-practice': 'scoped-identity',
+  'dependency-practice': 'decided-limits',
+  'incentive-practice': 'outcome-weighted',
+  'ai-practice': 'proportional-review',
+  'architecture-pressure': 'planning-sync',
+  'team-pressure': 'system-learning',
+  'improvement-loop': 'owned-and-verified',
+  'blocked-work': 'team-resolves',
+  degradation: 'impact-change',
+  'incident-intake': 'impact-routed',
+  'incident-diagnosis': 'correlated-telemetry',
+  'incident-remediation': 'controlled-emergency',
+  'platform-path-to-capability': 'supported-path',
+  'platform-cloud-reliability': 'designed-recovery',
+  'product-discovery-depth': 'problem-evidence',
+  'product-outcome-evidence': 'outcome-reviewed',
+  'product-outcome-depth': 'change-investment',
+  'management-portfolio': 'portfolio-tradeoffs',
+  'quality-risk-strategy': 'risk-shaped',
+  'service-ownership-continuity': 'end-to-end-owner',
+  'team-health': 'observe-and-adapt',
+  'leadership-enablement': 'system-owner',
+};
+
+const securityGovernanceUnits: Record<number, Record<string, string>> = {
+  0: {
+    'security-change': 'risk-guardrails',
+    'security-event-consequence': 'design-changed',
+    'engineering-security-depth': 'threat-and-guardrails',
+    'security-threat-in-change': 'threat-in-design',
+    'security-after-finding': 'finding-changes-path',
+    'security-control-decision': 'contextual-control',
+    'governance-probe': 'proportional',
+    'ready-to-release': 'small-automated',
+  },
+  1: {
+    'security-change': 'same-checklist',
+    'security-event-consequence': 'case-fixed-only',
+    'engineering-security-depth': 'pipeline-scans',
+    'security-threat-in-change': 'checklist-security',
+    'security-after-finding': 'finding-queued',
+    'security-control-decision': 'approval-records-only',
+    'security-control-learning': 'audit-passed',
+    'governance-probe': 'same-flow',
+    'ready-to-release': 'approval',
+  },
+};
+
+const scripts: Record<SyntheticCaseId, { shared: Record<string, string>; units: Record<number, Record<string, string>> }> = {
   low: { shared: lowShared, units: lowUnits },
   medium: { shared: mediumShared, units: mediumUnits },
   high: { shared: highShared, units: {} },
+  boundary: { shared: boundaryShared, units: boundaryUnits },
+  'security-governance': { shared: securityGovernanceShared, units: securityGovernanceUnits },
 };
 
 export function optionForOrganizationalSynthetic(
   node: Pick<AssessmentNode, 'id' | 'options'>,
   role: SampleRole,
   unitIndex: number,
-  band: MaturityBand = 'low',
+  caseId: SyntheticCaseId = 'low',
 ): string {
   if (node.id === 'respondent-context') return role.profile;
   if (node.id === 'work-context') return role.workContext;
-  const wanted = scripts[band].units[unitIndex]?.[node.id] ?? scripts[band].shared[node.id] ?? optionByBand(node.options, band);
-  return node.options.some((option) => option.id === wanted) ? wanted : optionByBand(node.options, band);
+  const fallbackBand = POC_VALIDATION_ORGS.find((org) => org.id === caseId)?.band ?? 'low';
+  const wanted = scripts[caseId].units[unitIndex]?.[node.id] ?? scripts[caseId].shared[node.id] ?? optionByBand(node.options, fallbackBand);
+  return node.options.some((option) => option.id === wanted) ? wanted : optionByBand(node.options, fallbackBand);
 }
 
-export function runOrganizationalSynthetic(db: Database, options: { band?: MaturityBand } = {}) {
-  const band = options.band ?? 'low';
-  const spec = POC_SYNTHETIC_ORGS.find((org) => org.band === band)!;
+export function runOrganizationalSynthetic(db: Database, options: { band?: MaturityBand; caseId?: SyntheticCaseId } = {}) {
+  const caseId = options.caseId ?? options.band ?? 'low';
+  const spec = POC_VALIDATION_ORGS.find((org) => org.id === caseId)!;
   const plan = DiagnosticSamplePlanner.forGate('organizational-diagnostic');
   const projects = new ProjectService(db);
   const invitations = new InvitationService(db);
@@ -271,14 +438,18 @@ export function runOrganizationalSynthetic(db: Database, options: { band?: Matur
   plan.units.forEach((unitPlan, unitIndex) => {
     const unit = units.find((candidate) => candidate.name === spec.units[unitIndex]) ?? units[unitIndex]!;
     const tokens = invitations.createBatch(projectId, unit.id, unitPlan.roles.length).tokens;
-    unitPlan.roles.forEach((role, index) => completeJourney(catalog, invitations, participations, tokens[index]!, role, unitIndex, band));
+    unitPlan.roles.forEach((role, index) => completeJourney(catalog, invitations, participations, tokens[index]!, role, unitIndex, caseId));
   });
   const report = new InferenceService(db).report(projectId, 5);
-  return { band, spec, plan, created, projectId, report };
+  return { band: spec.band, caseId, spec, plan, created, projectId, report };
 }
 
 export function runPocSyntheticSuite(db: Database) {
   return POC_SYNTHETIC_ORGS.map((org) => runOrganizationalSynthetic(db, { band: org.band }));
+}
+
+export function runPresentationValidationSuite(db: Database) {
+  return POC_VALIDATION_ORGS.map((org) => runOrganizationalSynthetic(db, { caseId: org.id }));
 }
 
 function completeJourney(
@@ -288,7 +459,7 @@ function completeJourney(
   token: string,
   role: SampleRole,
   unitIndex: number,
-  band: MaturityBand,
+  caseId: SyntheticCaseId,
 ): void {
   const claimed = invitations.claim(token) as { resumeToken: string };
   let guard = 0;
@@ -296,7 +467,7 @@ function completeJourney(
     if (guard++ > 80) throw new Error(`Synthetic journey exceeded 80 answers for ${role.profile}/${role.workContext}`);
     const current = participations.find(claimed.resumeToken)!;
     const node = catalog.getNode(current.graph_version, current.current_node, current.profile)!;
-    const option = optionForOrganizationalSynthetic(node, role, unitIndex, band);
+    const option = optionForOrganizationalSynthetic(node, role, unitIndex, caseId);
     const result = participations.answer(claimed.resumeToken, option);
     if (result === 'invalid') throw new Error(`Invalid synthetic answer ${option} on ${node.id}`);
   }

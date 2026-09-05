@@ -1,7 +1,7 @@
 # Plano: relatório apresentável — mapa, cartão, UX e sintéticos
 
-Hipótese ainda não incorporada. Consolida a sequência aberta depois da
-inspeção do showcase. Detalhe do mapa permanece em
+Ondas A–D estão na base. Resta a hipótese das folhas candidatas (onda E).
+Detalhe do mapa permanece em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md);
 detalhe da prosa do cartão em
 [`executive-decision-narrative-plan.md`](executive-decision-narrative-plan.md).
@@ -33,7 +33,7 @@ exercitam o mapa e o cartão sem se chamar o que a classificação não é.
 | A | Projetor do mapa | **Vigente.** Home: Produto, Engenharia, Operação; qualidade e segurança sob Engenharia |
 | B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
 | C | UX minimalista | **Vigente.** First screen: cartão compacto + três sistemas; metodologia no rodapé |
-| D | Massa sintética | Três orgs + um caso de fronteira de times passam a barra do produto |
+| D | Massa sintética | **Vigente.** Três bandas + fronteira e segurança≠governança passam a barra |
 | E | Folhas candidatas | Só depois de B–D; lacunas viram folha com contrato, uma de cada vez |
 
 Fora: LLM, React por antecipação, radar de quinze eixos, nó Agilidade,
@@ -114,7 +114,9 @@ teste.
 
 ## Onda D — Massa sintética para validar o produto
 
-Não é calibração. É barra de **apresentação e coerência**.
+**Entregue.** Não é calibração. É barra de **apresentação e coerência**.
+A especificação vigente está em `organizational-model.md` e
+`technical-architecture.md`.
 
 ### O que já existe e permanece
 
@@ -167,6 +169,4 @@ cada vez. Tuckman continua interpretação, não filho.
 
 ## Mudanças na base, quando cada onda fechar
 
-A, B e C já estão na base. D: `organizational-model.md` (sintético
-valida apresentação, não acurácia). E: `assessment-model.md` por folha
-nova.
+A, B, C e D já estão na base. E: `assessment-model.md` por folha nova.

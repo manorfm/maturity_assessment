@@ -6,6 +6,14 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Sintéticos validam apresentação, não acurácia
+
+- Três bandas mais fronteira de times e segurança≠governança passam a
+  barra do mapa e do cartão; cada caso declara `lookFor`; o E2E percorre
+  home → sistema → folha nos três mais a fronteira; ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-05 — First screen compacta decisão e três sistemas
 
 - O cartão compacto mostra decisão, valor (ou a falta medida) e teste;

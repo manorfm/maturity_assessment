@@ -1,6 +1,6 @@
 import { rmSync, writeFileSync } from 'node:fs';
 import { createDatabase } from '../../src/shared/database.js';
-import { POC_SYNTHETIC_ORGS, runPocSyntheticSuite } from '../../src/modules/inference/domain/organizational-synthetic.js';
+import { POC_SYNTHETIC_ORGS, runOrganizationalSynthetic, runPocSyntheticSuite } from '../../src/modules/inference/domain/organizational-synthetic.js';
 
 const databasePath = process.env.DATABASE_PATH ?? '/private/tmp/maturity-assessment-e2e.sqlite';
 if (!databasePath.startsWith('/private/tmp/maturity-assessment-e2e-') && databasePath !== '/private/tmp/maturity-assessment-e2e.sqlite') {
@@ -13,17 +13,20 @@ const outcomes: Record<string, string> = {
   low: 'Publicar limitador, decisão de diretoria e ação por unidade, sem contradizer o elo frágil.',
   medium: 'Mostrar prática intermediária com findings e ações, distinta da organização frágil e da sustentada.',
   high: 'Preservar o comportamento observado sem exigir cargo, ferramenta sofisticada ou transformação organizacional.',
+  boundary: 'Mostrar o mesmo artefato com causas diferentes: responsabilidade na Entrega e na faixa, sem sumir no corte de quatro.',
 };
 
 const db = createDatabase(databasePath);
-const suite = runPocSyntheticSuite(db);
+const suite = [...runPocSyntheticSuite(db), runOrganizationalSynthetic(db, { caseId: 'boundary' })];
 const manifest = suite.map((entry) => {
-  const spec = POC_SYNTHETIC_ORGS.find((org) => org.band === entry.band)!;
+  const spec = entry.spec ?? POC_SYNTHETIC_ORGS.find((org) => org.band === entry.band)!;
   return {
+    caseId: entry.caseId,
     band: entry.band,
     title: spec.name,
     story: spec.story,
-    expectedOutcome: outcomes[entry.band],
+    lookFor: spec.lookFor,
+    expectedOutcome: outcomes[entry.caseId] ?? outcomes[entry.band],
     adminPath: `/projects/${entry.created.publicId}/manage/${entry.created.adminSecret}`,
     publicPath: `/p/${entry.created.publicId}`,
   };
