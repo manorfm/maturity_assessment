@@ -112,19 +112,17 @@ avaliadas. Capacidades sem cobertura usam marcador neutro, ficam fora da geometr
 e não oferecem navegação. A apresentação não recalcula a inferência nem depende de
 framework de frontend.
 
-O HTML renderizado no servidor segue divulgação progressiva: um cartão de decisão
-em linguagem operacional mantém situação, prioridade, teste, critério e limite no
-primeiro plano. Base das entrevistas, justificativa da prioridade, hipóteses e
-fundamento técnico ficam em detalhes expansíveis. Depois da decisão, uma navegação
-por âncoras conduz às projeções de diretoria, liderança de tecnologia, gerência
-local e especialistas; todas consomem o mesmo diagnóstico e o mesmo portfólio.
-Essa navegação só aparece quando existem ao menos dois destinos úteis. Públicos sem
-decisão ou restrição confirmada não geram cartões desabilitados nem briefings vazios;
-as projeções continuam existindo no domínio e aparecem quando recebem conteúdo.
-O panorama sequenciado vem após os briefings e pertence ao relatório global. Cada
-recorte estrutural preserva a decisão local, a leitura por autoridade e até quatro
-comportamentos relacionados, mas não repete a sequência de transformação; seu radar
-orienta o aprofundamento sem reabrir a priorização. IDs de navegação pertencem apenas ao
+O HTML renderizado no servidor segue divulgação progressiva. A first screen
+compõe um cartão compacto (`density: compact`) e os três sistemas no mesmo
+peso; Gestão é faixa. O cartão visível traz decisão, situação, valor (ou a
+falta medida), teste, o que não resolve e o antipadrão. Fundamento, evidência,
+prioridade e vocabulário metodológico ficam em `details`. Os demais problemas
+aparecem como lista de uma linha (título · sistema organizacional · decidir
+ou investigar). Unidades distintivas ocupam uma linha e não reimprimem o
+cartão. Briefings por público, convites, hipóteses e calibração ficam no
+rodapé administrativo, fechados. O drill-down de área repete o cartão
+compacto e lista os filhos. Não há framework de frontend nem radar no
+primeiro plano. IDs de navegação pertencem apenas ao
 relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam
 amarradas ao limitador. Probabilidades, ordinal exato, cobertura percentual, versão,

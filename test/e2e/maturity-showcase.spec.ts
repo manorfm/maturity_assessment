@@ -85,11 +85,14 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   const expected = expectations[org.band];
   await page.goto(org.adminPath);
   await expect(page.getByText('Próxima decisão').first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
   const observed = await observeReport(page);
   if (expected.decision) expect(observed.decision).toMatch(expected.decision);
   expect(observed.limiter).not.toMatch(/e mais/i);
   expect(observed.reading.length).toBeGreaterThan(40);
   if (org.band !== 'high') {
+    await expect(page.getByText('O que esta decisão não resolve').first()).toBeVisible();
+    await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
   }
   return {

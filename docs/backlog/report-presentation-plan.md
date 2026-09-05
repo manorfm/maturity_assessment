@@ -32,7 +32,7 @@ exercitam o mapa e o cartão sem se chamar o que a classificação não é.
 | --- | --- | --- |
 | A | Projetor do mapa | **Vigente.** Home: Produto, Engenharia, Operação; qualidade e segurança sob Engenharia |
 | B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
-| C | UX minimalista | First screen cabe em uma tela; metodologia some do primeiro plano |
+| C | UX minimalista | **Vigente.** First screen: cartão compacto + três sistemas; metodologia no rodapé |
 | D | Massa sintética | Três orgs + um caso de fronteira de times passam a barra do produto |
 | E | Folhas candidatas | Só depois de B–D; lacunas viram folha com contrato, uma de cada vez |
 
@@ -61,8 +61,9 @@ O detalhe histórico permanece em
 
 ## Onda C — Modelo visual UX
 
-Sem framework novo. HTML e CSS atuais. Hierarquia visual, não mais
-prosa.
+**Entregue.** A especificação vigente está em `assessment-model.md`,
+`recommendation-model.md` e `technical-architecture.md`. Sem framework
+novo. HTML e CSS atuais. Hierarquia visual, não mais prosa.
 
 ### First screen (uma tela)
 
@@ -166,6 +167,6 @@ cada vez. Tuckman continua interpretação, não filho.
 
 ## Mudanças na base, quando cada onda fechar
 
-A e B já estão na base. C: `technical-architecture.md` (first screen).
-D: `organizational-model.md` (sintético valida apresentação, não
-acurácia). E: `assessment-model.md` por folha nova.
+A, B e C já estão na base. D: `organizational-model.md` (sintético
+valida apresentação, não acurácia). E: `assessment-model.md` por folha
+nova.

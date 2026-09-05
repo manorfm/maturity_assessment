@@ -30,12 +30,11 @@ test('primeiro plano é o diagnóstico, não o estágio nem o radar', () => {
   const decision = html.indexOf('Decisão pedida');
   const diagnosis = html.indexOf('O que observamos');
   const importance = html.indexOf('Por que importa');
-  const test = html.indexOf('Próximo experimento');
-  const success = html.indexOf('Como saber se funcionou');
+  const test = html.indexOf('O que esta decisão não resolve');
   const consistency = html.indexOf('Consistência do comportamento no elo limitante');
-  assert.ok(decision >= 0 && diagnosis > decision && importance > diagnosis && test > importance && success > test);
-  assert.ok(consistency > success);
-  assert.match(html, /Quem conduz: Fluxo/);
+  assert.ok(decision >= 0 && diagnosis > decision && importance > diagnosis && test > importance && consistency > test);
+  assert.match(html, /Não faça/);
+  assert.match(html, /Integre no mesmo dia/);
   assert.doesNotMatch(html, /Resumo executivo/);
   assert.match(html, /<details[^>]*>[\s\S]*0 · Opaco/);
 });

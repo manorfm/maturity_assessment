@@ -324,23 +324,23 @@ de recomendação. No first screen da organização, o cartão prefere a decisã
 — finding com mecanismo e contenção — mesmo quando outra folha publicada está
 num estágio mais baixo sem causa amarrada. Discriminar fica no detalhe dessa folha
 ou no panorama, não no cartão que a diretoria lê primeiro. O cartão vem antes do
-estágio e do mapa de sistemas. Ele traduz o contrato para linguagem operacional nesta ordem:
-decisão pedida (verbo, quem autoriza e horizonte), situação observada sem culpar o
-time quando a restrição é política, valor em risco só com evidência de impacto —
-ou a declaração de que o impacto ainda não foi medido —, por que o recorte é esse
-(autoridade, não jargão), teste, critério, o que não resolve e antipadrão.
-Fundamento e classe de solução sobem ao primeiro plano. Quando o limitador é do
+estágio e do mapa de sistemas. Na first screen, o cartão compacto traduz o
+contrato nesta ordem: decisão pedida (verbo, quem autoriza e horizonte),
+situação observada sem culpar o time quando a restrição é política, valor em
+risco só com evidência de impacto — ou a declaração de que o impacto ainda
+não foi medido —, teste, o que não resolve e antipadrão. Fundamento, classe
+de solução, evidência agregada e vocabulário metodológico ficam em `details`;
+o teste não exige abrir “Detalhes metodológicos”. Quando o limitador é do
 sistema organizacional, o texto lembra que aquele pilar é um meta-sistema, não um
-oitavo eixo técnico. Evidência agregada, hipóteses concorrentes e vocabulário
-metodológico ficam depois do teste. Quando a prontidão não foi demonstrada, o
+oitavo eixo técnico. Quando a prontidão não foi demonstrada, o
 texto diz apenas que as entrevistas ainda não mostraram o caminho funcionando;
 nunca conclui inexistência. As perspectivas que sustentam a leitura são nomeadas,
 contradição zero é explícita e o recorte se explica pela autoridade, não pelo
-rótulo da folha. O fundamento mostra fonte, princípio aplicado e vínculo com a
-evidência, além da classe de solução.
-O panorama lista todos os padrões publicados e separa decidir de investigar. O
-mesmo finding chega a diretoria, gerência e tecnologia com a pergunta de cada um
-— autorizar, recusar ou escalar, não comprar ferramenta — sem segundo motor.
+rótulo da folha.
+A first screen lista todos os padrões publicados em uma linha cada e separa
+decidir de investigar. Briefings por público continuam a projetar a mesma
+restrição — autorizar, recusar ou escalar, não comprar ferramenta — sem
+segundo motor, no rodapé administrativo.
 
 Os experimentos não reutilizam uma porcentagem como se ela medisse tudo. Posterior
 expressa força da hipótese; prioridade combina alcance e severidade. Métrica,

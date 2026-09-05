@@ -164,37 +164,46 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       : '';
     const capabilityBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/capabilities`;
     const areaBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/areas`;
-    const capabilityMap = renderOrganizationalAreaMap(report.organizationalAreas, { areaBase, capabilityBase });
     const scopeOccurrences = findingScopeOccurrences(report.scopes);
     const primaryOccurrence = scopeOccurrences.find((item) => item.pattern === report.outcome.finding?.pattern);
     const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
     const orderedFindings = uniqueFindingsByPattern(report.findings);
     const competingFinding = orderedFindings.find((finding) => finding.pattern !== report.outcome.finding?.pattern);
-    const firstPlane = report.classification
-      ? `${renderOutcome(report.outcome, { confirmedProblemCount: orderedFindings.length, ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}), ...(competingFinding ? { competingFinding } : {}) })}${renderClassification(report.classification, report.outcome)}`
-      : renderOutcome(report.outcome);
-    const globalPortfolio = renderFindingPortfolio(report.findings, report.outcome.finding?.pattern, scopeOccurrences, capabilityBase);
+    const firstScreen = renderFirstScreen({
+      outcome: report.outcome,
+      ...(report.classification ? { classification: report.classification } : {}),
+      organizationalAreas: report.organizationalAreas,
+      findings: report.findings,
+      scopes: distinctive,
+      areaBase,
+      capabilityBase,
+      confirmedProblemCount: orderedFindings.length,
+      ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}),
+      ...(competingFinding ? { competingFinding } : {}),
+    });
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
-    const scopeReports = distinctive.map((scope) => renderScopeReport(scope, capabilityBase)).join('');
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
     const audienceBriefs = renderAudienceBriefs(report.audienceReports, capabilityBase);
     const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
+    const audienceArchive = audienceNavigation || audienceBriefs || perspectives
+      ? `<details class="methodology"><summary>Leituras por público</summary>${audienceNavigation}${audienceBriefs}${perspectives}</details>`
+      : '';
     return reply.type('text/html').send(layout(String(auth.project.name), `
-      <header><p class="eyebrow">Painel protegido</p><h1>${escapeHtml(auth.project.name)}</h1><p class="lead">O painel mostra apenas estados e resultados agregados. Nenhuma resposta individual é acessível.</p></header>
-      <section id="report-diagnosis"><h2>Decisão prioritária</h2>${firstPlane}${reportAvailability}${perspectives}</section>
-      ${audienceNavigation}${audienceBriefs}${globalPortfolio ? `<div id="report-portfolio">${globalPortfolio}</div>` : ''}
-      <section><h2>Sistemas da organização</h2>${capabilityMap}</section>
-      <details class="methodology"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
+      <div class="report-home">
+      <header><p class="eyebrow">Diagnóstico</p><h1>${escapeHtml(auth.project.name)}</h1></header>
+      <section id="report-diagnosis">${firstScreen}${reportAvailability}</section>
+      <details class="methodology admin-footer"><summary>Administrar aplicação</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
       <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
         <label for="unitId">Unidade final</label><select id="unitId" name="unitId">${unitOptions}</select>
         <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
         <button type="submit">Gerar links</button></form></section>
       ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}</details>
+      ${audienceArchive}
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
       ${previous}
-      ${scopeReports ? `<section id="report-units"><p class="eyebrow">Mapa por estrutura</p><h2>Leituras por unidade</h2><p class="muted">Somente unidades que mudam o diagnóstico em relação à visão global aparecem.</p>${scopeReports}</section>` : ''}
       <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details>
-      <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`));
+      <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>
+      </div>`));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/capabilities/:capabilityId', async (request, reply) => {
@@ -261,7 +270,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const breadcrumbItems = path.map((item, index) => index === path.length - 1
       ? `<span class="breadcrumb-current" aria-current="page">${escapeHtml(item.label)}</span>`
       : `<a href="${areaBase}/${item.id}${scopeQuery}">${escapeHtml(item.label)}</a>`).join('<span class="breadcrumb-separator" aria-hidden="true">›</span>');
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOrganizationalAreaIndex(path, { areaBase, capabilityBase, scopeQuery })}`));
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOutcome(report.outcome, { density: 'compact' })}${renderOrganizationalAreaIndex(path, { areaBase, capabilityBase, scopeQuery })}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -394,11 +403,37 @@ export function renderDiagnosticFirstPlane(input: {
   const ordered = uniqueFindingsByPattern(input.findings);
   const competingFinding = ordered.find((finding) => finding.pattern !== input.outcome.finding?.pattern);
   const context = {
+    density: 'compact' as const,
     ...(input.confirmedProblemCount !== undefined ? { confirmedProblemCount: input.confirmedProblemCount } : {}),
     ...(input.occurrence ? { occurrence: input.occurrence } : {}),
     ...(competingFinding ? { competingFinding } : {}),
   };
-  return `${renderOutcome(input.outcome, context)}${renderFindingPortfolio(input.findings, input.outcome.finding?.pattern, input.occurrences ?? [], input.capabilityBase, input.scopeId)}${renderClassification(input.classification, input.outcome)}`;
+  return `${renderOutcome(input.outcome, context)}${renderClassification(input.classification, input.outcome)}`;
+}
+
+export function renderFirstScreen(input: {
+  outcome: ReportOutcome;
+  classification?: { level: number; label: string; limitingCapabilities: string[] };
+  organizationalAreas: OrganizationalAreaMap;
+  findings: OutcomeFinding[];
+  scopes: ScopeReportView[];
+  areaBase: string;
+  capabilityBase: string;
+  confirmedProblemCount?: number;
+  occurrence?: FindingScopeOccurrence;
+  competingFinding?: OutcomeFinding;
+}): string {
+  const ordered = uniqueFindingsByPattern(input.findings);
+  const competingFinding = input.competingFinding ?? ordered.find((finding) => finding.pattern !== input.outcome.finding?.pattern);
+  const card = renderOutcome(input.outcome, {
+    density: 'compact',
+    ...(input.confirmedProblemCount !== undefined ? { confirmedProblemCount: input.confirmedProblemCount } : {}),
+    ...(input.occurrence ? { occurrence: input.occurrence } : {}),
+    ...(competingFinding ? { competingFinding } : {}),
+  });
+  const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
+  const systems = `<section class="first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase })}</section>`;
+  return `${card}${systems}${renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase)}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
 }
 
 type PerspectiveGapView = { title: string; capability: string; strongerProfiles: string[]; constrainedProfiles: string[] };
@@ -432,7 +467,7 @@ const solutionKindLabels: Record<SolutionGuidance['solutionKind'], string> = {
   'tool-class': 'família de ferramenta',
 };
 
-export function renderOutcome(outcome: ReportOutcome, context: { confirmedProblemCount?: number; occurrence?: FindingScopeOccurrence; competingFinding?: OutcomeFinding } = {}): string {
+export function renderOutcome(outcome: ReportOutcome, context: { confirmedProblemCount?: number; occurrence?: FindingScopeOccurrence; competingFinding?: OutcomeFinding; density?: 'compact' | 'full' } = {}): string {
   const guidance = outcome.finding ? guidanceFor(outcome.finding.pattern, outcome.finding.foundation, outcome.finding.title) : undefined;
   const readiness = outcome.finding?.solutionReadiness;
   const evidence = outcome.finding?.recommendationEvidence;
@@ -456,28 +491,52 @@ export function renderOutcome(outcome: ReportOutcome, context: { confirmedProble
   const metaSystem = organizationalCapabilityIds.has(outcome.limiterId ?? '')
     ? '<p class="muted">O sistema organizacional é um meta-sistema: a restrição aqui explica espera, handoff ou decisão nos demais pilares, não um oitavo eixo técnico.</p>'
     : '';
+  const compact = context.density === 'compact';
   const briefing = guidance && outcome.finding && (outcome.kind === 'correct' || outcome.kind === 'evolve')
-    ? renderFindingNarrative(outcome.finding, { guidance, affected, priority, evidenceBlock: narrativeEvidenceBlock, causalAnalysis, readinessBlock, technicalDirection, metaSystem })
-    : `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section>${affected}${priority}${evidenceBlock}${diagnosticContext}${causalAnalysis}
+    ? renderFindingNarrative(outcome.finding, { guidance, affected, priority, evidenceBlock: narrativeEvidenceBlock, causalAnalysis, readinessBlock, technicalDirection, metaSystem }, compact)
+    : compact
+      ? `<section><h3>O que observamos</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section><section class="decision-request"><h3>O que recomendamos testar</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>`
+      : `<section><h3>O que está acontecendo</h3><p class="executive-reading">${escapeHtml(outcome.reading)}</p></section>${affected}${priority}${evidenceBlock}${diagnosticContext}${causalAnalysis}
       ${evidenceBlock ? '' : `<section><h3>O que as entrevistas mostraram</h3><p>${escapeHtml(interviewReading(outcome))}</p></section>`}${metaSystem}
       <section><h3>O que recomendamos testar</h3><p>${escapeHtml(outcome.nextStepBody)}</p></section>
       <section><h3>Como saber se funcionou</h3><p>${escapeHtml(successReading(outcome))}</p></section>`;
-  return `<article class="card outcome-card"><p class="eyebrow">Próxima decisão</p><p class="tag">${escapeHtml(outcome.kindLabel)}</p><h2>${escapeHtml(outcome.finding?.title ?? outcome.nextStepTitle)}</h2>${briefing}<p class="muted outcome-scope">Onde aparece: ${escapeHtml(outcome.limiterLabel)}</p></article>`;
+  return `<article class="card outcome-card${compact ? ' compact' : ''}"><p class="eyebrow">Próxima decisão</p><p class="tag">${escapeHtml(outcome.kindLabel)}</p><h2>${escapeHtml(outcome.finding?.title ?? outcome.nextStepTitle)}</h2>${briefing}<p class="muted outcome-scope">Onde aparece: ${escapeHtml(outcome.limiterLabel)}</p></article>`;
 }
 
 function renderFindingNarrative(finding: OutcomeFinding, fragments: {
   guidance: SolutionGuidance; affected: string; priority: string; evidenceBlock: string; causalAnalysis: string;
   readinessBlock: string; technicalDirection: string; metaSystem: string;
-}): string {
+}, compact = false): string {
   const narrative = projectFindingNarrative(finding);
-  return narrative.sections.map((section) => renderNarrativeSection(section, finding, fragments)).join('');
+  if (!compact) return narrative.sections.map((section) => renderNarrativeSection(section, finding, fragments)).join('');
+  const visible = new Set(['decision', 'observation', 'importance', 'experiment', 'investigation']);
+  const foreground = narrative.sections.filter((section) => visible.has(section.id));
+  const rest = narrative.sections.filter((section) => !visible.has(section.id));
+  const compactFragments = { ...fragments, affected: '', priority: '', evidenceBlock: '', causalAnalysis: '', readinessBlock: '', technicalDirection: '', metaSystem: '' };
+  const foundation = finding.foundation
+    ? `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p><strong>Princípio aplicado:</strong> ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)} Fonte: ${escapeHtml(finding.foundation.source)}.</p>`
+    : `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p>`;
+  const detail = [
+    foundation,
+    ...rest.map((section) => renderNarrativeSection(section, finding, fragments)),
+    fragments.priority,
+    fragments.affected,
+    fragments.evidenceBlock,
+    fragments.causalAnalysis,
+    fragments.readinessBlock,
+    fragments.technicalDirection,
+    fragments.metaSystem,
+  ].join('');
+  return `${foreground.map((section) => renderNarrativeSection(section, finding, compactFragments, true)).join('')}<details class="methodology" data-narrative="detail"><summary>Fundamento e evidência</summary>${detail}</details>`;
 }
 
 function renderNarrativeSection(section: FindingNarrativeSection, finding: OutcomeFinding, fragments: {
   guidance: SolutionGuidance; affected: string; priority: string; evidenceBlock: string; causalAnalysis: string;
   readinessBlock: string; technicalDirection: string; metaSystem: string;
-}): string {
-  if (section.id === 'decision') return `<section data-narrative="decision" class="decision-request"><p class="eyebrow">Decisão pedida</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? finding.intervention)}</strong></p><p>${escapeHtml(section.body)}</p></section>`;
+}, compact = false): string {
+  if (section.id === 'decision') return compact
+    ? `<section data-narrative="decision" class="decision-request"><p class="eyebrow">Decisão pedida</p><p><strong>${escapeHtml(finding.experiment?.action ?? finding.intervention)}</strong></p><p>${escapeHtml(section.body)}</p></section>`
+    : `<section data-narrative="decision" class="decision-request"><p class="eyebrow">Decisão pedida</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? finding.intervention)}</strong></p><p>${escapeHtml(section.body)}</p></section>`;
   if (section.id === 'observation') return `<section data-narrative="observation"><h3>${section.title}</h3><p class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</p></section>`;
   if (section.id === 'importance') return `<section data-narrative="importance"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.priority}${fragments.metaSystem}</section>`;
   if (section.id === 'capability') return `<section data-narrative="capability"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.affected}</section>`;
@@ -489,7 +548,10 @@ function renderNarrativeSection(section: FindingNarrativeSection, finding: Outco
     const foundation = finding.foundation
       ? `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p><strong>Princípio aplicado:</strong> ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)} Fonte: ${escapeHtml(finding.foundation.source)}.</p>`
       : `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(fragments.guidance.matureReference)}.</p>`;
-    return `<section data-narrative="experiment" class="decision-request"><p class="eyebrow">Decisão solicitada</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? section.body)}</strong></p><p>Quem conduz: ${escapeHtml(finding.experiment?.owner ?? 'Pessoas responsáveis pelo recorte com o grupo afetado')} · revisão ${escapeHtml(finding.experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p><p><strong>Como saber se funcionou:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}. Critério: ${escapeHtml(finding.experiment?.successCriterion ?? fragments.guidance.successCriterion)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>${foundation}</section>`;
+    const testBody = compact
+      ? `<p><strong>Teste:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>`
+      : `<p class="eyebrow">Decisão solicitada</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? section.body)}</strong></p><p>Quem conduz: ${escapeHtml(finding.experiment?.owner ?? 'Pessoas responsáveis pelo recorte com o grupo afetado')} · revisão ${escapeHtml(finding.experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p><p><strong>Como saber se funcionou:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}. Critério: ${escapeHtml(finding.experiment?.successCriterion ?? fragments.guidance.successCriterion)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>${foundation}`;
+    return `<section data-narrative="experiment"${compact ? '' : ' class="decision-request"'}>${testBody}</section>`;
   }
   if (section.id === 'investigation') return `<section data-narrative="investigation"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p></section>`;
   if (section.id === 'technical-options') return `<section data-narrative="technical-options"><h3>${section.title}</h3>${fragments.technicalDirection}</section>`;
@@ -592,6 +654,20 @@ function successReading(outcome: ReportOutcome): string {
   return 'A próxima rodada fecha quando uma restrição recorrente fica visível ou a hipótese é encerrada.';
 }
 
+export function renderFindingIndex(findings: OutcomeFinding[], primaryPattern: string | undefined, map: OrganizationalAreaMap, capabilityBase?: string): string {
+  const unique = uniqueFindingsByPattern(findings).filter((finding) => finding.pattern !== primaryPattern);
+  if (!unique.length) return '';
+  const items = unique.map((finding) => {
+    const system = findAreaPath(map, finding.detailCapability)?.[0]?.label ?? CapabilityTaxonomy.labelFor(finding.detailCapability);
+    const stance = finding.prescription?.status === 'investigate' ? 'investigar' : 'decidir';
+    const title = capabilityBase
+      ? `<a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a>`
+      : `<strong>${escapeHtml(finding.title)}</strong>`;
+    return `<li>${title} <span class="muted">· ${escapeHtml(system)} · ${escapeHtml(stance)}</span></li>`;
+  }).join('');
+  return `<section class="finding-index" id="report-portfolio"><h2>Outros problemas</h2><ul>${items}</ul></section>`;
+}
+
 export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPattern?: string, occurrences: FindingScopeOccurrence[] = [], capabilityBase?: string, scopeId?: string): string {
   const uniqueFindings = uniqueFindingsByPattern(findings);
   const systems = groupFindingsByDiagnosticSystem(uniqueFindings);
@@ -683,6 +759,16 @@ type ScopeReportView = {
   perspectiveGaps: Array<{ title: string; capability?: string }>;
   audienceReport?: UnitManagementReport;
 };
+
+export function renderScopeIndex(scopes: ScopeReportView[], _capabilityBase: string): string {
+  if (!scopes.length) return '';
+  const items = scopes.map((scope) => {
+    const outcome = decideReportOutcome({ classification: scope.classification, branches: scope.capabilityGroups, findings: scope.findings, perspectiveGaps: scope.perspectiveGaps });
+    const change = outcome.finding?.title ?? outcome.nextStepTitle;
+    return `<li class="scope-line"><strong>${escapeHtml(scope.path)}</strong> <span class="tag">${escapeHtml(scope.classification.label)}</span> <span class="muted">${escapeHtml(change)}</span></li>`;
+  }).join('');
+  return `<section class="scope-index" id="report-units"><h2>Unidades</h2><ul>${items}</ul></section>`;
+}
 
 export function renderScopeReport(scope: ScopeReportView, capabilityBase: string): string {
   const outcome = decideReportOutcome({ classification: scope.classification, branches: scope.capabilityGroups, findings: scope.findings, perspectiveGaps: scope.perspectiveGaps });

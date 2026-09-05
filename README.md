@@ -258,14 +258,11 @@ não mascaram uma terceira squad crítica dentro da mesma área.
 
 ### 8. Relatório e plano de melhoria
 
-O painel abre por uma narrativa estável: o que foi observado, por que importa, o
-que sustenta ou contradiz, o que pode manter o padrão, onde a restrição está
-contida, o que já funciona, o próximo experimento e, quando elegíveis, as opções
-técnicas. Metodologia e estágio permanecem por último. Depois do
-primeiro cartão, atalhos orientam quatro leituras do mesmo diagnóstico — diretoria,
-liderança de tecnologia, gerência local e especialistas/times — sem criar motores
-ou recomendações diferentes por público. Estágio, mapa de contraste e administração
-ficam depois, para localizar cobertura ou operar a coleta. Cada diagnóstico recomendado apresenta:
+O painel abre pelo cartão compacto — decisão pedida, situação, valor (ou a
+falta medida), teste, o que não resolve e o que não fazer — e pelos três
+sistemas da organização. Fundamento, evidência, briefings por público e
+administração ficam em detalhe. Estágio e mapa de recorte não competem com a
+decisão. Cada diagnóstico recomendado apresenta:
 
 - problema observado e impacto esperado;
 - causa provável e força da hipótese;
@@ -282,10 +279,11 @@ que todas as demais pessoas concordaram. Os indicadores de convergência, amplit
 diversidade e cobertura causal explicam em texto o que medem e o que não permitem
 concluir.
 
-O panorama posterior mostra quantos outros problemas foram confirmados, agrupa
-padrões relacionados e organiza a sequência de transformação por dependência,
-risco e autoridade. Recortes locais aparecem em “Leituras por unidade” somente
-quando mudam a interpretação global e preservam os limiares de anonimato.
+A first screen mostra o cartão compacto e os três sistemas; os demais
+problemas e as unidades distintivas ocupam uma linha cada. A sequência de
+transformação permanece no detalhe. Recortes locais aparecem em “Unidades”
+somente quando mudam a interpretação global e preservam os limiares de
+anonimato.
 
 Recomendações são classificadas como correção ou evolução. Uma ferramenta só pode
 ser sugerida quando resolve uma causa sustentada e é compatível com o contexto; sua

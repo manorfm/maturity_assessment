@@ -15,7 +15,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
   <style>
     :root { color-scheme: light; --bg:#f4f5f2; --surface:#fff; --ink:#19221d; --muted:#637069; --line:#dce1dc; --accent:#195f46; --soft:#e8f1ec; --critical:#b42318; --reactive:#d97706; --repeatable:#b78a00; --managed:#2563a8; --unknown:#7b8580; }
     * { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 system-ui,-apple-system,sans-serif }
-    main { width:min(920px,calc(100% - 32px)); margin:48px auto 80px } header { margin-bottom:32px } h1 { font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.04em; margin:.25rem 0 1rem } h2 { margin-top:2rem } h3 { margin-bottom:.4rem }
+    main { width:min(920px,calc(100% - 32px)); margin:48px auto 80px } body:has(.report-home) main { margin:28px auto 64px } header { margin-bottom:32px } h1 { font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.04em; margin:.25rem 0 1rem } h2 { margin-top:2rem } h3 { margin-bottom:.4rem }
     .eyebrow { color:var(--accent); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:.78rem }.lead { color:var(--muted); font-size:1.12rem; max-width:70ch }
     .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:24px; margin:18px 0; box-shadow:0 8px 30px rgba(25,34,29,.04) }
     label { display:block; font-weight:650; margin:16px 0 6px } input,select,textarea { width:100%; padding:11px 12px; border:1px solid #b8c1bb; border-radius:8px; background:#fff; color:var(--ink); font:inherit } textarea { min-height:120px; resize:vertical }
@@ -45,6 +45,20 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .area-index { display:grid; gap:10px; margin:18px 0 }
     .area-index-link { display:flex; justify-content:space-between; gap:12px; padding:16px 18px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); text-decoration:none }
     .area-index-link span { color:var(--muted) }
+    .report-home header { margin-bottom:16px }
+    .report-home h1 { font-size:clamp(1.55rem,3.2vw,2.15rem); margin:.1rem 0 .35rem }
+    .report-home .first-screen-systems h2,.report-home .finding-index h2,.report-home .scope-index h2 { margin-top:1.1rem }
+    .outcome-card.compact { padding:14px 16px; margin:8px 0 12px }
+    .outcome-card.compact > h2 { font-size:clamp(1.2rem,2.2vw,1.45rem); margin:.15rem 0 .4rem }
+    .outcome-card.compact h3 { margin-top:.45rem; font-size:.98rem }
+    .outcome-card.compact section { margin:0 }
+    .outcome-card.compact .decision-request { margin:8px 0; padding:10px 12px }
+    .outcome-card.compact [data-narrative="experiment"] p { margin:.25rem 0 }
+    .outcome-card.compact .notice { padding:8px 12px; margin:6px 0 0 }
+    .finding-index,.scope-index { margin:8px 0 20px }
+    .finding-index ul,.scope-index ul { list-style:none; padding:0; margin:0 }
+    .finding-index li,.scope-line { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:baseline; padding:9px 0; border-bottom:1px solid var(--line) }
+    .admin-footer { margin-top:28px }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>

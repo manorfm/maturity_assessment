@@ -6,6 +6,15 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — First screen compacta decisão e três sistemas
+
+- O cartão compacto mostra decisão, valor (ou a falta medida) e teste;
+  fundamento e evidência ficam em detalhe; o mapa vem em seguida; demais
+  problemas e unidades ocupam uma linha; administração e calibração
+  fecham no rodapé; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-04 — Cartão executivo fecha decisão sem impacto fabricado
 
 - Gravidade indeterminada não lista custo, velocidade nem previsibilidade; o

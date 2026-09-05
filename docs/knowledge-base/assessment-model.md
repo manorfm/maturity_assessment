@@ -351,22 +351,22 @@ suspende somente a folha ou o ramo que a contém; uma divergência de aprendizad
 substitui o diagnóstico de arquitetura, segurança ou fluxo. O resumo global continua
 inconclusivo quando qualquer divergência elegível impede uma leitura única do sistema.
 
-Na interface gerencial, cada página fecha um único cartão de decisão. A leitura
-começa em linguagem cotidiana por quatro perguntas: o que está acontecendo, o que
-as entrevistas mostraram, o que testar e como saber se funcionou. O primeiro plano
-mostra capacidades afetadas, pessoas que podiam observar a situação, padrões de
-resposta, perspectivas, contradições, capacidade disponível para resolver e a
-autorização solicitada: experimento, responsável, horizonte, indicador e critério.
-Termos metodológicos como posterior, população aplicável, mecanismo causal e classe
-de solução ficam na explicação sob demanda; não substituem a descrição concreta do
-trabalho, da espera, da decisão ou do risco observado.
-No resumo global, a decisão prioritária declara sua posição entre todos os
-comportamentos recorrentes e é seguida pelo panorama completo dos demais, com
-capacidade, sustentação agregada e distribuição entre unidades elegíveis.
+Na interface gerencial, cada página fecha um único cartão de decisão. A first
+screen do relatório global mostra, nesta ordem: o cartão compacto (decisão
+pedida, situação, valor só com evidência ou a falta medida, teste, o que não
+resolve e o que não fazer), os três sistemas (Produto, Engenharia, Operação),
+os demais problemas em uma linha cada (título · sistema · decidir ou
+investigar) e as unidades que mudam o recorte, também em uma linha. Gestão
+nunca é o quarto azulejo. Fundamento, evidência agregada e vocabulário
+metodológico ficam em `details`. O drill-down de uma área repete o mesmo
+cartão compacto e lista os filhos. Termos como posterior, população aplicável
+e mecanismo causal não substituem a descrição concreta do trabalho, da espera,
+da decisão ou do risco observado.
 Investigar permanece distinto de decidir. A contagem não esconde padrões atrás
 de um corte de quatro nem permite interpretar `Opaco` como “um único problema”.
-O panorama não prescreve transformações simultâneas: torna o sistema de problemas
-visível para sequenciamento sem competir com o menor experimento prioritário.
+O panorama da first screen não prescreve transformações simultâneas; a
+sequência de dependências permanece disponível no detalhe, sem competir com o
+menor experimento prioritário.
 O relatório distingue a capacidade principal do finding de seus efeitos relacionados.
 A primeira localiza onde a evidência e o tratamento se ligam; os demais mostram
 impacto transversal sem transformar todo pilar afetado em dono da intervenção.
@@ -380,9 +380,9 @@ o finding (as lentes não veem o mesmo sistema); contradição só discrimina qu
 está no limitador escolhido. A mesma suspensão vale no detalhamento: uma hipótese
 candidata pode ser mostrada para investigação, mas não autoriza intervenção antes
 da triangulação. Mapa de sistemas, mapa por estrutura, calibração e revisão
-cognitiva permanecem visíveis, mas não competem com a decisão: administração e
-instrumento ficam em `details`; o mapa por estrutura omite recortes que só duplicam o
-diagnóstico global. Nota, confiança, população, incerteza e versão do modelo são
+cognitiva permanecem acessíveis, mas não competem com a decisão: administração,
+leituras por público e instrumento ficam em `details`; as unidades na first
+screen ocupam uma linha e não reimprimem o cartão global. Nota, confiança, população, incerteza e versão do modelo são
 informações secundárias e explicáveis. Ferramenta, framework e nome de time
 continuam sem pontuar.
 

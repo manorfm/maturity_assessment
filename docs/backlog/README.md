@@ -39,9 +39,10 @@ squads exige ao menos dez pessoas, cinco em cada unidade. Calibração continua 
 jornadas rotuladas e não é substituída por sintéticos.
 
 A home já projeta três sistemas e a faixa de Gestão. O cartão executivo
-já fecha decisão sem impacto fabricado. A sequência aberta do relatório
-apresentável — UX minimalista e massa sintética de validação, sem
-calibração por sintético — está em
+já fecha decisão sem impacto fabricado. A first screen já compacta
+decisão, sistemas, demais problemas e unidades; metodologia fica no
+rodapé. A sequência aberta do relatório apresentável — massa sintética
+de validação, sem calibração por sintético — está em
 [`report-presentation-plan.md`](report-presentation-plan.md). O detalhe
 das lacunas do mapa permanece em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md); o

@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.74.0
+
+- A first screen do relatório passou a mostrar o cartão compacto e os
+  três sistemas antes de listas, unidades e administração. Fundamento e
+  evidência ficam em detalhe; o teste não exige abrir metodologia.
+
 ## 0.73.0
 
 - O cartão executivo passou a pedir decisão e quem autoriza, sem fabricar
