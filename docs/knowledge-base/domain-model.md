@@ -34,7 +34,13 @@
 - **Profile:** lente configurável sobre responsabilidades, visibilidade e decisões;
   seleciona cenários, mas não cria uma escala de capacidade por cargo.
 - **Response:** resposta bruta e metadados consentidos.
-- **Finding:** hipótese explicável, evidências, contradições e confiança.
+- **CapabilityFamily:** caminho de trabalho exigido pelo evento (origem da
+  versão, artefato, imagem, esteira, autorização no recurso, reversão,
+  aprendizado que fecha). Não é marca e não vira eixo do radar.
+- **Finding:** hipótese explicável, evidências, contradições e confiança;
+  capacidade principal, efeitos por sistema e uma ação por contenção visível.
+  Relatos opostos entre quem observou o mesmo evento são adoção desigual, não
+  inconclusivo.
 - **DiagnosticContext:** mecanismo de restrição, contenção, evidência faltante,
   impactos e severidade qualitativa associados ao finding.
 - **DiagnosticSystem:** biblioteca versionada que distingue sintomas, hipóteses
@@ -44,7 +50,8 @@
   evidência favorável e contrária, lacuna, limitação e versão do conhecimento.
 - **Recommendation:** experimento ou ação ligada a um finding e suas dependências.
 - **AssessmentNode/Edge:** grafo versionado de cenários, perguntas, condições e
-  encerramentos possíveis.
+  encerramentos possíveis. Arestas podem declarar `reinforces` para amarrar um
+  fato a hipótese já aberta em outro ramo.
 - **ProblemPattern:** hipótese de problema ligada a sinais, impactos e bloqueios.
 - **EvidenceFacet:** perspectiva de um perfil sobre uma capacidade compartilhada,
   usada para triangulação sem identificar o participante.

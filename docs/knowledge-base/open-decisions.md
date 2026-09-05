@@ -32,5 +32,12 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   sozinha não atribui categoria DORA nem declara uma empresa “elite”.
 - A faixa transversal da home usa o nome **Gestão**. A alternativa **Governança**
   permanece em aberto se o rótulo parecer avaliação de gestores.
+- Família de capacidade não é marca. Ausência do comportamento esperado no
+  evento ocorrido é falta de prática; “não observo” continua visibilidade.
+  Relatos opostos entre observadores são adoção desigual. Clima, incentivo e
+  liderança descrevem o local, nunca a pessoa. Cerimônia e post-mortem só
+  pontuam pelo efeito no próximo evento equivalente. O runtime `v19` ainda
+  materializa um limitador e discriminação por contradição; catálogo, grafo e
+  relatório seguem as ondas 1–3 do plano multiárea.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

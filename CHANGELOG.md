@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.84.0
+
+- O contrato vigente passou a distinguir família de capacidade e marca,
+  ausência no evento e “não observo”, adoção desigual e inconclusivo,
+  e cerimônia pelo efeito no cotidiano. Clima e liderança descrevem o
+  local, nunca a pessoa. O relatório publicado ainda não materializa
+  esse contrato.
+
 ## 0.83.0
 
 - A observação compacta passou a explicar o evento de trabalho, sem

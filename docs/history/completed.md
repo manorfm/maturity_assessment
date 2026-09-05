@@ -6,6 +6,24 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Contrato multiárea vigente na base
+
+- Família de capacidade ≠ marca; ausência no evento ocorrido é falta de
+  prática; relatos opostos entre observadores são adoção desigual;
+  clima e liderança descrevem o local; post-mortem e ágil só pontuam
+  pelo efeito no próximo evento. O runtime `v19` ainda não materializa
+  o relatório; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md)
+  e o
+  [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
+
+## 2026-09-05 — Plano multiárea: clima e cerimônia pelo cotidiano
+
+- Registrado o incremento em que maturidade inclui clima, incentivo e
+  liderança no local, sem apontar pessoa, e post-mortem/ágil só contam
+  se o dia a dia aprende e fecha solução; ver
+  [`multi-area-consultant-diagnostic-plan.md`](../backlog/multi-area-consultant-diagnostic-plan.md).
+
 ## 2026-09-05 — Observação compacta explica o trabalho, não sloganiza
 
 - O título cotidiano do cartão passou a descrever o evento e quem decide;

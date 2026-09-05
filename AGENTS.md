@@ -54,8 +54,9 @@ entregues e a base de conhecimento descreve o estado atual.
   capacidades avaliadas.
 - Evite perguntas que revelem a resposta desejada ou dependam de jargão.
 - Triangule capacidades com sinais de perfis distintos e eventos recentes.
-- Nunca interprete divergência automaticamente como comportamento frágil; ela pode
-  revelar baixa visibilidade, fronteira de responsabilidade ou assimetria de poder.
+- Divergência entre quem observou o mesmo evento é adoção desigual no local, não
+  inconclusivo e não rótulo de pessoa. Ainda pode ser visibilidade, fronteira ou
+  poder até o grafo discriminar; não atribuir fragilidade a um indivíduo.
 - Recomendações devem atacar causas plausíveis e considerar pré-condições, custo,
   risco e menor experimento útil.
 

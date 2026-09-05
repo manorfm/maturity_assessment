@@ -182,8 +182,10 @@ cargo e fornecedor não pontuam por si mesmos.
 
 O ramo de melhoria verifica consequência em vez de frequência da cerimônia: ação
 limitada, ownership, capacidade, revisão de efeito, autonomia e segurança para
-expor problemas. As respostas geram sinais cruzados somente quando a cadeia completa
-afeta mais de uma capacidade.
+expor problemas. Post-mortem e retro só sustentam aprendizado se o próximo
+evento equivalente mudou. As respostas geram sinais cruzados — e relações
+`reinforces` — quando o mesmo fato amarra outra hipótese já aberta (entrega
+com inception, priorização com gestão, war room com culpa e com lote/reversão).
 
 Um nó de contexto sem sinais identifica se a superfície de mudança pertence a um
 time ou é alterada por vários. Apenas os casos compartilhados aprofundam colisão,
@@ -229,8 +231,12 @@ independentes. Repetir o mesmo padrão aumenta evidência, mas não cobertura. F
 sem cobertura mínima aparecem como `não avaliado` e ficam fora da geometria do radar.
 
 Quando vários perfis observam o mesmo comportamento, o motor registra convergência,
-divergência e ausência de visibilidade. Divergência direciona novas perguntas e
-reduz confiança; não vira automaticamente um sinal negativo.
+divergência e ausência de visibilidade. Divergência entre quem observou o mesmo
+evento é adoção desigual no local: abre hipóteses com suporte (gestão,
+comunicação, fronteira, poder, desconhecimento) e não publica
+“inconclusivo”. “Não observo” continua visibilidade. O próximo probe prefere
+o fato que confirma ou mata uma hipótese já reforçada por outro ramo
+(`reinforces`), em vez de abrir um eixo solto.
 
 ## Recomendações
 
@@ -260,7 +266,8 @@ O mesmo padrão transversal é publicado uma única vez com todas as folhas afet
 Depois de discriminar a causa, o motor declara a capacidade necessária para agir e
 estima se ela não foi demonstrada, está apenas declarada, funciona localmente, é
 operacional ou adaptativa. Essa leitura usa evidência coletiva positiva e não
-transforma silêncio em inexistência.
+transforma “não observo” em inexistência. Evento ocorrido sem o comportamento
+da família continua falta de prática publicável.
 
 O catálogo separa intervenções de `correction` e `evolution`. A primeira trata um
 padrão negativo; a segunda transforma uma evidência intermediária recorrente em

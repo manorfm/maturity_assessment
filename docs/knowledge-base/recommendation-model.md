@@ -23,7 +23,10 @@ causal decide qual caminho é plausível neste contexto.
 O finding separa ainda problema, capacidades afetadas e capacidade necessária para
 resolver a causa. A prontidão dessa capacidade usa evidências positivas do recorte e
 é classificada como não demonstrada, declarada, local, operacional ou adaptativa.
-Ausência de evidência nunca é apresentada como prova de inexistência. Esse estado
+“Não observo” e população que não alcançou o evento nunca provam que a prática
+inexiste. Quando o evento ocorreu e o comportamento esperado da família não
+aparece na reconstrução, isso é falta de prática ou de capacidade compartilhada
+— não “folha não avaliada” e não inexistência metafísica. Esse estado
 condiciona o tamanho do experimento: uma solução estrutural não é recomendada como
 primeiro passo quando ainda falta execução, alcance ou aprendizado para sustentá-la.
 
@@ -52,6 +55,63 @@ respostas, amplitude na população aplicável, diversidade de perspectivas e
 cobertura causal. Alta convergência em uma única perspectiva continua sendo
 hipótese local, não evidência organizacional triangulada.
 
+## Família de capacidade, ausência e desigualdade
+
+Uma **família de capacidade** é o caminho de trabalho que precisa existir para
+o evento acontecer com segurança e rastreio — origem da versão, artefato
+governado, registro de imagem, esteira de build, identidade com autorização
+**naquele** recurso, reversão, aprendizado que fecha efeito. A família não é
+marca: o diagnóstico publica a falta ou a fragilidade do caminho, não JFrog
+versus Nexus, GitHub versus GitLab, AWS versus Azure, Ansible versus Actions.
+
+Clima, incentivo e liderança entram nessa leitura como maturidade do **local**,
+nunca da pessoa. Prazo, heroísmo, culpa, silêncio e war room são efeitos
+observáveis do sistema. O relatório constata a unidade ou o recorte; não nomeia
+gerente, time ou indivíduo. Cargo, one-on-one ou modelo de liderança não
+pontuam.
+
+Cerimônia e post-mortem seguem o mesmo contrato que ágil: ter o rito não
+pontua. Aprendeu = o sistema mudou e o efeito foi revisto no próximo evento
+equivalente. Não aprendeu = lista, culpa, controle local ou a pressão seguinte
+comeu a análise. Quem participava importa como fato de autoridade e de clima
+(só operação; sem produto; sem quem autoriza a restrição), não como lista de
+nomes.
+
+Três ausências permanecem distintas:
+
+1. **Não observo** — visibilidade daquela jornada; sem peso de capacidade.
+2. **Não se aplica** — o evento não ocorre neste ambiente; a folha fica não
+   avaliada.
+3. **Evento ocorreu e a família não aparece** — falta de prática ou de
+   capacidade compartilhada; o finding é publicável.
+
+Relatos opostos entre quem observou o mesmo evento são **adoção desigual** no
+local: uns praticam, outros ainda não. As hipóteses competem com suporte
+(gestão, comunicação, desconhecimento, ignorar de propósito, fronteira ou
+poder). Isso não é “a contradição impede escolher uma causa” e não é rótulo
+de pessoa. Inconclusivo só quando o grafo ou a amostra não atravessaram o
+evento; nesse caso o relatório declara instrumento insuficiente naquele
+recorte, não um estágio *repetível* sem causa.
+
+Um fato pode reforçar a mesma hipótese em várias áreas. O finding tem uma
+capacidade principal e **efeitos** nos sistemas atravessados. Cada contenção
+recebe indicação própria: diretoria ≠ engenharia ≠ operação. Duas frentes
+pagas para o mesmo trabalho são desperdício com contenção em portfólio ou
+estrutura, não “os dois times precisam ser mais ágeis”.
+
+Criar capacidade compartilhada (por exemplo um time de plataforma) ou
+desfazer fronteira (sustentação sem autoridade sobre o resultado) só com
+mecanismo demonstrado. Antipadrão: plataforma que opera a mesma fila; “somos
+modernos, logo não há N2”. Segregação exigida por obrigação permanece
+controle proporcional, não moda.
+
+O runtime `finding-narrative-v1` e o grafo `evidence-anamnesis-pilot-v19`
+ainda publicam um limitador e discriminação por contradição. Autoria e
+inferência novas seguem este contrato; as ondas 1–3 do
+[`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md)
+materializam catálogo, grafo e relatório. Não se expande o comportamento
+antigo.
+
 ## Atualização e explicação
 
 O cálculo usa log-espaço e normalização por softmax. A força considera suporte sobre
@@ -67,7 +127,9 @@ O relatório preserva:
 
 O catálogo materializa essa cadeia em uma rede especialista tipada com relações
 `observed_as`, `may_be_explained_by`, `supported_by`, `contradicted_by`,
-`addressed_by` e `grounded_in`. Toda intervenção
+`reinforces`, `amplifies`, `addressed_by` e `grounded_in`. `reinforces`
+amarra um fato de um ramo a hipótese já aberta em outro (entrega à
+inception; priorização à gestão tática ou organizacional). Toda intervenção
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
@@ -85,8 +147,10 @@ um padrão sociotécnico. O contrato distingue comportamento virtuoso ou vicioso
 condição habilitadora, racionalidade local, efeito sistêmico, incentivo, fronteira
 entre quem observa/recomenda/decide/executa, comportamento compensatório e sinal de
 regressão. A relação de reforço permanece explicitamente uma hipótese. Recorrência
-não determina contenção, prática local não implica difusão e divergência abre
-investigação de visibilidade, fronteira ou poder.
+não determina contenção, prática local não implica difusão. Divergência entre
+quem observou o mesmo evento publica adoção desigual com hipóteses em
+competição; ainda pode ser visibilidade, fronteira ou poder até o grafo
+discriminar. Não vira inconclusivo automático nem avaliação de pessoa.
 
 `culture` isolado não é mecanismo publicável: ele é normalizado para mecanismo e
 contenção indeterminados, suspende a prescrição e exige reconstruir decisão,
@@ -177,7 +241,9 @@ alcance sem alterar o posterior.
 
 Cada finding possui uma única **capacidade principal**, onde o padrão e o contrato
 de intervenção são publicados. Outras capacidades aparecem como efeitos. O mesmo
-padrão não vira várias prioridades apenas porque atravessa pilares.
+padrão não vira várias *prioridades* apenas porque atravessa pilares; vira
+**ações distintas por contenção** quando diretoria, engenharia e operação
+precisam de verbos diferentes para o mesmo mecanismo.
 
 O catálogo diferencia correção de um padrão negativo e evolução de uma prática
 intermediária. Uma capacidade 4/4 não recebe ação artificial; uma capacidade abaixo
@@ -266,14 +332,15 @@ se um parceiro externo deixa capacidade exercitável. Cada mecanismo seleciona u
 intervenção diferente e explicita o que ela não resolve.
 
 Cada página do relatório escolhe um desfecho: preservar prática sustentada;
-corrigir ou evoluir o limitador quando há finding amarrado; discriminar quando o
-limitador mistura evidência, quando o finding **é** a divergência de perspectiva,
-quando as fragilidades estão dispersas sem padrão recorrente, ou quando ainda
-competem várias explicações; ou declarar evidência insuficiente. Esses três
-vazios não se confundem: falta de amostra, contradição no mesmo elo e
-fragilidade sem causa amarrada pedem textos diferentes. Discriminar pede
-observação de um evento recente, não um playbook. Um ramo em 4 não herda
-discriminação de um neto de cloud.
+corrigir ou evoluir o limitador quando há finding amarrado; publicar adoção
+desigual ou causas concorrentes com suporte quando o evento foi atravessado e
+as evidências se misturam; ou declarar evidência insuficiente quando o grafo
+ou a amostra não atravessaram o evento. Esses vazios não se confundem: falta
+de amostra, adoção desigual no mesmo local e fragilidade sem causa amarrada
+pedem textos diferentes. “Repetível sem causa” e “a contradição impede
+escolher” não são desfechos. Discriminar pede o próximo fato que confirma ou
+mata uma hipótese já reforçada, não um playbook nem outra rodada genérica.
+Um ramo em 4 não herda discriminação de um neto de cloud.
 
 Discriminação sem causa isolada usa um contrato narrativo da capacidade: descreve
 o que está acontecendo em linguagem cotidiana, o que ainda não dá para dizer e o
@@ -320,9 +387,12 @@ observado; contenção descreve quem ou o que provavelmente consegue removê-lo.
 entrevista não discriminou isso, o resultado permanece indeterminado.
 
 O contrato também declara a autoridade provável para agir. Sem mecanismo ou
-contenção discriminados, o problema continua publicado, porém a orientação muda
-para investigação e nenhuma solução específica é prescrita. O panorama separa
-decisões organizacionais, capacidades compartilhadas, problemas locais e contenção
+contenção discriminados **e** sem o evento ter sido atravessado, o problema
+continua publicado como lacuna do instrumento. Quando o evento foi
+atravessado, o relatório lista as causas possíveis com suporte cruzado e a
+ação compatível com cada contenção já visível; não suspende o diagnóstico
+com “impossível escolher”. O panorama separa decisões organizacionais,
+capacidades compartilhadas, problemas locais, adoção desigual e contenção
 ainda indeterminada; cada item navega para o finding canônico no detalhamento.
 
 A apresentação é uma projeção determinística do mesmo finding, não um segundo motor

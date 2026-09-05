@@ -13,6 +13,9 @@
   não mudar ao retomar; “não observo” e “não se aplica” permanecem no fim.
 - Registrar “não sei” / “não observo” como informação sobre visibilidade, não como
   falha automática. “Não se aplica” é contexto: a folha permanece não avaliada.
+  Se o evento ocorreu e o comportamento esperado da família não aparece nas
+  alternativas de prática, isso pontua falta de prática — não deixa a folha
+  “não avaliada”.
 - Toda opção de prática pontua comportamento; saídas observacionais não carregam
   sinal de capacidade.
 - Usar perguntas sobre ferramentas e estruturas apenas para aplicabilidade e
@@ -21,7 +24,14 @@
   que diferentes soluções técnicas possam demonstrar a mesma capacidade.
 - Depois de um sinal positivo, mudar contexto ou pressão para verificar se a prática
   é consistente; depois de um sinal negativo, discriminar ferramenta, processo,
-  comunicação, desenho de times, arquitetura, governança e conhecimento.
+  comunicação, desenho de times, arquitetura, governança, incentivo, clima e
+  conhecimento. O próximo nó prefere o fato que **reforça ou mata** uma hipótese
+  já aberta em outro ramo (entrega ↔ inception; priorização ↔ gestão).
+- Não perguntar se existe o rito (Scrum, post-mortem, daily, repositório,
+  esteira, cloud). Reconstruir quem estava, o que se podia dizer, se saiu
+  mudança no sistema e o que aconteceu no próximo evento equivalente.
+- Não apontar pessoa. Clima, incentivo e liderança saem do cotidiano do
+  local. Alternativas não pedem adjetivo sobre gestor, time ou indivíduo.
 - Pedir que a pessoa reconheça o que ocorreu no último caso comparável; não pedir
   que escolha diretamente a causa, a prática ideal ou um adjetivo sobre o time.
 - Alternativas de cenário registram fatos, comportamentos e consequências. Padrões
@@ -154,12 +164,25 @@ time altera diretamente a mesma superfície. Ownership exclusivo segue adiante s
 ser premiado; compartilhamento abre cenários sobre sobrescrita, colisão, composição,
 proveniência e comunicação.
 
-### Reflexão e melhoria contínua
+### Reflexão, post-mortem e melhoria contínua
 
-Não perguntar apenas se existe retrospectiva. Reconstruir encontros recentes e
-verificar quantas mudanças foram escolhidas, quem assumiu, como ganharam capacidade,
-quando retornaram à pauta e qual efeito alterou a decisão. Cerimônia recorrente sem
-adaptação é um sinal diferente de ação bloqueada por governança ou baixa autonomia.
+Não perguntar se existe retrospectiva, post-mortem ou “cultura blameless”.
+Reconstruir o último evento equivalente:
+
+```text
+gatilho (falha, retro, fim de ciclo)
+  -> quem estava e quem podia decidir
+  -> o que foi dito e o que não podia ser dito
+  -> se saiu uma mudança no sistema (caminho, política, fronteira)
+  -> se essa mudança tinha dono, capacidade e revisão de efeito
+  -> o que aconteceu no próximo evento equivalente
+```
+
+Aprendeu = o sistema mudou e o efeito foi revisto. Não aprendeu = lista,
+culpa, controle local ou a pressão seguinte comeu a análise. Quem participa
+é fato de autoridade e de clima, não lista de nomes. Cerimônia recorrente
+sem adaptação é um sinal diferente de ação bloqueada por governança ou baixa
+autonomia.
 
 ### Agilidade declarada e fluxo em cascata
 
@@ -175,6 +198,9 @@ Não perguntar “vocês são ágeis?”. Reconstruir a jornada de uma necessida
 
 Sprints, daily e backlog são contexto neutro. Feedback tardio, fases sequenciais,
 handoffs, lote grande e baixa capacidade de mudança são evidências mais úteis.
+Daily que para sem o SM, retro sem dono das ações, review só o PM, sprint sem
+objetivo e “pronto” = chegou em homologação abrem gestão, entrega e promoção
+— não um eixo “Agile”.
 
 ### Qualidade e QA como etapa final
 
@@ -277,9 +303,11 @@ falta de vocabulário.
 
 Não perguntar se existe Vault, IAM, circuit breaker, OKR ou Copilot. Confirmar se
 o evento ocorre e, se ocorrer, o que acontece: como a credencial chega e expira;
-o que o sistema faz quando a dependência atrasa; o que pesou no último ciclo de
+se a identidade tem autorização **naquele** recurso ou só um token válido; o que
+o sistema faz quando a dependência atrasa; o que pesou no último ciclo de
 reconhecimento; como uma saída assistida por modelo é revista quando erra no risco.
-Ausência do evento deixa a folha não avaliada.
+Identidade ≠ autorização. Ausência do evento (incluindo “não estamos na nuvem”)
+deixa a folha de IAM/FinOps não avaliada; não cria eixo no radar.
 
 ### Arquitetura, linguagem e espera entre grupos
 

@@ -16,6 +16,9 @@ futuro integra o comportamento vigente até ser promovido à base de conheciment
   continuam donos da validação cognitiva, revisão cega e calibração empírica.
 - Este plano integra essas linhas e acrescenta operating model, funding, workforce,
   plataforma interna, portfólio de transformação e relatórios por autoridade.
+- [`multi-area-consultant-diagnostic-plan.md`](multi-area-consultant-diagnostic-plan.md)
+  sequencia o incremento: a onda 0 (contrato) já está na base; restam
+  catálogo, grafo, relatório e sintético.
 
 ## Problema e públicos
 

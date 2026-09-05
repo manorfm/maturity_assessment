@@ -41,15 +41,21 @@ com evidência mais frágil. Cada clique abre uma página própria, preserva o r
 organizacional e apresenta um breadcrumb do macro ao micro; folhas mostram problemas
 e correções. A home não indexa os oito pilares do motor: ela projeta três sistemas
 — Produto, Engenharia e Operação — e uma faixa transversal de Gestão. Ausência de
-evidência é rotulada como “não observado” ou “não avaliado”, nunca como nível zero.
+evidência é rotulada como “não observado” ou “não avaliado”, nunca como nível zero,
+quando o evento não ocorreu ou ninguém aplicável o observou. Se o evento ocorreu e
+o comportamento esperado da família não aparece, isso é falta de prática no local,
+não zero inventado nem “não avaliado”.
 A taxonomia não duplica o mesmo sinal para preencher frameworks diferentes.
 
-Cloud é contexto de arquitetura e operação, não um diagnóstico autônomo. Quando o
-catálogo possuir evidência discriminativa suficiente, workloads cloud poderão
-aprofundar os seis pilares Well-Architected — excelência operacional, segurança,
-confiabilidade, eficiência de performance, otimização de custos e sustentabilidade.
-Ferramentas como vault aparecem como possível intervenção para um problema de
-gestão de segredos demonstrado; sua presença nunca constitui um nível.
+Cloud é contexto de arquitetura e operação, não um diagnóstico autônomo nem um
+eixo do radar. Quando o evento é na nuvem, o cotidiano discrimina identidade
+versus autorização no recurso, blast radius do token e validação contínua — sem
+perguntar AWS, Azure ou GCP. Workloads cloud poderão aprofundar os seis pilares
+Well-Architected quando houver evidência discriminativa suficiente. Ferramentas
+como vault aparecem como possível intervenção para um problema de gestão de
+segredos demonstrado; sua presença nunca constitui um nível. Família de
+capacidade (caminho de artefato, registro de imagem, esteira) também não cria
+eixo: publica-se a falta do caminho, não a marca.
 
 As folhas vigentes são direção/alinhamento, descoberta/validação, portfólio;
 planejamento/refinamento, fluxo, feedback de integração e release; mudança sustentável,
@@ -185,7 +191,8 @@ Em aprendizado organizacional, o estágio exige ligar evento, mudança escolhida
 responsável, capacidade e revisão no caso seguinte. A referência separa ausência de
 fechamento de uma ação local bloqueada por prioridade, política ou autoridade.
 Retrospectiva, post-mortem, treinamento, comunidade ou repositório não concedem
-estágio sem alteração demonstrada no trabalho ou no sistema.
+estágio sem alteração demonstrada no trabalho ou no sistema. Ter o rito e
+aprender no dia a dia são leituras distintas.
 
 Em ownership, o estágio confronta responsabilidade declarada com autoridade sobre
 prioridade, risco, mudança e acompanhamento do resultado. Responsabilidade
@@ -202,10 +209,15 @@ ter autoridade, validade, proteção compensatória e reconciliação explícita
 
 Em liderança e gestão, o estágio observa como risco, carga, conflito e resultado
 alteram compromissos e se restrições recebem decisão no nível capaz de removê-las.
-Prazo, ocupação, heroísmo, culpa e silêncio são efeitos observáveis do sistema, não
-rótulos de uma pessoa. Cargo, one-on-one, modelo de liderança ou cerimônia não
-concedem estágio; recorrência, poder, perspectivas e consequência precisam ser
-triangulados antes de caracterizar cultura ou capacidade organizacional.
+Maturidade do local inclui clima, incentivo e liderança: se erro e risco podem
+ser ditos, o que é reconhecido (apagar o incêndio versus evitá-lo), se a
+reunião “tranquila” omite o que importa e se war room é o único momento em que
+a liderança vê o sistema. Prazo, ocupação, heroísmo, culpa e silêncio são
+efeitos observáveis do sistema, não rótulos de uma pessoa. O relatório
+constata o recorte; não identifica gerente de baixa performance. Cargo,
+one-on-one, modelo de liderança ou cerimônia não concedem estágio; recorrência,
+poder, perspectivas e consequência precisam ser triangulados. `culture` isolado
+continua sem mecanismo publicável.
 
 Em colaboração, o estágio observa como uma dependência compartilha contexto,
 produz decisão e devolve resultado, incluindo se uma ajuda recorrente transfere
@@ -376,6 +388,10 @@ menor experimento prioritário.
 O relatório distingue a capacidade principal do finding de seus efeitos relacionados.
 A primeira localiza onde a evidência e o tratamento se ligam; os demais mostram
 impacto transversal sem transformar todo pilar afetado em dono da intervenção.
+Cada contenção visível recebe indicação própria (política para diretoria,
+caminho para engenharia, operação para incidente). Relatos opostos no mesmo
+evento, entre quem observou, publicam adoção desigual — não “impossível
+escolher uma causa”.
 Mecanismo detalhado, classe de solução (prática, política, desenho organizacional,
 capacidade de plataforma ou família de ferramenta — nunca uma marca que pontue) e
 fundamentos ficam disponíveis sob demanda. O limitador
