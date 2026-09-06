@@ -38,12 +38,13 @@ validação de linguagem com as disciplinas, evidência externa) está no
 apresentar o produto como diagnóstico de engenharia — e não como framework de
 maturidade — está no
 [`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
-A home já projeta Produto, Engenharia e Operação. O cartão fecha
-decisão sem fabricar impacto. A first screen cabe decisão, até três
-cruzamentos com mecanismo, amostra (pessoas e unidades) e três
-sistemas. Radar e mapa publicado abrem em detalhe. Disciplina aberta
-não vira pergunta na home. Ao entrar, a disciplina declara o que
-abrange, trata e não é. “?” não pede mais pessoas.
+A home é o resultado das entrevistas: problemas por área, cada um com
+caminho, sustentação provisória, fundamento e impacto. Quem autoriza
+decide depois de ler. Os três sistemas continuam como índice. O
+cruzamento não é sessão da home: o motor registra as arestas e a
+disciplina mostra o mesmo problema com outro nome. Radar e mapa
+publicado abrem em detalhe. Disciplina aberta não vira pergunta na
+home. “?” não pede mais pessoas.
 A massa sintética valida apresentação — três bandas, fronteira,
 segurança≠governança e baixa prática de engenharia — sem calibração.
 O `/showcase` apresenta esses casos como deck do produto, depois de o
@@ -51,10 +52,11 @@ E2E percorrer criar projeto, convite e uma entrevista.
 O contrato de família de capacidade e o catálogo dos cinco packs
 (`causal-catalog-v10`) estão na base. O grafo `v20` afunila por reforço.
 Briefing de política permanece no recorte de medo. Piloto com pessoas
-reais só entra quando o relatório fechar decisão; a hipótese continua
+reais só entra quando o relatório de anamnese fechar; a hipótese continua
 no [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
-A sequência aberta do relatório apresentável (onda F: cartão, mapa e
-cruzamento que fecham decisão) está no
+A home já lista problemas por área com caminho. Abrir uma área é
+capítulo: uma linha do recorte e a mesma evidência com o nome
+local. A sequência aberta é G3 restante e G4 no
 [`plano de apresentação`](../backlog/report-presentation-plan.md).
 Folhas candidatas (onda E) só depois. A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma

@@ -19,6 +19,23 @@ duas unidades**, com trilhas complementares; oito pessoas numa unidade só checa
 O instrumento ainda precisa de jornadas reais, revisão com especialistas e calibração, sem transformar o
 resultado em ranking de pessoas ou times.
 
+## Como ler o relatório agora
+
+**Home vigente.** Resultado das entrevistas: problemas por área, cada
+um com caminho possível, sustentação provisória, o que significa,
+fundamento e impacto esperado. Quem autoriza decide depois de ler.
+Abrir uma área é capítulo: uma linha do recorte e a mesma evidência
+com o nome local. Ainda faltam o dossiê restante (G3) e o sintético
+de anamnese (G4) em
+[`docs/backlog/report-presentation-plan.md`](docs/backlog/report-presentation-plan.md).
+
+**Disciplina vigente.** Nome local da dor, efeito no nível acima, onde
+mais isso chega com outro nome. Ainda abre com três blocos de escopo.
+
+A especificação do motor (não da anamnese) está em
+[`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)
+e [`docs/knowledge-base/assessment-model.md`](docs/knowledge-base/assessment-model.md).
+
 O showcase sintético da POC apresenta três relatórios organizacionais — comportamento
 frágil, prática intermediária e prática sustentada — com 18 pessoas em duas
 unidades, e semeia o contraste de fronteira de times para validar o mapa.
@@ -260,11 +277,13 @@ não mascaram uma terceira squad crítica dentro da mesma área.
 
 ### 8. Relatório e plano de melhoria
 
-O painel abre pelo cartão compacto — decisão pedida, situação, valor (ou a
-falta medida), teste, o que não resolve e o que não fazer — e pelos três
-sistemas da organização. Fundamento, evidência, briefings por público e
-administração ficam em detalhe. Estágio e mapa de recorte não competem com a
-decisão. Cada diagnóstico recomendado apresenta:
+O painel abre pelo índice das entrevistas — problemas por área, cada
+um com caminho, sustentação, fundamento e impacto — e pelos três
+sistemas. Não há sessão de cruzamento na home: o motor guarda as
+arestas e a disciplina mostra o mesmo problema com o nome daquele
+recorte. Briefings por público e administração ficam em detalhe.
+Estágio e mapa de recorte não escondem as demais dores. Cada
+diagnóstico recomendado apresenta:
 
 - problema observado e impacto esperado;
 - causa provável e força da hipótese;
@@ -281,11 +300,10 @@ que todas as demais pessoas concordaram. Os indicadores de convergência, amplit
 diversidade e cobertura causal explicam em texto o que medem e o que não permitem
 concluir.
 
-A first screen mostra o cartão compacto e os três sistemas; os demais
-problemas e as unidades distintivas ocupam uma linha cada. A sequência de
-transformação permanece no detalhe. Recortes locais aparecem em “Unidades”
-somente quando mudam a interpretação global e preservam os limiares de
-anonimato.
+A first screen mostra o índice de problemas e os três sistemas. Unidades
+distintivas ocupam uma linha cada. A sequência de transformação permanece
+no detalhe. Recortes locais aparecem em “Unidades” somente quando mudam a
+interpretação global e preservam os limiares de anonimato.
 
 Recomendações são classificadas como correção ou evolução. Uma ferramenta só pode
 ser sugerida quando resolve uma causa sustentada e é compatível com o contexto; sua

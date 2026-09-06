@@ -309,11 +309,12 @@ nem finding permanece “entrevista não atravessou”, nunca zero e nunca “se
 problema”. Clicar em um sistema ou disciplina abre o que ela **abrange**, o que
 **trata** e o que **não é**, antes da lista de problemas daquele nível
 e do radar das crianças. A folha nomeia a dor local; o nível acima nomeia
-o efeito que essa dor gera no sistema — são problemas distintos. A first screen
-publica **Como as disciplinas se cruzam**: no máximo três arestas com
-mecanismo documentado, só com finding publicado. Disciplina sem
-recorte próprio não abre pergunta na home. O mapa completo fica no
-detalhe. Não inventa finding. O radar dos oito pilares abre no detalhe.
+o efeito que essa dor gera no sistema — são problemas distintos. O motor registra arestas entre disciplinas com causa publicada. A first
+screen não publica sessão de cruzamento. Ao abrir a disciplina, o
+mesmo problema aparece com o nome daquele recorte; o nível acima usa
+outro nome; a área maior lista as menores. Disciplina sem recorte
+próprio não abre pergunta na home. O mapa completo fica no detalhe.
+Não inventa finding. O radar dos oito pilares abre no detalhe.
 Unidades apontam **Ver cobertura deste time**.
 Cada eixo
 avaliado do motor é uma estimativa direcional de 0 a 4 calculada dentro da
@@ -375,21 +376,25 @@ suspende somente a folha ou o ramo que a contém; uma divergência de aprendizad
 substitui o diagnóstico de arquitetura, segurança ou fluxo. O resumo global continua
 inconclusivo quando qualquer divergência elegível impede uma leitura única do sistema.
 
-Na interface gerencial, cada página fecha um único cartão de decisão. A first
-screen do relatório global mostra, nesta ordem: o cartão compacto (efeito
-cotidiano, um mecanismo que não ecoa o título, ação com quem autoriza, teste
-e o que não resolve), o cruzamento entre disciplinas publicadas, a amostra
-desta leitura (pessoas e unidades) e os três sistemas (Produto, Engenharia, Operação).
-Gestão nunca é o quarto azulejo. Antipadrão, fundamento, evidência agregada e
-vocabulário metodológico ficam em `details`. O drill-down de uma área repete o mesmo
-cartão compacto e lista os filhos. Termos como posterior, população aplicável
+Na interface gerencial, o relatório global é o resultado das entrevistas,
+não o laudo de uma decisão. A first screen mostra, nesta ordem: os
+problemas publicados por área (cada um com caminho, sustentação
+provisória, fundamento e impacto esperado), a amostra desta leitura
+(pessoas e unidades) e os três sistemas (Produto, Engenharia, Operação).
+Gestão nunca é o quarto azulejo. Quem autoriza decide depois de ler.
+O cartão compacto permanece no detalhe da disciplina e quando não há
+finding publicado. Abrir uma área é capítulo: uma linha do que o
+recorte observa e as dores no nome local; a mesma evidência só
+reaparece no outro recorte quando o cruzamento já foi publicado.
+Termos como posterior, população aplicável
 e mecanismo causal não substituem a descrição concreta do trabalho, da espera,
 da decisão ou do risco observado.
 Investigar permanece distinto de decidir. A contagem não esconde padrões atrás
 de um corte de quatro nem permite interpretar `Opaco` como “um único problema”.
 O panorama da first screen não prescreve transformações simultâneas; a
-sequência de dependências permanece disponível no detalhe, sem competir com o
-menor experimento prioritário.
+sequência de dependências permanece no detalhe. Cada dor publica o
+próprio caminho; o produto não escolhe uma decisão no lugar de quem
+autoriza.
 O relatório distingue a capacidade principal do finding de seus efeitos relacionados.
 A primeira localiza onde a evidência e o tratamento se ligam; os demais mostram
 impacto transversal sem transformar todo pilar afetado em dono da intervenção.
@@ -399,7 +404,7 @@ evento, entre quem observou, publicam adoção desigual — não “impossível
 escolher uma causa”.
 Mecanismo detalhado, classe de solução (prática, política, desenho organizacional,
 capacidade de plataforma ou família de ferramenta — nunca uma marca que pontue) e
-fundamentos ficam disponíveis sob demanda. O limitador
+fundamentos ficam visíveis em cada caminho do índice. O limitador
 é o elo útil no piso da classificação, com finding amarrado; folhas de cloud
 aninhadas não ocupam o palco só porque a nota foi baixa. A página da folha usa o
 estágio daquela folha, não o rótulo global. Divergência de perspectiva no home é
@@ -407,7 +412,7 @@ o finding (as lentes não veem o mesmo sistema); contradição só discrimina qu
 está no limitador escolhido. A mesma suspensão vale no detalhamento: uma hipótese
 candidata pode ser mostrada para investigação, mas não autoriza intervenção antes
 da triangulação. Mapa de sistemas, mapa por estrutura, calibração e revisão
-cognitiva permanecem acessíveis, mas não competem com a decisão: administração,
+cognitiva permanecem acessíveis, sem esconder as demais dores: administração,
 leituras por público e instrumento ficam em `details`; as unidades na first
 screen ocupam uma linha e não reimprimem o cartão global. Nota, confiança, população, incerteza e versão do modelo são
 informações secundárias e explicáveis. Ferramenta, framework e nome de time

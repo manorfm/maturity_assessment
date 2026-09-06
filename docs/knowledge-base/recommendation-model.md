@@ -107,9 +107,9 @@ controle proporcional, não moda.
 
 O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
 `reinforces`. O grafo `v20` afunila o próximo probe para confirmar ou
-matar hipótese já reforçada. O projetor `front-inventory-v1` publica,
-abaixo da primeira decisão, uma ação por frente (Produto, Engenharia,
-Operação, Gestão) com mecanismo e suporte coletivo ainda provisório. Relatos
+matar hipótese já reforçada. O projetor `interview-report-v1` publica as dores por área com
+caminho e sustentação. O inventário por frente permanece no motor,
+fora da home. Relatos
 opostos no mesmo evento são adoção desigual: as hipóteses competem com
 suporte. O briefing de política descreve o que parar de autorizar no
 recorte de medo e o caminho técnico do mesmo evento. O caso sintético
@@ -402,33 +402,32 @@ com “impossível escolher”. O panorama separa decisões organizacionais,
 capacidades compartilhadas, problemas locais, adoção desigual e contenção
 ainda indeterminada; cada item navega para o finding canônico no detalhamento.
 
-A apresentação é uma projeção determinística do mesmo finding, não um segundo motor
-de recomendação. No first screen da organização, o cartão prefere a decisão pronta
-— finding com mecanismo e contenção — mesmo quando outra folha publicada está
-num estágio mais baixo sem causa amarrada. Discriminar fica no detalhe dessa folha
-ou no panorama, não no cartão que a diretoria lê primeiro. O cartão vem antes do
-estágio e do mapa de sistemas. Na first screen, o cartão compacto traduz o
-contrato em quatro batidas: efeito cotidiano; um mecanismo que não
-repete o título do catálogo; verbo com quem autoriza; teste e o que
-não resolve. Antipadrão, prontidão, contenção, título de catálogo e
-hedges (“não significa que não exista”) ficam em `details`. Fundamento, classe
-de solução, evidência agregada e vocabulário metodológico também ficam em `details`;
-o teste não exige abrir “Detalhes metodológicos”. Quando o limitador é do
-sistema organizacional, o texto lembra que aquele pilar é um meta-sistema, não um
-oitavo eixo técnico. Quando a prontidão não foi demonstrada, o
-texto diz apenas que as entrevistas ainda não mostraram o caminho funcionando;
-nunca conclui inexistência. As perspectivas que sustentam a leitura são nomeadas,
-contradição zero é explícita e o recorte se explica pela autoridade, não pelo
-rótulo da folha.
-Abaixo da primeira decisão, o cruzamento lista no máximo três arestas
-com mecanismo documentado (família, mesmo sistema diagnóstico ou
-cadeia explícita). A frase nomeia o mecanismo; não cola o título de
-uma folha no da outra nem afirma que todo achado gera o cartão.
-Disciplina aberta não vira pergunta na home. Inventário por frente e o
-mapa completo de lacunas ficam fora do primeiro plano; o mapa publicado
-abre em `details`. Não inventa finding. Padrões da mesma família do limitador aparecem
-como variações, não como problemas novos. Tratar só o ponto principal
-não remove as outras frentes. Decidir e investigar continuam distintos.
+A apresentação é uma projeção determinística dos findings, não um segundo
+motor. O relatório para o executivo **não é o laudo de uma decisão**.
+É o resultado das entrevistas: problemas publicados por área e
+disciplina, cada um com soluções possíveis para direcionar. Quem
+autoriza decide **depois** de ler. O produto não escolhe no lugar
+dele nem esconde as demais dores atrás de um cartão vencedor.
+
+A home vigente é esse índice: problemas publicados por área, cada um
+com o caminho mais sustentado, a faixa de sustentação, o que a
+solução significa, o fundamento, o impacto esperado e o que não
+resolve. O cartão compacto em quatro batidas permanece no detalhe
+da disciplina e nas leituras sem finding publicado (preservar ou
+evidência insuficiente). Quem autoriza decide depois de ler; o
+produto não abre pedindo “o que fazer agora” como se a decisão já
+tivesse sido tomada.
+
+Abrir um sistema ou a faixa Gestão é um capítulo (`area-chapter-v1`):
+uma linha do que o recorte observa, as dores no nome local e, quando
+o cruzamento já foi publicado, a mesma evidência com o nome do outro
+recorte. Não inventa aresta. Não promove Plataforma a sistema.
+
+Várias soluções na mesma dor só existem quando cada uma amarra uma
+hipótese distinta já publicada. Não é catálogo de boas práticas.
+Disciplina aberta não vira pergunta. Não inventa finding. O posterior
+não se lê como probabilidade objetiva antes do gate de calibração;
+a interface usa faixa verbal e deixa o número para avaliação offline.
 O briefing de política, no recorte de medo, diz o que esconder/war room
 produz, o que parar de autorizar, o menor teste sem nome e como saber.
 Engenharia recebe o caminho técnico do mesmo evento. Briefings por

@@ -6,6 +6,30 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-06 — Capítulo de área com intersecção publicada
+
+- Abrir Engenharia ou Gestão mostra o recorte numa linha e a mesma
+  evidência com o nome local; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
+## 2026-09-06 — Árvore de apresentação permanece
+
+- O exemplo de anamnese não redesenha disciplinas; capítulos do
+  executivo continuam Produto, Engenharia, Operação e Gestão; ver
+  [`domain-model.md`](../knowledge-base/domain-model.md).
+
+## 2026-09-06 — Índice de problemas com soluções
+
+- A first screen passou a ser o resultado das entrevistas: dores por
+  área, caminho, sustentação provisória, fundamento e impacto; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
+## 2026-09-06 — Cruzamento no detalhe da disciplina
+
+- Arestas saíram da home; a página da disciplina mostra onde o mesmo
+  mecanismo chega e com que nome; layout da home virou documento; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-05 — Cartão compacto em quatro batidas
 
 - First screen mostra efeito, mecanismo sem eco do título, ação e

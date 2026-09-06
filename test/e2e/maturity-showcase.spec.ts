@@ -25,9 +25,9 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Amostra de 18 pessoas em duas unidades.',
       'Briefing de diretoria com decisão ou restrição compartilhada.',
       'Cada unidade com ação local, restrição recebida ou escalada.',
-      'First screen fecha corrigir ou evoluir — não “distinguir explicações”.',
+      'First screen lista problemas por área com caminho, não uma decisão única.',
     ],
-    decision: /Precisa de correção|Pode evoluir/i,
+    decision: /problema publicado/i,
   },
   medium: {
     id: 'poc-media',
@@ -35,9 +35,9 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
     lookFor: [
       'Vários pilares publicados, sem inventar nível onde a entrevista curta não passou.',
       'Diretoria e áreas recebem texto acionável.',
-      'O cartão principal tem causa e experimento, não disputa de explicações.',
+      'O índice traz causa e caminho por dor, não uma disputa de explicações.',
     ],
-    decision: /Pode evoluir|Precisa de correção/i,
+    decision: /problema publicado/i,
   },
   high: {
     id: 'poc-alta',
@@ -110,8 +110,7 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   }
   await expect(page.getByText('Aguarde mais respostas')).toHaveCount(0);
   if (org.band !== 'high') {
-    await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toBeVisible();
-    await expect(page.getByText(/Fila de ambiente|esteira manual|origem da versão|Pedido na fila/i).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toHaveCount(0);
   }
   await expect(page.getByText('Instrumento e calibração')).not.toBeVisible();
   const observed = await observeReport(page);
@@ -119,7 +118,7 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   expect(observed.limiter).not.toMatch(/e mais/i);
   expect(observed.reading.length).toBeGreaterThan(40);
   if (org.band !== 'high') {
-    await expect(page.getByText('O que esta decisão não resolve').first()).toBeVisible();
+    await expect(page.getByText('O que este caminho não resolve').first()).toBeVisible();
     await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
   }
@@ -138,9 +137,14 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
 }
 
 async function observeReport(page: Page) {
+  const interview = page.locator('.interview-report');
   const reading = (await page.locator('.executive-reading').first().textContent())?.trim() ?? '';
-  const limiter = (await page.locator('.outcome-scope').first().textContent())?.replace(/^Onde aparece:\s*/i, '').trim() ?? '';
-  const decision = (await page.locator('.outcome-card > .tag').first().textContent())?.trim() ?? '';
+  const limiter = await interview.count()
+    ? (await page.locator('.interview-chapter > h2').first().textContent())?.trim() ?? ''
+    : (await page.locator('.outcome-scope').first().textContent())?.replace(/^Onde aparece:\s*/i, '').trim() ?? '';
+  const decision = await interview.count()
+    ? (await interview.locator('.tag').first().textContent())?.trim() ?? ''
+    : (await page.locator('.outcome-card > .tag').first().textContent())?.trim() ?? '';
   const classificationLocator = page.locator('.classification-level').first();
   const classification = await classificationLocator.count()
     ? await classificationLocator.evaluate((el) => el.textContent?.trim() ?? '')
@@ -205,8 +209,8 @@ async function inspectEngineeringPracticeOrg(browser: Browser, org: SeededOrg, b
   const page = await context.newPage();
   try {
     await page.goto(org.adminPath);
-    await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toBeVisible();
-    await expect(page.getByText(/Pedido na fila|Diagnóstico concentrado|autoriza o recurso|identidade/i).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toHaveCount(0);
+    await expect(page.getByText(/autoriza o recurso|identidade|credencial/i).first()).toBeVisible();
     await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing de política' })).toBeVisible();
     await expect(page.getByText(/O que parar de autorizar/)).toBeVisible();

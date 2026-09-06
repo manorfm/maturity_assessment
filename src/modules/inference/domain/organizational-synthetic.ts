@@ -29,7 +29,7 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
     units: ['Alpha', 'Beta'],
     story: 'Dezoito pessoas em duas unidades. Alpha espera esteira, regressão e empacotamento; Beta espera aprovação, ownership e coordenação. O first screen fecha a restrição sistêmica e mostra o que a alimenta — não um slogan único.',
     lookFor: [
-      'Home em Corrigir, com finding pronto de responsabilidade.',
+      'Home lista problemas por área com caminho, não um cartão único.',
       'O efeito se apoia em espera de esteira, empacotamento e aprovação, não num slogan único.',
       'Radar no detalhe da home; “?” é cobertura temática, não falta de gente.',
     ],
@@ -40,9 +40,9 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
     name: 'POC — sistema reativo',
     hierarchy: 'Produto em transição/Gama\nProduto em transição/Delta',
     units: ['Gama', 'Delta'],
-    story: 'Dezoito pessoas em duas unidades. Há acordo local e alguns ciclos se fecham. O cartão principal traz um problema com causa e experimento, não uma disputa de explicações.',
+    story: 'Dezoito pessoas em duas unidades. Há acordo local e alguns ciclos se fecham. O índice traz várias dores com caminho e sustentação, não uma disputa de explicações.',
     lookFor: [
-      'Cartão de portfólio: quem autoriza o ciclo, valor ainda não medido, teste visível.',
+      'Índice com portfólio e outros caminhos, sustentação visível.',
       'Cinco outros padrões visíveis; mapa em Produto e Engenharia.',
       'Nome não alega prática repetível; a restrição não culpa o time.',
     ],

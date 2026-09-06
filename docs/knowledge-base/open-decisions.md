@@ -40,6 +40,6 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   afunila por reforço.   O relatório publica cruzamento com mecanismo e
   briefing de política. A massa sintética de baixa prática já publica
   famílias distintas. Piloto humano e calibração continuam backlog:
-  não substituem um first screen que ainda não fecha decisão.
+  não substituem um relatório de entrevistas que o executivo ainda precisa conseguir ler e decidir.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

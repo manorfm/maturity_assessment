@@ -10,7 +10,7 @@ import {
   runOrganizationalSynthetic,
   type SyntheticCaseId,
 } from '../src/modules/inference/domain/organizational-synthetic.js';
-import { renderAudienceBriefs, renderFirstScreen } from '../src/modules/projects/project-routes.js';
+import { renderAudienceBriefs, renderAreaRecorte, renderFirstScreen } from '../src/modules/projects/project-routes.js';
 
 const FAMILY_PATTERNS = [
   'caminho-de-versao-sem-origem',
@@ -43,9 +43,8 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
   const cardPlane = html.slice(0, html.search(/<details/));
   assert.doesNotMatch(cardPlane, /Não faça/);
   assert.doesNotMatch(cardPlane, /não significa que (ele )?não exista/i);
-  assert.match(cardPlane, /O que esta decisão não resolve/);
-  assert.match(html, /Como as disciplinas se cruzam/);
-  assert.match(html, /Acesso a capacidades|Release e feedback|Fluxo|Liderança|Aprendizado/);
+  assert.match(cardPlane, /O que este caminho não resolve/);
+  assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
   assert.doesNotMatch(html, / em Acesso a capacidades gera /);
   assert.match(html, /Mapa de contraste e cobertura/);
   assert.doesNotMatch(html, /Aguarde mais respostas/);
@@ -55,6 +54,23 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
     'opaco precisa distinguir empacotamento, fila e cerimônia, não só reformular ownership',
   );
   assertPresentationLookFor(report, spec.lookFor);
+});
+
+test('opaco: a mesma fila aparece em Engenharia como pedido e em Gestão como war room', () => {
+  const { report } = runCase('low');
+  const map = report.organizationalAreas;
+  const engineering = renderAreaRecorte(findAreaPath(map, 'engineering')!, {
+    areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
+  });
+  const management = renderAreaRecorte(findAreaPath(map, 'management')!, {
+    areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
+  });
+  assert.match(engineering, /chamado|fila do outro grupo|espera outro grupo/i);
+  assert.match(engineering, /Em Gestão/);
+  assert.match(management, /crise|pressão|cala/i);
+  assert.match(management, /Em Engenharia/);
+  assert.doesNotMatch(engineering, /Como as disciplinas se cruzam/);
+  assert.doesNotMatch(management, /<h3>Plataforma<\/h3>/);
 });
 
 test('intermediário fecha portfólio, lista cinco outros e acende Produto e Engenharia', () => {
@@ -141,7 +157,7 @@ test('baixa prática publica famílias distintas, inventário e briefing de pol�
   assert.ok(report.outcome.finding);
   const html = firstScreenOf(report);
   const briefs = renderAudienceBriefs(report.audienceReports, '/capabilities');
-  assert.match(html, /Como as disciplinas se cruzam/);
+  assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
   assert.match(html, /Engenharia/);
   assert.match(html, /Gestão/);
   assert.match(html, /Operação|Produto/);

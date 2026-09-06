@@ -37,7 +37,7 @@ test('diagnóstico organizacional declara quantas pessoas e quais trilhas comple
   assert.equal(plan.calibrationReady, false);
   assert.match(plan.summary, /organizacional/);
   assert.ok(plan.why.some((item) => /não de mais eixos/i.test(item)));
-  assert.ok(plan.why.some((item) => /first screen fecha/i.test(item)));
+  assert.ok(plan.why.some((item) => /resultado das entrevistas|first screen fecha/i.test(item)));
 });
 
 test('comparar duas squads exige dez pessoas, cinco em cada unidade', () => {

@@ -184,24 +184,34 @@ test('first screen mostra a amostra que o experimento real precisa repetir', () 
   assert.doesNotMatch(html, /Para repetir com dados reais/);
   assert.doesNotMatch(html, /Calibração \(50–100/);
   const sample = html.indexOf('Amostra desta leitura');
+  const problems = html.indexOf('Problemas publicados');
   const systems = html.indexOf('Sistemas da organização');
-  assert.ok(sample >= 0 && sample < systems);
+  assert.ok(sample >= 0 && sample < problems && problems < systems);
 });
 
-test('first screen coloca o problema e três sistemas antes da lista, unidades e administração', () => {
+test('first screen lista problemas por área com caminho e sustentação, não uma decisão única', () => {
   const html = firstScreen();
-  const problem = html.indexOf('O que está acontecendo');
+  const index = html.indexOf('Problemas publicados');
+  const product = html.indexOf('>Produto</');
+  const engineering = html.indexOf('>Engenharia</');
+  const management = html.indexOf('>Gestão</');
   const systems = html.indexOf('Sistemas da organização');
-  const crossing = html.indexOf('Como as disciplinas se cruzam');
   const units = html.indexOf('Unidades');
-  const admin = html.search(/Administrar|Instrumento e calibração|Leituras por público/);
-  assert.ok(problem >= 0 && crossing > problem && systems > crossing && units > systems);
-  assert.ok(admin < 0 || admin > units);
+  assert.ok(index >= 0 && product > index && engineering > product && management > engineering && systems > management && units > systems);
+  assert.match(html, /class="interview-report"/);
+  assert.match(html, /A decisão — se houver — é de quem autoriza/);
+  assert.match(html, /Não autorize todo o próximo ciclo|Não autorizar todo o próximo ciclo/);
+  assert.match(html, /Sustentação provisória alta/);
+  assert.match(html, /Lean portfolio/);
+  assert.match(html, /Impacto esperado/);
+  assert.match(html, /O que este caminho não resolve/);
+  assert.doesNotMatch(html.slice(0, index + 80), /O que fazer agora/);
+  assert.doesNotMatch(html, /class="outcome-card compact"/);
   assert.match(html, />Produto</);
   assert.match(html, />Engenharia</);
   assert.match(html, />Operação</);
   assert.match(html, /Ver disciplinas/);
-  assert.match(html, /class="card first-screen-systems"/);
+  assert.match(html, /class="report-systems first-screen-systems"/);
   assert.match(html, /class="card finding-index"/);
   assert.match(html, /class="card scope-index"/);
   assert.match(html, /Mapa de contraste e cobertura/);
@@ -216,8 +226,8 @@ test('first screen coloca o problema e três sistemas antes da lista, unidades e
 test('outras restrições separam mecanismos e mostram o que cada um faz', () => {
   const html = firstScreen();
   const plane = html.slice(0, html.indexOf('first-screen-deep') === -1 ? html.length : html.indexOf('first-screen-deep'));
-  assert.match(plane, /Como as disciplinas se cruzam/);
-  assert.match(plane, /Acesso a capacidades|Release e feedback|Fluxo de trabalho|Gestão de portfólio/);
+  assert.doesNotMatch(plane, /Como as disciplinas se cruzam/);
+  assert.doesNotMatch(plane, /Onde mais isso chega/);
   assert.doesNotMatch(plane, / em Acesso a capacidades gera /);
   assert.doesNotMatch(plane, /Inventário por frente/);
   assert.doesNotMatch(plane, /entrevista não atravessou/);
@@ -263,12 +273,14 @@ test('página de área mostra o recorte, as disciplinas e o radar', () => {
   const html = renderAreaRecorte(path, {
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    findings: [readyFinding],
+    organizationalAreas: map,
     capabilities: [
       leaf('work-management', 'Fluxo de trabalho'),
       leaf('platform-autonomy', 'Acesso a capacidades'),
     ],
   });
-  assert.match(html, /Recorte: Engenharia|Disciplinas de Engenharia/);
+  assert.match(html, /Disciplinas de Engenharia/);
   assert.match(html, /href="\/areas\/delivery"/);
   assert.match(html, /href="\/areas\/platform"/);
   assert.match(html, /Mapa de contraste e cobertura/);
@@ -278,23 +290,21 @@ test('página de área mostra o recorte, as disciplinas e o radar', () => {
 });
 
 test('cartão compacto não lista hipóteses concorrentes da mesma família', () => {
-  const html = firstScreen({
-    outcome: {
-      ...outcome,
-      finding: {
-        ...readyFinding,
-        causalAnalysis: {
-          knowledgeVersion: 'test',
-          hypothesis: 'A hipótese principal explica o recorte.',
-          alternatives: ['Outra leitura da mesma família.', 'Terceira variação do mesmo limitador.'],
-          evidenceFor: [],
-          evidenceAgainst: [],
-          missingEvidence: 'Falta um evento.',
-          limitations: 'Não cria capacidade.',
-        },
+  const html = renderOutcome({
+    ...outcome,
+    finding: {
+      ...readyFinding,
+      causalAnalysis: {
+        knowledgeVersion: 'test',
+        hypothesis: 'A hipótese principal explica o recorte.',
+        alternatives: ['Outra leitura da mesma família.', 'Terceira variação do mesmo limitador.'],
+        evidenceFor: [],
+        evidenceAgainst: [],
+        missingEvidence: 'Falta um evento.',
+        limitations: 'Não cria capacidade.',
       },
     },
-  });
+  }, { density: 'compact' });
   const compact = html.slice(0, html.indexOf('Fundamento e evidência'));
   assert.match(compact, /A hipótese principal explica o recorte/);
   assert.doesNotMatch(compact, /Hipóteses concorrentes/);

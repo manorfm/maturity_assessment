@@ -110,7 +110,14 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.doesNotMatch(report.body, /Risco gerencial/);
   assert.doesNotMatch(report.body, /Resumo executivo/);
   assert.match(report.body, /Mapa de contraste e cobertura/);
-  assert.ok(report.body.indexOf('O que está acontecendo') < report.body.indexOf('Consistência do comportamento no elo limitante'));
+  assert.match(report.body, /Problemas publicados|O que está acontecendo/);
+  assert.ok(
+    Math.min(
+      ...['Problemas publicados', 'O que está acontecendo']
+        .map((marker) => report.body.indexOf(marker))
+        .filter((index) => index >= 0),
+    ) < report.body.indexOf('Consistência do comportamento no elo limitante'),
+  );
   assert.ok(report.body.indexOf('Sistemas da organização') < report.body.indexOf('Gerar convites individuais'));
   const areaUrl = report.body.match(/href="([^"]+\/areas\/[^"]+)"/)?.[1];
   const capabilityFromHome = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];

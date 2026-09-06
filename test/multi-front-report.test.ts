@@ -85,16 +85,18 @@ test('first screen coloca o inventário abaixo da decisão e lista causas com su
     areaBase: '/areas',
     capabilityBase: '/capabilities',
   });
-  const decision = html.indexOf('O que fazer agora');
+  const problems = html.indexOf('Problemas publicados');
   const crossing = html.indexOf('Como as disciplinas se cruzam');
   const systems = html.indexOf('Sistemas da organização');
-  assert.ok(decision >= 0 && crossing > decision && systems > crossing);
+  assert.ok(problems >= 0 && systems > problems);
+  assert.equal(crossing, -1);
   assert.match(html, /Produto/);
   assert.match(html, /Engenharia/);
   assert.match(html, /Operação/);
   assert.match(html, /Gestão/);
-  assert.match(html, /Como as disciplinas se cruzam/);
-  assert.match(html, /origem da versão|próximo incidente|crise/i);
+  assert.match(html, /Sustentação provisória/);
+  assert.match(html, /Pare de autorizar caça ao culpado|Investigação protegida/);
+  assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
   assert.doesNotMatch(html, /Inventário por frente/);
   assert.doesNotMatch(html, /Ainda é provisório/);
   assert.doesNotMatch(html, /impede escolher|inconclusivo até discriminar/i);

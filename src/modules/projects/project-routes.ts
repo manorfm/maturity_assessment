@@ -20,10 +20,12 @@ import { TransformationPortfolioPlanner, type TransformationPhase } from '../inf
 import { AudienceReportProjector, audienceAsk, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
 import { compactMechanismBody, projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
 import { policyBriefingFor } from '../inference/domain/multi-front-inventory.js';
-import { projectDisciplineCrossings, type DisciplineCrossing } from '../inference/domain/discipline-crossing.js';
+import { crossingsForCapability, type DisciplineCrossing } from '../inference/domain/discipline-crossing.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
 import { disciplineScope } from '../inference/domain/discipline-brief.js';
 import { problemsForNode, projectProblemTree, type HierarchicalBranch, type HierarchicalFinding, type HierarchicalProblem } from '../inference/domain/hierarchical-problems.js';
+import { projectInterviewReport, type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
+import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -261,7 +263,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         ? renderCapabilityRadar(groups, base, scopeId)
         : '';
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderDisciplineDetail({ selected, findings: relevant })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}`));
+    return reply.type('text/html').send(layout(selected.label, `<div class="report-home"><nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderDisciplineDetail({ selected, findings: relevant, projectFindings: findings, capabilityBase: base, primaryPattern: report.outcome.finding?.pattern })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}</div>`));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/areas/:areaId', async (request, reply) => {
@@ -289,7 +291,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       : `<a href="${areaBase}/${item.id}${scopeQuery}">${escapeHtml(item.label)}</a>`).join('<span class="breadcrumb-separator" aria-hidden="true">›</span>');
     const groups = source?.capabilityGroups ?? report.capabilityGroups;
     const areaFindings = source?.findings ?? report.findings;
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderAreaRecorte(path, { areaBase, capabilityBase, scopeQuery, capabilities: groups, findings: areaFindings })}`));
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderAreaRecorte(path, { areaBase, capabilityBase, scopeQuery, capabilities: groups, findings: areaFindings, organizationalAreas: map })}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -444,20 +446,19 @@ export function renderFirstScreen(input: {
   sample?: { completed: number; units: Array<{ path: string; completed: number }> };
   capabilityGroups?: CapabilityRadarNode[];
 }): string {
-  const ordered = uniqueFindingsByPattern(input.findings);
-  const competingFinding = input.competingFinding ?? ordered.find((finding) => finding.pattern !== input.outcome.finding?.pattern);
-  const card = renderOutcome(input.outcome, {
-    density: 'compact',
-    ...(input.confirmedProblemCount !== undefined ? { confirmedProblemCount: input.confirmedProblemCount } : {}),
-    ...(input.occurrence ? { occurrence: input.occurrence } : {}),
-    ...(competingFinding ? { competingFinding } : {}),
-  });
-  const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
   const reading = input.outcome.kind === 'preserve' ? 'preserve' : 'problem';
-  const crossing = reading === 'problem'
-    ? renderDisciplineCrossing(projectDisciplineCrossings(ordered, input.outcome.finding?.pattern), input.capabilityBase)
-    : '';
-  const systems = `<section class="card first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase }, { reading })}</section>`;
+  const interview = reading === 'problem' ? projectInterviewReport({ findings: input.findings, organizationalAreas: input.organizationalAreas }) : undefined;
+  const sample = renderSampleStrip(input.sample);
+  const opening = interview?.problemCount
+    ? renderInterviewReport(interview, input.capabilityBase, sample)
+    : `${renderOutcome(input.outcome, {
+      density: 'compact',
+      ...(input.confirmedProblemCount !== undefined ? { confirmedProblemCount: input.confirmedProblemCount } : {}),
+      ...(input.occurrence ? { occurrence: input.occurrence } : {}),
+      ...(input.competingFinding ? { competingFinding: input.competingFinding } : {}),
+    })}${sample}`;
+  const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
+  const systems = `<section class="report-systems first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase }, { reading })}</section>`;
   const radar = input.capabilityGroups?.length
     ? renderCapabilityRadar(input.capabilityGroups, input.capabilityBase)
     : '';
@@ -465,21 +466,53 @@ export function renderFirstScreen(input: {
   const deep = reading === 'problem' && (radar || publishedTree)
     ? `<details class="methodology first-screen-deep" id="report-portfolio"><summary>Mapa e recortes publicados</summary>${radar}${publishedTree}</details>`
     : `${radar}${publishedTree}`;
-  return `${card}${crossing}${renderSampleStrip(input.sample)}${systems}${deep}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
+  return `${opening}${systems}${deep}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
 }
 
-function renderDisciplineCrossing(edges: DisciplineCrossing[], capabilityBase?: string): string {
-  if (!edges.length) return '';
-  const items = edges.map((edge) => {
-    const from = capabilityBase
-      ? `<a href="${escapeHtml(`${capabilityBase}/${edge.fromId}`)}">${escapeHtml(edge.fromLabel)}</a>`
-      : escapeHtml(edge.fromLabel);
-    const to = capabilityBase
-      ? `<a href="${escapeHtml(`${capabilityBase}/${edge.toId}`)}">${escapeHtml(edge.toLabel)}</a>`
-      : escapeHtml(edge.toLabel);
-    return `<li><strong>${from} → ${to}.</strong> ${escapeHtml(edge.generates)}</li>`;
+function renderInterviewReport(report: ReturnType<typeof projectInterviewReport>, capabilityBase: string, sample = ''): string {
+  const count = report.problemCount;
+  const chapters = report.chapters.map((chapter) => {
+    const problems = chapter.problems.map((problem) => renderInterviewProblem(problem, capabilityBase)).join('');
+    return `<section class="interview-chapter" data-area="${escapeHtml(chapter.areaId)}"><h2>${escapeHtml(chapter.areaLabel)}</h2>${problems}</section>`;
   }).join('');
-  return `<section class="card discipline-crossing"><h2>Como as disciplinas se cruzam</h2><ul>${items}</ul></section>`;
+  return `<article class="interview-report"><p class="eyebrow">O que as entrevistas mostraram</p><p class="tag">${count} ${count === 1 ? 'problema publicado' : 'problemas publicados'}</p><p class="lead">Cada recorte traz o que as pessoas observaram e caminhos possíveis. A decisão — se houver — é de quem autoriza, depois desta leitura.</p>${sample}<h2>Problemas publicados</h2>${chapters}</article>`;
+}
+
+function renderInterviewProblem(problem: InterviewProblem, capabilityBase: string): string {
+  const href = `${capabilityBase}/${problem.capabilityId}`;
+  const evidence = problem.evidence.length
+    ? `<p><strong>O que as pessoas observaram.</strong> ${escapeHtml(problem.evidence.join(' '))}</p>`
+    : '';
+  const effects = problem.effects.length
+    ? `<p><strong>O que isso produz.</strong> ${escapeHtml(problem.effects.join(' '))}</p>`
+    : '';
+  const investigate = problem.investigate
+    ? '<p class="muted">As entrevistas ainda não amarraram contenção. O caminho abaixo é hipótese, não uma decisão tomada.</p>'
+    : '';
+  const solutions = problem.solutions.map((solution) => renderInterviewSolution(solution)).join('');
+  return `<article class="interview-problem" data-pattern="${escapeHtml(problem.pattern)}"><p class="muted">${escapeHtml(problem.capabilityLabel)}</p><h3 class="executive-reading">${escapeHtml(problem.title)}</h3><p>${escapeHtml(problem.mechanism)}</p>${evidence}${effects}${investigate}<div class="interview-solutions">${solutions}</div><p class="muted"><a href="${escapeHtml(href)}">Abrir ${escapeHtml(problem.capabilityLabel)}</a></p></article>`;
+}
+
+function renderInterviewSolution(solution: InterviewSolution): string {
+  const band = `Sustentação provisória ${solution.supportBand}`;
+  const role = solution.leading ? 'Caminho mais sustentado' : 'Outro caminho do mesmo sistema';
+  return `<section class="interview-solution${solution.leading ? ' leading' : ''}"><p class="support-band">${escapeHtml(band)}</p><h4>${escapeHtml(role)}</h4><p><strong>${escapeHtml(solution.action)}</strong></p><p><strong>O que isso significa.</strong> ${escapeHtml(solution.explanation)}</p><p><strong>Por que cabe.</strong> ${escapeHtml(solution.foundation.why)} Fonte: ${escapeHtml(solution.foundation.source)}. ${escapeHtml(solution.foundation.principle)}.</p><p><strong>Impacto esperado.</strong> ${escapeHtml(solution.expectedImpact)}</p><p><strong>O que este caminho não resolve.</strong> ${escapeHtml(solution.doesNotSolve)}</p></section>`;
+}
+
+function renderDisciplineReach(edges: DisciplineCrossing[], capabilityIds: string[], capabilityBase?: string): string {
+  if (!edges.length) return '';
+  const here = new Set(capabilityIds);
+  const items = edges.map((edge) => {
+    const outbound = here.has(edge.fromId);
+    const otherId = outbound ? edge.toId : edge.fromId;
+    const otherLabel = outbound ? edge.toLabel : edge.fromLabel;
+    const otherTitle = outbound ? edge.toTitle : edge.fromTitle;
+    const other = capabilityBase
+      ? `<a href="${escapeHtml(`${capabilityBase}/${otherId}`)}">${escapeHtml(otherLabel)}</a>`
+      : escapeHtml(otherLabel);
+    return `<li><strong>${other}</strong> — neste recorte o efeito se chama “${escapeHtml(otherTitle)}”. ${escapeHtml(edge.generates)}</li>`;
+  }).join('');
+  return `<section class="discipline-reach"><h2>Onde mais isso chega</h2><p>O mesmo mecanismo muda de nome conforme o recorte. Uma área maior reúne várias menores.</p><ul>${items}</ul></section>`;
 }
 
 function renderSampleStrip(sample?: { completed: number; units: Array<{ path: string; completed: number }> }): string {
@@ -489,7 +522,7 @@ function renderSampleStrip(sample?: { completed: number; units: Array<{ path: st
     return `${escapeHtml(name)} (${unit.completed})`;
   }).join(' · ');
   const unitCount = sample.units.length || 1;
-  return `<section class="card sample-strip" aria-label="Amostra desta leitura"><p><strong>Amostra desta leitura.</strong> ${sample.completed} pessoas em ${unitCount} ${unitCount === 1 ? 'unidade' : 'unidades'}${units ? ` — ${units}` : ''}.</p></section>`;
+  return `<p class="report-sample" aria-label="Amostra desta leitura"><strong>Amostra desta leitura.</strong> ${sample.completed} pessoas em ${unitCount} ${unitCount === 1 ? 'unidade' : 'unidades'}${units ? ` — ${units}` : ''}.</p>`;
 }
 
 type PerspectiveGapView = { title: string; capability: string; strongerProfiles: string[]; constrainedProfiles: string[] };
@@ -906,7 +939,7 @@ export function renderOrganizationalAreaMap(
   const query = urls.scopeQuery ?? '';
   const problemReading = options.reading === 'problem';
   const tiles = map.systems.map((system) => {
-    const chips = system.children.filter((child) => child.observed || problemReading).map((child) => (
+    const chips = system.children.filter((child) => problemReading ? child.findingCount > 0 : child.observed).map((child) => (
       `<a class="area-chip" href="${escapeHtml(areaChildHref(child, urls) + query)}">${escapeHtml(child.label)}</a>`
     )).join('');
     const status = system.findingCount
@@ -920,7 +953,7 @@ export function renderOrganizationalAreaMap(
     const drill = `<p><a class="area-drill" href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}">Ver disciplinas</a></p>`;
     return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}${status ? `<p class="muted">${escapeHtml(status)}</p>` : ''}${chips ? `<p class="area-chips">${chips}</p>` : ''}${drill}</article>`;
   }).join('');
-  const bandChildren = map.band.children.filter((child) => child.observed);
+  const bandChildren = map.band.children.filter((child) => problemReading ? child.findingCount > 0 : child.observed);
   const band = map.band.observed
     ? `<nav class="area-band" aria-label="Gestão"><p class="eyebrow">Gestão</p><p>${bandChildren.map((child) => `<a href="${escapeHtml(`${urls.capabilityBase}/${child.leafId ?? child.id}${query}`)}">${escapeHtml(child.label)}</a>`).join(' · ')}</p></nav>`
     : '';
@@ -950,16 +983,30 @@ export function renderOrganizationalAreaIndex(
 
 export function renderAreaRecorte(
   path: OrganizationalAreaNode[],
-  urls: { areaBase: string; capabilityBase: string; scopeQuery?: string; capabilities?: CapabilityRadarNode[]; findings?: OutcomeFinding[] },
+  urls: { areaBase: string; capabilityBase: string; scopeQuery?: string; capabilities?: CapabilityRadarNode[]; findings?: OutcomeFinding[]; organizationalAreas?: OrganizationalAreaMap },
 ): string {
   const selected = path.at(-1);
   if (!selected) return '';
   const index = renderOrganizationalAreaIndex(path, urls);
   const radarNodes = areaChildrenAsRadar(selected, urls.capabilities ?? []);
   const radar = radarNodes.length ? renderCapabilityRadar(radarNodes, urls.capabilityBase, urls.scopeQuery ? new URLSearchParams(urls.scopeQuery.replace(/^\?/, '')).get('scope') ?? undefined : undefined) : '';
-  const scope = renderDisciplineScope(selected.id);
-  const problems = urls.findings?.length ? renderAreaProblems(path, urls.findings, urls.capabilityBase) : '';
-  return `<section class="area-recorte">${scope}<p class="eyebrow">Recorte: ${escapeHtml(selected.label)}</p><h2>Disciplinas de ${escapeHtml(selected.label)}</h2><p>Abra uma disciplina para ver o que as entrevistas sustentam neste sistema. O mapa abaixo localiza cobertura; “?” não é fragilidade nem ausência de problema.</p>${problems}${index}${radar}</section>`;
+  const map = urls.organizationalAreas;
+  const chapter = map && urls.findings
+    ? renderAreaChapter(projectAreaChapter({ area: selected, findings: urls.findings, organizationalAreas: map }), urls.capabilityBase)
+    : urls.findings?.length ? renderAreaProblems(path, urls.findings, urls.capabilityBase) : '';
+  return `<section class="area-recorte">${chapter}<h2>Disciplinas de ${escapeHtml(selected.label)}</h2>${index}${radar}</section>`;
+}
+
+function renderAreaChapter(chapter: ReturnType<typeof projectAreaChapter>, capabilityBase: string): string {
+  const problems = chapter.problems.length
+    ? chapter.problems.map((problem) => {
+      const arrivals = problem.arrivals.map((arrival) => (
+        `<p class="muted">Em ${escapeHtml(arrival.areaLabel)}, a mesma evidência se chama: ${escapeHtml(arrival.localTitle)}</p>`
+      )).join('');
+      return `<article class="area-chapter-problem" data-pattern="${escapeHtml(problem.pattern)}"><p class="muted">${escapeHtml(problem.capabilityLabel)}</p><h3 class="executive-reading">${escapeHtml(problem.localTitle)}</h3><p><strong>Caminho neste recorte.</strong> ${escapeHtml(problem.action)}</p><p class="support-band">Sustentação provisória ${escapeHtml(problem.supportBand)}</p>${arrivals}<p class="muted"><a href="${escapeHtml(`${capabilityBase}/${problem.capabilityId}`)}">Abrir ${escapeHtml(problem.capabilityLabel)}</a></p></article>`;
+    }).join('')
+    : '<p class="muted">Neste recorte as entrevistas ainda não publicaram uma dor local.</p>';
+  return `<article class="area-chapter"><p class="area-observes">${escapeHtml(chapter.observes)}</p><h2>Problemas neste recorte</h2>${problems}</article>`;
 }
 
 function areaLeafIds(node: OrganizationalAreaNode): string[] {
@@ -1124,9 +1171,21 @@ function renderDisciplineScope(id: string): string {
   return `<section class="discipline-scope"><h2>O que esta disciplina abrange</h2><p>${escapeHtml(scope.covers)}</p><h3>O que trata</h3><p>${escapeHtml(scope.treats)}</p><h3>O que não é</h3><p>${escapeHtml(scope.not)}</p></section>`;
 }
 
-export function renderDisciplineDetail(input: { selected: CapabilityRadarNode; findings: ReportFinding[] }): string {
+export function renderDisciplineDetail(input: {
+  selected: CapabilityRadarNode;
+  findings: ReportFinding[];
+  projectFindings?: ReportFinding[];
+  capabilityBase?: string;
+  primaryPattern?: string;
+}): string {
   const brief = renderDisciplineScope(input.selected.id);
   const childIds = flattenCapabilityIds(input.selected).filter((id) => id !== input.selected.id);
+  const reachIds = [input.selected.id, ...childIds];
+  const reach = renderDisciplineReach(
+    crossingsForCapability(input.projectFindings ?? input.findings, reachIds, input.primaryPattern),
+    reachIds,
+    input.capabilityBase,
+  );
   const scoped = problemsForNode(input.selected.id, childIds, input.findings.map(asHierarchicalFinding));
   if (input.selected.children.length) {
     const fever = scoped.systemicEffects.map((effect) => `<p>${escapeHtml(effect)}</p>`).join('')
@@ -1135,16 +1194,16 @@ export function renderDisciplineDetail(input: { selected: CapabilityRadarNode; f
       || '<p class="muted">Nenhuma dor local publicada nas disciplinas abaixo.</p>';
     const solutions = scoped.descendants.map((problem) => renderHierarchicalSolution(problem)).join('')
       || '<p class="muted">Sem solução publicada enquanto a dor local não estiver nomeada.</p>';
-    return `${brief}<section class="discipline-level"><h2>Efeito neste nível</h2>${fever}</section><section class="discipline-level"><h2>Dores nas disciplinas abaixo</h2>${wounds}</section><section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
+    return `${brief}<section class="discipline-level"><h2>Efeito neste nível</h2>${fever}</section><section class="discipline-level"><h2>Dores nas disciplinas abaixo</h2>${wounds}</section>${reach}<section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
   }
   if (!scoped.local.length) {
-    return `${brief}<p class="notice">As entrevistas não atravessaram um problema publicado nesta disciplina. Isso não conclui ausência de problema.</p>`;
+    return `${brief}${reach}<p class="notice">As entrevistas não atravessaram um problema publicado nesta disciplina. Isso não conclui ausência de problema.</p>`;
   }
   const problems = scoped.local.map((problem) => renderHierarchicalWound(problem)).join('');
   const generated = [...new Set(scoped.local.map((problem) => problem.systemicEffect))]
     .map((effect) => `<p>${escapeHtml(effect)}</p>`).join('');
   const solutions = scoped.local.map((problem) => renderHierarchicalSolution(problem)).join('');
-  return `${brief}<section class="discipline-level"><h2>Problemas desta disciplina</h2>${problems}</section><section class="discipline-level"><h2>O que isso gera no sistema</h2>${generated}</section><section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
+  return `${brief}<section class="discipline-level"><h2>Problemas desta disciplina</h2>${problems}</section><section class="discipline-level"><h2>O que isso gera no sistema</h2>${generated}</section>${reach}<section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
 }
 
 function renderHierarchicalWound(problem: HierarchicalProblem): string {

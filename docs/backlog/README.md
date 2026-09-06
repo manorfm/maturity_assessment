@@ -44,11 +44,9 @@ deve ocorrer numa única unidade para preservar o limiar; uma comparação entre
 squads exige ao menos dez pessoas, cinco em cada unidade. Calibração continua 50–100
 jornadas rotuladas e não é substituída por sintéticos.
 
-A home já projeta três sistemas e a faixa de Gestão. A first screen já
-cruza disciplinas publicadas e esconde o mapa de lacunas. O cartão
-compacto já cabe em quatro batidas; o mapa ainda nomeia disciplina
-sem causa. A
-sequência aberta é a onda F em
+A home já lista problemas por área com caminho e sustentação. Abrir
+uma área já é capítulo com intersecção publicada. Restam o dossiê
+completo (G3) e o sintético de anamnese (G4) em
 [`report-presentation-plan.md`](report-presentation-plan.md). Folhas
 candidatas (onda E) só depois. A massa sintética já valida coerência,
 não a leitura. O `/showcase` já é o deck dos casos. O detalhe

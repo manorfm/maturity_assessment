@@ -77,6 +77,12 @@ export function projectDisciplineCrossings(findings: OutcomeFinding[], primaryPa
   return pickEdges(scored, primaryPattern).slice(0, 3);
 }
 
+export function crossingsForCapability(findings: OutcomeFinding[], capabilityIds: string[], primaryPattern?: string): DisciplineCrossing[] {
+  const ids = new Set(capabilityIds.filter(Boolean));
+  if (!ids.size) return [];
+  return projectDisciplineCrossings(findings, primaryPattern).filter((edge) => ids.has(edge.fromId) || ids.has(edge.toId));
+}
+
 function pickEdges(scored: Array<DisciplineCrossing & { strength: number }>, primaryPattern?: string): DisciplineCrossing[] {
   const best = new Map<string, DisciplineCrossing & { strength: number }>();
   for (const edge of scored) {

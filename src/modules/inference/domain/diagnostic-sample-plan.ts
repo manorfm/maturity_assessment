@@ -207,7 +207,7 @@ function packRoles(roles: SampleRole[], unitCount: number, gate: SampleGate): Di
       'Precisão vem de padrões independentes, trilhas complementares e concordância — não de mais eixos no radar.',
       'Um finding exige pelo menos duas pessoas no mesmo padrão; um pilar exige metade das folhas com dois padrões cada.',
       `O gate ${gateLabel(gate)} precisa de ${padded.length} pessoas em ${unitCount} unidade(s).`,
-      'Um diretor só recebe o relatório quando o first screen fecha corrigir, evoluir ou preservar. Discriminar no cartão principal significa causa ainda não amarrada — mais pessoas ou mais eixos não resolvem isso sozinhos.',
+      'Um diretor recebe o resultado das entrevistas quando há problemas publicados ou uma leitura de preservar. Discriminar no detalhe significa causa ainda não amarrada — mais pessoas ou mais eixos não resolvem isso sozinhos.',
       'A entrevista curta (dois a quatro eventos) não visita os aprofundamentos de perfil; produto, plataforma cloud e qualidade profunda podem permanecer não avaliados mesmo com amostra suficiente.',
       ...(unpublished.length ? [`Com o catálogo de opções das trilhas, ${unpublished.map(pillarLabel).join(', ')} continuam fora do alcance.`] : []),
     ],

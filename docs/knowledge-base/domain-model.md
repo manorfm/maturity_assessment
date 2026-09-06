@@ -65,8 +65,13 @@
 - **OrganizationalAreaMap:** projeção de apresentação `organizational-areas-v1`
   sobre as 29 folhas. Home: Produto, Engenharia, Operação; Engenharia abre
   entrega, qualidade de software, arquitetura, plataforma e segurança; Gestão é
-  faixa. Não reparenta `CapabilityTaxonomy` nem cria folha. Sistema ou disciplina
-  aparece se houver folha publicada ou finding. Rótulo de folha é
+  faixa. Não reparenta `CapabilityTaxonomy` nem cria folha. Os capítulos
+  do relatório executivo são essa mesma projeção — não uma segunda
+  árvore “Desenvolvimento / Plataforma / Organização”. Sistema ou disciplina
+  aparece se houver folha publicada ou finding. Abrir a área projeta
+  `area-chapter-v1`: uma linha do recorte, dores no nome local e
+  intersecção só quando o finding do outro lado já foi publicado.
+  Rótulo de folha é
   substantivo. A página da disciplina publica o que ela abrange, trata
   e não é, a dor daquele nível e o efeito distinto que essa dor gera acima.
 - **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.

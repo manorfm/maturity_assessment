@@ -5,6 +5,27 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.97.0
+
+- Abrir uma área virou capítulo: uma linha do que o recorte observa,
+  as dores no nome local e a mesma evidência reaparecendo no outro
+  recorte quando o cruzamento já foi publicado. Sem redesenhar a
+  árvore e sem promover Plataforma a sistema.
+
+## 0.96.0
+
+- A home deixou de ser o laudo de uma decisão. Passa a listar os
+  problemas publicados por área, cada um com caminho possível,
+  sustentação provisória, fundamento e impacto esperado. Quem
+  autoriza decide depois de ler.
+
+## 0.95.0
+
+- O cruzamento deixou a home e passou a ser do motor: na disciplina, o
+  mesmo problema chega com outro nome; a área maior lista as menores.
+  O layout da home virou documento de leitura — um bloco de decisão,
+  amostra numa linha, sistemas como índice.
+
 ## 0.94.0
 
 - O cartão compacto da first screen ficou em quatro batidas: efeito,

@@ -4,7 +4,7 @@ import { capabilityIds, CapabilityTaxonomy } from '../src/modules/inference/doma
 import { disciplineBrief, disciplineScope, presentationDisciplineIds } from '../src/modules/inference/domain/discipline-brief.js';
 import { problemsForNode, projectProblemTree, systemicEffectFor } from '../src/modules/inference/domain/hierarchical-problems.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
-import { projectDisciplineCrossings } from '../src/modules/inference/domain/discipline-crossing.js';
+import { crossingsForCapability, projectDisciplineCrossings } from '../src/modules/inference/domain/discipline-crossing.js';
 import { renderAreaRecorte, renderDisciplineDetail, renderFindingIndex, renderFirstScreen, renderOrganizationalAreaMap } from '../src/modules/projects/project-routes.js';
 import type { OutcomeFinding } from '../src/modules/inference/domain/report-outcome.js';
 
@@ -129,6 +129,25 @@ test('página-pai mostra a febre do nível e as dores das folhas, textos distint
   assert.doesNotMatch(feverBlock, /Para ter ambiente ou permissão, o time pede e espera outro grupo/);
 });
 
+test('página da disciplina mostra o mesmo problema com o nome de outra área', () => {
+  const findings = [
+    finding('provisionamento-em-fila', 'Pedido de ambiente espera outro grupo', 'platform-autonomy'),
+    finding('war-room-como-gestao', 'O war room virou o modo de gestão', 'leadership-management'),
+    finding('espera-normalizada', 'O time compensa espera iniciando mais trabalho', 'work-management'),
+  ];
+  const html = renderDisciplineDetail({
+    selected: leafNode('platform-autonomy', 'Acesso a capacidades'),
+    findings: [findings[0]!],
+    projectFindings: findings,
+    capabilityBase: '/capabilities',
+    primaryPattern: 'war-room-como-gestao',
+  });
+  assert.match(html, /Onde mais isso chega/);
+  assert.match(html, /Liderança e gestão/);
+  assert.match(html, /Fila de ambiente|pedido/i);
+  assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
+});
+
 test('cruzamento liga a dor de uma disciplina ao efeito na outra', () => {
   const edges = projectDisciplineCrossings([
     finding('provisionamento-em-fila', 'Pedido de ambiente espera outro grupo', 'platform-autonomy'),
@@ -144,6 +163,15 @@ test('cruzamento liga a dor de uma disciplina ao efeito na outra', () => {
   assert.doesNotMatch(edges.map((edge) => edge.generates).join(' '), /Pedido de ambiente espera outro grupo em Acesso/);
   assert.doesNotMatch(edges.map((edge) => edge.generates).join(' '), /ainda não|provisório|não dá para dizer/i);
   assert.equal(edges.filter((edge) => /war room virou o modo/i.test(edge.generates)).length, 0);
+  const published = [
+    finding('provisionamento-em-fila', 'Pedido de ambiente espera outro grupo', 'platform-autonomy'),
+    finding('war-room-como-gestao', 'O war room virou o modo de gestão', 'leadership-management'),
+    finding('empacotamento-manual', 'A versão para no passo de preparar', 'release-feedback'),
+    finding('espera-normalizada', 'O time compensa espera iniciando mais trabalho', 'work-management'),
+  ];
+  const forAccess = crossingsForCapability(published, ['platform-autonomy'], 'war-room-como-gestao');
+  assert.ok(forAccess.some((edge) => edge.fromId === 'platform-autonomy' || edge.toId === 'platform-autonomy'));
+  assert.equal(crossingsForCapability(published, ['software-security']).length, 0);
 });
 
 test('first screen lista todos os problemas por hierarquia e não trata vazio como ausência', () => {
@@ -186,11 +214,13 @@ test('recorte de área abre com o que a disciplina é e os problemas do nível',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     findings: [wound],
+    organizationalAreas: map,
     capabilities: [leafNode('platform-autonomy', 'Acesso a capacidades')],
   });
-  assert.match(html, /O que esta disciplina abrange/);
-  assert.ok(html.includes(disciplineScope('engineering').covers.slice(0, 24)));
-  assert.match(html, /Pedido de ambiente espera outro grupo/);
+  assert.match(html, /class="area-chapter"/);
+  assert.ok(html.includes(disciplineScope('engineering').treats.slice(0, 24)));
+  assert.doesNotMatch(html, /O que esta disciplina abrange/);
+  assert.match(html, /chamado|espera outro grupo|fila do outro grupo|Pedido de ambiente/i);
   assert.match(html, /Disciplinas de Engenharia/);
 });
 

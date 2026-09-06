@@ -113,20 +113,19 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
-compõe um cartão compacto (`density: compact`), o cruzamento entre
-disciplinas, a amostra desta leitura e os três sistemas; Gestão é faixa.
-Radar e recortes publicados abrem em `details`. Os blocos internos usam o
-fundo da página, não ficam soltos no cinza.
-O cartão visível traz efeito cotidiano,
-um mecanismo que não ecoa o título, o que fazer agora com quem autoriza,
-teste e o que não resolve, sem abrir pela tag de correção. O antipadrão
-fica em `details`. A amostra
-declara só pessoas e unidades. Fundamento, evidência,
-prioridade e vocabulário metodológico ficam em `details`. Os demais achados
-aparecem no cruzamento entre disciplinas: no máximo três arestas com
-mecanismo documentado, só com finding publicado. A página da disciplina começa pelo que ela abrange, trata e não é;
-depois vêm a dor daquele nível, o efeito que ela gera acima e a
-solução. Rótulos de folha são substantivos (Acesso a capacidades), não o
+projeta o índice de entrevistas (`interview-report-v1`): problemas
+publicados por área, cada um com soluções amarradas, faixa de
+sustentação, fundamento e impacto. A amostra desta leitura entra
+antes dos capítulos. Os três sistemas continuam como navegação;
+Gestão é faixa. O cruzamento fica no detalhe da disciplina. Radar e
+recortes publicados abrem em `details`. A home do relatório usa coluna
+estreita e serifada de leitura. O cartão compacto (`density: compact`)
+permanece no detalhe e nas leituras sem finding. A amostra declara só
+pessoas e unidades. Antipadrão, vocabulário metodológico e o número do
+posterior ficam fora do primeiro plano.
+A página da disciplina começa pelo que ela abrange, trata e não é;
+depois vêm a dor daquele nível, o efeito que ela gera acima, onde
+mais isso chega e a solução. Rótulos de folha são substantivos (Acesso a capacidades), não o
 estado desejado.
 Um eixo com “?” no radar significa cobertura temática insuficiente — a
 entrevista não atravessou dois padrões daquela disciplina — e não pede mais
@@ -134,8 +133,8 @@ pessoas nem declara fragilidade. Unidades
 distintivas ocupam uma linha, com link para a cobertura do time, e não
 reimprimem o cartão. Briefings por público são cartões com o pedido de
 decisão, não listas de âncoras; convites, hipóteses e calibração ficam no
-rodapé administrativo, fechados. O drill-down de área mostra o breve da disciplina, os problemas daquele
-nível, as crianças e o radar. Não há framework de frontend nem radar de
+rodapé administrativo, fechados. O drill-down de área projeta `area-chapter-v1`: uma linha do recorte,
+as dores no nome local, a intersecção publicada, as crianças e o radar. Não há framework de frontend nem radar de
 quinze eixos. IDs de navegação pertencem apenas ao
 relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam

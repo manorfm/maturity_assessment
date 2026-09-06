@@ -1,10 +1,10 @@
 # Plano: relatório apresentável — mapa, cartão, UX e sintéticos
 
-Ondas A–D e o cruzamento documentado (0.93) estão na base. A home
-ainda falha o aceite de leitura: o cartão é um memorando, o mapa
-ainda mostra disciplinas sem causa, e o cruzamento às vezes não
-amarra a decisão. **F é a sequência aberta.** E (folhas candidatas)
-só depois de F. Piloto humano só depois de F fechar.
+Ondas A–D, o cruzamento (0.93) e o índice de problemas (G1) estão
+na base. A home já lista dores por área com caminho. Restam G2
+(capítulo de área), o resto de G3 e G4. E (folhas candidatas) só
+depois de G. Piloto humano só depois do relatório de anamnese
+fechar.
 Detalhe histórico do mapa em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md);
 detalhe histórico do cartão em
@@ -40,8 +40,9 @@ classificação não é.
 | B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
 | C | UX minimalista | **Parcial.** Cruzamento no lugar do inventário; cartão e mapa ainda abrem pergunta |
 | D | Massa sintética | **Vigente.** Três bandas + contrastes passam a barra de coerência, não de leitura |
-| F | Relatório que responde | **Aberta.** F1 vigente; restam F2–F4. Aceite: quem lê o showcase reformula a decisão sem perguntar o que a entrevista não atravessou |
-| E | Folhas candidatas | Só depois de F; lacunas viram folha com contrato, uma de cada vez |
+| F | Relatório que responde | **Parcial.** Cartão e cruzamento no detalhe; não é o alvo de leitura |
+| G | Anamnese por áreas | **Parcial.** G1 e G2 vigentes; G3 restante e G4 abertos |
+| E | Folhas candidatas | Só depois de G; lacunas viram folha com contrato, uma de cada vez |
 
 Fora: LLM, React por antecipação, radar de quinze eixos, nó Agilidade,
 Tuckman como nota, calibração por sintético, reparentar
@@ -186,23 +187,12 @@ saúde e nunca como pergunta.
 **Aceite.** A first plane do opaco não contém “entrevista não
 atravessou”, “ainda sem causa” nem nome de folha sem finding.
 
-### F3 — Cruzamento amarra a decisão ou declara que não amarra
+### F3 — Cruzamento no detalhe da disciplina
 
-Hoje o cruzamento já recusa o leque “tudo gera o cartão”. No opaco
-as três arestas conversam com a crise. Na baixa prática o cartão é
-segurança e as arestas são fila, aprendizado e herói → reversão —
-três mecanismos reais que não tocam a decisão do cartão.
-
-**Fazer.** Se existir feed documentado até o finding do cartão,
-pelo menos uma aresta aponta para ele. Se não existir, uma linha:
-esta decisão não depende das outras frentes publicadas — e as três
-arestas continuam só com mecanismo. Proibido inventar “herói gera
-token”. Frase vaga de efeito sistêmico (“mudanças se encontram
-tarde”) só entra se for o mecanismo da aresta, não um tapa-buraco.
-
-**Aceite.** Em cada um dos quatro sintéticos, as arestas visíveis
-são acionáveis (dá para dizer o que parar). Nenhuma cola dois
-títulos com “gera”.
+**Vigente.** Não há sessão de cruzamento na home. O motor registra
+as arestas; a página da disciplina mostra onde o mesmo mecanismo
+chega e com que nome. Área maior lista as dores das menores. A
+especificação passou para `recommendation-model.md`.
 
 ### F4 — Disciplina: dor, efeito, ação
 
@@ -225,10 +215,102 @@ sintético, piloto com pessoas, onda E.
 
 ### Quando F fecha
 
-Atualizar `recommendation-model.md`, `assessment-model.md` e o
-wireframe vigente. Só então o
-[`plano multiárea`](multi-area-consultant-diagnostic-plan.md) volta
-a ser o próximo passo humano.
+F não é mais o alvo de leitura. G abaixo.
+
+---
+
+## Onda G — Anamnese por áreas (aberta, alvo de leitura)
+
+O relatório do executivo é o **resultado das entrevistas**, não o
+laudo de uma decisão. A home vigente já lista problemas por área
+com caminho, sustentação, fundamento e impacto. Quem autoriza
+decide depois de ler. O capítulo ao abrir uma área já está vigente.
+Restam o dossiê completo e o sintético em que o mesmo evento
+atravessa três capítulos.
+
+A árvore de disciplinas **já é boa o suficiente como instrumento**:
+Produto, Engenharia (com Plataforma dentro), Operação e Gestão como
+faixa. Não falta um grafo novo. O que ainda falta é **organizar a
+leitura das intersecções**: a mesma evidência publicada aparecer
+com o nome de cada recorte, sem inventar aresta e sem promover
+Plataforma a sistema. O motor já guarda feeds, reforço de família e
+mesmo sistema diagnóstico; o capítulo da área já projeta a
+intersecção publicada. Não reparentar `capability-taxonomy.ts`.
+
+### O que o exemplo exige e o que o motor já tem
+
+| Peça do exemplo | No motor hoje | Na projeção hoje |
+| --- | --- | --- |
+| 3–5 dores na visão executiva, com gravidade | `findings[]`, `priority`, `severity` | **G1 vigente.** Índice por área; semáforo só se gravidade já publicada |
+| Capítulo por área + “o que avaliamos” | sistemas Produto / Engenharia / Operação + faixa Gestão; `disciplineScope` | **G2 vigente.** Uma linha + dores locais + intersecção publicada |
+| Dor: evidências, efeitos, hipóteses, solução, fundamento | `recommendationEvidence`, `systemicEffect`, `causalAnalysis.alternatives`, `intervention`, `foundation` | **Parcial no índice.** Capítulo e jargão cotidiano ainda abertos |
+| A mesma evidência em várias áreas, com outro nome | `affectedCapabilities`, cruzamento, dor local ≠ efeito do sistema | **G2 vigente** no capítulo; disciplina continua com “onde mais isso chega” |
+| Solução: por quê, o que reduz, como, o que a referência defende, limite, prioridade | `plainExplanation`, `whyItWorks`, `doesNotSolve`, `matureReference`, `priority` | Visível no índice, com faixa de sustentação |
+| Não escolher uma única árvore causal | hipóteses concorrentes + arestas | Vários caminhos quando a hipótese irmã foi publicada |
+
+### O que copiar do exemplo — e o que é só cuidado
+
+**Copiar.** A forma: índice de dores, capítulo por área, dossiê
+(evidências → efeitos → hipóteses → soluções → fundamento), e a
+mesma evidência reaparecendo com outro nome. Team Topologies, SRE,
+DDD entram como **fundamento da solução**. O exemplo do GPT é
+amostra de leitura para o time executivo, não especificação de
+árvore. Os capítulos continuam Produto, Engenharia, Operação e a
+faixa Gestão. Plataforma e Entrega ficam dentro de Engenharia.
+Não reparentar `capability-taxonomy.ts` nem desenhar uma segunda
+taxonomia “Desenvolvimento / Plataforma / Organização” para
+parecer com o recorte.
+
+**Cuidado — não é rejeitar o exemplo.** São regras do instrumento,
+para o relatório não virar checklist de livro:
+
+- A dor só existe se a entrevista publicou o comportamento. “DoD
+  inconsistente” no exemplo é ilustração; se ninguém descreveu
+  critério de pronto divergente, o relatório não inventa P02.
+- “Fundamentação: Scrum Guide” não significa “faltou Scrum”. A
+  referência explica por que a ação cabe; não diagnostica ausência
+  de framework, ferramenta ou cargo.
+- Várias soluções na mesma dor são bem-vindas quando cada uma amarra
+  uma hipótese publicada, com sustentação própria (posterior da
+  causa). Ownership, boundary e estrutura podem coexistir como
+  caminhos, cada um com faixa de sustentação — não como três
+  slogans iguais sem probabilidade.
+- 🔴/🟠 só quando já há gravidade ou prioridade publicada. Sem isso
+  o semáforo mente.
+
+### Cortes
+
+**G1 — Índice de problemas.** **Vigente.** A home lista as dores
+publicadas por área, cada uma com a solução mais sustentada, a
+faixa de sustentação, o que o caminho significa, o fundamento e o
+impacto esperado. Não abre pedindo “o que fazer agora” como se a
+decisão já tivesse sido tomada. A especificação passou para
+`recommendation-model.md`.
+
+**G2 — Capítulo de área.** **Vigente.** Abrir um sistema vigente
+(Engenharia, Produto, Operação) ou a faixa Gestão mostra: uma linha
+do que o recorte observa; as dores daquele capítulo, no nome local;
+e, quando o cruzamento já foi publicado, a mesma evidência com o
+nome do outro recorte. A especificação passou para
+`recommendation-model.md`.
+
+**G3 — Dossiê da dor e das soluções.** **Parcial.** No índice, cada
+dor já mostra evidência agregada, efeito, e a lista de soluções
+publicadas (significado, fundamento, impacto, o que não resolve,
+sustentação). Ainda falta o dossiê completo no capítulo de área e
+a prosa que explica “blameless” sem o jargão da fonte.
+
+**G4 — Sintético de anamnese.** Um caso (reescrever `low` ou
+`engineering-practice`) em que o mesmo evento atravessa pelo menos
+três capítulos com nomes distintos. Aceite: o índice e dois capítulos
+contêm a mesma evidência; o sintético médio deixa de parecer um
+único slogan.
+
+### Fora de G
+
+LLM, React, calibrar por sintético, piloto humano, onda E, segunda
+árvore causal inventada, inventário de ferramentas, redesenhar a
+árvore de disciplinas para copiar os capítulos do exemplo.
 
 ---
 
