@@ -13,8 +13,9 @@ Antes de promover um item, registrar:
 - menor experimento capaz de validar a ideia;
 - mudanças necessárias na base de conhecimento.
 
-O contrato, o catálogo, o grafo que afunila e o relatório multiárea já
-estão na base (0.87.0). Resta a massa sintética de baixa prática no
+O contrato, o catálogo, o grafo que afunila, o relatório multiárea e a
+massa sintética de baixa prática já estão na base (0.88.0). O piloto
+humano e a calibração continuam no
 [`multi-area-consultant-diagnostic-plan.md`](multi-area-consultant-diagnostic-plan.md).
 
 O objetivo integrado de transformar o produto em uma plataforma especialista —

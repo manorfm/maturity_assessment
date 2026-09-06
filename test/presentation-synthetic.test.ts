@@ -10,11 +10,19 @@ import {
   runOrganizationalSynthetic,
   type SyntheticCaseId,
 } from '../src/modules/inference/domain/organizational-synthetic.js';
-import { renderFirstScreen } from '../src/modules/projects/project-routes.js';
+import { renderAudienceBriefs, renderFirstScreen } from '../src/modules/projects/project-routes.js';
 
-test('validação do produto declara três bandas e dois contrastes, sem alegar calibração', () => {
+const FAMILY_PATTERNS = [
+  'caminho-de-versao-sem-origem',
+  'identidade-sem-autorizacao-no-recurso',
+  'reversao-nao-reproduzivel',
+  'postmortem-sem-efeito',
+  'war-room-como-gestao',
+] as const;
+
+test('validação do produto declara três bandas e três contrastes, sem alegar calibração', () => {
   assert.deepEqual(POC_SYNTHETIC_ORGS.map((org) => org.band), ['low', 'medium', 'high']);
-  assert.deepEqual(POC_VALIDATION_ORGS.map((org) => org.id), ['low', 'medium', 'high', 'boundary', 'security-governance']);
+  assert.deepEqual(POC_VALIDATION_ORGS.map((org) => org.id), ['low', 'medium', 'high', 'boundary', 'security-governance', 'engineering-practice']);
   assert.ok(POC_VALIDATION_ORGS.every((org) => org.lookFor.length >= 3));
   assert.ok(POC_VALIDATION_ORGS.every((org) => org.units.length === 2));
 });
@@ -110,6 +118,39 @@ test('segurança e governança acendem recortes distintos, sem um slogan único'
   assert.match(html, /Governança/);
   assert.doesNotMatch(html, /segurança e governança/i);
   assert.doesNotMatch(html, /Agilidade/);
+  assertPresentationLookFor(report, spec.lookFor);
+});
+
+test('baixa prática publica famílias distintas, inventário e briefing de política', () => {
+  const { spec, report } = runCase('engineering-practice');
+  const findings = uniqueFindingsByPattern(report.findings);
+  const patterns = findings.map((finding) => finding.pattern);
+  const familyHits = FAMILY_PATTERNS.filter((pattern) => patterns.includes(pattern));
+  assert.match(spec.name, /baixa prática/i);
+  assert.ok(spec.lookFor.some((item) => /famílias distintas|origem da versão|war room/i.test(item)));
+  assert.ok(spec.lookFor.some((item) => /política|diretoria|autorizar/i.test(item)));
+  assert.ok(familyHits.length >= 4, `expected distinct families, got ${patterns.join(', ')}`);
+  assert.ok(patterns.includes('war-room-como-gestao'));
+  assert.ok(patterns.includes('caminho-de-versao-sem-origem') || patterns.includes('empacotamento-manual'));
+  assert.ok(patterns.includes('postmortem-sem-efeito') || patterns.includes('cerimonia-sem-adaptacao'));
+  assert.ok(patterns.includes('causa-responsabilidade-encerra-no-aceite') || patterns.includes('causa-fronteira-sustentacao'));
+  assert.ok(report.outcome.kind === 'correct' || report.outcome.kind === 'evolve');
+  assert.ok(report.outcome.finding);
+  const html = firstScreenOf(report);
+  const briefs = renderAudienceBriefs(report.audienceReports, '/capabilities');
+  assert.match(html, /Inventário por frente/);
+  assert.match(html, /Engenharia/);
+  assert.match(html, /Gestão/);
+  assert.match(html, /Operação|Produto/);
+  assert.match(briefs, /Briefing de política/);
+  assert.match(briefs, /O que parar de autorizar/);
+  assert.doesNotMatch(briefs, /adote blameless/i);
+  assert.doesNotMatch(`${html}${briefs}`, /JFrog|Nexus|GitHub|GitLab|Ansible|AWS|Azure/i);
+  assert.doesNotMatch(`${html}${briefs}`, /\b(Fulano|gerente [A-Z]|pessoa [A-Z])/);
+  assert.ok(
+    /origem|artefato|autorização no recurso|war room|post-mortem/i.test(`${html}${briefs}`),
+    'o panorama precisa mostrar famílias técnicas e clima, não só espera',
+  );
   assertPresentationLookFor(report, spec.lookFor);
 });
 

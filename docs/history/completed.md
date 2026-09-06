@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Massa sintética de baixa prática de engenharia
+
+- Caso `engineering-practice` publica famílias distintas, inventário e
+  briefing de política no mesmo relatório; depois do incidente o grafo
+  abre clima antes da cerimônia; ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
 ## 2026-09-05 — Relatório multiárea e briefing de política
 
 - First screen publica inventário por frente; contradição no mesmo

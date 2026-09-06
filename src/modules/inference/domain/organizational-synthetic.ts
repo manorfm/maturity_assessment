@@ -8,7 +8,7 @@ import { DiagnosticSamplePlanner, type SampleRole } from './diagnostic-sample-pl
 import { InferenceService } from '../inference-service.js';
 
 export type MaturityBand = 'low' | 'medium' | 'high';
-export type SyntheticCaseId = MaturityBand | 'boundary' | 'security-governance';
+export type SyntheticCaseId = MaturityBand | 'boundary' | 'security-governance' | 'engineering-practice';
 
 export type PocSyntheticOrg = {
   id: SyntheticCaseId;
@@ -88,6 +88,19 @@ export const POC_VALIDATION_ORGS: readonly PocSyntheticOrg[] = [
       'Segurança acende em Engenharia; governança na faixa de Gestão.',
       'Uma unidade mostra ameaça alterando o caminho; a outra, a mesma aprovação.',
       'Não funde os dois recortes num único slogan de controle.',
+    ],
+  },
+  {
+    id: 'engineering-practice',
+    band: 'low',
+    name: 'POC — baixa prática de engenharia',
+    hierarchy: 'Prática de engenharia/Entrega\nPrática de engenharia/Sustentação',
+    units: ['Entrega', 'Sustentação'],
+    story: 'Dezoito pessoas em duas frentes no mesmo trabalho. Promoção manual, credencial sem autorização no recurso, retro sem efeito, sustentação à parte, negócio fechando desenho e war room como modo de gestão. O panorama mostra famílias distintas, não só espera na esteira.',
+    lookFor: [
+      'Famílias distintas no panorama: origem da versão, autorização no recurso e war room.',
+      'Briefing de política para diretoria: o que parar de autorizar.',
+      'Inventário por frente, sem colapsar em espera na esteira.',
     ],
   },
 ];
@@ -402,12 +415,57 @@ const securityGovernanceUnits: Record<number, Record<string, string>> = {
   },
 };
 
+const engineeringPracticeShared: Record<string, string> = {
+  ...lowShared,
+  'ready-to-release': 'manual-package',
+  'deployment-probe': 'memory',
+  'credential-practice': 'config-secret',
+  'blocked-cause': 'permission-policy',
+  'team-pressure': 'private-resolution',
+  'war-room-thread': 'climate-hunt',
+  'improvement-loop': 'ceremony-report',
+  'improvement-cause': 'no-autonomy',
+  'shared-surface-context': 'multiple-teams',
+  'shared-surface-risk': 'overwritten-change',
+  'batch-or-frontier': 'accumulated-batch',
+  'decision-context': 'design-handed-off',
+  'product-discovery-depth': 'business-request',
+  'product-outcome-evidence': 'delivery-accepted',
+  'product-operating-model-cause': 'acceptance-ends-ownership',
+  'incident-intake': 'central-screening',
+  'incident-triage': 'same-queue',
+  'incident-routing-cause': 'support-boundary',
+  'incident-remediation': 'live-console-change',
+  'management-portfolio': 'parallel-initiatives',
+  'iteration-purpose': 'urgent-priority',
+  'priority-containment': 'org-authorization',
+};
+
+const engineeringPracticeUnits: Record<number, Record<string, string>> = {
+  0: {
+    'delivery-cause': 'process-policy',
+    'war-room-thread': 'live-fix',
+    'service-ownership-continuity': 'code-only-owner',
+    'improvement-cause': 'no-capacity',
+  },
+  1: {
+    'delivery-cause': 'team-boundary',
+    'war-room-thread': 'permission-gap',
+    'product-operating-model-cause': 'acceptance-ends-ownership',
+    'service-ownership-continuity': 'no-accountable-group',
+    'blocked-cause': 'permission-policy',
+    'incident-routing-cause': 'support-boundary',
+    'improvement-cause': 'no-autonomy',
+  },
+};
+
 const scripts: Record<SyntheticCaseId, { shared: Record<string, string>; units: Record<number, Record<string, string>> }> = {
   low: { shared: lowShared, units: lowUnits },
   medium: { shared: mediumShared, units: mediumUnits },
   high: { shared: highShared, units: {} },
   boundary: { shared: boundaryShared, units: boundaryUnits },
   'security-governance': { shared: securityGovernanceShared, units: securityGovernanceUnits },
+  'engineering-practice': { shared: engineeringPracticeShared, units: engineeringPracticeUnits },
 };
 
 export function optionForOrganizationalSynthetic(

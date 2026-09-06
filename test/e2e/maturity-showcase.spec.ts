@@ -56,8 +56,10 @@ test('apresenta três casos depois de percorrer o produto e validar os relatóri
   const seeded = JSON.parse(readFileSync(manifestPath, 'utf8')) as SeededOrg[];
   const banded = seeded.filter((org) => isBandedCase(org));
   const boundary = seeded.find((org) => org.caseId === 'boundary');
+  const engineeringPractice = seeded.find((org) => org.caseId === 'engineering-practice');
   expect(banded.map((entry) => entry.band)).toEqual(['low', 'medium', 'high']);
   expect(boundary, 'showcase seed must include the team-boundary contrast').toBeTruthy();
+  expect(engineeringPractice, 'showcase seed must include the low-engineering-practice contrast').toBeTruthy();
   await walkApplicationLoop(page);
   const collected = await Promise.all(banded.map((org) => inspectSeededOrg(browser, org, baseURL)));
   const readings = collected.map((entry) => `${entry.observed?.decision}|${entry.observed?.limiter}|${entry.observed?.reading}`);
@@ -65,6 +67,7 @@ test('apresenta três casos depois de percorrer o produto e validar os relatóri
   expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Manter o que funciona/i);
   expect(collected[2]?.observed?.decision ?? '').toMatch(/Manter o que funciona/i);
   await inspectBoundaryOrg(browser, boundary!, baseURL);
+  await inspectEngineeringPracticeOrg(browser, engineeringPractice!, baseURL);
 
   writeFileSync(SHOWCASE_GUIDE_PATH, buildShowcaseGuide(collected));
   await page.goto('/showcase');
@@ -185,6 +188,23 @@ async function inspectBoundaryOrg(browser: Browser, org: SeededOrg, baseURL: str
     await expect(page.locator('.area-tile.observed a', { hasText: 'Engenharia' })).toBeVisible();
     await expect(page.locator('.area-band', { hasText: 'Gestão' })).toBeVisible();
     await expect(page.getByText(/responsab|fronteira|ownership/i).first()).toBeVisible();
+    await walkHomeToLeaf(page);
+  } finally {
+    await context.close();
+  }
+}
+
+async function inspectEngineeringPracticeOrg(browser: Browser, org: SeededOrg, baseURL: string | undefined): Promise<void> {
+  const context = await browser.newContext(baseURL ? { baseURL } : {});
+  const page = await context.newPage();
+  try {
+    await page.goto(org.adminPath);
+    await expect(page.getByRole('heading', { name: 'Inventário por frente' })).toBeVisible();
+    await expect(page.getByText(/origem|artefato|autorização no recurso|war room|post-mortem/i).first()).toBeVisible();
+    await page.getByText('Leituras por público').click();
+    await expect(page.getByRole('heading', { name: 'Briefing de política' })).toBeVisible();
+    await expect(page.getByText(/O que parar de autorizar/)).toBeVisible();
+    await expect(page.getByText(/adote blameless/i)).toHaveCount(0);
     await walkHomeToLeaf(page);
   } finally {
     await context.close();

@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.88.0
+
+- A massa sintética passou a incluir o caso de baixa prática de
+  engenharia: famílias distintas no panorama, inventário por frente e
+  briefing de política, sem colapsar em espera na esteira. Depois do
+  incidente, o grafo abre clima (war room) antes da cerimônia.
+
 ## 0.87.0
 
 - O relatório passou a publicar inventário por frente, com ação de

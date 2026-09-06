@@ -41,7 +41,8 @@ maturidade — está no
 A home já projeta Produto, Engenharia e Operação. O cartão já fecha
 decisão sem fabricar impacto. A first screen já cabe decisão, amostra
 e três sistemas no primeiro plano. A massa sintética já valida apresentação
-— três bandas mais fronteira e segurança≠governança — sem calibração.
+— três bandas, fronteira, segurança≠governança e baixa prática de
+engenharia — sem calibração.
 O `/showcase` apresenta esses três casos como deck do produto, depois de
 o E2E percorrer criar projeto, convite e uma entrevista.
 A discriminação descreve o efeito observado e o que ainda não dá para
@@ -55,7 +56,8 @@ próximo probe confirma ou mata hipótese já aberta; inception amarra
 lote/fronteira; priorização discrimina gestão tática da organizacional;
 war room abre clima e o lado técnico no mesmo fio. O relatório publica
 inventário por frente, causas com suporte cruzado e briefing de política
-no recorte de medo. A massa sintética de baixa prática permanece no
+no recorte de medo. A massa sintética de baixa prática publica famílias
+distintas, inventário e briefing de política; o piloto humano continua no
 [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
 A sequência aberta do relatório apresentável (folhas candidatas) está no
 [`plano de apresentação`](../backlog/report-presentation-plan.md). A evolução

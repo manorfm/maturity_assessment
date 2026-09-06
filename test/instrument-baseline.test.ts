@@ -23,7 +23,7 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
   for (const route of Object.values(baseline.trackRoutes)) {
     assert.ok(route.events >= 2 && route.events <= 4);
     assert.ok(route.scenarios < 30);
-    assert.ok(route.estimatedMinutes <= 11);
+    assert.ok(route.estimatedMinutes <= 12);
   }
   assert.ok(baseline.authorship.commonTrunkNodes >= 30);
   assert.ok(baseline.authorship.commonTrunkRatio > .32);

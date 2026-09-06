@@ -1,9 +1,9 @@
 # Plano: diagnóstico em várias áreas, no formato de consultoria
 
-Status: ondas 0–3 incorporadas (0.87.0). O catálogo dos cinco packs,
-`causal-catalog-v10`, o grafo `v20` e o relatório multiárea
-(inventário, adoção desigual, briefing de política) estão vigentes.
-A massa sintética de baixa prática permanece na onda 4.
+Status: ondas 0–4 incorporadas (0.88.0). O catálogo, o grafo `v20`, o
+relatório multiárea e a massa sintética de baixa prática estão
+vigentes. O piloto humano e a calibração continuam nos planos já donos
+disso.
 
 Este plano não substitui
 [`specialist-diagnostic-platform-plan.md`](specialist-diagnostic-platform-plan.md)
@@ -231,6 +231,8 @@ capacidade compartilhada **ou** desfazer fronteira (sustentação), com
 antipadrão ao lado.
 
 ### Onda 4 — Massa sintética
+
+Status: **vigente** (0.88.0). Caso `engineering-practice`.
 
 Um caso “baixa prática de engenharia” que não seja só espera:
 promoção manual, sem caminho de artefato/imagem, token sem autorização

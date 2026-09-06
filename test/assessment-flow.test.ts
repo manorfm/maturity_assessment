@@ -330,6 +330,10 @@ test('incidente aprofunda roteamento diagnóstico e correção sem premiar ferra
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-diagnosis', 'direct-runtime-access'), 'diagnostic-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'diagnostic-cause', 'telemetry-gap'), 'incident-remediation');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-remediation', 'reproducible-change'), 'recurrence');
+  const fullCycle = RespondentWorkContext.fromOption('build-and-operate');
+  const architecture = RespondentWorkContext.fromOption('architecture-and-boundaries');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'recurrence', 'action-list', 'engineering', fullCycle), 'team-pressure');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'recurrence', 'action-list', 'architecture', architecture), 'team-pressure');
   const management = catalog.getNode(GRAPH_VERSION, 'incident-intake', 'management')!;
   const engineering = catalog.getNode(GRAPH_VERSION, 'incident-intake', 'engineering')!;
   assert.notEqual(management.scenario, engineering.scenario);

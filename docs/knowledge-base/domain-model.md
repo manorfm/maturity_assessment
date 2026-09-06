@@ -68,8 +68,9 @@
   faixa. Não reparenta `CapabilityTaxonomy` nem cria folha. Sistema ou disciplina
   aparece se houver folha publicada ou finding.
 - **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.
-  Três bandas (opaco, reativo, adaptativo) e dois contrastes de apresentação
-  (fronteira de times; segurança distinta de governança). Cada caso declara
+  Três bandas (opaco, reativo, adaptativo) e três contrastes de apresentação
+  (fronteira de times; segurança distinta de governança; baixa prática de
+  engenharia). Cada caso declara
   `lookFor` executivo. Valida coerência do produto e alimenta o deck em
   `/showcase`; não calibra o posterior nem substitui entrevista real.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da

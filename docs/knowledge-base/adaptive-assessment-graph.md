@@ -112,7 +112,7 @@ O contexto de trabalho também seleciona uma de oito trilhas declarativas: entre
 ciclo completo, risco, capacidade compartilhada, arquitetura, resultados, portfólio
 ou experiência. Cada trilha contém de duas a quatro famílias de evento compatíveis
 com o ponto de observação e encerra numa saída neutra antes dos probes adaptativos.
-Os caminhos típicos possuem de 5 a 14 cenários (cerca de 4 a 11 minutos), sem contar
+Os caminhos típicos possuem de 5 a 15 cenários (cerca de 4 a 12 minutos), sem contar
 até cinco probes causais posteriores. Título profissional não participa da seleção.
 
 As alternativas de prática são apresentadas em ordem determinística por
@@ -262,7 +262,9 @@ Três funis declarativos amarram o próximo fato ao ramo já aberto: origem pouc
 confiável segue para lote ou fronteira; prioridade sem foco discrimina gestão
 tática (o time não para de iniciar) da organizacional (quem autoriza o ciclo);
 war room no mesmo fio pergunta clima e o lado técnico (lote, reversão, permissão
-no recurso).
+no recurso). Depois de um incidente que volta, as trilhas de operação
+abrem pressão, conflito e aprendizado antes da cerimônia — senão o
+clima nunca entra na amostra organizacional.
 
 Não existe mapeamento “resposta X = compre ferramenta Y”. Duas populações com a
 mesma nota podem receber intervenções diferentes porque as combinações de causas,

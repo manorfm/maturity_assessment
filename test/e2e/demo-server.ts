@@ -14,10 +14,15 @@ const outcomes: Record<string, string> = {
   medium: 'Mostrar prática intermediária com findings e ações, distinta da organização frágil e da sustentada.',
   high: 'Preservar o comportamento observado sem exigir cargo, ferramenta sofisticada ou transformação organizacional.',
   boundary: 'Mostrar o mesmo artefato com causas diferentes: responsabilidade na Entrega e na faixa, sem sumir no corte de quatro.',
+  'engineering-practice': 'Publicar famílias distintas — origem da versão, autorização no recurso e war room — com inventário e briefing de política, sem colapsar em espera.',
 };
 
 const db = createDatabase(databasePath);
-const suite = [...runPocSyntheticSuite(db), runOrganizationalSynthetic(db, { caseId: 'boundary' })];
+const suite = [
+  ...runPocSyntheticSuite(db),
+  runOrganizationalSynthetic(db, { caseId: 'boundary' }),
+  runOrganizationalSynthetic(db, { caseId: 'engineering-practice' }),
+];
 const manifest = suite.map((entry) => {
   const spec = entry.spec ?? POC_SYNTHETIC_ORGS.find((org) => org.band === entry.band)!;
   return {

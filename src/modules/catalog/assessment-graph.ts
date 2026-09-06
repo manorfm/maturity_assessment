@@ -1189,7 +1189,7 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: 'team-pressure' },
   ];
   if (node.id === 'recurrence') return [
-    { from: node.id, to: 'improvement-loop', when: { tracksAny: ['full-cycle', 'risk', 'capability', 'architecture'] } },
+    { from: node.id, to: 'team-pressure', when: { tracksAny: ['full-cycle', 'risk', 'capability', 'architecture'] } },
     { from: node.id, to: 'recent-need' },
   ];
   if (node.id === 'product-operating-model-cause') return [

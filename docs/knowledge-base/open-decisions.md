@@ -38,7 +38,7 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   liderança descrevem o local, nunca a pessoa. Cerimônia e post-mortem só
   pontuam pelo efeito no próximo evento equivalente. O grafo `v20` já
   afunila por reforço. O relatório publica inventário por frente e
-  briefing de política. A onda 4 do plano multiárea cobre a massa
-  sintética de baixa prática de engenharia.
+  briefing de política. A massa sintética de baixa prática já publica
+  famílias distintas; restam piloto humano e calibração.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

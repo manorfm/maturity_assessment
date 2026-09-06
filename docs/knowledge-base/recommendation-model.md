@@ -112,8 +112,11 @@ abaixo da primeira decisão, uma ação por frente (Produto, Engenharia,
 Operação, Gestão) com mecanismo e crença relativa provisória. Relatos
 opostos no mesmo evento são adoção desigual: as hipóteses competem com
 suporte. O briefing de política descreve o que parar de autorizar no
-recorte de medo e o caminho técnico do mesmo evento. A massa sintética
-de baixa prática permanece na onda 4 do
+recorte de medo e o caminho técnico do mesmo evento. O caso sintético
+`engineering-practice` publica famílias distintas no mesmo relatório —
+origem da versão, autorização no recurso, reversão, post-mortem sem
+efeito e war room — com inventário e briefing de política. Isso valida
+coerência, não calibração. O piloto humano continua no
 [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
 
 ## Atualização e explicação

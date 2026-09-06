@@ -166,11 +166,14 @@ adaptativo não publica o pilar; a ausência continua “não avaliado”.
 A página `/showcase` é o deck desses três casos; calibração e notas de
 inspeção não abrem a apresentação.
 
-A barra de apresentação acrescenta dois contrastes, sem rotular jornada nem
+A barra de apresentação acrescenta três contrastes, sem rotular jornada nem
 mover prior: **fronteira de times** (mesmo artefato, causas diferentes;
-responsabilidade ancora em Entrega e na faixa) e **segurança distinta de
+responsabilidade ancora em Entrega e na faixa), **segurança distinta de
 governança** (ameaça muda o caminho numa unidade; a mesma aprovação na outra;
-Segurança acende em Engenharia, Governança na faixa). Cada caso declara
-`lookFor` executivo. Essa massa valida coerência do mapa e do cartão; não
-calibra o posterior, não substitui entrevista humana e não abre o gate 50–100.
+Segurança acende em Engenharia, Governança na faixa) e **baixa prática de
+engenharia** (famílias distintas no panorama — origem da versão, autorização
+no recurso, war room — com inventário e briefing de política, sem colapsar
+em espera). Cada caso declara `lookFor` executivo. Essa massa valida
+coerência do mapa e do cartão; não calibra o posterior, não substitui
+entrevista humana e não abre o gate 50–100.
 
