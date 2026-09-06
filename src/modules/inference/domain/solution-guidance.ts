@@ -272,9 +272,9 @@ const explicit: Record<string, SolutionGuidance> = {
     successCriterion: 'uma pessoa que não fez a última correção conclui o próximo diagnóstico equivalente',
   },
   'provisionamento-em-fila': {
-    mechanism: 'Ambiente e permissão chegam por pedido a outro grupo, então a espera é estrutural, não um incidente isolado.',
+    mechanism: 'O caminho normal não é o time obter o ambiente ou o acesso. É abrir um pedido, esperar quem concede — plataforma, infraestrutura ou segurança — e só então começar. Isso se repete em mudanças comuns, não só em emergência.',
     constraintKind: 'platform',
-    plainExplanation: 'Para começar o trabalho, alguém abre um chamado. Isso não é “falta de cloud”: é ausência de um caminho que o próprio time consiga seguir com limite e trilha.',
+    plainExplanation: 'Para começar, alguém abre um chamado e espera outro grupo liberar ambiente ou permissão. Não é um incidente isolado nem “falta de cloud”: o trabalho só anda quando a fila do outro grupo anda.',
     solutionKind: 'platform-capability',
     solutionClass: 'Self-service com guardrail para o pedido mais repetido',
     matureReference: 'Well-Architected / platform engineering',
@@ -1009,15 +1009,16 @@ export function guidanceFor(pattern: string, foundation?: FoundationRef, title =
   }
   return {
     ...fallback,
-    mechanism: fallbackMechanism(foundation?.source) + (title ? ` Neste recorte, o efeito observado é: ${effect}.` : ''),
+    mechanism: fallbackMechanism(foundation?.source),
     plainExplanation: `${fallbackMechanism(foundation?.source)} Em linguagem cotidiana: ${effect}. A classe de solução abaixo ataca essa restrição; ferramenta só entra como referência, nunca como nota.`,
   };
 }
 
-export function causeFromGuidance(guidance: SolutionGuidance, title: string): string {
+export function causeFromGuidance(guidance: SolutionGuidance, title: string, pattern?: string): string {
+  if (pattern && hasExplicitGuidance(pattern)) return guidance.mechanism;
   const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  if (new RegExp(escaped, 'i').test(guidance.mechanism)) return guidance.mechanism;
-  return `${guidance.mechanism} Neste recorte, o efeito observado é: ${lowerFirst(title)}.`;
+  if (!title || new RegExp(escaped, 'i').test(guidance.mechanism)) return guidance.mechanism;
+  return `${guidance.mechanism} ${title}`.trim();
 }
 
 export function allowsImprovementFoundation(pattern: string): boolean {

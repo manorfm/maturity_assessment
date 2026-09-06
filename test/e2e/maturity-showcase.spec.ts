@@ -104,8 +104,8 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
   await expect(page.getByText('Aguarde mais respostas')).toHaveCount(0);
   if (org.band !== 'high') {
-    await expect(page.getByRole('heading', { name: 'Outras restrições' })).toBeVisible();
-    await expect(page.getByText(/mecanismo distinto/)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toBeVisible();
+    await expect(page.getByText(/Fila de ambiente|esteira manual|origem da versão|Pedido na fila/i).first()).toBeVisible();
   }
   await expect(page.getByText('Instrumento e calibração')).not.toBeVisible();
   const observed = await observeReport(page);
@@ -199,7 +199,7 @@ async function inspectEngineeringPracticeOrg(browser: Browser, org: SeededOrg, b
   const page = await context.newPage();
   try {
     await page.goto(org.adminPath);
-    await expect(page.getByRole('heading', { name: 'Inventário por frente' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toBeVisible();
     await expect(page.getByText(/origem|artefato|autorização no recurso|war room|post-mortem/i).first()).toBeVisible();
     await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing de política' })).toBeVisible();

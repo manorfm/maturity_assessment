@@ -6,6 +6,40 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Cruzamento no lugar da árvore de lacunas
+
+- First screen publica no máximo três arestas com mecanismo
+  documentado; inventário, disciplinas abertas e o contrato de POC
+  saíram do primeiro plano; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
+## 2026-09-05 — Escopo explícito de cada disciplina
+
+- Página de sistema, grupo e folha abre com o que a disciplina abrange,
+  trata e não é; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
+## 2026-09-05 — Catálogo exaustivo com estado do recorte
+
+- Relatório com correção lista todas as disciplinas; silêncio vira
+  “ainda sem causa isolada” ou “entrevista não atravessou”, não saúde;
+  ver [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
+## 2026-09-05 — Disciplina por substantivo, breve e hierarquia dor/febre
+
+- Rótulos de folha deixaram o estado desejado; a página explica o que a
+  disciplina observa antes de listar problemas e soluções; a first screen
+  publica todos os findings em **Problemas por nível**; “entrevista não
+  atravessou” não conclui ausência; ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
+## 2026-09-05 — Prosa cotidiana na espera de ambiente e no inventário
+
+- Título e mecanismo de plataforma descrevem o pedido e a espera;
+  o gerador deixou de repetir o título com “neste recorte, o efeito
+  observado é”; o inventário fala de suporte coletivo provisório; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-05 — Massa sintética de baixa prática de engenharia
 
 - Caso `engineering-practice` publica famílias distintas, inventário e

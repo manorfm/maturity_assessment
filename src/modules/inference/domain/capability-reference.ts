@@ -120,7 +120,7 @@ const definitions: CapabilityReferenceInput[] = [
   },
   {
     capabilityId: 'platform-autonomy',
-    title: 'Capacidades chegam com autonomia e limites seguros',
+    title: 'Acesso a capacidades',
     purpose: 'Permitir que quem entrega e opera obtenha capacidades recorrentes com contexto, feedback e limites seguros, sem transformar governança ou especialização em fila.',
     assessmentBasis: 'behavior-and-effect-only',
     stages: [
@@ -177,7 +177,7 @@ const definitions: CapabilityReferenceInput[] = [
   },
   {
     capabilityId: 'technical-capability',
-    title: 'Competências necessárias entram no fluxo',
+    title: 'Competência técnica',
     purpose: 'Fazer o conhecimento necessário chegar ao trabalho real, permitir prática segura e distribuir capacidade de decisão e execução sem criar dependência permanente de especialistas.',
     assessmentBasis: 'behavior-and-effect-only',
     stages: [

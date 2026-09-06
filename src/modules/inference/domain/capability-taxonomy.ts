@@ -17,19 +17,19 @@ const taxonomy: TaxonomyNode[] = [
     leaf('planning-refinement', 'Planejamento e refinamento'), leaf('work-management', 'Fluxo de trabalho'), leaf('continuous-integration', 'Integração contínua'), leaf('release-feedback', 'Release e feedback'),
   ] },
   { id: 'engineering-quality', label: 'Engenharia e qualidade', children: [
-    leaf('sustainable-design', 'Mudanças preservam sustentabilidade do código'), leaf('quality-strategy', 'Riscos recebem proteção contínua'), leaf('sdlc-automation', 'Defeitos recebem feedback técnico repetível'), leaf('technical-capability', 'Competências necessárias entram no fluxo'),
+    leaf('sustainable-design', 'Sustentabilidade da mudança'), leaf('quality-strategy', 'Estratégia de qualidade'), leaf('sdlc-automation', 'Feedback técnico'), leaf('technical-capability', 'Competência técnica'),
   ] },
   { id: 'architecture-evolution', label: 'Arquitetura e evolução', children: [
     leaf('domain-alignment', 'Alinhamento ao domínio'), leaf('architecture-decisions', 'Decisões arquiteturais'), leaf('evolvability', 'Evolutibilidade'), leaf('integration-data', 'Integração e dados'),
   ] },
   { id: 'operations-reliability', label: 'Operação e confiabilidade', children: [
-    leaf('observability-practice', 'Impacto pode ser investigado'), leaf('reliability-practice', 'Confiabilidade altera decisões'), leaf('incident-management', 'Incidentes são contidos e geram aprendizado'), leaf('cloud-reliability', 'Recuperação de infraestrutura é demonstrável'),
+    leaf('observability-practice', 'Observabilidade'), leaf('reliability-practice', 'Confiabilidade'), leaf('incident-management', 'Incidentes'), leaf('cloud-reliability', 'Recuperação'),
   ] },
   { id: 'platform-experience', label: 'Plataforma e experiência de engenharia', children: [
-    leaf('platform-autonomy', 'Capacidades chegam com autonomia e limites seguros'), leaf('reproducible-infrastructure', 'Infraestrutura pode ser reproduzida'), leaf('cloud-efficiency', 'Eficiência orienta operação e investimento'),
+    leaf('platform-autonomy', 'Acesso a capacidades'), leaf('reproducible-infrastructure', 'Infraestrutura reproduzível'), leaf('cloud-efficiency', 'Eficiência de operação'),
   ] },
   { id: 'security-risk', label: 'Segurança e gestão de risco', children: [
-    leaf('software-security', 'Risco muda o caminho da entrega'), leaf('cloud-security', 'Identidade e acesso preservam escopo e rastreabilidade'),
+    leaf('software-security', 'Segurança na entrega'), leaf('cloud-security', 'Identidade e acesso'),
   ] },
   { id: 'organizational-system', label: 'Sistema organizacional', children: [
     leaf('team-ownership', 'Estrutura e ownership'), leaf('enabling-governance', 'Governança habilitadora'), leaf('leadership-management', 'Liderança e gestão'), leaf('collaboration', 'Colaboração'), leaf('organizational-learning', 'Aprendizado e adaptação'),

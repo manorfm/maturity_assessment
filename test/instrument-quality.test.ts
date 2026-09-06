@@ -21,7 +21,7 @@ test('diagnóstico separa causa de título do problema', () => {
   for (const [pattern, item] of Object.entries(recommendations)) {
     assert.notEqual(item.cause, item.title, pattern);
     assert.ok(item.cause.length >= 40, pattern);
-    assert.match(item.cause, new RegExp(item.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), pattern);
+    assert.doesNotMatch(item.cause, /Neste recorte, o efeito observado/i, pattern);
   }
   assert.ok(new Set(Object.values(recommendations).map((item) => item.cause)).size >= Object.keys(recommendations).length * .9);
 });

@@ -146,7 +146,7 @@ function frontsForFinding(finding: OutcomeFinding): DiagnosticFrontId[] {
 function relativeBelief(finding: OutcomeFinding, findings: OutcomeFinding[]): string {
   const pack = packForPattern(finding.pattern);
   const crossSupport = Boolean(pack && findings.some((item) => item.pattern !== finding.pattern && (item.pattern === pack.hypothesis || pack.facts.includes(item.pattern) || item.recommendationEvidence?.patterns.some((pattern) => pack.facts.includes(pattern) || pattern === pack.hypothesis))));
-  if (finding.confidence >= .85 && crossSupport) return 'crença relativa alta (provisória)';
-  if (finding.confidence >= .6) return 'crença relativa moderada (provisória)';
-  return 'crença relativa inicial (provisória)';
+  if (finding.confidence >= .85 && crossSupport) return 'Vários relatos, de lentes diferentes, sustentam esta leitura. Ainda é provisório.';
+  if (finding.confidence >= .6) return 'Há suporte coletivo nesta frente. Ainda é provisório.';
+  return 'Leitura inicial: poucos relatos ou uma só lente. Ainda é provisório.';
 }

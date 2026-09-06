@@ -56,7 +56,7 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
     story: 'Dezoito pessoas em duas unidades full-cycle. Entrega, operação e aprendizado resistem à urgência. O first screen preserva a prática, sem inventar transformação.',
     lookFor: [
       'Decisão de preservar a prática observada.',
-      'Sistemas sem cobertura aparecem como não observado, não como zero.',
+      'Sistemas sem cobertura aparecem como entrevista não atravessou, não como zero nem como ausência de problema.',
       'Nome não chama a organização de adaptativa; não inventa evoluções genéricas.',
     ],
   },
@@ -100,7 +100,7 @@ export const POC_VALIDATION_ORGS: readonly PocSyntheticOrg[] = [
     lookFor: [
       'Famílias distintas no panorama: origem da versão, autorização no recurso e war room.',
       'Briefing de política para diretoria: o que parar de autorizar.',
-      'Inventário por frente, sem colapsar em espera na esteira.',
+      'Cruzamento entre disciplinas, sem colapsar em espera na esteira.',
     ],
   },
 ];

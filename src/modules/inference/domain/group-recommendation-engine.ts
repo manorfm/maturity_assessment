@@ -19,7 +19,7 @@ export function defineInterventionCatalog(seeds: Record<string, InterventionSeed
     const foundation = seed.foundation ?? foundationFor(pattern);
     const guidance = guidanceFor(pattern, foundation, seed.title);
     return [pattern, {
-      ...seed, cause: causeFromGuidance(guidance, seed.title), action: seed.intervention, foundation, guidance,
+      ...seed, cause: causeFromGuidance(guidance, seed.title, pattern), action: seed.intervention, foundation, guidance,
       guidanceStatus: hasExplicitGuidance(pattern) ? 'explicit' : 'fallback',
       ...experimentDefaults('none', pattern, foundation, guidance), ...rule,
       evidencePatterns: rule.evidencePatterns ?? [pattern], contradictionPatterns: rule.contradictionPatterns ?? [],

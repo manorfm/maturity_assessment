@@ -66,7 +66,9 @@
   sobre as 29 folhas. Home: Produto, Engenharia, Operação; Engenharia abre
   entrega, qualidade de software, arquitetura, plataforma e segurança; Gestão é
   faixa. Não reparenta `CapabilityTaxonomy` nem cria folha. Sistema ou disciplina
-  aparece se houver folha publicada ou finding.
+  aparece se houver folha publicada ou finding. Rótulo de folha é
+  substantivo. A página da disciplina publica o que ela abrange, trata
+  e não é, a dor daquele nível e o efeito distinto que essa dor gera acima.
 - **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.
   Três bandas (opaco, reativo, adaptativo) e três contrastes de apresentação
   (fronteira de times; segurança distinta de governança; baixa prática de
@@ -178,6 +180,6 @@ contrato completo. Projeções carregam referências sem criar uma nova identida
 problema ou uma regra alternativa de recomendação.
 
 `projectFrontInventory` produz `front-inventory-v1`: uma linha por frente
-de apresentação, com mecanismo, crença relativa provisória e ação da
+de apresentação, com mecanismo, suporte coletivo ainda provisório e ação da
 contenção. O briefing de política no recorte de medo e o fork de desenho
 organizacional saem do mesmo catálogo de família, sem nomear pessoa.

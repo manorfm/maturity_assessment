@@ -113,29 +113,28 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
-compõe um cartão compacto (`density: compact`), o inventário por frente,
-a amostra desta leitura, os
-três sistemas no mesmo peso e o radar de cobertura dos pilares; Gestão é faixa.
-Amostra, sistemas, radar, outras restrições e unidades compartilham o mesmo
-cartão de superfície; os blocos internos usam o fundo da página, não ficam
-soltos no cinza.
+compõe um cartão compacto (`density: compact`), o cruzamento entre
+disciplinas, a amostra desta leitura e os três sistemas; Gestão é faixa.
+Radar e recortes publicados abrem em `details`. Os blocos internos usam o
+fundo da página, não ficam soltos no cinza.
 O cartão visível traz decisão,
 situação cotidiana, por que o padrão se repete, o que fazer agora, teste,
 o que não resolve e o antipadrão, sem abrir pela tag de correção. A amostra
-declara pessoas, unidades e o contrato para
-repetir o diagnóstico com dados reais. Fundamento, evidência,
+declara só pessoas e unidades. Fundamento, evidência,
 prioridade e vocabulário metodológico ficam em `details`. Os demais achados
-aparecem em **Outras restrições**, agrupados por frente diagnóstica, com o
-mecanismo visível. Itens da mesma família do limitador ficam como variações;
-as demais frentes não se apresentam como o mesmo efeito.
+aparecem no cruzamento entre disciplinas: no máximo três arestas com
+mecanismo documentado, só com finding publicado. A página da disciplina começa pelo que ela abrange, trata e não é;
+depois vêm a dor daquele nível, o efeito que ela gera acima e a
+solução. Rótulos de folha são substantivos (Acesso a capacidades), não o
+estado desejado.
 Um eixo com “?” no radar significa cobertura temática insuficiente — a
 entrevista não atravessou dois padrões daquela disciplina — e não pede mais
 pessoas nem declara fragilidade. Unidades
 distintivas ocupam uma linha, com link para a cobertura do time, e não
 reimprimem o cartão. Briefings por público são cartões com o pedido de
 decisão, não listas de âncoras; convites, hipóteses e calibração ficam no
-rodapé administrativo, fechados. O drill-down de área mostra o recorte, as
-disciplinas e o radar das crianças. Não há framework de frontend nem radar de
+rodapé administrativo, fechados. O drill-down de área mostra o breve da disciplina, os problemas daquele
+nível, as crianças e o radar. Não há framework de frontend nem radar de
 quinze eixos. IDs de navegação pertencem apenas ao
 relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam

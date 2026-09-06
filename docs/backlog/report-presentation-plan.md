@@ -1,9 +1,13 @@
 # Plano: relatório apresentável — mapa, cartão, UX e sintéticos
 
-Ondas A–D estão na base. Resta a hipótese das folhas candidatas (onda E).
-Detalhe do mapa permanece em
+Ondas A–D e o cruzamento documentado (0.93) estão na base. A home
+ainda falha o aceite de leitura: o cartão é um memorando, o mapa
+ainda mostra disciplinas sem causa, e o cruzamento às vezes não
+amarra a decisão. **F é a sequência aberta.** E (folhas candidatas)
+só depois de F. Piloto humano só depois de F fechar.
+Detalhe histórico do mapa em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md);
-detalhe da prosa do cartão em
+detalhe histórico do cartão em
 [`executive-decision-narrative-plan.md`](executive-decision-narrative-plan.md).
 Este arquivo é a **ordem das ondas** e o contrato de UX e de massa
 sintética.
@@ -34,9 +38,10 @@ classificação não é.
 | --- | --- | --- |
 | A | Projetor do mapa | **Vigente.** Home: Produto, Engenharia, Operação; qualidade e segurança sob Engenharia |
 | B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
-| C | UX minimalista | **Vigente.** First screen: cartão + sistemas + radar + restrições por frente |
-| D | Massa sintética | **Vigente.** Três bandas + fronteira e segurança≠governança passam a barra |
-| E | Folhas candidatas | Só depois de B–D; lacunas viram folha com contrato, uma de cada vez |
+| C | UX minimalista | **Parcial.** Cruzamento no lugar do inventário; cartão e mapa ainda abrem pergunta |
+| D | Massa sintética | **Vigente.** Três bandas + contrastes passam a barra de coerência, não de leitura |
+| F | Relatório que responde | **Aberta.** Quatro cortes abaixo; aceite: quem lê o showcase reformula a decisão sem perguntar o que a entrevista não atravessou |
+| E | Folhas candidatas | Só depois de F; lacunas viram folha com contrato, uma de cada vez |
 
 Fora: LLM, React por antecipação, radar de quinze eixos, nó Agilidade,
 Tuckman como nota, calibração por sintético, reparentar
@@ -63,41 +68,40 @@ O detalhe histórico permanece em
 
 ## Onda C — Modelo visual UX
 
-**Entregue.** A especificação vigente está em `assessment-model.md`,
-`recommendation-model.md` e `technical-architecture.md`. Sem framework
-novo. HTML e CSS atuais. Hierarquia visual, não mais prosa.
+**Parcial.** Inventário e árvore de lacunas saíram da home; o
+cruzamento publica no máximo três mecanismos. O wireframe abaixo é o
+**alvo de F**, não o estado atual.
 
 ### First screen (uma tela)
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│  O que está acontecendo              Precisa de correção│
-│  Frase cotidiana do efeito                              │
-│  Por que isso se repete                                 │
-│  O que fazer agora · quem autoriza                      │
-│  Teste · o que não resolve · não faça                   │
-│  [detalhe] fundamento e evidência                       │
+│  Efeito cotidiano                    Precisa de correção│
+│  Por que se repete (um mecanismo, sem eco do título)    │
+│  Fazer agora · quem autoriza                            │
+│  Teste · o que não resolve                              │
+│  [fechado] fundamento e evidência                       │
 └─────────────────────────────────────────────────────────┘
-
+┌─────────────────────────────────────────────────────────┐
+│  Como se cruzam   no máx. 3 · mecanismo · só publicado  │
+│  Acesso → Liderança. Fila de ambiente vira gestão por…  │
+└─────────────────────────────────────────────────────────┘
 ┌──────────┐ ┌──────────┐ ┌──────────┐
 │ Produto  │ │Engenharia│ │ Operação │
-│ Ver disc.│ │ Ver disc.│ │ Ver disc.│
+│ N probl. │ │ N probl. │ │ N probl. │
+│ só folhas com causa                                 │
 └──────────┘ └──────────┘ └──────────┘
-     Radar dos oito pilares (depois dos sistemas)
-     “?” = sem cobertura temática, não falta de gente
+── Gestão ──  só disciplinas com causa publicada
 
-── Gestão ──  só se houver restrição cruzada
-   Modelo de times · Responsabilidade · Governança · …
-
-Outras restrições   frente diagnóstica · mecanismo · decidir|investigar
-Unidades            uma linha + ver cobertura deste time
+[fechado] mapa publicado e radar
+Unidades              uma linha + ver cobertura deste time
 ```
 
 ### Regras de layout
 
 - Um cartão de decisão. O resto é navegação ou lista.
 - Três sistemas no mesmo peso. Gestão nunca é o quarto azulejo.
-- Folha ou finding acende o sistema; vazio é “não observado”, não zero.
+- Folha ou finding acende o sistema; vazio é “entrevista não atravessou”, não zero nem ausência.
 - Radar vem depois dos sistemas; “?” não pede mais pessoas.
 - Os demais achados são frentes distintas; variações do limitador não
   fingem ser problemas novos.
@@ -156,6 +160,88 @@ calibrado. Não substitui as cinco entrevistas por perspectiva.
 
 ---
 
+## Onda F — Relatório que responde (aberta)
+
+Não é outra onda de prosa. Cada corte tem um teste que falha na home
+atual e um aceite de leitura nos sintéticos `low`, `medium`,
+`engineering-practice` e `boundary`. Sem piloto humano neste bloco.
+
+### F1 — Cartão em quatro batidas
+
+O compacto ainda empilha título de catálogo, “por que se repete” que
+copia o título, autorização, teste, o que não resolve, antipadrão e
+hedges de prontidão. Quem lê sai com pergunta.
+
+**Fazer.** No primeiro plano, só: efeito cotidiano; um mecanismo que
+não ecoa o título; verbo + quem autoriza; teste + o que não resolve.
+Antipadrão, prontidão, contenção e “não significa que não exista”
+ficam no `details` já existente. TDD no HTML visível (sem conteúdo
+de `<details>`).
+
+**Aceite.** Em viewport desktop, decisão + cruzamento + três sistemas
+cabem sem rolar. Quem lê o opaco reformula: guerra de crise, quem
+para de autorizar caça ao culpado, como sabe. Não pergunta se “o
+caminho já existe”.
+
+### F2 — Mapa sem disciplina aberta
+
+Os azulejos ainda listam Direção, Descoberta, Portfólio… sem causa.
+Isso reabre a lacuna que saiu da árvore.
+
+**Fazer.** Em leitura de problema, chip e faixa só com finding
+publicado. Sistema sem problema publicado mostra o nome e o drill,
+sem status-ensaio. Pasta vazia continua no mapa fechado, nunca como
+saúde e nunca como pergunta.
+
+**Aceite.** A first plane do opaco não contém “entrevista não
+atravessou”, “ainda sem causa” nem nome de folha sem finding.
+
+### F3 — Cruzamento amarra a decisão ou declara que não amarra
+
+Hoje o cruzamento já recusa o leque “tudo gera o cartão”. No opaco
+as três arestas conversam com a crise. Na baixa prática o cartão é
+segurança e as arestas são fila, aprendizado e herói → reversão —
+três mecanismos reais que não tocam a decisão do cartão.
+
+**Fazer.** Se existir feed documentado até o finding do cartão,
+pelo menos uma aresta aponta para ele. Se não existir, uma linha:
+esta decisão não depende das outras frentes publicadas — e as três
+arestas continuam só com mecanismo. Proibido inventar “herói gera
+token”. Frase vaga de efeito sistêmico (“mudanças se encontram
+tarde”) só entra se for o mecanismo da aresta, não um tapa-buraco.
+
+**Aceite.** Em cada um dos quatro sintéticos, as arestas visíveis
+são acionáveis (dá para dizer o que parar). Nenhuma cola dois
+títulos com “gera”.
+
+### F4 — Disciplina: dor, efeito, ação
+
+A página ainda abre com três parágrafos de escopo. Isso gera
+pergunta antes da causa.
+
+**Fazer.** Uma linha de recorte (o que não é). Depois: dor local,
+efeito no sistema, o que fazer. Lista de buracos da entrevista
+fica fora desta página quando a leitura é problema e a folha não
+foi atravessada — o drill do mapa fechado cobre o catálogo.
+
+**Aceite.** Abrir `Acesso a capacidades` no opaco mostra a fila, o
+que ela gera e o teste. Não pergunta o que a disciplina “abrange”
+em três blocos.
+
+### Fora de F
+
+LLM, React, mais inventário, árvore exaustiva na home, calibrar por
+sintético, piloto com pessoas, onda E.
+
+### Quando F fecha
+
+Atualizar `recommendation-model.md`, `assessment-model.md` e o
+wireframe vigente. Só então o
+[`plano multiárea`](multi-area-consultant-diagnostic-plan.md) volta
+a ser o próximo passo humano.
+
+---
+
 ## Onda E — Lacunas que podem virar folha
 
 Só depois de A–D e só com contrato (comportamento, restrição, rubrica).
@@ -174,4 +260,5 @@ cada vez. Tuckman continua interpretação, não filho.
 
 ## Mudanças na base, quando cada onda fechar
 
-A, B, C e D já estão na base. E: `assessment-model.md` por folha nova.
+A, B, D e o cruzamento documentado já estão na base. F: `recommendation-model.md`
+e `assessment-model.md` quando o first screen fechar decisão. E: `assessment-model.md` por folha nova.

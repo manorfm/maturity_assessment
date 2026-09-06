@@ -41,7 +41,7 @@ com evidência mais frágil. Cada clique abre uma página própria, preserva o r
 organizacional e apresenta um breadcrumb do macro ao micro; folhas mostram problemas
 e correções. A home não indexa os oito pilares do motor: ela projeta três sistemas
 — Produto, Engenharia e Operação — e uma faixa transversal de Gestão. Ausência de
-evidência é rotulada como “não observado” ou “não avaliado”, nunca como nível zero,
+evidência é rotulada como “entrevista não atravessou” ou “não avaliado”, nunca como nível zero nem como ausência de problema,
 quando o evento não ocorreu ou ninguém aplicável o observou. Se o evento ocorreu e
 o comportamento esperado da família não aparece, isso é falta de prática no local,
 não zero inventado nem “não avaliado”.
@@ -305,9 +305,16 @@ são auxiliares: o produto é o problema e o teste, não o nível. Os oito pilar
 continuam a árvore que `CapabilityTaxonomy.organize` agrega; não indexam a home.
 Um sistema ou disciplina **aparece** quando há folha publicada (cobertura ≥ 1) ou
 finding; não some porque o pilar antigo não fechou duas crianças. Pasta sem folha
-nem finding permanece “não observado”, nunca zero. Clicar em um sistema abre as
-disciplinas e o radar das crianças. A first screen também mostra o radar dos
-oito pilares depois dos sistemas. Unidades apontam **Ver cobertura deste time**.
+nem finding permanece “entrevista não atravessou”, nunca zero e nunca “sem
+problema”. Clicar em um sistema ou disciplina abre o que ela **abrange**, o que
+**trata** e o que **não é**, antes da lista de problemas daquele nível
+e do radar das crianças. A folha nomeia a dor local; o nível acima nomeia
+o efeito que essa dor gera no sistema — são problemas distintos. A first screen
+publica **Como as disciplinas se cruzam**: no máximo três arestas com
+mecanismo documentado, só com finding publicado. Disciplina sem
+recorte próprio não abre pergunta na home. O mapa completo fica no
+detalhe. Não inventa finding. O radar dos oito pilares abre no detalhe.
+Unidades apontam **Ver cobertura deste time**.
 Cada eixo
 avaliado do motor é uma estimativa direcional de 0 a 4 calculada dentro da
 capacidade, acompanhada do volume de evidência. Um eixo ausente significa

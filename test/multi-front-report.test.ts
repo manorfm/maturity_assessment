@@ -61,7 +61,7 @@ test('inventário publica uma ação por frente com crença relativa provisória
   assert.match(engineering.action, /origem e a promoção|caminho paralelo/i);
   assert.match(operations.action, /incidente sem nome|condições do sistema/i);
   assert.match(management.action, /caça ao culpado|desempenho individual/i);
-  assert.match(management.relativeBelief, /provisória/);
+  assert.match(management.relativeBelief, /provisório/);
   assert.doesNotMatch(inventory.rows.map((row) => row.action).join(' '), /JFrog|blameless workshop/i);
 });
 
@@ -86,15 +86,17 @@ test('first screen coloca o inventário abaixo da decisão e lista causas com su
     capabilityBase: '/capabilities',
   });
   const decision = html.indexOf('O que fazer agora');
-  const inventory = html.indexOf('Inventário por frente');
+  const crossing = html.indexOf('Como as disciplinas se cruzam');
   const systems = html.indexOf('Sistemas da organização');
-  assert.ok(decision >= 0 && inventory > decision && systems > inventory);
+  assert.ok(decision >= 0 && crossing > decision && systems > crossing);
   assert.match(html, /Produto/);
   assert.match(html, /Engenharia/);
   assert.match(html, /Operação/);
   assert.match(html, /Gestão/);
-  assert.match(html, /crença relativa/);
-  assert.match(html, /Hipóteses competem com suporte/);
+  assert.match(html, /Como as disciplinas se cruzam/);
+  assert.match(html, /origem da versão|próximo incidente|crise/i);
+  assert.doesNotMatch(html, /Inventário por frente/);
+  assert.doesNotMatch(html, /Ainda é provisório/);
   assert.doesNotMatch(html, /impede escolher|inconclusivo até discriminar/i);
 });
 

@@ -5,6 +5,40 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.93.0
+
+- A first screen deixou o inventário e a árvore de lacunas. No lugar,
+  publica no máximo três cruzamentos com mecanismo documentado — não
+  um leque de “tudo gera o cartão”. Disciplina aberta não abre
+  pergunta na home. A amostra declara só pessoas e unidades.
+
+## 0.92.0
+
+- Cada disciplina passou a declarar o que abrange, o que trata e o que
+  não é, no topo da página, antes da lista de problemas e soluções.
+
+## 0.91.0
+
+- No recorte com problemas, o catálogo passou a ser o mapa completo:
+  cada disciplina traz o breve, a dor publicada ou o estado do recorte.
+  “Ainda sem causa isolada” e “entrevista não atravessou” não se lêem
+  como saúde; o relatório não inventa finding.
+
+## 0.90.0
+
+- O relatório passou a nomear disciplinas por substantivo, abrir cada
+  recorte com o que aquela disciplina observa, e separar a dor da folha
+  do efeito que ela gera no sistema. A first screen lista todos os
+  problemas publicados por hierarquia; assunto não atravessado não se
+  lê como ausência.
+
+## 0.89.0
+
+- O relatório deixou de publicar slogans de plataforma (“fila externa”)
+  e de colar o título de novo no mecanismo. A espera de ambiente ou
+  permissão descreve o pedido e quem concede; o inventário fala de
+  suporte coletivo, não de “crença relativa”.
+
 ## 0.88.0
 
 - A massa sintética passou a incluir o caso de baixa prática de

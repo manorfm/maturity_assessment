@@ -109,7 +109,7 @@ O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
 `reinforces`. O grafo `v20` afunila o próximo probe para confirmar ou
 matar hipótese já reforçada. O projetor `front-inventory-v1` publica,
 abaixo da primeira decisão, uma ação por frente (Produto, Engenharia,
-Operação, Gestão) com mecanismo e crença relativa provisória. Relatos
+Operação, Gestão) com mecanismo e suporte coletivo ainda provisório. Relatos
 opostos no mesmo evento são adoção desigual: as hipóteses competem com
 suporte. O briefing de política descreve o que parar de autorizar no
 recorte de medo e o caminho técnico do mesmo evento. O caso sintético
@@ -420,14 +420,13 @@ texto diz apenas que as entrevistas ainda não mostraram o caminho funcionando;
 nunca conclui inexistência. As perspectivas que sustentam a leitura são nomeadas,
 contradição zero é explícita e o recorte se explica pela autoridade, não pelo
 rótulo da folha.
-Abaixo da primeira decisão, o inventário `front-inventory-v1` lista
-Produto, Engenharia, Operação e Gestão com mecanismo, crença relativa
-provisória e a ação daquela contenção. Quando o mecanismo é desenho,
-oferece instituir capacidade compartilhada **ou** desfazer fronteira,
-com antipadrão ao lado. A first screen agrupa os demais padrões
-publicados em **Outras restrições**, por frente diagnóstica — integração
-e feedback, plataforma, melhoria sem fechamento, fluxo — e mostra o
-mecanismo de cada uma. Padrões da mesma família do limitador aparecem
+Abaixo da primeira decisão, o cruzamento lista no máximo três arestas
+com mecanismo documentado (família, mesmo sistema diagnóstico ou
+cadeia explícita). A frase nomeia o mecanismo; não cola o título de
+uma folha no da outra nem afirma que todo achado gera o cartão.
+Disciplina aberta não vira pergunta na home. Inventário por frente e o
+mapa completo de lacunas ficam fora do primeiro plano; o mapa publicado
+abre em `details`. Não inventa finding. Padrões da mesma família do limitador aparecem
 como variações, não como problemas novos. Tratar só o ponto principal
 não remove as outras frentes. Decidir e investigar continuam distintos.
 O briefing de política, no recorte de medo, diz o que esconder/war room

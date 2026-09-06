@@ -40,10 +40,9 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
   assert.equal(systemObserved(report, 'engineering'), true);
   assert.equal(report.organizationalAreas.band.observed, true);
   const html = firstScreenOf(report);
-  assert.match(html, /Outras restrições/);
-  assert.match(html, /mecanismo distinto/);
-  assert.match(html, /Integração e feedback tardios/);
-  assert.match(html, /Melhoria sem fechamento/);
+  assert.match(html, /Como as disciplinas se cruzam/);
+  assert.match(html, /Acesso a capacidades|Release e feedback|Fluxo|Liderança|Aprendizado/);
+  assert.doesNotMatch(html, / em Acesso a capacidades gera /);
   assert.match(html, /Mapa de contraste e cobertura/);
   assert.doesNotMatch(html, /Aguarde mais respostas/);
   assert.doesNotMatch(html, /sustentam o mesmo efeito/);
@@ -65,7 +64,7 @@ test('intermediário fecha portfólio, lista cinco outros e acende Produto e Eng
   assert.equal(ready.length, 1);
   assert.equal(ready[0]?.detailCapability, 'portfolio-management');
   assert.doesNotMatch(guidanceFor(ready[0]!.pattern, ready[0]!.foundation, ready[0]!.title).plainExplanation, /a equipe sabe|a equipe já recebeu/i);
-  assert.match(html, /Preparação concentra espera|Ambientes e capacidades chegam por fila|A lista de melhoria não fecha/);
+  assert.match(html, /Preparação concentra espera|ambiente ou permissão|A lista de melhoria não fecha|versão para no passo/i);
   assert.doesNotMatch(html, /mostrando os 4/);
   assert.equal(systemObserved(report, 'product'), true);
   assert.equal(systemObserved(report, 'engineering'), true);
@@ -80,7 +79,7 @@ test('sustentável preserva e deixa sistema sem cobertura como não observado', 
   assert.ok(report.capabilities.filter((capability) => capability.level >= 3 && (capability.coverage ?? 0) >= 1).length >= 3);
   const unobserved = report.organizationalAreas.systems.filter((system) => !system.observed);
   assert.ok(unobserved.length >= 1);
-  assert.match(html, /não observado/);
+  assert.match(html, /entrevista não atravessou/);
   assert.doesNotMatch(html, /Agilidade/);
   assertPresentationLookFor(report, spec.lookFor);
 });
@@ -138,7 +137,7 @@ test('baixa prática publica famílias distintas, inventário e briefing de pol�
   assert.ok(report.outcome.finding);
   const html = firstScreenOf(report);
   const briefs = renderAudienceBriefs(report.audienceReports, '/capabilities');
-  assert.match(html, /Inventário por frente/);
+  assert.match(html, /Como as disciplinas se cruzam/);
   assert.match(html, /Engenharia/);
   assert.match(html, /Gestão/);
   assert.match(html, /Operação|Produto/);

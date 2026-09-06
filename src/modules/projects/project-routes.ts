@@ -19,8 +19,11 @@ import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../infere
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
 import { AudienceReportProjector, audienceAsk, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
 import { projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
-import { policyBriefingFor, projectFrontInventory, type FrontInventory } from '../inference/domain/multi-front-inventory.js';
+import { policyBriefingFor } from '../inference/domain/multi-front-inventory.js';
+import { projectDisciplineCrossings, type DisciplineCrossing } from '../inference/domain/discipline-crossing.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
+import { disciplineScope } from '../inference/domain/discipline-brief.js';
+import { problemsForNode, projectProblemTree, type HierarchicalBranch, type HierarchicalFinding, type HierarchicalProblem } from '../inference/domain/hierarchical-problems.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -238,13 +241,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const hypotheses = source?.hypotheses ?? report.hypotheses;
     const relevantIds = new Set(flattenCapabilityIds(selected));
     const relevant = findings.filter((finding) => relevantIds.has(finding.detailCapability) || finding.affectedCapabilities?.some((id) => relevantIds.has(id)));
-    const outcome = decideReportOutcome({
-      classification: source?.classification ?? report.classification,
-      branches: groups,
-      findings: relevant,
-      perspectiveGaps: source?.perspectiveGaps ?? report.perspectiveGaps,
-      focusId: selected.id,
-    });
     const base = `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`;
     const scopeQuery = scopeId ? `?scope=${encodeURIComponent(scopeId)}` : '';
     const dashboardUrl = `/projects/${params.publicId}/manage/${params.adminSecret}`;
@@ -265,7 +261,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         ? renderCapabilityRadar(groups, base, scopeId)
         : '';
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderOutcome(outcome)}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}`));
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderDisciplineDetail({ selected, findings: relevant })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}`));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/areas/:areaId', async (request, reply) => {
@@ -292,7 +288,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ? `<span class="breadcrumb-current" aria-current="page">${escapeHtml(item.label)}</span>`
       : `<a href="${areaBase}/${item.id}${scopeQuery}">${escapeHtml(item.label)}</a>`).join('<span class="breadcrumb-separator" aria-hidden="true">›</span>');
     const groups = source?.capabilityGroups ?? report.capabilityGroups;
-    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderAreaRecorte(path, { areaBase, capabilityBase, scopeQuery, capabilities: groups })}`));
+    const areaFindings = source?.findings ?? report.findings;
+    return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderAreaRecorte(path, { areaBase, capabilityBase, scopeQuery, capabilities: groups, findings: areaFindings })}`));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -456,21 +453,33 @@ export function renderFirstScreen(input: {
     ...(competingFinding ? { competingFinding } : {}),
   });
   const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
-  const inventory = renderFrontInventory(projectFrontInventory(ordered));
-  const systems = `<section class="card first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase })}</section>`;
+  const reading = input.outcome.kind === 'preserve' ? 'preserve' : 'problem';
+  const crossing = reading === 'problem'
+    ? renderDisciplineCrossing(projectDisciplineCrossings(ordered, input.outcome.finding?.pattern), input.capabilityBase)
+    : '';
+  const systems = `<section class="card first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase }, { reading })}</section>`;
   const radar = input.capabilityGroups?.length
     ? renderCapabilityRadar(input.capabilityGroups, input.capabilityBase)
     : '';
-  return `${card}${inventory}${renderSampleStrip(input.sample)}${systems}${radar}${renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase)}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
+  const publishedTree = renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase, { exhaustive: false, reading });
+  const deep = reading === 'problem' && (radar || publishedTree)
+    ? `<details class="methodology first-screen-deep" id="report-portfolio"><summary>Mapa e recortes publicados</summary>${radar}${publishedTree}</details>`
+    : `${radar}${publishedTree}`;
+  return `${card}${crossing}${renderSampleStrip(input.sample)}${systems}${deep}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
 }
 
-function renderFrontInventory(inventory: FrontInventory): string {
-  if (!inventory.rows.length) return '';
-  const rows = inventory.rows.map((row) => `<article class="front-inventory-row"><h3>${escapeHtml(row.label)}</h3><p>${escapeHtml(row.mechanism)}</p><p class="muted">${escapeHtml(row.relativeBelief)}</p><p><strong>Ação desta contenção.</strong> ${escapeHtml(row.action)}</p></article>`).join('');
-  const fork = inventory.orgDesignFork
-    ? `<aside class="notice"><p><strong>Quando o mecanismo é desenho.</strong> ${escapeHtml(inventory.orgDesignFork.institute)} ${escapeHtml(inventory.orgDesignFork.dismantle)}</p><p><strong>Antipadrão:</strong> ${escapeHtml(inventory.orgDesignFork.antiPattern)}</p><p class="muted">${escapeHtml(inventory.orgDesignFork.preserveObligation)}</p></aside>`
-    : '';
-  return `<section class="card front-inventory"><h2>Inventário por frente</h2><p class="muted">Hipóteses competem com suporte cruzado. Relatos opostos no mesmo evento são adoção desigual no local, não um laudo sem causa.</p><div class="grid">${rows}</div>${fork}</section>`;
+function renderDisciplineCrossing(edges: DisciplineCrossing[], capabilityBase?: string): string {
+  if (!edges.length) return '';
+  const items = edges.map((edge) => {
+    const from = capabilityBase
+      ? `<a href="${escapeHtml(`${capabilityBase}/${edge.fromId}`)}">${escapeHtml(edge.fromLabel)}</a>`
+      : escapeHtml(edge.fromLabel);
+    const to = capabilityBase
+      ? `<a href="${escapeHtml(`${capabilityBase}/${edge.toId}`)}">${escapeHtml(edge.toLabel)}</a>`
+      : escapeHtml(edge.toLabel);
+    return `<li><strong>${from} → ${to}.</strong> ${escapeHtml(edge.generates)}</li>`;
+  }).join('');
+  return `<section class="card discipline-crossing"><h2>Como as disciplinas se cruzam</h2><ul>${items}</ul></section>`;
 }
 
 function renderSampleStrip(sample?: { completed: number; units: Array<{ path: string; completed: number }> }): string {
@@ -480,7 +489,7 @@ function renderSampleStrip(sample?: { completed: number; units: Array<{ path: st
     return `${escapeHtml(name)} (${unit.completed})`;
   }).join(' · ');
   const unitCount = sample.units.length || 1;
-  return `<section class="card sample-strip" aria-label="Amostra desta leitura"><p><strong>Amostra desta leitura.</strong> ${sample.completed} pessoas em ${unitCount} ${unitCount === 1 ? 'unidade' : 'unidades'}${units ? ` — ${units}` : ''}. Trilhas complementares: entrega, ciclo completo, risco, plataforma, arquitetura, produto, portfólio e dados; cada papel ao menos duas vezes.</p><p class="muted">Para repetir com dados reais: 18 pessoas em duas unidades, no mínimo 5 em cada uma. Sem essa composição o cartão não fecha decisão. Calibração (50–100 jornadas rotuladas) é um gate separado.</p></section>`;
+  return `<section class="card sample-strip" aria-label="Amostra desta leitura"><p><strong>Amostra desta leitura.</strong> ${sample.completed} pessoas em ${unitCount} ${unitCount === 1 ? 'unidade' : 'unidades'}${units ? ` — ${units}` : ''}.</p></section>`;
 }
 
 type PerspectiveGapView = { title: string; capability: string; strongerProfiles: string[]; constrainedProfiles: string[] };
@@ -719,32 +728,22 @@ function successReading(outcome: ReportOutcome): string {
   return 'A próxima rodada fecha quando uma restrição recorrente fica visível ou a hipótese é encerrada.';
 }
 
-export function renderFindingIndex(findings: OutcomeFinding[], primaryPattern: string | undefined, _map: OrganizationalAreaMap, capabilityBase?: string): string {
-  const unique = uniqueFindingsByPattern(findings).filter((finding) => finding.pattern !== primaryPattern);
-  if (!unique.length) return '';
-  const primarySystem = primaryPattern ? diagnosticSystemFor(primaryPattern) : undefined;
-  const systems = groupFindingsByDiagnosticSystem(unique);
-  const related = systems.filter((system) => primarySystem && system.id === primarySystem.id);
-  const independent = systems.filter((system) => !primarySystem || system.id !== primarySystem.id);
-  const card = (finding: OutcomeFinding) => {
-    const stance = finding.prescription?.status === 'investigate' ? 'investigar' : 'decidir';
-    const title = capabilityBase
-      ? `<a href="${escapeHtml(findingDetailHref(capabilityBase, finding))}"><strong>${escapeHtml(finding.title)}</strong></a>`
-      : `<strong>${escapeHtml(finding.title)}</strong>`;
-    const explanation = guidanceFor(finding.pattern, finding.foundation, finding.title).plainExplanation;
-    const mechanism = explanation && explanation !== finding.title ? `<p>${escapeHtml(explanation)}</p>` : '';
-    return `<article class="observation-card">${title}${mechanism}<p class="muted">${escapeHtml(stance)}</p></article>`;
-  };
-  const group = (label: string, items: OutcomeFinding[], note?: string) => (
-    `<div class="observation-group"><h3>${escapeHtml(label)}</h3>${note ? `<p class="muted">${escapeHtml(note)}</p>` : ''}<div class="observation-grid">${items.map(card).join('')}</div></div>`
-  );
-  const relatedBlock = related.map((system) => group(
-    'Variações deste mecanismo',
-    system.findings,
-    'Não são problemas novos: são o mesmo limitador visto em outro recorte.',
-  ));
-  const independentBlock = independent.map((system) => group(system.label, system.findings));
-  return `<section class="card finding-index" id="report-portfolio"><h2>Outras restrições</h2><p>Tratar só o ponto acima não remove as frentes abaixo. Cada grupo é um mecanismo distinto — empacotamento, fila, lote, cerimônia sem fechamento ou fluxo que esconde espera.</p>${relatedBlock.join('')}${independentBlock.join('')}</section>`;
+export function renderFindingIndex(
+  findings: OutcomeFinding[],
+  primaryPattern: string | undefined,
+  map: OrganizationalAreaMap,
+  capabilityBase?: string,
+  options: { exhaustive?: boolean; reading?: 'problem' | 'preserve' } = {},
+): string {
+  const unique = uniqueFindingsByPattern(findings);
+  const exhaustive = options.exhaustive === true;
+  if (!unique.length && !exhaustive) return '';
+  const tree = projectProblemTree(unique.map(asHierarchicalFinding), map, { exhaustive });
+  if (!tree.length) return '';
+  const lead = exhaustive
+    ? 'O cartão acima é o efeito no sistema. A dor da folha gera o efeito do sistema. São problemas distintos. Cada grupo permanece um mecanismo distinto. O que a entrevista não atravessou não se lê como saúde: não inventamos causa onde o grafo não passou.'
+    : 'A dor da folha gera o efeito do sistema. São problemas distintos: a ferida local e a inflamação que se espalha. Cada grupo permanece um mecanismo distinto.';
+  return `<section class="card finding-index" id="report-portfolio"><h2>Problemas por nível</h2><p>${lead}</p>${renderProblemTree(tree, unique, capabilityBase, primaryPattern, options.reading ?? 'preserve')}</section>`;
 }
 
 export function renderFindingPortfolio(findings: OutcomeFinding[], primaryPattern?: string, occurrences: FindingScopeOccurrence[] = [], capabilityBase?: string, scopeId?: string): string {
@@ -901,22 +900,24 @@ type CapabilityRadarNode = { id: string; label: string; level: number; confidenc
 export function renderOrganizationalAreaMap(
   map: OrganizationalAreaMap,
   urls: { areaBase: string; capabilityBase: string; scopeQuery?: string },
+  options: { reading?: 'problem' | 'preserve' } = {},
 ): string {
   const query = urls.scopeQuery ?? '';
+  const problemReading = options.reading === 'problem';
   const tiles = map.systems.map((system) => {
-    const chips = system.children.filter((child) => child.observed).map((child) => (
+    const chips = system.children.filter((child) => child.observed || problemReading).map((child) => (
       `<a class="area-chip" href="${escapeHtml(areaChildHref(child, urls) + query)}">${escapeHtml(child.label)}</a>`
     )).join('');
-    const status = system.observed
-      ? (system.findingCount ? `${system.findingCount} ${system.findingCount === 1 ? 'problema' : 'problemas'}` : 'observado')
-      : 'não observado';
-    const heading = system.observed
-      ? `<a href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}"><h3>${escapeHtml(system.label)}</h3></a>`
-      : `<h3>${escapeHtml(system.label)}</h3>`;
-    const drill = system.observed
-      ? `<p><a class="area-drill" href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}">Ver disciplinas</a></p>`
-      : '';
-    return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}<p class="muted">${escapeHtml(status)}</p>${chips ? `<p class="area-chips">${chips}</p>` : ''}${drill}</article>`;
+    const status = system.findingCount
+      ? `${system.findingCount} ${system.findingCount === 1 ? 'problema' : 'problemas'}`
+      : problemReading
+        ? ''
+        : system.observed
+          ? 'cobertura sem problema publicado'
+          : 'entrevista não atravessou — não conclui ausência de problema';
+    const heading = `<a href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}"><h3>${escapeHtml(system.label)}</h3></a>`;
+    const drill = `<p><a class="area-drill" href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}">Ver disciplinas</a></p>`;
+    return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}${status ? `<p class="muted">${escapeHtml(status)}</p>` : ''}${chips ? `<p class="area-chips">${chips}</p>` : ''}${drill}</article>`;
   }).join('');
   const bandChildren = map.band.children.filter((child) => child.observed);
   const band = map.band.observed
@@ -934,26 +935,30 @@ export function renderOrganizationalAreaIndex(
   const query = urls.scopeQuery ?? '';
   const detailOf = (node: OrganizationalAreaNode) => node.findingCount
     ? `${node.findingCount} ${node.findingCount === 1 ? 'problema' : 'problemas'}`
-    : 'observado';
+    : node.observed
+      ? 'ainda sem causa isolada'
+      : 'entrevista não atravessou';
   const self = selected.kind === 'leaf'
     ? `<a class="area-index-link" href="${escapeHtml(`${urls.capabilityBase}/${selected.leafId ?? selected.id}${query}`)}"><strong>${escapeHtml(selected.label)}</strong><span>${escapeHtml(detailOf(selected))}</span></a>`
     : '';
-  const items = selected.children.filter((child) => child.observed).map((child) => (
+  const items = selected.children.map((child) => (
     `<a class="area-index-link" href="${escapeHtml(areaChildHref(child, urls) + query)}"><strong>${escapeHtml(child.label)}</strong><span>${escapeHtml(detailOf(child))}</span></a>`
   )).join('');
-  return `<nav class="area-index" aria-label="Disciplinas de ${escapeHtml(selected.label)}">${self}${items || (self ? '' : '<p class="muted">Nenhuma disciplina observada neste recorte.</p>')}</nav>`;
+  return `<nav class="area-index" aria-label="Disciplinas de ${escapeHtml(selected.label)}">${self}${items || (self ? '' : '<p class="muted">Nenhuma disciplina neste recorte.</p>')}</nav>`;
 }
 
 export function renderAreaRecorte(
   path: OrganizationalAreaNode[],
-  urls: { areaBase: string; capabilityBase: string; scopeQuery?: string; capabilities?: CapabilityRadarNode[] },
+  urls: { areaBase: string; capabilityBase: string; scopeQuery?: string; capabilities?: CapabilityRadarNode[]; findings?: OutcomeFinding[] },
 ): string {
   const selected = path.at(-1);
   if (!selected) return '';
   const index = renderOrganizationalAreaIndex(path, urls);
   const radarNodes = areaChildrenAsRadar(selected, urls.capabilities ?? []);
   const radar = radarNodes.length ? renderCapabilityRadar(radarNodes, urls.capabilityBase, urls.scopeQuery ? new URLSearchParams(urls.scopeQuery.replace(/^\?/, '')).get('scope') ?? undefined : undefined) : '';
-  return `<section class="area-recorte"><p class="eyebrow">Recorte: ${escapeHtml(selected.label)}</p><h2>Disciplinas de ${escapeHtml(selected.label)}</h2><p>Abra uma disciplina para ver o que as entrevistas sustentam neste sistema. O mapa abaixo localiza cobertura; “?” não é fragilidade.</p>${index}${radar}</section>`;
+  const scope = renderDisciplineScope(selected.id);
+  const problems = urls.findings?.length ? renderAreaProblems(path, urls.findings, urls.capabilityBase) : '';
+  return `<section class="area-recorte">${scope}<p class="eyebrow">Recorte: ${escapeHtml(selected.label)}</p><h2>Disciplinas de ${escapeHtml(selected.label)}</h2><p>Abra uma disciplina para ver o que as entrevistas sustentam neste sistema. O mapa abaixo localiza cobertura; “?” não é fragilidade nem ausência de problema.</p>${problems}${index}${radar}</section>`;
 }
 
 function areaLeafIds(node: OrganizationalAreaNode): string[] {
@@ -1103,6 +1108,120 @@ type ReportFinding = {
   solutionReadiness?: { stage: string; label: string; explanation: string; evidence: number };
   causalAnalysis?: OutcomeFinding['causalAnalysis'];
 };
+
+function asHierarchicalFinding(finding: { pattern?: string; title: string; intervention: string; detailCapability?: string }): HierarchicalFinding {
+  return {
+    pattern: finding.pattern ?? '',
+    title: finding.title,
+    intervention: finding.intervention,
+    detailCapability: finding.detailCapability ?? '',
+  };
+}
+
+function renderDisciplineScope(id: string): string {
+  const scope = disciplineScope(id);
+  return `<section class="discipline-scope"><h2>O que esta disciplina abrange</h2><p>${escapeHtml(scope.covers)}</p><h3>O que trata</h3><p>${escapeHtml(scope.treats)}</p><h3>O que não é</h3><p>${escapeHtml(scope.not)}</p></section>`;
+}
+
+export function renderDisciplineDetail(input: { selected: CapabilityRadarNode; findings: ReportFinding[] }): string {
+  const brief = renderDisciplineScope(input.selected.id);
+  const childIds = flattenCapabilityIds(input.selected).filter((id) => id !== input.selected.id);
+  const scoped = problemsForNode(input.selected.id, childIds, input.findings.map(asHierarchicalFinding));
+  if (input.selected.children.length) {
+    const fever = scoped.systemicEffects.map((effect) => `<p>${escapeHtml(effect)}</p>`).join('')
+      || '<p>As dores abaixo ainda não se acumularam num efeito distinto neste nível.</p>';
+    const wounds = scoped.descendants.map((problem) => renderHierarchicalWound(problem)).join('')
+      || '<p class="muted">Nenhuma dor local publicada nas disciplinas abaixo.</p>';
+    const solutions = scoped.descendants.map((problem) => renderHierarchicalSolution(problem)).join('')
+      || '<p class="muted">Sem solução publicada enquanto a dor local não estiver nomeada.</p>';
+    return `${brief}<section class="discipline-level"><h2>Efeito neste nível</h2>${fever}</section><section class="discipline-level"><h2>Dores nas disciplinas abaixo</h2>${wounds}</section><section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
+  }
+  if (!scoped.local.length) {
+    return `${brief}<p class="notice">As entrevistas não atravessaram um problema publicado nesta disciplina. Isso não conclui ausência de problema.</p>`;
+  }
+  const problems = scoped.local.map((problem) => renderHierarchicalWound(problem)).join('');
+  const generated = [...new Set(scoped.local.map((problem) => problem.systemicEffect))]
+    .map((effect) => `<p>${escapeHtml(effect)}</p>`).join('');
+  const solutions = scoped.local.map((problem) => renderHierarchicalSolution(problem)).join('');
+  return `${brief}<section class="discipline-level"><h2>Problemas desta disciplina</h2>${problems}</section><section class="discipline-level"><h2>O que isso gera no sistema</h2>${generated}</section><section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
+}
+
+function renderHierarchicalWound(problem: HierarchicalProblem): string {
+  return `<article class="observation-card"><p class="muted">${escapeHtml(problem.capabilityLabel)}</p><h3>${escapeHtml(problem.localTitle)}</h3></article>`;
+}
+
+function renderHierarchicalSolution(problem: HierarchicalProblem): string {
+  return `<article class="observation-card"><h3>Ação para esta dor</h3><p>${escapeHtml(problem.intervention)}</p></article>`;
+}
+
+function renderAreaProblems(path: OrganizationalAreaNode[], findings: OutcomeFinding[], capabilityBase: string): string {
+  const selected = path.at(-1);
+  if (!selected) return '';
+  const root = path[0] ?? selected;
+  const emptyBand: OrganizationalAreaNode = { id: 'management', label: 'Gestão', kind: 'band', observed: false, findingCount: 0, children: [] };
+  const map: OrganizationalAreaMap = {
+    version: 'organizational-areas-v1',
+    systems: root.kind === 'band' ? [] : [root],
+    band: root.kind === 'band' ? root : emptyBand,
+  };
+  const tree = projectProblemTree(findings.map(asHierarchicalFinding), map, { exhaustive: true });
+  const focus = findProblemBranch(tree, selected.id);
+  if (!focus) return '';
+  return renderProblemTree([focus], findings, capabilityBase, undefined, 'problem');
+}
+
+function findProblemBranch(nodes: HierarchicalBranch[], id: string): HierarchicalBranch | undefined {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    const nested = findProblemBranch(node.children, id);
+    if (nested) return nested;
+  }
+  return undefined;
+}
+
+function branchStatusReading(status: HierarchicalBranch['status'], reading: 'problem' | 'preserve'): string {
+  if (status === 'published-problem') return '';
+  if (status === 'coverage-without-finding') {
+    return reading === 'problem'
+      ? 'A entrevista passou por aqui, mas ainda não isolou uma causa publicada. Ainda sem causa isolada — não leia como disciplina saudável.'
+      : 'Cobertura sem problema publicado.';
+  }
+  return 'Entrevista não atravessou. Isso não conclui ausência de problema.';
+}
+
+function renderProblemTree(
+  tree: HierarchicalBranch[],
+  findings: OutcomeFinding[],
+  capabilityBase?: string,
+  primaryPattern?: string,
+  reading: 'problem' | 'preserve' = 'preserve',
+): string {
+  const renderNode = (node: HierarchicalBranch, depth: number): string => {
+    const brief = `<p class="discipline-brief">${escapeHtml(node.brief)}</p>`;
+    const status = branchStatusReading(node.status, reading);
+    const statusLine = status ? `<p class="muted">${escapeHtml(status)}</p>` : '';
+    const fever = node.kind !== 'leaf' && node.systemicEffects.length
+      ? `<p class="problem-fever"><strong>Efeito neste nível.</strong> ${escapeHtml(node.systemicEffects[0]!)}</p>`
+      : '';
+    const cards = node.problems.map((problem) => {
+      const source = findings.find((item) => item.pattern === problem.pattern);
+      const explanation = source ? guidanceFor(source.pattern, source.foundation, source.title).plainExplanation : '';
+      const mechanism = explanation && explanation !== problem.localTitle ? `<p>${escapeHtml(explanation)}</p>` : '';
+      const family = diagnosticSystemFor(problem.pattern)?.label;
+      const familyLine = family ? `<p class="muted">${escapeHtml(family)}</p>` : '';
+      const stance = source?.prescription?.status === 'investigate' ? 'investigar' : 'decidir';
+      const mark = problem.pattern === primaryPattern ? '<p class="muted">Decisão do cartão neste recorte.</p>' : '';
+      const title = capabilityBase && source
+        ? `<a href="${escapeHtml(findingDetailHref(capabilityBase, source))}"><strong>${escapeHtml(problem.localTitle)}</strong></a>`
+        : `<strong>${escapeHtml(problem.localTitle)}</strong>`;
+      return `<article class="observation-card">${title}${mechanism}${familyLine}${mark}<p class="muted">${escapeHtml(stance)}</p></article>`;
+    }).join('');
+    const kids = node.children.map((child) => renderNode(child, depth + 1)).join('');
+    const heading = depth === 0 ? 'h3' : depth === 1 ? 'h4' : 'h5';
+    return `<div class="problem-level problem-depth-${depth} problem-status-${node.status}"><${heading}>${escapeHtml(node.label)}</${heading}>${brief}${statusLine}${fever}${cards ? `<div class="observation-grid">${cards}</div>` : ''}${kids}</div>`;
+  };
+  return `<div class="problem-tree">${tree.map((node) => renderNode(node, 0)).join('')}</div>`;
+}
 
 export function renderCapabilityDiagnosis(findings: ReportFinding[], capability: CapabilityRadarNode): string {
   if (findings.length) {

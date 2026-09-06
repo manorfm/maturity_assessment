@@ -38,29 +38,25 @@ validação de linguagem com as disciplinas, evidência externa) está no
 apresentar o produto como diagnóstico de engenharia — e não como framework de
 maturidade — está no
 [`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
-A home já projeta Produto, Engenharia e Operação. O cartão já fecha
-decisão sem fabricar impacto. A first screen já cabe decisão, amostra
-e três sistemas no primeiro plano. A massa sintética já valida apresentação
-— três bandas, fronteira, segurança≠governança e baixa prática de
-engenharia — sem calibração.
-O `/showcase` apresenta esses três casos como deck do produto, depois de
-o E2E percorrer criar projeto, convite e uma entrevista.
-A discriminação descreve o efeito observado e o que ainda não dá para
-dizer, sem resenha das respostas. A first screen empilha cartões da
-decisão até as unidades. O radar
-dos pilares vem depois dos sistemas; as demais restrições aparecem por
-frente diagnóstica, não como o mesmo efeito, e “?” não pede mais pessoas.
+A home já projeta Produto, Engenharia e Operação. O cartão fecha
+decisão sem fabricar impacto. A first screen cabe decisão, até três
+cruzamentos com mecanismo, amostra (pessoas e unidades) e três
+sistemas. Radar e mapa publicado abrem em detalhe. Disciplina aberta
+não vira pergunta na home. Ao entrar, a disciplina declara o que
+abrange, trata e não é. “?” não pede mais pessoas.
+A massa sintética valida apresentação — três bandas, fronteira,
+segurança≠governança e baixa prática de engenharia — sem calibração.
+O `/showcase` apresenta esses casos como deck do produto, depois de o
+E2E percorrer criar projeto, convite e uma entrevista.
 O contrato de família de capacidade e o catálogo dos cinco packs
-(`causal-catalog-v10`) estão na base. O grafo `v20` afunila por reforço:
-próximo probe confirma ou mata hipótese já aberta; inception amarra
-lote/fronteira; priorização discrimina gestão tática da organizacional;
-war room abre clima e o lado técnico no mesmo fio. O relatório publica
-inventário por frente, causas com suporte cruzado e briefing de política
-no recorte de medo. A massa sintética de baixa prática publica famílias
-distintas, inventário e briefing de política; o piloto humano continua no
-[`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
-A sequência aberta do relatório apresentável (folhas candidatas) está no
-[`plano de apresentação`](../backlog/report-presentation-plan.md). A evolução
+(`causal-catalog-v10`) estão na base. O grafo `v20` afunila por reforço.
+Briefing de política permanece no recorte de medo. Piloto com pessoas
+reais só entra quando o relatório fechar decisão; a hipótese continua
+no [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
+A sequência aberta do relatório apresentável (onda F: cartão, mapa e
+cruzamento que fecham decisão) está no
+[`plano de apresentação`](../backlog/report-presentation-plan.md).
+Folhas candidatas (onda E) só depois. A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma
 referência de alta performance está no
 [`plano comparativo`](../backlog/comparative-diagnostic-plan.md). O plano de amostra

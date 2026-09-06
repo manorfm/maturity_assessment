@@ -146,8 +146,8 @@ test('first screen mostra a amostra que o experimento real precisa repetir', () 
   assert.match(html, /18 pessoas em 2 unidades/);
   assert.match(html, /Gama \(9\)/);
   assert.match(html, /Delta \(9\)/);
-  assert.match(html, /Para repetir com dados reais/);
-  assert.match(html, /18 pessoas em duas unidades/);
+  assert.doesNotMatch(html, /Para repetir com dados reais/);
+  assert.doesNotMatch(html, /Calibração \(50–100/);
   const sample = html.indexOf('Amostra desta leitura');
   const systems = html.indexOf('Sistemas da organização');
   assert.ok(sample >= 0 && sample < systems);
@@ -157,10 +157,10 @@ test('first screen coloca o problema e três sistemas antes da lista, unidades e
   const html = firstScreen();
   const problem = html.indexOf('O que está acontecendo');
   const systems = html.indexOf('Sistemas da organização');
-  const others = html.indexOf('Outras restrições');
+  const crossing = html.indexOf('Como as disciplinas se cruzam');
   const units = html.indexOf('Unidades');
   const admin = html.search(/Administrar|Instrumento e calibração|Leituras por público/);
-  assert.ok(problem >= 0 && systems > problem && others > systems && units > others);
+  assert.ok(problem >= 0 && crossing > problem && systems > crossing && units > systems);
   assert.ok(admin < 0 || admin > units);
   assert.match(html, />Produto</);
   assert.match(html, />Engenharia</);
@@ -180,18 +180,15 @@ test('first screen coloca o problema e três sistemas antes da lista, unidades e
 
 test('outras restrições separam mecanismos e mostram o que cada um faz', () => {
   const html = firstScreen();
-  assert.match(html, /Outras restrições/);
-  assert.match(html, /Cada grupo é um mecanismo distinto/);
-  assert.match(html, /não remove as frentes abaixo/);
-  assert.match(html, /Integração e feedback tardios|Ambientes, acesso e capacidade compartilhada|Melhoria sem fechamento/);
-  assert.match(html, /Preparação concentra espera/);
-  assert.match(html, /sabe empacotar|abre um chamado|Reunir e anotar não é melhorar/);
-  assert.match(html, /A lista de melhoria não fecha/);
-  assert.match(html, /investigar/);
-  assert.match(html, /<article class="observation-card"/);
+  const plane = html.slice(0, html.indexOf('first-screen-deep') === -1 ? html.length : html.indexOf('first-screen-deep'));
+  assert.match(plane, /Como as disciplinas se cruzam/);
+  assert.match(plane, /Acesso a capacidades|Release e feedback|Fluxo de trabalho|Gestão de portfólio/);
+  assert.doesNotMatch(plane, / em Acesso a capacidades gera /);
+  assert.doesNotMatch(plane, /Inventário por frente/);
+  assert.doesNotMatch(plane, /entrevista não atravessou/);
+  assert.doesNotMatch(plane, /Outras restrições/);
   assert.doesNotMatch(html, /sustentam o mesmo efeito/);
   assert.doesNotMatch(html, /O que alimenta este efeito/);
-  assert.doesNotMatch(html, /<section class="finding-index"[^>]*>[\s\S]*?<ul>[\s\S]*?<li><a/);
   assert.doesNotMatch(html, /Sequência de transformação/);
   assert.doesNotMatch(html, /mostrando os 4/);
   assert.doesNotMatch(html, /Também observado nas entrevistas/);

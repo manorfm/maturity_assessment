@@ -48,7 +48,9 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-home header { margin-bottom:16px }
     .report-home h1 { font-size:clamp(1.55rem,3.2vw,2.15rem); margin:.1rem 0 .35rem }
     .report-home .card > h2 { margin-top:0 }
-    .report-home .first-screen-systems h2,.report-home .finding-index h2,.report-home .scope-index h2,.report-home .front-inventory h2 { margin-top:0 }
+    .report-home .first-screen-systems h2,.report-home .finding-index h2,.report-home .scope-index h2,.report-home .front-inventory h2,.report-home .discipline-crossing h2 { margin-top:0 }
+    .discipline-crossing ul { list-style:none; padding:0; margin:8px 0 0; display:grid; gap:10px }
+    .discipline-crossing li { padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--bg) }
     .front-inventory-row { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:16px }
     .front-inventory-row h3 { margin:.1rem 0 .4rem }
     .sample-strip p { margin:.2rem 0 }
@@ -65,6 +67,18 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .scope-line:last-child { border-bottom:0 }
     .admin-footer { margin-top:28px }
     .finding-index > p { max-width:68ch }
+    .discipline-brief { max-width:68ch; font-size:1.05rem; line-height:1.5; margin:.35rem 0 1.1rem }
+    .discipline-scope { max-width:68ch; margin:.2rem 0 1.4rem; padding:16px 18px; border:1px solid var(--line); border-radius:12px; background:var(--soft) }
+    .discipline-scope h2 { margin:.1rem 0 .45rem; font-size:1.15rem }
+    .discipline-scope h3 { margin:.85rem 0 .25rem; font-size:.98rem; color:var(--accent) }
+    .discipline-scope p { margin:0 }
+    .discipline-level { margin:22px 0 }
+    .discipline-level h2 { margin:0 0 10px }
+    .problem-tree { display:grid; gap:18px; margin-top:12px }
+    .problem-level { padding:12px 0 4px }
+    .problem-depth-1 { margin-left:8px; padding-left:14px; border-left:2px solid var(--line) }
+    .problem-depth-2 { margin-left:8px; padding-left:14px; border-left:2px solid var(--line) }
+    .problem-fever { max-width:68ch; color:var(--muted) }
     .observation-group { margin:18px 0 0; padding-top:16px; border-top:1px solid var(--line) }
     .observation-group:first-of-type { border-top:0; padding-top:4px }
     .observation-group h3 { margin:0 0 8px; font-size:1rem }

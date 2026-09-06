@@ -37,8 +37,9 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   Relatos opostos entre observadores são adoção desigual. Clima, incentivo e
   liderança descrevem o local, nunca a pessoa. Cerimônia e post-mortem só
   pontuam pelo efeito no próximo evento equivalente. O grafo `v20` já
-  afunila por reforço. O relatório publica inventário por frente e
+  afunila por reforço.   O relatório publica cruzamento com mecanismo e
   briefing de política. A massa sintética de baixa prática já publica
-  famílias distintas; restam piloto humano e calibração.
+  famílias distintas. Piloto humano e calibração continuam backlog:
+  não substituem um first screen que ainda não fecha decisão.
 
 Detalhes e critérios técnicos estão em `technical-architecture.md`.

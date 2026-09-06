@@ -14,8 +14,9 @@ Antes de promover um item, registrar:
 - mudanças necessárias na base de conhecimento.
 
 O contrato, o catálogo, o grafo que afunila, o relatório multiárea e a
-massa sintética de baixa prática já estão na base (0.88.0). O piloto
-humano e a calibração continuam no
+massa sintética de baixa prática já estão na base. Piloto humano e
+calibração só depois do first screen fechar decisão; a hipótese
+continua no
 [`multi-area-consultant-diagnostic-plan.md`](multi-area-consultant-diagnostic-plan.md).
 
 O objetivo integrado de transformar o produto em uma plataforma especialista —
@@ -43,15 +44,13 @@ deve ocorrer numa única unidade para preservar o limiar; uma comparação entre
 squads exige ao menos dez pessoas, cinco em cada unidade. Calibração continua 50–100
 jornadas rotuladas e não é substituída por sintéticos.
 
-A home já projeta três sistemas e a faixa de Gestão. O cartão executivo
-já fecha decisão sem impacto fabricado. A first screen já compacta
-problema, causa, ação, sistemas, radar e outras restrições por frente;
-metodologia fica no rodapé. “?” no radar é cobertura temática, não falta
-de gente. A massa sintética já valida apresentação sem calibração. O
-`/showcase` já é o deck dos três casos, não um índice de inspeção. A
-sequência aberta do relatório apresentável — folhas candidatas, uma de
-cada vez — está em
-[`report-presentation-plan.md`](report-presentation-plan.md). O detalhe
+A home já projeta três sistemas e a faixa de Gestão. A first screen já
+cruza disciplinas publicadas e esconde o mapa de lacunas. O cartão
+ainda é um memorando; o mapa ainda nomeia disciplina sem causa. A
+sequência aberta é a onda F em
+[`report-presentation-plan.md`](report-presentation-plan.md). Folhas
+candidatas (onda E) só depois. A massa sintética já valida coerência,
+não a leitura. O `/showcase` já é o deck dos casos. O detalhe
 das lacunas do mapa permanece em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md); o
 do cartão, em
