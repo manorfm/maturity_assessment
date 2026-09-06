@@ -31,7 +31,7 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
     lookFor: [
       'Home em Corrigir, com finding pronto de responsabilidade.',
       'O efeito se apoia em espera de esteira, empacotamento e aprovação, não num slogan único.',
-      'Radar na first screen; “?” é cobertura temática, não falta de gente.',
+      'Radar no detalhe da home; “?” é cobertura temática, não falta de gente.',
     ],
   },
   {
@@ -98,7 +98,7 @@ export const POC_VALIDATION_ORGS: readonly PocSyntheticOrg[] = [
     units: ['Entrega', 'Sustentação'],
     story: 'Dezoito pessoas em duas frentes no mesmo trabalho. Promoção manual, credencial sem autorização no recurso, retro sem efeito, sustentação à parte, negócio fechando desenho e war room como modo de gestão. O panorama mostra famílias distintas, não só espera na esteira.',
     lookFor: [
-      'Famílias distintas no panorama: origem da versão, autorização no recurso e war room.',
+      'Cruzamento visível na home; origem da versão, autorização e war room no detalhe.',
       'Briefing de política para diretoria: o que parar de autorizar.',
       'Cruzamento entre disciplinas, sem colapsar em espera na esteira.',
     ],

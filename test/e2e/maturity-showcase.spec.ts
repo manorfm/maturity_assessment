@@ -101,7 +101,13 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   await expect(page.getByText(/Amostra desta leitura/).first()).toBeVisible();
   await expect(page.getByText(/18 pessoas em 2 unidades/).first()).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
-  await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
+  if (org.band === 'high') {
+    await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
+  } else {
+    await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeHidden();
+    await page.getByText('Mapa e recortes publicados').click();
+    await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
+  }
   await expect(page.getByText('Aguarde mais respostas')).toHaveCount(0);
   if (org.band !== 'high') {
     await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toBeVisible();
@@ -200,7 +206,7 @@ async function inspectEngineeringPracticeOrg(browser: Browser, org: SeededOrg, b
   try {
     await page.goto(org.adminPath);
     await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toBeVisible();
-    await expect(page.getByText(/origem|artefato|autorização no recurso|war room|post-mortem/i).first()).toBeVisible();
+    await expect(page.getByText(/Pedido na fila|Diagnóstico concentrado|autoriza o recurso|identidade/i).first()).toBeVisible();
     await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing de política' })).toBeVisible();
     await expect(page.getByText(/O que parar de autorizar/)).toBeVisible();

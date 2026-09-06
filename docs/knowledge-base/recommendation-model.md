@@ -408,11 +408,11 @@ de recomendação. No first screen da organização, o cartão prefere a decisã
 num estágio mais baixo sem causa amarrada. Discriminar fica no detalhe dessa folha
 ou no panorama, não no cartão que a diretoria lê primeiro. O cartão vem antes do
 estágio e do mapa de sistemas. Na first screen, o cartão compacto traduz o
-contrato nesta ordem: decisão pedida (verbo, quem autoriza e horizonte),
-situação observada sem culpar o time quando a restrição é política, valor em
-risco só com evidência de impacto — ou a declaração de que o impacto ainda
-não foi medido —, teste, o que não resolve e antipadrão. Fundamento, classe
-de solução, evidência agregada e vocabulário metodológico ficam em `details`;
+contrato em quatro batidas: efeito cotidiano; um mecanismo que não
+repete o título do catálogo; verbo com quem autoriza; teste e o que
+não resolve. Antipadrão, prontidão, contenção, título de catálogo e
+hedges (“não significa que não exista”) ficam em `details`. Fundamento, classe
+de solução, evidência agregada e vocabulário metodológico também ficam em `details`;
 o teste não exige abrir “Detalhes metodológicos”. Quando o limitador é do
 sistema organizacional, o texto lembra que aquele pilar é um meta-sistema, não um
 oitavo eixo técnico. Quando a prontidão não foi demonstrada, o

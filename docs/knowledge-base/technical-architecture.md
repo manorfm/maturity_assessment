@@ -117,9 +117,10 @@ compõe um cartão compacto (`density: compact`), o cruzamento entre
 disciplinas, a amostra desta leitura e os três sistemas; Gestão é faixa.
 Radar e recortes publicados abrem em `details`. Os blocos internos usam o
 fundo da página, não ficam soltos no cinza.
-O cartão visível traz decisão,
-situação cotidiana, por que o padrão se repete, o que fazer agora, teste,
-o que não resolve e o antipadrão, sem abrir pela tag de correção. A amostra
+O cartão visível traz efeito cotidiano,
+um mecanismo que não ecoa o título, o que fazer agora com quem autoriza,
+teste e o que não resolve, sem abrir pela tag de correção. O antipadrão
+fica em `details`. A amostra
 declara só pessoas e unidades. Fundamento, evidência,
 prioridade e vocabulário metodológico ficam em `details`. Os demais achados
 aparecem no cruzamento entre disciplinas: no máximo três arestas com

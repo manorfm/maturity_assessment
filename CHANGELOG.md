@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.94.0
+
+- O cartão compacto da first screen ficou em quatro batidas: efeito,
+  um mecanismo que não ecoa o título, ação com quem autoriza, teste e
+  o que não resolve. Antipadrão e hedges de prontidão ficam no
+  detalhe.
+
 ## 0.93.0
 
 - A first screen deixou o inventário e a árvore de lacunas. No lugar,

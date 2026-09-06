@@ -18,7 +18,7 @@ import { diagnosticSystemFor, groupFindingsByDiagnosticSystem } from '../inferen
 import { classifyPortfolioLevel, type DiagnosticPortfolioLevel } from '../inference/domain/diagnostic-portfolio.js';
 import { TransformationPortfolioPlanner, type TransformationPhase } from '../inference/domain/transformation-portfolio.js';
 import { AudienceReportProjector, audienceAsk, type AudienceReports, type UnitManagementReport } from '../inference/domain/audience-report.js';
-import { projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
+import { compactMechanismBody, projectFindingNarrative, type FindingNarrativeSection } from '../inference/domain/finding-narrative.js';
 import { policyBriefingFor } from '../inference/domain/multi-front-inventory.js';
 import { projectDisciplineCrossings, type DisciplineCrossing } from '../inference/domain/discipline-crossing.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
@@ -577,6 +577,7 @@ function renderFindingNarrative(finding: OutcomeFinding, fragments: {
     : `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p>`;
   const detail = [
     foundation,
+    `<p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>`,
     ...rest.map((section) => renderNarrativeSection(section, finding, fragments)),
     fragments.priority,
     fragments.affected,
@@ -606,14 +607,14 @@ function renderNarrativeSection(section: FindingNarrativeSection, finding: Outco
       ? `<p class="muted catalog-title">${escapeHtml(finding.title)}</p>`
       : '';
     return compact
-      ? `<section data-narrative="observation"><h3>${section.title}</h3><h2 class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</h2>${catalog}</section>`
+      ? `<section data-narrative="observation"><h3>${section.title}</h3><h2 class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</h2></section>`
       : `<section data-narrative="observation"><h3>${section.title}</h3><p class="executive-reading">${escapeHtml(fragments.guidance.plainExplanation)}</p>${catalog}</section>`;
   }
   if (section.id === 'importance') return `<section data-narrative="importance"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.priority}${fragments.metaSystem}</section>`;
   if (section.id === 'capability') return `<section data-narrative="capability"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.affected}</section>`;
   if (section.id === 'evidence') return `<section data-narrative="evidence"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p>${fragments.evidenceBlock}</section>`;
   if (section.id === 'mechanism') {
-    const body = compact ? section.body.split(' Hipóteses concorrentes:')[0] ?? section.body : section.body;
+    const body = compact ? compactMechanismBody(finding) : section.body;
     return `<section data-narrative="mechanism"><h3>${section.title}</h3><p>${escapeHtml(body)}</p>${compact ? '' : fragments.causalAnalysis}</section>`;
   }
   if (section.id === 'containment') return `<section data-narrative="containment"><h3>${section.title}</h3><p>${escapeHtml(section.body)}</p></section>`;
@@ -623,7 +624,7 @@ function renderNarrativeSection(section: FindingNarrativeSection, finding: Outco
       ? `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p><strong>Princípio aplicado:</strong> ${escapeHtml(finding.foundation.principle)}. ${escapeHtml(finding.foundation.why)} Fonte: ${escapeHtml(finding.foundation.source)}.</p>`
       : `<p><strong>${escapeHtml(fragments.guidance.solutionClass)}</strong> (${escapeHtml(solutionKindLabels[fragments.guidance.solutionKind])}). ${escapeHtml(fragments.guidance.whyItWorks)}</p><p>Referência: ${escapeHtml(fragments.guidance.matureReference)}.</p>`;
     const testBody = compact
-      ? `<h3>${section.title}</h3><p><strong>Teste:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>`
+      ? `<h3>${section.title}</h3><p><strong>Teste:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p>`
       : `<p class="eyebrow">Decisão solicitada</p><h3>${section.title}</h3><p><strong>${escapeHtml(finding.experiment?.action ?? section.body)}</strong></p><p>Quem conduz: ${escapeHtml(finding.experiment?.owner ?? 'Pessoas responsáveis pelo recorte com o grupo afetado')} · revisão ${escapeHtml(finding.experiment?.reviewHorizon ?? 'na próxima mudança equivalente')}.</p><p><strong>Como saber se funcionou:</strong> observe ${escapeHtml(finding.experiment?.metric ?? fragments.guidance.metric)}. Critério: ${escapeHtml(finding.experiment?.successCriterion ?? fragments.guidance.successCriterion)}.</p><p><strong>O que esta decisão não resolve:</strong> ${escapeHtml(fragments.guidance.doesNotSolve)}</p><p class="notice">Não faça: ${escapeHtml(fragments.guidance.antiPattern)}</p>${foundation}`;
     return `<section data-narrative="experiment"${compact ? '' : ' class="decision-request"'}>${testBody}</section>`;
   }

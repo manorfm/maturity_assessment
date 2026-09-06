@@ -40,7 +40,7 @@ classificação não é.
 | B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
 | C | UX minimalista | **Parcial.** Cruzamento no lugar do inventário; cartão e mapa ainda abrem pergunta |
 | D | Massa sintética | **Vigente.** Três bandas + contrastes passam a barra de coerência, não de leitura |
-| F | Relatório que responde | **Aberta.** Quatro cortes abaixo; aceite: quem lê o showcase reformula a decisão sem perguntar o que a entrevista não atravessou |
+| F | Relatório que responde | **Aberta.** F1 vigente; restam F2–F4. Aceite: quem lê o showcase reformula a decisão sem perguntar o que a entrevista não atravessou |
 | E | Folhas candidatas | Só depois de F; lacunas viram folha com contrato, uma de cada vez |
 
 Fora: LLM, React por antecipação, radar de quinze eixos, nó Agilidade,
@@ -168,20 +168,10 @@ atual e um aceite de leitura nos sintéticos `low`, `medium`,
 
 ### F1 — Cartão em quatro batidas
 
-O compacto ainda empilha título de catálogo, “por que se repete” que
-copia o título, autorização, teste, o que não resolve, antipadrão e
-hedges de prontidão. Quem lê sai com pergunta.
-
-**Fazer.** No primeiro plano, só: efeito cotidiano; um mecanismo que
-não ecoa o título; verbo + quem autoriza; teste + o que não resolve.
-Antipadrão, prontidão, contenção e “não significa que não exista”
-ficam no `details` já existente. TDD no HTML visível (sem conteúdo
-de `<details>`).
-
-**Aceite.** Em viewport desktop, decisão + cruzamento + três sistemas
-cabem sem rolar. Quem lê o opaco reformula: guerra de crise, quem
-para de autorizar caça ao culpado, como sabe. Não pergunta se “o
-caminho já existe”.
+**Vigente.** O compacto mostra efeito, mecanismo sem eco do título,
+ação com quem autoriza, teste e o que não resolve. Antipadrão e
+hedges ficam em `details`. A especificação passou para
+`recommendation-model.md`.
 
 ### F2 — Mapa sem disciplina aberta
 

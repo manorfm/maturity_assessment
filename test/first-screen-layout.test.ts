@@ -12,6 +12,7 @@ import {
   renderScopeIndex,
   renderAreaRecorte,
 } from '../src/modules/projects/project-routes.js';
+import { compactMechanismBody } from '../src/modules/inference/domain/finding-narrative.js';
 import type { OutcomeFinding } from '../src/modules/inference/domain/report-outcome.js';
 
 const readyFinding: OutcomeFinding = {
@@ -97,6 +98,17 @@ function firstScreen(overrides: Partial<Parameters<typeof renderFirstScreen>[0]>
   });
 }
 
+test('mecanismo compacto corta o título e os hedges', () => {
+  const echoed = compactMechanismBody({
+    ...readyFinding,
+    title: 'O war room virou o modo de ver e gerir o sistema',
+    cause: 'O war room virou o modo de ver e gerir o sistema, então a liderança só enxerga o trabalho quando já quebrou.',
+  });
+  assert.match(echoed, /liderança só enxerga o trabalho quando já quebrou/);
+  assert.doesNotMatch(echoed, /O war room virou o modo de ver e gerir o sistema/);
+  assert.doesNotMatch(echoed, /Ainda falta|Limite:/);
+});
+
 test('cartão compacto começa pelo problema e só depois pede a ação', () => {
   const html = renderOutcome(outcome, { density: 'compact' });
   const firstPlane = html.slice(0, html.search(/<details[^>]*class="[^"]*methodology/));
@@ -111,7 +123,11 @@ test('cartão compacto começa pelo problema e só depois pede a ação', () => 
   assert.match(firstPlane, /Não autorizar todo o próximo ciclo/);
   assert.match(firstPlane, /Como saber se funcionou|Teste:/);
   assert.match(firstPlane, /O que esta decisão não resolve/);
-  assert.match(firstPlane, /Não faça/);
+  assert.match(firstPlane, /Quem autoriza/);
+  assert.doesNotMatch(firstPlane, /Não faça/);
+  assert.doesNotMatch(firstPlane, /não significa que (ele )?não exista/i);
+  assert.doesNotMatch(firstPlane, /catalog-title/);
+  assert.match(html, /<details[^>]*>[\s\S]*Não faça/);
   assert.match(firstPlane, /Precisa de correção/);
   assert.doesNotMatch(firstPlane, /Próxima decisão/);
   assert.doesNotMatch(firstPlane, /Corrigir o limitador/);
@@ -123,6 +139,25 @@ test('cartão compacto começa pelo problema e só depois pede a ação', () => 
   assert.doesNotMatch(firstPlane, /A organização já consegue fazer isso/);
   const actionBlock = firstPlane.slice(action);
   assert.equal((actionBlock.match(/Não autorizar todo o próximo ciclo/g) ?? []).length, 1);
+});
+
+test('cartão compacto não ecoa o título no mecanismo visível', () => {
+  const finding = {
+    ...readyFinding,
+    pattern: 'war-room-como-gestao',
+    detailCapability: 'leadership-management',
+    title: 'O war room virou o modo de ver e gerir o sistema',
+    cause: 'O war room virou o modo de ver e gerir o sistema, então a liderança só enxerga o trabalho quando já quebrou e o reconhecimento cai em quem apaga o incêndio.',
+  };
+  const html = renderOutcome({
+    kind: 'correct', kindLabel: 'Precisa de correção', limiterLabel: 'Liderança e gestão',
+    reading: '', nextStepTitle: finding.title, nextStepBody: finding.intervention, finding,
+  }, { density: 'compact' });
+  const firstPlane = html.slice(0, html.search(/<details/));
+  assert.match(firstPlane, /liderança só enxerga o trabalho quando já quebrou/i);
+  assert.equal((firstPlane.match(/O war room virou o modo de ver e gerir o sistema/g) ?? []).length, 0);
+  assert.doesNotMatch(firstPlane, /Não faça/);
+  assert.doesNotMatch(firstPlane, /A organização já consegue fazer isso/);
 });
 
 test('força da evidência fala em confirmação, não em evidência direcional', () => {

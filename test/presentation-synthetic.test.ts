@@ -40,6 +40,10 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
   assert.equal(systemObserved(report, 'engineering'), true);
   assert.equal(report.organizationalAreas.band.observed, true);
   const html = firstScreenOf(report);
+  const cardPlane = html.slice(0, html.search(/<details/));
+  assert.doesNotMatch(cardPlane, /Não faça/);
+  assert.doesNotMatch(cardPlane, /não significa que (ele )?não exista/i);
+  assert.match(cardPlane, /O que esta decisão não resolve/);
   assert.match(html, /Como as disciplinas se cruzam/);
   assert.match(html, /Acesso a capacidades|Release e feedback|Fluxo|Liderança|Aprendizado/);
   assert.doesNotMatch(html, / em Acesso a capacidades gera /);

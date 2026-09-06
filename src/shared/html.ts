@@ -54,13 +54,14 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .front-inventory-row { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:16px }
     .front-inventory-row h3 { margin:.1rem 0 .4rem }
     .sample-strip p { margin:.2rem 0 }
-    .outcome-card.compact { padding:14px 16px; margin:8px 0 12px }
-    .outcome-card.compact > h2 { font-size:clamp(1.2rem,2.2vw,1.45rem); margin:.15rem 0 .4rem }
-    .outcome-card.compact h3 { margin-top:.45rem; font-size:.98rem }
+    .outcome-card.compact { padding:12px 14px; margin:6px 0 10px }
+    .outcome-card.compact > h2 { font-size:clamp(1.15rem,2vw,1.35rem); margin:.1rem 0 .3rem }
+    .outcome-card.compact h3 { margin-top:.35rem; font-size:.95rem }
     .outcome-card.compact section { margin:0 }
-    .outcome-card.compact .decision-request { margin:8px 0; padding:10px 12px }
-    .outcome-card.compact [data-narrative="experiment"] p { margin:.25rem 0 }
+    .outcome-card.compact .decision-request { margin:6px 0; padding:8px 10px }
+    .outcome-card.compact [data-narrative="experiment"] p { margin:.2rem 0 }
     .outcome-card.compact .notice { padding:8px 12px; margin:6px 0 0 }
+    .outcome-card.compact .executive-reading { font-size:clamp(1.15rem,2vw,1.35rem); margin:.15rem 0 .35rem }
     .finding-index,.scope-index { margin:18px 0 }
     .finding-index ul,.scope-index ul { list-style:none; padding:0; margin:0 }
     .finding-index li,.scope-line { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:baseline; padding:12px 0; border-bottom:1px solid var(--line) }

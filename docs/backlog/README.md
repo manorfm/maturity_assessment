@@ -46,7 +46,8 @@ jornadas rotuladas e não é substituída por sintéticos.
 
 A home já projeta três sistemas e a faixa de Gestão. A first screen já
 cruza disciplinas publicadas e esconde o mapa de lacunas. O cartão
-ainda é um memorando; o mapa ainda nomeia disciplina sem causa. A
+compacto já cabe em quatro batidas; o mapa ainda nomeia disciplina
+sem causa. A
 sequência aberta é a onda F em
 [`report-presentation-plan.md`](report-presentation-plan.md). Folhas
 candidatas (onda E) só depois. A massa sintética já valida coerência,

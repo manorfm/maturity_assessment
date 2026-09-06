@@ -91,6 +91,21 @@ function evidenceBody(finding: OutcomeFinding): string {
   return `${evidence.supportingParticipants} de ${evidence.applicablePopulation} pessoas que poderiam observar essa situação relataram ${patternCount} ${patternCount === 1 ? 'padrão de resposta relacionado' : 'padrões de resposta relacionados'} ao comportamento. Perspectivas: ${perspectives}. ${contradiction}${remainder}`;
 }
 
+export function compactMechanismBody(finding: OutcomeFinding): string {
+  const raw = mechanismBody(finding).split(' Hipóteses concorrentes:')[0] ?? '';
+  const withoutHedge = raw.split(' Ainda falta:')[0]!.split(' Limite:')[0]!.trim();
+  const title = finding.title?.trim();
+  if (!title) return withoutHedge;
+  if (withoutHedge === title) {
+    return finding.cause && finding.cause !== title ? finding.cause : withoutHedge;
+  }
+  if (withoutHedge.startsWith(title)) {
+    const rest = withoutHedge.slice(title.length).replace(/^[,;:\s]+(então\s+)?/i, '').trim();
+    if (rest.length >= 24) return rest.charAt(0).toUpperCase() + rest.slice(1);
+  }
+  return withoutHedge;
+}
+
 function mechanismBody(finding: OutcomeFinding): string {
   const causal = finding.causalAnalysis;
   const hypothesis = causal?.hypothesis || finding.cause || 'A hipótese causal ainda não foi discriminada.';

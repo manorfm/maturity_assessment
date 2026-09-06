@@ -376,14 +376,12 @@ substitui o diagnóstico de arquitetura, segurança ou fluxo. O resumo global co
 inconclusivo quando qualquer divergência elegível impede uma leitura única do sistema.
 
 Na interface gerencial, cada página fecha um único cartão de decisão. A first
-screen do relatório global mostra, nesta ordem: o cartão compacto (decisão
-pedida, situação, valor só com evidência ou a falta medida, teste, o que não
-resolve e o que não fazer), a amostra desta leitura (pessoas, unidades e o
-que repetir no experimento real), os três sistemas (Produto, Engenharia, Operação),
-os demais problemas em uma linha cada (título · sistema · decidir ou
-investigar) e as unidades que mudam o recorte, também em uma linha. Gestão
-nunca é o quarto azulejo. Fundamento, evidência agregada e vocabulário
-metodológico ficam em `details`. O drill-down de uma área repete o mesmo
+screen do relatório global mostra, nesta ordem: o cartão compacto (efeito
+cotidiano, um mecanismo que não ecoa o título, ação com quem autoriza, teste
+e o que não resolve), o cruzamento entre disciplinas publicadas, a amostra
+desta leitura (pessoas e unidades) e os três sistemas (Produto, Engenharia, Operação).
+Gestão nunca é o quarto azulejo. Antipadrão, fundamento, evidência agregada e
+vocabulário metodológico ficam em `details`. O drill-down de uma área repete o mesmo
 cartão compacto e lista os filhos. Termos como posterior, população aplicável
 e mecanismo causal não substituem a descrição concreta do trabalho, da espera,
 da decisão ou do risco observado.

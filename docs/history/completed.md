@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-05 — Cartão compacto em quatro batidas
+
+- First screen mostra efeito, mecanismo sem eco do título, ação e
+  teste; antipadrão e “não significa que não exista” saíram do
+  primeiro plano; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-05 — Cruzamento no lugar da árvore de lacunas
 
 - First screen publica no máximo três arestas com mecanismo
