@@ -69,6 +69,9 @@ test('opaco: a mesma fila aparece em Engenharia como pedido e em Gestão como wa
   assert.match(engineering, /Em Gestão/);
   assert.match(management, /crise|pressão|cala/i);
   assert.match(management, /Em Engenharia/);
+  assert.match(management, /Impacto esperado/);
+  assert.match(management, /sem procurar culpado|não a pessoa|sem atribuir culpa|Investigação protegida/i);
+  assert.doesNotMatch(management, /blameless/i);
   assert.doesNotMatch(engineering, /Como as disciplinas se cruzam/);
   assert.doesNotMatch(management, /<h3>Plataforma<\/h3>/);
 });

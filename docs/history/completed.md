@@ -6,6 +6,13 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-06 — Dossiê da dor no capítulo de área
+
+- Capítulo e índice explicam o caminho e o impacto em linguagem
+  cotidiana; fundamento de incidente não depende da palavra
+  blameless; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-06 — Capítulo de área com intersecção publicada
 
 - Abrir Engenharia ou Gestão mostra o recorte numa linha e a mesma

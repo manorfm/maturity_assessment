@@ -72,6 +72,41 @@ test('sem o finding publicado no outro recorte, não inventa a intersecção', (
   assert.equal(projectAreaChapter({ area: map.band, findings, organizationalAreas: map }).problems.length, 0);
 });
 
+test('capítulo de área publica o dossiê da dor sem exigir jargão de fundamento', () => {
+  const findings = [
+    queue,
+    {
+      ...warRoom,
+      foundation: { source: 'SRE / blameless postmortem', principle: 'Culpa local preserva o erro', why: 'Caça ao culpado esconde o relato cedo.' },
+      recommendationEvidence: { supportingParticipants: 5, applicablePopulation: 6, contradictingParticipants: 0, patterns: ['war-room-como-gestao'], layers: ['system'], profiles: ['management'] },
+    },
+  ];
+  const map = mapFor(findings);
+  const chapter = projectAreaChapter({ area: map.band, findings, organizationalAreas: map });
+  const pain = chapter.problems.find((problem) => problem.pattern === 'war-room-como-gestao')!;
+  assert.match(pain.evidence.join(' '), /5 de 6 relatos/);
+  assert.ok(pain.effects.length > 0);
+  assert.ok(pain.hypotheses.length > 0);
+  assert.match(pain.solutions[0]!.foundationReading.reading, /sem procurar culpado|não a pessoa/i);
+  assert.doesNotMatch(pain.solutions[0]!.foundationReading.sourceLabel, /blameless/i);
+
+  const html = renderAreaRecorte(findAreaPath(map, 'management')!, {
+    areaBase: '/areas',
+    capabilityBase: '/capabilities',
+    findings,
+    organizationalAreas: map,
+  });
+  const firstPlane = html.slice(0, html.search(/<details/) === -1 ? html.length : html.search(/<details/));
+  assert.match(firstPlane, /O que as pessoas observaram/);
+  assert.match(firstPlane, /O que isso produz/);
+  assert.match(firstPlane, /Hipóteses publicadas/);
+  assert.match(firstPlane, /Impacto esperado/);
+  assert.match(firstPlane, /O que este caminho não resolve/);
+  assert.match(firstPlane, /sem procurar culpado|não a pessoa|sem atribuir culpa/i);
+  assert.doesNotMatch(firstPlane, /blameless/i);
+  assert.doesNotMatch(firstPlane, /Fundamento e evidência/);
+});
+
 test('página de área é capítulo: uma linha, dores locais, mesma evidência com outro nome', () => {
   const findings = [queue, warRoom];
   const map = mapFor(findings);

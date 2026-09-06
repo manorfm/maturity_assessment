@@ -56,7 +56,7 @@ reais só entra quando o relatório de anamnese fechar; a hipótese continua
 no [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
 A home já lista problemas por área com caminho. Abrir uma área é
 capítulo: uma linha do recorte e a mesma evidência com o nome
-local. A sequência aberta é G3 restante e G4 no
+local. A sequência aberta é G4 (sintético de anamnese) no
 [`plano de apresentação`](../backlog/report-presentation-plan.md).
 Folhas candidatas (onda E) só depois. A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma

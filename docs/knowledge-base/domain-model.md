@@ -69,8 +69,9 @@
   do relatório executivo são essa mesma projeção — não uma segunda
   árvore “Desenvolvimento / Plataforma / Organização”. Sistema ou disciplina
   aparece se houver folha publicada ou finding. Abrir a área projeta
-  `area-chapter-v1`: uma linha do recorte, dores no nome local e
-  intersecção só quando o finding do outro lado já foi publicado.
+  `area-chapter-v1`: uma linha do recorte, dossiê da dor no nome
+  local e intersecção só quando o finding do outro lado já foi
+  publicado. Fundamento de incidente se lê sem o jargão da fonte.
   Rótulo de folha é
   substantivo. A página da disciplina publica o que ela abrange, trata
   e não é, a dor daquele nível e o efeito distinto que essa dor gera acima.

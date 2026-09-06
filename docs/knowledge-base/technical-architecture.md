@@ -134,7 +134,7 @@ distintivas ocupam uma linha, com link para a cobertura do time, e não
 reimprimem o cartão. Briefings por público são cartões com o pedido de
 decisão, não listas de âncoras; convites, hipóteses e calibração ficam no
 rodapé administrativo, fechados. O drill-down de área projeta `area-chapter-v1`: uma linha do recorte,
-as dores no nome local, a intersecção publicada, as crianças e o radar. Não há framework de frontend nem radar de
+o dossiê da dor no nome local, a intersecção publicada, as crianças e o radar. Não há framework de frontend nem radar de
 quinze eixos. IDs de navegação pertencem apenas ao
 relatório global, evitando âncoras duplicadas nos recortes de unidade. O limitador de palco
 exclui cloud aninhada salvo quando resta só esse elo. Hipóteses do home ficam

@@ -3,8 +3,7 @@ import { projectDisciplineCrossings } from './discipline-crossing.js';
 import { disciplineScope } from './discipline-brief.js';
 import { uniqueFindingsByPattern, type OutcomeFinding } from './report-outcome.js';
 import { guidanceFor } from './solution-guidance.js';
-import { supportBandFor, type SupportBand } from './interview-report.js';
-import { CapabilityTaxonomy } from './capability-taxonomy.js';
+import { projectFindingDossier, type InterviewProblem } from './interview-report.js';
 
 export type AreaChapterArrival = {
   areaId: string;
@@ -12,13 +11,8 @@ export type AreaChapterArrival = {
   localTitle: string;
 };
 
-export type AreaChapterProblem = {
-  pattern: string;
-  capabilityId: string;
-  capabilityLabel: string;
+export type AreaChapterProblem = InterviewProblem & {
   localTitle: string;
-  action: string;
-  supportBand: SupportBand;
   arrivals: AreaChapterArrival[];
 };
 
@@ -40,16 +34,11 @@ export function projectAreaChapter(input: {
   const local = published.filter((finding) => leaves.has(finding.detailCapability));
   const crossings = projectDisciplineCrossings(published);
   const problems = local.map((finding) => {
-    const guidance = guidanceFor(finding.pattern, finding.foundation, finding.title);
-    const arrivals = arrivalsFor(finding, crossings, published, input.organizationalAreas, input.area.id);
+    const dossier = projectFindingDossier(finding, published, { id: input.area.id, label: input.area.label });
     return {
-      pattern: finding.pattern,
-      capabilityId: finding.detailCapability,
-      capabilityLabel: CapabilityTaxonomy.labelFor(finding.detailCapability),
-      localTitle: guidance.plainExplanation,
-      action: finding.experiment?.action ?? finding.intervention,
-      supportBand: supportBandFor(finding.confidence),
-      arrivals,
+      ...dossier,
+      localTitle: dossier.title,
+      arrivals: arrivalsFor(finding, crossings, published, input.organizationalAreas, input.area.id),
     };
   });
   return {

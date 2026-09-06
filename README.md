@@ -24,9 +24,9 @@ resultado em ranking de pessoas ou times.
 **Home vigente.** Resultado das entrevistas: problemas por área, cada
 um com caminho possível, sustentação provisória, o que significa,
 fundamento e impacto esperado. Quem autoriza decide depois de ler.
-Abrir uma área é capítulo: uma linha do recorte e a mesma evidência
-com o nome local. Ainda faltam o dossiê restante (G3) e o sintético
-de anamnese (G4) em
+Abrir uma área é capítulo com dossiê: evidência, efeito, hipóteses e
+soluções em linguagem cotidiana. Ainda falta o sintético de anamnese
+(G4) em
 [`docs/backlog/report-presentation-plan.md`](docs/backlog/report-presentation-plan.md).
 
 **Disciplina vigente.** Nome local da dor, efeito no nível acima, onde

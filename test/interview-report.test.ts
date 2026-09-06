@@ -75,6 +75,9 @@ test('agrupa dores publicadas por área e amarra um caminho com sustentação', 
   assert.ok(product.solutions[0]!.doesNotSolve.length > 10);
   const engineering = report.chapters.find((chapter) => chapter.areaId === 'engineering')!.problems[0]!;
   assert.equal(engineering.solutions[0]!.supportBand, 'média');
+  const management = report.chapters.find((chapter) => chapter.areaId === 'management')!.problems[0]!;
+  assert.match(management.solutions[0]!.foundationReading.reading, /sem procurar culpado|não a pessoa/i);
+  assert.doesNotMatch(management.solutions[0]!.foundationReading.sourceLabel, /blameless/i);
 });
 
 test('várias soluções na mesma dor só entram quando outra hipótese do sistema foi publicada', () => {

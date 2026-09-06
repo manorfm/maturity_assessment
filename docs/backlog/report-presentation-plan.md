@@ -41,7 +41,7 @@ classificação não é.
 | C | UX minimalista | **Parcial.** Cruzamento no lugar do inventário; cartão e mapa ainda abrem pergunta |
 | D | Massa sintética | **Vigente.** Três bandas + contrastes passam a barra de coerência, não de leitura |
 | F | Relatório que responde | **Parcial.** Cartão e cruzamento no detalhe; não é o alvo de leitura |
-| G | Anamnese por áreas | **Parcial.** G1 e G2 vigentes; G3 restante e G4 abertos |
+| G | Anamnese por áreas | **Parcial.** G1–G3 vigentes; G4 aberto |
 | E | Folhas candidatas | Só depois de G; lacunas viram folha com contrato, uma de cada vez |
 
 Fora: LLM, React por antecipação, radar de quinze eixos, nó Agilidade,
@@ -224,9 +224,8 @@ F não é mais o alvo de leitura. G abaixo.
 O relatório do executivo é o **resultado das entrevistas**, não o
 laudo de uma decisão. A home vigente já lista problemas por área
 com caminho, sustentação, fundamento e impacto. Quem autoriza
-decide depois de ler. O capítulo ao abrir uma área já está vigente.
-Restam o dossiê completo e o sintético em que o mesmo evento
-atravessa três capítulos.
+decide depois de ler. O capítulo ao abrir uma área já traz o dossiê. Resta o sintético
+em que o mesmo evento atravessa três capítulos.
 
 A árvore de disciplinas **já é boa o suficiente como instrumento**:
 Produto, Engenharia (com Plataforma dentro), Operação e Gestão como
@@ -243,7 +242,7 @@ intersecção publicada. Não reparentar `capability-taxonomy.ts`.
 | --- | --- | --- |
 | 3–5 dores na visão executiva, com gravidade | `findings[]`, `priority`, `severity` | **G1 vigente.** Índice por área; semáforo só se gravidade já publicada |
 | Capítulo por área + “o que avaliamos” | sistemas Produto / Engenharia / Operação + faixa Gestão; `disciplineScope` | **G2 vigente.** Uma linha + dores locais + intersecção publicada |
-| Dor: evidências, efeitos, hipóteses, solução, fundamento | `recommendationEvidence`, `systemicEffect`, `causalAnalysis.alternatives`, `intervention`, `foundation` | **Parcial no índice.** Capítulo e jargão cotidiano ainda abertos |
+| Dor: evidências, efeitos, hipóteses, solução, fundamento | `recommendationEvidence`, `systemicEffect`, `causalAnalysis.alternatives`, `intervention`, `foundation` | **G3 vigente** no índice e no capítulo; fundamento cotidiano |
 | A mesma evidência em várias áreas, com outro nome | `affectedCapabilities`, cruzamento, dor local ≠ efeito do sistema | **G2 vigente** no capítulo; disciplina continua com “onde mais isso chega” |
 | Solução: por quê, o que reduz, como, o que a referência defende, limite, prioridade | `plainExplanation`, `whyItWorks`, `doesNotSolve`, `matureReference`, `priority` | Visível no índice, com faixa de sustentação |
 | Não escolher uma única árvore causal | hipóteses concorrentes + arestas | Vários caminhos quando a hipótese irmã foi publicada |
@@ -294,11 +293,11 @@ e, quando o cruzamento já foi publicado, a mesma evidência com o
 nome do outro recorte. A especificação passou para
 `recommendation-model.md`.
 
-**G3 — Dossiê da dor e das soluções.** **Parcial.** No índice, cada
-dor já mostra evidência agregada, efeito, e a lista de soluções
-publicadas (significado, fundamento, impacto, o que não resolve,
-sustentação). Ainda falta o dossiê completo no capítulo de área e
-a prosa que explica “blameless” sem o jargão da fonte.
+**G3 — Dossiê da dor e das soluções.** **Vigente.** Índice e capítulo
+mostram evidências, efeitos, hipóteses e a lista de soluções
+(significado, fundamento cotidiano, impacto, o que não resolve,
+sustentação). “Blameless” se lê como investigação sem culpa. A
+especificação passou para `recommendation-model.md`.
 
 **G4 — Sintético de anamnese.** Um caso (reescrever `low` ou
 `engineering-practice`) em que o mesmo evento atravessa pelo menos

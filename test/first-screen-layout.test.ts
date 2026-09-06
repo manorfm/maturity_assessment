@@ -202,7 +202,7 @@ test('first screen lista problemas por área com caminho e sustentação, não u
   assert.match(html, /A decisão — se houver — é de quem autoriza/);
   assert.match(html, /Não autorize todo o próximo ciclo|Não autorizar todo o próximo ciclo/);
   assert.match(html, /Sustentação provisória alta/);
-  assert.match(html, /Lean portfolio/);
+  assert.match(html, /capacidade reservada para rever o resultado|Medir sem reservar capacidade/);
   assert.match(html, /Impacto esperado/);
   assert.match(html, /O que este caminho não resolve/);
   assert.doesNotMatch(html.slice(0, index + 80), /O que fazer agora/);

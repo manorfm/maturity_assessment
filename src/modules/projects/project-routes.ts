@@ -486,17 +486,21 @@ function renderInterviewProblem(problem: InterviewProblem, capabilityBase: strin
   const effects = problem.effects.length
     ? `<p><strong>O que isso produz.</strong> ${escapeHtml(problem.effects.join(' '))}</p>`
     : '';
+  const hypotheses = problem.hypotheses.length
+    ? `<p><strong>Hipóteses publicadas.</strong> ${escapeHtml(problem.hypotheses.join(' '))}</p>`
+    : '';
   const investigate = problem.investigate
     ? '<p class="muted">As entrevistas ainda não amarraram contenção. O caminho abaixo é hipótese, não uma decisão tomada.</p>'
     : '';
   const solutions = problem.solutions.map((solution) => renderInterviewSolution(solution)).join('');
-  return `<article class="interview-problem" data-pattern="${escapeHtml(problem.pattern)}"><p class="muted">${escapeHtml(problem.capabilityLabel)}</p><h3 class="executive-reading">${escapeHtml(problem.title)}</h3><p>${escapeHtml(problem.mechanism)}</p>${evidence}${effects}${investigate}<div class="interview-solutions">${solutions}</div><p class="muted"><a href="${escapeHtml(href)}">Abrir ${escapeHtml(problem.capabilityLabel)}</a></p></article>`;
+  return `<article class="interview-problem" data-pattern="${escapeHtml(problem.pattern)}"><p class="muted">${escapeHtml(problem.capabilityLabel)}</p><h3 class="executive-reading">${escapeHtml(problem.title)}</h3><p>${escapeHtml(problem.mechanism)}</p>${evidence}${effects}${hypotheses}${investigate}<div class="interview-solutions">${solutions}</div><p class="muted"><a href="${escapeHtml(href)}">Abrir ${escapeHtml(problem.capabilityLabel)}</a></p></article>`;
 }
 
 function renderInterviewSolution(solution: InterviewSolution): string {
   const band = `Sustentação provisória ${solution.supportBand}`;
   const role = solution.leading ? 'Caminho mais sustentado' : 'Outro caminho do mesmo sistema';
-  return `<section class="interview-solution${solution.leading ? ' leading' : ''}"><p class="support-band">${escapeHtml(band)}</p><h4>${escapeHtml(role)}</h4><p><strong>${escapeHtml(solution.action)}</strong></p><p><strong>O que isso significa.</strong> ${escapeHtml(solution.explanation)}</p><p><strong>Por que cabe.</strong> ${escapeHtml(solution.foundation.why)} Fonte: ${escapeHtml(solution.foundation.source)}. ${escapeHtml(solution.foundation.principle)}.</p><p><strong>Impacto esperado.</strong> ${escapeHtml(solution.expectedImpact)}</p><p><strong>O que este caminho não resolve.</strong> ${escapeHtml(solution.doesNotSolve)}</p></section>`;
+  const foundation = solution.foundationReading;
+  return `<section class="interview-solution${solution.leading ? ' leading' : ''}"><p class="support-band">${escapeHtml(band)}</p><h4>${escapeHtml(role)}</h4><p><strong>${escapeHtml(solution.action)}</strong></p><p><strong>O que isso significa.</strong> ${escapeHtml(solution.explanation)}</p><p><strong>Por que cabe.</strong> ${escapeHtml(foundation.reading)} Referência: ${escapeHtml(foundation.sourceLabel)}.</p><p><strong>Impacto esperado.</strong> ${escapeHtml(solution.expectedImpact)}</p><p><strong>O que este caminho não resolve.</strong> ${escapeHtml(solution.doesNotSolve)}</p></section>`;
 }
 
 function renderDisciplineReach(edges: DisciplineCrossing[], capabilityIds: string[], capabilityBase?: string): string {
@@ -1003,7 +1007,7 @@ function renderAreaChapter(chapter: ReturnType<typeof projectAreaChapter>, capab
       const arrivals = problem.arrivals.map((arrival) => (
         `<p class="muted">Em ${escapeHtml(arrival.areaLabel)}, a mesma evidência se chama: ${escapeHtml(arrival.localTitle)}</p>`
       )).join('');
-      return `<article class="area-chapter-problem" data-pattern="${escapeHtml(problem.pattern)}"><p class="muted">${escapeHtml(problem.capabilityLabel)}</p><h3 class="executive-reading">${escapeHtml(problem.localTitle)}</h3><p><strong>Caminho neste recorte.</strong> ${escapeHtml(problem.action)}</p><p class="support-band">Sustentação provisória ${escapeHtml(problem.supportBand)}</p>${arrivals}<p class="muted"><a href="${escapeHtml(`${capabilityBase}/${problem.capabilityId}`)}">Abrir ${escapeHtml(problem.capabilityLabel)}</a></p></article>`;
+      return `<div class="area-chapter-problem">${renderInterviewProblem(problem, capabilityBase)}${arrivals}</div>`;
     }).join('')
     : '<p class="muted">Neste recorte as entrevistas ainda não publicaram uma dor local.</p>';
   return `<article class="area-chapter"><p class="area-observes">${escapeHtml(chapter.observes)}</p><h2>Problemas neste recorte</h2>${problems}</article>`;

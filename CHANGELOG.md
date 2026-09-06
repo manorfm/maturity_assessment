@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.98.0
+
+- O capítulo de área passou a trazer o dossiê da dor: evidência,
+  efeito, hipóteses e soluções com significado, fundamento cotidiano,
+  impacto e o que não resolve. “Blameless” virou investigação sem
+  culpa, sem exigir o jargão da fonte.
+
 ## 0.97.0
 
 - Abrir uma área virou capítulo: uma linha do que o recorte observa,

@@ -4,6 +4,7 @@ import { findAreaPath, type OrganizationalAreaMap } from './organizational-areas
 import { diagnosticSystemFor } from './problem-system.js';
 import { uniqueFindingsByPattern, type OutcomeFinding } from './report-outcome.js';
 import { guidanceFor, hasExplicitGuidance } from './solution-guidance.js';
+import { plainFoundation, type FoundationReading } from './foundation-reading.js';
 
 export type SupportBand = 'alta' | 'média' | 'baixa';
 
@@ -13,6 +14,7 @@ export type InterviewSolution = {
   explanation: string;
   whyItFits: string;
   foundation: { source: string; principle: string; why: string };
+  foundationReading: FoundationReading;
   expectedImpact: string;
   doesNotSolve: string;
   supportBand: SupportBand;
@@ -31,6 +33,7 @@ export type InterviewProblem = {
   mechanism: string;
   evidence: string[];
   effects: string[];
+  hypotheses: string[];
   solutions: InterviewSolution[];
   investigate: boolean;
 };
@@ -63,7 +66,7 @@ export function projectInterviewReport(input: {
   const problems = published.flatMap((finding) => {
     const area = areaFor(finding.detailCapability, input.organizationalAreas);
     if (!area) return [];
-    return [toProblem(finding, published, area)];
+    return [projectFindingDossier(finding, published, area)];
   });
   const chapters = chapterOrder.flatMap((areaId) => {
     const items = problems.filter((problem) => problem.areaId === areaId);
@@ -73,13 +76,14 @@ export function projectInterviewReport(input: {
   return { version: 'interview-report-v1', problemCount: problems.length, chapters };
 }
 
-function toProblem(finding: OutcomeFinding, published: OutcomeFinding[], area: { id: string; label: string }): InterviewProblem {
+export function projectFindingDossier(finding: OutcomeFinding, published: OutcomeFinding[], area: { id: string; label: string }): InterviewProblem {
   const guidance = guidanceFor(finding.pattern, finding.foundation, finding.title);
   const leading = toSolution(finding, guidance, true, true);
   const alternatives = alternativeFindings(finding, published).map((item) => (
     toSolution(item, guidanceFor(item.pattern, item.foundation, item.title), false, true)
   ));
   const related = finding.affectedCapabilities?.filter((id) => id !== finding.detailCapability) ?? [];
+  const competing = finding.causalAnalysis?.alternatives.filter((item) => !/^[a-z0-9-]+$/.test(item)) ?? [];
   return {
     pattern: finding.pattern,
     capabilityId: finding.detailCapability,
@@ -93,6 +97,7 @@ function toProblem(finding: OutcomeFinding, published: OutcomeFinding[], area: {
       systemicEffectFor(finding),
       ...related.map((id) => `No recorte de ${CapabilityTaxonomy.labelFor(id)} o mesmo mecanismo chega com outro nome.`),
     ],
+    hypotheses: [guidance.mechanism, ...alternatives.map((item) => item.whyItFits), ...competing].filter(uniqueText).slice(0, 3),
     solutions: [leading, ...alternatives].slice(0, 3),
     investigate: finding.prescription?.status === 'investigate',
   };
@@ -106,6 +111,7 @@ function toSolution(finding: OutcomeFinding, guidance: ReturnType<typeof guidanc
     explanation: `${guidance.solutionClass}. ${guidance.whyItWorks}`,
     whyItFits: guidance.whyItWorks,
     foundation: { source: foundation.source, principle: foundation.principle, why: foundation.why },
+    foundationReading: plainFoundation(foundation),
     expectedImpact: finding.experiment?.successCriterion ?? guidance.successCriterion,
     doesNotSolve: guidance.doesNotSolve,
     supportBand: supportBandFor(finding.confidence),
@@ -136,6 +142,11 @@ function evidenceLines(finding: OutcomeFinding): string[] {
   }
   const prose = finding.causalAnalysis?.evidenceFor.filter((item) => !/^[a-z0-9-]+$/.test(item)) ?? [];
   return [...lines, ...prose].slice(0, 3);
+}
+
+function uniqueText(value: string, index: number, items: string[]): boolean {
+  const normalized = value.trim().toLowerCase();
+  return Boolean(normalized) && items.findIndex((item) => item.trim().toLowerCase() === normalized) === index;
 }
 
 function areaFor(capabilityId: string, map: OrganizationalAreaMap): { id: string; label: string } | undefined {
