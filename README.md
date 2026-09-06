@@ -26,12 +26,13 @@ um com caminho possível, sustentação provisória, o que significa,
 fundamento e impacto esperado. Quem autoriza decide depois de ler.
 Abrir uma área é capítulo com dossiê: evidência, efeito, hipóteses e
 soluções em linguagem cotidiana. O mesmo evento publicado reaparece
-com o nome de cada recorte. No plano de apresentação restam F2 e F4
-em
+com o nome de cada recorte. A próxima onda de instrumento é E em
 [`docs/backlog/report-presentation-plan.md`](docs/backlog/report-presentation-plan.md).
 
-**Disciplina vigente.** Nome local da dor, efeito no nível acima, onde
-mais isso chega com outro nome. Ainda abre com três blocos de escopo.
+**Disciplina vigente.** Uma linha do recorte (o que não é), a dor
+local, o efeito no sistema, o que fazer e o teste. Onde mais isso
+chega continua no detalhe. Folha sem finding não lista buracos da
+entrevista.
 
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)

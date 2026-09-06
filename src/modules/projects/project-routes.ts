@@ -1170,9 +1170,8 @@ function asHierarchicalFinding(finding: { pattern?: string; title: string; inter
   };
 }
 
-function renderDisciplineScope(id: string): string {
-  const scope = disciplineScope(id);
-  return `<section class="discipline-scope"><h2>O que esta disciplina abrange</h2><p>${escapeHtml(scope.covers)}</p><h3>O que trata</h3><p>${escapeHtml(scope.treats)}</p><h3>O que não é</h3><p>${escapeHtml(scope.not)}</p></section>`;
+function renderDisciplineRecorte(id: string): string {
+  return `<p class="discipline-recorte">${escapeHtml(disciplineScope(id).not)}</p>`;
 }
 
 export function renderDisciplineDetail(input: {
@@ -1182,11 +1181,12 @@ export function renderDisciplineDetail(input: {
   capabilityBase?: string;
   primaryPattern?: string;
 }): string {
-  const brief = renderDisciplineScope(input.selected.id);
+  const recorte = renderDisciplineRecorte(input.selected.id);
   const childIds = flattenCapabilityIds(input.selected).filter((id) => id !== input.selected.id);
   const reachIds = [input.selected.id, ...childIds];
+  const published = input.projectFindings ?? input.findings;
   const reach = renderDisciplineReach(
-    crossingsForCapability(input.projectFindings ?? input.findings, reachIds, input.primaryPattern),
+    crossingsForCapability(published, reachIds, input.primaryPattern),
     reachIds,
     input.capabilityBase,
   );
@@ -1196,26 +1196,30 @@ export function renderDisciplineDetail(input: {
       || '<p>As dores abaixo ainda não se acumularam num efeito distinto neste nível.</p>';
     const wounds = scoped.descendants.map((problem) => renderHierarchicalWound(problem)).join('')
       || '<p class="muted">Nenhuma dor local publicada nas disciplinas abaixo.</p>';
-    const solutions = scoped.descendants.map((problem) => renderHierarchicalSolution(problem)).join('')
+    const solutions = scoped.descendants.map((problem) => renderHierarchicalSolution(problem, published)).join('')
       || '<p class="muted">Sem solução publicada enquanto a dor local não estiver nomeada.</p>';
-    return `${brief}<section class="discipline-level"><h2>Efeito neste nível</h2>${fever}</section><section class="discipline-level"><h2>Dores nas disciplinas abaixo</h2>${wounds}</section>${reach}<section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
+    return `${recorte}<section class="discipline-level"><h2>Efeito neste nível</h2>${fever}</section><section class="discipline-level"><h2>Dores nas disciplinas abaixo</h2>${wounds}</section>${reach}<section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
   }
   if (!scoped.local.length) {
-    return `${brief}${reach}<p class="notice">As entrevistas não atravessaram um problema publicado nesta disciplina. Isso não conclui ausência de problema.</p>`;
+    return recorte;
   }
   const problems = scoped.local.map((problem) => renderHierarchicalWound(problem)).join('');
   const generated = [...new Set(scoped.local.map((problem) => problem.systemicEffect))]
     .map((effect) => `<p>${escapeHtml(effect)}</p>`).join('');
-  const solutions = scoped.local.map((problem) => renderHierarchicalSolution(problem)).join('');
-  return `${brief}<section class="discipline-level"><h2>Problemas desta disciplina</h2>${problems}</section><section class="discipline-level"><h2>O que isso gera no sistema</h2>${generated}</section>${reach}<section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
+  const solutions = scoped.local.map((problem) => renderHierarchicalSolution(problem, published)).join('');
+  return `${recorte}<section class="discipline-level"><h2>Problemas desta disciplina</h2>${problems}</section><section class="discipline-level"><h2>O que isso gera no sistema</h2>${generated}</section>${reach}<section class="discipline-level"><h2>O que fazer</h2>${solutions}</section>`;
 }
 
 function renderHierarchicalWound(problem: HierarchicalProblem): string {
   return `<article class="observation-card"><p class="muted">${escapeHtml(problem.capabilityLabel)}</p><h3>${escapeHtml(problem.localTitle)}</h3></article>`;
 }
 
-function renderHierarchicalSolution(problem: HierarchicalProblem): string {
-  return `<article class="observation-card"><h3>Ação para esta dor</h3><p>${escapeHtml(problem.intervention)}</p></article>`;
+function renderHierarchicalSolution(problem: HierarchicalProblem, findings: ReportFinding[] = []): string {
+  const source = findings.find((item) => item.pattern === problem.pattern);
+  const guidance = guidanceFor(problem.pattern, source?.foundation, source?.title ?? problem.localTitle);
+  const test = source?.experiment?.successCriterion || guidance.successCriterion;
+  const testLine = test ? `<p><strong>Teste.</strong> ${escapeHtml(test)}</p>` : '';
+  return `<article class="observation-card"><h3>Ação para esta dor</h3><p>${escapeHtml(problem.intervention)}</p>${testLine}</article>`;
 }
 
 function renderAreaProblems(path: OrganizationalAreaNode[], findings: OutcomeFinding[], capabilityBase: string): string {

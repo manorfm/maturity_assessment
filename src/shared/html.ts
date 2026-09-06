@@ -95,6 +95,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .admin-footer { margin-top:28px }
     .finding-index > p { max-width:68ch }
     .discipline-brief { max-width:68ch; font-size:1.05rem; line-height:1.5; margin:.35rem 0 1.1rem }
+    .discipline-recorte { max-width:68ch; margin:.2rem 0 1.2rem; color:var(--muted) }
     .discipline-scope { max-width:68ch; margin:.2rem 0 1.4rem; padding:16px 18px; border:1px solid var(--line); border-radius:12px; background:var(--soft) }
     .discipline-scope h2 { margin:.1rem 0 .45rem; font-size:1.15rem }
     .discipline-scope h3 { margin:.85rem 0 .25rem; font-size:.98rem; color:var(--accent) }

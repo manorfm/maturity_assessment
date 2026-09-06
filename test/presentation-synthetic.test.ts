@@ -10,7 +10,7 @@ import {
   runOrganizationalSynthetic,
   type SyntheticCaseId,
 } from '../src/modules/inference/domain/organizational-synthetic.js';
-import { renderAudienceBriefs, renderAreaRecorte, renderFirstScreen } from '../src/modules/projects/project-routes.js';
+import { renderAudienceBriefs, renderAreaRecorte, renderDisciplineDetail, renderFirstScreen } from '../src/modules/projects/project-routes.js';
 
 const FAMILY_PATTERNS = [
   'caminho-de-versao-sem-origem',
@@ -54,6 +54,36 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
     'opaco precisa distinguir empacotamento, fila e cerimônia, não só reformular ownership',
   );
   assertPresentationLookFor(report, spec.lookFor);
+});
+
+test('opaco: a first plane não ensaia disciplina sem finding', () => {
+  const { report } = runCase('low');
+  const html = firstScreenOf(report);
+  const plane = html.slice(0, html.search(/<details/) === -1 ? html.length : html.search(/<details/));
+  assert.doesNotMatch(plane, /entrevista não atravessou/);
+  assert.doesNotMatch(plane, /ainda sem causa/);
+  assert.doesNotMatch(plane, />Direção</);
+  assert.doesNotMatch(plane, />Descoberta</);
+  assert.doesNotMatch(plane, />Confiabilidade</);
+  assert.doesNotMatch(plane, />Incidentes</);
+});
+
+test('opaco: Acesso a capacidades mostra a fila, o efeito e o teste, sem três blocos de escopo', () => {
+  const { report } = runCase('low');
+  const html = renderDisciplineDetail({
+    selected: {
+      id: 'platform-autonomy', label: 'Acesso a capacidades', level: 1, confidence: .8, evidence: 4,
+      hasContradiction: false, assessed: true, coverage: 1, children: [],
+    },
+    findings: report.findings,
+    projectFindings: report.findings,
+    capabilityBase: '/capabilities',
+  });
+  assert.match(html, /chamado|fila do outro grupo|espera outro grupo/i);
+  assert.match(html, /espalh|espera se espalha|depende de outro grupo/i);
+  assert.match(html, /pedido mais repetido|tempo observável|sem ticket/i);
+  assert.doesNotMatch(html, /O que esta disciplina abrange/);
+  assert.doesNotMatch(html, /<h3>O que trata<\/h3>/);
 });
 
 test('opaco: o mesmo evento atravessa Produto, Engenharia e Gestão com nomes distintos', () => {

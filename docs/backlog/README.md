@@ -46,10 +46,11 @@ jornadas rotuladas e não é substituída por sintéticos.
 
 A home já lista problemas por área com caminho e sustentação. Abrir
 uma área já é capítulo com dossiê e a mesma evidência no nome local.
-A onda G fechou. No plano de apresentação restam F2 e F4; folhas
-candidatas (onda E) vêm depois. A massa sintética já valida
-coerência e a leitura em três capítulos, não calibração. O
-`/showcase` já é o deck dos casos. O detalhe
+As ondas F e G fecharam. A próxima onda de instrumento é E (folhas
+candidatas) em
+[`report-presentation-plan.md`](report-presentation-plan.md). A massa
+sintética já valida coerência e a leitura em três capítulos, não
+calibração. O `/showcase` já é o deck dos casos. O detalhe
 das lacunas do mapa permanece em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md); o
 do cartão, em

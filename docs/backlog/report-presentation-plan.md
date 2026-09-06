@@ -1,9 +1,9 @@
 # Plano: relatório apresentável — mapa, cartão, UX e sintéticos
 
-Ondas A–D e G (anamnese por áreas) estão na base. Restam F2 e F4
-no relatório e, depois, E (folhas candidatas). O relatório de
-anamnese fechou; piloto humano deixa de estar bloqueado por esta
-onda.
+Ondas A–D, F e G estão na base. A próxima onda de instrumento é E
+(folhas candidatas, uma de cada vez, com contrato). O relatório de
+anamnese e o relatório que responde fecharam; piloto humano deixa
+de estar bloqueado por estas ondas.
 Detalhe histórico do mapa em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md);
 detalhe histórico do cartão em
@@ -39,7 +39,7 @@ classificação não é.
 | B | Cartão executivo | **Vigente.** Diretor reformula problema, valor (ou a falta) e teste |
 | C | UX minimalista | **Parcial.** Cruzamento no lugar do inventário; cartão e mapa ainda abrem pergunta |
 | D | Massa sintética | **Vigente.** Três bandas + contrastes passam a barra de coerência, não de leitura |
-| F | Relatório que responde | **Parcial.** Cartão e cruzamento no detalhe; não é o alvo de leitura |
+| F | Relatório que responde | **Vigente.** Mapa só com finding; disciplina em recorte, dor, efeito e teste |
 | G | Anamnese por áreas | **Vigente.** Índice, capítulo, dossiê e o mesmo evento em três recortes |
 | E | Folhas candidatas | Só depois de G; lacunas viram folha com contrato, uma de cada vez |
 
@@ -160,7 +160,7 @@ calibrado. Não substitui as cinco entrevistas por perspectiva.
 
 ---
 
-## Onda F — Relatório que responde (aberta)
+## Onda F — Relatório que responde (vigente)
 
 Não é outra onda de prosa. Cada corte tem um teste que falha na home
 atual e um aceite de leitura nos sintéticos `low`, `medium`,
@@ -175,16 +175,11 @@ hedges ficam em `details`. A especificação passou para
 
 ### F2 — Mapa sem disciplina aberta
 
-Os azulejos ainda listam Direção, Descoberta, Portfólio… sem causa.
-Isso reabre a lacuna que saiu da árvore.
-
-**Fazer.** Em leitura de problema, chip e faixa só com finding
+**Vigente.** Em leitura de problema, chip e faixa só com finding
 publicado. Sistema sem problema publicado mostra o nome e o drill,
 sem status-ensaio. Pasta vazia continua no mapa fechado, nunca como
-saúde e nunca como pergunta.
-
-**Aceite.** A first plane do opaco não contém “entrevista não
-atravessou”, “ainda sem causa” nem nome de folha sem finding.
+saúde e nunca como pergunta. A especificação passou para
+`recommendation-model.md`.
 
 ### F3 — Cruzamento no detalhe da disciplina
 
@@ -195,17 +190,11 @@ especificação passou para `recommendation-model.md`.
 
 ### F4 — Disciplina: dor, efeito, ação
 
-A página ainda abre com três parágrafos de escopo. Isso gera
-pergunta antes da causa.
-
-**Fazer.** Uma linha de recorte (o que não é). Depois: dor local,
-efeito no sistema, o que fazer. Lista de buracos da entrevista
-fica fora desta página quando a leitura é problema e a folha não
-foi atravessada — o drill do mapa fechado cobre o catálogo.
-
-**Aceite.** Abrir `Acesso a capacidades` no opaco mostra a fila, o
-que ela gera e o teste. Não pergunta o que a disciplina “abrange”
-em três blocos.
+**Vigente.** Uma linha de recorte (o que não é). Depois: dor local,
+efeito no sistema, o que fazer e o teste. Lista de buracos da
+entrevista fica fora desta página quando a folha não foi
+atravessada — o drill do mapa fechado cobre o catálogo. A
+especificação passou para `recommendation-model.md`.
 
 ### Fora de F
 
@@ -214,7 +203,7 @@ sintético, piloto com pessoas, onda E.
 
 ### Quando F fecha
 
-F não é mais o alvo de leitura. G abaixo.
+F e G já fecharam. A próxima onda de instrumento é E.
 
 ---
 
@@ -331,5 +320,5 @@ cada vez. Tuckman continua interpretação, não filho.
 
 ## Mudanças na base, quando cada onda fechar
 
-A, B, D, G e o cruzamento documentado já estão na base. F2 e F4
-ainda abertos. E: `assessment-model.md` por folha nova.
+A, B, D, F, G e o cruzamento documentado já estão na base. E:
+`assessment-model.md` por folha nova.

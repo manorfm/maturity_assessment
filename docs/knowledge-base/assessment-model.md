@@ -306,9 +306,10 @@ continuam a árvore que `CapabilityTaxonomy.organize` agrega; não indexam a hom
 Um sistema ou disciplina **aparece** quando há folha publicada (cobertura ≥ 1) ou
 finding; não some porque o pilar antigo não fechou duas crianças. Pasta sem folha
 nem finding permanece “entrevista não atravessou”, nunca zero e nunca “sem
-problema”. Clicar em um sistema ou disciplina abre o que ela **abrange**, o que
-**trata** e o que **não é**, antes da lista de problemas daquele nível
-e do radar das crianças. A folha nomeia a dor local; o nível acima nomeia
+problema”. Essa leitura mora no mapa fechado; a first plane em leitura
+de problema não ensaia folha sem finding. Clicar numa disciplina abre
+uma linha do recorte (o que **não é**), a dor local, o efeito no
+sistema, o que fazer e o teste. A folha nomeia a dor local; o nível acima nomeia
 o efeito que essa dor gera no sistema — são problemas distintos. O motor registra arestas entre disciplinas com causa publicada. A first
 screen não publica sessão de cruzamento. Ao abrir a disciplina, o
 mesmo problema aparece com o nome daquele recorte; o nível acima usa

@@ -73,8 +73,9 @@
   local e todas as intersecções cujo finding do outro lado já foi
   publicado. Fundamento de incidente se lê sem o jargão da fonte.
   Rótulo de folha é
-  substantivo. A página da disciplina publica o que ela abrange, trata
-  e não é, a dor daquele nível e o efeito distinto que essa dor gera acima.
+  substantivo. A página da disciplina publica uma linha do recorte,
+  a dor daquele nível, o efeito distinto que essa dor gera acima,
+  a ação e o teste.
 - **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.
   Três bandas (opaco, reativo, adaptativo) e três contrastes de apresentação
   (fronteira de times; segurança distinta de governança; baixa prática de

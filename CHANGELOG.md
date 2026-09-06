@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.100.0
+
+- Em leitura de problema, o mapa da home só acende chip e faixa com
+  finding publicado; a first plane do opaco não ensaia folha vazia.
+- A página da disciplina abre com uma linha do recorte, depois dor,
+  efeito e teste — sem três blocos de escopo e sem lista de buracos
+  da entrevista na folha não atravessada.
+
 ## 0.99.0
 
 - O sintético opaco atravessa Produto, Engenharia e Gestão com o

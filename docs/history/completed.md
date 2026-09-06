@@ -6,6 +6,18 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-06 — Disciplina em recorte, dor, efeito e teste
+
+- A página da disciplina deixou os três blocos de escopo; abre com
+  o que o recorte não é, depois a dor local, o efeito e o teste; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
+## 2026-09-06 — Mapa da home só com finding publicado
+
+- Chip e faixa da first plane acendem só com causa publicada; pasta
+  vazia fica no mapa fechado; ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-09-06 — Sintético de anamnese em três capítulos
 
 - O caso opaco publica a mesma evidência em Produto, Engenharia e

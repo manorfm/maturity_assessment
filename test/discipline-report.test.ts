@@ -93,24 +93,38 @@ test('árvore exaustiva lista o mapa inteiro e marca o que não foi atravessado'
   assert.equal(platform?.status, 'published-problem');
 });
 
-test('página da disciplina explica o recorte, depois a dor local, depois a solução', () => {
+test('página da disciplina abre com o recorte, a dor, o efeito e o teste', () => {
   const wound = finding('provisionamento-em-fila', 'Para ter ambiente ou permissão, o time pede e espera outro grupo', 'platform-autonomy');
   const html = renderDisciplineDetail({
     selected: leafNode('platform-autonomy', 'Acesso a capacidades'),
     findings: [wound],
   });
-  const scopeAt = html.indexOf('O que esta disciplina abrange');
-  const treatsAt = html.indexOf('O que trata');
+  const recorteAt = html.search(/Não é o time de cloud|Não é IDP|Não diagnostica/);
   const problemAt = html.indexOf('Problemas desta disciplina');
   const generateAt = html.indexOf('O que isso gera no sistema');
   const solutionAt = html.indexOf('O que fazer');
-  assert.ok(scopeAt >= 0 && treatsAt > scopeAt && problemAt > treatsAt && generateAt > problemAt && solutionAt > generateAt);
-  assert.match(html, /O que não é/);
-  assert.ok(html.includes(disciplineScope('platform-autonomy').covers.slice(0, 28)));
-  assert.match(html, /Para ter ambiente ou permissão/);
+  assert.ok(recorteAt >= 0 && problemAt > recorteAt && generateAt > problemAt && solutionAt > generateAt);
+  assert.doesNotMatch(html, /O que esta disciplina abrange/);
+  assert.doesNotMatch(html, /<h3>O que trata<\/h3>/);
+  assert.doesNotMatch(html, /<h[23]>O que não é<\/h[23]>/);
+  assert.match(html, /Para ter ambiente ou permissão|chamado|fila/i);
+  assert.match(html, /pedido mais repetido|tempo observável|teste/i);
   assert.doesNotMatch(html, /Capacidades chegam com autonomia/);
   const fever = html.slice(generateAt, solutionAt);
   assert.doesNotMatch(fever, /Para ter ambiente ou permissão, o time pede e espera outro grupo/);
+});
+
+test('folha sem problema publicado não lista buracos da entrevista', () => {
+  const wound = finding('provisionamento-em-fila', 'Pedido de ambiente espera outro grupo', 'platform-autonomy');
+  const html = renderDisciplineDetail({
+    selected: leafNode('software-security', 'Segurança na entrega'),
+    findings: [wound],
+  });
+  assert.match(html, /Não é SAST|Não é checklist|Scan presente/i);
+  assert.doesNotMatch(html, /O que esta disciplina abrange/);
+  assert.doesNotMatch(html, /não atravessaram um problema/);
+  assert.doesNotMatch(html, /ainda sem causa/);
+  assert.doesNotMatch(html, /Problemas desta disciplina/);
 });
 
 test('página-pai mostra a febre do nível e as dores das folhas, textos distintos', () => {

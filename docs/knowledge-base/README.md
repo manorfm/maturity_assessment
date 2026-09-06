@@ -56,8 +56,10 @@ anamnese fechou: índice, capítulo, dossiê e o mesmo evento em três
 recortes. Piloto com pessoas reais deixa de estar bloqueado por essa
 onda; a hipótese continua no
 [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
+O mapa da home, em leitura de problema, só acende chip e faixa com
+finding. A disciplina abre com o recorte, a dor, o efeito e o teste.
 No [`plano de apresentação`](../backlog/report-presentation-plan.md)
-restam F2 e F4; folhas candidatas (onda E) vêm depois. A evolução
+a próxima onda de instrumento é E (folhas candidatas). A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma
 referência de alta performance está no
 [`plano comparativo`](../backlog/comparative-diagnostic-plan.md). O plano de amostra

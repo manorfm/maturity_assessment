@@ -435,6 +435,14 @@ médio nomeia dores nesses recortes, não um slogan único.
 
 Várias soluções na mesma dor só existem quando cada uma amarra uma
 hipótese distinta já publicada. Não é catálogo de boas práticas.
+Em leitura de problema, chip e faixa do mapa só acendem com finding
+publicado. Sistema sem problema mostra o nome e o drill, sem ensaio
+de status. Pasta vazia fica no mapa fechado.
+A página da disciplina abre com uma linha do recorte — o que ela
+não é — e em seguida a dor local, o efeito no sistema, o que fazer
+e o teste. Não pergunta o que a disciplina “abrange” em três blocos.
+Folha sem finding publicado não lista buracos da entrevista; o
+catálogo fica no mapa fechado.
 Disciplina aberta não vira pergunta. Não inventa finding. O posterior
 não se lê como probabilidade objetiva antes do gate de calibração;
 a interface usa faixa verbal e deixa o número para avaliação offline.

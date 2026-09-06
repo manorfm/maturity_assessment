@@ -123,9 +123,10 @@ estreita e serifada de leitura. O cartão compacto (`density: compact`)
 permanece no detalhe e nas leituras sem finding. A amostra declara só
 pessoas e unidades. Antipadrão, vocabulário metodológico e o número do
 posterior ficam fora do primeiro plano.
-A página da disciplina começa pelo que ela abrange, trata e não é;
-depois vêm a dor daquele nível, o efeito que ela gera acima, onde
-mais isso chega e a solução. Rótulos de folha são substantivos (Acesso a capacidades), não o
+A página da disciplina começa por uma linha do recorte (o que não
+é); depois vêm a dor daquele nível, o efeito que ela gera acima,
+onde mais isso chega, a ação e o teste. Folha sem finding não lista
+buracos da entrevista. Rótulos de folha são substantivos (Acesso a capacidades), não o
 estado desejado.
 Um eixo com “?” no radar significa cobertura temática insuficiente — a
 entrevista não atravessou dois padrões daquela disciplina — e não pede mais
