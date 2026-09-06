@@ -421,12 +421,17 @@ tivesse sido tomada.
 Abrir um sistema ou a faixa Gestão é um capítulo (`area-chapter-v1`):
 uma linha do que o recorte observa, as dores no nome local e, quando
 o cruzamento já foi publicado, a mesma evidência com o nome do outro
-recorte. O dossiê da dor fica visível no capítulo e no índice:
-evidência, efeito, hipóteses e soluções com significado, fundamento
-em linguagem cotidiana, impacto e o que não resolve. Fonte com
-jargão (por exemplo “blameless”) vira o princípio em prosa — 
-investigar sem procurar culpado — sem exigir o termo. Não inventa
-aresta. Não promove Plataforma a sistema.
+recorte. O capítulo lista todas as intersecções publicadas daquele
+recorte — feeds e reforços de família — e não herda o corte de três
+arestas da página da disciplina. O dossiê da dor fica visível no
+capítulo e no índice: evidência, efeito, hipóteses e soluções com
+significado, fundamento em linguagem cotidiana, impacto e o que não
+resolve. Fonte com jargão (por exemplo “blameless”) vira o princípio
+em prosa — investigar sem procurar culpado — sem exigir o termo. Não
+inventa aresta. Não promove Plataforma a sistema.
+O sintético opaco publica o mesmo evento em Produto, Engenharia e
+Gestão com nomes locais (fila, próxima iniciativa, war room). O
+médio nomeia dores nesses recortes, não um slogan único.
 
 Várias soluções na mesma dor só existem quando cada uma amarra uma
 hipótese distinta já publicada. Não é catálogo de boas práticas.

@@ -70,7 +70,7 @@
   árvore “Desenvolvimento / Plataforma / Organização”. Sistema ou disciplina
   aparece se houver folha publicada ou finding. Abrir a área projeta
   `area-chapter-v1`: uma linha do recorte, dossiê da dor no nome
-  local e intersecção só quando o finding do outro lado já foi
+  local e todas as intersecções cujo finding do outro lado já foi
   publicado. Fundamento de incidente se lê sem o jargão da fonte.
   Rótulo de folha é
   substantivo. A página da disciplina publica o que ela abrange, trata
@@ -78,7 +78,8 @@
 - **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.
   Três bandas (opaco, reativo, adaptativo) e três contrastes de apresentação
   (fronteira de times; segurança distinta de governança; baixa prática de
-  engenharia). Cada caso declara
+  engenharia). O opaco atravessa Produto, Engenharia e Gestão com o
+  mesmo evento e nomes locais. Cada caso declara
   `lookFor` executivo. Valida coerência do produto e alimenta o deck em
   `/showcase`; não calibra o posterior nem substitui entrevista real.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da

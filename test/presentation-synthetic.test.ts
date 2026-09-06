@@ -56,6 +56,35 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
   assertPresentationLookFor(report, spec.lookFor);
 });
 
+test('opaco: o mesmo evento atravessa Produto, Engenharia e Gestão com nomes distintos', () => {
+  const { report } = runCase('low');
+  const map = report.organizationalAreas;
+  const html = firstScreenOf(report);
+  assert.match(html, /data-area="product"/);
+  assert.match(html, /data-area="engineering"/);
+  assert.match(html, /data-area="management"/);
+  assert.match(html, /chamado|fila do outro grupo|espera outro grupo/i);
+  assert.match(html, /próxima iniciativa|já foram comprometidas|revisar o resultado anterior/i);
+  assert.match(html, /crise|pressão|cala/i);
+
+  const product = renderAreaRecorte(findAreaPath(map, 'product')!, {
+    areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
+  });
+  const engineering = renderAreaRecorte(findAreaPath(map, 'engineering')!, {
+    areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
+  });
+  const management = renderAreaRecorte(findAreaPath(map, 'management')!, {
+    areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
+  });
+  assert.match(product, /próxima iniciativa|já foram comprometidas/i);
+  assert.match(product, /Em Engenharia|Em Gestão/);
+  assert.match(engineering, /chamado|fila do outro grupo|espera outro grupo/i);
+  assert.match(engineering, /Em Produto|Em Gestão/);
+  assert.match(management, /crise|pressão|cala/i);
+  assert.match(management, /Em Engenharia|Em Produto/);
+  assert.doesNotMatch(product, /<h3>Plataforma<\/h3>/);
+});
+
 test('opaco: a mesma fila aparece em Engenharia como pedido e em Gestão como war room', () => {
   const { report } = runCase('low');
   const map = report.organizationalAreas;
@@ -74,6 +103,16 @@ test('opaco: a mesma fila aparece em Engenharia como pedido e em Gestão como wa
   assert.doesNotMatch(management, /blameless/i);
   assert.doesNotMatch(engineering, /Como as disciplinas se cruzam/);
   assert.doesNotMatch(management, /<h3>Plataforma<\/h3>/);
+});
+
+test('intermediário: o índice nomeia dores em Produto e Engenharia, não um slogan', () => {
+  const { report } = runCase('medium');
+  const html = firstScreenOf(report);
+  assert.match(html, /data-area="product"/);
+  assert.match(html, /data-area="engineering"/);
+  assert.match(html, /próxima iniciativa|já foram comprometidas|revisar o resultado anterior/i);
+  assert.match(html, /Preparação concentra espera|ambiente ou permissão|A lista de melhoria não fecha|versão para no passo/i);
+  assert.doesNotMatch(html, /mostrando os 4/);
 });
 
 test('intermediário fecha portfólio, lista cinco outros e acende Produto e Engenharia', () => {

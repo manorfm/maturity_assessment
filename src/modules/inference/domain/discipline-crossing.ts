@@ -22,6 +22,7 @@ const FEEDS: Feed[] = [
   { from: 'provisionamento-em-fila', to: 'espera-normalizada', because: 'Pedido na fila gera mais trabalho em aberto.' },
   { from: 'espera-normalizada', to: 'war-room-como-gestao', because: 'O extra só aparece quando já quebrou.' },
   { from: 'espera-normalizada', to: 'causa-capacidade-tomada-pela-proxima-iniciativa', because: 'Mais início come a capacidade de revisar o resultado.' },
+  { from: 'provisionamento-em-fila', to: 'causa-capacidade-tomada-pela-proxima-iniciativa', because: 'A fila come o tempo de rever o resultado.' },
   { from: 'provisionamento-em-fila', to: 'war-room-como-gestao', because: 'Fila de ambiente ou permissão vira gestão por crise.' },
   { from: 'empacotamento-manual', to: 'caminho-de-versao-sem-origem', because: 'Preparar à mão quebra a origem da versão.' },
   { from: 'empacotamento-manual', to: 'causa-capacidade-tomada-pela-proxima-iniciativa', because: 'A esteira manual come a revisão do resultado.' },
@@ -38,17 +39,21 @@ const FEEDS: Feed[] = [
   { from: 'causa-capacidade-tomada-pela-proxima-iniciativa', to: 'war-room-como-gestao', because: 'Sem capacidade para aprender, a crise vira o modo de gestão.' },
 ];
 
-export function projectDisciplineCrossings(findings: OutcomeFinding[], primaryPattern?: string): DisciplineCrossing[] {
+export function publishedIntersections(findings: OutcomeFinding[]): DisciplineCrossing[] {
   const unique = uniqueByPattern(findings).filter((item) => item.detailCapability);
   if (unique.length < 2) return [];
   const byPattern = new Map(unique.map((item) => [item.pattern, item]));
-  const scored: Array<DisciplineCrossing & { strength: number }> = [];
+  const best = new Map<string, DisciplineCrossing>();
+  const remember = (edge: DisciplineCrossing) => {
+    const key = `${edge.fromPattern}->${edge.toPattern}`;
+    if (!best.has(key)) best.set(key, edge);
+  };
 
   for (const feed of FEEDS) {
     const from = byPattern.get(feed.from);
     const to = byPattern.get(feed.to);
     if (!from || !to || from.detailCapability === to.detailCapability) continue;
-    scored.push({ ...crossingOf(from, to, feed.because), strength: 3 });
+    remember(crossingOf(from, to, feed.because));
   }
 
   for (const pack of capabilityFamilyCatalog) {
@@ -56,10 +61,19 @@ export function projectDisciplineCrossings(findings: OutcomeFinding[], primaryPa
       const from = byPattern.get(edge.fact);
       const to = byPattern.get(edge.hypothesis);
       if (!from || !to || from.detailCapability === to.detailCapability) continue;
-      const because = firstSentence(pack.path);
-      scored.push({ ...crossingOf(from, to, because), strength: 3 });
+      remember(crossingOf(from, to, firstSentence(pack.path)));
     }
   }
+
+  return [...best.values()];
+}
+
+export function projectDisciplineCrossings(findings: OutcomeFinding[], primaryPattern?: string): DisciplineCrossing[] {
+  const unique = uniqueByPattern(findings).filter((item) => item.detailCapability);
+  if (unique.length < 2) return [];
+  const scored: Array<DisciplineCrossing & { strength: number }> = [
+    ...publishedIntersections(findings).map((edge) => ({ ...edge, strength: 3 })),
+  ];
 
   for (let index = 0; index < unique.length; index += 1) {
     for (let next = index + 1; next < unique.length; next += 1) {

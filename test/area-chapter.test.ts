@@ -28,6 +28,11 @@ const ready = (pattern: string, title: string, detailCapability: string, extras:
 const queue = ready('provisionamento-em-fila', 'Pedido de ambiente espera outro grupo', 'platform-autonomy', {
   intervention: 'Teste um caminho que o próprio time conclua, com limite visível.',
 });
+const nextInitiative = ready(
+  'causa-capacidade-tomada-pela-proxima-iniciativa',
+  'A próxima iniciativa come a revisão',
+  'portfolio-management',
+);
 const warRoom = ready('war-room-como-gestao', 'O war room virou a gestão', 'leadership-management', {
   intervention: 'Pare de autorizar caça ao culpado no próximo incidente.',
 });
@@ -61,6 +66,33 @@ test('capítulo de Gestão nomeia a mesma evidência como war room, sem inventar
   assert.match(pain.localTitle, /crise|pressão|cala/i);
   assert.equal(chapter.problems.some((problem) => problem.pattern === 'provisionamento-em-fila'), false);
   assert.ok(pain.arrivals.some((arrival) => arrival.areaId === 'engineering' && /chamado|espera|fila/i.test(arrival.localTitle)));
+});
+
+test('o mesmo evento publicado atravessa Produto, Engenharia e Gestão mesmo com outros findings', () => {
+  const findings = [
+    queue,
+    nextInitiative,
+    warRoom,
+    ready('ownership-fragmentado', 'Fronteira sem dono', 'domain-alignment'),
+    ready('retrospectiva-sem-fechamento', 'Lista de melhoria some', 'organizational-learning'),
+    ready('causa-responsabilidade-encerra-no-aceite', 'Aceite encerra o dono', 'team-ownership'),
+    ready('espera-normalizada', 'Espera virou o ritmo', 'work-management'),
+    ready('empacotamento-manual', 'Empacotar à mão', 'release-feedback'),
+  ];
+  const map = mapFor(findings);
+  const product = projectAreaChapter({ area: map.systems.find((system) => system.id === 'product')!, findings, organizationalAreas: map });
+  const engineering = projectAreaChapter({ area: map.systems.find((system) => system.id === 'engineering')!, findings, organizationalAreas: map });
+  const management = projectAreaChapter({ area: map.band, findings, organizationalAreas: map });
+  const productPain = product.problems.find((problem) => problem.pattern === 'causa-capacidade-tomada-pela-proxima-iniciativa')!;
+  const queuePain = engineering.problems.find((problem) => problem.pattern === 'provisionamento-em-fila')!;
+  const crisisPain = management.problems.find((problem) => problem.pattern === 'war-room-como-gestao')!;
+  assert.match(productPain.localTitle, /próxima iniciativa|já foram comprometidas/i);
+  assert.match(queuePain.localTitle, /chamado|espera outro grupo|fila do outro grupo/i);
+  assert.match(crisisPain.localTitle, /crise|pressão|cala/i);
+  assert.ok(productPain.arrivals.some((arrival) => arrival.areaId === 'engineering' || arrival.areaId === 'management'));
+  assert.ok(queuePain.arrivals.some((arrival) => arrival.areaId === 'product' || arrival.areaId === 'management'));
+  assert.ok(crisisPain.arrivals.some((arrival) => arrival.areaId === 'engineering'));
+  assert.ok(crisisPain.arrivals.some((arrival) => arrival.areaId === 'product'));
 });
 
 test('sem o finding publicado no outro recorte, não inventa a intersecção', () => {

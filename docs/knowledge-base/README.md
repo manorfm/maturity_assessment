@@ -51,14 +51,13 @@ O `/showcase` apresenta esses casos como deck do produto, depois de o
 E2E percorrer criar projeto, convite e uma entrevista.
 O contrato de família de capacidade e o catálogo dos cinco packs
 (`causal-catalog-v10`) estão na base. O grafo `v20` afunila por reforço.
-Briefing de política permanece no recorte de medo. Piloto com pessoas
-reais só entra quando o relatório de anamnese fechar; a hipótese continua
-no [`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
-A home já lista problemas por área com caminho. Abrir uma área é
-capítulo: uma linha do recorte e a mesma evidência com o nome
-local. A sequência aberta é G4 (sintético de anamnese) no
-[`plano de apresentação`](../backlog/report-presentation-plan.md).
-Folhas candidatas (onda E) só depois. A evolução
+Briefing de política permanece no recorte de medo. O relatório de
+anamnese fechou: índice, capítulo, dossiê e o mesmo evento em três
+recortes. Piloto com pessoas reais deixa de estar bloqueado por essa
+onda; a hipótese continua no
+[`plano multiárea`](../backlog/multi-area-consultant-diagnostic-plan.md).
+No [`plano de apresentação`](../backlog/report-presentation-plan.md)
+restam F2 e F4; folhas candidatas (onda E) vêm depois. A evolução
 aberta para tornar explícita a distância entre o comportamento observado e uma
 referência de alta performance está no
 [`plano comparativo`](../backlog/comparative-diagnostic-plan.md). O plano de amostra

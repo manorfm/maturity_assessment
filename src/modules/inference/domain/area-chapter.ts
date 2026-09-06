@@ -1,5 +1,5 @@
 import { findAreaPath, type OrganizationalAreaMap, type OrganizationalAreaNode } from './organizational-areas.js';
-import { projectDisciplineCrossings } from './discipline-crossing.js';
+import { publishedIntersections } from './discipline-crossing.js';
 import { disciplineScope } from './discipline-brief.js';
 import { uniqueFindingsByPattern, type OutcomeFinding } from './report-outcome.js';
 import { guidanceFor } from './solution-guidance.js';
@@ -32,7 +32,7 @@ export function projectAreaChapter(input: {
   const leaves = new Set(leavesOf(input.area));
   const published = uniqueFindingsByPattern(input.findings);
   const local = published.filter((finding) => leaves.has(finding.detailCapability));
-  const crossings = projectDisciplineCrossings(published);
+  const crossings = publishedIntersections(published);
   const problems = local.map((finding) => {
     const dossier = projectFindingDossier(finding, published, { id: input.area.id, label: input.area.label });
     return {
@@ -52,7 +52,7 @@ export function projectAreaChapter(input: {
 
 function arrivalsFor(
   finding: OutcomeFinding,
-  crossings: ReturnType<typeof projectDisciplineCrossings>,
+  crossings: ReturnType<typeof publishedIntersections>,
   published: OutcomeFinding[],
   map: OrganizationalAreaMap,
   areaId: string,

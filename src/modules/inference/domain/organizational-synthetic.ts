@@ -27,10 +27,10 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
     name: 'POC — sistema opaco',
     hierarchy: 'Linha sob restrição/Alpha\nLinha sob restrição/Beta',
     units: ['Alpha', 'Beta'],
-    story: 'Dezoito pessoas em duas unidades. Alpha espera esteira, regressão e empacotamento; Beta espera aprovação, ownership e coordenação. O first screen fecha a restrição sistêmica e mostra o que a alimenta — não um slogan único.',
+    story: 'Dezoito pessoas em duas unidades. Alpha espera esteira, regressão e empacotamento; Beta espera aprovação, ownership e coordenação. A fila, a próxima iniciativa e o war room são o mesmo evento com três nomes.',
     lookFor: [
+      'O mesmo evento atravessa Produto, Engenharia e Gestão com nomes distintos.',
       'Home lista problemas por área com caminho, não um cartão único.',
-      'O efeito se apoia em espera de esteira, empacotamento e aprovação, não num slogan único.',
       'Radar no detalhe da home; “?” é cobertura temática, não falta de gente.',
     ],
   },
@@ -134,6 +134,8 @@ const lowShared: Record<string, string> = {
   'platform-cloud-sustainability': 'local-ownership',
   'product-discovery-depth': 'business-request',
   'product-outcome-depth': 'report-result',
+  'product-outcome-evidence': 'next-demand',
+  'product-operating-model-cause': 'next-initiative-consumes-capacity',
   'management-portfolio': 'parallel-initiatives',
   'management-safety': 'risk-recorded',
   'quality-risk-strategy': 'qa-judgment',
@@ -164,6 +166,7 @@ const lowUnits: Record<number, Record<string, string>> = {
     'blocked-cause': 'architecture-dependency',
     'service-ownership-continuity': 'no-accountable-group',
     'improvement-cause': 'no-autonomy',
+    'product-operating-model-cause': 'acceptance-ends-ownership',
   },
 };
 

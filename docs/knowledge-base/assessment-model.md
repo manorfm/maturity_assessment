@@ -386,6 +386,8 @@ O cartão compacto permanece no detalhe da disciplina e quando não há
 finding publicado. Abrir uma área é capítulo: uma linha do que o
 recorte observa e as dores no nome local; a mesma evidência só
 reaparece no outro recorte quando o cruzamento já foi publicado.
+O caso opaco atravessa Produto, Engenharia e Gestão com nomes
+locais do mesmo evento.
 Termos como posterior, população aplicável
 e mecanismo causal não substituem a descrição concreta do trabalho, da espera,
 da decisão ou do risco observado.

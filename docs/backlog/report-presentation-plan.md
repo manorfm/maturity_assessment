@@ -1,10 +1,9 @@
 # Plano: relatório apresentável — mapa, cartão, UX e sintéticos
 
-Ondas A–D, o cruzamento (0.93) e o índice de problemas (G1) estão
-na base. A home já lista dores por área com caminho. Restam G2
-(capítulo de área), o resto de G3 e G4. E (folhas candidatas) só
-depois de G. Piloto humano só depois do relatório de anamnese
-fechar.
+Ondas A–D e G (anamnese por áreas) estão na base. Restam F2 e F4
+no relatório e, depois, E (folhas candidatas). O relatório de
+anamnese fechou; piloto humano deixa de estar bloqueado por esta
+onda.
 Detalhe histórico do mapa em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md);
 detalhe histórico do cartão em
@@ -41,7 +40,7 @@ classificação não é.
 | C | UX minimalista | **Parcial.** Cruzamento no lugar do inventário; cartão e mapa ainda abrem pergunta |
 | D | Massa sintética | **Vigente.** Três bandas + contrastes passam a barra de coerência, não de leitura |
 | F | Relatório que responde | **Parcial.** Cartão e cruzamento no detalhe; não é o alvo de leitura |
-| G | Anamnese por áreas | **Parcial.** G1–G3 vigentes; G4 aberto |
+| G | Anamnese por áreas | **Vigente.** Índice, capítulo, dossiê e o mesmo evento em três recortes |
 | E | Folhas candidatas | Só depois de G; lacunas viram folha com contrato, uma de cada vez |
 
 Fora: LLM, React por antecipação, radar de quinze eixos, nó Agilidade,
@@ -219,22 +218,22 @@ F não é mais o alvo de leitura. G abaixo.
 
 ---
 
-## Onda G — Anamnese por áreas (aberta, alvo de leitura)
+## Onda G — Anamnese por áreas (vigente)
 
 O relatório do executivo é o **resultado das entrevistas**, não o
-laudo de uma decisão. A home vigente já lista problemas por área
-com caminho, sustentação, fundamento e impacto. Quem autoriza
-decide depois de ler. O capítulo ao abrir uma área já traz o dossiê. Resta o sintético
-em que o mesmo evento atravessa três capítulos.
+laudo de uma decisão. A home lista problemas por área com caminho,
+sustentação, fundamento e impacto. Quem autoriza decide depois de
+ler. Abrir uma área é capítulo com dossiê. O sintético opaco
+atravessa três capítulos com nomes locais do mesmo evento.
 
 A árvore de disciplinas **já é boa o suficiente como instrumento**:
 Produto, Engenharia (com Plataforma dentro), Operação e Gestão como
-faixa. Não falta um grafo novo. O que ainda falta é **organizar a
-leitura das intersecções**: a mesma evidência publicada aparecer
-com o nome de cada recorte, sem inventar aresta e sem promover
-Plataforma a sistema. O motor já guarda feeds, reforço de família e
-mesmo sistema diagnóstico; o capítulo da área já projeta a
-intersecção publicada. Não reparentar `capability-taxonomy.ts`.
+faixa. Não falta um grafo novo. A leitura das intersecções já
+organiza a mesma evidência publicada com o nome de cada recorte,
+sem inventar aresta e sem promover Plataforma a sistema. O motor
+guarda feeds, reforço de família e mesmo sistema diagnóstico; o
+capítulo da área projeta todas as intersecções publicadas. Não
+reparentar `capability-taxonomy.ts`.
 
 ### O que o exemplo exige e o que o motor já tem
 
@@ -243,7 +242,7 @@ intersecção publicada. Não reparentar `capability-taxonomy.ts`.
 | 3–5 dores na visão executiva, com gravidade | `findings[]`, `priority`, `severity` | **G1 vigente.** Índice por área; semáforo só se gravidade já publicada |
 | Capítulo por área + “o que avaliamos” | sistemas Produto / Engenharia / Operação + faixa Gestão; `disciplineScope` | **G2 vigente.** Uma linha + dores locais + intersecção publicada |
 | Dor: evidências, efeitos, hipóteses, solução, fundamento | `recommendationEvidence`, `systemicEffect`, `causalAnalysis.alternatives`, `intervention`, `foundation` | **G3 vigente** no índice e no capítulo; fundamento cotidiano |
-| A mesma evidência em várias áreas, com outro nome | `affectedCapabilities`, cruzamento, dor local ≠ efeito do sistema | **G2 vigente** no capítulo; disciplina continua com “onde mais isso chega” |
+| A mesma evidência em várias áreas, com outro nome | `affectedCapabilities`, cruzamento, dor local ≠ efeito do sistema | **G4 vigente** no sintético opaco; disciplina continua com “onde mais isso chega” |
 | Solução: por quê, o que reduz, como, o que a referência defende, limite, prioridade | `plainExplanation`, `whyItWorks`, `doesNotSolve`, `matureReference`, `priority` | Visível no índice, com faixa de sustentação |
 | Não escolher uma única árvore causal | hipóteses concorrentes + arestas | Vários caminhos quando a hipótese irmã foi publicada |
 
@@ -299,11 +298,12 @@ mostram evidências, efeitos, hipóteses e a lista de soluções
 sustentação). “Blameless” se lê como investigação sem culpa. A
 especificação passou para `recommendation-model.md`.
 
-**G4 — Sintético de anamnese.** Um caso (reescrever `low` ou
-`engineering-practice`) em que o mesmo evento atravessa pelo menos
-três capítulos com nomes distintos. Aceite: o índice e dois capítulos
-contêm a mesma evidência; o sintético médio deixa de parecer um
-único slogan.
+**G4 — Sintético de anamnese.** **Vigente.** O caso `low` publica a
+fila, a próxima iniciativa e o war room como o mesmo evento em
+Produto, Engenharia e Gestão. O índice e os três capítulos
+contêm essa evidência com nomes locais. O médio nomeia dores em
+Produto e Engenharia, não um slogan. A especificação passou para
+`recommendation-model.md`.
 
 ### Fora de G
 
@@ -331,5 +331,5 @@ cada vez. Tuckman continua interpretação, não filho.
 
 ## Mudanças na base, quando cada onda fechar
 
-A, B, D e o cruzamento documentado já estão na base. F: `recommendation-model.md`
-e `assessment-model.md` quando o first screen fechar decisão. E: `assessment-model.md` por folha nova.
+A, B, D, G e o cruzamento documentado já estão na base. F2 e F4
+ainda abertos. E: `assessment-model.md` por folha nova.

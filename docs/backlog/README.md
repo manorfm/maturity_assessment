@@ -45,11 +45,11 @@ squads exige ao menos dez pessoas, cinco em cada unidade. Calibração continua 
 jornadas rotuladas e não é substituída por sintéticos.
 
 A home já lista problemas por área com caminho e sustentação. Abrir
-uma área já é capítulo com dossiê e intersecção publicada. Resta o
-sintético de anamnese (G4) em
-[`report-presentation-plan.md`](report-presentation-plan.md). Folhas
-candidatas (onda E) só depois. A massa sintética já valida coerência,
-não a leitura. O `/showcase` já é o deck dos casos. O detalhe
+uma área já é capítulo com dossiê e a mesma evidência no nome local.
+A onda G fechou. No plano de apresentação restam F2 e F4; folhas
+candidatas (onda E) vêm depois. A massa sintética já valida
+coerência e a leitura em três capítulos, não calibração. O
+`/showcase` já é o deck dos casos. O detalhe
 das lacunas do mapa permanece em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md); o
 do cartão, em

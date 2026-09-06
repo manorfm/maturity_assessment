@@ -173,7 +173,9 @@ governança** (ameaça muda o caminho numa unidade; a mesma aprovação na outra
 Segurança acende em Engenharia, Governança na faixa) e **baixa prática de
 engenharia** (famílias distintas no panorama — origem da versão, autorização
 no recurso, war room — com inventário e briefing de política, sem colapsar
-em espera). Cada caso declara `lookFor` executivo. Essa massa valida
-coerência do mapa e do cartão; não calibra o posterior, não substitui
+em espera). O caso opaco publica a mesma evidência em Produto,
+Engenharia e Gestão com nomes locais. Cada caso declara `lookFor`
+executivo. Essa massa valida coerência do mapa, do cartão e da
+leitura em três capítulos; não calibra o posterior, não substitui
 entrevista humana e não abre o gate 50–100.
 

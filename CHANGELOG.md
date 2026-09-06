@@ -5,6 +5,14 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.99.0
+
+- O sintético opaco atravessa Produto, Engenharia e Gestão com o
+  mesmo evento e nomes locais distintos (fila, próxima iniciativa,
+  war room). O capítulo de área mostra todas as intersecções
+  publicadas, sem o corte de três arestas da disciplina. O médio
+  deixa de se ler como um único slogan.
+
 ## 0.98.0
 
 - O capítulo de área passou a trazer o dossiê da dor: evidência,
