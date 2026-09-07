@@ -1,6 +1,6 @@
 {
   "name": "maturity-assessment",
-  "version": "0.100.0",
+  "version": "0.103.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,9 +11,9 @@
     "test:e2e": "playwright test",
     "audit:instrument": "node --import tsx scripts/audit-instrument.ts",
     "demo:test-server": "node --import tsx test/e2e/demo-server.ts",
-    "demo:serve": "SHOWCASE_GUIDE=/private/tmp/maturity-assessment-showcase-pilot-v1.html DATABASE_PATH=/private/tmp/maturity-assessment-e2e-pilot-v1.sqlite PORT=3217 node --import tsx src/server.ts",
+    "demo:serve": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e-pilot-v1.sqlite SHOWCASE_MANIFEST=/private/tmp/maturity-assessment-showcase-poc.json PORT=3217 node --import tsx src/server.ts",
     "demo": "npm run test:e2e && npm run demo:serve",
-    "showcase": "npm run demo",
+    "showcase": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e-pilot-v1.sqlite PORT=3217 node --import tsx test/e2e/demo-server.ts",
     "check": "tsc -p tsconfig.json --noEmit"
   },
   "engines": {

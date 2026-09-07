@@ -47,8 +47,8 @@ publicado abrem em detalhe. Disciplina aberta não vira pergunta na
 home. “?” não pede mais pessoas.
 A massa sintética valida apresentação — três bandas, fronteira,
 segurança≠governança e baixa prática de engenharia — sem calibração.
-O `/showcase` apresenta esses casos como deck do produto, depois de o
-E2E percorrer criar projeto, convite e uma entrevista.
+O `/showcase` apresenta três situações — menos madura, intermediária
+e madura. A madura ainda publica o resto observado.
 O contrato de família de capacidade e o catálogo dos cinco packs
 (`causal-catalog-v10`) estão na base. O grafo `v20` afunila por reforço.
 Briefing de política permanece no recorte de medo. O relatório de

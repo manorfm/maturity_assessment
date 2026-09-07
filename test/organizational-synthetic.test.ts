@@ -31,12 +31,14 @@ test('sintético intermediário fecha problema e solução que um diretor conseg
   assertDirectorateAndUnits(report);
 });
 
-test('sintético de alta preserva prática sustentada sem inventar transformação', () => {
+test('sintético maduro publica uma evolução concreta sem parecer frágil', () => {
   const { plan, report } = runOrganizationalSynthetic(createDatabase(':memory:'), { band: 'high' });
   assertPresentableReport(report, plan.totalPeople, 'high');
   assert.ok((report.classification?.level ?? 0) >= 3);
-  assert.equal(report.outcome.kind, 'preserve');
-  assert.match(report.outcome.kindLabel, /manter o que funciona/i);
+  assert.equal(report.outcome.kind, 'evolve');
+  assert.match(report.outcome.kindLabel, /pode evoluir/i);
+  assert.ok(report.findings.some((finding) => finding.kind === 'evolution'));
+  assert.doesNotMatch(report.outcome.kindLabel, /precisa de correção/i);
 });
 
 test('as três bandas da POC produzem relatórios distintos e apresentáveis', () => {

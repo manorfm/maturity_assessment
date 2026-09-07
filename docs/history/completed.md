@@ -6,6 +6,24 @@ em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 Para uma visão resumida dos marcos por versão, consulte o
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
+## 2026-09-07 — Showcase em grade com problema e caminho
+
+- O deck compara as três situações lado a lado, com título, descrição,
+  problema e caminho separados; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-09-06 — Showcase com três situações
+
+- O deck apresenta menos madura, intermediária e madura; a madura
+  publica uma evolução concreta; ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
+## 2026-09-06 — Showcase com relatórios simulados
+
+- `/showcase` semeia as organizações sintéticas e mostra o relatório
+  de cada uma; ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-09-06 — Disciplina em recorte, dor, efeito e teste
 
 - A página da disciplina deixou os três blocos de escopo; abre com

@@ -53,11 +53,11 @@ export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
     name: 'POC — prática adaptativa',
     hierarchy: 'Operação sustentável/Plataforma\nOperação sustentável/Produto',
     units: ['Plataforma', 'Produto'],
-    story: 'Dezoito pessoas em duas unidades full-cycle. Entrega, operação e aprendizado resistem à urgência. O first screen preserva a prática, sem inventar transformação.',
+    story: 'Dezoito pessoas em duas unidades full-cycle. Entrega, operação e aprendizado resistem à urgência. Ainda assim a emergência é reconciliada depois — um resto concreto para evoluir, não uma lista genérica.',
     lookFor: [
-      'Decisão de preservar a prática observada.',
+      'Prática forte com uma evolução publicada, não preservação vazia.',
       'Sistemas sem cobertura aparecem como entrevista não atravessou, não como zero nem como ausência de problema.',
-      'Nome não chama a organização de adaptativa; não inventa evoluções genéricas.',
+      'Nome não chama a organização de adaptativa; a melhoria é o resto observado, não um programa.',
     ],
   },
 ];
@@ -276,7 +276,7 @@ const highShared: Record<string, string> = {
   'incident-intake': 'impact-routed',
   'incident-triage': 'risk-classified',
   'incident-diagnosis': 'correlated-telemetry',
-  'incident-remediation': 'reproducible-change',
+  'incident-remediation': 'controlled-emergency',
   recurrence: 'system-change',
   'platform-path-to-capability': 'supported-path',
   'platform-path-adoption': 'common-case-works',

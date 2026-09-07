@@ -38,13 +38,14 @@ A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)
 e [`docs/knowledge-base/assessment-model.md`](docs/knowledge-base/assessment-model.md).
 
-O showcase sintético da POC apresenta três relatórios organizacionais — comportamento
-frágil, prática intermediária e prática sustentada — com 18 pessoas em duas
-unidades, e semeia o contraste de fronteira de times para validar o mapa.
+O showcase sintético da POC apresenta três situações — menos madura,
+intermediária e madura — com 18 pessoas em duas unidades. A madura
+ainda publica um resto concreto.
 Os seis contrastes da onda 6 permanecem o protocolo de validação humana;
 somente entrevistas reais contam para o gate de cinco por perspectiva.
-A página `/showcase` é o deck desses três casos; o E2E percorre criar
-projeto, gerar convite e concluir uma entrevista no mesmo produto.
+A página `/showcase` publica as simulações: o relatório de cada caso
+como o executivo leria. O E2E percorre criar projeto, gerar convite e
+concluir uma entrevista no mesmo produto.
 A execução demonstra coerência sintética, não acurácia empírica.
 O painel administrativo registra qual contraste foi validado e mostra cobertura e
 problemas abertos sem associar a entrevista a convite, participação ou pessoa.
@@ -391,8 +392,8 @@ tirá-lo do primeiro plano está no
 - entidades e value objects nas fronteiras com invariantes;
 - schema vigente sem camada de retrocompatibilidade legada;
 - testes de domínio, integração, HTTP e jornada completa com Playwright;
-- showcase automatizado com três relatórios organizacionais da POC (frágil,
-  intermediário e sustentado), cada um com 18 pessoas em duas unidades.
+- showcase automatizado com as simulações do relatório da POC (três
+  bandas e três contrastes), cada uma com 18 pessoas em duas unidades.
 
 ## Arquitetura
 
@@ -437,18 +438,16 @@ npm run build
 npm run test:e2e
 ```
 
-Para gerar os três casos, validar o percurso do produto e deixar a
-apresentação aberta:
+Para semear as simulações e abrir a apresentação:
 
 ```bash
-npm run demo
+npm run showcase
 ```
 
-O comando recria o SQLite temporário, semeia as três organizações da POC, percorre
-criar projeto → convite → entrevista no Chromium, lê os relatórios e grava o deck em
-`/private/tmp/maturity-assessment-showcase-pilot-v1.html`. Abra
-`http://127.0.0.1:3217/showcase` para o percurso e os três casos concluídos.
-`npm run showcase` é um alias do mesmo fluxo.
+O comando recria o SQLite temporário, semeia as três bandas e os três
+contrastes e serve `http://127.0.0.1:3217/showcase` com o relatório de
+cada organização. `npm run demo` ainda percorre o produto no Chromium
+e depois reabre a mesma base.
 
 Para uma execução paralela, `E2E_DATABASE_PATH`, `E2E_SHOWCASE_GUIDE`, `E2E_PORT`
 e `SHOWCASE_PUBLIC_URL` isolam banco, guia e portas sem apagar um showcase que já

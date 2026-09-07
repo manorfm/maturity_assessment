@@ -66,6 +66,29 @@ test('nota alta e coerente preserva a prática', () => {
   assert.match(outcome.nextStepBody, /não acrescente intervenção/i);
 });
 
+test('organização adaptativa com evolução publicada não esconde o resto em preservar', () => {
+  const leftover = {
+    kind: 'evolution' as const,
+    pattern: 'mudanca-emergencial-reconciliada',
+    detailCapability: 'enabling-governance',
+    title: 'A emergência é reconciliada, mas ainda exige trabalho posterior',
+    cause: 'A reconciliação ainda depende de trabalho posterior.',
+    intervention: 'Exercite o caminho emergencial com reconciliação no mesmo fluxo.',
+    confidence: .9,
+    priority: .57,
+    prescription: { status: 'investigate' as const, reason: 'Ainda falta discriminar o mecanismo.' },
+  };
+  const outcome = decideReportOutcome({
+    classification: { level: 4, label: 'Adaptativo', limitingCapabilities: ['Aprendizado e adaptação'] },
+    branches: [leaf('organizational-learning', 'Aprendizado e adaptação', 4)],
+    findings: [leftover],
+  });
+  assert.equal(outcome.kind, 'evolve');
+  assert.equal(outcome.finding?.pattern, leftover.pattern);
+  assert.match(outcome.reading, /emergência é reconciliada/i);
+  assert.doesNotMatch(outcome.kindLabel, /manter o que funciona/i);
+});
+
 test('limitador baixo sem padrão amarrado declara fragilidade dispersa', () => {
   const outcome = decideReportOutcome({
     classification: { level: 1, label: 'Reativo', limitingCapabilities: ['Descoberta e validação'] },

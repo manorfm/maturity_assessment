@@ -163,15 +163,17 @@ test('intermediário fecha portfólio, lista cinco outros e acende Produto e Eng
   assertPresentationLookFor(report, spec.lookFor);
 });
 
-test('sustentável preserva e deixa sistema sem cobertura como não observado', () => {
+test('sustentável publica o resto concreto e deixa sistema sem cobertura como não observado', () => {
   const { spec, report } = runCase('high');
   const html = firstScreenOf(report);
   assert.doesNotMatch(spec.name, /organização adaptativa/i);
-  assert.equal(report.outcome.kind, 'preserve');
+  assert.equal(report.outcome.kind, 'evolve');
+  assert.ok(report.findings.some((finding) => finding.kind === 'evolution'));
+  assert.match(html, /emergência é reconciliada|Pode evoluir/i);
   assert.ok(report.capabilities.filter((capability) => capability.level >= 3 && (capability.coverage ?? 0) >= 1).length >= 3);
   const unobserved = report.organizationalAreas.systems.filter((system) => !system.observed);
   assert.ok(unobserved.length >= 1);
-  assert.match(html, /entrevista não atravessou/);
+  assert.match(html, /area-tile unobserved/);
   assert.doesNotMatch(html, /Agilidade/);
   assertPresentationLookFor(report, spec.lookFor);
 });

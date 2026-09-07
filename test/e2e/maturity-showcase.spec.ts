@@ -27,7 +27,7 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Cada unidade com ação local, restrição recebida ou escalada.',
       'First screen lista problemas por área com caminho, não uma decisão única.',
     ],
-    decision: /problema publicado/i,
+    decision: /problemas? publicados?/i,
   },
   medium: {
     id: 'poc-media',
@@ -37,17 +37,17 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Diretoria e áreas recebem texto acionável.',
       'O índice traz causa e caminho por dor, não uma disputa de explicações.',
     ],
-    decision: /problema publicado/i,
+    decision: /problemas? publicados?/i,
   },
   high: {
     id: 'poc-alta',
     expectedOutcome: 'Preservar o comportamento observado sem exigir cargo, ferramenta sofisticada ou transformação organizacional.',
     lookFor: [
-      'Decisão de preservar a prática.',
+      'Prática forte com uma evolução publicada, não preservação vazia.',
       'Folhas fortes com cobertura, pilares sem dois padrões continuam não avaliados.',
-      'Não converte ausência de problema em lista de evoluções genéricas.',
+      'A melhoria é o resto observado, não um programa genérico.',
     ],
-    decision: /Manter o que funciona/i,
+    decision: /Pode evoluir|problemas? publicados?/i,
   },
 };
 
@@ -57,27 +57,34 @@ test('apresenta três casos depois de percorrer o produto e validar os relatóri
   const banded = seeded.filter((org) => isBandedCase(org));
   const boundary = seeded.find((org) => org.caseId === 'boundary');
   const engineeringPractice = seeded.find((org) => org.caseId === 'engineering-practice');
+  const securityGovernance = seeded.find((org) => org.caseId === 'security-governance');
   expect(banded.map((entry) => entry.band)).toEqual(['low', 'medium', 'high']);
   expect(boundary, 'showcase seed must include the team-boundary contrast').toBeTruthy();
   expect(engineeringPractice, 'showcase seed must include the low-engineering-practice contrast').toBeTruthy();
+  expect(securityGovernance, 'showcase seed must include the security-governance contrast').toBeTruthy();
   await walkApplicationLoop(page);
   const collected = await Promise.all(banded.map((org) => inspectSeededOrg(browser, org, baseURL)));
   const readings = collected.map((entry) => `${entry.observed?.decision}|${entry.observed?.limiter}|${entry.observed?.reading}`);
   expect(new Set(readings).size).toBe(3);
-  expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Manter o que funciona/i);
-  expect(collected[2]?.observed?.decision ?? '').toMatch(/Manter o que funciona/i);
+  expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Pode evoluir|Manter o que funciona/i);
+  expect(collected[2]?.observed?.decision ?? '').toMatch(/Pode evoluir|problemas? publicados?/i);
+  expect(collected[2]?.observed?.decision ?? '').not.toMatch(/Manter o que funciona/i);
   await inspectBoundaryOrg(browser, boundary!, baseURL);
   await inspectEngineeringPracticeOrg(browser, engineeringPractice!, baseURL);
+  await inspectSecurityGovernanceOrg(browser, securityGovernance!, baseURL);
 
   writeFileSync(SHOWCASE_GUIDE_PATH, buildShowcaseGuide(collected));
   await page.goto('/showcase');
-  await expect(page.getByRole('heading', { name: 'Diagnóstico de engenharia' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Simulações do relatório' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Como o sistema funciona' })).toBeVisible();
-  await expect(page.getByText('3 de 3 casos concluídos')).toBeVisible();
-  await expect(page.getByText('entrevistas simuladas')).toBeVisible();
+  await expect(page.getByText(/organizações simuladas|organização simulada/)).toBeVisible();
+  await expect(page.getByText('Menos madura').first()).toBeVisible();
+  await expect(page.getByText('Intermediária').first()).toBeVisible();
+  await expect(page.getByText('Madura').first()).toBeVisible();
   await expect(page.getByText('18 pessoas em duas unidades').first()).toBeVisible();
   await expect(page.getByText(/Validação humana pendente/)).toHaveCount(0);
   for (const entry of collected) await expect(page.getByRole('heading', { name: entry.title })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'POC — segurança distinta de governança' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Abrir relatório' })).toHaveCount(3);
 
   console.log(`[showcase] apresentação: ${inspectHost}/showcase`);
@@ -98,16 +105,15 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   const expected = expectations[org.band];
   await page.goto(org.adminPath);
   await expect(page.getByText('O que as entrevistas mostraram').first()).toBeVisible();
+  if (org.band === 'high') {
+    await expect(page.getByText(/Pode evoluir|emergência é reconciliada/i).first()).toBeVisible();
+  }
   await expect(page.getByText(/Amostra desta leitura/).first()).toBeVisible();
   await expect(page.getByText(/18 pessoas em 2 unidades/).first()).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
-  if (org.band === 'high') {
-    await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
-  } else {
-    await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeHidden();
-    await page.getByText('Mapa e recortes publicados').click();
-    await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
-  }
+  await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeHidden();
+  await page.getByText('Mapa e recortes publicados').click();
+  await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
   await expect(page.getByText('Aguarde mais respostas')).toHaveCount(0);
   if (org.band !== 'high') {
     await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toHaveCount(0);
@@ -198,6 +204,20 @@ async function inspectBoundaryOrg(browser: Browser, org: SeededOrg, baseURL: str
     await expect(page.locator('.area-tile.observed a', { hasText: 'Engenharia' })).toBeVisible();
     await expect(page.locator('.area-band', { hasText: 'Gestão' })).toBeVisible();
     await expect(page.getByText(/responsab|fronteira|ownership/i).first()).toBeVisible();
+    await walkHomeToLeaf(page);
+  } finally {
+    await context.close();
+  }
+}
+
+async function inspectSecurityGovernanceOrg(browser: Browser, org: SeededOrg, baseURL: string | undefined): Promise<void> {
+  const context = await browser.newContext(baseURL ? { baseURL } : {});
+  const page = await context.newPage();
+  try {
+    await page.goto(org.adminPath);
+    await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
+    await expect(page.getByText(/Segurança/i).first()).toBeVisible();
+    await expect(page.getByText(/Governança/i).first()).toBeVisible();
     await walkHomeToLeaf(page);
   } finally {
     await context.close();

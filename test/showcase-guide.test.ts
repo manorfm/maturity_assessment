@@ -4,7 +4,7 @@ import { buildShowcaseGuide } from './e2e/showcase-guide.js';
 
 test('demonstração vazia explica o produto e o que ainda falta', () => {
   const html = buildShowcaseGuide([]);
-  assert.match(html, /Diagnóstico de engenharia/);
+  assert.match(html, /Diagnóstico de engenharia|Simulações do relatório/);
   assert.match(html, /Como o sistema funciona/);
   assert.match(html, /projeto/);
   assert.match(html, /convites/);

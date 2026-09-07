@@ -199,6 +199,7 @@ test('first screen lista problemas por área com caminho e sustentação, não u
   const units = html.indexOf('Unidades');
   assert.ok(index >= 0 && product > index && engineering > product && management > engineering && systems > management && units > systems);
   assert.match(html, /class="interview-report"/);
+  assert.match(html, /5 problemas publicados/);
   assert.match(html, /A decisão — se houver — é de quem autoriza/);
   assert.match(html, /Não autorize todo o próximo ciclo|Não autorizar todo o próximo ciclo/);
   assert.match(html, /Sustentação provisória alta/);

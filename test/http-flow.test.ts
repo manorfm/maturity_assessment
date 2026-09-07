@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { writeFileSync, rmSync } from 'node:fs';
 import { test } from 'node:test';
 import vm from 'node:vm';
 import { createApp } from '../src/app/create-app.js';
@@ -166,26 +165,17 @@ test('piloto inicial conclui oito jornadas em uma unidade sem alegar calibraçã
   await app.close();
 });
 
-test('índice do showcase só existe quando o guia gerado está disponível', async () => {
+test('showcase vazio explica a simulação; com massa, publica o relatório', async () => {
   const previous = process.env.SHOWCASE_GUIDE;
-  const guidePath = '/private/tmp/maturity-assessment-showcase-http.html';
   try {
     delete process.env.SHOWCASE_GUIDE;
     const app = await createApp(createDatabase(':memory:'));
-    const missing = await app.inject({ method: 'GET', url: '/showcase' });
-    assert.equal(missing.statusCode, 404);
+    const empty = await app.inject({ method: 'GET', url: '/showcase' });
+    assert.equal(empty.statusCode, 200);
+    assert.match(empty.body, /Simulações do relatório/);
+    assert.match(empty.body, /Ainda não/);
     await app.close();
-
-    writeFileSync(guidePath, '<html lang="pt-BR"><body><h1>Índice de inspeção</h1></body></html>');
-    process.env.SHOWCASE_GUIDE = guidePath;
-    const withGuide = await createApp(createDatabase(':memory:'));
-    const served = await withGuide.inject({ method: 'GET', url: '/showcase' });
-    assert.equal(served.statusCode, 200);
-    assert.match(served.headers['content-type'] ?? '', /text\/html/);
-    assert.match(served.body, /Índice de inspeção/);
-    await withGuide.close();
   } finally {
-    rmSync(guidePath, { force: true });
     if (previous === undefined) delete process.env.SHOWCASE_GUIDE;
     else process.env.SHOWCASE_GUIDE = previous;
   }

@@ -197,6 +197,21 @@ export function decideReportOutcome(input: {
       finding: leading,
     };
   }
+  const leftover = uniqueFindings.find((finding) => finding.kind === 'evolution') ?? uniqueFindings[0];
+  if (leftover && (stageLevel >= 4 || (limiter && limiter.level >= 4))) {
+    const action = leftover.experiment?.action ?? leftover.intervention;
+    return {
+      ...outcome(
+        leftover.kind === 'evolution' ? 'evolve' : 'correct',
+        leftover.title,
+        `${leftover.title}. A prática observada é forte; este é o resto concreto, não um programa genérico.`,
+        leftover.title,
+        action,
+      ),
+      ...limiterId(limiter),
+      finding: leftover,
+    };
+  }
   if (stageLevel >= 4 || (limiter && limiter.level >= 4)) {
     const preservation = preservationFor(limiter?.id ?? focus?.id ?? '');
     return { ...outcome('preserve', limiterLabel, preservation.reading, 'Preservar antes de intervir', preservation.nextStep), ...limiterId(limiter) };

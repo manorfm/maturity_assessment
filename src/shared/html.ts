@@ -15,7 +15,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
   <style>
     :root { color-scheme: light; --bg:#f3f1eb; --surface:#fffcf7; --ink:#1c1914; --muted:#5c584f; --line:#d8d2c6; --accent:#1d4f3e; --soft:#e7efe8; --critical:#b42318; --reactive:#d97706; --repeatable:#b78a00; --managed:#2563a8; --unknown:#7b8580; --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif; --sans:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif; }
     * { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 var(--sans) }
-    main { width:min(920px,calc(100% - 32px)); margin:48px auto 80px } body:has(.report-home) main { width:min(780px,calc(100% - 40px)); margin:36px auto 72px } header { margin-bottom:32px } h1 { font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.04em; margin:.25rem 0 1rem } h2 { margin-top:2rem } h3 { margin-bottom:.4rem }
+    main { width:min(920px,calc(100% - 32px)); margin:48px auto 80px } body:has(.report-home) main { width:min(780px,calc(100% - 40px)); margin:36px auto 72px } body:has(.showcase-compare) main { width:min(1180px,calc(100% - 32px)) } header { margin-bottom:32px } h1 { font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.04em; margin:.25rem 0 1rem } h2 { margin-top:2rem } h3 { margin-bottom:.4rem }
     .eyebrow { color:var(--accent); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:.78rem }.lead { color:var(--muted); font-size:1.12rem; max-width:70ch }
     .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:24px; margin:18px 0; box-shadow:0 8px 30px rgba(25,34,29,.04) }
     label { display:block; font-weight:650; margin:16px 0 6px } input,select,textarea { width:100%; padding:11px 12px; border:1px solid #b8c1bb; border-radius:8px; background:#fff; color:var(--ink); font:inherit } textarea { min-height:120px; resize:vertical }
@@ -60,17 +60,20 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-home .area-band { font-family:var(--sans); font-size:.9rem }
     .report-home .first-screen-systems h2,.report-home .finding-index h2,.report-home .scope-index h2,.report-home .front-inventory h2,.report-home .interview-report h2 { margin-top:0 }
     .interview-report { margin:0 0 28px }
-    .interview-report > .lead { margin:.2rem 0 1rem; max-width:68ch }
+    .interview-report > .lead { margin:.2rem 0 1rem; max-width:68ch; color:var(--muted); font-size:1rem }
     .interview-chapter { margin:22px 0 8px }
-    .interview-chapter > h2 { font-size:1.2rem; margin:0 0 4px }
-    .interview-problem { padding:18px 0 16px; border-bottom:1px solid var(--line) }
-    .interview-problem:last-child { border-bottom:0 }
-    .interview-problem .executive-reading { font-size:1.18rem; line-height:1.4; margin:.15rem 0 .55rem; font-weight:650 }
-    .interview-solutions { display:grid; gap:12px; margin:12px 0 }
-    .interview-solution { padding:14px 16px; border:1px solid var(--line); border-radius:10px; background:var(--surface) }
+    .interview-chapter > h2 { font-size:1.05rem; margin:0 0 10px; color:var(--muted); font-family:var(--sans); letter-spacing:.04em; text-transform:uppercase }
+    .interview-problem { padding:18px 18px 16px; margin:0 0 14px; border:1px solid var(--line); border-left:4px solid var(--critical); border-radius:12px; background:var(--surface) }
+    .interview-problem:last-child { border-bottom:1px solid var(--line) }
+    .interview-problem > .muted:first-child { margin:0 0 4px }
+    .interview-problem .executive-reading { font-size:1.22rem; line-height:1.35; margin:.1rem 0 .45rem; font-weight:650 }
+    .interview-problem > p { color:var(--muted); font-size:.98rem }
+    .interview-problem > p strong { color:var(--ink); font-weight:650 }
+    .interview-solutions { display:grid; gap:12px; margin:14px 0 4px }
+    .interview-solution { padding:14px 16px; border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; background:var(--soft) }
     .interview-solution.leading { border-color:var(--accent) }
-    .interview-solution h4 { margin:.15rem 0 .4rem; font-family:var(--sans); font-size:.92rem }
-    .support-band { font-family:var(--sans); color:var(--accent); font-weight:750; font-size:.78rem; letter-spacing:.03em; text-transform:uppercase }
+    .interview-solution h4 { margin:.15rem 0 .4rem; font-family:var(--sans); font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent) }
+    .support-band { font-family:var(--sans); color:var(--accent); font-weight:750; font-size:.72rem; letter-spacing:.04em; text-transform:uppercase }
     .discipline-reach { margin:22px 0; padding:0 }
     .discipline-reach h2 { margin:0 0 6px; font-size:1.15rem }
     .discipline-reach > p { color:var(--muted); margin:0 0 10px }
@@ -125,9 +128,39 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .area-drill { color:var(--accent); font-weight:750; text-decoration:none }
     .scope-line a { color:var(--accent); font-weight:650 }
     .showcase-deck { margin-bottom:8px }
-    .showcase-deck .lead { max-width:68ch }
+    .showcase-deck h1 { font-size:clamp(1.8rem,4vw,2.6rem) }
+    .showcase-deck .lead { max-width:62ch; color:var(--muted) }
+    .showcase-howto,.showcase-poc { background:transparent; border:0; box-shadow:none; padding:0; margin:8px 0 28px }
+    .showcase-howto h2,.showcase-cases h2,.showcase-poc h2 { margin:0 0 10px; font-size:1.05rem; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); font-weight:700 }
+    .showcase-summary { color:var(--muted); max-width:68ch; margin:0 0 18px }
+    .showcase-steps { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px }
+    .showcase-steps li { display:flex; gap:10px; align-items:flex-start; padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:var(--surface) }
+    .showcase-steps span { flex:0 0 auto; width:1.6rem; height:1.6rem; border-radius:999px; background:var(--soft); color:var(--accent); font-weight:750; font-size:.85rem; display:grid; place-items:center }
+    .showcase-steps p { margin:0; color:var(--muted); font-size:.92rem; line-height:1.45 }
+    .showcase-compare { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; align-items:stretch }
+    .showcase-simulation { display:flex; flex-direction:column; margin:0; padding:20px 20px 18px; border:1px solid var(--line); border-radius:16px; background:var(--surface); box-shadow:0 8px 30px rgba(25,34,29,.04) }
+    .showcase-simulation[data-band="low"] { border-top:4px solid var(--critical) }
+    .showcase-simulation[data-band="medium"] { border-top:4px solid var(--reactive) }
+    .showcase-simulation[data-band="high"] { border-top:4px solid var(--accent) }
+    .showcase-sim-head { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px }
+    .showcase-simulation h3 { margin:.15rem 0 .45rem; font-size:1.2rem; line-height:1.25 }
+    .showcase-desc { color:var(--muted); font-size:.92rem; line-height:1.45; margin:0 0 16px }
+    .showcase-block { padding:12px 14px; border-radius:10px; margin:0 0 10px }
+    .showcase-block.problem { background:color-mix(in srgb, var(--critical) 8%, var(--surface)); border:1px solid color-mix(in srgb, var(--critical) 22%, var(--line)) }
+    .showcase-block.path { background:var(--soft); border:1px solid color-mix(in srgb, var(--accent) 22%, var(--line)) }
+    .field-label { margin:0 0 4px; font-size:.7rem; font-weight:750; letter-spacing:.06em; text-transform:uppercase; color:var(--muted) }
+    .showcase-block.problem .field-label { color:var(--critical) }
+    .showcase-block.path .field-label { color:var(--accent) }
+    .showcase-problem { margin:0 0 6px; font-weight:650; line-height:1.35 }
+    .showcase-where { margin:0; color:var(--muted); font-size:.85rem }
+    .showcase-block.path p { margin:0; font-size:.95rem; line-height:1.45 }
+    .showcase-simulation .button { margin-top:auto; align-self:flex-start }
+    .showcase-poc { color:var(--muted); max-width:68ch }
+    .showcase-poc p { margin:.35rem 0 }
+    .showcase-report { margin:18px 0 8px; padding-top:12px; border-top:1px solid var(--line) }
     article.card > .tag { margin-bottom:8px }
     details.methodology > article { margin:16px 0 }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>

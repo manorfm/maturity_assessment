@@ -50,7 +50,7 @@ As ondas F e G fecharam. A próxima onda de instrumento é E (folhas
 candidatas) em
 [`report-presentation-plan.md`](report-presentation-plan.md). A massa
 sintética já valida coerência e a leitura em três capítulos, não
-calibração. O `/showcase` já é o deck dos casos. O detalhe
+calibração. O `/showcase` já publica os relatórios simulados. O detalhe
 das lacunas do mapa permanece em
 [`organizational-area-map-plan.md`](organizational-area-map-plan.md); o
 do cartão, em
@@ -75,9 +75,9 @@ técnica em camadas está em
 preserva a taxonomia e proíbe pontuar ferramentas; esteira, SAST, ambiente seguro,
 descoberta de domínio, mapeamento arquitetural e ferramentas homologadas aparecem
 somente como técnicas ou famílias condicionadas ao mecanismo demonstrado.
-As ondas 2 a 5 estão na base vigente. O showcase da POC já apresenta três
-relatórios organizacionais como deck do produto; os seis contrastes da onda 6
-permanecem o protocolo de validação humana no painel. A próxima etapa aberta
+As ondas 2 a 5 estão na base vigente. O showcase da POC já apresenta
+as três situações (menos madura, intermediária e madura); a onda 6
+permanece o protocolo de validação humana no painel. A próxima etapa aberta
 é executar essa validação sem contar massa sintética.
 O painel já operacionaliza essa coleta com rastreabilidade anônima por contraste e
 perspectiva; os registros reais ainda precisam ser produzidos nas entrevistas.

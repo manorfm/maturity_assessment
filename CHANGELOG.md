@@ -5,6 +5,24 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.103.0
+
+- O `/showcase` passou a comparar as três situações em grade: título,
+  descrição, problema e caminho com pesos visuais distintos.
+
+## 0.102.0
+
+- O `/showcase` voltou a apresentar três projetos: menos madura,
+  intermediária e madura. A madura publica o resto observado — não
+  esconde evolução atrás de preservar.
+
+## 0.101.0
+
+- O `/showcase` passou a publicar as simulações no mesmo motor: cada
+  caso mostra o relatório como o executivo leria. Não depende mais de
+  um HTML gerado pelo E2E. O seed inclui as três bandas e os três
+  contrastes.
+
 ## 0.100.0
 
 - Em leitura de problema, o mapa da home só acende chip e faixa com

@@ -155,16 +155,18 @@ unidades — e o contrato para repetir o diagnóstico com dados reais: 18
 pessoas em duas unidades, no mínimo 5 em cada, com trilhas complementares.
 Calibração continua 50–100 jornadas rotuladas e não se mistura com essa barra.
 
-O showcase da POC apresenta três organizações sintéticas de 18 pessoas, nomeadas pelos
-estágios observados: **opaco**, **reativo** e **adaptativo**. As entrevistas
-são simuladas no mesmo motor da jornada real. O nome não alega
-prática repetível quando a classificação é Reativo. Cada uma publica um first
-screen que um diretor consegue usar — decisão, valor ou a falta dele, e teste,
-ou preservação da prática. Folhas sem causa amarrada continuam no detalhe ou no
-panorama como incerteza, não no cartão principal. Concordar num único padrão
-adaptativo não publica o pilar; a ausência continua “não avaliado”.
-A página `/showcase` é o deck desses três casos; calibração e notas de
-inspeção não abrem a apresentação.
+O showcase da POC apresenta três organizações sintéticas de 18 pessoas —
+**menos madura** (opaco), **intermediária** (reativo) e **madura**
+(prática forte com um resto concreto). As entrevistas são simuladas no
+mesmo motor da jornada real. O nome não alega prática repetível quando a
+classificação é Reativo. Cada uma publica um first screen que um diretor
+consegue usar. Folhas sem causa amarrada continuam no detalhe ou no
+panorama como incerteza, não no cartão principal. Concordar num único
+padrão adaptativo não publica o pilar; a ausência continua “não avaliado”.
+A página `/showcase` mostra os três resultados lado a lado; o relatório
+completo abre em cada projeto. Uma organização madura ainda publica a
+evolução observada — não esconde o resto em “preservar” nem inventa um
+programa genérico. Calibração não abre a apresentação.
 
 A barra de apresentação acrescenta três contrastes, sem rotular jornada nem
 mover prior: **fronteira de times** (mesmo artefato, causas diferentes;

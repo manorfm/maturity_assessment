@@ -130,8 +130,8 @@ A especificação vigente está em `organizational-model.md` e
 
 Três organizações de 18 pessoas em duas unidades (opaco, intermediário,
 sustentável). Scripts coerentes por unidade, sem rotação frágil.
-O `/showcase` apresenta os três casos; o E2E percorre o produto e a
-first screen.
+O `/showcase` publica o relatório simulado de cada caso; o E2E
+percorre o produto e a first screen.
 
 ### O que falta para validar o produto novo
 
@@ -139,7 +139,7 @@ first screen.
 | --- | --- | --- |
 | Opaco | Finding pronto de responsabilidade + vários investigate | Home em Corrigir; Engenharia e faixa acesas; nome não mente o estágio |
 | Intermediário | Seis padrões, um pronto (portfólio) | Cartão sem metáfora de aprender; cinco visíveis; mapa em Produto + Engenharia; nome não alega prática repetível |
-| Sustentável | Folhas fortes, pilares sem cobertura | Preservar; sistemas sem cobertura = não observado; não “organização adaptativa” |
+| Sustentável | Folhas fortes, um resto publicado | Evoluir o ponto observado; sistemas sem cobertura = não observado; não “organização adaptativa” |
 | Fronteira de times | Duas unidades no mesmo artefato, causas diferentes | Finding de responsabilidade/fronteira; ancora em Entrega e na faixa; não some no corte de quatro |
 | Segurança ≠ governança | Uma unidade: ameaça muda o caminho; outra: mesma aprovação | Segurança acende em Engenharia; governança na faixa; não um único slogan |
 
