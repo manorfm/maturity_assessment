@@ -1,7 +1,7 @@
 import { escapeHtml } from '../../shared/html.js';
 import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnostic-report.js';
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
-import { cynefinReading } from '../inference/domain/treatment-contract.js';
+import { cynefinReading, evidenceGradeReading } from '../inference/domain/treatment-contract.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierNode } from '../inference/domain/learning-frontier.js';
@@ -89,8 +89,11 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
 
 function renderConduct(item: TreatmentConduct, order: number): string {
   const cynefin = item.cynefin ? `<p>Domínio: ${escapeHtml(cynefinReading[item.cynefin])}.</p>` : '';
+  const grade = item.evidenceGrade
+    ? `<p>Grau de evidência ${item.evidenceGrade}: ${escapeHtml(evidenceGradeReading[item.evidenceGrade])}.</p>`
+    : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
-  return `<article class="report-conduct"><p class="report-kicker">${order}</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${limit}</article>`;
+  return `<article class="report-conduct"><p class="report-kicker">${order || ''}</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${limit}</article>`;
 }
 
 function renderFooter(laudo: DiagnosticLaudo): string {
@@ -166,12 +169,15 @@ export function renderNodeCard(input: { title: string; path: string; definition:
     ${block('Referências', `<p>${escapeHtml(input.references)}</p>`)}`;
 }
 
-export function renderTreatmentPage(active: TreatmentConduct[], later: TreatmentConduct[], evidenceGap: string): string {
-  const list = (items: TreatmentConduct[]) => items.map((item) => renderConduct(item, 0)).join('') || '<p class="report-gap">Nenhuma conduta neste horizonte.</p>';
+export function renderTreatmentPage(active: TreatmentConduct[], later: TreatmentConduct[], evidenceGap?: string): string {
+  const list = (items: TreatmentConduct[]) => items.map((item, index) => renderConduct(item, index + 1)).join('') || '<p class="report-gap">Nenhuma conduta neste horizonte.</p>';
+  const grades = evidenceGap
+    ? `<p class="report-gap">${escapeHtml(evidenceGap)}</p>`
+    : '<p>O grau A–D descreve a base da prática, não o suporte local da amostra. Condutas D só entram como experimento explícito.</p>';
   return `<header class="report-hero"><p class="report-kicker">Plano de tratamento</p><h1>Quem faz o quê, e em que ordem</h1></header>
     <section class="report-block"><h2>0–30 dias · ativas agora</h2>${list(active)}</section>
     <section class="report-block"><h2>Depois</h2>${list(later)}</section>
-    <section class="report-block"><h2>Domínio Cynefin</h2><ul><li>Claro — a resposta é conhecida: aplicar</li><li>Complicado — exige análise de especialista</li><li>Complexo — só se descobre testando: experimento pequeno</li><li>Caótico — agir primeiro para estabilizar</li></ul><p class="report-gap">${escapeHtml(evidenceGap)}</p></section>`;
+    <section class="report-block"><h2>Domínio Cynefin</h2><ul><li>Claro — a resposta é conhecida: aplicar</li><li>Complicado — exige análise de especialista</li><li>Complexo — só se descobre testando: experimento pequeno</li><li>Caótico — agir primeiro para estabilizar</li></ul>${grades}</section>`;
 }
 
 export function renderAudiencePage(groups: Array<{ title: string; verbs: AudienceVerb[] }>): string {

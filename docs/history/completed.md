@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-08 — Grau A–D nas condutas e leitura só com publicação
+
+- Condutas do laudo e do plano classificam grau de evidência A–D pela
+  base da prática. A leitura geral só preenche índice com
+  `IndexPublication` publicada. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-08 — Laudo no lugar da home de anamnese
 
 - O relatório abre no laudo de nove blocos, com mapa de quatro sistemas,

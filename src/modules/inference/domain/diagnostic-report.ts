@@ -1,12 +1,12 @@
 import { findAreaPath, type OrganizationalAreaMap } from './organizational-areas.js';
 import type { OutcomeFinding, ReportOutcome } from './report-outcome.js';
 import { uniqueFindingsByPattern } from './report-outcome.js';
-import { guidanceFor } from './solution-guidance.js';
+import { guidanceFor, hasExplicitGuidance } from './solution-guidance.js';
 import type { IndexPublication } from './stage-posterior.js';
 import { assessReadiness, type PrerequisitePosterior, type ReadinessAssessment } from './advanced-readiness.js';
 import { learningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
 import { compareReadings, type IndexReading, type ReadingChange } from './reading-history.js';
-import { classifyCynefin, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
+import { classifyCynefin, classifyEvidenceGrade, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
 
 export type ReportGap = { gap: string };
 
@@ -129,6 +129,10 @@ function conductFrom(finding: OutcomeFinding): TreatmentConduct {
     horizon: '0-30',
     authority: authorityOwner(finding.decisionAuthority),
     cynefin,
+    evidenceGrade: classifyEvidenceGrade({
+      ...(finding.foundation?.source ? { foundationSource: finding.foundation.source } : {}),
+      ...(hasExplicitGuidance(finding.pattern) ? { matureReference: guidance.matureReference } : {}),
+    }),
     doesNotSolve: guidance.doesNotSolve,
   };
 }
@@ -188,8 +192,12 @@ export function projectHistoryPage(input: { previous?: IndexReading; current?: I
   return { change: compareReadings(input.previous, input.current) };
 }
 
-export function evidenceGradeGap(): { gap: string } {
-  return { gap: 'Grau de evidência A–D ainda não foi classificado para estas condutas.' };
+export function evidenceGradeGap(conducts: TreatmentConduct[]): { gap?: string; grades: Array<{ action: string; grade: EvidenceGrade }> } {
+  const grades = conducts
+    .filter((item): item is TreatmentConduct & { evidenceGrade: EvidenceGrade } => Boolean(item.evidenceGrade))
+    .map((item) => ({ action: item.action, grade: item.evidenceGrade }));
+  if (!grades.length) return { gap: 'Grau de evidência A–D ainda não foi classificado para estas condutas.', grades: [] };
+  return { grades };
 }
 
 export type { EvidenceGrade };

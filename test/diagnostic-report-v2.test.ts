@@ -7,7 +7,7 @@ import { inferNoisyOr, referenceWaitCauses, referenceWaitSymptoms } from '../src
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { compareReadings } from '../src/modules/inference/domain/reading-history.js';
 import { observeStage, publishIndex } from '../src/modules/inference/domain/stage-posterior.js';
-import { classifyCynefin } from '../src/modules/inference/domain/treatment-contract.js';
+import { classifyCynefin, classifyEvidenceGrade } from '../src/modules/inference/domain/treatment-contract.js';
 import type { OutcomeFinding } from '../src/modules/inference/domain/report-outcome.js';
 
 test('noisy-OR reproduz o exemplo de espera do documento 05', () => {
@@ -96,4 +96,64 @@ test('índice só publica com amostra, testlets e faixa estreita', () => {
   assert.equal(publishIndex({ respondents: 4, testlets: 2, perspectives: 2, posterior, coverage: 0.6 }).published, false);
   const wide = { ...posterior, band: [0, 100] as [number, number] };
   assert.equal(publishIndex({ respondents: 8, testlets: 2, perspectives: 2, posterior: wide, coverage: 0.6 }).published, false);
+});
+
+test('laudo preenche leitura geral só com IndexPublication publicada', () => {
+  const finding: OutcomeFinding = {
+    kind: 'correction', pattern: 'espera', detailCapability: 'work-management', title: 'Espera',
+    cause: 'fila', intervention: 'limitar WIP', confidence: 0.9, priority: 0.8,
+    foundation: { source: 'Accelerate / DORA', principle: 'fluxo', why: 'espera é custo' },
+  };
+  const posterior = observeStage([
+    { anchor: 1, options: [0, 1, 2, 3, 4], discrimination: 1, perspectiveReliability: 1, severity: 0 },
+    { anchor: 1, options: [0, 1, 2, 3, 4], discrimination: 1, perspectiveReliability: 1, severity: 0 },
+    { anchor: 2, options: [0, 1, 2, 3, 4], discrimination: 1, perspectiveReliability: 1, severity: 0 },
+    { anchor: 1, options: [0, 1, 2, 3, 4], discrimination: 1, perspectiveReliability: 1, severity: 0 },
+  ]);
+  const index = publishIndex({ respondents: 8, testlets: 2, perspectives: 2, posterior, coverage: 0.7, target: 45 });
+  assert.equal(index.published, true);
+  const map = OrganizationalAreaProjector.empty();
+  const outcome = {
+    kind: 'correct' as const, kindLabel: 'Precisa de correção', limiterLabel: 'Fluxo',
+    reading: 'espera', nextStepTitle: '', nextStepBody: '', finding,
+  };
+  const laudo = projectDiagnosticLaudo({ outcome, findings: [finding], organizationalAreas: map, index });
+  assert.equal('gap' in laudo.reading, false);
+  if (!('gap' in laudo.reading)) {
+    assert.equal(laudo.reading.index, index.published ? index.index : -1);
+    assert.equal(laudo.reading.coverage, 0.7);
+    assert.equal(laudo.reading.target, 45);
+  }
+  const blocked = projectDiagnosticLaudo({
+    outcome, findings: [finding], organizationalAreas: map,
+    index: { published: false, reason: 'Menos de 5 respondentes neste recorte.' },
+  });
+  assert.equal('gap' in blocked.reading, true);
+  assert.match('gap' in blocked.reading ? blocked.reading.gap : '', /Menos de 5/);
+});
+
+test('conduta recebe grau de evidência A–D pela base da prática, não pela amostra local', () => {
+  const withDora: OutcomeFinding = {
+    kind: 'correction', pattern: 'caminho-de-versao-sem-origem', detailCapability: 'release-feedback',
+    title: 'Sem origem', cause: 'cópia', intervention: 'origem única', confidence: 0.9, priority: 0.8,
+    foundation: { source: 'Continuous Delivery / SLSA', principle: 'mesmo artefato', why: 'proveniência' },
+    prescription: { status: 'ready', reason: 'ok' },
+  };
+  const bare: OutcomeFinding = {
+    kind: 'correction', pattern: 'hipotese-local', detailCapability: 'work-management',
+    title: 'Hipótese', cause: 'desconhecido', intervention: 'experimentar', confidence: 0.6, priority: 0.5,
+  };
+  const map = OrganizationalAreaProjector.empty();
+  const laudo = projectDiagnosticLaudo({
+    outcome: {
+      kind: 'correct', kindLabel: 'Precisa de correção', limiterLabel: 'Entrega',
+      reading: '', nextStepTitle: '', nextStepBody: '', finding: withDora,
+    },
+    findings: [withDora, bare],
+    organizationalAreas: map,
+  });
+  assert.equal(laudo.conduct[0]?.evidenceGrade, 'B');
+  assert.equal(laudo.conduct[1]?.evidenceGrade, 'D');
+  assert.equal(classifyEvidenceGrade({ foundationSource: 'Accelerate / DORA', replicated: true }), 'A');
+  assert.equal(classifyEvidenceGrade({ foundationSource: 'consenso de prática' }), 'C');
 });

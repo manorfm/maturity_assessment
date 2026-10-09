@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.105.0
+
+- Condutas do laudo e do plano recebem grau de evidência A–D pela base da
+  prática (08 §6.2), não pelo suporte local da amostra. A leitura geral do
+  laudo só mostra índice quando há `IndexPublication` publicada.
+
 ## 0.104.0
 
 - O relatório gerencial abre no laudo. O mapa passa a ter quatro sistemas,

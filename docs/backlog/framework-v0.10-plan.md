@@ -12,10 +12,14 @@ novo.
 ## Aberto
 
 - WP3: converter `signals[]` do grafo para matriz Q (`evidence[]`, âncora, testlet). O adaptador ainda não substitui o peso −2..+2.
-- WP4: posterior por unidade no runtime, partial pooling e índice com alvo de contexto. `stage-posterior` cobre a enumeração e a regra de publicação; o relatório do projeto ainda não a alimenta.
+- WP4: posterior por unidade no runtime e partial pooling. O laudo já
+  preenche leitura geral quando recebe `IndexPublication` publicada;
+  o runtime do projeto ainda não produz essas observações ancoradas.
 - WP5: `noisy-or` reproduz 05 §8.4. O catálogo `causal-catalog-v10` ainda não virou `causal-catalog-v11`.
 - WP6 e WP7: seletor por utilidade e vinhetas.
-- WP9: Cynefin já classifica a conduta a partir do contrato atual. Grau de evidência A–D continua sem classificação.
+- WP9: Cynefin e grau A–D classificam a conduta pela base da prática
+  (`classifyEvidenceGrade`). A ainda exige `replicated`; biblioteca de
+  arquétipos e restrição por escore de 08 §4 continuam abertas.
 - WP12 a WP14, WP16 a WP19: sofisticação, capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP15: comparador de duas leituras com faixa. Sem duas fotografias de índice, a página diz a lacuna.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.

@@ -24,6 +24,22 @@ export function classifyCynefin(input: {
   return 'complex';
 }
 
+/** Grau da conduta (08 §6.2): o quanto se sabe que esta prática produz o efeito, não o suporte local da amostra. */
+export function classifyEvidenceGrade(input: {
+  foundationSource?: string;
+  matureReference?: string;
+  replicated?: boolean;
+}): EvidenceGrade {
+  const text = `${input.foundationSource ?? ''} ${input.matureReference ?? ''}`.trim().toLowerCase();
+  if (!text) return 'D';
+  const strong = /dora|accelerate|continuous delivery|slsa|sre\b/.test(text);
+  if (strong && input.replicated) return 'A';
+  if (strong) return 'B';
+  if (/consenso|prática amplamente|plataforma como produto|cncf|lean\b/.test(text)) return 'C';
+  if (input.foundationSource || input.matureReference) return 'C';
+  return 'D';
+}
+
 export const cynefinReading: Record<CynefinDomain, string> = {
   clear: 'A resposta é conhecida: aplicar',
   complicated: 'Exige análise de especialista',

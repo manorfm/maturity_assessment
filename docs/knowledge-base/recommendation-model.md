@@ -107,7 +107,11 @@ controle proporcional, não moda.
 
 O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
 `reinforces`. O grafo `v20` afunila o próximo probe para confirmar ou
-matar hipótese já reforçada. O projetor `diagnostic-report-v2` publica o laudo. O `interview-report-v1`
+matar hipótese já reforçada. O projetor `diagnostic-report-v2` publica o laudo.
+A leitura geral só mostra índice com faixa quando há `IndexPublication`
+publicada. Cada conduta recebe Cynefin e grau de evidência A–D pela base
+da prática (`classifyEvidenceGrade`), não pelo suporte local da amostra.
+O `interview-report-v1`
 continua a montar o dossiê de cada dor usado na ficha e no capítulo.
 O inventário por frente permanece no motor,
 fora da home. Relatos
