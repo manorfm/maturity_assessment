@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.106.0
+
+- Grafo `evidence-anamnesis-pilot-v21`: opções de prática publicam
+  `evidence[]` (matriz Q), com adaptador que deriva `signals` para o
+  motor m1, metadados `taskFamily`/`testlet` e auditoria da matriz.
+
 ## 0.105.0
 
 - Condutas do laudo e do plano recebem grau de evidência A–D pela base da

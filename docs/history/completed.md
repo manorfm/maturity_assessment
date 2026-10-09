@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-08 — Matriz Q no grafo v21
+
+- Opções de prática publicam `evidence[]` (âncora, discriminação, testlet).
+  O motor m1 continua com `signals` derivados. Auditoria da matriz Q entra no
+  `audit:instrument`. Ver [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-08 — Grau A–D nas condutas e leitura só com publicação
 
 - Condutas do laudo e do plano classificam grau de evidência A–D pela

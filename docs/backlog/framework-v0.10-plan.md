@@ -11,9 +11,12 @@ novo.
 
 ## Aberto
 
-- WP3: converter `signals[]` do grafo para matriz Q (`evidence[]`, âncora, testlet). O adaptador ainda não substitui o peso −2..+2.
-- WP4: posterior por unidade no runtime e partial pooling. O laudo já
-  preenche leitura geral quando recebe `IndexPublication` publicada;
+- WP3 (parcial): grafo `v21` publica `evidence[]` em toda opção de prática,
+  com adaptador m1 (`evidenceToSignals`), `taskFamily`/`testlet` e auditoria
+  da matriz Q. Revisar âncoras de ritual/heroísmo (−2 → 1) e folhas com
+  testlets ou topo escassos ainda é conteúdo aberto.
+- WP4: posterior por unidade no runtime e partial pooling.
+  `evidenceToAnchoredResponse` já liga a matriz Q ao `observeStage`;
   o runtime do projeto ainda não produz essas observações ancoradas.
 - WP5: `noisy-or` reproduz 05 §8.4. O catálogo `causal-catalog-v10` ainda não virou `causal-catalog-v11`.
 - WP6 e WP7: seletor por utilidade e vinhetas.

@@ -74,6 +74,16 @@ classificação DORA futura exigirá as cinco métricas vigentes no contexto de 
 aplicação ou serviço — lead time, frequência, tempo de recuperação de implantação
 falha, taxa de falha e taxa de retrabalho — sem inferi-las apenas da entrevista.
 
+## Matriz Q (grafo v21)
+
+Cada opção de prática publica `evidence[]`: folha, âncora de estágio 0–4,
+discriminação, camada, restrição e, quando couber, `appropriation`
+(ritual/heroísmo). O nó declara `taskFamily` e `testlet`. Enquanto o runtime
+permanece em m1, um adaptador deriva `signals[]` (peso −2..+2) a partir da
+evidência. `evidenceToAnchoredResponse` prepara a observação para m2. A
+auditoria do instrumento bloqueia prática sem `evidence[]` e alerta folhas com
+testlets ou âncoras altas escassos.
+
 ## Contexto não é evidência
 
 Perguntas como “usa Kafka?”, “usa Kubernetes?” ou “possui time de plataforma?” só

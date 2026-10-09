@@ -1,6 +1,8 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
-export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v20';
+import { normalizeOptionEvidence, type EvidenceLink } from './evidence-contract.js';
+
+export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v21';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
 export const NOT_APPLICABLE_ID = 'not-applicable';
 
@@ -10,7 +12,8 @@ export type ConstraintKind = 'none' | 'undetermined' | 'knowledge' | 'capacity' 
 export type ObservationKind = 'practice' | 'visibility' | 'not_applicable';
 export type Signal = { capability: string; pattern: string; weight: number; details: string[]; layer: EvidenceLayer; constraint: ConstraintKind };
 export type EventFactKind = 'trigger' | 'decision' | 'work' | 'wait' | 'workaround' | 'consequence' | 'learning' | 'review';
-export type Option = { id: string; label: string; signals: Signal[]; observation?: ObservationKind; factKind?: EventFactKind };
+export type Option = { id: string; label: string; signals: Signal[]; evidence?: EvidenceLink[]; observation?: ObservationKind; factKind?: EventFactKind };
+export type { EvidenceLink };
 
 export const cannotObserve: Option = {
   id: CANNOT_OBSERVE_ID,
@@ -48,6 +51,9 @@ export type AssessmentNode = {
   prompt: string;
   options: Option[];
   next?: string;
+  taskFamily?: string;
+  testlet?: string;
+  pressure?: boolean;
 };
 
 export type EdgeConditions = { responsibilitiesAny?: WorkResponsibility[]; authoritiesAny?: WorkAuthority[]; scopesAny?: WorkScope[]; observableEventsAny?: ObservableEvent[]; tracksAny?: InterviewTrack[] };
@@ -1103,14 +1109,6 @@ const eventFollowupNodes: AssessmentNode[] = [
   },
 ];
 
-const eventAnchors = new Set(['ready-to-release', 'environment-access', 'security-change', 'architecture-pressure', 'improvement-loop']);
-export const graph: AssessmentNode[] = [...authoredNodes, ...eventFollowupNodes].map((node) => {
-  const factual = eventAnchors.has(node.id)
-    ? { ...node, scenario: node.scenario.replace(/normalmente|costuma/gi, 'naquele caso'), prompt: node.prompt.replace(/normalmente|costuma/gi, 'naquele caso'), options: node.options.map((option) => option.observation ? option : { ...option, factKind: 'trigger' as const }) }
-    : node;
-  return { ...attachObservationalExits(factual), scenario: anchorRecentObservation(factual.scenario) };
-});
-
 export const eventReconstructionDefinitions: Record<string, EventReconstructionDefinition> = {
   'ready-to-release': { anchorNodeId: 'ready-to-release', family: 'change', steps: [{ nodeId: 'ready-to-release', phase: 'trigger' }, { nodeId: 'release-event-consequence', phase: 'consequence' }] },
   'environment-access': { anchorNodeId: 'environment-access', family: 'environment-access', steps: [{ nodeId: 'environment-access', phase: 'trigger' }, { nodeId: 'environment-event-consequence', phase: 'consequence' }] },
@@ -1118,6 +1116,31 @@ export const eventReconstructionDefinitions: Record<string, EventReconstructionD
   'architecture-pressure': { anchorNodeId: 'architecture-pressure', family: 'architecture-decision', steps: [{ nodeId: 'architecture-pressure', phase: 'trigger' }, { nodeId: 'architecture-event-consequence', phase: 'learning' }] },
   'improvement-loop': { anchorNodeId: 'improvement-loop', family: 'system-improvement', steps: [{ nodeId: 'improvement-loop', phase: 'trigger' }, { nodeId: 'improvement-event-consequence', phase: 'review' }] },
 };
+
+function evidenceMetaFor(nodeId: string): { taskFamily: string; testlet: string } {
+  for (const definition of Object.values(eventReconstructionDefinitions)) {
+    if (definition.steps.some((step) => step.nodeId === nodeId)) {
+      return { taskFamily: definition.family, testlet: definition.anchorNodeId };
+    }
+  }
+  return { taskFamily: 'general', testlet: nodeId };
+}
+
+const eventAnchors = new Set(['ready-to-release', 'environment-access', 'security-change', 'architecture-pressure', 'improvement-loop']);
+export const graph: AssessmentNode[] = [...authoredNodes, ...eventFollowupNodes].map((node) => {
+  const factual = eventAnchors.has(node.id)
+    ? { ...node, scenario: node.scenario.replace(/normalmente|costuma/gi, 'naquele caso'), prompt: node.prompt.replace(/normalmente|costuma/gi, 'naquele caso'), options: node.options.map((option) => option.observation ? option : { ...option, factKind: 'trigger' as const }) }
+    : node;
+  const withExits = attachObservationalExits(factual);
+  const meta = evidenceMetaFor(withExits.id);
+  return {
+    ...withExits,
+    scenario: anchorRecentObservation(factual.scenario),
+    taskFamily: meta.taskFamily,
+    testlet: meta.testlet,
+    options: withExits.options.map((option) => normalizeOptionEvidence(option)),
+  };
+});
 
 export type EventInterviewTrackDefinition = { id: InterviewTrack; events: readonly ObservableEvent[] };
 export const eventInterviewTracks: Record<InterviewTrack, EventInterviewTrackDefinition> = {

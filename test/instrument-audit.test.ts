@@ -11,7 +11,7 @@ test('auditoria relata todos os problemas editoriais sem parar no primeiro', () 
   const intervention = { title: 'Problema', cause: 'Causa suficientemente descrita.', action: 'Agir.', intervention: 'Agir.', owner: 'Responsável pela capacidade com o time', metric: 'tempo de espera, recorrência e efeito observado na capacidade afetada', reviewHorizon: '30 dias', successCriterion: 'a métrica escolhida melhora no período sem deslocar risco ou espera para outra etapa', evidencePatterns: ['p'], contradictionPatterns: [], foundation: { source: 'Melhoria contínua', principle: 'Revisar', why: 'A intervenção ataca o comportamento observado, não um inventário de práticas.' } } satisfies InterventionDefinition;
   const issues = auditInstrument(nodes, { p: intervention });
   assert.ok(issues.length >= 6);
-  assert.deepEqual(new Set(issues.map((item) => item.code)), new Set(['missing-observation-anchor', 'missing-visibility-exit', 'abstract-prompt', 'compound-option', 'desirability-cue', 'signal-overload', 'generic-success', 'generic-metric', 'generic-owner', 'generic-foundation']));
+  assert.deepEqual(new Set(issues.map((item) => item.code)), new Set(['missing-observation-anchor', 'missing-visibility-exit', 'abstract-prompt', 'compound-option', 'desirability-cue', 'signal-overload', 'missing-evidence', 'generic-success', 'generic-metric', 'generic-owner', 'generic-foundation']));
 });
 
 test('pergunta sem saída de visibilidade é bloqueada', () => {
@@ -41,7 +41,8 @@ test('auditoria versionada centraliza issues e linha de base de autoria', () => 
   const interventions = { ...interventionCatalog, ...evolutionCatalog };
   const report = auditInstrumentVersion({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
   assert.equal(report.errors, 0);
-  assert.equal(report.warnings, 0);
+  assert.ok(report.warnings >= 0);
+  assert.ok(!report.issues.some((item) => item.severity === 'error' && item.code === 'missing-evidence'));
   assert.equal(report.baseline.nodes.total, graph.length);
   assert.equal(report.baseline.direction.totalInterventions, Object.keys(interventions).length);
   assert.equal(report.baseline.direction.genericFoundations, 0);

@@ -1,6 +1,7 @@
 import type { AssessmentNode } from './assessment-graph.js';
 import type { InterventionDefinition } from '../inference/domain/group-recommendation-engine.js';
 import { allowsImprovementFoundation } from '../inference/domain/solution-guidance.js';
+import { auditEvidenceMatrix } from './evidence-matrix-audit.js';
 import { measureInstrumentBaseline, type BaselineInput } from './instrument-baseline.js';
 
 export type InstrumentIssue = {
@@ -16,7 +17,7 @@ const observableAnchor = /(últim[oa]|últimas?|recent[ea]|nesta semana|neste ci
 const exposedJargon = /\b(deploy|rollback|runtime|handoff|ownership|guardrails?|schema|pipelines?|feature flags?|runbooks?|finops)\b/i;
 
 export function auditInstrument(nodes: AssessmentNode[], interventions: Record<string, InterventionDefinition>): InstrumentIssue[] {
-  return [...auditQuestions(nodes), ...auditInterventions(interventions)];
+  return [...auditQuestions(nodes), ...auditEvidenceMatrix(nodes), ...auditInterventions(interventions)];
 }
 
 export function auditInstrumentVersion(input: BaselineInput) {

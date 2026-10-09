@@ -10,7 +10,7 @@ const interventions = { ...interventionCatalog, ...evolutionCatalog };
 test('linha de base mede percurso, autoria e profundidade por perspectiva', () => {
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
-  assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v20');
+  assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v21');
   assert.equal(baseline.nodes.total, 92);
   assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 57, probe: 28 });
   assert.equal(Object.keys(baseline.routes).length, profileIds.length);
