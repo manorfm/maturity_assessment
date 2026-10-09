@@ -42,6 +42,15 @@ export class ProjectService {
       .get(publicId, hashSecret(adminSecret)) as Record<string, unknown> | undefined;
   }
 
+  measurementModel(projectId: string): 'm1' | 'm2' {
+    const row = this.db.prepare('SELECT measurement_model FROM projects WHERE id = ?').get(projectId) as { measurement_model: string } | undefined;
+    return row?.measurement_model === 'm2' ? 'm2' : 'm1';
+  }
+
+  setMeasurementModel(projectId: string, model: 'm1' | 'm2'): void {
+    this.db.prepare('UPDATE projects SET measurement_model = ? WHERE id = ?').run(model, projectId);
+  }
+
   listUnits(projectId: string): Unit[] {
     const rows = this.db.prepare(`
       SELECT u.id, u.name, u.unit_type, u.path,

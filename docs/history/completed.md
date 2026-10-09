@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-08 — Modelo de medição m2 atrás de flag
+
+- Módulo `measurement` com posterior por unidade, agregação e
+  publicação (05 §5.1/§7.3). Schema 22: `projects.measurement_model`
+  padrão `m1`. Em `m2` o laudo pode publicar índice; showcase permanece
+  em m1. Ver [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-08 — Matriz Q no grafo v21
 
 - Opções de prática publicam `evidence[]` (âncora, discriminação, testlet).

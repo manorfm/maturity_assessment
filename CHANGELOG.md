@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.107.0
+
+- Modelo de medição m2 no módulo `measurement` (05 §5.1/§7.3). Projetos
+  ganham `measurement_model` (padrão `m1`); em `m2` o runtime publica
+  índice só quando a regra de publicação passa. Showcase permanece em m1.
+
 ## 0.106.0
 
 - Grafo `evidence-anamnesis-pilot-v21`: opções de prática publicam

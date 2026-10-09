@@ -1,0 +1,7 @@
+{
+  "version": "m2",
+  "kappa": { "low": 0.6, "medium": 1.0, "high": 1.6 },
+  "psi": 1.2,
+  "gates": { "gamma3": 0.35, "gamma4": 0.25 },
+  "poolingDefault": 0.5
+}

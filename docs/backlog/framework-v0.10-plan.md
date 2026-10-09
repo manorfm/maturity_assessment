@@ -15,9 +15,12 @@ novo.
   com adaptador m1 (`evidenceToSignals`), `taskFamily`/`testlet` e auditoria
   da matriz Q. Revisar âncoras de ritual/heroísmo (−2 → 1) e folhas com
   testlets ou topo escassos ainda é conteúdo aberto.
-- WP4: posterior por unidade no runtime e partial pooling.
-  `evidenceToAnchoredResponse` já liga a matriz Q ao `observeStage`;
-  o runtime do projeto ainda não produz essas observações ancoradas.
+- WP4 (parcial): módulo `measurement` reproduz 05 §5.1/§7.3; projetos
+  têm `measurement_model` (padrão `m1`); em `m2` o runtime mede folhas
+  pela matriz Q e só publica índice quando a regra de publicação passa.
+  Aceite dos sintéticos do showcase em m2 e promoção a padrão ainda
+  abertos. Partial pooling hierárquico entre unidades mãe/filha ainda
+  não entra no caminho do relatório.
 - WP5: `noisy-or` reproduz 05 §8.4. O catálogo `causal-catalog-v10` ainda não virou `causal-catalog-v11`.
 - WP6 e WP7: seletor por utilidade e vinhetas.
 - WP9: Cynefin e grau A–D classificam a conduta pela base da prática

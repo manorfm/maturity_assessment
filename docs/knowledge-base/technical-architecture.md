@@ -35,8 +35,9 @@ TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudança
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
 O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
-o único schema vigente, registrado como versão 21; mudanças incompatíveis exigem
-recriação explícita da base. Opções carregam `observation_kind` (`practice`,
+o único schema vigente, registrado como versão 22; mudanças incompatíveis exigem
+recriação explícita da base. Projetos carregam `measurement_model` (`m1` ou
+`m2`, padrão `m1`). Opções carregam `observation_kind` (`practice`,
 `visibility` ou `not_applicable`). Capturas agregadas de diagnóstico, experimentos
 de transformação, rótulos cegos do piloto e entrevistas cognitivas ficam em tabelas
 próprias, sem vínculo com pessoa. O painel administrativo registra entrevistas
@@ -63,10 +64,15 @@ src/
     catalog/
     assessments/
     inference/
+    measurement/
     projects/
   shared/
   web/
 ```
+
+O módulo `measurement` concentra o modelo m2 (observação, posterior por
+unidade, portões de camada, pooling, agregação e publicação). O
+`inference-service` escolhe m1 ou m2 por `projects.measurement_model`.
 
 `shared` será pequeno: infraestrutura realmente transversal, não regras de negócio
 sem proprietário.

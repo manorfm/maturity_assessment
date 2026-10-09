@@ -18,6 +18,12 @@ import { TransformationPortfolioPlanner, type TransformationPortfolio } from './
 import { AudienceReportProjector, type UnitManagementReport } from './domain/audience-report.js';
 import { sociotechnicalPatternFor, type SociotechnicalPatternView } from './domain/sociotechnical-pattern.js';
 import { technicalDirectionFor, type TechnicalDirection } from './domain/technical-practice-library.js';
+import type { IndexPublication } from './domain/stage-posterior.js';
+import { leafPublicationToIndex } from './domain/measurement-adapter.js';
+import { aggregateParentIndex } from '../measurement/domain/index-aggregation.js';
+import { measureLeafFromBundles } from '../measurement/domain/runtime-bridge.js';
+import { bundlesByLeaf, type ResponseObservation } from '../measurement/domain/response-observation.js';
+import type { StageDistribution } from '../measurement/domain/measurement-params.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -328,9 +334,10 @@ export class InferenceService {
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
     const modelVersion = this.modelVersion();
+    const measurementModel = this.measurementModel(projectId);
     if (completed < minimum) {
       const transformationPortfolio = TransformationPortfolioPlanner.plan([]);
-      return { completed, minimum, modelVersion, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], organizationalAreas: OrganizationalAreaProjector.empty(), perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
+      return { completed, minimum, modelVersion, measurementModel, index: undefined as IndexPublication | undefined, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], organizationalAreas: OrganizationalAreaProjector.empty(), perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
     }
     const findings = uniqueFindingsByPattern(this.findings(projectId, completed));
     this.persistTransformation(projectId, completed, findings);
@@ -362,11 +369,74 @@ export class InferenceService {
     );
     const outcome = decideReportOutcome({ classification, branches: capabilityGroups, findings, perspectiveGaps });
     const transformationPortfolio = TransformationPortfolioPlanner.plan(findings);
-    return { completed, minimum, modelVersion, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), scopes, outcome };
+    const index = measurementModel === 'm2' ? this.measureIndex(projectId) : undefined;
+    return { completed, minimum, modelVersion, measurementModel, index, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), scopes, outcome };
   }
 
   private calibration(modelVersion: string | null): PilotReport {
     return modelVersion ? new PilotService(this.db).summarize(modelVersion) : PilotEvaluation.from([]);
+  }
+
+  private measurementModel(projectId: string): 'm1' | 'm2' {
+    const row = this.db.prepare('SELECT measurement_model FROM projects WHERE id = ?').get(projectId) as { measurement_model: string } | undefined;
+    return row?.measurement_model === 'm2' ? 'm2' : 'm1';
+  }
+
+  /** Publica índice só em m2, a partir da matriz Q e do módulo de medição. */
+  private measureIndex(projectId: string): IndexPublication | undefined {
+    const rows = this.db.prepare(`
+      SELECT p.id participant_id, p.unit_id, p.profile, r.node_id, r.option_id
+      FROM responses r JOIN participations p ON p.id = r.participation_id
+      WHERE p.project_id = ? AND p.status = 'completed'
+    `).all(projectId) as unknown as Array<{ participant_id: string; unit_id: string; profile: string; node_id: string; option_id: string }>;
+    if (!rows.length) return { published: false, reason: 'Menos de 5 respondentes neste recorte.' };
+    const observations: ResponseObservation[] = rows.map((row) => ({
+      participantId: row.participant_id,
+      unitId: row.unit_id,
+      profile: row.profile,
+      nodeId: row.node_id,
+      optionId: row.option_id,
+    }));
+    const byLeaf = bundlesByLeaf(observations);
+    const publishedLeaves: Record<string, StageDistribution> = {};
+    const weights: Record<string, number> = {};
+    let fallback: IndexPublication | undefined;
+    for (const [leaf, responses] of byLeaf) {
+      const reading = measureLeafFromBundles({
+        unit: projectId,
+        leaf,
+        responses,
+        coverage: Math.min(1, responses.length / 5),
+      });
+      const publication = leafPublicationToIndex(reading.publication);
+      if (publication.published) {
+        publishedLeaves[leaf] = reading.posterior.distribution;
+        weights[leaf] = 1;
+      } else if (!fallback) {
+        fallback = publication;
+      }
+    }
+    const keys = Object.keys(publishedLeaves);
+    if (!keys.length) return fallback ?? { published: false, reason: 'Ainda não há amostra suficiente para publicar índice.' };
+    if (keys.length === 1) {
+      const leaf = keys[0]!;
+      const reading = measureLeafFromBundles({
+        unit: projectId,
+        leaf,
+        responses: byLeaf.get(leaf)!,
+        coverage: Math.min(1, byLeaf.get(leaf)!.length / 5),
+      });
+      return leafPublicationToIndex(reading.publication);
+    }
+    const parent = aggregateParentIndex({ leaves: publishedLeaves, weights, draws: 8_000, seed: 1 });
+    const width = parent.band[1] - parent.band[0];
+    if (width > 50) return { published: false, reason: 'Faixa larga demais para publicar índice.' };
+    return {
+      published: true,
+      index: parent.index,
+      band: parent.band,
+      coverage: Math.min(1, keys.length / 8),
+    };
   }
 
   private modelVersion(): string | null {

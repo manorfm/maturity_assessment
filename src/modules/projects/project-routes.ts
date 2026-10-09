@@ -27,6 +27,7 @@ import { problemsForNode, projectProblemTree, type HierarchicalBranch, type Hier
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, projectFrontierPage, projectHistoryPage, projectReadinessPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
 
 type Params = { publicId: string; adminSecret: string };
@@ -206,6 +207,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       capabilityGroups: report.capabilityGroups,
       projectName: String(auth.project.name),
       perspectiveGaps: report.perspectiveGaps,
+      ...(report.index ? { index: report.index } : {}),
+      instrument: `Instrumento vigente · modelo ${report.measurementModel}`,
     });
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
@@ -565,6 +568,8 @@ export function renderFirstScreen(input: {
   capabilityGroups?: CapabilityRadarNode[];
   projectName?: string;
   perspectiveGaps?: Array<{ title: string; capability?: string }>;
+  index?: IndexPublication;
+  instrument?: string;
 }): string {
   const reportBase = input.areaBase.replace(/\/areas$/, '/report');
   const laudo = projectDiagnosticLaudo({
@@ -573,6 +578,8 @@ export function renderFirstScreen(input: {
     organizationalAreas: input.organizationalAreas,
     ...(input.sample ? { sample: input.sample } : {}),
     ...(input.perspectiveGaps ? { perspectiveGaps: input.perspectiveGaps } : {}),
+    ...(input.index ? { index: input.index } : {}),
+    ...(input.instrument ? { instrument: input.instrument } : {}),
   });
   const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
   const shell = renderReportShell({
