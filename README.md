@@ -21,18 +21,21 @@ resultado em ranking de pessoas ou times.
 
 ## Como ler o relatório agora
 
-**Home vigente.** Resultado das entrevistas: problemas por área, cada
-um com caminho possível, sustentação provisória, o que significa,
-fundamento e impacto esperado. Quem autoriza decide depois de ler.
-Abrir uma área é capítulo com dossiê: evidência, efeito, hipóteses e
-soluções em linguagem cotidiana. O mesmo evento publicado reaparece
-com o nome de cada recorte. A próxima onda de instrumento é E em
-[`docs/backlog/report-presentation-plan.md`](docs/backlog/report-presentation-plan.md).
+**Home vigente.** O relatório abre no laudo: motivo, leitura geral,
+até três achados, divergências, restrição, conduta de 30 dias,
+prognóstico, o que ainda não sabemos, e o rodapé de amostra. Onde o
+modelo em execução (`m1`) ainda não mede, o bloco declara a lacuna —
+não inventa índice nem prognóstico. O mapa tem quatro sistemas
+(Produto, Engenharia, Operação e Organização) em três cortes. Ficha
+do nó, plano de tratamento, visão por público, walkthrough, prontidão,
+fronteira e histórico usam o mesmo chrome. Quem autoriza decide depois
+de ler. O que o framework v0.10 ainda não liga ao runtime está em
+[`docs/backlog/framework-v0.10-plan.md`](docs/backlog/framework-v0.10-plan.md).
 
-**Disciplina vigente.** Uma linha do recorte (o que não é), a dor
-local, o efeito no sistema, o que fazer e o teste. Onde mais isso
-chega continua no detalhe. Folha sem finding não lista buracos da
-entrevista.
+**Ficha do nó.** O mesmo molde em qualquer capacidade: o que é, como
+está, o que relataram, por que acontece, onde se resolve, o que fazer,
+como saber se funcionou, o que já funciona, relações, lacunas e
+referências. Campo vazio é lacuna explícita.
 
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)

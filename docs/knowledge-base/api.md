@@ -17,8 +17,9 @@ restrição. O mesmo formato existe nos recortes hierárquicos elegíveis.
 `capabilityGroups` expõe a árvore recursiva dos oito pilares usada pelos radares
 de recorte; cada ramo inclui nível limitante, intervalo, observadores, evidência,
 contradição e filhos observados. `organizationalAreas` expõe a projeção da home
-(`organizational-areas-v1`): três sistemas, disciplinas de Engenharia e a faixa
-de Gestão, com `observed` e `findingCount`. Não substitui `capabilityGroups`.
+(`organizational-areas-v2`): quatro sistemas — Produto, Engenharia, Operação
+e Organização — com `observed` e `findingCount`. O campo `band` aponta para
+o sistema Organização. Não substitui `capabilityGroups`.
 
 Cada finding também expõe `cause`, `priority`, `recommendationEvidence`,
 `experiment`, `foundation`, `affectedCapabilities`, `solutionCapability` e

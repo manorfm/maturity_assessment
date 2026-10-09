@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-08 — Laudo no lugar da home de anamnese
+
+- O relatório abre no laudo de nove blocos, com mapa de quatro sistemas,
+  ficha, plano, visão por público e walkthrough. Índice, prognóstico,
+  prontidão e fronteira ficam em lacuna no modelo m1. Ver
+  [`product-vision.md`](../knowledge-base/product-vision.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 Este arquivo registra resultados incorporados. A especificação vigente permanece
 em `docs/knowledge-base`; detalhes ainda futuros permanecem em `docs/backlog`.
 

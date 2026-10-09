@@ -38,9 +38,10 @@ validação de linguagem com as disciplinas, evidência externa) está no
 apresentar o produto como diagnóstico de engenharia — e não como framework de
 maturidade — está no
 [`plano de diagnóstico`](../backlog/engineering-diagnostic-plan.md).
-A home é o resultado das entrevistas: problemas por área, cada um com
-caminho, sustentação provisória, fundamento e impacto. Quem autoriza
-decide depois de ler. Os três sistemas continuam como índice. O
+A home do relatório é o laudo: motivo, leitura, até três achados,
+divergência, restrição, conduta, prognóstico e lacunas. Quem autoriza
+decide depois de ler. Os quatro sistemas — Produto, Engenharia, Operação
+e Organização — são o mapa, não a faixa de Gestão. O
 cruzamento não é sessão da home: o motor registra as arestas e a
 disciplina mostra o mesmo problema com outro nome. Radar e mapa
 publicado abrem em detalhe. Disciplina aberta não vira pergunta na

@@ -24,14 +24,16 @@ documento. Aqui permanecem apenas escolhas incorporadas ao modelo e ao produto.
   clique ou aceitação de recomendação não constituem verdade de treinamento.
 - O produto é um diagnóstico de engenharia do sistema sociotécnico de entrega,
   não um checklist de maturidade. Ele combina diagnóstico causal e referencial
-  comparativo de alta performance. A home indexa três sistemas (Produto,
-  Engenharia, Operação) e uma faixa de Gestão; os oito pilares continuam a
-  agregação do motor. Estágio ordinal e radar de recorte são leituras auxiliares.
+  comparativo de alta performance. A home do relatório é o laudo. O mapa
+  indexa quatro sistemas (Produto, Engenharia, Operação e Organização); os
+  oito pilares continuam a agregação do motor. Estágio ordinal e radar de
+  recorte são leituras auxiliares. Índice percentual só entra com faixa,
+  cobertura e estado de calibração.
   O estágio expressa consistência do comportamento contra uma rubrica específica
   da capacidade, nunca presença de ferramenta, framework ou cargo. A entrevista
   sozinha não atribui categoria DORA nem declara uma empresa “elite”.
-- A faixa transversal da home usa o nome **Gestão**. A alternativa **Governança**
-  permanece em aberto se o rótulo parecer avaliação de gestores.
+- O quarto sistema do mapa usa o nome **Organização**. Governança continua
+  folha dentro dele, não o nome do sistema.
 - Família de capacidade não é marca. Ausência do comportamento esperado no
   evento ocorrido é falta de prática; “não observo” continua visibilidade.
   Relatos opostos entre observadores são adoção desigual. Clima, incentivo e

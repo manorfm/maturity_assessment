@@ -44,7 +44,9 @@ deve ocorrer numa única unidade para preservar o limiar; uma comparação entre
 squads exige ao menos dez pessoas, cinco em cada unidade. Calibração continua 50–100
 jornadas rotuladas e não é substituída por sintéticos.
 
-A home já lista problemas por área com caminho e sustentação. Abrir
+A home do relatório é o laudo descrito na base. O que o framework v0.10
+ainda não mede está no
+[`plano do framework`](framework-v0.10-plan.md). Abrir
 uma área já é capítulo com dossiê e a mesma evidência no nome local.
 As ondas F e G fecharam. A próxima onda de instrumento é E (folhas
 candidatas) em

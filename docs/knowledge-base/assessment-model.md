@@ -39,8 +39,8 @@ mantém a mesma resposta como origem explicável; não se duplica uma nota gené
 Cada nó pode possuir filhos e produzir outro radar. Seu nível é limitado pelo filho
 com evidência mais frágil. Cada clique abre uma página própria, preserva o recorte
 organizacional e apresenta um breadcrumb do macro ao micro; folhas mostram problemas
-e correções. A home não indexa os oito pilares do motor: ela projeta três sistemas
-— Produto, Engenharia e Operação — e uma faixa transversal de Gestão. Ausência de
+e correções. A home não indexa os oito pilares do motor: o mapa projeta quatro
+sistemas — Produto, Engenharia, Operação e Organização. Ausência de
 evidência é rotulada como “entrevista não atravessou” ou “não avaliado”, nunca como nível zero nem como ausência de problema,
 quando o evento não ocorreu ou ninguém aplicável o observou. Se o evento ocorreu e
 o comportamento esperado da família não aparece, isso é falta de prática no local,
@@ -293,11 +293,11 @@ Confiança e cobertura acompanham as três leituras e nunca são fundidas num sc
 único. Categoria de performance DORA depende das métricas vigentes por aplicação
 ou serviço e de referência comparável; não deriva do estágio 0–4.
 
-O relatório vigente apresenta, na home, um mapa de apresentação com três sistemas
-— **Produto**, **Engenharia** e **Operação**. Engenharia abre entrega, qualidade de
-software, arquitetura, plataforma e segurança. Observabilidade fica sob Publicação,
-dentro de Entrega. Gestão (responsabilidade, governança, liderança, colaboração e
-aprendizado) é faixa transversal, não um quarto azulejo. `planning-refinement`
+O relatório vigente abre no laudo. O mapa de apresentação tem quatro sistemas
+— **Produto**, **Engenharia**, **Operação** e **Organização**. Engenharia abre
+entrega, qualidade de software, arquitetura, plataforma e segurança.
+Observabilidade fica sob Publicação, dentro de Entrega. Organização reúne
+responsabilidade, governança, liderança, colaboração e aprendizado. `planning-refinement`
 permanece no pilar `delivery-flow` do motor e aparece em Produto só na projeção.
 A leitura começa pelo problema observado, pela hipótese de por que ele se
 repete e pelo que fazer agora. Estágio ordinal e o mapa de sistemas
@@ -377,12 +377,14 @@ suspende somente a folha ou o ramo que a contém; uma divergência de aprendizad
 substitui o diagnóstico de arquitetura, segurança ou fluxo. O resumo global continua
 inconclusivo quando qualquer divergência elegível impede uma leitura única do sistema.
 
-Na interface gerencial, o relatório global é o resultado das entrevistas,
-não o laudo de uma decisão. A first screen mostra, nesta ordem: os
-problemas publicados por área (cada um com caminho, sustentação
-provisória, fundamento e impacto esperado), a amostra desta leitura
-(pessoas e unidades) e os três sistemas (Produto, Engenharia, Operação).
-Gestão nunca é o quarto azulejo. Quem autoriza decide depois de ler.
+Na interface gerencial, o relatório global é um laudo. A first screen
+mostra, nesta ordem: motivo da avaliação (ou a lacuna, se o projeto não
+registrou a queixa), leitura geral (índice com faixa, cobertura e alvo,
+ou a lacuna enquanto o modelo for `m1`), até três achados, divergências,
+restrição principal, conduta de 30 dias, prognóstico, o que ainda não
+sabemos e o rodapé de amostra e calibração. O mapa tem quatro sistemas
+(Produto, Engenharia, Operação e Organização). Organização não é faixa.
+Quem autoriza decide depois de ler.
 O cartão compacto permanece no detalhe da disciplina e quando não há
 finding publicado. Abrir uma área é capítulo: uma linha do que o
 recorte observa e as dores no nome local; a mesma evidência só

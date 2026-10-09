@@ -113,16 +113,18 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
-projeta o índice de entrevistas (`interview-report-v1`): problemas
-publicados por área, cada um com soluções amarradas, faixa de
-sustentação, fundamento e impacto. A amostra desta leitura entra
-antes dos capítulos. Os três sistemas continuam como navegação;
-Gestão é faixa. O cruzamento fica no detalhe da disciplina. Radar e
-recortes publicados abrem em `details`. A home do relatório usa coluna
-estreita e serifada de leitura. O cartão compacto (`density: compact`)
-permanece no detalhe e nas leituras sem finding. A amostra declara só
-pessoas e unidades. Antipadrão, vocabulário metodológico e o número do
-posterior ficam fora do primeiro plano.
+é o laudo (`diagnostic-report-v2`): motivo, leitura geral, até três
+achados, divergências, restrição principal, conduta de 30 dias,
+prognóstico, o que ainda não sabemos e rodapé de amostra e calibração.
+Onde o modelo `m1` não mede índice, faixa, alvo ou prognóstico, o bloco
+declara a lacuna. Não publica o exemplo numérico do protótipo. A navegação
+lateral liga mapa, ficha, prontidão, fronteira, plano, walkthrough,
+histórico e visão por público. O mapa tem quatro sistemas — Produto,
+Engenharia, Operação e Organização — e três cortes: por capacidade, por
+estrutura e por perspectiva. Organização deixou de ser faixa. O chrome do
+relatório usa os tokens claro/escuro do protótipo, Newsreader e IBM Plex
+Sans. Entrevista e painel administrativo mantêm o tema anterior. Radar
+não é a leitura principal.
 A página da disciplina começa por uma linha do recorte (o que não
 é); depois vêm a dor daquele nível, o efeito que ela gera acima,
 onde mais isso chega, a ação e o teste. Folha sem finding não lista
@@ -212,8 +214,8 @@ cobertura, validação e custo. Snapshots dessa decisão permanecem privados.
 
 `CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos dos oito
 pilares. `OrganizationalAreaProjector` consome as mesmas 29 folhas e os findings
-e desenha a home em três sistemas (Produto, Engenharia, Operação) mais a faixa de
-Gestão, sem recalcular nível nem reparentar o motor. Um sistema acende com folha
+e desenha o mapa em quatro sistemas (Produto, Engenharia, Operação e
+Organização), sem recalcular nível nem reparentar o motor. Um sistema acende com folha
 publicada ou finding, mesmo quando o pilar correspondente não fecha duas crianças.
 O drill-down de área usa `/areas/:id`; folhas continuam em `/capabilities/:id`.
 Radares de recorte de unidade ainda consomem `capabilityGroups`. A UI não

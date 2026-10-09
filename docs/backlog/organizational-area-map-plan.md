@@ -86,13 +86,17 @@ fatia rival na home. O que a base chama de sistema organizacional **não
 é pilar**: a organização é o conjunto. Vira faixa transversal. Os oito
 pilares do motor continuam por baixo.
 
-## Home (três sistemas)
+## Mapa (quatro sistemas)
+
+A home vigente é o laudo. O mapa, não a faixa, indexa:
 
 1. **Produto**
 2. **Engenharia** — entrega, qualidade de software, arquitetura,
    plataforma, segurança.
 3. **Operação** — confiabilidade, incidentes, recuperação.
    Observabilidade não fica aqui: acompanha a publicação da mudança.
+4. **Organização** — responsabilidade, governança, liderança,
+   aprendizado e fluxo de trabalho. Deixou de ser faixa.
 
 ## Como a árvore aprofunda sem inventar eixo
 

@@ -62,10 +62,12 @@
   unidade, comparação, diagnóstico organizacional, triangulação, calibração).
   Declara total de pessoas, distribuição por unidade e trilha, pilares observáveis
   e o que permanece não avaliado. Não trata quantidade de eixos como precisão.
-- **OrganizationalAreaMap:** projeção de apresentação `organizational-areas-v1`
-  sobre as 29 folhas. Home: Produto, Engenharia, Operação; Engenharia abre
-  entrega, qualidade de software, arquitetura, plataforma e segurança; Gestão é
-  faixa. Não reparenta `CapabilityTaxonomy` nem cria folha. Os capítulos
+- **OrganizationalAreaMap:** projeção de apresentação `organizational-areas-v2`
+  sobre as 29 folhas. Quatro sistemas: Produto, Engenharia, Operação e
+  Organização. Engenharia abre entrega, qualidade de software, arquitetura,
+  plataforma e segurança. Organização reúne responsabilidade, governança,
+  liderança, colaboração e aprendizado. O campo `band` aponta para esse
+  sistema. Não reparenta `CapabilityTaxonomy` nem cria folha. Os capítulos
   do relatório executivo são essa mesma projeção — não uma segunda
   árvore “Desenvolvimento / Plataforma / Organização”. Sistema ou disciplina
   aparece se houver folha publicada ou finding. Abrir a área projeta
@@ -79,7 +81,7 @@
 - **PocSyntheticOrg:** organização sintética de 18 pessoas em duas unidades.
   Três bandas (opaco, reativo, adaptativo) e três contrastes de apresentação
   (fronteira de times; segurança distinta de governança; baixa prática de
-  engenharia). O opaco atravessa Produto, Engenharia e Gestão com o
+  engenharia). O opaco atravessa Produto, Engenharia e Organização com o
   mesmo evento e nomes locais. Cada caso declara
   `lookFor` executivo. Valida coerência do produto e alimenta o deck em
   `/showcase`; não calibra o posterior nem substitui entrevista real.

@@ -107,8 +107,9 @@ controle proporcional, não moda.
 
 O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
 `reinforces`. O grafo `v20` afunila o próximo probe para confirmar ou
-matar hipótese já reforçada. O projetor `interview-report-v1` publica as dores por área com
-caminho e sustentação. O inventário por frente permanece no motor,
+matar hipótese já reforçada. O projetor `diagnostic-report-v2` publica o laudo. O `interview-report-v1`
+continua a montar o dossiê de cada dor usado na ficha e no capítulo.
+O inventário por frente permanece no motor,
 fora da home. Relatos
 opostos no mesmo evento são adoção desigual: as hipóteses competem com
 suporte. O briefing de política descreve o que parar de autorizar no
@@ -418,7 +419,7 @@ evidência insuficiente). Quem autoriza decide depois de ler; o
 produto não abre pedindo “o que fazer agora” como se a decisão já
 tivesse sido tomada.
 
-Abrir um sistema ou a faixa Gestão é um capítulo (`area-chapter-v1`):
+Abrir um sistema, inclusive Organização, é um capítulo (`area-chapter-v1`):
 uma linha do que o recorte observa, as dores no nome local e, quando
 o cruzamento já foi publicado, a mesma evidência com o nome do outro
 recorte. O capítulo lista todas as intersecções publicadas daquele
@@ -430,7 +431,7 @@ resolve. Fonte com jargão (por exemplo “blameless”) vira o princípio
 em prosa — investigar sem procurar culpado — sem exigir o termo. Não
 inventa aresta. Não promove Plataforma a sistema.
 O sintético opaco publica o mesmo evento em Produto, Engenharia e
-Gestão com nomes locais (fila, próxima iniciativa, war room). O
+Organização com nomes locais (fila, próxima iniciativa, war room). O
 médio nomeia dores nesses recortes, não um slogan único.
 
 Várias soluções na mesma dor só existem quando cada uma amarra uma

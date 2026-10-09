@@ -1,5 +1,10 @@
 # Plano: relatório apresentável — mapa, cartão, UX e sintéticos
 
+A home vigente é o laudo e o mapa tem quatro sistemas, inclusive
+Organização. Este arquivo guarda a ordem das ondas de instrumento; não
+descreve mais a first screen. O que o framework ainda não mede está em
+[`framework-v0.10-plan.md`](framework-v0.10-plan.md).
+
 Ondas A–D, F e G estão na base. A próxima onda de instrumento é E
 (folhas candidatas, uma de cada vez, com contrato). O relatório de
 anamnese e o relatório que responde fecharam; piloto humano deixa

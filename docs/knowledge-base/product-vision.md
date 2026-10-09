@@ -32,6 +32,14 @@ não é evidência de capacidade e ausência nominal não é evidência de fragi
 
 ## Resultados esperados
 
+O relatório é um laudo da área de tecnologia: como está, por que está assim,
+o que fazer primeiro, como saber se funcionou e com quanta segurança isso é
+dito. A primeira página cabe numa leitura curta. O mapa, a ficha de cada nó,
+o plano de tratamento, a visão por público, o walkthrough da área, a prontidão
+para práticas avançadas, a fronteira de aprendizado e o histórico de
+reavaliação aprofundam a mesma evidência. O laudo descreve o sistema de
+trabalho. Não avalia pessoas e não vira meta de bônus.
+
 O relatório apresenta primeiro um diagnóstico explicável:
 
 - comportamentos sustentados e frágeis, com confiança da inferência;
