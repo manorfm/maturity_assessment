@@ -62,7 +62,7 @@ test('agrupa dores publicadas por área e amarra um caminho com sustentação', 
   ];
   const report = projectInterviewReport({ findings, organizationalAreas: mapFor(findings) });
   assert.equal(report.version, 'interview-report-v1');
-  assert.deepEqual(report.chapters.map((chapter) => chapter.areaId), ['product', 'engineering', 'management']);
+  assert.deepEqual(report.chapters.map((chapter) => chapter.areaId), ['product', 'engineering', 'organization']);
   assert.equal(report.problemCount, 3);
   const product = report.chapters[0]!.problems[0]!;
   assert.match(product.title, /próxima iniciativa|já foram alocadas|compromisso/i);
@@ -75,7 +75,7 @@ test('agrupa dores publicadas por área e amarra um caminho com sustentação', 
   assert.ok(product.solutions[0]!.doesNotSolve.length > 10);
   const engineering = report.chapters.find((chapter) => chapter.areaId === 'engineering')!.problems[0]!;
   assert.equal(engineering.solutions[0]!.supportBand, 'média');
-  const management = report.chapters.find((chapter) => chapter.areaId === 'management')!.problems[0]!;
+  const management = report.chapters.find((chapter) => chapter.areaId === 'organization')!.problems[0]!;
   assert.match(management.solutions[0]!.foundationReading.reading, /sem procurar culpado|não a pessoa/i);
   assert.doesNotMatch(management.solutions[0]!.foundationReading.sourceLabel, /blameless/i);
 });
@@ -87,7 +87,7 @@ test('várias soluções na mesma dor só entram quando outra hipótese do siste
     ready('provisionamento-em-fila', 'Ambiente chega por fila', 'platform-autonomy'),
   ];
   const report = projectInterviewReport({ findings, organizationalAreas: mapFor(findings) });
-  const learning = report.chapters.find((chapter) => chapter.areaId === 'management')!.problems
+  const learning = report.chapters.find((chapter) => chapter.areaId === 'organization')!.problems
     .find((problem) => problem.pattern === 'postmortem-sem-efeito')!;
   assert.equal(learning.solutions.length, 2);
   assert.equal(learning.solutions[0]!.pattern, 'postmortem-sem-efeito');
@@ -101,6 +101,6 @@ test('várias soluções na mesma dor só entram quando outra hipótese do siste
 test('não inventa capítulo para disciplina sem finding', () => {
   const findings = [ready('war-room-como-gestao', 'O war room virou a gestão', 'leadership-management')];
   const report = projectInterviewReport({ findings, organizationalAreas: mapFor(findings) });
-  assert.deepEqual(report.chapters.map((chapter) => chapter.areaId), ['management']);
+  assert.deepEqual(report.chapters.map((chapter) => chapter.areaId), ['organization']);
   assert.equal(report.chapters[0]!.problems[0]!.evidence[0], '6 de 8 relatos aplicáveis sustentam este mecanismo.');
 });

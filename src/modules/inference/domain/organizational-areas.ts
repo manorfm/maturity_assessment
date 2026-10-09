@@ -13,8 +13,9 @@ export type OrganizationalAreaNode = {
 };
 
 export type OrganizationalAreaMap = {
-  version: 'organizational-areas-v1';
+  version: 'organizational-areas-v2';
   systems: OrganizationalAreaNode[];
+  /** O quarto sistema, Organização. O nome histórico `band` aponta para o mesmo nó. */
   band: OrganizationalAreaNode;
 };
 
@@ -89,8 +90,8 @@ const presentationSystems: AreaDefinition[] = [
   },
 ];
 
-const presentationBand: AreaDefinition = {
-  id: 'management', label: 'Gestão', kind: 'band', children: [
+const organizationSystem: AreaDefinition = {
+  id: 'organization', label: 'Organização', kind: 'system', children: [
     leaf('team-ownership', 'Responsabilidade'),
     leaf('enabling-governance', 'Governança'),
     leaf('leadership-management', 'Liderança'),
@@ -120,10 +121,13 @@ export class OrganizationalAreaProjector {
         children,
       };
     };
+    const systems = [...presentationSystems, organizationSystem].map(build);
+    const band = systems.find((system) => system.id === 'organization');
+    if (!band) throw new Error('Sistema Organização ausente do mapa.');
     return {
-      version: 'organizational-areas-v1',
-      systems: presentationSystems.map(build),
-      band: build(presentationBand),
+      version: 'organizational-areas-v2',
+      systems,
+      band,
     };
   }
 }
@@ -135,7 +139,6 @@ export function collectAreaLeaves(map: Pick<OrganizationalAreaMap, 'systems' | '
     node.children.forEach(walk);
   };
   map.systems.forEach(walk);
-  walk(map.band);
   return leaves;
 }
 
@@ -149,7 +152,7 @@ export function findAreaPath(map: OrganizationalAreaMap, id: string): Organizati
     }
     return undefined;
   };
-  return search([...map.systems, map.band]);
+  return search(map.systems);
 }
 
 function indexFindings(findings: AreaFindingRef[]): Map<string, Set<string>> {

@@ -14,9 +14,9 @@ const finding = (detailCapability: string, affectedCapabilities: string[] = []) 
 
 test('projetor cobre as 29 folhas sem criar ID novo e sem reparentar o motor', () => {
   const map = OrganizationalAreaProjector.project({ capabilities: [], findings: [] });
-  assert.deepEqual(map.systems.map((system) => system.id), ['product', 'engineering', 'operations']);
-  assert.equal(map.band.id, 'management');
-  assert.equal(map.band.label, 'Gestão');
+  assert.deepEqual(map.systems.map((system) => system.id), ['product', 'engineering', 'operations', 'organization']);
+  assert.equal(map.band.id, 'organization');
+  assert.equal(map.band.label, 'Organização');
   const leaves = collectAreaLeaves(map);
   assert.deepEqual([...leaves].sort(), [...capabilityLeafIds].sort());
   assert.equal(leaves.length, 29);
@@ -28,7 +28,7 @@ test('projetor cobre as 29 folhas sem criar ID novo e sem reparentar o motor', (
   assert.equal(engine.find((branch) => branch.id === 'delivery-flow')?.assessed, false);
 });
 
-test('home mostra três sistemas; qualidade, plataforma e segurança ficam sob Engenharia', () => {
+test('home mostra quatro sistemas; qualidade, plataforma e segurança ficam sob Engenharia', () => {
   const map = OrganizationalAreaProjector.project({
     capabilities: [
       measure('work-management'),
@@ -92,7 +92,7 @@ test('planejamento aparece em Produto; observabilidade fica sob Publicação, n�
   assert.doesNotMatch(collectAreaLeaves({ systems: [operations], band: map.band }).join(','), /observability/);
 });
 
-test('finding de responsabilidade acende a faixa e o sistema da restrição', () => {
+test('finding de responsabilidade acende Organização e o sistema da restrição', () => {
   const map = OrganizationalAreaProjector.project({
     capabilities: [],
     findings: [finding('team-ownership', ['work-management'])],
@@ -133,7 +133,7 @@ test('rótulos da home são disciplinas, não cerimônia nem slogan', () => {
   assert.ok(labels.includes('Planejamento'));
 });
 
-test('mapa da home lista três sistemas e não rivaliza qualidade com plataforma', () => {
+test('mapa da home lista quatro sistemas e não rivaliza qualidade com plataforma', () => {
   const map = OrganizationalAreaProjector.project({
     capabilities: [measure('work-management'), measure('quality-strategy'), measure('platform-autonomy'), measure('software-security')],
     findings: [finding('team-ownership')],
@@ -148,7 +148,8 @@ test('mapa da home lista três sistemas e não rivaliza qualidade com plataforma
   assert.match(html, /Qualidade de software/);
   assert.match(html, /Plataforma/);
   assert.match(html, /Segurança/);
-  assert.match(html, /Gestão/);
+  assert.match(html, /Organização/);
+  assert.doesNotMatch(html, /aria-label="Gestão"/);
   assert.match(html, /Responsabilidade/);
   assert.doesNotMatch(html, /Sistema organizacional/);
   assert.doesNotMatch(html, /Estratégia de produto e valor/);

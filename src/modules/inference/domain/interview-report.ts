@@ -50,7 +50,7 @@ export type InterviewReport = {
   chapters: InterviewChapter[];
 };
 
-const chapterOrder = ['product', 'engineering', 'operations', 'management'] as const;
+const chapterOrder = ['product', 'engineering', 'operations', 'organization'] as const;
 
 export function supportBandFor(posterior: number): SupportBand {
   if (posterior >= .75) return 'alta';

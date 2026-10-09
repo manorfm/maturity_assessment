@@ -83,7 +83,7 @@ test('árvore exaustiva lista o mapa inteiro e marca o que não foi atravessado'
   assert.ok(ids.includes('engineering'));
   assert.ok(ids.includes('platform'));
   assert.ok(ids.includes('platform-autonomy'));
-  assert.ok(ids.includes('management'));
+  assert.ok(ids.includes('organization'));
   assert.ok(ids.includes('product'));
   assert.ok(ids.includes('operations'));
   assert.equal(countProblems(tree), 3);

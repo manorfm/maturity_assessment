@@ -55,7 +55,7 @@ test('capítulo de Engenharia observa o recorte e nomeia a fila como pedido e es
   const pain = chapter.problems.find((problem) => problem.pattern === 'provisionamento-em-fila')!;
   assert.match(pain.localTitle, /chamado|espera outro grupo|fila do outro grupo/i);
   assert.equal(chapter.problems.some((problem) => problem.pattern === 'war-room-como-gestao'), false);
-  assert.ok(pain.arrivals.some((arrival) => arrival.areaId === 'management' && /crise|war room|pressão/i.test(arrival.localTitle)));
+  assert.ok(pain.arrivals.some((arrival) => arrival.areaId === 'organization' && /crise|war room|pressão/i.test(arrival.localTitle)));
 });
 
 test('capítulo de Gestão nomeia a mesma evidência como war room, sem inventar Plataforma', () => {
@@ -89,8 +89,8 @@ test('o mesmo evento publicado atravessa Produto, Engenharia e Gestão mesmo com
   assert.match(productPain.localTitle, /próxima iniciativa|já foram comprometidas/i);
   assert.match(queuePain.localTitle, /chamado|espera outro grupo|fila do outro grupo/i);
   assert.match(crisisPain.localTitle, /crise|pressão|cala/i);
-  assert.ok(productPain.arrivals.some((arrival) => arrival.areaId === 'engineering' || arrival.areaId === 'management'));
-  assert.ok(queuePain.arrivals.some((arrival) => arrival.areaId === 'product' || arrival.areaId === 'management'));
+  assert.ok(productPain.arrivals.some((arrival) => arrival.areaId === 'engineering' || arrival.areaId === 'organization'));
+  assert.ok(queuePain.arrivals.some((arrival) => arrival.areaId === 'product' || arrival.areaId === 'organization'));
   assert.ok(crisisPain.arrivals.some((arrival) => arrival.areaId === 'engineering'));
   assert.ok(crisisPain.arrivals.some((arrival) => arrival.areaId === 'product'));
 });
@@ -122,7 +122,7 @@ test('capítulo de área publica o dossiê da dor sem exigir jargão de fundamen
   assert.match(pain.solutions[0]!.foundationReading.reading, /sem procurar culpado|não a pessoa/i);
   assert.doesNotMatch(pain.solutions[0]!.foundationReading.sourceLabel, /blameless/i);
 
-  const html = renderAreaRecorte(findAreaPath(map, 'management')!, {
+  const html = renderAreaRecorte(findAreaPath(map, 'organization')!, {
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     findings,
@@ -155,14 +155,14 @@ test('página de área é capítulo: uma linha, dores locais, mesma evidência c
   assert.match(engineering, /class="area-chapter"/);
   assert.match(engineering, /espera|origem da versão|pedido/i);
   assert.match(engineering, /chamado|fila do outro grupo/i);
-  assert.match(engineering, /Em Gestão/);
+  assert.match(engineering, /Em Organização/);
   assert.match(engineering, /crise|pressão|cala/i);
   assert.doesNotMatch(engineering, /O que esta disciplina abrange/);
   assert.doesNotMatch(engineering, /O que trata/);
   assert.doesNotMatch(engineering, /Como as disciplinas se cruzam/);
   assert.doesNotMatch(engineering, /<h3>Plataforma<\/h3>/);
 
-  const management = renderAreaRecorte(findAreaPath(map, 'management')!, {
+  const management = renderAreaRecorte(findAreaPath(map, 'organization')!, {
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     findings,

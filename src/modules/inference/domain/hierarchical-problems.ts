@@ -101,7 +101,7 @@ export function projectProblemTree(
   map: OrganizationalAreaMap,
   options: { exhaustive?: boolean } = {},
 ): HierarchicalBranch[] {
-  const roots = [...map.systems, map.band];
+  const roots = map.systems;
   const tree = roots.map((node) => projectBranch(node, findings, options.exhaustive === true));
   return options.exhaustive ? tree : tree.filter(branchHasProblems);
 }
