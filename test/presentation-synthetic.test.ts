@@ -10,6 +10,7 @@ import {
   runOrganizationalSynthetic,
   type SyntheticCaseId,
 } from '../src/modules/inference/domain/organizational-synthetic.js';
+import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 import { renderAudienceBriefs, renderAreaRecorte, renderDisciplineDetail, renderFirstScreen } from '../src/modules/projects/project-routes.js';
 
 const FAMILY_PATTERNS = [
@@ -46,7 +47,8 @@ test('opaco fecha Corrigir com responsabilidade pronta e acende Engenharia e a f
   assert.match(cardPlane, /O que este caminho não resolve/);
   assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
   assert.doesNotMatch(html, / em Acesso a capacidades gera /);
-  assert.match(html, /Mapa de contraste e cobertura/);
+  assert.match(html, /href="\/report\/map"/);
+  assert.doesNotMatch(html, /24%/);
   assert.doesNotMatch(html, /Aguarde mais respostas/);
   assert.doesNotMatch(html, /sustentam o mesmo efeito/);
   assert.ok(
@@ -86,16 +88,13 @@ test('opaco: Acesso a capacidades mostra a fila, o efeito e o teste, sem três b
   assert.doesNotMatch(html, /<h3>O que trata<\/h3>/);
 });
 
-test('opaco: o mesmo evento atravessa Produto, Engenharia e Gestão com nomes distintos', () => {
+test('opaco: o mesmo evento atravessa Produto, Engenharia e Organização com nomes distintos', () => {
   const { report } = runCase('low');
   const map = report.organizationalAreas;
-  const html = firstScreenOf(report);
+  const html = mapOf(report);
   assert.match(html, /data-area="product"/);
   assert.match(html, /data-area="engineering"/);
-  assert.match(html, /data-area="management"/);
-  assert.match(html, /chamado|fila do outro grupo|espera outro grupo/i);
-  assert.match(html, /próxima iniciativa|já foram comprometidas|revisar o resultado anterior/i);
-  assert.match(html, /crise|pressão|cala/i);
+  assert.match(html, /data-area="organization"/);
 
   const product = renderAreaRecorte(findAreaPath(map, 'product')!, {
     areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
@@ -103,29 +102,29 @@ test('opaco: o mesmo evento atravessa Produto, Engenharia e Gestão com nomes di
   const engineering = renderAreaRecorte(findAreaPath(map, 'engineering')!, {
     areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
   });
-  const management = renderAreaRecorte(findAreaPath(map, 'management')!, {
+  const management = renderAreaRecorte(findAreaPath(map, 'organization')!, {
     areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
   });
   assert.match(product, /próxima iniciativa|já foram comprometidas/i);
-  assert.match(product, /Em Engenharia|Em Gestão/);
+  assert.match(product, /Em Engenharia|Em Organização/);
   assert.match(engineering, /chamado|fila do outro grupo|espera outro grupo/i);
-  assert.match(engineering, /Em Produto|Em Gestão/);
+  assert.match(engineering, /Em Produto|Em Organização/);
   assert.match(management, /crise|pressão|cala/i);
   assert.match(management, /Em Engenharia|Em Produto/);
   assert.doesNotMatch(product, /<h3>Plataforma<\/h3>/);
 });
 
-test('opaco: a mesma fila aparece em Engenharia como pedido e em Gestão como war room', () => {
+test('opaco: a mesma fila aparece em Engenharia como pedido e em Organização como war room', () => {
   const { report } = runCase('low');
   const map = report.organizationalAreas;
   const engineering = renderAreaRecorte(findAreaPath(map, 'engineering')!, {
     areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
   });
-  const management = renderAreaRecorte(findAreaPath(map, 'management')!, {
+  const management = renderAreaRecorte(findAreaPath(map, 'organization')!, {
     areaBase: '/areas', capabilityBase: '/capabilities', findings: report.findings, organizationalAreas: map,
   });
   assert.match(engineering, /chamado|fila do outro grupo|espera outro grupo/i);
-  assert.match(engineering, /Em Gestão/);
+  assert.match(engineering, /Em Organização/);
   assert.match(management, /crise|pressão|cala/i);
   assert.match(management, /Em Engenharia/);
   assert.match(management, /Impacto esperado/);
@@ -138,8 +137,9 @@ test('opaco: a mesma fila aparece em Engenharia como pedido e em Gestão como wa
 test('intermediário: o índice nomeia dores em Produto e Engenharia, não um slogan', () => {
   const { report } = runCase('medium');
   const html = firstScreenOf(report);
-  assert.match(html, /data-area="product"/);
-  assert.match(html, /data-area="engineering"/);
+  const map = mapOf(report);
+  assert.match(map, /data-area="product"/);
+  assert.match(map, /data-area="engineering"/);
   assert.match(html, /próxima iniciativa|já foram comprometidas|revisar o resultado anterior/i);
   assert.match(html, /Preparação concentra espera|ambiente ou permissão|A lista de melhoria não fecha|versão para no passo/i);
   assert.doesNotMatch(html, /mostrando os 4/);
@@ -173,7 +173,7 @@ test('sustentável publica o resto concreto e deixa sistema sem cobertura como n
   assert.ok(report.capabilities.filter((capability) => capability.level >= 3 && (capability.coverage ?? 0) >= 1).length >= 3);
   const unobserved = report.organizationalAreas.systems.filter((system) => !system.observed);
   assert.ok(unobserved.length >= 1);
-  assert.match(html, /area-tile unobserved/);
+  assert.match(mapOf(report), /area-tile unobserved/);
   assert.doesNotMatch(html, /Agilidade/);
   assertPresentationLookFor(report, spec.lookFor);
 });
@@ -188,8 +188,8 @@ test('fronteira de times ancora responsabilidade em Entrega e na faixa', () => {
   assert.equal(systemObserved(report, 'engineering'), true);
   assert.equal(report.organizationalAreas.band.observed, true);
   const html = firstScreenOf(report);
-  assert.match(html, /Entrega|Fluxo de trabalho|Integração/);
-  assert.match(html, /Gestão|Responsabilidade/);
+  assert.match(html, /Entrega|Fluxo de trabalho|Integração|Organização/);
+  assert.match(html, /Organização|Responsabilidade|Aprendizado/);
   assert.doesNotMatch(html, /mostrando os 4/);
   assert.ok(findings.length >= 2);
   assertPresentationLookFor(report, spec.lookFor);
@@ -205,9 +205,9 @@ test('segurança e governança acendem recortes distintos, sem um slogan único'
   const securityPath = findAreaPath(report.organizationalAreas, 'software-security');
   const governancePath = findAreaPath(report.organizationalAreas, 'enabling-governance');
   assert.ok(securityPath?.some((node) => node.id === 'engineering'));
-  assert.ok(governancePath?.some((node) => node.id === 'management'));
+  assert.ok(governancePath?.some((node) => node.id === 'organization'));
   const html = firstScreenOf(report);
-  assert.match(html, /Segurança/);
+  assert.ok(securityPath?.some((node) => node.id === 'security' || node.label === 'Segurança'));
   assert.match(html, /Governança/);
   assert.doesNotMatch(html, /segurança e governança/i);
   assert.doesNotMatch(html, /Agilidade/);
@@ -233,7 +233,7 @@ test('baixa prática publica famílias distintas, inventário e briefing de pol�
   const briefs = renderAudienceBriefs(report.audienceReports, '/capabilities');
   assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
   assert.match(html, /Engenharia/);
-  assert.match(html, /Gestão/);
+  assert.match(html, /Organização|Liderança|gestão/);
   assert.match(html, /Operação|Produto/);
   assert.match(briefs, /Briefing de política/);
   assert.match(briefs, /O que parar de autorizar/);
@@ -253,6 +253,17 @@ function runCase(id: SyntheticCaseId) {
 
 function systemObserved(report: ReturnType<typeof runOrganizationalSynthetic>['report'], id: string) {
   return report.organizationalAreas.systems.find((system) => system.id === id)?.observed === true;
+}
+
+function mapOf(report: ReturnType<typeof runOrganizationalSynthetic>['report']) {
+  return renderMapPage({
+    map: report.organizationalAreas,
+    cut: 'cap',
+    areaBase: '/areas',
+    capabilityBase: '/capabilities',
+    units: [],
+    perspectives: [],
+  });
 }
 
 function firstScreenOf(report: ReturnType<typeof runOrganizationalSynthetic>['report']) {

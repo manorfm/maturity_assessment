@@ -22,10 +22,12 @@ import { compactMechanismBody, projectFindingNarrative, type FindingNarrativeSec
 import { policyBriefingFor } from '../inference/domain/multi-front-inventory.js';
 import { crossingsForCapability, type DisciplineCrossing } from '../inference/domain/discipline-crossing.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
-import { disciplineScope } from '../inference/domain/discipline-brief.js';
+import { disciplineBrief, disciplineScope } from '../inference/domain/discipline-brief.js';
 import { problemsForNode, projectProblemTree, type HierarchicalBranch, type HierarchicalFinding, type HierarchicalProblem } from '../inference/domain/hierarchical-problems.js';
-import { projectInterviewReport, type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
+import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
+import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, projectFrontierPage, projectHistoryPage, projectReadinessPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -202,6 +204,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ...(primaryOccurrence ? { occurrence: primaryOccurrence } : {}),
       ...(competingFinding ? { competingFinding } : {}),
       capabilityGroups: report.capabilityGroups,
+      projectName: String(auth.project.name),
+      perspectiveGaps: report.perspectiveGaps,
     });
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
@@ -246,9 +250,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const base = `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`;
     const scopeQuery = scopeId ? `?scope=${encodeURIComponent(scopeId)}` : '';
     const dashboardUrl = `/projects/${params.publicId}/manage/${params.adminSecret}`;
-    const breadcrumbItems = path.map((item, index) => index === path.length - 1
-      ? `<span class="breadcrumb-current" aria-current="page">${escapeHtml(item.label)}</span>`
-      : `<a href="${base}/${item.id}${scopeQuery}">${escapeHtml(item.label)}</a>`).join('<span class="breadcrumb-separator" aria-hidden="true">›</span>');
     const parent = path.at(-2);
     const backUrl = parent ? `${base}/${parent.id}${scopeQuery}` : dashboardUrl;
     const coverage = `<p class="coverage"><strong>${coverageLabel(selected.coverage)}</strong><span class="coverage-track"><span style="width:${Math.round(selected.coverage * 100)}%"></span></span></p>`;
@@ -263,7 +264,32 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         ? renderCapabilityRadar(groups, base, scopeId)
         : '';
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
-    return reply.type('text/html').send(layout(selected.label, `<div class="report-home"><nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderDisciplineDetail({ selected, findings: relevant, projectFindings: findings, capabilityBase: base, primaryPattern: report.outcome.finding?.pattern })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}</div>`));
+    const reportBase = `/projects/${params.publicId}/manage/${params.adminSecret}/report`;
+    const primary = relevant[0];
+    const card = renderNodeCard({
+      title: selected.label,
+      path: path.map((item) => item.label).join(' › '),
+      definition: disciplineBrief(selected.id),
+      reported: '',
+      why: primary?.cause || 'Ainda não há causa publicada neste nó.',
+      where: containmentLabel(primary?.containment && primary.containment !== 'undetermined' ? primary.containment : 'undetermined'),
+      action: primary?.experiment?.action || primary?.intervention || 'Sem conduta publicada.',
+      check: primary?.experiment?.successCriterion || 'O teste ainda não foi publicado.',
+      preserve: 'O que já funciona só entra quando a leitura é de preservação.',
+      relations: relationLabels(primary?.affectedCapabilities, selected.id),
+      unknown: primary?.missingEvidence || 'Lacuna ainda não nomeada.',
+      references: primary?.foundation?.source || 'Referência ainda não ligada a esta ficha.',
+    });
+    const pattern = report.outcome.finding?.pattern;
+    const reported = `<div class="report-home">${renderDisciplineDetail({ selected, findings: relevant, projectFindings: findings, capabilityBase: base, ...(pattern ? { primaryPattern: pattern } : {}) })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}</div>`;
+    const body = card.replace('<section class="report-block"><h2>O que as pessoas relataram</h2>', `<section class="report-block"><h2>O que as pessoas relataram</h2>${reported}`);
+    return reply.type('text/html').send(layout(selected.label, renderReportShell({
+      page: 'node',
+      base: reportBase,
+      projectName: String(auth.project.name),
+      nodeLabel: selected.label,
+      body: `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}">Voltar</a></nav>${body}`,
+    })));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/areas/:areaId', async (request, reply) => {
@@ -292,6 +318,97 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const groups = source?.capabilityGroups ?? report.capabilityGroups;
     const areaFindings = source?.findings ?? report.findings;
     return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderAreaRecorte(path, { areaBase, capabilityBase, scopeQuery, capabilities: groups, findings: areaFindings, organizationalAreas: map })}`));
+  });
+
+  const reportPage = (params: Params, page: ReportPageId, body: string, nodeLabel?: string) => {
+    const auth = requireProject(params);
+    const base = `/projects/${params.publicId}/manage/${params.adminSecret}/report`;
+    return layout(String(auth.project.name), renderReportShell({ page, base, projectName: String(auth.project.name), body, ...(nodeLabel ? { nodeLabel } : {}) }));
+  };
+
+  app.get('/projects/:publicId/manage/:adminSecret/report', async (request, reply) => {
+    const params = request.params as Params;
+    return reply.redirect(`/projects/${params.publicId}/manage/${params.adminSecret}`);
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/report/map', async (request, reply) => {
+    const params = request.params as Params;
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const cut = (request.query as { cut?: string }).cut;
+    const selected = cut === 'est' || cut === 'per' ? cut : 'cap';
+    const body = renderMapPage({
+      map: report.organizationalAreas,
+      cut: selected,
+      areaBase: `/projects/${params.publicId}/manage/${params.adminSecret}/areas`,
+      capabilityBase: `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`,
+      units: report.scopes.filter((scope) => scope.path.split('/').length > 1).map((scope) => ({ path: scope.path, completed: scope.completed })),
+      perspectives: report.perspectiveGaps,
+    });
+    return reply.type('text/html').send(reportPage(params, 'map', body));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/report/treatment', async (request, reply) => {
+    const params = request.params as Params;
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const plan = projectTreatmentPlan(report.findings);
+    return reply.type('text/html').send(reportPage(params, 'treatment', renderTreatmentPage(plan.active, plan.later, evidenceGradeGap().gap)));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/report/audiences', async (request, reply) => {
+    const params = request.params as Params;
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const groups = uniqueFindingsByPattern(report.findings).slice(0, 3).map((finding) => ({ title: finding.title, verbs: projectAudienceVerbs(finding) }));
+    return reply.type('text/html').send(reportPage(params, 'audiences', renderAudiencePage(groups)));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/report/readiness', async (request, reply) => {
+    const params = request.params as Params;
+    requireProject(params);
+    const items = projectReadinessPage([
+      { id: 'chaos-engineering', label: 'Chaos engineering' },
+      { id: 'ai-dlc', label: 'AI-DLC' },
+      { id: 'service-mesh', label: 'Service mesh' },
+    ]);
+    return reply.type('text/html').send(reportPage(params, 'readiness', renderReadinessPage(items)));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/report/frontier', async (request, reply) => {
+    const params = request.params as Params;
+    requireProject(params);
+    const frontier = projectFrontierPage(undefined);
+    return reply.type('text/html').send(reportPage(params, 'frontier', renderFrontierPage(frontier.nodes, frontier.gap)));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/report/history', async (request, reply) => {
+    const params = request.params as Params;
+    requireProject(params);
+    const history = projectHistoryPage({});
+    return reply.type('text/html').send(reportPage(params, 'history', renderHistoryPage(history.change, history.gap)));
+  });
+
+  app.get('/projects/:publicId/manage/:adminSecret/report/walkthrough/:areaId', async (request, reply) => {
+    const params = request.params as Params & { areaId: string };
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const path = findAreaPath(report.organizationalAreas, params.areaId);
+    if (!path) throw new ResourceNotFoundError('Área não encontrada.');
+    const area = path.at(-1)!;
+    const chapter = projectAreaChapter({ area, findings: report.findings, organizationalAreas: report.organizationalAreas });
+    const first = chapter.problems[0];
+    const body = renderWalkthrough({
+      areaLabel: area.label,
+      summary: chapter.observes,
+      where: first?.title ?? 'As entrevistas ainda não publicaram uma dor neste recorte.',
+      arrived: first?.mechanism ?? 'O caminho até aqui ainda não foi publicado.',
+      working: report.outcome.kind === 'preserve' ? report.outcome.reading : 'Nada neste recorte foi publicado como prática a preservar.',
+      next: first?.solutions[0]?.action ?? 'Sem próxima fase enquanto não houver conduta.',
+      risks: first?.solutions[0]?.doesNotSolve ?? 'O risco de regressão acompanha a conduta, quando ela existe.',
+      assumptions: 'Premissas de índice, alvo e prognóstico continuam em aberto no modelo m1.',
+    });
+    return reply.type('text/html').send(reportPage(params, 'walkthrough', body));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -445,37 +562,25 @@ export function renderFirstScreen(input: {
   competingFinding?: OutcomeFinding;
   sample?: { completed: number; units: Array<{ path: string; completed: number }> };
   capabilityGroups?: CapabilityRadarNode[];
+  projectName?: string;
+  perspectiveGaps?: Array<{ title: string; capability?: string }>;
 }): string {
-  const reading = input.outcome.kind === 'preserve' ? 'preserve' : 'problem';
-  const interview = reading === 'problem' ? projectInterviewReport({ findings: input.findings, organizationalAreas: input.organizationalAreas }) : undefined;
-  const sample = renderSampleStrip(input.sample);
-  const opening = interview?.problemCount
-    ? renderInterviewReport(interview, input.capabilityBase, sample)
-    : `${renderOutcome(input.outcome, {
-      density: 'compact',
-      ...(input.confirmedProblemCount !== undefined ? { confirmedProblemCount: input.confirmedProblemCount } : {}),
-      ...(input.occurrence ? { occurrence: input.occurrence } : {}),
-      ...(input.competingFinding ? { competingFinding: input.competingFinding } : {}),
-    })}${sample}`;
+  const reportBase = input.areaBase.replace(/\/areas$/, '/report');
+  const laudo = projectDiagnosticLaudo({
+    outcome: input.outcome,
+    findings: input.findings,
+    organizationalAreas: input.organizationalAreas,
+    ...(input.sample ? { sample: input.sample } : {}),
+    ...(input.perspectiveGaps ? { perspectiveGaps: input.perspectiveGaps } : {}),
+  });
   const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
-  const systems = `<section class="report-systems first-screen-systems"><h2>Sistemas da organização</h2>${renderOrganizationalAreaMap(input.organizationalAreas, { areaBase: input.areaBase, capabilityBase: input.capabilityBase }, { reading })}</section>`;
-  const radar = input.capabilityGroups?.length
-    ? renderCapabilityRadar(input.capabilityGroups, input.capabilityBase)
-    : '';
-  const publishedTree = renderFindingIndex(input.findings, input.outcome.finding?.pattern, input.organizationalAreas, input.capabilityBase, { exhaustive: false, reading });
-  const deep = reading === 'problem' && (radar || publishedTree)
-    ? `<details class="methodology first-screen-deep" id="report-portfolio"><summary>Mapa e recortes publicados</summary>${radar}${publishedTree}</details>`
-    : `${radar}${publishedTree}`;
-  return `${opening}${systems}${deep}${renderScopeIndex(input.scopes, input.capabilityBase)}${classification}`;
-}
-
-function renderInterviewReport(report: ReturnType<typeof projectInterviewReport>, capabilityBase: string, sample = ''): string {
-  const count = report.problemCount;
-  const chapters = report.chapters.map((chapter) => {
-    const problems = chapter.problems.map((problem) => renderInterviewProblem(problem, capabilityBase)).join('');
-    return `<section class="interview-chapter" data-area="${escapeHtml(chapter.areaId)}"><h2>${escapeHtml(chapter.areaLabel)}</h2>${problems}</section>`;
-  }).join('');
-  return `<article class="interview-report"><p class="eyebrow">O que as entrevistas mostraram</p><p class="tag">${count} ${count === 1 ? 'problema publicado' : 'problemas publicados'}</p><p class="lead">Cada recorte traz o que as pessoas observaram e caminhos possíveis. A decisão — se houver — é de quem autoriza, depois desta leitura.</p>${sample}<h2>Problemas publicados</h2>${chapters}</article>`;
+  const shell = renderReportShell({
+    page: 'laudo',
+    base: reportBase,
+    projectName: input.projectName ?? 'Diagnóstico',
+    body: renderLaudo(laudo, { capabilityBase: input.capabilityBase, reportBase }),
+  });
+  return `${shell}${classification}`;
 }
 
 function renderInterviewProblem(problem: InterviewProblem, capabilityBase: string): string {
@@ -517,16 +622,6 @@ function renderDisciplineReach(edges: DisciplineCrossing[], capabilityIds: strin
     return `<li><strong>${other}</strong> — neste recorte o efeito se chama “${escapeHtml(otherTitle)}”. ${escapeHtml(edge.generates)}</li>`;
   }).join('');
   return `<section class="discipline-reach"><h2>Onde mais isso chega</h2><p>O mesmo mecanismo muda de nome conforme o recorte. Uma área maior reúne várias menores.</p><ul>${items}</ul></section>`;
-}
-
-function renderSampleStrip(sample?: { completed: number; units: Array<{ path: string; completed: number }> }): string {
-  if (!sample || sample.completed < 1) return '';
-  const units = sample.units.map((unit) => {
-    const name = unit.path.split('/').at(-1) ?? unit.path;
-    return `${escapeHtml(name)} (${unit.completed})`;
-  }).join(' · ');
-  const unitCount = sample.units.length || 1;
-  return `<p class="report-sample" aria-label="Amostra desta leitura"><strong>Amostra desta leitura.</strong> ${sample.completed} pessoas em ${unitCount} ${unitCount === 1 ? 'unidade' : 'unidades'}${units ? ` — ${units}` : ''}.</p>`;
 }
 
 type PerspectiveGapView = { title: string; capability: string; strongerProfiles: string[]; constrainedProfiles: string[] };
@@ -738,6 +833,11 @@ function priorityComparison(primary: OutcomeFinding, competing?: OutcomeFinding)
 
 function restrictionLabel(value: string): string {
   return ({ none: 'Nenhum mecanismo restritivo demonstrado', undetermined: 'Ainda não determinado', knowledge: 'Conhecimento', capacity: 'Capacidade disponível', process: 'Processo', policy: 'Política', tooling: 'Ferramenta', platform: 'Plataforma', access: 'Acesso', architecture: 'Arquitetura', organization: 'Estrutura organizacional', governance: 'Governança', culture: 'Cultura', incentive: 'Incentivo', priority: 'Prioridade ou alocação de capacidade', 'external-dependency': 'Dependência externa' } as Record<string, string>)[value] ?? value;
+}
+
+function relationLabels(ids: string[] | undefined, selfId: string): string {
+  const labels = [...new Set((ids ?? []).filter((id) => id && id !== selfId))].map((id) => CapabilityTaxonomy.labelFor(id));
+  return labels.length ? labels.join(', ') : 'Nenhuma relação publicada além deste nó.';
 }
 
 function containmentLabel(value: string): string {
@@ -957,11 +1057,7 @@ export function renderOrganizationalAreaMap(
     const drill = `<p><a class="area-drill" href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}">Ver disciplinas</a></p>`;
     return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}${status ? `<p class="muted">${escapeHtml(status)}</p>` : ''}${chips ? `<p class="area-chips">${chips}</p>` : ''}${drill}</article>`;
   }).join('');
-  const bandChildren = map.band.children.filter((child) => problemReading ? child.findingCount > 0 : child.observed);
-  const band = map.band.observed
-    ? `<nav class="area-band" aria-label="Gestão"><p class="eyebrow">Gestão</p><p>${bandChildren.map((child) => `<a href="${escapeHtml(`${urls.capabilityBase}/${child.leafId ?? child.id}${query}`)}">${escapeHtml(child.label)}</a>`).join(' · ')}</p></nav>`
-    : '';
-  return `<section class="area-map" aria-label="Sistemas da organização"><div class="area-map-systems">${tiles}</div>${band}</section>`;
+  return `<section class="area-map" aria-label="Sistemas da organização"><div class="area-map-systems">${tiles}</div></section>`;
 }
 
 export function renderOrganizationalAreaIndex(
@@ -1226,11 +1322,10 @@ function renderAreaProblems(path: OrganizationalAreaNode[], findings: OutcomeFin
   const selected = path.at(-1);
   if (!selected) return '';
   const root = path[0] ?? selected;
-  const emptyBand: OrganizationalAreaNode = { id: 'management', label: 'Gestão', kind: 'band', observed: false, findingCount: 0, children: [] };
   const map: OrganizationalAreaMap = {
-    version: 'organizational-areas-v1',
-    systems: root.kind === 'band' ? [] : [root],
-    band: root.kind === 'band' ? root : emptyBand,
+    version: 'organizational-areas-v2',
+    systems: [root],
+    band: root.id === 'organization' ? root : { id: 'organization', label: 'Organização', kind: 'system', observed: false, findingCount: 0, children: [] },
   };
   const tree = projectProblemTree(findings.map(asHierarchicalFinding), map, { exhaustive: true });
   const focus = findProblemBranch(tree, selected.id);

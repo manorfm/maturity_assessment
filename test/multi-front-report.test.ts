@@ -85,16 +85,11 @@ test('first screen coloca o inventário abaixo da decisão e lista causas com su
     areaBase: '/areas',
     capabilityBase: '/capabilities',
   });
-  const problems = html.indexOf('Problemas publicados');
+  const problems = html.indexOf('Achados');
   const crossing = html.indexOf('Como as disciplinas se cruzam');
-  const systems = html.indexOf('Sistemas da organização');
-  assert.ok(problems >= 0 && systems > problems);
+  assert.ok(problems >= 0);
   assert.equal(crossing, -1);
-  assert.match(html, /Produto/);
-  assert.match(html, /Engenharia/);
-  assert.match(html, /Operação/);
-  assert.match(html, /Gestão/);
-  assert.match(html, /Sustentação provisória/);
+  assert.match(html, /Sustentação forte|Sustentação moderada/);
   assert.match(html, /Pare de autorizar caça ao culpado|Investigação protegida/);
   assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
   assert.doesNotMatch(html, /Inventário por frente/);

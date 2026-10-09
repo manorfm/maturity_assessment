@@ -5,6 +5,13 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.104.0
+
+- O relatório gerencial abre no laudo. O mapa passa a ter quatro sistemas,
+  com Organização no lugar da faixa Gestão. Páginas de ficha, plano, visão
+  por público, walkthrough, prontidão, fronteira e histórico entram no
+  mesmo chrome. O modelo em execução não inventa índice nem prognóstico.
+
 ## 0.103.0
 
 - O `/showcase` passou a comparar as três situações em grade: título,

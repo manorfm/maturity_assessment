@@ -27,7 +27,7 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Cada unidade com ação local, restrição recebida ou escalada.',
       'First screen lista problemas por área com caminho, não uma decisão única.',
     ],
-    decision: /problemas? publicados?/i,
+    decision: /Achados|laudo/i,
   },
   medium: {
     id: 'poc-media',
@@ -37,7 +37,7 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Diretoria e áreas recebem texto acionável.',
       'O índice traz causa e caminho por dor, não uma disputa de explicações.',
     ],
-    decision: /problemas? publicados?/i,
+    decision: /Achados|laudo/i,
   },
   high: {
     id: 'poc-alta',
@@ -47,7 +47,7 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Folhas fortes com cobertura, pilares sem dois padrões continuam não avaliados.',
       'A melhoria é o resto observado, não um programa genérico.',
     ],
-    decision: /Pode evoluir|problemas? publicados?/i,
+    decision: /Achados|laudo|Pode evoluir/i,
   },
 };
 
@@ -66,8 +66,9 @@ test('apresenta três casos depois de percorrer o produto e validar os relatóri
   const collected = await Promise.all(banded.map((org) => inspectSeededOrg(browser, org, baseURL)));
   const readings = collected.map((entry) => `${entry.observed?.decision}|${entry.observed?.limiter}|${entry.observed?.reading}`);
   expect(new Set(readings).size).toBe(3);
+  expect(collected[0]?.observed?.decision ?? '').toMatch(/laudo/i);
   expect(collected[0]?.observed?.decision ?? '').not.toMatch(/Pode evoluir|Manter o que funciona/i);
-  expect(collected[2]?.observed?.decision ?? '').toMatch(/Pode evoluir|problemas? publicados?/i);
+  expect(collected[2]?.observed?.decision ?? '').toMatch(/laudo/i);
   expect(collected[2]?.observed?.decision ?? '').not.toMatch(/Manter o que funciona/i);
   await inspectBoundaryOrg(browser, boundary!, baseURL);
   await inspectEngineeringPracticeOrg(browser, engineeringPractice!, baseURL);
@@ -104,30 +105,33 @@ async function inspectSeededOrg(browser: Browser, org: SeededOrg, baseURL: strin
 async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideCase> {
   const expected = expectations[org.band];
   await page.goto(org.adminPath);
-  await expect(page.getByText('O que as entrevistas mostraram').first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Diagnóstico da área de tecnologia' })).toBeVisible();
   if (org.band === 'high') {
     await expect(page.getByText(/Pode evoluir|emergência é reconciliada/i).first()).toBeVisible();
   }
   await expect(page.getByText(/Amostra desta leitura/).first()).toBeVisible();
   await expect(page.getByText(/18 pessoas em 2 unidades/).first()).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
-  await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeHidden();
-  await page.getByText('Mapa e recortes publicados').click();
-  await expect(page.getByText('Mapa de contraste e cobertura').first()).toBeVisible();
   await expect(page.getByText('Aguarde mais respostas')).toHaveCount(0);
   if (org.band !== 'high') {
     await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toHaveCount(0);
+    await expect(page.getByText('O que este caminho não resolve').first()).toBeVisible();
   }
-  await expect(page.getByText('Instrumento e calibração')).not.toBeVisible();
+  await expect(page.getByText('posterior exibido permanece provisório')).not.toBeVisible();
   const observed = await observeReport(page);
   if (expected.decision) expect(observed.decision).toMatch(expected.decision);
   expect(observed.limiter).not.toMatch(/e mais/i);
   expect(observed.reading.length).toBeGreaterThan(40);
   if (org.band !== 'high') {
-    await expect(page.getByText('O que este caminho não resolve').first()).toBeVisible();
     await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
   }
+  await page.getByRole('link', { name: 'Mapa' }).click();
+  await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Por capacidade' })).toBeVisible();
+  await page.getByRole('link', { name: 'Plano de tratamento' }).click();
+  await expect(page.getByRole('heading', { name: 'Quem faz o quê, e em que ordem' })).toBeVisible();
+  await page.getByRole('link', { name: 'Área: Operação' }).click();
+  await expect(page.getByRole('heading', { name: /Operação/ })).toBeVisible();
   await walkHomeToLeaf(page);
   return {
     id: expected.id,
@@ -143,14 +147,11 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
 }
 
 async function observeReport(page: Page) {
-  const interview = page.locator('.interview-report');
-  const reading = (await page.locator('.executive-reading').first().textContent())?.trim() ?? '';
-  const limiter = await interview.count()
-    ? (await page.locator('.interview-chapter > h2').first().textContent())?.trim() ?? ''
-    : (await page.locator('.outcome-scope').first().textContent())?.replace(/^Onde aparece:\s*/i, '').trim() ?? '';
-  const decision = await interview.count()
-    ? (await interview.locator('.tag').first().textContent())?.trim() ?? ''
-    : (await page.locator('.outcome-card > .tag').first().textContent())?.trim() ?? '';
+  const reading = (await page.locator('.executive-reading').first().textContent())?.trim()
+    ?? (await page.locator('.report-hero h1').first().textContent())?.trim()
+    ?? '';
+  const limiter = (await page.locator('.report-finding').first().textContent())?.trim() ?? '';
+  const decision = (await page.locator('a[aria-current="page"]').first().textContent())?.trim() ?? 'Laudo';
   const classificationLocator = page.locator('.classification-level').first();
   const classification = await classificationLocator.count()
     ? await classificationLocator.evaluate((el) => el.textContent?.trim() ?? '')
@@ -200,9 +201,10 @@ async function inspectBoundaryOrg(browser: Browser, org: SeededOrg, baseURL: str
   const page = await context.newPage();
   try {
     await page.goto(org.adminPath);
+    await page.getByRole('link', { name: 'Mapa' }).click();
     await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
     await expect(page.locator('.area-tile.observed a', { hasText: 'Engenharia' })).toBeVisible();
-    await expect(page.locator('.area-band', { hasText: 'Gestão' })).toBeVisible();
+    await expect(page.locator('.area-tile a', { hasText: 'Organização' })).toBeVisible();
     await expect(page.getByText(/responsab|fronteira|ownership/i).first()).toBeVisible();
     await walkHomeToLeaf(page);
   } finally {
@@ -215,6 +217,7 @@ async function inspectSecurityGovernanceOrg(browser: Browser, org: SeededOrg, ba
   const page = await context.newPage();
   try {
     await page.goto(org.adminPath);
+    await page.getByRole('link', { name: 'Mapa' }).click();
     await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
     await expect(page.getByText(/Segurança/i).first()).toBeVisible();
     await expect(page.getByText(/Governança/i).first()).toBeVisible();
@@ -242,6 +245,7 @@ async function inspectEngineeringPracticeOrg(browser: Browser, org: SeededOrg, b
 }
 
 async function walkHomeToLeaf(page: Page): Promise<void> {
+  if (!page.url().includes('/report/map')) await page.getByRole('link', { name: 'Mapa' }).click();
   const system = page.locator('.area-tile.observed a').first();
   await expect(system).toBeVisible();
   await system.click();

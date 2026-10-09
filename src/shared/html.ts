@@ -12,6 +12,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
   <title>${escapeHtml(title)} · Diagnóstico de engenharia</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap">
   <style>
     :root { color-scheme: light; --bg:#f3f1eb; --surface:#fffcf7; --ink:#1c1914; --muted:#5c584f; --line:#d8d2c6; --accent:#1d4f3e; --soft:#e7efe8; --critical:#b42318; --reactive:#d97706; --repeatable:#b78a00; --managed:#2563a8; --unknown:#7b8580; --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif; --sans:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif; }
     * { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 var(--sans) }
@@ -32,7 +33,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .capability-navigation { display:flex; align-items:center; gap:16px; margin:0 0 30px; padding:10px 14px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.72); box-shadow:0 5px 20px rgba(25,34,29,.035) }.back-link { flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:8px; background:var(--soft); color:var(--accent); font-weight:750; text-decoration:none }.back-link:hover,.back-link:focus-visible { background:#dcebe3; outline:2px solid transparent }.breadcrumb { display:flex; align-items:center; gap:8px; min-width:0; color:var(--muted); font-size:.9rem; overflow-x:auto; white-space:nowrap; scrollbar-width:thin }.breadcrumb a { color:var(--muted); text-decoration:none }.breadcrumb a:hover,.breadcrumb a:focus-visible { color:var(--accent); text-decoration:underline }.breadcrumb-separator { color:#9aa49e }.breadcrumb-current { color:var(--ink); font-weight:700 }
     .coverage { display:grid; grid-template-columns:auto minmax(120px,1fr); align-items:center; gap:12px; color:var(--muted); font-size:.9rem }.coverage-track { display:block; height:8px; overflow:hidden; border-radius:999px; background:var(--line) }.coverage-track span { display:block; height:100%; border-radius:inherit; background:var(--accent) }
     fieldset { border:0; padding:0; margin:24px 0 } legend { font-weight:750; font-size:1.15rem }.hierarchy-row { margin:10px 0 10px min(calc(var(--level) * 28px),45%); padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--bg); display:grid; grid-template-columns:24px minmax(180px,1fr) auto; gap:10px; align-items:center }.hierarchy-branch { color:var(--accent); font-weight:800 }.hierarchy-actions { display:flex; gap:7px; flex-wrap:wrap }.hierarchy-actions button,.compact { margin:0; padding:8px 11px; font-size:.88rem }.button.danger { background:#f5e9e7; color:#8a3026 }.form-error { color:#9a2e22; min-height:1.5em; font-weight:650 }
-    .area-map-systems { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:12px 0 8px }
+    .area-map-systems { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:12px 0 8px }
     .area-tile { background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:20px }
     .area-tile.unobserved { color:var(--muted) }
     .area-tile.observed { border-color:var(--accent) }
@@ -160,7 +161,41 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .showcase-report { margin:18px 0 8px; padding-top:12px; border-top:1px solid var(--line) }
     article.card > .tag { margin-bottom:8px }
     details.methodology > article { margin:16px 0 }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} }
+    body:has(.diagnostic-report) main { width:min(1440px, calc(100% - 24px)); margin:0 auto 48px }
+    .diagnostic-report { --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-soft:#DCEAE8; --accent-ink:#0A4B51; --sunk:#EFE9DE; --ochre:#94560F; --red:#A2372A; --red-soft:#F6E3DE; --na:#B9B2A7; display:flex; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:15px; line-height:1.5 }
+    .diagnostic-report[data-theme="escuro"] { --bg:#171614; --surface:#211F1C; --ink:#EDE8DF; --ink2:#CBC3B6; --ink3:#A89F91; --rule:#3A3631; --accent:#5FB0B0; --accent-soft:#1C3435; --accent-ink:#8FD0CF; --sunk:#1B1A17; --ochre:#E0A35C; --red:#E8826F; --red-soft:#3C2420; --na:#6A645B; color-scheme:dark }
+    .report-sidebar { width:248px; flex:none; box-sizing:border-box; padding:40px 20px; border-right:1px solid var(--rule); background:var(--sunk); display:flex; flex-direction:column; gap:28px }
+    .report-brand { display:flex; flex-direction:column; gap:4px; padding:0 12px }
+    .report-brand strong { font-family:Newsreader, Georgia, serif; font-size:20px; font-weight:600; line-height:1.2 }
+    .report-brand span, .report-sidebar-note { color:var(--ink3); font-size:13px }
+    .report-sidebar nav { display:flex; flex-direction:column; gap:2px }
+    .report-sidebar a { display:block; padding:8px 12px; border-radius:6px; color:var(--ink2); text-decoration:none; font-size:14px }
+    .report-sidebar a[aria-current="page"] { background:var(--accent-soft); color:var(--accent-ink); font-weight:600 }
+    .report-sidebar-note { margin-top:auto; padding:0 12px; font-size:12px; line-height:1.5 }
+    .report-theme { margin:0 12px; background:transparent; color:var(--accent-ink); border:1px solid var(--rule); border-radius:6px; padding:8px 12px }
+    .report-main { flex:1; min-width:0; padding:40px 48px 72px }
+    .report-hero h1, .report-block h2 { font-family:Newsreader, Georgia, serif; font-weight:500 }
+    .report-hero h1 { font-size:46px; line-height:1.1; margin:0 0 12px }
+    .report-kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3) }
+    .report-note, .report-gap { color:var(--ink2) }
+    .report-block { display:grid; grid-template-columns:200px minmax(0,1fr); gap:8px 40px; border-top:1px solid var(--rule); padding-top:28px; margin-top:28px }
+    .report-block h2 { grid-column:1; grid-row:1; margin:0; font-size:15px; font-weight:600 }
+    .report-block > :not(h2) { grid-column:2 }
+    .report-finding, .report-conduct { margin:0 0 16px }
+    .report-index { font-family:Newsreader, Georgia, serif; font-size:40px; line-height:1; margin:0 }
+    .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--rule); color:var(--ink3); font-size:13px }
+    .report-tabs { display:flex; gap:4px; padding:4px; background:var(--sunk); border-radius:10px; width:max-content; margin:24px 0 }
+    .report-tabs a { min-height:44px; padding:0 20px; border-radius:8px; display:inline-flex; align-items:center; text-decoration:none; color:var(--ink2) }
+    .report-tabs a[aria-selected="true"] { background:var(--surface); color:var(--ink); font-weight:600 }
+    .report-matrix { width:100%; border-collapse:collapse }
+    .report-matrix th, .report-matrix td { border-bottom:1px solid var(--rule); padding:8px; text-align:left }
+    .na-cell { color:var(--na) }
+    .readiness { padding:2px 10px; border-radius:999px; font-weight:700; font-size:12px }
+    .readiness.ready { color:var(--accent-ink); background:var(--accent-soft) }
+    .readiness.near { color:var(--ink); background:#F5E6D0 }
+    .readiness.blocked { color:var(--red); background:var(--red-soft) }
+    .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:32px} .report-main{padding:24px 16px 48px} .area-map-systems{grid-template-columns:1fr} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>

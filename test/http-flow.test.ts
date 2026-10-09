@@ -47,7 +47,7 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(firstRespond.body, /minuto/);
   assert.match(firstRespond.body, /Guarde este endereço para retomar/);
   assert.match(invitationPage.body, /guarde o endereço depois do primeiro acesso/);
-  assert.match(dashboard.body, /O que as entrevistas mostraram/);
+  assert.match(dashboard.body, /Diagnóstico da área de tecnologia/);
   assert.match(dashboard.body, /Operação do piloto/);
   assert.match(dashboard.body, /Instrumento e calibração/);
   assert.ok(dashboard.body.indexOf('Operação do piloto') < dashboard.body.indexOf('Instrumento e calibração'));
@@ -96,10 +96,9 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(completed.body, /não são exibidos novamente/);
   db.prepare('UPDATE projects SET minimum_group_size = 1').run();
   const report = await app.inject({ method: 'GET', url: managementUrl });
-  assert.match(report.body, /Sistemas da organização/);
-  assert.match(report.body, /Engenharia/);
+  assert.match(report.body, /Diagnóstico da área de tecnologia/);
+  assert.match(report.body, /Engenharia|Achados|Laudo/);
   assert.match(report.body, /Diagnóstico/);
-  assert.match(report.body, /O que as entrevistas mostraram/);
   assert.match(report.body, /Operação do piloto/);
   assert.match(report.body, /Instrumento e calibração/);
   assert.match(report.body, /Calibração do modelo/);
@@ -108,18 +107,15 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   assert.match(report.body, /Consistência do comportamento no elo limitante/);
   assert.doesNotMatch(report.body, /Risco gerencial/);
   assert.doesNotMatch(report.body, /Resumo executivo/);
-  assert.match(report.body, /Mapa de contraste e cobertura/);
-  assert.match(report.body, /Problemas publicados|O que está acontecendo/);
-  assert.ok(
-    Math.min(
-      ...['Problemas publicados', 'O que está acontecendo']
-        .map((marker) => report.body.indexOf(marker))
-        .filter((index) => index >= 0),
-    ) < report.body.indexOf('Consistência do comportamento no elo limitante'),
-  );
-  assert.ok(report.body.indexOf('Sistemas da organização') < report.body.indexOf('Gerar convites individuais'));
-  const areaUrl = report.body.match(/href="([^"]+\/areas\/[^"]+)"/)?.[1];
-  const capabilityFromHome = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
+  assert.match(report.body, /href="[^"]+\/report\/map"/);
+  assert.match(report.body, /O que está acontecendo/);
+  assert.ok(report.body.indexOf('O que está acontecendo') < report.body.indexOf('Consistência do comportamento no elo limitante'));
+  assert.ok(report.body.indexOf('Laudo') < report.body.indexOf('Gerar convites individuais'));
+  const mapHref = report.body.match(/href="([^"]+\/report\/map)"/)?.[1];
+  const mapPage = mapHref ? await app.inject({ method: 'GET', url: mapHref }) : undefined;
+  const areaUrl = mapPage?.body.match(/href="([^"]+\/areas\/[^"]+)"/)?.[1];
+  const capabilityFromHome = report.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1]
+    ?? mapPage?.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
   const areaPage = areaUrl ? await app.inject({ method: 'GET', url: areaUrl }) : undefined;
   const capabilityUrl = capabilityFromHome ?? areaPage?.body.match(/href="([^"]+\/capabilities\/[^"]+)"/)?.[1];
   assert.ok(capabilityUrl);

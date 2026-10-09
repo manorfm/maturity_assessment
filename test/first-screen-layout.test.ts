@@ -183,45 +183,33 @@ test('first screen mostra a amostra que o experimento real precisa repetir', () 
   assert.match(html, /Delta \(9\)/);
   assert.doesNotMatch(html, /Para repetir com dados reais/);
   assert.doesNotMatch(html, /Calibração \(50–100/);
-  const sample = html.indexOf('Amostra desta leitura');
-  const problems = html.indexOf('Problemas publicados');
-  const systems = html.indexOf('Sistemas da organização');
-  assert.ok(sample >= 0 && sample < problems && problems < systems);
+  assert.match(html, /Amostra desta leitura/);
+  assert.match(html, /Achados/);
+  assert.doesNotMatch(html, /24%/);
 });
 
-test('first screen lista problemas por área com caminho e sustentação, não uma decisão única', () => {
+test('first screen é o laudo, com no máximo três achados e lacuna de índice', () => {
   const html = firstScreen();
-  const index = html.indexOf('Problemas publicados');
-  const product = html.indexOf('>Produto</');
-  const engineering = html.indexOf('>Engenharia</');
-  const management = html.indexOf('>Gestão</');
-  const systems = html.indexOf('Sistemas da organização');
-  const units = html.indexOf('Unidades');
-  assert.ok(index >= 0 && product > index && engineering > product && management > engineering && systems > management && units > systems);
-  assert.match(html, /class="interview-report"/);
-  assert.match(html, /5 problemas publicados/);
-  assert.match(html, /A decisão — se houver — é de quem autoriza/);
+  assert.match(html, /Diagnóstico da área de tecnologia/);
+  assert.match(html, /Motivo da avaliação/);
+  assert.match(html, /ainda não registrou o motivo/);
+  assert.match(html, /ainda não publica índice/);
+  assert.match(html, /Achados/);
   assert.match(html, /Não autorize todo o próximo ciclo|Não autorizar todo o próximo ciclo/);
-  assert.match(html, /Sustentação provisória alta/);
-  assert.match(html, /capacidade reservada para rever o resultado|Medir sem reservar capacidade/);
-  assert.match(html, /Impacto esperado/);
+  assert.match(html, /Sustentação forte/);
   assert.match(html, /O que este caminho não resolve/);
-  assert.doesNotMatch(html.slice(0, index + 80), /O que fazer agora/);
+  assert.match(html, /Produto ›/);
+  assert.match(html, /href="\/report\/map"/);
+  assert.match(html, /href="\/report\/treatment"/);
+  assert.match(html, /A lista de melhoria não fecha/);
+  assert.doesNotMatch(html, /class="interview-report"/);
   assert.doesNotMatch(html, /class="outcome-card compact"/);
-  assert.match(html, />Produto</);
-  assert.match(html, />Engenharia</);
-  assert.match(html, />Operação</);
-  assert.match(html, /Ver disciplinas/);
-  assert.match(html, /class="report-systems first-screen-systems"/);
-  assert.match(html, /class="card finding-index"/);
-  assert.match(html, /class="card scope-index"/);
-  assert.match(html, /Mapa de contraste e cobertura/);
-  assert.match(html, /<svg/);
-  assert.ok(html.indexOf('Sistemas da organização') < html.indexOf('Mapa de contraste e cobertura'));
-  assert.doesNotMatch(html, /Outros problemas/);
   assert.doesNotMatch(html, /Aguarde mais respostas/);
-  assert.doesNotMatch(html, /<article class="area-tile[^"]*">\s*(?:<a[^>]*>)?<h3>Gestão<\/h3>/);
-  assert.match(html, /<nav class="area-band" aria-label="Gestão"/);
+  assert.doesNotMatch(html, /aria-label="Gestão"/);
+  assert.doesNotMatch(html, /24%/);
+  const achados = html.indexOf('>Achados<');
+  const conduta = html.indexOf('Conduta para 30 dias');
+  assert.ok(achados >= 0 && conduta > achados);
 });
 
 test('outras restrições separam mecanismos e mostram o que cada um faz', () => {
