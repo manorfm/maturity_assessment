@@ -74,12 +74,14 @@ export function renderInterviewQuestion(input: {
 }
 
 export function renderInterviewComplete(): string {
-  const body = `<div class="interview-copy">
-    <p class="interview-kicker">Concluído</p>
-    <h1>Obrigado pela participação</h1>
-    <p class="interview-lead">Suas respostas foram registradas anonimamente. Por segurança, elas e o percurso não são exibidos novamente.</p>
+  const body = `<div class="interview-copy interview-complete">
+    <h1>Obrigado.</h1>
+    <p class="interview-lead">Suas respostas foram registradas de forma anônima.</p>
+    <p class="interview-lead">Elas vão se somar às de outras pessoas e só entram em resultados com 5 ou mais participantes.</p>
+    <p class="interview-lead">Por segurança, elas e o percurso não são exibidos novamente.</p>
+    <p class="interview-hint">Você já pode fechar esta página.</p>
   </div>`;
-  return renderInterviewShell({ title: 'Obrigado', body, progressLabel: 'entrevista concluída', progressPercent: 100 });
+  return renderInterviewShell({ title: 'Obrigado', body, progressLabel: 'concluído', progressPercent: 100 });
 }
 
 export function renderInterviewStatus(input: {

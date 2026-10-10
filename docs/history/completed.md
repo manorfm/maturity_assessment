@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — Chrome admin e superfícies alinhados ao design-graph
+
+- Administração, showcase, erros e conclusão da entrevista passam a usar o
+  mesmo sistema visual do protótipo maturity (`admin-view` + tokens
+  globais). Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-09 — Chrome da entrevista alinhado ao design-graph
 
 - `/respond` e estados de convite usam `interview-view` com tokens, tipografia

@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { AppError } from '../shared/errors.js';
 import { escapeHtml, layout } from '../shared/html.js';
+import { renderAdminShell } from '../modules/projects/admin-view.js';
 
 export function configureErrorHandling(app: FastifyInstance): void {
   app.setErrorHandler(async (error, request, reply) => {
@@ -35,7 +36,12 @@ export function configureErrorHandling(app: FastifyInstance): void {
 }
 
 function errorPage(requestId: string, message: string, title = 'Não foi possível continuar'): string {
-  return layout(title, `<div class="card"><p class="eyebrow">Referência ${escapeHtml(requestId)}</p><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p><p><a class="button secondary" href="/">Voltar ao início</a></p></div>`);
+  return layout(title, renderAdminShell({
+    title,
+    lead: message,
+    showSteps: false,
+    body: `<p class="muted">Referência ${escapeHtml(requestId)}</p><p class="admin-actions"><a class="button secondary" href="/">Voltar ao início</a></p>`,
+  }));
 }
 
 function isApiRequest(url: string): boolean {

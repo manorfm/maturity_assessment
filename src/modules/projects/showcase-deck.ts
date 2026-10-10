@@ -4,6 +4,7 @@ import { InferenceService } from '../inference/inference-service.js';
 import { POC_SYNTHETIC_ORGS, type MaturityBand, type PocSyntheticOrg } from '../inference/domain/organizational-synthetic.js';
 import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
 import { uniqueFindingsByPattern } from '../inference/domain/report-outcome.js';
+import { renderAdminShell } from './admin-view.js';
 
 export type ShowcaseManifestEntry = {
   caseId?: string;
@@ -44,12 +45,12 @@ export function renderShowcaseDeck(simulations: ShowcaseSimulation[]): string {
   const summary = count
     ? `<p class="showcase-summary"><strong>${count} ${count === 1 ? 'organização simulada' : 'organizações simuladas'}.</strong> Mesmo produto, três situações. A madura ainda publica um resto concreto — não uma lista genérica.</p>`
     : '<p class="showcase-summary"><strong>Ainda não há simulações semeadas.</strong> Rode o showcase para criar as três organizações e publicar os relatórios no mesmo motor da jornada real.</p>';
-  return layout('Simulações do relatório', `
-    <header class="showcase-deck">
-      <p class="eyebrow">Demonstração do produto</p>
-      <h1>Simulações do relatório</h1>
-      <p class="lead">Três projetos passaram por entrevistas no mesmo motor. Cada cartão separa a situação, o problema observado e o caminho possível. Quem autoriza decide depois de ler.</p>
-    </header>
+  return layout('Simulações do relatório', renderAdminShell({
+    title: 'Simulações do relatório',
+    lead: 'Três projetos passaram por entrevistas no mesmo motor. Cada cartão separa a situação, o problema observado e o caminho possível. Quem autoriza decide depois de ler.',
+    showSteps: false,
+    status: 'Demonstração',
+    body: `<div class="showcase-shell">
     <section class="showcase-howto">
       <h2>Como o sistema funciona</h2>
       <ol class="showcase-steps">
@@ -69,7 +70,8 @@ export function renderShowcaseDeck(simulations: ShowcaseSimulation[]): string {
       <p>A POC repete o mesmo percurso com os eventos de vocês: <strong>18 pessoas em duas unidades</strong>, no mínimo 5 em cada, com trilhas complementares.</p>
       <p>Esta página simula as entrevistas no mesmo motor. Não é calibração e não substitui as pessoas do recorte.</p>
     </section>
-  `);
+    </div>`,
+  }));
 }
 
 function renderSimulation(entry: ShowcaseSimulation): string {

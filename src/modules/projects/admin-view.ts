@@ -1,0 +1,78 @@
+import { escapeHtml } from '../../shared/html.js';
+
+const BRAND = 'Anamnese de Tecnologia';
+const TOKEN_STYLE = '--bg:#F6F2EA;--surface:#FFFDF8;--sunk:#EFE9DE;--ink:#1E1C19;--ink2:#46413A;--ink3:#625B51;--rule:#DCD4C6;--accent:#0D5C63;--accent-ink:#0A4B51;--accent-soft:#DCEAE8;--on-accent:#FFFFFF;--red:#A2372A;--red-soft:#F6E3DE;--ochre:#94560F;--ochre-soft:#F5E6D0;--na:#B9B2A7;--na-ink:#5E584E;--focus:#0D5C63';
+
+export type AdminStep = 'project' | 'structure' | 'invites' | 'terms';
+
+const STEPS: Array<{ id: AdminStep; number: string; label: string }> = [
+  { id: 'project', number: '1', label: 'Projeto' },
+  { id: 'structure', number: '2', label: 'Estrutura' },
+  { id: 'invites', number: '3', label: 'Convites e participação' },
+  { id: 'terms', number: '4', label: 'Termo de uso' },
+];
+
+export function renderAdminShell(input: {
+  title: string;
+  lead?: string;
+  step?: AdminStep;
+  projectName?: string;
+  status?: string;
+  body: string;
+  stepHrefs?: Partial<Record<AdminStep, string>>;
+  showSteps?: boolean;
+}): string {
+  const status = input.status
+    ? `<span class="admin-status">${escapeHtml(input.status)}</span>`
+    : '';
+  const projectLabel = input.projectName
+    ? `<span>${escapeHtml(input.projectName)}</span>${status}`
+    : status || '<span>Administração do diagnóstico</span>';
+  const heading = input.lead
+    ? `<div class="admin-heading"><h2>${escapeHtml(input.title)}</h2><p>${escapeHtml(input.lead)}</p></div>`
+    : `<div class="admin-heading"><h2>${escapeHtml(input.title)}</h2></div>`;
+  const nav = input.showSteps === false || !input.step
+    ? ''
+    : `<nav aria-label="Etapas do projeto" class="admin-steps">${STEPS.map((step) => {
+      const current = step.id === input.step;
+      const href = input.stepHrefs?.[step.id];
+      const attrs = current ? ' aria-current="step"' : '';
+      const className = current ? 'admin-step current' : 'admin-step';
+      const mark = `<span class="admin-step-mark">${escapeHtml(step.number)}</span>${escapeHtml(step.label)}`;
+      return href
+        ? `<a class="${className}" href="${escapeHtml(href)}"${attrs}>${mark}</a>`
+        : `<span class="${className}"${attrs}>${mark}</span>`;
+    }).join('')}</nav>`;
+  return `<div class="admin" data-theme="claro" style="${TOKEN_STYLE};font-family:'IBM Plex Sans',sans-serif">
+  <header class="admin-top">
+    <div class="admin-brand"><strong style="font-family:Newsreader,Georgia,serif">${escapeHtml(BRAND)}</strong><span>Administração</span></div>
+    <div class="admin-top-meta">${projectLabel}</div>
+  </header>
+  <div class="admin-body">
+    ${nav}
+    <main class="admin-main">${heading}${input.body}</main>
+  </div>
+</div>`;
+}
+
+export function renderAdminMetric(label: string, value: string | number, hint: string): string {
+  return `<div class="admin-metric"><div class="admin-metric-label">${escapeHtml(label)}</div><div class="admin-metric-value">${escapeHtml(value)}</div><div class="admin-metric-hint">${escapeHtml(hint)}</div></div>`;
+}
+
+export function renderAdminAside(title: string, paragraphs: string[]): string {
+  return `<aside class="admin-aside"><div class="admin-aside-title">${escapeHtml(title)}</div>${paragraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join('')}</aside>`;
+}
+
+export function renderTermsPanel(orgName: string): string {
+  const items = [
+    ['1', 'Sem uso individual', 'Os resultados descrevem o sistema de trabalho. Não serão usados para avaliar, promover, desligar ou comparar pessoas.'],
+    ['2', 'Sem bônus', 'Nenhum índice deste diagnóstico será meta de remuneração variável, bônus ou objetivo individual.'],
+    ['3', 'Mínimo de 5 pessoas', 'Recortes com menos de 5 pessoas não são exibidos e aparecem agregados ao nível acima. Não há acesso a respostas individuais.'],
+    ['4', 'Sem ranking', 'O relatório não ordena times ou pessoas por resultado.'],
+    ['5', 'Divulgação aos respondentes', 'Um resumo dos achados deve ser apresentado a quem participou após a entrega do laudo.'],
+  ];
+  return `<div class="admin-terms" id="termo">
+    <div class="admin-terms-title">Pacto de uso entre ${escapeHtml(orgName)} e a Anamnese de Tecnologia</div>
+    <ol>${items.map(([n, title, body]) => `<li><span>${escapeHtml(n)}</span><div><strong>${escapeHtml(title)}</strong><p>${escapeHtml(body)}</p></div></li>`).join('')}</ol>
+  </div>`;
+}

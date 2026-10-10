@@ -47,9 +47,10 @@ test('pergunta separa práticas de saídas observacionais e mostra progresso', (
 
 test('conclusão da entrevista segue o tom do protótipo', () => {
   const html = renderInterviewComplete();
-  assert.match(html, /Obrigado/);
-  assert.match(html, /registradas/);
+  assert.match(html, /Obrigado\./);
+  assert.match(html, /registradas de forma anônima/);
   assert.match(html, /não são exibidos novamente/);
+  assert.match(html, /aria-valuenow="100"/);
 });
 
 test('rota /respond serve o chrome de entrevista do design-graph', async () => {

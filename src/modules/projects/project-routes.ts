@@ -29,6 +29,7 @@ import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, projectFrontierPage, projectHistoryPage, projectReadinessPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
+import { renderAdminAside, renderAdminMetric, renderAdminShell, renderTermsPanel } from './admin-view.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -62,22 +63,7 @@ export function renderAudienceBriefs(reports: AudienceReports, capabilityBase: s
   return executive || technology || policyCard ? `<section class="audience-briefs">${policyCard}${executive}${technology}</section>` : '';
 }
 
-const projectForm = () => layout('Novo projeto', `
-  <header><p class="eyebrow">Diagnóstico de engenharia</p><h1>Crie um mapa do sistema de trabalho</h1>
-  <p class="lead">Configure a estrutura, distribua convites anônimos e observe gargalos sem avaliar pessoas ou premiar ferramentas.</p></header>
-  <form class="card" method="post" action="/projects">
-    <label for="name">Nome do projeto</label><input id="name" name="name" required maxlength="100" placeholder="Assessment da Tribo Digital">
-    <fieldset class="hierarchy-editor" data-hierarchy-editor>
-      <legend>Estrutura organizacional</legend>
-      <p class="muted">Monte a árvore com os nomes usados na sua organização. Convites serão gerados somente para as unidades finais.</p>
-      <div data-hierarchy-tree></div>
-      <button class="button secondary compact" type="button" data-add-root>Adicionar unidade raiz</button>
-      <p class="form-error" role="alert" data-hierarchy-error></p>
-    </fieldset>
-    <input type="hidden" name="hierarchy" data-hierarchy-value required>
-    <button type="submit" data-create-project disabled>Criar projeto</button>
-  </form>
-  <script>
+const hierarchyEditorScript = `<script>
     (()=>{
       const tree=document.querySelector('[data-hierarchy-tree]');
       const value=document.querySelector('[data-hierarchy-value]');
@@ -116,15 +102,50 @@ const projectForm = () => layout('Novo projeto', `
       document.querySelector('[data-add-root]').addEventListener('click',()=>{if(nodes.length>=200)return;nodes.push({id:String(++sequence),parentId:null,name:''});render()});
       render();
     })();
-  </script><p><a href="/projects/access">Já possui um projeto? Acessar painel</a></p>`);
+  </script>`;
 
-const projectAccessForm = () => layout('Acessar projeto', `
-  <header><p class="eyebrow">Projeto existente</p><h1>Acesse o painel protegido</h1><p class="lead">Use o identificador e a chave administrativa entregues na criação do projeto.</p></header>
-  <form class="card" method="post" action="/projects/access">
-    <label for="publicId">Identificador do projeto</label><input id="publicId" name="publicId" required autocomplete="off">
-    <label for="adminSecret">Chave administrativa</label><input id="adminSecret" name="adminSecret" type="password" required autocomplete="current-password">
-    <button type="submit">Acessar relatório</button>
-  </form><p><a href="/projects/new">Criar outro projeto</a></p>`);
+const projectForm = () => layout('Novo projeto', renderAdminShell({
+  title: 'Novo diagnóstico',
+  lead: 'Descreva o que motivou a avaliação e monte a estrutura com os nomes usados no dia a dia. Convites só nascem nas unidades finais.',
+  step: 'project',
+  stepHrefs: { project: '/projects/new', structure: '#estrutura' },
+  body: `<div class="admin-panel">
+    <form class="admin-form" method="post" action="/projects">
+      <div><label for="name">Nome do projeto</label><input id="name" name="name" required maxlength="100" placeholder="Diagnóstico 2026 — Orbital Pagamentos"></div>
+      <fieldset class="hierarchy-editor" id="estrutura" data-hierarchy-editor>
+        <legend>Estrutura organizacional</legend>
+        <p class="muted">Monte a árvore com os nomes usados na sua organização. Convites serão gerados somente para as unidades finais.</p>
+        <div data-hierarchy-tree></div>
+        <button class="button secondary compact" type="button" data-add-root>Adicionar unidade raiz</button>
+        <p class="form-error" role="alert" data-hierarchy-error></p>
+      </fieldset>
+      <input type="hidden" name="hierarchy" data-hierarchy-value required>
+      <div class="admin-actions"><button type="submit" data-create-project disabled>Criar projeto</button>
+      <a class="button secondary" href="/projects/access">Já possui um projeto? Acessar painel</a></div>
+    </form>
+    ${renderAdminAside('Como o contexto é usado', [
+      'O nome e a estrutura orientam a leitura do relatório. Eles não mudam as perguntas nem os índices.',
+      'Times com menos de 5 respondentes aparecem agregados ao nível acima.',
+    ])}
+  </div>${hierarchyEditorScript}`,
+}));
+
+const projectAccessForm = () => layout('Acessar projeto', renderAdminShell({
+  title: 'Acesse o painel protegido',
+  lead: 'Use o identificador e a chave administrativa entregues na criação do projeto.',
+  showSteps: false,
+  body: `<div class="admin-panel">
+    <form class="admin-form" method="post" action="/projects/access">
+      <div><label for="publicId">Identificador do projeto</label><input id="publicId" name="publicId" required autocomplete="off"></div>
+      <div><label for="adminSecret">Chave administrativa</label><input id="adminSecret" name="adminSecret" type="password" required autocomplete="current-password"></div>
+      <div class="admin-actions"><button type="submit">Acessar relatório</button>
+      <a class="button secondary" href="/projects/new">Criar outro projeto</a></div>
+    </form>
+    ${renderAdminAside('Acesso administrativo', [
+      'O link do painel não registra participação. Respostas só entram por convite individual.',
+    ])}
+  </div>`,
+}));
 
 export function registerProjectRoutes(app: FastifyInstance, db: Database): void {
   const projects = new ProjectService(db);
@@ -152,7 +173,13 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const { publicId } = request.params as { publicId: string };
     const project = db.prepare('SELECT name FROM projects WHERE public_id = ?').get(publicId) as { name: string } | undefined;
     if (!project) throw new ResourceNotFoundError('Projeto não encontrado.');
-    return reply.type('text/html').send(layout(project.name, `<div class="card"><p class="eyebrow">${escapeHtml(project.name)}</p><h1>Diagnóstico da organização</h1><p class="lead">Para responder, use seu convite individual. O link geral do projeto não registra participação.</p><p class="notice">As respostas são anônimas e só aparecem de forma agregada quando o grupo mínimo é atingido.</p></div>`));
+    return reply.type('text/html').send(layout(project.name, renderAdminShell({
+      title: 'Diagnóstico da organização',
+      lead: 'Para responder, use seu convite individual. O link geral do projeto não registra participação.',
+      projectName: project.name,
+      showSteps: false,
+      body: `${renderAdminAside('Anonimato', ['As respostas são anônimas e só aparecem de forma agregada quando o grupo mínimo é atingido.'])}`,
+    })));
   });
 
   const requireProject = (params: Params) => {
@@ -213,25 +240,45 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
     const audienceBriefs = renderAudienceBriefs(report.audienceReports, capabilityBase);
-    const batchCards = batches.map((batch) => `<article class="card"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
+    const issued = batches.reduce((sum, item) => sum + item.quantity, 0);
+    const batchCards = batches.map((batch) => `<article class="admin-batch"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
     const audienceArchive = audienceNavigation || audienceBriefs || perspectives
       ? `<details class="methodology"><summary>Leituras por público</summary>${audienceNavigation}${audienceBriefs}${perspectives}</details>`
       : '';
+    const adminOps = renderAdminShell({
+      title: 'Convites e participação',
+      lead: 'Acompanhe a participação por lote. Os números são sempre agregados por unidade.',
+      step: 'invites',
+      projectName: String(auth.project.name),
+      status: 'Coleta aberta',
+      stepHrefs: {
+        invites: '#operacao',
+        terms: '#termo',
+      },
+      body: `<div id="operacao" class="admin-metrics">
+        ${renderAdminMetric('Convites emitidos', issued, `em ${batches.length} ${batches.length === 1 ? 'lote' : 'lotes'}`)}
+        ${renderAdminMetric('Concluídos', report.completed, report.completed === 1 ? 'jornada concluída' : 'jornadas concluídas')}
+        ${renderAdminMetric('Mínimo do relatório', report.minimum, report.completed < report.minimum ? `faltam ${report.minimum - report.completed}` : 'limiar atingido')}
+        ${renderAdminMetric('Unidades finais', units.filter((unit) => unit.isLeaf).length, 'aptas a receber convites')}
+      </div>
+      <details class="methodology admin-footer" open><summary>Operação do piloto</summary>
+      <section class="admin-form"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
+        <label for="unitId">Unidade final</label><select id="unitId" name="unitId">${unitOptions}</select>
+        <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
+        <button type="submit">Gerar links</button></form></section>
+      ${batchCards ? `<section class="admin-batches"><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
+      <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details></details>
+      ${renderTermsPanel(String(auth.project.name))}
+      ${audienceArchive}
+      ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
+      ${previous}
+      <p class="admin-actions"><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`,
+    });
     return reply.type('text/html').send(layout(String(auth.project.name), `
       <div class="report-home">
       <header><p class="eyebrow">Diagnóstico</p><h1>${escapeHtml(auth.project.name)}</h1></header>
       <section id="report-diagnosis">${firstScreen}${reportAvailability}</section>
-      <details class="methodology admin-footer"><summary>Operação do piloto</summary><div class="grid"><div class="card"><div class="metric">${report.completed}</div><span class="muted">concluídas</span></div><div class="card"><div class="metric">${batches.reduce((sum,item)=>sum+item.quantity,0)}</div><span class="muted">convites emitidos</span></div></div>
-      <section class="card"><h2>Gerar convites individuais</h2><p class="muted">Os links servem para qualquer integrante da unidade. Cada pessoa informa sua perspectiva ao iniciar.</p><form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitations">
-        <label for="unitId">Unidade final</label><select id="unitId" name="unitId">${unitOptions}</select>
-        <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
-        <button type="submit">Gerar links</button></form></section>
-      ${batchCards ? `<section><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
-      <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details></details>
-      ${audienceArchive}
-      ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
-      ${previous}
-      <p><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>
+      ${adminOps}
       </div>`));
   });
 
@@ -1457,5 +1504,17 @@ export function diagnosticStrength(probability: number): string {
 function invitationLinksPage(protocol: string, host: string, tokens: string[], params: Params): string {
   const origin = `${protocol}://${host}`;
   const links = tokens.map((token) => `${origin}/invite/${token}`);
-  return layout('Convites gerados', `<header><p class="eyebrow">Convites únicos</p><h1>Distribua um link por pessoa</h1><p class="lead">Esta é a única vez em que os tokens aparecem juntos. Não associe nomes aos links na plataforma.</p></header><p class="notice">Peça que cada pessoa guarde o endereço depois do primeiro acesso para retomar. O convite original não reabre a entrevista.</p><div class="card"><ol id="invitation-links">${links.map((link) => `<li><code>${escapeHtml(link)}</code></li>`).join('')}</ol><button type="button" data-copy-links>Copiar todos os links</button><p class="muted" role="status" data-copy-status></p></div><a class="button" href="/projects/${params.publicId}/manage/${params.adminSecret}">Voltar ao painel</a><script>document.querySelector('[data-copy-links]')?.addEventListener('click',async()=>{const status=document.querySelector('[data-copy-status]');try{const links=[...document.querySelectorAll('#invitation-links code')].map(element=>element.textContent).join('\\n');await navigator.clipboard.writeText(links);status.textContent='Links copiados.'}catch{status.textContent='Não foi possível copiar. Selecione os links manualmente.'}})</script>`);
+  return layout('Convites gerados', renderAdminShell({
+    title: 'Distribua um link por pessoa',
+    lead: 'Esta é a única vez em que os tokens aparecem juntos. Não associe nomes aos links na plataforma.',
+    step: 'invites',
+    status: 'Lote emitido',
+    stepHrefs: { invites: `/projects/${params.publicId}/manage/${params.adminSecret}` },
+    body: `<p class="interview-notice">Peça que cada pessoa guarde o endereço depois do primeiro acesso para retomar. O convite original não reabre a entrevista.</p>
+      <div class="admin-batch"><ol id="invitation-links">${links.map((link) => `<li><code>${escapeHtml(link)}</code></li>`).join('')}</ol>
+      <div class="admin-actions"><button type="button" data-copy-links>Copiar todos os links</button>
+      <a class="button secondary" href="/projects/${params.publicId}/manage/${params.adminSecret}">Voltar ao painel</a></div>
+      <p class="muted" role="status" data-copy-status></p></div>
+      <script>document.querySelector('[data-copy-links]')?.addEventListener('click',async()=>{const status=document.querySelector('[data-copy-status]');try{const links=[...document.querySelectorAll('#invitation-links code')].map(element=>element.textContent).join('\\n');await navigator.clipboard.writeText(links);status.textContent='Links copiados.'}catch{status.textContent='Não foi possível copiar. Selecione os links manualmente.'}})</script>`,
+  }));
 }
