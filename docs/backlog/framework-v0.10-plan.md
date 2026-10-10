@@ -25,10 +25,10 @@ selecionável.
   demais sistemas de `diagnosticSystemCatalog` em noisy-OR (hipótese/unknown
   → causas/λ₀), com runtime no `inference-service`. Elicitação SHELF dos λ
   permanece aberta.
-- WP6 (parcial): seletor por bits/min com restrições e amostragem matricial
-  de folhas escassas; simulador de unidade cobre o critério de cobertura.
-  Cobertura de unidade no journey service (29 folhas) e rodízio de vinhetas
-  no grafo ainda abertos.
+- WP6 (parcial): seletor por bits/min com restrições; simulador de unidade;
+  `unitLeafCoverage` (29 folhas) e `selectWithUnitCoverage` no journey;
+  vinhetas semeadas fora do tronco com `selectVignette` (rodízio). Ligar
+  cobertura no caminho quente e vinhetas no tronco (WP7) ainda abertos.
 - WP7 (parcial): catálogo e auditoria dos tipos 07 (vinheta, leitura, grupo,
   lista, texto livre com flag off). Inserção no tronco do grafo, rodízio de
   vinhetas na jornada e fila de revisão humana no painel ainda abertos.

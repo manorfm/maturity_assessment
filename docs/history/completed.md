@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Cobertura de unidade e rodízio de vinhetas (WP6)
+
+- `unitLeafCoverage` / `selectWithUnitCoverage` no journey; vinhetas
+  adaptativas com `selectVignette`. Ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-10-10 — Famílias causais migradas no catálogo v11
 
 - Sistemas de `diagnosticSystemCatalog` viram `CausalFamily` noisy-OR

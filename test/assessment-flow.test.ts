@@ -191,7 +191,9 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   const invitations = new InvitationService(db);
   const participations = new ParticipationService(db);
   const catalog = new CatalogService(db);
-  assert.equal((db.prepare('SELECT COUNT(*) total FROM assessment_nodes').get() as { total: number }).total, graph.length);
+  const adaptiveVignettes = (db.prepare("SELECT COUNT(*) total FROM assessment_nodes WHERE node_key LIKE 'vignette-%'").get() as { total: number }).total;
+  assert.equal((db.prepare('SELECT COUNT(*) total FROM assessment_nodes').get() as { total: number }).total, graph.length + Number(adaptiveVignettes));
+  assert.ok(Number(adaptiveVignettes) >= 1, 'vinhetas adaptativas (06) entram fora do tronco');
   assert.ok(graph.length >= 15, 'a entrevista deve cobrir o SDLC além de um questionário raso');
   assert.deepEqual(graph[0]!.options.map((option) => option.id), profileIds);
   assert.equal(graph[0]!.options.every((option) => option.signals.length === 0), true);
@@ -404,7 +406,8 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
   assert.ok(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_hypotheses').get() as { total: number }).total) > 0);
   const oversizedFamily = db.prepare('SELECT family_key, COUNT(*) total FROM diagnostic_hypotheses GROUP BY family_key HAVING total > 2 LIMIT 1').get();
   assert.equal(oversizedFamily, undefined, 'causas simultâneas não devem competir em uma família categórica gigante');
-  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM question_observations').get() as { total: number }).total), graph.length);
+  const adaptiveVignetteObs = Number((db.prepare("SELECT COUNT(*) total FROM question_observations WHERE node_key LIKE 'vignette-%'").get() as { total: number }).total);
+  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM question_observations').get() as { total: number }).total), graph.length + adaptiveVignetteObs);
   const deliveryApplicability = db.prepare("SELECT applicability_patterns_json FROM question_observations WHERE node_key = 'delivery-cause'").get() as { applicability_patterns_json: string };
   assert.deepEqual(new Set(JSON.parse(deliveryApplicability.applicability_patterns_json) as string[]), new Set(['mudanca-isolada', 'integracao-por-janela']));
   const withoutCloudEfficiency = graph.map((node) => ({ ...node, options: node.options.map((option) => ({ ...option, signals: option.signals.filter((item) => !item.details?.includes('cloud-efficiency')) })) }));

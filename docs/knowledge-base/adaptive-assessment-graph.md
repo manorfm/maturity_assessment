@@ -253,8 +253,12 @@ que explicita ação, responsável provável, métrica, revisão e critério de 
 
 Após uma saída declarativa, o motor compara probes ainda não respondidos, visíveis
 à perspectiva e habilitados por padrões de contexto já observados. A escolha
-maximiza utilidade em **bits por minuto** sobre o ganho de informação causal
-(e cobertura de folhas da unidade ainda sem 2 testlets ou 2 perspectivas).
+maximiza utilidade em **bits por minuto** sobre o ganho de informação causal.
+O journey calcula cobertura matricial das 29 folhas na unidade
+(`unitLeafCoverage`) e expõe `selectWithUnitCoverage` para priorizar folhas
+com < 2 testlets ou < 2 perspectivas; o caminho quente do tronco ainda usa
+`selectAfterTerminal` até revalidar sintéticos m2. Vinhetas de ancoragem são
+semeadas fora do tronco; `selectVignette` aplica rodízio (≤ 2 por respondente).
 Restrições — testlet já respondido, orçamento de tempo, no máximo 2 itens
 seguidos da mesma folha, vinhetas ≤ 2 — filtram candidatos em vez de entrar
 como pesos. Hipóteses já reforçadas restringem o pool quando há candidato
