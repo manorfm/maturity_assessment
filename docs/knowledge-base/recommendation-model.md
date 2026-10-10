@@ -108,7 +108,11 @@ controle proporcional, não moda.
 O catálogo `causal-catalog-v11` materializa os cinco packs, as arestas
 `reinforces` e as famílias causais noisy-OR (05 §8): `late-integration`
 (calibrada em §8.4) mais os demais sistemas de `diagnosticSystemCatalog`,
-com proveniência dos parâmetros (provisórios até SHELF). O grafo vigente
+com proveniência tipada (`method`: provisional | prototype | shelf; versão;
+especialistas quando SHELF). `shelf-elicitation` converte a pergunta “em 100
+unidades…” em λ e `auditCausalCatalog` entra em `audit:instrument`. Sessões
+SHELF com 3–5 especialistas ainda não foram aplicadas às famílias vigentes
+(λ continuam provisórios/protótipo). O grafo vigente
 afunila o próximo probe para confirmar ou matar hipótese já reforçada. O
 projetor `diagnostic-report-v2` publica o laudo.
 A leitura geral só mostra índice com faixa quando há `IndexPublication`

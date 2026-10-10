@@ -1,9 +1,19 @@
 /** Família causal noisy-OR (05 §12). Substitui hipóteses mutuamente exclusivas + "desconhecido". */
 
+/** Origem dos λ / priors (05 §8.6). */
+export type ProvenanceMethod = 'provisional' | 'prototype' | 'shelf';
+
 export type ParameterProvenance = {
   author: string;
   date: string;
   rationale: string;
+  method: ProvenanceMethod;
+  /** Versão do pacote de parâmetros (catálogo ou sessão SHELF). */
+  version: string;
+  /** Obrigatório quando method = shelf (3–5). */
+  experts?: number;
+  /** ISO date-time da elicitação SHELF. */
+  elicitedAt?: string;
 };
 
 export type CausalCause = {

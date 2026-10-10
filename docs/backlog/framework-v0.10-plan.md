@@ -23,10 +23,10 @@ selecionável.
   `omegaForLeaf` no runtime; `lab/README` aponta protótipos e o fluxo de
   exportar `pooling` no JSON m2. Estimação Bayesian (κ, δ, ρ, ψ) e E0 com
   PyMC/Stan permanecem abertos.
-- WP5 (parcial): `causal-catalog-v11` cobre `late-integration` (§8.4) e os
-  demais sistemas de `diagnosticSystemCatalog` em noisy-OR (hipótese/unknown
-  → causas/λ₀), com runtime no `inference-service`. Elicitação SHELF dos λ
-  permanece aberta.
+- WP5 (parcial): `causal-catalog-v11` em noisy-OR com proveniência tipada,
+  `applyShelfSession` / `lambdaFromHundred` e auditoria no
+  `audit:instrument`. Aplicar sessões SHELF reais (3–5 especialistas) às
+  famílias e substituir λ provisórios permanece aberto.
 - WP6 (fechado no motor): seletor por bits/min; cobertura matricial no caminho
   quente (`selectAfterTerminal` = `selectWithUnitCoverage`); vinheta com
   rodízio. Simulador de unidade e §8.2 de aceitação de campo permanecem como

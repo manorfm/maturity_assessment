@@ -57,6 +57,8 @@ export const lateIntegrationFamily: CausalFamily = {
     author: 'framework-v0.10/05 §8.4',
     date: '2026-10-09',
     rationale: 'Parâmetros do protótipo de referência (anexo-B causal.py); provisórios até elicitação SHELF.',
+    method: 'prototype',
+    version: CAUSAL_CATALOG_VERSION,
   },
 };
 

@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Contrato SHELF e auditoria de λ (WP5)
+
+- Proveniência com `method`/`version`; `shelf-elicitation` e
+  `auditCausalCatalog` no instrumento. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-10 — ICC e ω no laboratório/runtime (WP10)
 
 - `icc.ts`: ICC(1)/ICC(2), k para 0,70 (09 §4), `ω = 1 − ICC(1)`; runtime

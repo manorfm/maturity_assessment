@@ -1,6 +1,8 @@
 import type { AssessmentNode } from './assessment-graph.js';
 import type { InterventionDefinition } from '../inference/domain/group-recommendation-engine.js';
 import { allowsImprovementFoundation } from '../inference/domain/solution-guidance.js';
+import { auditCausalCatalog } from '../inference/domain/causal-catalog-audit.js';
+import { causalCatalog } from '../inference/domain/causal-catalog.js';
 import { auditEvidenceMatrix } from './evidence-matrix-audit.js';
 import { measureInstrumentBaseline, type BaselineInput } from './instrument-baseline.js';
 import { auditItemCatalog } from './item-type-audit.js';
@@ -24,6 +26,7 @@ export function auditInstrument(nodes: AssessmentNode[], interventions: Record<s
     ...auditEvidenceMatrix(nodes),
     ...auditInterventions(interventions),
     ...auditItemCatalog(itemCatalog),
+    ...auditCausalCatalog(causalCatalog),
   ];
 }
 

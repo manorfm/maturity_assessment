@@ -131,6 +131,8 @@ export function causalFamilyFromSystem(system: DiagnosticSystemDefinition): Caus
       author: 'framework-v0.10/WP5 migration',
       date: '2026-10-09',
       rationale: `Parâmetros provisórios derivados do sistema diagnóstico ${system.id}; vazamento λ₀ substitui "unknown" até elicitação SHELF.`,
+      method: 'provisional',
+      version: 'causal-catalog-v11',
     },
   };
 }
