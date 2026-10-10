@@ -257,8 +257,9 @@ function decisionLimiter(leaves: CapabilityBranch[], stageLevel: number, finding
   const readyOnFloor = pool.filter((leaf) => boundTo(leaf, true));
   const readyAnywhere = searchable.filter((leaf) => boundTo(leaf, true));
   const withFinding = pool.filter((leaf) => boundTo(leaf));
-  const ranked = pick(coherent(notCloud(readyOnFloor)))
-    ?? pick(notCloud(readyAnywhere))
+  // Entre folhas com conduta ready, priorize a de maior prioridade (não só o nível mais baixo).
+  const ranked = pickReady(coherent(notCloud(readyOnFloor)), findings)
+    ?? pickReady(notCloud(readyAnywhere), findings)
     ?? pick(coherent(notCloud(withFinding)))
     ?? pick(notCloud(withFinding))
     ?? pick(withFinding)
@@ -271,6 +272,21 @@ function decisionLimiter(leaves: CapabilityBranch[], stageLevel: number, finding
 function pick(items: CapabilityBranch[]): CapabilityBranch | undefined {
   if (!items.length) return undefined;
   return [...items].sort((left, right) => left.level - right.level || right.confidence - left.confidence)[0];
+}
+
+function pickReady(items: CapabilityBranch[], findings: OutcomeFinding[]): CapabilityBranch | undefined {
+  if (!items.length) return undefined;
+  const readyPriority = (leaf: CapabilityBranch) => Math.max(0, ...findings
+    .filter((finding) => (
+      (finding.detailCapability === leaf.id || finding.affectedCapabilities?.includes(leaf.id))
+      && finding.prescription?.status !== 'investigate'
+    ))
+    .map((finding) => finding.priority));
+  return [...items].sort((left, right) => {
+    const byPriority = readyPriority(right) - readyPriority(left);
+    if (byPriority !== 0) return byPriority;
+    return left.level - right.level || right.confidence - left.confidence;
+  })[0];
 }
 
 function virtualLeaf(finding: OutcomeFinding): CapabilityBranch {
