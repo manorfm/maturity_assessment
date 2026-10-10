@@ -106,10 +106,11 @@ modernos, logo não há N2”. Segregação exigida por obrigação permanece
 controle proporcional, não moda.
 
 O catálogo `causal-catalog-v11` materializa os cinco packs, as arestas
-`reinforces` e a família `late-integration` em noisy-OR (05 §8), com
-proveniência dos parâmetros. O grafo vigente afunila o próximo probe para
-confirmar ou matar hipótese já reforçada. O projetor `diagnostic-report-v2`
-publica o laudo.
+`reinforces` e as famílias causais noisy-OR (05 §8): `late-integration`
+(calibrada em §8.4) mais os demais sistemas de `diagnosticSystemCatalog`,
+com proveniência dos parâmetros (provisórios até SHELF). O grafo vigente
+afunila o próximo probe para confirmar ou matar hipótese já reforçada. O
+projetor `diagnostic-report-v2` publica o laudo.
 A leitura geral só mostra índice com faixa quando há `IndexPublication`
 publicada. Cada conduta recebe Cynefin e grau de evidência A–D pela base
 da prática (`classifyEvidenceGrade`), não pelo suporte local da amostra.

@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Famílias causais migradas no catálogo v11
+
+- Sistemas de `diagnosticSystemCatalog` viram `CausalFamily` noisy-OR
+  (sem `unknown`; λ₀ = vazamento); `late-integration` permanece a referência
+  §8.4. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-10 — Partial pooling hierárquico no índice m2
 
 - `measureLeafAcrossUnits` aplica prior da mãe (sem a própria unidade) e o

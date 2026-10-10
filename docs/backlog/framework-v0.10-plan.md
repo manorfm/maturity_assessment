@@ -21,10 +21,10 @@ selecionável.
   e partial pooling hierárquico (unidade ← irmãos via mãe) no
   `measureIndex`. Fechado no motor; ω estimado por ICC no lab (WP10)
   permanece fora do runtime.
-- WP5 (parcial): `CausalFamily` + `causal-catalog-v11` com a família
-  `late-integration` (05 §8.4) e runtime noisy-OR no `inference-service`.
-  Converter as demais famílias do motor legado (hipótese/unknown → causas/λ₀)
-  e elicitação SHELF dos λ ainda estão abertos.
+- WP5 (parcial): `causal-catalog-v11` cobre `late-integration` (§8.4) e os
+  demais sistemas de `diagnosticSystemCatalog` em noisy-OR (hipótese/unknown
+  → causas/λ₀), com runtime no `inference-service`. Elicitação SHELF dos λ
+  permanece aberta.
 - WP6 (parcial): seletor por bits/min com restrições e amostragem matricial
   de folhas escassas; simulador de unidade cobre o critério de cobertura.
   Cobertura de unidade no journey service (29 folhas) e rodízio de vinhetas

@@ -1,10 +1,13 @@
 import type { CausalFamily } from './causal-family.js';
+import { causalFamilyFromSystem } from './causal-family-from-system.js';
+import { diagnosticSystemCatalog } from './problem-system.js';
 
 export const CAUSAL_CATALOG_VERSION = 'causal-catalog-v11';
 
 /**
  * Família de referência 05 §8.4 (integração tardia / explaining away).
  * λ e priors do protótipo anexo-B; proveniência explícita (provisória até SHELF).
+ * Substitui o sistema diagnóstico `integration-feedback` no catálogo v11.
  */
 export const lateIntegrationFamily: CausalFamily = {
   id: 'late-integration',
@@ -57,7 +60,11 @@ export const lateIntegrationFamily: CausalFamily = {
   },
 };
 
-export const causalCatalog: CausalFamily[] = [lateIntegrationFamily];
+const migratedFamilies: CausalFamily[] = diagnosticSystemCatalog
+  .filter((system) => system.id !== 'integration-feedback')
+  .map(causalFamilyFromSystem);
+
+export const causalCatalog: CausalFamily[] = [lateIntegrationFamily, ...migratedFamilies];
 
 export function causalFamilyById(id: string): CausalFamily | undefined {
   return causalCatalog.find((family) => family.id === id);

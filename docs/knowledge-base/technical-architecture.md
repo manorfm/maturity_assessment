@@ -225,9 +225,10 @@ motor nem nomeia pessoa.
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
 das perguntas e política são publicados com versão imutável no SQLite. O catálogo
-`causal-catalog-v11` adiciona `CausalFamily` com enumeração noisy-OR e
-beta-binomial. O caminho legado por padrão ainda atualiza em log-espaço e
-consome uma evidência por grupo correlacionado.
+`causal-catalog-v11` publica `CausalFamily` noisy-OR para todos os sistemas
+diagnósticos (`late-integration` + migração dos demais; `unknown` → λ₀).
+O caminho legado por padrão ainda atualiza em log-espaço e consome uma
+evidência por grupo correlacionado.
 O módulo `assessments` pede ao seletor adaptativo um aprofundamento somente depois
 do tronco obrigatório; no máximo cinco probes adicionais são escolhidos por
 utilidade em bits/minuto com restrições (06). Snapshots dessa decisão
