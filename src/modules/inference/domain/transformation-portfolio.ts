@@ -1,5 +1,6 @@
 import type { DecisionAuthority, FindingContainment } from './diagnostic-contract.js';
 import type { ConstraintKind } from './group-recommendation-engine.js';
+import { identifyPrimaryConstraint, type PrimaryConstraint } from './primary-constraint.js';
 import type { OutcomeFinding } from './report-outcome.js';
 
 export type TransformationPhase = 'stabilize' | 'shorten-feedback' | 'shared-capability' | 'operating-model' | 'adaptive-capability';
@@ -25,6 +26,7 @@ export type TransformationPortfolio = {
   version: 'transformation-portfolio-v1';
   sequence: TransformationStep[];
   conditioned: Array<{ pattern: string; title: string; condition: string }>;
+  primaryConstraint?: PrimaryConstraint;
 };
 
 type InterventionPolicy = Pick<TransformationStep, 'prerequisites' | 'incompatibilities' | 'riskDisplacement' | 'cost' | 'risk' | 'reversibility'>;
@@ -90,11 +92,24 @@ export class TransformationPortfolioPlanner {
       .filter((finding) => finding.prescription?.status === 'investigate' || finding.mechanism === 'undetermined')
       .map((finding) => ({ pattern: finding.pattern, title: finding.title, condition: finding.prescription?.reason ?? finding.missingEvidence ?? 'Discriminar mecanismo, contenção e autoridade antes de escolher a solução.' }));
     const ready = findings.filter((finding) => !conditioned.some((item) => item.pattern === finding.pattern));
-    const ranked = [...ready].sort((left, right) => phaseRank(phaseFor(left)) - phaseRank(phaseFor(right)) || right.priority - left.priority || left.pattern.localeCompare(right.pattern));
+    const primaryConstraint = identifyPrimaryConstraint(ready);
+    const ranked = [...ready].sort((left, right) => {
+      const phaseDelta = phaseRank(phaseFor(left)) - phaseRank(phaseFor(right));
+      if (phaseDelta !== 0) return phaseDelta;
+      const leftPrimary = primaryConstraint && causeMatches(left, primaryConstraint.causeId) ? 0 : 1;
+      const rightPrimary = primaryConstraint && causeMatches(right, primaryConstraint.causeId) ? 0 : 1;
+      if (leftPrimary !== rightPrimary) return leftPrimary - rightPrimary;
+      return right.priority - left.priority || left.pattern.localeCompare(right.pattern);
+    });
     const sequence: TransformationStep[] = [];
     for (const finding of ranked) {
       const phase = phaseFor(finding);
       const policy = policies[finding.mechanism ?? 'undetermined'] ?? defaultPolicy;
+      const subordinate = Boolean(
+        primaryConstraint
+        && !causeMatches(finding, primaryConstraint.causeId)
+        && finding.detailCapability === ready.find((item) => item.pattern === primaryConstraint.causeId)?.detailCapability,
+      );
       const predecessor = [...sequence].reverse().find((candidate) => {
         const candidateFinding = ready.find((item) => item.pattern === candidate.pattern);
         return candidateFinding?.detailCapability === 'team-ownership'
@@ -109,16 +124,28 @@ export class TransformationPortfolioPlanner {
         authority: finding.decisionAuthority ?? 'undetermined',
         containment: finding.containment ?? 'undetermined',
         prerequisites: [...policy.prerequisites],
-        dependsOn: predecessor ? [predecessor.pattern] : [],
-        incompatibilities: [...policy.incompatibilities],
+        dependsOn: predecessor ? [predecessor.pattern] : subordinate && primaryConstraint ? [primaryConstraint.causeId] : [],
+        incompatibilities: [
+          ...policy.incompatibilities,
+          ...(subordinate ? ['Adiada: aumenta a carga sobre a restrição principal enquanto ela não for elevada.'] : []),
+        ],
         riskDisplacement: policy.riskDisplacement,
         cost: policy.cost,
         risk: policy.risk,
         reversibility: policy.reversibility,
       });
     }
-    return { version: 'transformation-portfolio-v1', sequence, conditioned };
+    return {
+      version: 'transformation-portfolio-v1',
+      sequence,
+      conditioned,
+      ...(primaryConstraint ? { primaryConstraint } : {}),
+    };
   }
+}
+
+function causeMatches(finding: OutcomeFinding, causeId: string): boolean {
+  return finding.pattern === causeId || finding.causalAnalysis?.alternatives.includes(causeId) === true;
 }
 
 function phaseFor(finding: OutcomeFinding): TransformationPhase {

@@ -113,6 +113,10 @@ publica o laudo.
 A leitura geral só mostra índice com faixa quando há `IndexPublication`
 publicada. Cada conduta recebe Cynefin e grau de evidência A–D pela base
 da prática (`classifyEvidenceGrade`), não pelo suporte local da amostra.
+A biblioteca `systemic-archetypes-v1` publica arquétipo só com ≥ 2 elos
+observados ("padrão provável"). O portfólio escolhe a **restrição
+principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e
+limita a 3 condutas ativas por autoridade.
 O `interview-report-v1`
 continua a montar o dossiê de cada dor usado na ficha e no capítulo.
 O inventário por frente permanece no motor,

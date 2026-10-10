@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — Arquétipos e restrição principal no tratamento
+
+- Biblioteca de 8 arquétipos sistêmicos e escore de restrição (08 §3–§4)
+  no portfólio; plano limita 3 condutas ativas por autoridade. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-09 — Tipos de item 07 no catálogo
 
 - Contratos de vinheta, leitura, referente de grupo, técnica de lista e texto

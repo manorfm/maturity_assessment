@@ -10,6 +10,8 @@ export type TreatmentConduct = {
   cynefin?: CynefinDomain;
   evidenceGrade?: EvidenceGrade;
   doesNotSolve?: string;
+  archetype?: string;
+  prognosisWithoutTreatment?: string;
 };
 
 export function classifyCynefin(input: {

@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.111.0
+
+- Tratamento: arquétipos sistêmicos (padrão provável com ≥ 2 elos) e
+  restrição principal por escore no portfólio; no máximo 3 condutas
+  ativas por autoridade.
+
 ## 0.110.0
 
 - Catálogo de tipos de item 07 (vinheta, leitura, grupo, lista, texto livre).

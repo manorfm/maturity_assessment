@@ -7,6 +7,7 @@ import { assessReadiness, type PrerequisitePosterior, type ReadinessAssessment }
 import { learningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
 import { compareReadings, type IndexReading, type ReadingChange } from './reading-history.js';
 import { classifyCynefin, classifyEvidenceGrade, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
+import { primaryArchetypeFor } from './systemic-archetypes.js';
 
 export type ReportGap = { gap: string };
 
@@ -69,7 +70,8 @@ export function projectDiagnosticLaudo(input: {
     nodeId: finding.detailCapability,
     areas: Math.max(1, finding.affectedCapabilities?.length ?? 1),
   }));
-  const conduct = primary.slice(0, 3).map((finding) => conductFrom(finding));
+  const observedPatterns = published.map((finding) => finding.pattern);
+  const conduct = primary.slice(0, 3).map((finding) => conductFrom(finding, observedPatterns));
   const constraint = input.outcome.finding
     ? {
       title: input.outcome.limiterLabel,
@@ -114,7 +116,7 @@ function readingFrom(index?: IndexPublication): DiagnosticLaudo['reading'] {
   };
 }
 
-function conductFrom(finding: OutcomeFinding): TreatmentConduct {
+function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): TreatmentConduct {
   const guidance = guidanceFor(finding.pattern, finding.foundation, finding.title);
   const cynefin: CynefinDomain = classifyCynefin({
     ...(finding.mechanism ? { mechanism: finding.mechanism } : {}),
@@ -122,6 +124,7 @@ function conductFrom(finding: OutcomeFinding): TreatmentConduct {
     ...(finding.severity ? { severity: finding.severity } : {}),
     ...(finding.prescription?.status ? { prescription: finding.prescription.status } : {}),
   });
+  const archetype = primaryArchetypeFor([finding.pattern, ...observedPatterns]);
   return {
     action: finding.experiment?.action || finding.intervention || guidance.plainExplanation,
     owner: finding.experiment?.owner || 'Quem autoriza neste recorte',
@@ -134,6 +137,10 @@ function conductFrom(finding: OutcomeFinding): TreatmentConduct {
       ...(hasExplicitGuidance(finding.pattern) ? { matureReference: guidance.matureReference } : {}),
     }),
     doesNotSolve: guidance.doesNotSolve,
+    ...(archetype ? {
+      archetype: archetype.label,
+      prognosisWithoutTreatment: archetype.prognosisWithoutTreatment,
+    } : {}),
   };
 }
 
@@ -171,8 +178,22 @@ export function projectAudienceVerbs(finding: OutcomeFinding): AudienceVerb[] {
 
 export function projectTreatmentPlan(findings: OutcomeFinding[]): { active: TreatmentConduct[]; later: TreatmentConduct[] } {
   const published = uniqueFindingsByPattern(findings).filter((finding) => finding.confidence >= 0.5);
-  const conducts = published.map(conductFrom);
-  return { active: conducts.slice(0, 3), later: conducts.slice(3, 6) };
+  const observedPatterns = published.map((finding) => finding.pattern);
+  const conducts = published.map((finding) => conductFrom(finding, observedPatterns));
+  // No máximo 3 condutas ativas por nível de autoridade (08 §7).
+  const active: TreatmentConduct[] = [];
+  const later: TreatmentConduct[] = [];
+  const byAuthority = new Map<TreatmentConduct['authority'], number>();
+  for (const conduct of conducts) {
+    const count = byAuthority.get(conduct.authority) ?? 0;
+    if (count < 3 && active.length < 9) {
+      active.push(conduct);
+      byAuthority.set(conduct.authority, count + 1);
+    } else {
+      later.push(conduct);
+    }
+  }
+  return { active, later: later.slice(0, 6) };
 }
 
 export function projectReadinessPage(practices: Array<{ id: string; label: string; prerequisites?: PrerequisitePosterior[]; technicalPhase?: number }>): Array<{ id: string; label: string; assessment?: ReadinessAssessment; gap?: string }> {

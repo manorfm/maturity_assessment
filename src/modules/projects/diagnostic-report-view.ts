@@ -92,8 +92,11 @@ function renderConduct(item: TreatmentConduct, order: number): string {
   const grade = item.evidenceGrade
     ? `<p>Grau de evidência ${item.evidenceGrade}: ${escapeHtml(evidenceGradeReading[item.evidenceGrade])}.</p>`
     : '';
+  const archetype = item.archetype
+    ? `<p>Arquétipo (padrão provável): ${escapeHtml(item.archetype)}.${item.prognosisWithoutTreatment ? ` Sem tratamento: ${escapeHtml(item.prognosisWithoutTreatment)}` : ''}</p>`
+    : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
-  return `<article class="report-conduct"><p class="report-kicker">${order || ''}</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${limit}</article>`;
+  return `<article class="report-conduct"><p class="report-kicker">${order || ''}</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${archetype}${limit}</article>`;
 }
 
 function renderFooter(laudo: DiagnosticLaudo): string {

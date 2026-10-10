@@ -32,9 +32,9 @@ novo.
 - WP7 (parcial): catálogo e auditoria dos tipos 07 (vinheta, leitura, grupo,
   lista, texto livre com flag off). Inserção no tronco do grafo, rodízio de
   vinhetas na jornada e fila de revisão humana no painel ainda abertos.
-- WP9: Cynefin e grau A–D classificam a conduta pela base da prática
-  (`classifyEvidenceGrade`). A ainda exige `replicated`; biblioteca de
-  arquétipos e restrição por escore de 08 §4 continuam abertas.
+- WP9 (parcial): Cynefin, grau A–D, arquétipos `systemic-archetypes-v1` e
+  restrição principal por escore no portfólio. Pulso (itens-âncora) e grau
+  A com `replicated` explícito no catálogo de condutas ainda abertos.
 - WP12 a WP14, WP16 a WP19: sofisticação, capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP15: comparador de duas leituras com faixa. Sem duas fotografias de índice, a página diz a lacuna.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
