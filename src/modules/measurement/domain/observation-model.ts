@@ -4,6 +4,8 @@ export type TestletItem = {
   chosen: Stage;
   anchors: Stage[];
   discrimination: Discrimination;
+  /** Identificador do testlet (nó ou âncora de evento); distingue itens independentes. */
+  testletId?: string;
 };
 
 export type RespondentBundle = {

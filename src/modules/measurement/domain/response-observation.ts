@@ -56,6 +56,7 @@ export function bundlesByLeaf(observations: ResponseObservation[]): Map<string, 
         chosen: link.anchorStage as Stage,
         anchors: [0, 1, 2, 3, 4],
         discrimination: link.discrimination,
+        testletId: lookup.testlet,
       };
       const existing = current.byTestlet.get(lookup.testlet);
       if (!existing || discriminationRank[item.discrimination] > discriminationRank[existing.discrimination]) {

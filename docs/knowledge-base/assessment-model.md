@@ -82,10 +82,11 @@ discriminação, camada, restrição e, quando couber, `appropriation`
 está em `m1` (padrão), um adaptador deriva `signals[]` (peso −2..+2) a partir
 da evidência. Em `m2`, o módulo `measurement` calcula posterior por unidade
 (05 §3–§7), agregação com elo limitante e regra de publicação; o laudo só
-mostra índice quando a publicação passa. Projetos novos nascem em `m1` até
-os sintéticos do showcase passarem no modelo novo. A auditoria do
-instrumento bloqueia prática sem `evidence[]` e alerta folhas com testlets
-ou âncoras altas escassos.
+mostra índice quando a publicação passa. Os sintéticos do showcase, em `m2`,
+publicam índice ordenado opaco < reativo < adaptativo; projetos novos ainda
+nascem em `m1` até a promoção explícita a padrão. A auditoria do instrumento
+bloqueia prática sem `evidence[]` e alerta folhas com testlets ou âncoras
+altas escassos.
 
 ## Contexto não é evidência
 

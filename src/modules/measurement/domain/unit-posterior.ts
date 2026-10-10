@@ -62,9 +62,9 @@ export function unitPosterior(input: {
 function distinctTestlets(responses: RespondentBundle[]): number {
   const keys = new Set<string>();
   for (const respondent of responses) {
-    for (const item of respondent.items) {
-      keys.add(`${item.discrimination}:${[...item.anchors].sort((a, b) => a - b).join(',')}`);
-    }
+    respondent.items.forEach((item, index) => {
+      keys.add(item.testletId ?? `${item.discrimination}:${[...item.anchors].sort((a, b) => a - b).join(',')}:${index}`);
+    });
   }
   return keys.size;
 }

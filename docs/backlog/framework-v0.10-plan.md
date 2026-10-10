@@ -18,9 +18,10 @@ novo.
 - WP4 (parcial): módulo `measurement` reproduz 05 §5.1/§7.3; projetos
   têm `measurement_model` (padrão `m1`); em `m2` o runtime mede folhas
   pela matriz Q e só publica índice quando a regra de publicação passa.
-  Aceite dos sintéticos do showcase em m2 e promoção a padrão ainda
-  abertos. Partial pooling hierárquico entre unidades mãe/filha ainda
-  não entra no caminho do relatório.
+  Aceite dos sintéticos do showcase em m2 (índice ordenado
+  opaco < reativo < adaptativo) fechado. Promoção de `m2` a padrão de
+  projeto novo e partial pooling hierárquico no caminho do relatório
+  ainda abertos.
 - WP5 (parcial): `CausalFamily` + `causal-catalog-v11` com a família
   `late-integration` (05 §8.4) e runtime noisy-OR no `inference-service`.
   Converter as demais famílias do motor legado (hipótese/unknown → causas/λ₀)
@@ -40,4 +41,6 @@ novo.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
 - WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.
 
-Hipótese, não compromisso: promover `m2` como padrão de projeto novo só depois dos sintéticos do showcase.
+Hipótese, não compromisso: promover `m2` como padrão de projeto novo — o
+aceite dos sintéticos do showcase já passou; falta decisão explícita de
+promoção e pooling hierárquico no relatório.

@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — Aceite m2 nos sintéticos do showcase
+
+- Testlets distintos passam a contar por `testletId`; sob `measurement_model=m2`
+  as três bandas POC publicam índice ordenado opaco < reativo < adaptativo.
+  Ver [`framework-v0.10-plan.md`](../backlog/framework-v0.10-plan.md).
+
 ## 2026-10-09 — Chrome admin e superfícies alinhados ao design-graph
 
 - Administração, showcase, erros e conclusão da entrevista passam a usar o
