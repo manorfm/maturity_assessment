@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — Chrome da entrevista alinhado ao design-graph
+
+- `/respond` e estados de convite usam `interview-view` com tokens, tipografia
+  e separação prática/observacional do protótipo maturity. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-09 — Arquétipos e restrição principal no tratamento
 
 - Biblioteca de 8 arquétipos sistêmicos e escore de restrição (08 §3–§4)

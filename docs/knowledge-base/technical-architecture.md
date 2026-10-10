@@ -129,9 +129,11 @@ lateral liga mapa, ficha, prontidão, fronteira, plano, walkthrough,
 histórico e visão por público. O mapa tem quatro sistemas — Produto,
 Engenharia, Operação e Organização — e três cortes: por capacidade, por
 estrutura e por perspectiva. Organização deixou de ser faixa. O chrome do
-relatório usa os tokens claro/escuro do protótipo, Newsreader e IBM Plex
-Sans. Entrevista e painel administrativo mantêm o tema anterior. Radar
-não é a leitura principal.
+relatório e da entrevista usa os tokens claro/escuro do protótipo,
+Newsreader e IBM Plex Sans. A entrevista SSR (`interview-view`) separa
+práticas de saídas observacionais, mostra progresso por minutos restantes
+e preserva anonimato e retomada. O painel administrativo mantém o tema
+anterior. Radar não é a leitura principal.
 A página da disciplina começa por uma linha do recorte (o que não
 é); depois vêm a dor daquele nível, o efeito que ela gera acima,
 onde mais isso chega, a ação e o teste. Folha sem finding não lista

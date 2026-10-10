@@ -161,7 +161,37 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .showcase-report { margin:18px 0 8px; padding-top:12px; border-top:1px solid var(--line) }
     article.card > .tag { margin-bottom:8px }
     details.methodology > article { margin:16px 0 }
-    body:has(.diagnostic-report) main { width:min(1440px, calc(100% - 24px)); margin:0 auto 48px }
+    body:has(.diagnostic-report) main, body:has(.interview) main { width:100%; max-width:none; margin:0; padding:0 }
+    .interview { --bg:#F6F2EA; --surface:#FFFDF8; --sunk:#EFE9DE; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-ink:#0A4B51; --accent-soft:#DCEAE8; --on-accent:#FFFFFF; --red:#A2372A; --red-soft:#F6E3DE; --ochre:#94560F; --ochre-soft:#F5E6D0; --na:#B9B2A7; --na-ink:#5E584E; --focus:#0D5C63; min-height:100vh; box-sizing:border-box; display:flex; flex-direction:column; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:16px; line-height:1.55 }
+    .interview[data-theme="escuro"] { --bg:#171614; --surface:#211F1C; --sunk:#1B1A17; --ink:#EDE8DF; --ink2:#CBC3B6; --ink3:#A89F91; --rule:#3A3631; --accent:#5FB0B0; --accent-ink:#8FD0CF; --accent-soft:#1C3435; --on-accent:#0D1414; --red:#E8826F; --red-soft:#3C2420; --ochre:#E0A35C; --ochre-soft:#382B1A; --na:#6A645B; --na-ink:#B5AC9E; --focus:#8FD0CF; color-scheme:dark }
+    .interview-header { display:flex; flex-direction:column; gap:12px; padding:20px clamp(20px,5vw,64px) 0 }
+    .interview-progress-meta { display:flex; justify-content:space-between; align-items:center; gap:16px; font-size:13px; color:var(--ink3) }
+    .interview-brand { font-family:Newsreader, Georgia, serif; font-size:17px; font-weight:600; color:var(--ink) }
+    .interview-progress { height:4px; background:var(--rule); border-radius:2px; overflow:hidden }
+    .interview-progress > div { height:4px; background:var(--accent) }
+    .interview-main { flex:1; width:100%; max-width:1180px; margin:0 auto; box-sizing:border-box; padding:clamp(28px,6vw,72px) clamp(20px,5vw,64px) 32px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:28px clamp(28px,6vw,80px) }
+    .interview-copy { flex:1 1 320px; min-width:0; display:flex; flex-direction:column; gap:18px }
+    .interview-kicker { margin:0; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3) }
+    .interview-copy h1 { margin:0; font-family:Newsreader, Georgia, serif; font-size:clamp(26px,3.2vw,40px); line-height:1.14; font-weight:500; letter-spacing:-.01em }
+    .interview-lead { margin:0; font-size:15px; color:var(--ink2); max-width:46ch }
+    .interview-panel { flex:1.25 1 320px; min-width:0; display:flex; flex-direction:column; gap:14px }
+    .interview-form fieldset { border:0; margin:0; padding:0; min-width:0; display:flex; flex-direction:column; gap:10px }
+    .interview-form legend { padding:0; margin:0 0 12px; font-size:clamp(17px,1.6vw,20px); font-weight:600; line-height:1.4 }
+    .interview-choices { display:flex; flex-direction:column; gap:8px }
+    .interview-choices-secondary { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:8px }
+    .interview-or { display:flex; align-items:center; gap:10px; margin-top:4px; font-size:12px; color:var(--ink3) }
+    .interview-or span:first-child, .interview-or span:last-child { flex:1; height:1px; background:var(--rule) }
+    .interview-choice { position:relative; display:flex; align-items:center; gap:12px; width:100%; min-height:52px; box-sizing:border-box; margin:0; padding:12px 14px; border:1.5px solid var(--rule); background:var(--surface); border-radius:10px; text-align:left; cursor:pointer; font-size:15px; font-weight:400; line-height:1.35; color:var(--ink) }
+    .interview-choice input { position:absolute; opacity:0; width:1px; height:1px; pointer-events:none }
+    .interview-choice-dot { flex:none; width:18px; height:18px; border-radius:50%; border:2px solid var(--ink2); box-sizing:border-box; display:flex; align-items:center; justify-content:center }
+    .interview-choice-dot > span { width:8px; height:8px; border-radius:50%; background:transparent }
+    .interview-choice:has(:checked) { border-color:var(--accent); background:var(--accent-soft) }
+    .interview-choice:has(:checked) .interview-choice-dot > span { background:var(--accent) }
+    .interview-choice:focus-within { outline:3px solid var(--focus); outline-offset:2px }
+    .interview-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px }
+    .interview-actions button { flex:1 1 160px; max-width:320px; margin:0 0 0 auto; min-height:48px; padding:0 20px; border:0; border-radius:10px; background:var(--accent); color:var(--on-accent); font:inherit; font-weight:600; cursor:pointer }
+    .interview-notice { margin:0; padding:14px 16px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-soft); color:var(--ink); font-size:15px }
+    .interview-hint { margin:0; color:var(--ink3); font-size:13px; max-width:60ch }
     .diagnostic-report { --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-soft:#DCEAE8; --accent-ink:#0A4B51; --sunk:#EFE9DE; --ochre:#94560F; --red:#A2372A; --red-soft:#F6E3DE; --na:#B9B2A7; display:flex; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:15px; line-height:1.5 }
     .diagnostic-report[data-theme="escuro"] { --bg:#171614; --surface:#211F1C; --ink:#EDE8DF; --ink2:#CBC3B6; --ink3:#A89F91; --rule:#3A3631; --accent:#5FB0B0; --accent-soft:#1C3435; --accent-ink:#8FD0CF; --sunk:#1B1A17; --ochre:#E0A35C; --red:#E8826F; --red-soft:#3C2420; --na:#6A645B; color-scheme:dark }
     .report-sidebar { width:248px; flex:none; box-sizing:border-box; padding:40px 20px; border-right:1px solid var(--rule); background:var(--sunk); display:flex; flex-direction:column; gap:28px }

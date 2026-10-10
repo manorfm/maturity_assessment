@@ -33,7 +33,11 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 - editor visual do grafo com simulação de percursos e validação antes de publicar;
 - versões multilíngues revisadas semanticamente, não apenas traduzidas;
 - acessibilidade validada com usuários e tecnologias assistivas;
-- feedback ao respondente sem revelar alternativas supostamente “certas”.
+- feedback ao respondente sem revelar alternativas supostamente “certas”;
+- alinhar o painel administrativo e o showcase ao chrome do design-graph
+  (relatório e entrevista já usam); hipótese, ainda não compromisso;
+- tela de boas-vindas dedicada antes da primeira pergunta, quando o grafo
+  publicar um nó de abertura sem sinal; hipótese, ainda não compromisso.
 
 ## Modelo de inferência
 
