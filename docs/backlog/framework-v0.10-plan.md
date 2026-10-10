@@ -29,7 +29,9 @@ novo.
   de folhas escassas; simulador de unidade cobre o critério de cobertura.
   Cobertura de unidade no journey service (29 folhas) e rodízio de vinhetas
   no grafo ainda abertos.
-- WP7: tipos de item novos (vinhetas no instrumento, literacy, lista, texto).
+- WP7 (parcial): catálogo e auditoria dos tipos 07 (vinheta, leitura, grupo,
+  lista, texto livre com flag off). Inserção no tronco do grafo, rodízio de
+  vinhetas na jornada e fila de revisão humana no painel ainda abertos.
 - WP9: Cynefin e grau A–D classificam a conduta pela base da prática
   (`classifyEvidenceGrade`). A ainda exige `replicated`; biblioteca de
   arquétipos e restrição por escore de 08 §4 continuam abertas.

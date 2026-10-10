@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — Tipos de item 07 no catálogo
+
+- Contratos de vinheta, leitura, referente de grupo, técnica de lista e texto
+  livre (flag off, PII, κ). Schema 23. Auditoria entra em `audit:instrument`.
+  Ver [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-09 — Seletor adaptativo por bits/minuto
 
 - `AdaptiveQuestionSelector` maximiza utilidade (ΔH / minutos) com restrições

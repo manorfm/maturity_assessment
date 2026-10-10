@@ -35,9 +35,10 @@ TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudança
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
 O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
-o único schema vigente, registrado como versão 22; mudanças incompatíveis exigem
+o único schema vigente, registrado como versão 23; mudanças incompatíveis exigem
 recriação explícita da base. Projetos carregam `measurement_model` (`m1` ou
-`m2`, padrão `m1`). Opções carregam `observation_kind` (`practice`,
+`m2`, padrão `m1`) e `free_text_enabled` (padrão desligado). Opções carregam
+`observation_kind` (`practice`,
 `visibility` ou `not_applicable`). Capturas agregadas de diagnóstico, experimentos
 de transformação, rótulos cegos do piloto e entrevistas cognitivas ficam em tabelas
 próprias, sem vínculo com pessoa. O painel administrativo registra entrevistas

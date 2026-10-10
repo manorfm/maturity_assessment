@@ -37,7 +37,7 @@ test('projeto novo nasce em m1 e a coluna measurement_model existe', () => {
   assert.ok(columns.some((column) => column.name === 'measurement_model'));
   assert.deepEqual(
     [...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)),
-    [22],
+    [23],
   );
 });
 

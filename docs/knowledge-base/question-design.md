@@ -68,6 +68,23 @@
 - comparar o que deveria ocorrer com o que ocorreu;
 - estimar frequência/confiança e depois informar um exemplo.
 
+## Tipos novos (catálogo 07)
+
+O módulo `item-catalog` publica contratos auditáveis, ainda fora do tronco
+obrigatório do grafo v21:
+
+- **Vinheta de ancoragem** — situação hipotética com estágio autoral; estima
+  severidade por perspectiva (`estimatePerspectiveSeverity`).
+- **Leitura** — estímulo sintético com vereditos correta / incorreta /
+  letramento ausente; alimenta variável de letramento, não a prática.
+- **Referente de grupo** — clima/cultura pergunta sobre o time, não o indivíduo.
+- **Técnica de lista** — prevalência de tema sensível só com ≥ 40 por braço e
+  intervalo.
+- **Texto livre** — flag `free_text_enabled` desligada por padrão; PII removida;
+  livro de códigos e revisão humana obrigatória; κ mínimo 0,7.
+
+`npm run audit:instrument` inclui a auditoria desses tipos.
+
 ## Três estados observacionais
 
 Cada pergunta de prática admite, além das alternativas de comportamento:

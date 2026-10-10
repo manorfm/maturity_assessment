@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.110.0
+
+- Catálogo de tipos de item 07 (vinheta, leitura, grupo, lista, texto livre).
+  Texto livre nasce desligado (`free_text_enabled`); técnica de lista só
+  publica com n ≥ 40; auditoria dos tipos entra no `audit:instrument`.
+
 ## 0.109.0
 
 - Seletor adaptativo por utilidade em bits/minuto (06): restrições filtram

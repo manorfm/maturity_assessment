@@ -3,7 +3,7 @@ import type { DatabaseSync } from 'node:sqlite';
 export function applyMigrations(db: DatabaseSync): void {
   db.exec(`
     CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);
-    CREATE TABLE projects (id TEXT PRIMARY KEY, public_id TEXT UNIQUE NOT NULL, name TEXT NOT NULL, admin_secret_hash TEXT NOT NULL, minimum_group_size INTEGER NOT NULL DEFAULT 5, measurement_model TEXT NOT NULL DEFAULT 'm1' CHECK(measurement_model IN ('m1','m2')), created_at TEXT NOT NULL);
+    CREATE TABLE projects (id TEXT PRIMARY KEY, public_id TEXT UNIQUE NOT NULL, name TEXT NOT NULL, admin_secret_hash TEXT NOT NULL, minimum_group_size INTEGER NOT NULL DEFAULT 5, measurement_model TEXT NOT NULL DEFAULT 'm1' CHECK(measurement_model IN ('m1','m2')), free_text_enabled INTEGER NOT NULL DEFAULT 0 CHECK(free_text_enabled IN (0,1)), created_at TEXT NOT NULL);
     CREATE TABLE organization_units (id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), parent_id TEXT REFERENCES organization_units(id), name TEXT NOT NULL, unit_type TEXT NOT NULL, path TEXT NOT NULL);
     CREATE INDEX idx_units_project ON organization_units(project_id);
     CREATE TABLE invitation_batches (id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), unit_id TEXT NOT NULL REFERENCES organization_units(id), profile TEXT NOT NULL, quantity INTEGER NOT NULL, created_at TEXT NOT NULL, reissued_from TEXT UNIQUE REFERENCES invitation_batches(id));
@@ -50,6 +50,6 @@ export function applyMigrations(db: DatabaseSync): void {
       foundation_explained INTEGER NOT NULL,
       confusing_term TEXT, created_at TEXT NOT NULL
     );
-    INSERT INTO schema_migrations (version, applied_at) VALUES (22, datetime('now'));
+    INSERT INTO schema_migrations (version, applied_at) VALUES (23, datetime('now'));
   `);
 }
