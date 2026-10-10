@@ -37,9 +37,10 @@ export function anchorStageToWeight(stage: AnchorStage): number {
 export function signalToEvidenceLinks(signal: Signal): EvidenceLink[] {
   const leaves = signal.details.length ? signal.details : [signal.capability];
   const appropriation = appropriationFor(signal.pattern);
-  // Âncora segue a tabela 04 §4.2. Appropriation marca ritual/heroísmo para revisão
-  // de conteúdo (subir −2 → 1) sem alterar o peso m1 nesta migração.
-  const anchorStage = weightToAnchorStage(signal.weight);
+  // 04 §4.2: ritual/heroísmo são estágio 1 (forma sem função / esforço heroico),
+  // não ausência (0). Peso autoral −2 sobe para âncora 1; adaptador m1 deriva −1.
+  let anchorStage = weightToAnchorStage(signal.weight);
+  if (appropriation && anchorStage === 0) anchorStage = 1;
   return leaves.map((leaf, index) => ({
     capability: leaf,
     pattern: signal.pattern,
@@ -87,10 +88,20 @@ export function evidenceToSignals(links: EvidenceLink[]): Signal[] {
 }
 
 export function normalizeOptionEvidence(option: Option & { evidence?: EvidenceLink[] }): OptionEvidence {
+  const authored = option.signals;
   const evidence = option.evidence?.length
     ? option.evidence
-    : option.signals.flatMap(signalToEvidenceLinks);
-  return { ...option, evidence, signals: evidenceToSignals(evidence) };
+    : authored.flatMap(signalToEvidenceLinks);
+  // Matriz Q usa âncora 1 para ritual/heroísmo; o motor m1 preserva o peso autoral
+  // (−2) até os limiares de finding serem recalibrados para estágio 1.
+  const signals = evidenceToSignals(evidence).map((signal) => {
+    const source = authored.find((item) => item.pattern === signal.pattern);
+    if (source && appropriationFor(source.pattern) && source.weight <= -2) {
+      return { ...signal, weight: source.weight };
+    }
+    return signal;
+  });
+  return { ...option, evidence, signals };
 }
 
 function appropriationFor(pattern: string): Appropriation | undefined {

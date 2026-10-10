@@ -46,13 +46,32 @@ test('signal vira evidência com discriminação medium e papel por folha', () =
   assert.equal(links[1]?.capability, 'sdlc-automation');
 });
 
-test('heroísmo e ritual em peso −2 recebem appropriation e mantêm âncora 0 até revisão', () => {
+test('heroísmo e ritual em peso −2 recebem appropriation e sobem para âncora 1 (04 §4.2)', () => {
   const hero = signalToEvidenceLinks(signal({ pattern: 'dependencia-de-heroi', weight: -2 }))[0]!;
-  assert.equal(hero.anchorStage, 0);
+  assert.equal(hero.anchorStage, 1);
   assert.equal(hero.appropriation, 'heroism');
   const ritual = signalToEvidenceLinks(signal({ pattern: 'war-room-como-gestao', weight: -2 }))[0]!;
-  assert.equal(ritual.anchorStage, 0);
+  assert.equal(ritual.anchorStage, 1);
   assert.equal(ritual.appropriation, 'ritual');
+  const normalized = normalizeOptionEvidence({
+    id: 'war-room',
+    label: 'Reúnem um grupo pequeno para recuperar a entrega.',
+    signals: [signal({ pattern: 'war-room-como-gestao', weight: -2 })],
+  });
+  assert.equal(normalized.evidence[0]?.anchorStage, 1);
+  // Motor m1 preserva peso autoral −2 até recalibrar limiares de finding.
+  assert.equal(normalized.signals[0]?.weight, -2);
+});
+
+test('grafo vigente aplica âncora 1 em opções de ritual e heroísmo marcadas', async () => {
+  const { graph } = await import('../src/modules/catalog/assessment-graph.js');
+  const ritualOrHero = graph.flatMap((node) => node.options.flatMap((option) =>
+    option.evidence.filter((link) => link.appropriation === 'ritual' || link.appropriation === 'heroism')
+      .map((link) => ({ nodeId: node.id, optionId: option.id, link }))));
+  assert.ok(ritualOrHero.length >= 3, 'deve haver opções marcadas como ritual ou heroísmo');
+  for (const item of ritualOrHero) {
+    assert.equal(item.link.anchorStage, 1, `${item.nodeId}/${item.optionId}/${item.link.pattern}`);
+  }
 });
 
 test('adaptador reconstrói Signal para o motor m1 sem perder padrão nem folha', () => {

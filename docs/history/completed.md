@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Âncoras de ritual/heroísmo na matriz Q (WP3)
+
+- `appropriation` sobe peso −2 para âncora 1 (04 §4.2); m1 preserva −2 até
+  recalibrar findings. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Cobertura matricial no caminho quente (WP6)
 
 - `selectAfterTerminal` aplica `unitLeafCoverage` (restrição só com folha já
