@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Cobertura matricial no caminho quente (WP6)
+
+- `selectAfterTerminal` aplica `unitLeafCoverage` (restrição só com folha já
+  coberta na unidade). Ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-10-10 — Fila de revisão de texto livre (WP7)
 
 - Schema 25: `free_text_entries` / `free_text_codings`; κ de Cohen e fila no

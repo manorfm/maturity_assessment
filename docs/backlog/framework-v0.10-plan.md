@@ -25,9 +25,10 @@ selecionável.
   demais sistemas de `diagnosticSystemCatalog` em noisy-OR (hipótese/unknown
   → causas/λ₀), com runtime no `inference-service`. Elicitação SHELF dos λ
   permanece aberta.
-- WP6 (parcial): seletor por bits/min com restrições; simulador de unidade;
-  `unitLeafCoverage` / `selectWithUnitCoverage`; vinheta no tronco com
-  rodízio. Ligar cobertura no caminho quente ainda aberto.
+- WP6 (fechado no motor): seletor por bits/min; cobertura matricial no caminho
+  quente (`selectAfterTerminal` = `selectWithUnitCoverage`); vinheta com
+  rodízio. Simulador de unidade e §8.2 de aceitação de campo permanecem como
+  validação empírica.
 - WP7 (fechado no motor de tipos): vinheta, leitura, referente de grupo e
   técnica de lista no tronco; texto livre com flag off, PII, livro de códigos,
   fila de revisão no painel e κ ≥ 0,7. Ligar texto livre ao tronco da entrevista

@@ -53,7 +53,10 @@ export class AdaptiveQuestionSelector {
     const eligible = this.filterConstraints(candidates, state);
     if (!eligible.length) return undefined;
 
-    const sparse = sparseLeaves(state.leafCoverage);
+    // Só restringe ao pool escasso quando a unidade já cobriu alguma folha
+    // (≥ 2 testlets e ≥ 2 perspectivas); senão o início da amostra segue bits/min.
+    const matrixActive = unitHasMatrixCoverage(state.leafCoverage);
+    const sparse = matrixActive ? sparseLeaves(state.leafCoverage) : [];
     const coveragePool = sparse.length
       ? eligible.filter((candidate) => candidate.leafId && sparse.includes(candidate.leafId))
       : [];
@@ -102,7 +105,8 @@ export class AdaptiveQuestionSelector {
     const informationGain = expectedInformationGain(posterior, candidate);
     const beta = state.beta ?? 1;
     const leafWeight = candidate.leafId ? (state.leafWeights?.[candidate.leafId] ?? 1) : 1;
-    const leafGain = coversSparseLeaf ? leafWeight * Math.max(informationGain, 0.05) : 0;
+    // Sem piso artificial: cobertura restringe o pool; a utilidade continua em bits/min reais.
+    const leafGain = coversSparseLeaf ? leafWeight * informationGain : 0;
     const causalGain = beta * informationGain;
     const minutes = itemMinutes(candidate);
     const utility = (causalGain + leafGain) / minutes;
@@ -136,4 +140,9 @@ function sparseLeaves(coverage?: Record<string, { testlets: number; perspectives
   return Object.entries(coverage)
     .filter(([, value]) => value.testlets < 2 || value.perspectives < 2)
     .map(([leaf]) => leaf);
+}
+
+function unitHasMatrixCoverage(coverage?: Record<string, { testlets: number; perspectives: number }>): boolean {
+  if (!coverage) return false;
+  return Object.values(coverage).some((value) => value.testlets >= 2 && value.perspectives >= 2);
 }

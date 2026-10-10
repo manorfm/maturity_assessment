@@ -255,9 +255,10 @@ Após uma saída declarativa, o motor compara probes ainda não respondidos, vis
 à perspectiva e habilitados por padrões de contexto já observados. A escolha
 maximiza utilidade em **bits por minuto** sobre o ganho de informação causal.
 O journey calcula cobertura matricial das 29 folhas na unidade
-(`unitLeafCoverage`) e expõe `selectWithUnitCoverage` para priorizar folhas
-com < 2 testlets ou < 2 perspectivas; o caminho quente do tronco ainda usa
-`selectAfterTerminal` até revalidar sintéticos m2. Após `work-context`, o tronco
+(`unitLeafCoverage`) e o caminho quente (`selectAfterTerminal` /
+`selectWithUnitCoverage`) prioriza folhas com < 2 testlets ou < 2 perspectivas
+quando a unidade já tem pelo menos uma folha coberta (≥ 2 testlets e ≥ 2
+perspectivas); no início da amostra prevalece bits/min. Após `work-context`, o tronco
 inclui vinheta (ancora δ̂_r), leitura (`literacy`), referente de grupo
 (`group-error-climate` → `leadership-management`) e técnica de lista
 (braços controle/tratamento via `selectListTechnique`; prevalência só no

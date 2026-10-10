@@ -20,32 +20,21 @@ const VIGNETTE_IDS = new Set(itemCatalog.filter((item) => item.kind === 'vignett
 export class AdaptiveJourneyService {
   constructor(private readonly db: Database) {}
 
+  /**
+   * Próximo probe após saída declarativa (caminho quente).
+   * Aplica cobertura matricial da unidade (06 §4): prioriza folhas com
+   * < 2 testlets ou < 2 perspectivas quando a unidade já tem cobertura mista.
+   */
   selectAfterTerminal(participationId: string, profile: string, graphVersion: string): string | undefined {
-    const adaptiveQuestions = Number((this.db.prepare('SELECT COUNT(*) total FROM inference_snapshots WHERE participation_id = ?').get(participationId) as { total: number }).total);
-    if (adaptiveQuestions >= 5) return undefined;
-    const modelVersion = (this.db.prepare("SELECT version FROM inference_model_versions WHERE graph_version = ? AND status = 'published' LIMIT 1").get(graphVersion) as { version: string } | undefined)?.version;
-    if (!modelVersion) return undefined;
-    const preferredIds = preferredProbeIds(this.observedPatterns(participationId));
-    const answeredTestlets = this.answeredNodes(participationId);
-    const ranked = this.uncertainFamilies(modelVersion, participationId).flatMap((family) => {
-      const candidates = this.questionCandidates(modelVersion, family.capability, participationId, profile, family.hypotheses.map((item) => item.id));
-      const selected = new AdaptiveQuestionSelector().select(family, candidates, { preferredIds, answeredTestlets });
-      return selected ? [{ family, selected }] : [];
-    }).sort((left, right) => right.selected.utility - left.selected.utility || right.selected.informationGain - left.selected.informationGain);
-    const choice = ranked[0];
-    if (!choice || choice.selected.utility < 0.01) return undefined;
-    const { family, selected } = choice;
-    this.db.prepare('INSERT INTO inference_snapshots (id, model_version, participation_id, family_key, posterior_json, selected_question_key, selection_reason, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id(), modelVersion, participationId, family.familyId, JSON.stringify(family.hypotheses), selected.id, selected.reasons.join(' '), new Date().toISOString());
-    return selected.id;
+    return this.selectAdaptiveProbe(participationId, profile, graphVersion);
   }
 
-  /**
-   * Escolhe probe com cobertura matricial da unidade (06 §4).
-   * Usado quando a unidade já tem cobertura mista; o caminho quente do tronco
-   * permanece em `selectAfterTerminal` para não alterar sintéticos calibrados.
-   */
+  /** Alias explícito da cobertura no caminho quente (mesma implementação). */
   selectWithUnitCoverage(participationId: string, profile: string, graphVersion: string): string | undefined {
+    return this.selectAdaptiveProbe(participationId, profile, graphVersion);
+  }
+
+  private selectAdaptiveProbe(participationId: string, profile: string, graphVersion: string): string | undefined {
     const adaptiveQuestions = Number((this.db.prepare('SELECT COUNT(*) total FROM inference_snapshots WHERE participation_id = ?').get(participationId) as { total: number }).total);
     if (adaptiveQuestions >= 5) return undefined;
     const modelVersion = (this.db.prepare("SELECT version FROM inference_model_versions WHERE graph_version = ? AND status = 'published' LIMIT 1").get(graphVersion) as { version: string } | undefined)?.version;
@@ -57,12 +46,20 @@ export class AdaptiveJourneyService {
     const preferredIds = preferredProbeIds(this.observedPatterns(participationId));
     const answeredTestlets = this.answeredNodes(participationId);
     const leafCoverage = this.unitLeafCoverage(String(participation.project_id), participation.unit_id);
+    const matrixActive = Object.values(leafCoverage).some((value) => value.testlets >= 2 && value.perspectives >= 2);
     const ranked = this.uncertainFamilies(modelVersion, participationId).flatMap((family) => {
-      const candidates = this.questionCandidates(modelVersion, family.capability, participationId, profile, family.hypotheses.map((item) => item.id), true);
+      const candidates = this.questionCandidates(
+        modelVersion,
+        family.capability,
+        participationId,
+        profile,
+        family.hypotheses.map((item) => item.id),
+        matrixActive,
+      );
       const selected = new AdaptiveQuestionSelector().select(family, candidates, {
         preferredIds,
         answeredTestlets,
-        leafCoverage,
+        ...(matrixActive ? { leafCoverage } : {}),
       });
       return selected ? [{ family, selected }] : [];
     }).sort((left, right) => right.selected.utility - left.selected.utility || right.selected.informationGain - left.selected.informationGain);
