@@ -5,7 +5,7 @@ import { guidanceFor, hasExplicitGuidance } from './solution-guidance.js';
 import type { IndexPublication } from './stage-posterior.js';
 import { assessReadiness, type PrerequisitePosterior, type ReadinessAssessment } from './advanced-readiness.js';
 import { learningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
-import { compareReadings, type IndexReading, type ReadingChange } from './reading-history.js';
+import { projectHistoryAssessment, type HistoryAssessment, type IndexReading } from './reading-history.js';
 import { classifyCynefin, classifyEvidenceGrade, foundationIsReplicated, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
 import { primaryArchetypeFor } from './systemic-archetypes.js';
 import { selectPulseItems, type PulseCatalogItem } from '../../catalog/item-catalog.js';
@@ -215,9 +215,8 @@ export function projectFrontierPage(input: { nodes: string[]; edges: EnablementE
   return { nodes: learningFrontier(input.nodes, input.edges) };
 }
 
-export function projectHistoryPage(input: { previous?: IndexReading; current?: IndexReading }): { change?: ReadingChange; gap?: string } {
-  if (!input.previous || !input.current) return { gap: 'Ainda não há duas leituras com índice e faixa. Diferença de suporte de padrão não publica melhora.' };
-  return { change: compareReadings(input.previous, input.current) };
+export function projectHistoryPage(input: { previous?: IndexReading; current?: IndexReading }): HistoryAssessment {
+  return projectHistoryAssessment(input);
 }
 
 export function evidenceGradeGap(conducts: TreatmentConduct[]): { gap?: string; grades: Array<{ action: string; grade: EvidenceGrade }> } {

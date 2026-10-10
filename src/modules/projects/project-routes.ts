@@ -439,7 +439,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const params = request.params as Params;
     requireProject(params);
     const history = projectHistoryPage({});
-    return reply.type('text/html').send(reportPage(params, 'history', renderHistoryPage(history.change, history.gap)));
+    return reply.type('text/html').send(reportPage(params, 'history', renderHistoryPage(history)));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/report/walkthrough/:areaId', async (request, reply) => {

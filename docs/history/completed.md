@@ -1,5 +1,10 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — P(melhora) entre leituras (WP15)
+
+- `change-detection` (05 §9) e histórico com limiar 0,8; faixas como
+  fallback. Ver [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Contrato SHELF e auditoria de λ (WP5)
 
 - Proveniência com `method`/`version`; `shelf-elicitation` e

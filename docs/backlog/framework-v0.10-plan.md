@@ -38,10 +38,12 @@ selecionável.
 - WP9 (fechado no motor de contrato): Cynefin, grau A–D com
   `foundationIsReplicated`, arquétipos `systemic-archetypes-v1`, restrição
   principal por escore, pulso (`pulse-*` / `selectPulseItems`) no plano de
-  tratamento. Publicar mudança com P(melhora) ≥ 0,8 e reavaliação 6–12 meses
-  permanecem no ciclo de evolução (WP16).
+  tratamento.
+- WP15 (parcial): `change-detection` com P(melhora)/P(piora) e limiar 0,8
+  (05 §9); histórico usa distribuições quando há, senão faixas. Persistir
+  duas fotografias de índice no projeto e reavaliação 6–12 meses ainda
+  abertos.
 - WP12 a WP14, WP16 a WP19: sofisticação, capacidades novas, Laya, exames, reescrita do banco, dossiês.
-- WP15: comparador de duas leituras com faixa. Sem duas fotografias de índice, a página diz a lacuna.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
 - WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.
 

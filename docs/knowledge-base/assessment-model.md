@@ -89,7 +89,9 @@ compartilham prior da mãe por partial pooling (05 §7.1) antes da agregação d
 índice: `ω` vem de `pooling[folha]` quando o lab exportou ICC→ω
 (`omegaFromIcc1` = 1 − ICC(1)), senão `poolingDefault` (0,5). ICC(2) e k para
 confiabilidade ≥ 0,70 estão em `measurement/domain/icc.ts` (09 §4); pasta
-`lab/` documenta o fluxo offline. A auditoria do instrumento bloqueia prática sem `evidence[]`. Toda
+`lab/` documenta o fluxo offline. Entre duas posteriores de estágio,
+`change-detection` publica melhora/piora só com P ≥ 0,8 (05 §9); sem
+distribuição, o histórico cai na comparação de faixas. A auditoria do instrumento bloqueia prática sem `evidence[]`. Toda
 folha com evidência no grafo v21 tem ≥ 2 testlets, âncora baixa (0–1) e caminho
 até âncora alta (consistência ≥ 3 ou outcome/system em 4), inclusive
 `knowledge-discovery`, `cognitive-load`, `identity-access` e `cloud-security`.

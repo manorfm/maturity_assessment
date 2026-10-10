@@ -231,9 +231,19 @@ export function renderFrontierPage(nodes: FrontierNode[], gap?: string): string 
   return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1></header>${list}`;
 }
 
-export function renderHistoryPage(change?: string, gap?: string): string {
+export function renderHistoryPage(input: {
+  change?: string;
+  gap?: string;
+  pImprove?: number;
+  pRegress?: number;
+  threshold?: number;
+} = {}): string {
+  const { change, gap, pImprove, pRegress, threshold = 0.8 } = input;
+  const probs = pImprove !== undefined && pRegress !== undefined
+    ? `<p>P(melhora) ${pImprove.toFixed(2)} · P(piora) ${pRegress.toFixed(2)} · limiar ${threshold.toFixed(2)} (05 §9).</p>`
+    : '';
   const body = gap
     ? `<p class="report-gap">${escapeHtml(gap)}</p>`
-    : `<p>${change === 'improved' ? 'Melhorou: a faixa atual ficou acima da anterior.' : change === 'regressed' ? 'Piorou: a faixa atual ficou abaixo da anterior.' : 'Incerto: as faixas ainda se sobrepõem.'}</p>`;
-  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Melhora só é publicada quando a diferença sai da faixa.</p></header>${body}`;
+    : `<p>${change === 'improved' ? 'Melhorou: P(melhora) atingiu o limiar de publicação.' : change === 'regressed' ? 'Piorou: P(piora) atingiu o limiar de publicação.' : 'Incerto: ainda não há evidência suficiente de melhora ou piora.'}</p>${probs}`;
+  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora) ou P(piora) ≥ ${threshold.toFixed(2)}.</p></header>${body}`;
 }
