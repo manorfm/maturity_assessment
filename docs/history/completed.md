@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — ICC e ω no laboratório/runtime (WP10)
+
+- `icc.ts`: ICC(1)/ICC(2), k para 0,70 (09 §4), `ω = 1 − ICC(1)`; runtime
+  usa `omegaForLeaf`; `lab/README` descreve exportação para o JSON m2. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Peso m1 −1 para ritual/heroísmo (WP3)
 
 - Adaptador deriva −1 (âncora 1); sintético opaco scripta war-room; laudo

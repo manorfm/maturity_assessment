@@ -26,6 +26,7 @@ import type { IndexPublication } from './domain/stage-posterior.js';
 import { leafPublicationToIndex } from './domain/measurement-adapter.js';
 import { aggregateParentIndex } from '../measurement/domain/index-aggregation.js';
 import { measureLeafAcrossUnits, peakedDistribution } from '../measurement/domain/hierarchical-pooling.js';
+import { omegaForLeaf } from '../measurement/domain/icc.js';
 import { defaultMeasurementParams, type StageDistribution } from '../measurement/domain/measurement-params.js';
 import { measureLeafFromBundles } from '../measurement/domain/runtime-bridge.js';
 import { bundlesByLeafAndUnit, type ResponseObservation } from '../measurement/domain/response-observation.js';
@@ -453,7 +454,7 @@ export class InferenceService {
         leaf,
         units: unitNodes,
         responsesByUnit,
-        omega: params.poolingDefault,
+        omega: omegaForLeaf(params, leaf),
         params,
       });
       const gate = measureLeafFromBundles({

@@ -7,7 +7,10 @@ export type MeasurementParams = {
   kappa: Record<Discrimination, number>;
   psi: number;
   gates: { gamma3: number; gamma4: number };
+  /** ω padrão (05 §13) até o lab exportar ICC→ω por folha. */
   poolingDefault: number;
+  /** ω por folha estimado no laboratório (05 §7.1 / WP10). */
+  pooling?: Record<string, number>;
 };
 
 export function defaultMeasurementParams(): MeasurementParams {
