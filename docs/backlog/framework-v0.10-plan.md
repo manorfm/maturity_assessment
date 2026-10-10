@@ -15,12 +15,12 @@ selecionável.
   com adaptador m1 (`evidenceToSignals`), `taskFamily`/`testlet` e auditoria
   da matriz Q. Revisar âncoras de ritual/heroísmo (−2 → 1) e folhas com
   testlets ou topo escassos ainda é conteúdo aberto.
-- WP4 (parcial): módulo `measurement` reproduz 05 §5.1/§7.3; projetos
-  têm `measurement_model` (padrão `m2`, schema 24); em `m2` o runtime
-  mede folhas pela matriz Q e só publica índice quando a regra de
-  publicação passa. Aceite dos sintéticos do showcase e promoção a
-  padrão fechados. Partial pooling hierárquico no caminho do relatório
-  ainda aberto.
+- WP4: módulo `measurement` reproduz 05 §5.1/§7.3; projetos têm
+  `measurement_model` (padrão `m2`, schema 24); runtime mede folhas pela
+  matriz Q, publica índice com regra de publicação, aceite dos sintéticos
+  e partial pooling hierárquico (unidade ← irmãos via mãe) no
+  `measureIndex`. Fechado no motor; ω estimado por ICC no lab (WP10)
+  permanece fora do runtime.
 - WP5 (parcial): `CausalFamily` + `causal-catalog-v11` com a família
   `late-integration` (05 §8.4) e runtime noisy-OR no `inference-service`.
   Converter as demais famílias do motor legado (hipótese/unknown → causas/λ₀)
@@ -40,5 +40,4 @@ selecionável.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
 - WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.
 
-Pooling hierárquico no caminho do relatório (unidade ← área ← empresa)
-permanece aberto em WP4.
+WP4 no runtime está fechado; estimação de ω por ICC continua no WP10.

@@ -36,8 +36,26 @@ const discriminationRank: Record<Discrimination, number> = { low: 1, medium: 2, 
  * Agrupa respostas por folha e participante em RespondentBundle[] (05 §3.5).
  * Por testlet fica a ligação de maior discriminação; entre testlets, independência.
  */
+type ParticipantDraft = {
+  perspective: string;
+  unitId: string;
+  byTestlet: Map<string, TestletItem>;
+};
+
 export function bundlesByLeaf(observations: ResponseObservation[]): Map<string, RespondentBundle[]> {
-  const byLeafParticipant = new Map<string, Map<string, { perspective: string; byTestlet: Map<string, TestletItem> }>>();
+  const byLeaf = bundlesByLeafAndUnit(observations);
+  const result = new Map<string, RespondentBundle[]>();
+  for (const [leaf, byUnit] of byLeaf) {
+    result.set(leaf, [...byUnit.values()].flat());
+  }
+  return result;
+}
+
+/** Agrupa por folha e unidade organizacional (05 §7.1). */
+export function bundlesByLeafAndUnit(
+  observations: ResponseObservation[],
+): Map<string, Map<string, RespondentBundle[]>> {
+  const byLeafParticipant = new Map<string, Map<string, ParticipantDraft>>();
 
   for (const observation of observations) {
     const lookup = optionLookup.get(`${observation.nodeId}:${observation.optionId}`);
@@ -50,6 +68,7 @@ export function bundlesByLeaf(observations: ResponseObservation[]): Map<string, 
       const participants = byLeafParticipant.get(leafKey) ?? new Map();
       const current = participants.get(observation.participantId) ?? {
         perspective: observation.profile,
+        unitId: observation.unitId,
         byTestlet: new Map<string, TestletItem>(),
       };
       const item: TestletItem = {
@@ -67,13 +86,17 @@ export function bundlesByLeaf(observations: ResponseObservation[]): Map<string, 
     }
   }
 
-  const result = new Map<string, RespondentBundle[]>();
+  const result = new Map<string, Map<string, RespondentBundle[]>>();
   for (const [leaf, participants] of byLeafParticipant) {
-    const bundles: RespondentBundle[] = [...participants.values()].map((participant) => ({
-      perspective: participant.perspective,
-      items: [...participant.byTestlet.values()],
-    }));
-    result.set(leaf, bundles);
+    const byUnit = new Map<string, RespondentBundle[]>();
+    for (const participant of participants.values()) {
+      const bundle: RespondentBundle = {
+        perspective: participant.perspective,
+        items: [...participant.byTestlet.values()],
+      };
+      byUnit.set(participant.unitId, [...(byUnit.get(participant.unitId) ?? []), bundle]);
+    }
+    result.set(leaf, byUnit);
   }
   return result;
 }

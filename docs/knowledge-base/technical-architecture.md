@@ -75,7 +75,9 @@ O módulo `measurement` concentra o modelo m2 (observação, posterior por
 unidade, portões de camada, pooling, agregação e publicação). O
 `inference-service` escolhe m1 ou m2 por `projects.measurement_model`.
 Testlets distintos contam por `testletId` na ponte runtime; o aceite dos
-sintéticos do showcase em m2 está coberto por teste.
+sintéticos do showcase em m2 está coberto por teste. Em `m2`, o índice
+agrega folhas com partial pooling entre unidades irmãs (prior da mãe
+sem a própria unidade, ω = `poolingDefault`).
 
 `shared` será pequeno: infraestrutura realmente transversal, não regras de negócio
 sem proprietário.

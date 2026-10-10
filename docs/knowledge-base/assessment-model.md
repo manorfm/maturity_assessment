@@ -84,9 +84,10 @@ da evidência. Em `m2`, o módulo `measurement` calcula posterior por unidade
 (05 §3–§7), agregação com elo limitante e regra de publicação; o laudo só
 mostra índice quando a publicação passa. Os sintéticos do showcase, em `m2`,
 publicam índice ordenado opaco < reativo < adaptativo. Projetos novos nascem
-em `m2`; `m1` permanece selecionável. A auditoria do instrumento bloqueia
-prática sem `evidence[]` e alerta folhas com testlets ou âncoras altas
-escassos.
+em `m2`; `m1` permanece selecionável. Unidades irmãs compartilham prior da
+mãe por partial pooling (05 §7.1) antes da agregação do índice. A auditoria
+do instrumento bloqueia prática sem `evidence[]` e alerta folhas com
+testlets ou âncoras altas escassos.
 
 ## Contexto não é evidência
 

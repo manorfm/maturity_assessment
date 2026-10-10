@@ -22,9 +22,10 @@ import { technicalDirectionFor, type TechnicalDirection } from './domain/technic
 import type { IndexPublication } from './domain/stage-posterior.js';
 import { leafPublicationToIndex } from './domain/measurement-adapter.js';
 import { aggregateParentIndex } from '../measurement/domain/index-aggregation.js';
+import { measureLeafAcrossUnits, peakedDistribution } from '../measurement/domain/hierarchical-pooling.js';
+import { defaultMeasurementParams, type StageDistribution } from '../measurement/domain/measurement-params.js';
 import { measureLeafFromBundles } from '../measurement/domain/runtime-bridge.js';
-import { bundlesByLeaf, type ResponseObservation } from '../measurement/domain/response-observation.js';
-import type { StageDistribution } from '../measurement/domain/measurement-params.js';
+import { bundlesByLeafAndUnit, type ResponseObservation } from '../measurement/domain/response-observation.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -398,37 +399,73 @@ export class InferenceService {
       nodeId: row.node_id,
       optionId: row.option_id,
     }));
-    const byLeaf = bundlesByLeaf(observations);
+    const orgUnits = this.db.prepare('SELECT id, parent_id FROM organization_units WHERE project_id = ?')
+      .all(projectId) as unknown as Array<{ id: string; parent_id: string | null }>;
+    const unitNodes = orgUnits.map((unit) => ({ id: unit.id, parentId: unit.parent_id }));
+    const byLeafUnit = bundlesByLeafAndUnit(observations);
+    const params = defaultMeasurementParams();
     const publishedLeaves: Record<string, StageDistribution> = {};
     const weights: Record<string, number> = {};
+    const singleLeafDirect = new Map<string, IndexPublication>();
     let fallback: IndexPublication | undefined;
-    for (const [leaf, responses] of byLeaf) {
-      const reading = measureLeafFromBundles({
+    for (const [leaf, byUnit] of byLeafUnit) {
+      const responsesByUnit = Object.fromEntries([...byUnit.entries()]);
+      const allResponses = [...byUnit.values()].flat();
+      const unitReadings = measureLeafAcrossUnits({
+        leaf,
+        units: unitNodes,
+        responsesByUnit,
+        omega: params.poolingDefault,
+        params,
+      });
+      const gate = measureLeafFromBundles({
         unit: projectId,
         leaf,
-        responses,
-        coverage: Math.min(1, responses.length / 5),
+        responses: allResponses,
+        coverage: Math.min(1, allResponses.length / 5),
+        params,
       });
-      const publication = leafPublicationToIndex(reading.publication);
-      if (publication.published) {
-        publishedLeaves[leaf] = reading.posterior.distribution;
-        weights[leaf] = 1;
-      } else if (!fallback) {
-        fallback = publication;
+      const publication = leafPublicationToIndex(gate.publication);
+      if (!publication.published) {
+        if (!fallback) fallback = publication;
+        continue;
       }
+      const unitDistributions = Object.fromEntries(
+        [...unitReadings.entries()].map(([id, reading]) => [id, reading.distribution]),
+      );
+      if (Object.keys(unitDistributions).length > 1) {
+        const hierarchical = aggregateParentIndex({
+          leaves: unitDistributions,
+          weights: Object.fromEntries(Object.keys(unitDistributions).map((id) => [id, 1])),
+          draws: 4_000,
+          seed: 1,
+        });
+        if (hierarchical.band[1] - hierarchical.band[0] > 50) {
+          if (!fallback) fallback = { published: false, reason: 'Faixa larga demais para publicar índice.' };
+          continue;
+        }
+        publishedLeaves[leaf] = peakedDistribution(hierarchical.index);
+        singleLeafDirect.set(leaf, {
+          published: true,
+          index: hierarchical.index,
+          band: hierarchical.band,
+          coverage: Math.min(1, allResponses.length / 5),
+        });
+      } else {
+        const only = [...unitReadings.values()][0] ?? gate.posterior;
+        publishedLeaves[leaf] = only.distribution;
+        singleLeafDirect.set(leaf, {
+          published: true,
+          index: only.index,
+          band: only.interval90,
+          coverage: Math.min(1, allResponses.length / 5),
+        });
+      }
+      weights[leaf] = 1;
     }
     const keys = Object.keys(publishedLeaves);
     if (!keys.length) return fallback ?? { published: false, reason: 'Ainda não há amostra suficiente para publicar índice.' };
-    if (keys.length === 1) {
-      const leaf = keys[0]!;
-      const reading = measureLeafFromBundles({
-        unit: projectId,
-        leaf,
-        responses: byLeaf.get(leaf)!,
-        coverage: Math.min(1, byLeaf.get(leaf)!.length / 5),
-      });
-      return leafPublicationToIndex(reading.publication);
-    }
+    if (keys.length === 1) return singleLeafDirect.get(keys[0]!)!;
     const parent = aggregateParentIndex({ leaves: publishedLeaves, weights, draws: 8_000, seed: 1 });
     const width = parent.band[1] - parent.band[0];
     if (width > 50) return { published: false, reason: 'Faixa larga demais para publicar índice.' };
@@ -439,6 +476,8 @@ export class InferenceService {
       coverage: Math.min(1, keys.length / 8),
     };
   }
+
+
 
   private modelVersion(): string | null {
     return (this.db.prepare("SELECT version FROM inference_model_versions WHERE status = 'published' ORDER BY published_at DESC LIMIT 1").get() as { version: string } | undefined)?.version ?? null;

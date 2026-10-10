@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Partial pooling hierárquico no índice m2
+
+- `measureLeafAcrossUnits` aplica prior da mãe (sem a própria unidade) e o
+  `measureIndex` agrega unidades irmãs antes do índice do projeto. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-09 — m2 como padrão de projeto novo
 
 - Schema 24: `projects.measurement_model` DEFAULT `m2` após aceite dos
