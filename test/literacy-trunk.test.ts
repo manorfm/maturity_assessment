@@ -15,8 +15,7 @@ test('item de leitura está no tronco após a vinheta', () => {
   assert.ok(graph.some((node) => node.id === literacyWipChart.id));
   assert.ok(edges.some((edge) => edge.from === approvalChangeVignette.id && edge.to === literacyWipChart.id));
   const fromLiteracy = edges.filter((edge) => edge.from === literacyWipChart.id);
-  assert.ok(fromLiteracy.some((edge) => edge.to === 'urgent-change'));
-  assert.ok(fromLiteracy.some((edge) => edge.to === 'ready-to-release'));
+  assert.ok(fromLiteracy.every((edge) => edge.to === 'group-error-climate'));
   const node = graph.find((item) => item.id === literacyWipChart.id)!;
   assert.match(node.scenario, /aguardando teste/i);
   assert.ok(node.options.every((option) => option.signals.length === 0));

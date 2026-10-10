@@ -114,6 +114,7 @@ const contextOccurs = {
 
 const lowShared: Record<string, string> = {
   ...contextOccurs,
+  'group-error-climate': 'blame',
   'environment-access': 'ticket-queue',
   'credential-practice': 'handoff-secret',
   'dependency-practice': 'wait-forever',
@@ -172,6 +173,7 @@ const lowUnits: Record<number, Record<string, string>> = {
 
 const mediumShared: Record<string, string> = {
   ...contextOccurs,
+  'group-error-climate': 'learn',
   'urgent-change': 'manager-coordinates',
   'shared-change': 'continuous',
   'ready-to-release': 'small-automated',
@@ -253,6 +255,7 @@ const mediumUnits: Record<number, Record<string, string>> = {
 
 const highShared: Record<string, string> = {
   ...contextOccurs,
+  'group-error-climate': 'adapt',
   'urgent-change': 'replan-together',
   'shared-change': 'continuous',
   'ready-to-release': 'small-automated',
@@ -307,6 +310,7 @@ const highShared: Record<string, string> = {
 
 const boundaryShared: Record<string, string> = {
   ...contextOccurs,
+  'group-error-climate': 'blame',
   'urgent-change': 'manager-coordinates',
   'shared-change': 'before-release',
   'ready-to-release': 'small-automated',
@@ -362,6 +366,7 @@ const boundaryUnits: Record<number, Record<string, string>> = {
 
 const securityGovernanceShared: Record<string, string> = {
   ...contextOccurs,
+  'group-error-climate': 'learn',
   'urgent-change': 'replan-together',
   'shared-change': 'continuous',
   'ready-to-release': 'small-automated',

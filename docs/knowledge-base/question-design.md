@@ -70,17 +70,18 @@
 
 ## Tipos novos (catálogo 07)
 
-O módulo `item-catalog` publica contratos auditáveis. Vinheta e leitura já
-entram no tronco do grafo v21 (após `work-context`):
+O módulo `item-catalog` publica contratos auditáveis. Vinheta, leitura e
+referente de grupo entram no tronco do grafo v21 (após `work-context`):
 
 - **Vinheta de ancoragem** — situação hipotética com estágio autoral; estima
   severidade por perspectiva (`estimatePerspectiveSeverity`).
 - **Leitura** — estímulo sintético com vereditos correta / incorreta /
   letramento ausente; `aggregateLiteracy` publica no relatório (separada da
   prática), só acima do limiar de agregação.
-- **Referente de grupo** — clima/cultura pergunta sobre o time, não o indivíduo.
+- **Referente de grupo** — `group-error-climate` pergunta sobre o time (não o
+  indivíduo) e alimenta `leadership-management` com âncoras de clima.
 - **Técnica de lista** — prevalência de tema sensível só com ≥ 40 por braço e
-  intervalo.
+  intervalo; ainda não está no tronco.
 - **Texto livre** — flag `free_text_enabled` desligada por padrão; PII removida;
   livro de códigos e revisão humana obrigatória; κ mínimo 0,7.
 

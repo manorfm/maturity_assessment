@@ -1,5 +1,10 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Referente de grupo no tronco (WP7)
+
+- `group-error-climate` após a leitura; sinais em `leadership-management`. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-10 — Leitura (literacy) no tronco e letramento agregado
 
 - `literacy-wip-chart` no tronco após a vinheta; `aggregateLiteracy` no

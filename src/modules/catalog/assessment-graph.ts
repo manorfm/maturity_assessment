@@ -1,7 +1,7 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
 import { normalizeOptionEvidence, type EvidenceLink } from './evidence-contract.js';
-import { approvalChangeVignette, literacyWipChart } from './item-catalog.js';
+import { approvalChangeVignette, groupErrorReferent, literacyWipChart } from './item-catalog.js';
 
 export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v21';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
@@ -118,6 +118,42 @@ const authoredNodes: AssessmentNode[] = [
       label: reading.label,
       signals: [] as Signal[],
     })),
+    next: groupErrorReferent.id,
+  },
+  {
+    id: groupErrorReferent.id,
+    type: 'scenario',
+    title: groupErrorReferent.title,
+    scenario: groupErrorReferent.scenario,
+    prompt: groupErrorReferent.prompt,
+    // Referente de grupo (07 §4.1 / Chan 1998): clima observado no time → leadership-management.
+    options: [
+      {
+        id: 'hide',
+        label: groupErrorReferent.options.find((item) => item.id === 'hide')!.label,
+        signals: [{ capability: 'organizacao', pattern: 'alerta-de-risco-depende-de-seguranca-pessoal', weight: -2, details: ['leadership-management', 'collaboration'], layer: 'system', constraint: 'culture' }],
+      },
+      {
+        id: 'blame',
+        label: groupErrorReferent.options.find((item) => item.id === 'blame')!.label,
+        signals: [{ capability: 'organizacao', pattern: 'culpa-e-controle', weight: -2, details: ['enabling-governance', 'leadership-management'], layer: 'practice', constraint: 'none' }],
+      },
+      {
+        id: 'local-fix',
+        label: groupErrorReferent.options.find((item) => item.id === 'local-fix')!.label,
+        signals: [{ capability: 'aprendizado', pattern: 'postmortem-sem-efeito', weight: -1, details: ['organizational-learning', 'leadership-management'], layer: 'outcome', constraint: 'none' }],
+      },
+      {
+        id: 'learn',
+        label: groupErrorReferent.options.find((item) => item.id === 'learn')!.label,
+        signals: [{ capability: 'organizacao', pattern: 'aprendizado-blameless', weight: 2, details: ['organizational-learning', 'leadership-management'], layer: 'outcome', constraint: 'none' }],
+      },
+      {
+        id: 'adapt',
+        label: groupErrorReferent.options.find((item) => item.id === 'adapt')!.label,
+        signals: [{ capability: 'organizacao', pattern: 'aprendizado-blameless', weight: 2, details: ['organizational-learning', 'leadership-management'], layer: 'outcome', constraint: 'none' }],
+      },
+    ],
     next: 'urgent-change',
   },
   {
@@ -1219,6 +1255,9 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: literacyWipChart.id },
   ];
   if (node.id === literacyWipChart.id) return [
+    { from: node.id, to: groupErrorReferent.id },
+  ];
+  if (node.id === groupErrorReferent.id) return [
     { from: node.id, to: 'ready-to-release', when: { tracksAny: ['delivery', 'full-cycle'] } },
     { from: node.id, to: 'security-change', when: { tracksAny: ['risk'] } },
     { from: node.id, to: 'environment-access', when: { tracksAny: ['capability'] } },

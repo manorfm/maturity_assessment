@@ -211,6 +211,8 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   participations.answer(claimed.resumeToken, 'ritual');
   assert.equal(participations.find(claimed.resumeToken)?.current_node, 'literacy-wip-chart');
   participations.answer(claimed.resumeToken, 'stop-starting');
+  assert.equal(participations.find(claimed.resumeToken)?.current_node, 'group-error-climate');
+  participations.answer(claimed.resumeToken, 'learn');
   assert.equal(participations.find(claimed.resumeToken)?.current_node, 'security-change');
   participations.answer(claimed.resumeToken, 'late-review');
   const current = participations.find(claimed.resumeToken)!;
@@ -257,8 +259,9 @@ test('contexto seleciona poucos eventos sem depender do título escolhido', () =
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'engineering', buildAndOperate), 'vignette-approval-change');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'architecture-and-boundaries', 'architecture', architecture), 'vignette-approval-change');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'vignette-approval-change', 'ritual', 'engineering', buildAndOperate), 'literacy-wip-chart');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'literacy-wip-chart', 'stop-starting', 'engineering', buildAndOperate), 'ready-to-release');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'literacy-wip-chart', 'stop-starting', 'architecture', architecture), 'architecture-pressure');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'literacy-wip-chart', 'stop-starting', 'engineering', buildAndOperate), 'group-error-climate');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'group-error-climate', 'learn', 'engineering', buildAndOperate), 'ready-to-release');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'group-error-climate', 'learn', 'architecture', architecture), 'architecture-pressure');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildAndOperate), 'environment-access');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildFocused), 'integration-cadence');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap', 'engineering', buildFocused), 'architecture-pressure');
@@ -420,7 +423,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 350);
+  assert.equal(signals.length, 355);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);

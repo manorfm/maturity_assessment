@@ -257,10 +257,11 @@ maximiza utilidade em **bits por minuto** sobre o ganho de informação causal.
 O journey calcula cobertura matricial das 29 folhas na unidade
 (`unitLeafCoverage`) e expõe `selectWithUnitCoverage` para priorizar folhas
 com < 2 testlets ou < 2 perspectivas; o caminho quente do tronco ainda usa
-`selectAfterTerminal` até revalidar sintéticos m2. A vinheta de ancoragem e o item de leitura entram no tronco após
-`work-context` (sem sinal de maturidade): a vinheta ancora δ̂_r; a leitura
-alimenta `literacy` no relatório. `selectVignette` aplica rodízio (≤ 2)
-quando há mais de uma vinheta.
+`selectAfterTerminal` até revalidar sintéticos m2. Após `work-context`, o tronco
+inclui vinheta (ancora δ̂_r, sem sinal de maturidade), leitura (`literacy` no
+relatório, sem sinal de maturidade) e referente de grupo
+(`group-error-climate` → `leadership-management`). `selectVignette` aplica
+rodízio (≤ 2) quando há mais de uma vinheta.
 Restrições — testlet já respondido, orçamento de tempo, no máximo 2 itens
 seguidos da mesma folha, vinhetas ≤ 2 — filtram candidatos em vez de entrar
 como pesos. Hipóteses já reforçadas restringem o pool quando há candidato
