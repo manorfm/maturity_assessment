@@ -87,7 +87,11 @@ passa. Os sintéticos do showcase, em `m2`, publicam índice ordenado opaco <
 reativo < adaptativo. Projetos novos nascem em `m2`; `m1` permanece
 selecionável. Unidades irmãs compartilham prior da mãe por partial pooling
 (05 §7.1) antes da agregação do índice. A auditoria do instrumento bloqueia
-prática sem `evidence[]` e alerta folhas com testlets ou âncoras altas escassos.
+prática sem `evidence[]`. Toda folha com evidência no grafo v21 tem ≥ 2
+testlets, âncora baixa (0–1) e caminho até âncora alta (consistência ≥ 3 ou
+outcome/system em 4), inclusive `knowledge-discovery`, `cognitive-load`,
+`identity-access` e `cloud-security`. Recalibrar limiares m1 para estágio 1
+permanece aberto.
 
 ## Contexto não é evidência
 

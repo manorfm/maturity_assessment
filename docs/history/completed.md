@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Folhas escassas da matriz Q (WP3)
+
+- `knowledge-discovery`, `cognitive-load`, `identity-access` e `cloud-security`
+  passam a ter ≥ 2 testlets e âncora alta; auditoria sem sparse/topo.
+  Ver [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Pulso e grau A com replicated (WP9)
 
 - `foundationIsReplicated` + `classifyEvidenceGrade` exigem replicação para

@@ -26,3 +26,13 @@ test('auditoria da matriz Q bloqueia prática sem evidence e exige cobertura de 
   assert.equal(issues.filter((item) => item.code === 'missing-evidence').length, 0);
   assert.ok(issues.every((item) => item.code !== 'missing-evidence'));
 });
+
+test('folhas publicáveis têm ≥2 testlets, âncora baixa e caminho até âncora alta', () => {
+  const issues = auditEvidenceMatrix(graph);
+  const sparse = issues.filter((item) => item.code === 'sparse-testlets');
+  const top = issues.filter((item) => item.code === 'missing-top-anchor');
+  const low = issues.filter((item) => item.code === 'missing-fragility-anchor');
+  assert.deepEqual(sparse.map((item) => item.subject), []);
+  assert.deepEqual(top.map((item) => item.subject), []);
+  assert.deepEqual(low.map((item) => item.subject), []);
+});

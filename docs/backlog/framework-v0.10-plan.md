@@ -11,11 +11,10 @@ selecionável.
 
 ## Aberto
 
-- WP3 (parcial): grafo `v21` publica `evidence[]` em toda opção de prática,
-  com adaptador m1 (`evidenceToSignals`), `taskFamily`/`testlet` e auditoria
-  da matriz Q; ritual/heroísmo sobem para âncora 1 (peso m1 −2 preservado).
-  Folhas com testlets ou topo escassos e recalibrar limiares m1 para estágio 1
-  ainda são conteúdo aberto.
+- WP3 (fechado na matriz Q): grafo `v21` com `evidence[]`, adaptador m1,
+  `taskFamily`/`testlet`, auditoria, ritual/heroísmo em âncora 1 e folhas
+  publicáveis com ≥ 2 testlets + âncora baixa + caminho até topo. Recalibrar
+  limiares m1 para estágio 1 permanece aberto.
 - WP4: módulo `measurement` reproduz 05 §5.1/§7.3; projetos têm
   `measurement_model` (padrão `m2`, schema 25); runtime mede folhas pela
   matriz Q, publica índice com regra de publicação, aceite dos sintéticos
