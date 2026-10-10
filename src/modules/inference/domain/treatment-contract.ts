@@ -26,6 +26,16 @@ export function classifyCynefin(input: {
   return 'complex';
 }
 
+/**
+ * Grau A exige achado empírico replicado (08 §6.2).
+ * `replicated: true` no fundamento, ou corpus Accelerate/DORA multi-ano.
+ */
+export function foundationIsReplicated(foundation?: { source?: string; replicated?: boolean }): boolean {
+  if (foundation?.replicated === true) return true;
+  if (foundation?.replicated === false) return false;
+  return /\b(accelerate|dora)\b/i.test(foundation?.source ?? '');
+}
+
 /** Grau da conduta (08 §6.2): o quanto se sabe que esta prática produz o efeito, não o suporte local da amostra. */
 export function classifyEvidenceGrade(input: {
   foundationSource?: string;

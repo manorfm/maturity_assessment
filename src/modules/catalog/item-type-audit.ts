@@ -71,6 +71,21 @@ function auditItem(item: CatalogItem): ItemTypeIssue[] {
     }
   }
 
+  if (item.kind === 'pulse') {
+    if (!item.leafId?.trim()) {
+      issues.push(issue('error', 'pulse-missing-leaf', item.id, 'Item de pulso precisa de folha tratada.'));
+    }
+    if (item.options.length < 3) {
+      issues.push(issue('error', 'pulse-options', item.id, 'Item de pulso precisa de pelo menos três opções ancoradas.'));
+    }
+    if (item.intervalWeeks.min < 4 || item.intervalWeeks.max > 8 || item.intervalWeeks.min > item.intervalWeeks.max) {
+      issues.push(issue('error', 'pulse-interval', item.id, 'Pulso deve ficar entre 4 e 8 semanas.'));
+    }
+    if (!groupReferent.test(`${item.scenario} ${item.prompt}`)) {
+      issues.push(issue('error', 'pulse-group-referent', item.id, 'Pulso deve usar referente de grupo nas mesmas unidades.'));
+    }
+  }
+
   return issues;
 }
 

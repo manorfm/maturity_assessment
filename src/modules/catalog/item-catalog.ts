@@ -4,8 +4,11 @@ import type {
   GroupReferentItem,
   ListTechniqueItem,
   LiteracyItem,
+  PulseItem,
   VignetteItem,
 } from './item-types.js';
+
+export type { PulseItem as PulseCatalogItem };
 
 /** Vinheta 07 §4.3 — aprovação de mudança (âncora autoral 1). */
 export const approvalChangeVignette: VignetteItem = {
@@ -118,12 +121,79 @@ export const freeTextStrategy: FreeTextItem = {
   codebookVersion: 'strategy-purpose-v1',
 };
 
+const pulseAnchors = [
+  { id: 'absent', label: 'Ainda não ocorre ou não observei.', anchor: 0 as const },
+  { id: 'fragile', label: 'Ocorre sob pressão ou só com esforço de alguém.', anchor: 1 as const },
+  { id: 'local', label: 'Ocorre de forma local, ainda sem revisão do efeito.', anchor: 2 as const },
+  { id: 'owned', label: 'Ocorre com dono e critério, e o efeito é revisado.', anchor: 3 as const },
+  { id: 'adapted', label: 'Já foi revisado depois de falhar e o fluxo mudou de novo.', anchor: 4 as const },
+];
+
+/** Itens-âncora de pulso (08 §7) — 4–8 semanas, folhas tratadas. */
+export const pulseReleasePath: PulseItem = {
+  id: 'pulse-release-path',
+  kind: 'pulse',
+  title: 'Caminho da versão',
+  scenario: 'Pense na última promoção de mudança que você acompanhou.',
+  prompt: 'Neste time, a versão chegou ao ambiente de destino por um caminho reproduzível?',
+  leafId: 'release-feedback',
+  options: pulseAnchors,
+  intervalWeeks: { min: 4, max: 8 },
+};
+
+export const pulseLearningClose: PulseItem = {
+  id: 'pulse-learning-close',
+  kind: 'pulse',
+  title: 'Fechamento do aprendizado',
+  scenario: 'Pense no último incidente ou falha relevante deste time.',
+  prompt: 'Neste time, a reflexão resultou em mudança no fluxo com dono e revisão?',
+  leafId: 'organizational-learning',
+  options: pulseAnchors,
+  intervalWeeks: { min: 4, max: 8 },
+};
+
+export const pulseApprovalFeedback: PulseItem = {
+  id: 'pulse-approval-feedback',
+  kind: 'pulse',
+  title: 'Aprovação com evidência',
+  scenario: 'Pense na última aprovação que atrasou ou liberou uma mudança.',
+  prompt: 'Neste time, a aprovação mudou com evidência nova, ou só registrou o rito?',
+  leafId: 'enabling-governance',
+  options: pulseAnchors,
+  intervalWeeks: { min: 4, max: 8 },
+};
+
+export const pulseWipLimit: PulseItem = {
+  id: 'pulse-wip-limit',
+  kind: 'pulse',
+  title: 'Limite de trabalho',
+  scenario: 'Pense no trabalho em andamento deste time nesta semana.',
+  prompt: 'Neste time, alguém parou de iniciar para esvaziar uma espera visível?',
+  leafId: 'work-management',
+  options: pulseAnchors,
+  intervalWeeks: { min: 4, max: 8 },
+};
+
+export const pulseItems: PulseItem[] = [
+  pulseReleasePath,
+  pulseLearningClose,
+  pulseApprovalFeedback,
+  pulseWipLimit,
+];
+
+/** Seleciona até 6 itens-âncora das folhas tratadas (08 §7; ideal 3–6). */
+export function selectPulseItems(treatedLeafIds: readonly string[], max = 6): PulseItem[] {
+  const wanted = new Set(treatedLeafIds);
+  return pulseItems.filter((item) => wanted.has(item.leafId)).slice(0, Math.min(6, max));
+}
+
 export const itemCatalog: CatalogItem[] = [
   approvalChangeVignette,
   literacyWipChart,
   groupErrorReferent,
   metricManipulationList,
   freeTextStrategy,
+  ...pulseItems,
 ];
 
 export const freeTextPipeline = {

@@ -114,6 +114,10 @@ projetor `diagnostic-report-v2` publica o laudo.
 A leitura geral só mostra índice com faixa quando há `IndexPublication`
 publicada. Cada conduta recebe Cynefin e grau de evidência A–D pela base
 da prática (`classifyEvidenceGrade`), não pelo suporte local da amostra.
+Grau A exige fonte forte **e** achado replicado (`foundationIsReplicated`:
+`replicated: true` no fundamento ou corpus Accelerate/DORA no `source`).
+`projectTreatmentPlan` anexa pulso (`selectPulseItems`) com 3–6
+itens-âncora das folhas das condutas ativas, intervalo 4–8 semanas.
 A biblioteca `systemic-archetypes-v1` publica arquétipo só com ≥ 2 elos
 observados ("padrão provável"). O portfólio escolhe a **restrição
 principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e

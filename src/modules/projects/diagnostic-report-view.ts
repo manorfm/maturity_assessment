@@ -2,6 +2,7 @@ import { escapeHtml } from '../../shared/html.js';
 import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnostic-report.js';
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinReading, evidenceGradeReading } from '../inference/domain/treatment-contract.js';
+import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierNode } from '../inference/domain/learning-frontier.js';
@@ -172,14 +173,23 @@ export function renderNodeCard(input: { title: string; path: string; definition:
     ${block('Referências', `<p>${escapeHtml(input.references)}</p>`)}`;
 }
 
-export function renderTreatmentPage(active: TreatmentConduct[], later: TreatmentConduct[], evidenceGap?: string): string {
+export function renderTreatmentPage(
+  active: TreatmentConduct[],
+  later: TreatmentConduct[],
+  evidenceGap?: string,
+  pulse: PulseCatalogItem[] = [],
+): string {
   const list = (items: TreatmentConduct[]) => items.map((item, index) => renderConduct(item, index + 1)).join('') || '<p class="report-gap">Nenhuma conduta neste horizonte.</p>';
   const grades = evidenceGap
     ? `<p class="report-gap">${escapeHtml(evidenceGap)}</p>`
     : '<p>O grau A–D descreve a base da prática, não o suporte local da amostra. Condutas D só entram como experimento explícito.</p>';
+  const pulseList = pulse.length
+    ? `<ul>${pulse.map((item) => `<li><strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.prompt)} <span class="report-meta">(${item.intervalWeeks.min}–${item.intervalWeeks.max} semanas · ${escapeHtml(item.leafId)})</span></li>`).join('')}</ul>`
+    : '<p class="report-gap">Ainda não há folhas tratadas com item-âncora de pulso no catálogo.</p>';
   return `<header class="report-hero"><p class="report-kicker">Plano de tratamento</p><h1>Quem faz o quê, e em que ordem</h1></header>
     <section class="report-block"><h2>0–30 dias · ativas agora</h2>${list(active)}</section>
     <section class="report-block"><h2>Depois</h2>${list(later)}</section>
+    <section class="report-block"><h2>Pulso · 4–8 semanas</h2><p>3 a 6 itens-âncora das folhas tratadas, nas mesmas unidades. Mudança só com P(melhora) ≥ 0,8.</p>${pulseList}</section>
     <section class="report-block"><h2>Domínio Cynefin</h2><ul><li>Claro — a resposta é conhecida: aplicar</li><li>Complicado — exige análise de especialista</li><li>Complexo — só se descobre testando: experimento pequeno</li><li>Caótico — agir primeiro para estabilizar</li></ul>${grades}</section>`;
 }
 

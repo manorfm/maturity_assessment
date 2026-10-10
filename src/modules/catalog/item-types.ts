@@ -59,4 +59,12 @@ export type FreeTextItem = CatalogItemBase & {
   codebookVersion: string;
 };
 
-export type CatalogItem = VignetteItem | LiteracyItem | GroupReferentItem | ListTechniqueItem | FreeTextItem;
+/** Item-âncora de pulso (08 §7): reaplicação curta nas folhas tratadas. */
+export type PulseItem = CatalogItemBase & {
+  kind: 'pulse';
+  leafId: string;
+  options: Array<{ id: string; label: string; anchor: AnchorStage }>;
+  intervalWeeks: { min: number; max: number };
+};
+
+export type CatalogItem = VignetteItem | LiteracyItem | GroupReferentItem | ListTechniqueItem | FreeTextItem | PulseItem;

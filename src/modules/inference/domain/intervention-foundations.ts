@@ -1,4 +1,10 @@
-export type ExplicitFoundation = { source: string; principle: string; why: string };
+export type ExplicitFoundation = {
+  source: string;
+  principle: string;
+  why: string;
+  /** Achado empírico replicado (08 §6.2); habilita grau A com fonte forte. */
+  replicated?: boolean;
+};
 
 export const interventionFoundations: Record<string, ExplicitFoundation> = {
   "sobrecarga-silenciosa": {

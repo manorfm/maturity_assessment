@@ -34,9 +34,11 @@ selecionável.
   técnica de lista no tronco; texto livre com flag off, PII, livro de códigos,
   fila de revisão no painel e κ ≥ 0,7. Ligar texto livre ao tronco da entrevista
   quando a flag estiver ligada permanece hipótese aberta.
-- WP9 (parcial): Cynefin, grau A–D, arquétipos `systemic-archetypes-v1` e
-  restrição principal por escore no portfólio. Pulso (itens-âncora) e grau
-  A com `replicated` explícito no catálogo de condutas ainda abertos.
+- WP9 (fechado no motor de contrato): Cynefin, grau A–D com
+  `foundationIsReplicated`, arquétipos `systemic-archetypes-v1`, restrição
+  principal por escore, pulso (`pulse-*` / `selectPulseItems`) no plano de
+  tratamento. Publicar mudança com P(melhora) ≥ 0,8 e reavaliação 6–12 meses
+  permanecem no ciclo de evolução (WP16).
 - WP12 a WP14, WP16 a WP19: sofisticação, capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP15: comparador de duas leituras com faixa. Sem duas fotografias de índice, a página diz a lacuna.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.

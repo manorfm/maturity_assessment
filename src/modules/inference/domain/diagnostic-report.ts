@@ -6,8 +6,9 @@ import type { IndexPublication } from './stage-posterior.js';
 import { assessReadiness, type PrerequisitePosterior, type ReadinessAssessment } from './advanced-readiness.js';
 import { learningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
 import { compareReadings, type IndexReading, type ReadingChange } from './reading-history.js';
-import { classifyCynefin, classifyEvidenceGrade, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
+import { classifyCynefin, classifyEvidenceGrade, foundationIsReplicated, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
 import { primaryArchetypeFor } from './systemic-archetypes.js';
+import { selectPulseItems, type PulseCatalogItem } from '../../catalog/item-catalog.js';
 
 export type ReportGap = { gap: string };
 
@@ -135,6 +136,7 @@ function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): Treat
     evidenceGrade: classifyEvidenceGrade({
       ...(finding.foundation?.source ? { foundationSource: finding.foundation.source } : {}),
       ...(hasExplicitGuidance(finding.pattern) ? { matureReference: guidance.matureReference } : {}),
+      replicated: foundationIsReplicated(finding.foundation),
     }),
     doesNotSolve: guidance.doesNotSolve,
     ...(archetype ? {
@@ -176,7 +178,11 @@ export function projectAudienceVerbs(finding: OutcomeFinding): AudienceVerb[] {
   ];
 }
 
-export function projectTreatmentPlan(findings: OutcomeFinding[]): { active: TreatmentConduct[]; later: TreatmentConduct[] } {
+export function projectTreatmentPlan(findings: OutcomeFinding[]): {
+  active: TreatmentConduct[];
+  later: TreatmentConduct[];
+  pulse: PulseCatalogItem[];
+} {
   const published = uniqueFindingsByPattern(findings).filter((finding) => finding.confidence >= 0.5);
   const observedPatterns = published.map((finding) => finding.pattern);
   const conducts = published.map((finding) => conductFrom(finding, observedPatterns));
@@ -193,7 +199,8 @@ export function projectTreatmentPlan(findings: OutcomeFinding[]): { active: Trea
       later.push(conduct);
     }
   }
-  return { active, later: later.slice(0, 6) };
+  const treatedLeaves = [...new Set(published.map((finding) => finding.detailCapability))];
+  return { active, later: later.slice(0, 6), pulse: selectPulseItems(treatedLeaves) };
 }
 
 export function projectReadinessPage(practices: Array<{ id: string; label: string; prerequisites?: PrerequisitePosterior[]; technicalPhase?: number }>): Array<{ id: string; label: string; assessment?: ReadinessAssessment; gap?: string }> {

@@ -88,6 +88,9 @@ referente de grupo e técnica de lista entram no tronco do grafo v21 (após
   (`stripPii`); livro `strategy-purpose-v1`; fila de revisão humana no painel
   (`free_text_entries` / `free_text_codings`); κ de Cohen ≥ 0,7 para publicar
   código. Ainda fora do tronco da entrevista.
+- **Pulso** — itens-âncora (`pulse-*`) das folhas tratadas, intervalo 4–8
+  semanas, referente de grupo; `selectPulseItems` anexa ao plano de tratamento.
+  Fora do tronco da entrevista; acompanhamento pós-conduta (08 §7).
 
 `npm run audit:instrument` inclui a auditoria desses tipos.
 

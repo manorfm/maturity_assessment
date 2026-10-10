@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Pulso e grau A com replicated (WP9)
+
+- `foundationIsReplicated` + `classifyEvidenceGrade` exigem replicação para
+  grau A; catálogo `pulse-*` e `selectPulseItems` no plano de tratamento.
+  Ver [`recommendation-model.md`](../knowledge-base/recommendation-model.md) e
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-10 — Âncoras de ritual/heroísmo na matriz Q (WP3)
 
 - `appropriation` sobe peso −2 para âncora 1 (04 §4.2); m1 preserva −2 até
