@@ -59,8 +59,19 @@ test('heroísmo e ritual em peso −2 recebem appropriation e sobem para âncora
     signals: [signal({ pattern: 'war-room-como-gestao', weight: -2 })],
   });
   assert.equal(normalized.evidence[0]?.anchorStage, 1);
-  // Motor m1 preserva peso autoral −2 até recalibrar limiares de finding.
-  assert.equal(normalized.signals[0]?.weight, -2);
+  // m1 usa o peso da âncora 1 (−1): ritual/heroísmo são fragilidade, não ausência.
+  assert.equal(normalized.signals[0]?.weight, -1);
+});
+
+test('grafo vigente deriva peso −1 em ritual/heroísmo para o motor m1', async () => {
+  const { graph } = await import('../src/modules/catalog/assessment-graph.js');
+  const ritualOrHero = graph.flatMap((node) => node.options.flatMap((option) =>
+    option.evidence.filter((link) => link.appropriation === 'ritual' || link.appropriation === 'heroism')
+      .map((link) => ({ nodeId: node.id, optionId: option.id, signal: option.signals.find((item) => item.pattern === link.pattern) }))));
+  assert.ok(ritualOrHero.length >= 3);
+  for (const item of ritualOrHero) {
+    assert.equal(item.signal?.weight, -1, `${item.nodeId}/${item.optionId}`);
+  }
 });
 
 test('grafo vigente aplica âncora 1 em opções de ritual e heroísmo marcadas', async () => {

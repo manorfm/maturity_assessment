@@ -79,19 +79,17 @@ falha, taxa de falha e taxa de retrabalho — sem inferi-las apenas da entrevist
 Cada opção de prática publica `evidence[]`: folha, âncora de estágio 0–4,
 discriminação, camada, restrição e, quando couber, `appropriation`
 (ritual/heroísmo). Ritual e heroísmo com peso autoral −2 sobem para **âncora 1**
-(04 §4.2); o adaptador m1 ainda preserva peso −2 nesses padrões até recalibrar
-limiares de finding. O nó declara `taskFamily` e `testlet`. Em `m2`, o módulo
-`measurement` calcula posterior por unidade (05 §3–§7), agregação com elo
-limitante e regra de publicação; o laudo só mostra índice quando a publicação
-passa. Os sintéticos do showcase, em `m2`, publicam índice ordenado opaco <
-reativo < adaptativo. Projetos novos nascem em `m2`; `m1` permanece
-selecionável. Unidades irmãs compartilham prior da mãe por partial pooling
-(05 §7.1) antes da agregação do índice. A auditoria do instrumento bloqueia
-prática sem `evidence[]`. Toda folha com evidência no grafo v21 tem ≥ 2
-testlets, âncora baixa (0–1) e caminho até âncora alta (consistência ≥ 3 ou
-outcome/system em 4), inclusive `knowledge-discovery`, `cognitive-load`,
-`identity-access` e `cloud-security`. Recalibrar limiares m1 para estágio 1
-permanece aberto.
+(04 §4.2); o adaptador m1 deriva peso **−1** (fragilidade, não ausência). O nó
+declara `taskFamily` e `testlet`. Em `m2`, o módulo `measurement` calcula
+posterior por unidade (05 §3–§7), agregação com elo limitante e regra de
+publicação; o laudo só mostra índice quando a publicação passa. Os sintéticos
+do showcase, em `m2`, publicam índice ordenado opaco < reativo < adaptativo.
+Projetos novos nascem em `m2`; `m1` permanece selecionável. Unidades irmãs
+compartilham prior da mãe por partial pooling (05 §7.1) antes da agregação do
+índice. A auditoria do instrumento bloqueia prática sem `evidence[]`. Toda
+folha com evidência no grafo v21 tem ≥ 2 testlets, âncora baixa (0–1) e caminho
+até âncora alta (consistência ≥ 3 ou outcome/system em 4), inclusive
+`knowledge-discovery`, `cognitive-load`, `identity-access` e `cloud-security`.
 
 ## Contexto não é evidência
 

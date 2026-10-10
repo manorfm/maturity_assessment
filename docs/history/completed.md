@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Peso m1 −1 para ritual/heroísmo (WP3)
+
+- Adaptador deriva −1 (âncora 1); sintético opaco scripta war-room; laudo
+  prefere conduta ready no limitador. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Folhas escassas da matriz Q (WP3)
 
 - `knowledge-discovery`, `cognitive-load`, `identity-access` e `cloud-security`

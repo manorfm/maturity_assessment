@@ -145,7 +145,8 @@ export function decideReportOutcome(input: {
     : decisionLimiter(leaves.length ? leaves : flattenAssessedLeaves(input.branches), stageLevel, uniqueFindings);
   const limiterLabel = limiter?.label ?? (focus?.label ?? input.classification.limitingCapabilities[0] ?? input.classification.label);
   const bound = limiter ? uniqueFindings.filter((finding) => finding.detailCapability === limiter.id || finding.affectedCapabilities?.includes(limiter.id)) : uniqueFindings;
-  const leading = bound[0];
+  // Prefer ready prescriptions: investigate on the same leaf must not hide a conduct already ready.
+  const leading = bound.find((finding) => finding.prescription?.status !== 'investigate') ?? bound[0];
   const mixed = Boolean(limiter?.hasContradiction || (limiter && limiter.confidence < .5));
   const focusCapabilityIds = new Set(focus ? flattenNodeIds(focus) : []);
   const gap = input.focusId

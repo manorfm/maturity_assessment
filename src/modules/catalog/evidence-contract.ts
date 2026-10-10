@@ -92,16 +92,8 @@ export function normalizeOptionEvidence(option: Option & { evidence?: EvidenceLi
   const evidence = option.evidence?.length
     ? option.evidence
     : authored.flatMap(signalToEvidenceLinks);
-  // Matriz Q usa âncora 1 para ritual/heroísmo; o motor m1 preserva o peso autoral
-  // (−2) até os limiares de finding serem recalibrados para estágio 1.
-  const signals = evidenceToSignals(evidence).map((signal) => {
-    const source = authored.find((item) => item.pattern === signal.pattern);
-    if (source && appropriationFor(source.pattern) && source.weight <= -2) {
-      return { ...signal, weight: source.weight };
-    }
-    return signal;
-  });
-  return { ...option, evidence, signals };
+  // Matriz Q e m1 alinhados: ritual/heroísmo → âncora 1 → peso −1.
+  return { ...option, evidence, signals: evidenceToSignals(evidence) };
 }
 
 function appropriationFor(pattern: string): Appropriation | undefined {

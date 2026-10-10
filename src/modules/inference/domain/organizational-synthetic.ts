@@ -123,6 +123,9 @@ const lowShared: Record<string, string> = {
   'security-change': 'late-review',
   'platform-path-to-capability': 'ticket-hero',
   'platform-path-adoption': 'path-does-not-fit',
+  // War room: ritual/heroísmo → peso m1 −1; script explícito (optionByBand não basta).
+  'team-pressure': 'private-resolution',
+  'war-room-thread': 'climate-hunt',
   'improvement-loop': 'action-list-fades',
   degradation: 'customer-volume',
   'incident-diagnosis': 'separate-searches',
