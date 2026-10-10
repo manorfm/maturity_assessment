@@ -26,12 +26,11 @@ selecionável.
   → causas/λ₀), com runtime no `inference-service`. Elicitação SHELF dos λ
   permanece aberta.
 - WP6 (parcial): seletor por bits/min com restrições; simulador de unidade;
-  `unitLeafCoverage` (29 folhas) e `selectWithUnitCoverage` no journey;
-  vinhetas semeadas fora do tronco com `selectVignette` (rodízio). Ligar
-  cobertura no caminho quente e vinhetas no tronco (WP7) ainda abertos.
-- WP7 (parcial): catálogo e auditoria dos tipos 07 (vinheta, leitura, grupo,
-  lista, texto livre com flag off). Inserção no tronco do grafo, rodízio de
-  vinhetas na jornada e fila de revisão humana no painel ainda abertos.
+  `unitLeafCoverage` / `selectWithUnitCoverage`; vinheta no tronco com
+  rodízio. Ligar cobertura no caminho quente ainda aberto.
+- WP7 (parcial): catálogo/auditoria dos tipos 07; vinheta de ancoragem no
+  tronco após `work-context` com rodízio na jornada. Leitura no tronco,
+  itens de grupo/lista e fila de revisão humana no painel ainda abertos.
 - WP9 (parcial): Cynefin, grau A–D, arquétipos `systemic-archetypes-v1` e
   restrição principal por escore no portfólio. Pulso (itens-âncora) e grau
   A com `replicated` explícito no catálogo de condutas ainda abertos.

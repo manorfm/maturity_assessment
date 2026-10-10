@@ -49,7 +49,10 @@ function auditQuestions(nodes: AssessmentNode[]): InstrumentIssue[] {
     if (node.id === 'respondent-context') return [];
     const issues: InstrumentIssue[] = [];
     if (!observableAnchor.test(`${node.scenario} ${node.prompt}`)) issues.push(issue('warning', 'missing-observation-anchor', node.id, 'O cenário não ancora a resposta em um evento ou período recuperável.'));
-    if (!node.options.some((option) => option.observation === 'visibility')) issues.push(issue('error', 'missing-visibility-exit', node.id, 'A pergunta precisa permitir que a pessoa declare não observar a situação sem produzir sinal.'));
+    // Vinhetas de ancoragem (07 §4.3) são estímulo comum a todas as perspectivas; não pedem "não observo".
+    if (!node.id.startsWith('vignette-') && !node.options.some((option) => option.observation === 'visibility')) {
+      issues.push(issue('error', 'missing-visibility-exit', node.id, 'A pergunta precisa permitir que a pessoa declare não observar a situação sem produzir sinal.'));
+    }
     if (exposedJargon.test(node.scenario)) issues.push(issue('error', 'exposed-jargon', `${node.id}/scenario`, 'O cenário expõe jargão que precisa ser traduzido para um comportamento cotidiano.'));
     if (exposedJargon.test(node.prompt)) issues.push(issue('error', 'exposed-jargon', `${node.id}/prompt`, 'A pergunta expõe jargão que precisa ser traduzido para um comportamento cotidiano.'));
     if (abstractLanguage.test(node.prompt)) issues.push(issue('warning', 'abstract-prompt', node.id, 'A pergunta usa abstração que pode exigir tradução pela pessoa respondente.'));

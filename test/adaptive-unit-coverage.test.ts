@@ -91,7 +91,7 @@ test('catálogo semeia vinhetas e selectVignette respeita rodízio e teto de 2',
   for (const vignetteId of vignetteIds) {
     const node = db.prepare('SELECT node_key, node_type FROM assessment_nodes WHERE node_key = ?').get(vignetteId) as { node_key: string; node_type: string } | undefined;
     assert.ok(node, `vinheta ${vignetteId} deve existir como nó`);
-    assert.equal(node.node_type, 'probe');
+    assert.equal(node.node_type, 'scenario');
   }
 
   const projects = new ProjectService(db);

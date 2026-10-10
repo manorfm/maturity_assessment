@@ -191,9 +191,8 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   const invitations = new InvitationService(db);
   const participations = new ParticipationService(db);
   const catalog = new CatalogService(db);
-  const adaptiveVignettes = (db.prepare("SELECT COUNT(*) total FROM assessment_nodes WHERE node_key LIKE 'vignette-%'").get() as { total: number }).total;
-  assert.equal((db.prepare('SELECT COUNT(*) total FROM assessment_nodes').get() as { total: number }).total, graph.length + Number(adaptiveVignettes));
-  assert.ok(Number(adaptiveVignettes) >= 1, 'vinhetas adaptativas (06) entram fora do tronco');
+  assert.equal((db.prepare('SELECT COUNT(*) total FROM assessment_nodes').get() as { total: number }).total, graph.length);
+  assert.ok(graph.some((node) => node.id.startsWith('vignette-')), 'vinheta de ancoragem entra no tronco');
   assert.ok(graph.length >= 15, 'a entrevista deve cobrir o SDLC além de um questionário raso');
   assert.deepEqual(graph[0]!.options.map((option) => option.id), profileIds);
   assert.equal(graph[0]!.options.every((option) => option.signals.length === 0), true);
@@ -208,6 +207,8 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   assert.equal(participations.find(claimed.resumeToken)?.profile, 'quality');
   assert.equal(participations.find(claimed.resumeToken)?.current_node, 'work-context');
   participations.answer(claimed.resumeToken, 'quality-and-risk');
+  assert.equal(participations.find(claimed.resumeToken)?.current_node, 'vignette-approval-change');
+  participations.answer(claimed.resumeToken, 'ritual');
   assert.equal(participations.find(claimed.resumeToken)?.current_node, 'security-change');
   participations.answer(claimed.resumeToken, 'late-review');
   const current = participations.find(claimed.resumeToken)!;
@@ -251,9 +252,10 @@ test('contexto seleciona poucos eventos sem depender do título escolhido', () =
   const buildAndOperate = RespondentWorkContext.fromOption('build-and-operate');
   const buildFocused = RespondentWorkContext.fromOption('build-focused');
   const architecture = RespondentWorkContext.fromOption('architecture-and-boundaries');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'engineering', buildAndOperate), 'ready-to-release');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'architecture', buildAndOperate), 'ready-to-release');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'architecture-and-boundaries', 'architecture', architecture), 'architecture-pressure');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'build-and-operate', 'engineering', buildAndOperate), 'vignette-approval-change');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'architecture-and-boundaries', 'architecture', architecture), 'vignette-approval-change');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'vignette-approval-change', 'ritual', 'engineering', buildAndOperate), 'ready-to-release');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'vignette-approval-change', 'ritual', 'architecture', architecture), 'architecture-pressure');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildAndOperate), 'environment-access');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildFocused), 'integration-cadence');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap', 'engineering', buildFocused), 'architecture-pressure');
@@ -406,8 +408,7 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
   assert.ok(Number((db.prepare('SELECT COUNT(*) total FROM diagnostic_hypotheses').get() as { total: number }).total) > 0);
   const oversizedFamily = db.prepare('SELECT family_key, COUNT(*) total FROM diagnostic_hypotheses GROUP BY family_key HAVING total > 2 LIMIT 1').get();
   assert.equal(oversizedFamily, undefined, 'causas simultâneas não devem competir em uma família categórica gigante');
-  const adaptiveVignetteObs = Number((db.prepare("SELECT COUNT(*) total FROM question_observations WHERE node_key LIKE 'vignette-%'").get() as { total: number }).total);
-  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM question_observations').get() as { total: number }).total), graph.length + adaptiveVignetteObs);
+  assert.equal(Number((db.prepare('SELECT COUNT(*) total FROM question_observations').get() as { total: number }).total), graph.length);
   const deliveryApplicability = db.prepare("SELECT applicability_patterns_json FROM question_observations WHERE node_key = 'delivery-cause'").get() as { applicability_patterns_json: string };
   assert.deepEqual(new Set(JSON.parse(deliveryApplicability.applicability_patterns_json) as string[]), new Set(['mudanca-isolada', 'integracao-por-janela']));
   const withoutCloudEfficiency = graph.map((node) => ({ ...node, options: node.options.map((option) => ({ ...option, signals: option.signals.filter((item) => !item.details?.includes('cloud-efficiency')) })) }));

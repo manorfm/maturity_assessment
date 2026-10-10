@@ -43,8 +43,14 @@ export class ParticipationService {
       const effectiveProfile = node.id === 'respondent-context' ? option.id : participation.profile;
       const effectiveContext = node.id === 'work-context' && option.id !== 'cannot-observe' ? RespondentWorkContext.fromOption(option.id) : participation.workContext;
       const declarativeNext = this.catalog.nextNode(participation.graph_version, node.id, option.id, effectiveProfile, effectiveContext);
-      const next = declarativeNext && !this.hasAnswered(participation.id, declarativeNext)
-        ? declarativeNext
+      const rotatedVignette = node.id === 'work-context'
+        ? this.adaptiveJourney.selectVignette(participation.id)
+        : undefined;
+      const preferredNext = rotatedVignette && !this.hasAnswered(participation.id, rotatedVignette)
+        ? rotatedVignette
+        : declarativeNext;
+      const next = preferredNext && !this.hasAnswered(participation.id, preferredNext)
+        ? preferredNext
         : this.adaptiveJourney.selectAfterTerminal(participation.id, effectiveProfile, participation.graph_version);
       if (next) {
         this.db.prepare('UPDATE participations SET current_node = ? WHERE id = ?').run(next, participation.id);

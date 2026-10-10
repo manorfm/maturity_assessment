@@ -479,6 +479,11 @@ export function optionForOrganizationalSynthetic(
 ): string {
   if (node.id === 'respondent-context') return role.profile;
   if (node.id === 'work-context') return role.workContext;
+  // Vinheta: ancora na âncora autoral (estágio 1) para não puxar δ̂_r nem o índice.
+  if (node.id.startsWith('vignette-')) {
+    const anchor = node.options.find((option) => option.id === 'ritual') ?? node.options[0];
+    return anchor!.id;
+  }
   const fallbackBand = POC_VALIDATION_ORGS.find((org) => org.id === caseId)?.band ?? 'low';
   const wanted = scripts[caseId].units[unitIndex]?.[node.id] ?? scripts[caseId].shared[node.id] ?? optionByBand(node.options, fallbackBand);
   return node.options.some((option) => option.id === wanted) ? wanted : optionByBand(node.options, fallbackBand);

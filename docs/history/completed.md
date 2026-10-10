@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Vinheta de ancoragem no tronco (WP7)
+
+- `vignette-approval-change` no grafo após `work-context`; rodízio via
+  `selectVignette`; sem sinal de maturidade. Ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-10-10 — Cobertura de unidade e rodízio de vinhetas (WP6)
 
 - `unitLeafCoverage` / `selectWithUnitCoverage` no journey; vinhetas

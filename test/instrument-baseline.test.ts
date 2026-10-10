@@ -11,8 +11,8 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
   assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v21');
-  assert.equal(baseline.nodes.total, 92);
-  assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 57, probe: 28 });
+  assert.equal(baseline.nodes.total, 93);
+  assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 58, probe: 28 });
   assert.equal(Object.keys(baseline.routes).length, profileIds.length);
   for (const profile of profileIds) {
     assert.ok(baseline.routes[profile].scenarios >= 30, profile);
@@ -28,7 +28,7 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
   assert.ok(baseline.authorship.commonTrunkNodes >= 30);
   assert.ok(baseline.authorship.commonTrunkRatio > .32);
   assert.ok(baseline.authorship.causalProbeNodes > 0);
-  assert.equal(baseline.authorship.nodesWithoutVisibilityExit, 0);
+  assert.equal(baseline.authorship.nodesWithoutVisibilityExit, 1, 'vinheta de ancoragem não oferece saída de visibilidade');
 });
 
 test('linha de base torna visível dívida de fundamentos e contratos de direção', () => {

@@ -1,6 +1,7 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
 import { normalizeOptionEvidence, type EvidenceLink } from './evidence-contract.js';
+import { approvalChangeVignette } from './item-catalog.js';
 
 export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v21';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
@@ -34,7 +35,7 @@ export function observationOf(option: Option): ObservationKind {
 }
 
 function attachObservationalExits(node: AssessmentNode): AssessmentNode {
-  if (node.id === 'respondent-context') return node;
+  if (node.id === 'respondent-context' || node.id.startsWith('vignette-')) return node;
   if (node.options.some((option) => option.id === CANNOT_OBSERVE_ID)) return node;
   return { ...node, options: [...node.options, cannotObserve] };
 }
@@ -89,6 +90,20 @@ const authoredNodes: AssessmentNode[] = [
     scenario: 'Pense no trabalho recente, não no título do cargo. Pessoas com nomes de função diferentes podem construir, operar, decidir ou oferecer capacidades semelhantes. Esta resposta apenas seleciona situações que você consegue observar e não produz pontuação.',
     prompt: 'Qual descrição reúne melhor suas responsabilidades, autoridade e alcance no cotidiano?',
     options: workContextOptions,
+    next: approvalChangeVignette.id,
+  },
+  {
+    id: approvalChangeVignette.id,
+    type: 'scenario',
+    title: approvalChangeVignette.title,
+    scenario: approvalChangeVignette.scenario,
+    prompt: approvalChangeVignette.prompt,
+    // Sem sinais de maturidade: a vinheta ancora δ̂_r (05 §4.1), não entra no índice.
+    options: approvalChangeVignette.options.map((option) => ({
+      id: option.id,
+      label: option.label,
+      signals: [] as Signal[],
+    })),
     next: 'urgent-change',
   },
   {
@@ -1181,6 +1196,9 @@ function skipEdges(node: AssessmentNode, to: string): AssessmentEdge[] {
 
 export const edges: AssessmentEdge[] = graph.flatMap((node) => {
   if (node.id === 'work-context') return [
+    { from: node.id, to: approvalChangeVignette.id },
+  ];
+  if (node.id === approvalChangeVignette.id) return [
     { from: node.id, to: 'ready-to-release', when: { tracksAny: ['delivery', 'full-cycle'] } },
     { from: node.id, to: 'security-change', when: { tracksAny: ['risk'] } },
     { from: node.id, to: 'environment-access', when: { tracksAny: ['capability'] } },

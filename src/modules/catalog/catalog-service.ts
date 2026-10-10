@@ -1,7 +1,6 @@
 import { inTransaction, type Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { edges, graph, GRAPH_VERSION, nodeVariants, observationOf, profiles, type AssessmentEdge, type AssessmentNode, type ObservationKind, type Option, type Signal } from './assessment-graph.js';
-import { itemCatalog } from './item-catalog.js';
 import { capabilityLeafIds } from '../inference/domain/capability-taxonomy.js';
 import { PILOT_THRESHOLDS } from '../inference/domain/pilot-policy.js';
 import type { RespondentWorkContext } from '../assessments/domain/respondent-work-context.js';
@@ -36,29 +35,6 @@ export class CatalogService {
       edges.forEach((edge, position) => this.db.prepare('INSERT INTO assessment_edges (id, graph_version, from_node_key, option_key, to_node_key, priority, profile, conditions_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
         .run(id(), GRAPH_VERSION, edge.from, edge.optionId ?? null, edge.to, position, edge.profile ?? null, JSON.stringify(edge.when ?? {})));
       this.seedDiagnosticModel();
-      this.seedAdaptiveVignettes(graph.length);
-    });
-  }
-
-  /** Vinhetas fora do tronco (WP7); elegíveis só pelo seletor adaptativo (06 §3). */
-  private seedAdaptiveVignettes(startPosition: number): void {
-    const vignettes = itemCatalog.filter((item) => item.kind === 'vignette');
-    const allProfiles = Object.keys(profiles);
-    const modelVersion = `${GRAPH_VERSION}-bayesian-v4`;
-    vignettes.forEach((vignette, index) => {
-      if (vignette.kind !== 'vignette') return;
-      this.db.prepare('INSERT INTO assessment_nodes (graph_version, node_key, node_type, title, scenario, prompt, position) VALUES (?, ?, ?, ?, ?, ?, ?)')
-        .run(GRAPH_VERSION, vignette.id, 'probe', vignette.title, vignette.scenario, vignette.prompt, startPosition + index);
-      vignette.options.forEach((option, optionPosition) => {
-        this.db.prepare('INSERT INTO assessment_options (graph_version, node_key, option_key, label, position, observation_kind) VALUES (?, ?, ?, ?, ?, ?)')
-          .run(GRAPH_VERSION, vignette.id, option.id, option.label, optionPosition, 'practice');
-        const leafId = vignette.leafId ?? 'enabling-governance';
-        // Peso 0: a vinheta ancora δ̂_r (05 §4.1), não puxa o estágio da folha.
-        this.db.prepare('INSERT INTO assessment_signals (id, graph_version, node_key, option_key, capability, pattern, weight, detail_capabilities, evidence_layer, constraint_kind) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-          .run(id(), GRAPH_VERSION, vignette.id, option.id, 'governanca', `vignette-anchor:${vignette.id}:${option.anchor}`, 0, JSON.stringify([leafId]), 'practice', 'none');
-      });
-      this.db.prepare('INSERT INTO question_observations (model_version, node_key, profiles_json, applicability_patterns_json, cost) VALUES (?, ?, ?, ?, ?)')
-        .run(modelVersion, vignette.id, JSON.stringify(allProfiles), JSON.stringify([]), 0.35);
     });
   }
 
