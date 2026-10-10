@@ -42,9 +42,9 @@ test('banco novo nasce somente no esquema vigente', () => {
   assert.equal(invitations.find((column) => column.name === 'batch_id')?.notnull, 1);
   assert.equal(participations.find((column) => column.name === 'work_context_json')?.notnull, 1);
   assert.equal(edges.find((column) => column.name === 'conditions_json')?.notnull, 1);
-  assert.deepEqual([...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)), [23]);
+  assert.deepEqual([...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)), [24]);
   const projects = [...db.prepare('PRAGMA table_info(projects)').all()] as Array<{ name: string; dflt_value: string | null }>;
-  assert.equal(projects.find((column) => column.name === 'measurement_model')?.dflt_value, "'m1'");
+  assert.equal(projects.find((column) => column.name === 'measurement_model')?.dflt_value, "'m2'");
   assert.equal(projects.find((column) => column.name === 'free_text_enabled')?.dflt_value, '0');
   db.close();
 });

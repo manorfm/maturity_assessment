@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — m2 como padrão de projeto novo
+
+- Schema 24: `projects.measurement_model` DEFAULT `m2` após aceite dos
+  sintéticos; `m1` permanece selecionável. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-09 — Aceite m2 nos sintéticos do showcase
 
 - Testlets distintos passam a contar por `testletId`; sob `measurement_model=m2`

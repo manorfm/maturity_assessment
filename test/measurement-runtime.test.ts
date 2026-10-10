@@ -26,18 +26,18 @@ function section51Bundles(): RespondentBundle[] {
   ];
 }
 
-test('projeto novo nasce em m1 e a coluna measurement_model existe', () => {
+test('projeto novo nasce em m2 e a coluna measurement_model existe', () => {
   const db = createDatabase(':memory:');
   new CatalogService(db);
   const projects = new ProjectService(db);
-  const created = projects.create('Runtime m1', 'Org/Time');
+  const created = projects.create('Runtime m2', 'Org/Time');
   const project = projects.authorize(created.publicId, created.adminSecret)!;
-  assert.equal(project.measurement_model, 'm1');
+  assert.equal(project.measurement_model, 'm2');
   const columns = [...db.prepare('PRAGMA table_info(projects)').all()] as Array<{ name: string }>;
   assert.ok(columns.some((column) => column.name === 'measurement_model'));
   assert.deepEqual(
     [...db.prepare('SELECT version FROM schema_migrations').all()].map((row) => Number((row as { version: number }).version)),
-    [23],
+    [24],
   );
 });
 
@@ -56,7 +56,7 @@ test('ponte m2 publica IndexPublication a partir de bundles §5.1', () => {
   assert.equal(leafPublicationToIndex(reading.publication).published, true);
 });
 
-test('inference em m1 não inventa índice no laudo; m2 pode publicar', () => {
+test('inference em m2 é o padrão; m1 permanece selecionável sem inventar índice', () => {
   const db = createDatabase(':memory:');
   new CatalogService(db);
   const projects = new ProjectService(db);
@@ -64,6 +64,12 @@ test('inference em m1 não inventa índice no laudo; m2 pode publicar', () => {
   const project = projects.authorize(created.publicId, created.adminSecret)!;
   const projectId = String(project.id);
 
+  const m2 = new InferenceService(db).report(projectId, 5);
+  assert.equal(m2.measurementModel, 'm2');
+  // Sem participações suficientes o índice continua não publicado — não inventa número.
+  assert.ok(!m2.index || m2.index.published === false);
+
+  projects.setMeasurementModel(projectId, 'm1');
   const m1 = new InferenceService(db).report(projectId, 5);
   assert.equal(m1.measurementModel, 'm1');
   assert.equal(m1.index?.published, undefined);
@@ -76,10 +82,4 @@ test('inference em m1 não inventa índice no laudo; m2 pode publicar', () => {
   });
   assert.ok('gap' in laudoM1.reading);
   assert.match(laudoM1.footer.instrument, /m1/);
-
-  projects.setMeasurementModel(projectId, 'm2');
-  const m2 = new InferenceService(db).report(projectId, 5);
-  assert.equal(m2.measurementModel, 'm2');
-  // Sem participações suficientes o índice continua não publicado — não inventa número.
-  assert.ok(!m2.index || m2.index.published === false);
 });

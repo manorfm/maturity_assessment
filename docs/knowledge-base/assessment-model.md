@@ -83,10 +83,10 @@ está em `m1` (padrão), um adaptador deriva `signals[]` (peso −2..+2) a parti
 da evidência. Em `m2`, o módulo `measurement` calcula posterior por unidade
 (05 §3–§7), agregação com elo limitante e regra de publicação; o laudo só
 mostra índice quando a publicação passa. Os sintéticos do showcase, em `m2`,
-publicam índice ordenado opaco < reativo < adaptativo; projetos novos ainda
-nascem em `m1` até a promoção explícita a padrão. A auditoria do instrumento
-bloqueia prática sem `evidence[]` e alerta folhas com testlets ou âncoras
-altas escassos.
+publicam índice ordenado opaco < reativo < adaptativo. Projetos novos nascem
+em `m2`; `m1` permanece selecionável. A auditoria do instrumento bloqueia
+prática sem `evidence[]` e alerta folhas com testlets ou âncoras altas
+escassos.
 
 ## Contexto não é evidência
 

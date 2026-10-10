@@ -6,8 +6,8 @@ comportamento vigente além do que a base de conhecimento já descreve.
 O laudo, o chrome, o mapa de quatro sistemas, a ficha, o plano, a visão
 por público e o walkthrough já projetam o que o motor sustenta e declaram
 lacuna no resto. Os módulos abaixo existem e têm teste de referência. O
-produto em execução continua em `m1` até os sintéticos passarem no modelo
-novo.
+produto em execução usa `m2` como padrão de projeto novo; `m1` permanece
+selecionável.
 
 ## Aberto
 
@@ -16,12 +16,11 @@ novo.
   da matriz Q. Revisar âncoras de ritual/heroísmo (−2 → 1) e folhas com
   testlets ou topo escassos ainda é conteúdo aberto.
 - WP4 (parcial): módulo `measurement` reproduz 05 §5.1/§7.3; projetos
-  têm `measurement_model` (padrão `m1`); em `m2` o runtime mede folhas
-  pela matriz Q e só publica índice quando a regra de publicação passa.
-  Aceite dos sintéticos do showcase em m2 (índice ordenado
-  opaco < reativo < adaptativo) fechado. Promoção de `m2` a padrão de
-  projeto novo e partial pooling hierárquico no caminho do relatório
-  ainda abertos.
+  têm `measurement_model` (padrão `m2`, schema 24); em `m2` o runtime
+  mede folhas pela matriz Q e só publica índice quando a regra de
+  publicação passa. Aceite dos sintéticos do showcase e promoção a
+  padrão fechados. Partial pooling hierárquico no caminho do relatório
+  ainda aberto.
 - WP5 (parcial): `CausalFamily` + `causal-catalog-v11` com a família
   `late-integration` (05 §8.4) e runtime noisy-OR no `inference-service`.
   Converter as demais famílias do motor legado (hipótese/unknown → causas/λ₀)
@@ -41,6 +40,5 @@ novo.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
 - WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.
 
-Hipótese, não compromisso: promover `m2` como padrão de projeto novo — o
-aceite dos sintéticos do showcase já passou; falta decisão explícita de
-promoção e pooling hierárquico no relatório.
+Pooling hierárquico no caminho do relatório (unidade ← área ← empresa)
+permanece aberto em WP4.
