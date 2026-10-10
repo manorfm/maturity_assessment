@@ -35,15 +35,16 @@ TypeScript estrito também rejeita símbolos e parâmetros não usados. Mudança
 comportamento seguem ciclos red/green/blue com testes de domínio, integração e HTTP.
 
 O estágio atual não preserva bancos anteriores. Um banco vazio recebe diretamente
-o único schema vigente, registrado como versão 24; mudanças incompatíveis exigem
+o único schema vigente, registrado como versão 25; mudanças incompatíveis exigem
 recriação explícita da base. Projetos carregam `measurement_model` (`m1` ou
 `m2`, padrão `m2`) e `free_text_enabled` (padrão desligado). Opções carregam
 `observation_kind` (`practice`,
 `visibility` ou `not_applicable`). Capturas agregadas de diagnóstico, experimentos
-de transformação, rótulos cegos do piloto e entrevistas cognitivas ficam em tabelas
-próprias, sem vínculo com pessoa. O painel administrativo registra entrevistas
-cognitivas nessas tabelas. Colunas de
-projeção, camada e restrição são obrigatórias.
+de transformação, rótulos cegos do piloto, entrevistas cognitivas e a fila de
+texto livre (`free_text_entries` / `free_text_codings`) ficam em tabelas próprias,
+sem vínculo com pessoa. O painel administrativo registra entrevistas cognitivas e
+codifica texto livre com κ. Colunas de projeção, camada e restrição são
+obrigatórias.
 Índices e constraints garantem que um lote de origem seja reemitido no máximo uma vez.
 
 A API administrativa usa bearer token apenas no header e compartilha os serviços

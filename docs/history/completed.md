@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Fila de revisão de texto livre (WP7)
+
+- Schema 25: `free_text_entries` / `free_text_codings`; κ de Cohen e fila no
+  painel administrativo; flag `free_text_enabled` permanece desligada. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-10 — Técnica de lista no tronco (WP7)
 
 - Braços `list-metric-manipulation-{control,treatment}` após o clima de grupo;

@@ -30,6 +30,7 @@ import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, project
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
 import { renderAdminAside, renderAdminMetric, renderAdminShell, renderTermsPanel } from './admin-view.js';
+import { FreeTextReviewService, strategyPurposeCodebook } from '../inference/domain/free-text-review.js';
 
 type Params = { publicId: string; adminSecret: string };
 
@@ -152,6 +153,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
   const invitations = new InvitationService(db);
   const inference = new InferenceService(db);
   const pilot = new PilotService(db);
+  const freeTextReviews = new FreeTextReviewService(db);
 
   app.get('/', async (_request, reply) => reply.type('text/html').send(projectForm()));
   app.get('/projects/new', async (_request, reply) => reply.type('text/html').send(projectForm()));
@@ -267,7 +269,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         <label for="count">Quantidade</label><input id="count" name="count" type="number" min="1" max="100" value="5">
         <button type="submit">Gerar links</button></form></section>
       ${batchCards ? `<section class="admin-batches"><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
-      <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}</details></details>
+      <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}${renderFreeTextReviewQueue(freeTextReviews, projectId, auth.params, projects.freeTextEnabled(projectId))}</details></details>
       ${renderTermsPanel(String(auth.project.name))}
       ${audienceArchive}
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
@@ -503,6 +505,61 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     });
     return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
   });
+
+  app.post('/projects/:publicId/manage/:adminSecret/free-text-reviews', async (request, reply) => {
+    const auth = requireProject(request.params as Params);
+    const body = (request.body ?? {}) as { entryId?: string; raterKey?: string; code?: string };
+    const entryId = body.entryId?.trim() ?? '';
+    const raterKey = body.raterKey?.trim() || 'human-a';
+    const code = body.code?.trim() ?? '';
+    if (!entryId || !code) throw new DomainValidationError('Informe a entrada e o código do livro.');
+    freeTextReviews.recordCoding(entryId, raterKey, code);
+    return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`);
+  });
+}
+
+function renderFreeTextReviewQueue(
+  reviews: FreeTextReviewService,
+  projectId: string,
+  params: Params,
+  enabled: boolean,
+): string {
+  const pending = reviews.listPending(projectId);
+  const agreement = reviews.agreement(projectId);
+  const codeOptions = strategyPurposeCodebook.codes
+    .map((code) => `<option value="${escapeHtml(code.id)}">${escapeHtml(code.label)}</option>`)
+    .join('');
+  const status = enabled
+    ? pending.length
+      ? `${pending.length} ${pending.length === 1 ? 'entrada pendente' : 'entradas pendentes'}.`
+      : 'Nenhuma entrada pendente.'
+    : 'Texto livre desligado neste projeto (padrão). A fila fica disponível quando a flag for ligada.';
+  const kappaLine = agreement.overallKappa === undefined
+    ? escapeHtml(agreement.reason ?? 'Concordância ainda não mensurável.')
+    : `κ geral ${agreement.overallKappa.toFixed(2)} · códigos publicáveis: ${agreement.publishableCodes.length ? agreement.publishableCodes.map((code) => escapeHtml(code)).join(', ') : 'nenhum (≥ 0,7)'}`;
+  const cards = pending.map((entry) => `
+    <article class="admin-batch" data-free-text-entry="${escapeHtml(entry.id)}">
+      <span class="tag">${escapeHtml(entry.reviewReason)}</span>
+      <p>${escapeHtml(entry.sanitizedText)}</p>
+      <p class="muted">Proposta: ${escapeHtml(entry.proposedCode ?? '—')}${entry.proposedConfidence === null ? '' : ` · confiança ${entry.proposedConfidence.toFixed(2)}`}</p>
+      <form method="post" action="/projects/${params.publicId}/manage/${params.adminSecret}/free-text-reviews">
+        <input type="hidden" name="entryId" value="${escapeHtml(entry.id)}">
+        <label for="rater-${escapeHtml(entry.id)}">Avaliador</label>
+        <select id="rater-${escapeHtml(entry.id)}" name="raterKey">
+          <option value="human-a">Humano A</option>
+          <option value="human-b">Humano B</option>
+        </select>
+        <label for="code-${escapeHtml(entry.id)}">Código</label>
+        <select id="code-${escapeHtml(entry.id)}" name="code" required>${codeOptions}</select>
+        <button type="submit">Registrar código</button>
+      </form>
+    </article>`).join('');
+  return `<section class="card" id="free-text-reviews"><h2>Revisão de texto livre</h2>
+    <p class="muted">Pipeline 07 §6: PII removida, livro de códigos versionado, revisão humana e κ ≥ 0,7 para publicar. Sem vínculo com participação.</p>
+    <p class="notice">${escapeHtml(status)}</p>
+    <p class="muted">${kappaLine}</p>
+    ${cards || '<p class="muted">Fila vazia.</p>'}
+  </section>`;
 }
 
 function renderSampleProgress(progress: import('../inference/domain/diagnostic-sample-plan.js').SampleProgress): string {

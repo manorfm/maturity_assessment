@@ -50,6 +50,27 @@ export function applyMigrations(db: DatabaseSync): void {
       foundation_explained INTEGER NOT NULL,
       confusing_term TEXT, created_at TEXT NOT NULL
     );
-    INSERT INTO schema_migrations (version, applied_at) VALUES (24, datetime('now'));
+    CREATE TABLE free_text_entries (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      unit_id TEXT NOT NULL REFERENCES organization_units(id),
+      node_id TEXT NOT NULL,
+      codebook_version TEXT NOT NULL,
+      sanitized_text TEXT NOT NULL,
+      proposed_code TEXT,
+      proposed_confidence REAL,
+      review_reason TEXT NOT NULL CHECK(review_reason IN ('low_confidence','rare_code','random_sample','required')),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','coded','discarded')),
+      created_at TEXT NOT NULL
+    );
+    CREATE TABLE free_text_codings (
+      id TEXT PRIMARY KEY,
+      entry_id TEXT NOT NULL REFERENCES free_text_entries(id),
+      rater_key TEXT NOT NULL,
+      code TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE(entry_id, rater_key)
+    );
+    INSERT INTO schema_migrations (version, applied_at) VALUES (25, datetime('now'));
   `);
 }

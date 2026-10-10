@@ -84,9 +84,10 @@ referente de grupo e técnica de lista entram no tronco do grafo v21 (após
 - **Técnica de lista** — `list-metric-manipulation-{control,treatment}` estima
   prevalência sensível (`aggregateListTechnique` / Blair & Imai) só com ≥ 40
   por braço e intervalo; sem sinal de maturidade na resposta individual.
-- **Texto livre** — flag `free_text_enabled` desligada por padrão; PII removida;
-  livro de códigos e revisão humana obrigatória; κ mínimo 0,7; fila no painel
-  ainda aberta.
+- **Texto livre** — flag `free_text_enabled` desligada por padrão; PII removida
+  (`stripPii`); livro `strategy-purpose-v1`; fila de revisão humana no painel
+  (`free_text_entries` / `free_text_codings`); κ de Cohen ≥ 0,7 para publicar
+  código. Ainda fora do tronco da entrevista.
 
 `npm run audit:instrument` inclui a auditoria desses tipos.
 

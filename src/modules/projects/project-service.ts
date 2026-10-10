@@ -51,6 +51,15 @@ export class ProjectService {
     this.db.prepare('UPDATE projects SET measurement_model = ? WHERE id = ?').run(model, projectId);
   }
 
+  setFreeTextEnabled(projectId: string, enabled: boolean): void {
+    this.db.prepare('UPDATE projects SET free_text_enabled = ? WHERE id = ?').run(enabled ? 1 : 0, projectId);
+  }
+
+  freeTextEnabled(projectId: string): boolean {
+    const row = this.db.prepare('SELECT free_text_enabled FROM projects WHERE id = ?').get(projectId) as { free_text_enabled: number } | undefined;
+    return Number(row?.free_text_enabled) === 1;
+  }
+
   listUnits(projectId: string): Unit[] {
     const rows = this.db.prepare(`
       SELECT u.id, u.name, u.unit_type, u.path,

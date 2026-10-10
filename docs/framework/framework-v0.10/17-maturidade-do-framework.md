@@ -33,7 +33,7 @@ Usando a escala do próprio produto (0 opaco · 1 reativo · 2 repetível ·
 | Mapa de capacidades (03, 13) | **2** | Amplo; 29 folhas com contrato; 54 temas + 12 capacidades novas sem contrato | Autoria das 7 prioridades de 03 §3.2 e de N1, N5 |
 | Metodologia de evidência (04) | **2** | Contrato definido; matriz Q não migrada | WP3 concluído e auditoria verde |
 | Modelo estatístico (05, 15) | **2** | Estrutura correta; parâmetros elicitados; protótipo reproduz exemplos | E0 (simulação e recuperação) aprovado |
-| Motor adaptativo (06) | **2** | Bits/min, cobertura; vinheta/leitura/grupo/lista no tronco | Ligar cobertura no caminho quente; revisão humana texto livre (WP7); §8.2 |
+| Motor adaptativo (06) | **2** | Bits/min, cobertura; tipos 07 no tronco + fila texto livre | Ligar cobertura no caminho quente; texto livre no tronco sob flag; §8.2 |
 | Banco de perguntas | **2** em entrega e operação · **1** em organização, dados, IA | Grafo v20 com 92 nós concentrado em entrega | Itens para D10–D12, D6 e N1–N7 |
 | Diagnóstico causal (05 §8, 08) | **2** | Catálogo v11 cobre os sistemas em noisy-OR; λ provisórios | Elicitação SHELF de 3 famílias |
 | Tratamento (08) | **1** | Contrato definido; graus de evidência não atribuídos; poucas condutas nos domínios novos | Biblioteca com grau para as 30 condutas mais frequentes |

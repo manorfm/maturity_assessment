@@ -16,7 +16,7 @@ selecionável.
   da matriz Q. Revisar âncoras de ritual/heroísmo (−2 → 1) e folhas com
   testlets ou topo escassos ainda é conteúdo aberto.
 - WP4: módulo `measurement` reproduz 05 §5.1/§7.3; projetos têm
-  `measurement_model` (padrão `m2`, schema 24); runtime mede folhas pela
+  `measurement_model` (padrão `m2`, schema 25); runtime mede folhas pela
   matriz Q, publica índice com regra de publicação, aceite dos sintéticos
   e partial pooling hierárquico (unidade ← irmãos via mãe) no
   `measureIndex`. Fechado no motor; ω estimado por ICC no lab (WP10)
@@ -28,10 +28,10 @@ selecionável.
 - WP6 (parcial): seletor por bits/min com restrições; simulador de unidade;
   `unitLeafCoverage` / `selectWithUnitCoverage`; vinheta no tronco com
   rodízio. Ligar cobertura no caminho quente ainda aberto.
-- WP7 (parcial): catálogo/auditoria dos tipos 07; vinheta, leitura, referente
-  de grupo e técnica de lista (`list-metric-manipulation`) no tronco;
-  letramento e prevalência de lista agregados no relatório. Fila de revisão
-  humana (texto livre) no painel ainda aberta.
+- WP7 (fechado no motor de tipos): vinheta, leitura, referente de grupo e
+  técnica de lista no tronco; texto livre com flag off, PII, livro de códigos,
+  fila de revisão no painel e κ ≥ 0,7. Ligar texto livre ao tronco da entrevista
+  quando a flag estiver ligada permanece hipótese aberta.
 - WP9 (parcial): Cynefin, grau A–D, arquétipos `systemic-archetypes-v1` e
   restrição principal por escore no portfólio. Pulso (itens-âncora) e grau
   A com `replicated` explícito no catálogo de condutas ainda abertos.
