@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — Seletor adaptativo por bits/minuto
+
+- `AdaptiveQuestionSelector` maximiza utilidade (ΔH / minutos) com restrições
+  de testlet, folha e orçamento; folhas com cobertura incompleta restringem
+  o pool. Ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-10-09 — Catálogo causal v11 com noisy-OR
 
 - `CausalFamily` e `causal-catalog-v11` publicam a família de integração

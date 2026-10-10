@@ -25,7 +25,11 @@ novo.
   `late-integration` (05 §8.4) e runtime noisy-OR no `inference-service`.
   Converter as demais famílias do motor legado (hipótese/unknown → causas/λ₀)
   e elicitação SHELF dos λ ainda estão abertos.
-- WP6 e WP7: seletor por utilidade e vinhetas.
+- WP6 (parcial): seletor por bits/min com restrições e amostragem matricial
+  de folhas escassas; simulador de unidade cobre o critério de cobertura.
+  Cobertura de unidade no journey service (29 folhas) e rodízio de vinhetas
+  no grafo ainda abertos.
+- WP7: tipos de item novos (vinhetas no instrumento, literacy, lista, texto).
 - WP9: Cynefin e grau A–D classificam a conduta pela base da prática
   (`classifyEvidenceGrade`). A ainda exige `replicated`; biblioteca de
   arquétipos e restrição por escore de 08 §4 continuam abertas.

@@ -252,11 +252,16 @@ faixas verbais de sustentação para não simular probabilidade calibrada. Sua d
 que explicita ação, responsável provável, métrica, revisão e critério de sucesso.
 
 Após uma saída declarativa, o motor compara probes ainda não respondidos, visíveis
-à perspectiva e habilitados por padrões de contexto já observados. O ranking combina ganho esperado de informação, cobertura, validação, custo invertido e um bônus
-quando o candidato confirma ou mata uma hipótese já aberta por `reinforces`.
-A extensão termina sem pergunta útil acima de 0,01 bit ou após cinco probes, e persiste versão, posterior e motivo
-da escolha sem expor a jornada individual no relatório. Probes de causa só são
-elegíveis quando um sintoma declarado em sua aplicabilidade foi observado.
+à perspectiva e habilitados por padrões de contexto já observados. A escolha
+maximiza utilidade em **bits por minuto** sobre o ganho de informação causal
+(e cobertura de folhas da unidade ainda sem 2 testlets ou 2 perspectivas).
+Restrições — testlet já respondido, orçamento de tempo, no máximo 2 itens
+seguidos da mesma folha, vinhetas ≤ 2 — filtram candidatos em vez de entrar
+como pesos. Hipóteses já reforçadas restringem o pool quando há candidato
+preferido elegível. A extensão termina sem pergunta com `U < 0,01` bit/min
+ou após cinco probes, e persiste versão, posterior e motivo da escolha sem
+expor a jornada individual no relatório. Probes de causa só são elegíveis
+quando um sintoma declarado em sua aplicabilidade foi observado.
 
 Três funis declarativos amarram o próximo fato ao ramo já aberto: origem pouco
 confiável segue para lote ou fronteira; prioridade sem foco discrimina gestão

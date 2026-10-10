@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.109.0
+
+- Seletor adaptativo por utilidade em bits/minuto (06): restrições filtram
+  candidatos; folhas com testlets ou perspectivas incompletos têm prioridade;
+  parada em `U < 0,01` bit/min.
+
 ## 0.108.0
 
 - Catálogo causal `v11` com `CausalFamily` noisy-OR (05 §8.4). A família

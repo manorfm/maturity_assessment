@@ -104,7 +104,10 @@ test('seleciona a pergunta com maior ganho esperado de informação', () => {
 
 test('seleção pré-piloto evita repetição quando o ganho causal é equivalente', () => {
   const posterior = new BayesianInferenceEngine().infer(model, [])[0]!;
-  const outcome = [{ probability: 1, likelihoods: { tooling: .5, process: .5 } }];
+  const outcome = [
+    { probability: .5, likelihoods: { tooling: .9, process: .1, unknown: .4 } },
+    { probability: .5, likelihoods: { tooling: .1, process: .9, unknown: .4 } },
+  ];
   const selected = new AdaptiveQuestionSelector().select(posterior, [
     { id: 'repeated', cost: .2, coverage: .5, validationNeed: .5, causalValue: .5, perspectiveBalance: .5, repetitionRisk: 1, outcomes: outcome },
     { id: 'fresh', cost: .2, coverage: .5, validationNeed: .5, causalValue: .5, perspectiveBalance: .5, repetitionRisk: 0, outcomes: outcome },

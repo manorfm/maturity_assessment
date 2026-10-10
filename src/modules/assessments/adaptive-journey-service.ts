@@ -17,13 +17,14 @@ export class AdaptiveJourneyService {
     const modelVersion = (this.db.prepare("SELECT version FROM inference_model_versions WHERE graph_version = ? AND status = 'published' LIMIT 1").get(graphVersion) as { version: string } | undefined)?.version;
     if (!modelVersion) return undefined;
     const preferredIds = preferredProbeIds(this.observedPatterns(participationId));
+    const answeredTestlets = this.answeredNodes(participationId);
     const ranked = this.uncertainFamilies(modelVersion, participationId).flatMap((family) => {
       const candidates = this.questionCandidates(modelVersion, family.capability, participationId, profile, family.hypotheses.map((item) => item.id));
-      const selected = new AdaptiveQuestionSelector().select(family, candidates, { preferredIds });
+      const selected = new AdaptiveQuestionSelector().select(family, candidates, { preferredIds, answeredTestlets });
       return selected ? [{ family, selected }] : [];
-    }).sort((left, right) => right.selected.score - left.selected.score || right.selected.informationGain - left.selected.informationGain);
+    }).sort((left, right) => right.selected.utility - left.selected.utility || right.selected.informationGain - left.selected.informationGain);
     const choice = ranked[0];
-    if (!choice || choice.selected.informationGain <= .01) return undefined;
+    if (!choice || choice.selected.utility < 0.01) return undefined;
     const { family, selected } = choice;
     this.db.prepare('INSERT INTO inference_snapshots (id, model_version, participation_id, family_key, posterior_json, selected_question_key, selection_reason, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .run(id(), modelVersion, participationId, family.familyId, JSON.stringify(family.hypotheses), selected.id, selected.reasons.join(' '), new Date().toISOString());
@@ -72,5 +73,10 @@ export class AdaptiveJourneyService {
 
   private observedPatterns(participationId: string): string[] {
     return (this.db.prepare('SELECT DISTINCT s.pattern FROM responses r JOIN participations p ON p.id = r.participation_id JOIN assessment_signals s ON s.graph_version = p.graph_version AND s.node_key = r.node_id AND s.option_key = r.option_id WHERE p.id = ?').all(participationId) as unknown as Array<{ pattern: string }>).map((row) => row.pattern);
+  }
+
+  private answeredNodes(participationId: string): Set<string> {
+    const rows = this.db.prepare('SELECT node_id FROM responses WHERE participation_id = ?').all(participationId) as unknown as Array<{ node_id: string }>;
+    return new Set(rows.map((row) => row.node_id));
   }
 }

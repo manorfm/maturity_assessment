@@ -219,8 +219,9 @@ das perguntas e política são publicados com versão imutável no SQLite. O cat
 beta-binomial. O caminho legado por padrão ainda atualiza em log-espaço e
 consome uma evidência por grupo correlacionado.
 O módulo `assessments` pede ao seletor adaptativo um aprofundamento somente depois
-do tronco obrigatório; no máximo cinco probes adicionais são escolhidos por entropia,
-cobertura, validação e custo. Snapshots dessa decisão permanecem privados.
+do tronco obrigatório; no máximo cinco probes adicionais são escolhidos por
+utilidade em bits/minuto com restrições (06). Snapshots dessa decisão
+permanecem privados.
 
 `CapabilityTaxonomy` organiza as capacidades medidas em ramos recursivos dos oito
 pilares. `OrganizationalAreaProjector` consome as mesmas 29 folhas e os findings
