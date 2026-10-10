@@ -21,7 +21,10 @@ novo.
   Aceite dos sintéticos do showcase em m2 e promoção a padrão ainda
   abertos. Partial pooling hierárquico entre unidades mãe/filha ainda
   não entra no caminho do relatório.
-- WP5: `noisy-or` reproduz 05 §8.4. O catálogo `causal-catalog-v10` ainda não virou `causal-catalog-v11`.
+- WP5 (parcial): `CausalFamily` + `causal-catalog-v11` com a família
+  `late-integration` (05 §8.4) e runtime noisy-OR no `inference-service`.
+  Converter as demais famílias do motor legado (hipótese/unknown → causas/λ₀)
+  e elicitação SHELF dos λ ainda estão abertos.
 - WP6 e WP7: seletor por utilidade e vinhetas.
 - WP9: Cynefin e grau A–D classificam a conduta pela base da prática
   (`classifyEvidenceGrade`). A ainda exige `replicated`; biblioteca de

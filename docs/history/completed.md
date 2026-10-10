@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-09 — Catálogo causal v11 com noisy-OR
+
+- `CausalFamily` e `causal-catalog-v11` publicam a família de integração
+  tardia com explaining away (05 §8.4). O runtime inclui a posterior
+  noisy-OR sem prior "desconhecido". Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-08 — Modelo de medição m2 atrás de flag
 
 - Módulo `measurement` com posterior por unidade, agregação e

@@ -10,6 +10,7 @@ import { decideReportOutcome, uniqueFindingsByPattern } from './domain/report-ou
 import { defineInterventionCatalog, GroupRecommendationEngine, type ConstraintKind, type EvidenceLayer, type GroupSignal, type InterventionSeed, type RecommendationEvidence } from './domain/group-recommendation-engine.js';
 import type { SolutionReadiness } from './domain/solution-readiness.js';
 import { BayesianInferenceEngine, type DiagnosticPosterior } from './domain/bayesian-inference-engine.js';
+import { CausalInferenceEngine } from './domain/causal-inference-engine.js';
 import { DiagnosticModel } from './domain/diagnostic-model.js';
 import { PilotEvaluation, type PilotReport } from './domain/pilot-evaluation.js';
 import { PilotService } from './pilot-service.js';
@@ -480,16 +481,20 @@ export class InferenceService {
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
       GROUP BY s.pattern
     `).all(...scope.parameters) as unknown as Array<{ pattern: string; support: number; profiles: string; layers: string }>;
-    const posteriors = new BayesianInferenceEngine().infer(DiagnosticModel.create({ version, families }), observed.map((item) => ({
+    const evidenceObservations = observed.map((item) => ({
       pattern: item.pattern, support: Number(item.support), applicablePopulation: applicableByPattern.get(item.pattern) ?? Number(item.support),
       profiles: item.profiles.split(','), layers: item.layers.split(','),
-    })));
+    }));
+    const posteriors = new BayesianInferenceEngine().infer(DiagnosticModel.create({ version, families }), evidenceObservations);
+    const causalPosteriors = new CausalInferenceEngine().inferCatalog(evidenceObservations);
     const discriminators = this.eligibleDiscriminators(version, projectId, unitId);
-    return posteriors.map((posterior) => ({
+    const labeled = posteriors.map((posterior) => ({
       ...posterior,
       hypotheses: posterior.hypotheses.map((hypothesis) => ({ ...hypothesis, label: hypothesis.id === 'unknown' ? hypothesis.label : interventionCatalog[hypothesis.id]?.title ?? evolutionCatalog[hypothesis.id]?.title ?? hypothesis.label })),
       ...this.nextDiscriminator(posterior, discriminators),
     }));
+    // Famílias do catálogo v11 (noisy-OR) entram junto; explaining away não usa "unknown".
+    return [...causalPosteriors, ...labeled];
   }
 
   private nextDiscriminator(posterior: DiagnosticPosterior, discriminators: Array<{ key: string; label: string; patterns: string[] }>): Pick<DiagnosticPosterior, 'nextQuestionKey' | 'nextQuestionLabel'> {

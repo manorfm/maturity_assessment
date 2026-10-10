@@ -5,6 +5,12 @@ na [base de conhecimento](docs/knowledge-base/README.md); mudanças menores e a
 cronologia técnica completa permanecem no
 [histórico de evoluções](docs/history/completed.md).
 
+## 0.108.0
+
+- Catálogo causal `v11` com `CausalFamily` noisy-OR (05 §8.4). A família
+  `late-integration` entra no runtime com explaining away; vazamento `λ₀`
+  substitui o prior de "desconhecido" nessa família.
+
 ## 0.107.0
 
 - Modelo de medição m2 no módulo `measurement` (05 §5.1/§7.3). Projetos

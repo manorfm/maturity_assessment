@@ -3,7 +3,7 @@ import type { InterventionDefinition } from './group-recommendation-engine.js';
 import { diagnosticSystemFor } from './problem-system.js';
 import { hasTechnicalContract } from './technical-practice-library.js';
 
-export const CAUSAL_KNOWLEDGE_VERSION = 'causal-catalog-v10';
+export const CAUSAL_KNOWLEDGE_VERSION = 'causal-catalog-v11';
 
 export type CausalRelation = 'observed_as' | 'may_be_explained_by' | 'supported_by' | 'contradicted_by' | 'reinforces' | 'amplifies' | 'addressed_by' | 'grounded_in' | 'may_enable';
 export type CausalEdge = { from: string; relation: CausalRelation; to: string };

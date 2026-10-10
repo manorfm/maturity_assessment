@@ -51,7 +51,7 @@ segurança≠governança e baixa prática de engenharia — sem calibração.
 O `/showcase` apresenta três situações — menos madura, intermediária
 e madura. A madura ainda publica o resto observado.
 O contrato de família de capacidade e o catálogo dos cinco packs
-(`causal-catalog-v10`) estão na base. O grafo `v20` afunila por reforço.
+(`causal-catalog-v11`) estão na base. O grafo vigente afunila por reforço.
 Briefing de política permanece no recorte de medo. O relatório de
 anamnese fechou: índice, capítulo, dossiê e o mesmo evento em três
 recortes. Piloto com pessoas reais deixa de estar bloqueado por essa

@@ -105,9 +105,11 @@ mecanismo demonstrado. Antipadrão: plataforma que opera a mesma fila; “somos
 modernos, logo não há N2”. Segregação exigida por obrigação permanece
 controle proporcional, não moda.
 
-O catálogo `causal-catalog-v10` materializa os cinco packs e as arestas
-`reinforces`. O grafo `v20` afunila o próximo probe para confirmar ou
-matar hipótese já reforçada. O projetor `diagnostic-report-v2` publica o laudo.
+O catálogo `causal-catalog-v11` materializa os cinco packs, as arestas
+`reinforces` e a família `late-integration` em noisy-OR (05 §8), com
+proveniência dos parâmetros. O grafo vigente afunila o próximo probe para
+confirmar ou matar hipótese já reforçada. O projetor `diagnostic-report-v2`
+publica o laudo.
 A leitura geral só mostra índice com faixa quando há `IndexPublication`
 publicada. Cada conduta recebe Cynefin e grau de evidência A–D pela base
 da prática (`classifyEvidenceGrade`), não pelo suporte local da amostra.
@@ -126,12 +128,13 @@ coerência, não calibração. O piloto humano continua no
 
 ## Atualização e explicação
 
-O cálculo usa log-espaço e normalização por softmax. A força considera suporte sobre
-população aplicável, variedade de perspectivas e camadas. Uma ocorrência isolada
-não equivale a recorrência coletiva, e ausência de resposta não vira evidência
-negativa. Evidências que pertencem ao
-mesmo grupo causal são consumidas uma única vez, evitando premiar perguntas
-redundantes. Contradições alteram apenas as hipóteses às quais foram ligadas.
+Famílias do catálogo v11 usam noisy-OR com vazamento e evidência
+beta-binomial: causas podem coexistir, o vazamento `λ₀` substitui o prior
+de "desconhecido", e todos os sintomas observados entram na posterior
+(explaining away). O motor legado por família de padrão ainda usa
+log-espaço/softmax e consome uma evidência por grupo correlacionado.
+Uma ocorrência isolada não equivale a recorrência coletiva, e ausência de
+resposta não vira evidência negativa.
 
 O relatório preserva:
 
@@ -145,7 +148,7 @@ inception; priorização à gestão tática ou organizacional). Toda intervenç�
 publicada precisa possuir o caminho completo; a rede é explicável e não aprende
 silenciosamente com cliques ou respostas.
 
-A versão causal vigente `causal-catalog-v10` projeta no mesmo finding a hipótese
+A versão causal vigente `causal-catalog-v11` projeta no mesmo finding a hipótese
 mais sustentada, explicações concorrentes do mesmo sistema de problemas, evidência
 a favor, evidência contrária que atingiu o limiar, lacuna restante e limite da
 orientação. Ausência de contradição observada é declarada como ausência de evidência

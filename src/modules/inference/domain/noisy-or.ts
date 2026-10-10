@@ -36,11 +36,17 @@ function betaBinomialLog(present: number, total: number, mean: number, precision
   return logBeta(present + alpha, total - present + beta) - logBeta(alpha, beta);
 }
 
+export type NoisyOrReporting = { p1?: number; p0?: number; phi?: number };
+
 export function inferNoisyOr(
   causes: NoisyOrCause[],
   symptoms: NoisyOrSymptom[],
   observations: Record<string, SymptomCount>,
+  reporting: NoisyOrReporting = {},
 ): Record<string, number> {
+  const p1 = reporting.p1 ?? 0.6;
+  const p0 = reporting.p0 ?? 0.1;
+  const phi = reporting.phi ?? 10;
   const posterior = Object.fromEntries(causes.map((cause) => [cause.id, 0]));
   let partition = 0;
   const states = 1 << causes.length;
@@ -59,8 +65,8 @@ export function inferNoisyOr(
         survival *= 1 - (symptom.strengthByCause[cause.id] ?? 0);
       });
       const probability = 1 - (1 - symptom.leak) * survival;
-      const present = Math.exp(betaBinomialLog(observed.present, observed.total, 0.6));
-      const absent = Math.exp(betaBinomialLog(observed.present, observed.total, 0.1));
+      const present = Math.exp(betaBinomialLog(observed.present, observed.total, p1, phi));
+      const absent = Math.exp(betaBinomialLog(observed.present, observed.total, p0, phi));
       weight *= probability * present + (1 - probability) * absent;
     }
     partition += weight;
@@ -75,6 +81,7 @@ function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
+/** Referência 05 §8.4 — mesmos λ/priors da família `late-integration` no catálogo v11. */
 export const referenceWaitCauses: NoisyOrCause[] = [
   { id: 'feedback-lento', prior: 0.3 },
   { id: 'aprovacao-externa', prior: 0.3 },

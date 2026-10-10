@@ -173,7 +173,9 @@ evidência, contradição, intervenção e fundamento. `problem-system.ts` mant�
 bibliotecas declarativas com os papéis `symptoms`, `hypotheses` e `amplifiers`;
 elas alimentam tanto o agrupamento do panorama quanto as alternativas do finding.
 A projeção pública remove identificadores internos, preserva a versão
-`causal-catalog-v10` e aparece no cartão e no detalhe sem recalcular o posterior.
+`causal-catalog-v11` e aparece no cartão e no detalhe sem recalcular o posterior.
+Famílias `CausalFamily` (noisy-OR) entram no `inference-service` junto com o
+motor legado por padrão.
 `SociotechnicalPattern` valida decisão e consequência observadas antes de compor
 um ciclo, mantém reforço como hipótese e separa racionalidade local, efeito,
 incentivo, fronteira decisória e comportamento compensatório. A projeção é
@@ -212,8 +214,10 @@ motor nem nomeia pessoa.
 
 O módulo `inference` contém um sistema probabilístico especialista, sem LLM e sem
 serviço distribuído. Hipóteses, priors, probabilidades condicionais, observabilidade
-das perguntas e política são publicados com versão imutável no SQLite. A atualização
-bayesiana ocorre em log-espaço e consome uma única evidência por grupo correlacionado.
+das perguntas e política são publicados com versão imutável no SQLite. O catálogo
+`causal-catalog-v11` adiciona `CausalFamily` com enumeração noisy-OR e
+beta-binomial. O caminho legado por padrão ainda atualiza em log-espaço e
+consome uma evidência por grupo correlacionado.
 O módulo `assessments` pede ao seletor adaptativo um aprofundamento somente depois
 do tronco obrigatório; no máximo cinco probes adicionais são escolhidos por entropia,
 cobertura, validação e custo. Snapshots dessa decisão permanecem privados.
