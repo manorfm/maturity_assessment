@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Leitura (literacy) no tronco e letramento agregado
+
+- `literacy-wip-chart` no tronco após a vinheta; `aggregateLiteracy` no
+  relatório. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-10 — Vinheta de ancoragem no tronco (WP7)
 
 - `vignette-approval-change` no grafo após `work-context`; rodízio via

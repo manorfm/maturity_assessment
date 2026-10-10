@@ -70,13 +70,14 @@
 
 ## Tipos novos (catálogo 07)
 
-O módulo `item-catalog` publica contratos auditáveis, ainda fora do tronco
-obrigatório do grafo v21:
+O módulo `item-catalog` publica contratos auditáveis. Vinheta e leitura já
+entram no tronco do grafo v21 (após `work-context`):
 
 - **Vinheta de ancoragem** — situação hipotética com estágio autoral; estima
   severidade por perspectiva (`estimatePerspectiveSeverity`).
 - **Leitura** — estímulo sintético com vereditos correta / incorreta /
-  letramento ausente; alimenta variável de letramento, não a prática.
+  letramento ausente; `aggregateLiteracy` publica no relatório (separada da
+  prática), só acima do limiar de agregação.
 - **Referente de grupo** — clima/cultura pergunta sobre o time, não o indivíduo.
 - **Técnica de lista** — prevalência de tema sensível só com ≥ 40 por braço e
   intervalo.

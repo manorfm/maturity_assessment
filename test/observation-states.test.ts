@@ -21,7 +21,7 @@ test('opções de visibilidade e não aplicabilidade não alimentam o nível', (
 });
 
 test('cenários e probes oferecem saída de visibilidade que não pontua', () => {
-  const interview = graph.filter((node) => node.id !== 'respondent-context' && !node.id.startsWith('vignette-'));
+  const interview = graph.filter((node) => node.id !== 'respondent-context' && !node.id.startsWith('vignette-') && !node.id.startsWith('literacy-'));
   for (const node of interview) {
     const option = node.options.find((item) => item.id === CANNOT_OBSERVE_ID);
     assert.ok(option, `missing cannot-observe on ${node.id}`);
@@ -33,7 +33,7 @@ test('cenários e probes oferecem saída de visibilidade que não pontua', () =>
 test('saída de visibilidade tem aresta de continuação', () => {
   const catalog = new CatalogService(createDatabase(':memory:'));
   const withExit = new Set(edges.map((edge) => edge.from));
-  for (const node of graph.filter((item) => item.id !== 'respondent-context' && !item.id.startsWith('vignette-') && withExit.has(item.id))) {
+  for (const node of graph.filter((item) => item.id !== 'respondent-context' && !item.id.startsWith('vignette-') && !item.id.startsWith('literacy-') && withExit.has(item.id))) {
     assert.ok(catalog.nextNode(GRAPH_VERSION, node.id, CANNOT_OBSERVE_ID, 'engineering'), `no exit from ${node.id}/${CANNOT_OBSERVE_ID}`);
   }
 });

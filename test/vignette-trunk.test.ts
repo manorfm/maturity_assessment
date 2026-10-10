@@ -14,8 +14,7 @@ test('vinheta de ancoragem está no tronco do grafo após work-context', () => {
   assert.ok(fromWork.length > 0);
   assert.ok(fromWork.every((edge) => edge.to === approvalChangeVignette.id), 'todo o tronco passa pela vinheta');
   const fromVignette = edges.filter((edge) => edge.from === approvalChangeVignette.id);
-  assert.ok(fromVignette.some((edge) => edge.to === 'urgent-change'));
-  assert.ok(fromVignette.some((edge) => edge.to === 'ready-to-release'));
+  assert.ok(fromVignette.every((edge) => edge.to === 'literacy-wip-chart'));
 });
 
 test('jornada real encontra a vinheta depois do contexto de trabalho', () => {
@@ -42,6 +41,5 @@ test('jornada real encontra a vinheta depois do contexto de trabalho', () => {
   const option = node.options.find((item) => item.id === 'ritual') ?? node.options[0]!;
   participations.answer(claimed.resumeToken, option.id);
   const after = participations.find(claimed.resumeToken)!;
-  assert.notEqual(after.current_node, approvalChangeVignette.id);
-  assert.ok(['ready-to-release', 'urgent-change', 'environment-access', 'security-change', 'architecture-pressure', 'product-outcome-evidence'].includes(after.current_node));
+  assert.equal(after.current_node, 'literacy-wip-chart');
 });

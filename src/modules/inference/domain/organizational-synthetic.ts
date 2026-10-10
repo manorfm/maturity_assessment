@@ -484,6 +484,10 @@ export function optionForOrganizationalSynthetic(
     const anchor = node.options.find((option) => option.id === 'ritual') ?? node.options[0];
     return anchor!.id;
   }
+  // Leitura: sintéticos usam a opção correta (não alimenta estágio de prática).
+  if (node.id.startsWith('literacy-')) {
+    return node.options.find((option) => option.id === 'stop-starting')?.id ?? node.options[0]!.id;
+  }
   const fallbackBand = POC_VALIDATION_ORGS.find((org) => org.id === caseId)?.band ?? 'low';
   const wanted = scripts[caseId].units[unitIndex]?.[node.id] ?? scripts[caseId].shared[node.id] ?? optionByBand(node.options, fallbackBand);
   return node.options.some((option) => option.id === wanted) ? wanted : optionByBand(node.options, fallbackBand);

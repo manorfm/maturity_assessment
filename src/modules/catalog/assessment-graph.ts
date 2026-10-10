@@ -1,7 +1,7 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
 import { normalizeOptionEvidence, type EvidenceLink } from './evidence-contract.js';
-import { approvalChangeVignette } from './item-catalog.js';
+import { approvalChangeVignette, literacyWipChart } from './item-catalog.js';
 
 export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v21';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
@@ -35,7 +35,7 @@ export function observationOf(option: Option): ObservationKind {
 }
 
 function attachObservationalExits(node: AssessmentNode): AssessmentNode {
-  if (node.id === 'respondent-context' || node.id.startsWith('vignette-')) return node;
+  if (node.id === 'respondent-context' || node.id.startsWith('vignette-') || node.id.startsWith('literacy-')) return node;
   if (node.options.some((option) => option.id === CANNOT_OBSERVE_ID)) return node;
   return { ...node, options: [...node.options, cannotObserve] };
 }
@@ -102,6 +102,20 @@ const authoredNodes: AssessmentNode[] = [
     options: approvalChangeVignette.options.map((option) => ({
       id: option.id,
       label: option.label,
+      signals: [] as Signal[],
+    })),
+    next: literacyWipChart.id,
+  },
+  {
+    id: literacyWipChart.id,
+    type: 'scenario',
+    title: literacyWipChart.title,
+    scenario: `${literacyWipChart.scenario} ${literacyWipChart.stimulus}`,
+    prompt: literacyWipChart.prompt,
+    // Sem sinais de maturidade: alimenta só a variável de letramento (07 §4.2).
+    options: literacyWipChart.readings.map((reading) => ({
+      id: reading.id,
+      label: reading.label,
       signals: [] as Signal[],
     })),
     next: 'urgent-change',
@@ -1148,9 +1162,12 @@ export const graph: AssessmentNode[] = [...authoredNodes, ...eventFollowupNodes]
     : node;
   const withExits = attachObservationalExits(factual);
   const meta = evidenceMetaFor(withExits.id);
+  const scenario = factual.id.startsWith('literacy-') || factual.id.startsWith('vignette-')
+    ? factual.scenario
+    : anchorRecentObservation(factual.scenario);
   return {
     ...withExits,
-    scenario: anchorRecentObservation(factual.scenario),
+    scenario,
     taskFamily: meta.taskFamily,
     testlet: meta.testlet,
     options: withExits.options.map((option) => normalizeOptionEvidence(option)),
@@ -1199,6 +1216,9 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: approvalChangeVignette.id },
   ];
   if (node.id === approvalChangeVignette.id) return [
+    { from: node.id, to: literacyWipChart.id },
+  ];
+  if (node.id === literacyWipChart.id) return [
     { from: node.id, to: 'ready-to-release', when: { tracksAny: ['delivery', 'full-cycle'] } },
     { from: node.id, to: 'security-change', when: { tracksAny: ['risk'] } },
     { from: node.id, to: 'environment-access', when: { tracksAny: ['capability'] } },
