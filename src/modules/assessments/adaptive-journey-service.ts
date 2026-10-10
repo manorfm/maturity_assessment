@@ -1,6 +1,6 @@
 import type { Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
-import { itemCatalog } from '../catalog/item-catalog.js';
+import { itemCatalog, listTechniqueNodeId, metricManipulationList, type ListTechniqueArm } from '../catalog/item-catalog.js';
 import { AdaptiveQuestionSelector, type QuestionCandidate } from '../inference/domain/adaptive-question-selector.js';
 import { BayesianInferenceEngine } from '../inference/domain/bayesian-inference-engine.js';
 import { DiagnosticModel } from '../inference/domain/diagnostic-model.js';
@@ -72,6 +72,25 @@ export class AdaptiveJourneyService {
     this.db.prepare('INSERT INTO inference_snapshots (id, model_version, participation_id, family_key, posterior_json, selected_question_key, selection_reason, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .run(id(), modelVersion, participationId, family.familyId, JSON.stringify(family.hypotheses), selected.id, selected.reasons.join(' '), new Date().toISOString());
     return selected.id;
+  }
+
+  /**
+   * Braço controle/tratamento da técnica de lista (07 §4.4).
+   * Atribuição determinística por participação para equilibrar braços sem revelar o desenho.
+   */
+  selectListTechnique(participationId: string): string | undefined {
+    const answered = this.answeredNodes(participationId);
+    if ([...answered].some((nodeId) => nodeId.startsWith(`${metricManipulationList.id}-`))) return undefined;
+    let hash = 0;
+    for (let index = 0; index < participationId.length; index += 1) {
+      hash = (hash + participationId.charCodeAt(index)) % 2;
+    }
+    const arm: ListTechniqueArm = hash === 0 ? 'control' : 'treatment';
+    const nodeId = listTechniqueNodeId(metricManipulationList, arm);
+    const participation = this.db.prepare('SELECT graph_version FROM participations WHERE id = ?')
+      .get(participationId) as { graph_version: string } | undefined;
+    if (!participation || !this.nodeExists(participation.graph_version, nodeId)) return undefined;
+    return nodeId;
   }
 
   /** Próxima vinheta do rodízio na unidade (06 §3); inserção no tronco permanece WP7. */

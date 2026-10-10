@@ -13,8 +13,7 @@ test('referente de grupo está no tronco após a leitura e usa linguagem de grup
   assert.ok(graph.some((node) => node.id === groupErrorReferent.id));
   assert.ok(edges.some((edge) => edge.from === literacyWipChart.id && edge.to === groupErrorReferent.id));
   const fromGroup = edges.filter((edge) => edge.from === groupErrorReferent.id);
-  assert.ok(fromGroup.some((edge) => edge.to === 'urgent-change'));
-  assert.ok(fromGroup.some((edge) => edge.to === 'ready-to-release'));
+  assert.ok(fromGroup.every((edge) => edge.to.startsWith('list-metric-manipulation-')));
 
   const node = graph.find((item) => item.id === groupErrorReferent.id)!;
   assert.match(`${node.scenario} ${node.prompt}`, /neste time/i);

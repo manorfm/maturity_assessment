@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Técnica de lista no tronco (WP7)
+
+- Braços `list-metric-manipulation-{control,treatment}` após o clima de grupo;
+  `aggregateListTechnique` no relatório (≥ 40/braço). Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-10 — Referente de grupo no tronco (WP7)
 
 - `group-error-climate` após a leitura; sinais em `leadership-management`. Ver

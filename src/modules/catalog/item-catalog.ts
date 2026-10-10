@@ -78,6 +78,35 @@ export const metricManipulationList: ListTechniqueItem = {
   minimumSample: 40,
 };
 
+export type ListTechniqueArm = 'control' | 'treatment';
+
+export function listTechniqueNodeId(item: ListTechniqueItem, arm: ListTechniqueArm): string {
+  return `${item.id}-${arm}`;
+}
+
+export function listTechniqueArmOf(nodeId: string): ListTechniqueArm | undefined {
+  if (nodeId.endsWith('-treatment')) return 'treatment';
+  if (nodeId.endsWith('-control')) return 'control';
+  return undefined;
+}
+
+export function listTechniqueScenario(item: ListTechniqueItem, arm: ListTechniqueArm): string {
+  const statements = arm === 'treatment'
+    ? [...item.neutralStatements, item.sensitiveStatement]
+    : item.neutralStatements;
+  const numbered = statements.map((statement, index) => `${index + 1}. ${statement}`).join(' ');
+  return `${item.scenario} ${numbered}`;
+}
+
+export function listTechniqueCountOptions(arm: ListTechniqueArm): Array<{ id: string; label: string }> {
+  const max = arm === 'treatment' ? 5 : 4;
+  const words = ['Nenhuma', '1', '2', '3', '4', '5'];
+  return Array.from({ length: max + 1 }, (_, count) => ({
+    id: `count-${count}`,
+    label: words[count]!,
+  }));
+}
+
 export const freeTextStrategy: FreeTextItem = {
   id: 'free-text-strategy-purpose',
   kind: 'free-text',

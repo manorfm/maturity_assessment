@@ -213,6 +213,9 @@ test('grafo publicado é persistido e ramifica conforme a resposta', () => {
   participations.answer(claimed.resumeToken, 'stop-starting');
   assert.equal(participations.find(claimed.resumeToken)?.current_node, 'group-error-climate');
   participations.answer(claimed.resumeToken, 'learn');
+  const listNode = participations.find(claimed.resumeToken)?.current_node;
+  assert.ok(listNode?.startsWith('list-metric-manipulation-'));
+  participations.answer(claimed.resumeToken, 'count-2');
   assert.equal(participations.find(claimed.resumeToken)?.current_node, 'security-change');
   participations.answer(claimed.resumeToken, 'late-review');
   const current = participations.find(claimed.resumeToken)!;
@@ -260,8 +263,9 @@ test('contexto seleciona poucos eventos sem depender do título escolhido', () =
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'work-context', 'architecture-and-boundaries', 'architecture', architecture), 'vignette-approval-change');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'vignette-approval-change', 'ritual', 'engineering', buildAndOperate), 'literacy-wip-chart');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'literacy-wip-chart', 'stop-starting', 'engineering', buildAndOperate), 'group-error-climate');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'group-error-climate', 'learn', 'engineering', buildAndOperate), 'ready-to-release');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'group-error-climate', 'learn', 'architecture', architecture), 'architecture-pressure');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'group-error-climate', 'learn', 'engineering', buildAndOperate), 'list-metric-manipulation-control');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'list-metric-manipulation-control', 'count-2', 'engineering', buildAndOperate), 'ready-to-release');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'list-metric-manipulation-treatment', 'count-2', 'architecture', architecture), 'architecture-pressure');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildAndOperate), 'environment-access');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-event-consequence', 'decision-still-useful', 'engineering', buildFocused), 'integration-cadence');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap', 'engineering', buildFocused), 'architecture-pressure');

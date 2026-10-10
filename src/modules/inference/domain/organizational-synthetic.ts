@@ -493,6 +493,10 @@ export function optionForOrganizationalSynthetic(
   if (node.id.startsWith('literacy-')) {
     return node.options.find((option) => option.id === 'stop-starting')?.id ?? node.options[0]!.id;
   }
+  // Técnica de lista: contagem intermediária; prevalência só publica com n ≥ 40/braço.
+  if (node.id.startsWith('list-')) {
+    return node.options.find((option) => option.id === 'count-2')?.id ?? node.options[0]!.id;
+  }
   const fallbackBand = POC_VALIDATION_ORGS.find((org) => org.id === caseId)?.band ?? 'low';
   const wanted = scripts[caseId].units[unitIndex]?.[node.id] ?? scripts[caseId].shared[node.id] ?? optionByBand(node.options, fallbackBand);
   return node.options.some((option) => option.id === wanted) ? wanted : optionByBand(node.options, fallbackBand);

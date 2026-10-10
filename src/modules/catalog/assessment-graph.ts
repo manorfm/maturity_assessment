@@ -1,7 +1,18 @@
 import { workContextOptions, type InterviewTrack, type ObservableEvent, type WorkAuthority, type WorkResponsibility, type WorkScope } from '../assessments/domain/respondent-work-context.js';
 
 import { normalizeOptionEvidence, type EvidenceLink } from './evidence-contract.js';
-import { approvalChangeVignette, groupErrorReferent, literacyWipChart } from './item-catalog.js';
+import {
+  approvalChangeVignette,
+  groupErrorReferent,
+  listTechniqueCountOptions,
+  listTechniqueNodeId,
+  listTechniqueScenario,
+  literacyWipChart,
+  metricManipulationList,
+} from './item-catalog.js';
+
+const listMetricControlId = listTechniqueNodeId(metricManipulationList, 'control');
+const listMetricTreatmentId = listTechniqueNodeId(metricManipulationList, 'treatment');
 
 export const GRAPH_VERSION = 'evidence-anamnesis-pilot-v21';
 export const CANNOT_OBSERVE_ID = 'cannot-observe';
@@ -35,7 +46,7 @@ export function observationOf(option: Option): ObservationKind {
 }
 
 function attachObservationalExits(node: AssessmentNode): AssessmentNode {
-  if (node.id === 'respondent-context' || node.id.startsWith('vignette-') || node.id.startsWith('literacy-')) return node;
+  if (node.id === 'respondent-context' || node.id.startsWith('vignette-') || node.id.startsWith('literacy-') || node.id.startsWith('list-')) return node;
   if (node.options.some((option) => option.id === CANNOT_OBSERVE_ID)) return node;
   return { ...node, options: [...node.options, cannotObserve] };
 }
@@ -154,6 +165,33 @@ const authoredNodes: AssessmentNode[] = [
         signals: [{ capability: 'organizacao', pattern: 'aprendizado-blameless', weight: 2, details: ['organizational-learning', 'leadership-management'], layer: 'outcome', constraint: 'none' }],
       },
     ],
+    next: listMetricControlId,
+  },
+  {
+    id: listMetricControlId,
+    type: 'scenario',
+    title: metricManipulationList.title,
+    scenario: listTechniqueScenario(metricManipulationList, 'control'),
+    prompt: metricManipulationList.prompt,
+    // Sem sinais de maturidade: prevalência agregada (07 §4.4), nunca resposta individual.
+    options: listTechniqueCountOptions('control').map((option) => ({
+      id: option.id,
+      label: option.label,
+      signals: [] as Signal[],
+    })),
+    next: 'urgent-change',
+  },
+  {
+    id: listMetricTreatmentId,
+    type: 'scenario',
+    title: metricManipulationList.title,
+    scenario: listTechniqueScenario(metricManipulationList, 'treatment'),
+    prompt: metricManipulationList.prompt,
+    options: listTechniqueCountOptions('treatment').map((option) => ({
+      id: option.id,
+      label: option.label,
+      signals: [] as Signal[],
+    })),
     next: 'urgent-change',
   },
   {
@@ -1198,7 +1236,7 @@ export const graph: AssessmentNode[] = [...authoredNodes, ...eventFollowupNodes]
     : node;
   const withExits = attachObservationalExits(factual);
   const meta = evidenceMetaFor(withExits.id);
-  const scenario = factual.id.startsWith('literacy-') || factual.id.startsWith('vignette-')
+  const scenario = factual.id.startsWith('literacy-') || factual.id.startsWith('vignette-') || factual.id.startsWith('list-')
     ? factual.scenario
     : anchorRecentObservation(factual.scenario);
   return {
@@ -1258,6 +1296,10 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: groupErrorReferent.id },
   ];
   if (node.id === groupErrorReferent.id) return [
+    { from: node.id, to: listMetricControlId },
+    { from: node.id, to: listMetricTreatmentId },
+  ];
+  if (node.id === listMetricControlId || node.id === listMetricTreatmentId) return [
     { from: node.id, to: 'ready-to-release', when: { tracksAny: ['delivery', 'full-cycle'] } },
     { from: node.id, to: 'security-change', when: { tracksAny: ['risk'] } },
     { from: node.id, to: 'environment-access', when: { tracksAny: ['capability'] } },

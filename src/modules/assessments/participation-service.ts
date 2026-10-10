@@ -1,6 +1,7 @@
 import { inTransaction, type Database } from '../../shared/database.js';
 import { hashSecret, id } from '../../shared/ids.js';
 import { CatalogService } from '../catalog/catalog-service.js';
+import { groupErrorReferent } from '../catalog/item-catalog.js';
 import { AssessmentProfile } from './domain/invitation.js';
 import { AdaptiveJourneyService } from './adaptive-journey-service.js';
 import { RespondentWorkContext } from './domain/respondent-work-context.js';
@@ -46,9 +47,14 @@ export class ParticipationService {
       const rotatedVignette = node.id === 'work-context'
         ? this.adaptiveJourney.selectVignette(participation.id)
         : undefined;
-      const preferredNext = rotatedVignette && !this.hasAnswered(participation.id, rotatedVignette)
-        ? rotatedVignette
-        : declarativeNext;
+      const listArm = node.id === groupErrorReferent.id
+        ? this.adaptiveJourney.selectListTechnique(participation.id)
+        : undefined;
+      const preferredNext = (listArm && !this.hasAnswered(participation.id, listArm))
+        ? listArm
+        : (rotatedVignette && !this.hasAnswered(participation.id, rotatedVignette)
+          ? rotatedVignette
+          : declarativeNext);
       const next = preferredNext && !this.hasAnswered(participation.id, preferredNext)
         ? preferredNext
         : this.adaptiveJourney.selectAfterTerminal(participation.id, effectiveProfile, participation.graph_version);

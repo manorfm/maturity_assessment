@@ -12,7 +12,8 @@ import type { SolutionReadiness } from './domain/solution-readiness.js';
 import { BayesianInferenceEngine, type DiagnosticPosterior } from './domain/bayesian-inference-engine.js';
 import { CausalInferenceEngine } from './domain/causal-inference-engine.js';
 import { aggregateLiteracy, type LiteracyPublication } from './domain/literacy-aggregate.js';
-import { literacyWipChart } from '../catalog/item-catalog.js';
+import { aggregateListTechnique, parseListTechniqueCount, type ListTechniquePublication } from './domain/list-technique-aggregate.js';
+import { listTechniqueArmOf, literacyWipChart, metricManipulationList } from '../catalog/item-catalog.js';
 import { DiagnosticModel } from './domain/diagnostic-model.js';
 import { PilotEvaluation, type PilotReport } from './domain/pilot-evaluation.js';
 import { PilotService } from './pilot-service.js';
@@ -341,7 +342,7 @@ export class InferenceService {
     const measurementModel = this.measurementModel(projectId);
     if (completed < minimum) {
       const transformationPortfolio = TransformationPortfolioPlanner.plan([]);
-      return { completed, minimum, modelVersion, measurementModel, index: undefined as IndexPublication | undefined, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], organizationalAreas: OrganizationalAreaProjector.empty(), perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), literacy: { published: false, n: 0, reason: 'Amostra abaixo do limiar.' } as LiteracyPublication, scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
+      return { completed, minimum, modelVersion, measurementModel, index: undefined as IndexPublication | undefined, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], organizationalAreas: OrganizationalAreaProjector.empty(), perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), literacy: { published: false, n: 0, reason: 'Amostra abaixo do limiar.' } as LiteracyPublication, listTechnique: { published: false, controlN: 0, treatmentN: 0, reason: 'Amostra abaixo do limiar.' } as ListTechniquePublication, scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
     }
     const findings = uniqueFindingsByPattern(this.findings(projectId, completed));
     this.persistTransformation(projectId, completed, findings);
@@ -375,7 +376,8 @@ export class InferenceService {
     const transformationPortfolio = TransformationPortfolioPlanner.plan(findings);
     const index = measurementModel === 'm2' ? this.measureIndex(projectId) : undefined;
     const literacy = this.literacyPublication(projectId, minimum);
-    return { completed, minimum, modelVersion, measurementModel, index, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), literacy, scopes, outcome };
+    const listTechnique = this.listTechniquePublication(projectId);
+    return { completed, minimum, modelVersion, measurementModel, index, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), literacy, listTechnique, scopes, outcome };
   }
 
   private literacyPublication(projectId: string, minimum: number): LiteracyPublication {
@@ -389,6 +391,25 @@ export class InferenceService {
       answers: rows.map((row) => ({ optionId: row.option_id })),
       readings: literacyWipChart.readings,
       minimum,
+    });
+  }
+
+  private listTechniquePublication(projectId: string): ListTechniquePublication {
+    const rows = this.db.prepare(`
+      SELECT r.node_id, r.option_id
+      FROM responses r
+      JOIN participations p ON p.id = r.participation_id
+      WHERE p.project_id = ? AND p.status = 'completed' AND r.node_id LIKE 'list-%'
+    `).all(projectId) as unknown as Array<{ node_id: string; option_id: string }>;
+    const answers = rows.flatMap((row) => {
+      const arm = listTechniqueArmOf(row.node_id);
+      const count = parseListTechniqueCount(row.option_id);
+      if (!arm || count === undefined) return [];
+      return [{ arm, count }];
+    });
+    return aggregateListTechnique({
+      answers,
+      minimumPerArm: metricManipulationList.minimumSample,
     });
   }
 
