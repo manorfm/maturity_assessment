@@ -28,7 +28,7 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
   assert.ok(baseline.authorship.commonTrunkNodes >= 30);
   assert.ok(baseline.authorship.commonTrunkRatio > .32);
   assert.ok(baseline.authorship.causalProbeNodes > 0);
-  assert.equal(baseline.authorship.nodesWithoutVisibilityExit, 2, 'vinheta e leitura não oferecem saída de visibilidade genérica');
+  assert.equal(baseline.authorship.nodesWithoutVisibilityExit, 4, 'vinheta, leitura e itens especiais sem saída de visibilidade genérica');
 });
 
 test('linha de base torna visível dívida de fundamentos e contratos de direção', () => {
