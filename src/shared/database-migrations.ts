@@ -71,6 +71,21 @@ export function applyMigrations(db: DatabaseSync): void {
       created_at TEXT NOT NULL,
       UNIQUE(entry_id, rater_key)
     );
-    INSERT INTO schema_migrations (version, applied_at) VALUES (25, datetime('now'));
+    CREATE TABLE index_readings (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL REFERENCES projects(id),
+      unit_id TEXT,
+      label TEXT NOT NULL,
+      index_value INTEGER NOT NULL,
+      band_low INTEGER NOT NULL,
+      band_high INTEGER NOT NULL,
+      distribution_json TEXT,
+      instrument_version TEXT NOT NULL,
+      model_version TEXT NOT NULL,
+      completed INTEGER NOT NULL,
+      captured_at TEXT NOT NULL
+    );
+    CREATE INDEX idx_index_readings_project ON index_readings(project_id, captured_at);
+    INSERT INTO schema_migrations (version, applied_at) VALUES (26, datetime('now'));
   `);
 }

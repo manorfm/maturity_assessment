@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Fotografias de índice no histórico (WP15)
+
+- Schema 26: `index_readings`; captura imutável por amostra; histórico
+  compara duas leituras com P ≥ 0,8. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — P(melhora) entre leituras (WP15)
 
 - `change-detection` (05 §9) e histórico com limiar 0,8; faixas como

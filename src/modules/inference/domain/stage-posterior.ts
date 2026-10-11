@@ -77,7 +77,15 @@ function credibleBand(probabilities: StagePosterior['probabilities']): [number, 
 
 export type IndexPublication =
   | { published: false; reason: string }
-  | { published: true; index: number; band: [number, number]; coverage: number; target?: number };
+  | {
+    published: true;
+    index: number;
+    band: [number, number];
+    coverage: number;
+    target?: number;
+    /** Posterior 0–4 quando disponível para P(melhora) (05 §9). */
+    distribution?: readonly [number, number, number, number, number];
+  };
 
 export function publishIndex(input: {
   respondents: number;

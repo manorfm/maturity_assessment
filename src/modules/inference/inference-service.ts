@@ -1,6 +1,6 @@
 import type { Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
-import { profiles, type Profile } from '../catalog/assessment-graph.js';
+import { GRAPH_VERSION, profiles, type Profile } from '../catalog/assessment-graph.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { CausalKnowledgeGraph, type CausalPath } from './domain/causal-knowledge-graph.js';
 import { TeamClassification } from './domain/team-classification.js';
@@ -30,6 +30,7 @@ import { omegaForLeaf } from '../measurement/domain/icc.js';
 import { defaultMeasurementParams, type StageDistribution } from '../measurement/domain/measurement-params.js';
 import { measureLeafFromBundles } from '../measurement/domain/runtime-bridge.js';
 import { bundlesByLeafAndUnit, type ResponseObservation } from '../measurement/domain/response-observation.js';
+import { projectHistoryAssessment, type HistoryAssessment, type IndexReading } from './domain/reading-history.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -337,6 +338,77 @@ export const causalKnowledgeGraph = CausalKnowledgeGraph.from({ ...interventionC
 export class InferenceService {
   constructor(private readonly db: Database) {}
 
+  /** Fotografia imutável do índice (16 §2); não duplica a mesma amostra. */
+  captureIndexReading(projectId: string, input: {
+    label: string;
+    index: number;
+    band: [number, number];
+    distribution?: StageDistribution;
+    instrumentVersion: string;
+    modelVersion: string;
+    completed: number;
+    unitId?: string | null;
+  }): void {
+    const last = this.db.prepare(`
+      SELECT completed FROM index_readings
+      WHERE project_id = ? AND ${(input.unitId ? 'unit_id = ?' : 'unit_id IS NULL')}
+      ORDER BY captured_at DESC LIMIT 1
+    `).get(...(input.unitId ? [projectId, input.unitId] : [projectId])) as { completed: number } | undefined;
+    if (last && Number(last.completed) === input.completed) return;
+    this.db.prepare(`
+      INSERT INTO index_readings
+        (id, project_id, unit_id, label, index_value, band_low, band_high, distribution_json,
+         instrument_version, model_version, completed, captured_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      id(),
+      projectId,
+      input.unitId ?? null,
+      input.label,
+      input.index,
+      input.band[0],
+      input.band[1],
+      input.distribution ? JSON.stringify(input.distribution) : null,
+      input.instrumentVersion,
+      input.modelVersion,
+      input.completed,
+      new Date().toISOString(),
+    );
+  }
+
+  listIndexReadings(projectId: string, limit = 2): IndexReading[] {
+    const rows = this.db.prepare(`
+      SELECT id, label, index_value, band_low, band_high, distribution_json, captured_at
+      FROM index_readings
+      WHERE project_id = ? AND unit_id IS NULL
+      ORDER BY captured_at DESC
+      LIMIT ?
+    `).all(projectId, limit) as unknown as Array<{
+      id: string;
+      label: string;
+      index_value: number;
+      band_low: number;
+      band_high: number;
+      distribution_json: string | null;
+      captured_at: string;
+    }>;
+    return rows.map((row) => ({
+      id: row.id,
+      label: row.label || row.captured_at.slice(0, 10),
+      index: Number(row.index_value),
+      band: [Number(row.band_low), Number(row.band_high)] as [number, number],
+      ...(row.distribution_json ? {
+        distribution: JSON.parse(row.distribution_json) as StageDistribution,
+      } : {}),
+    })).reverse();
+  }
+
+  projectIndexHistory(projectId: string): HistoryAssessment {
+    const readings = this.listIndexReadings(projectId, 2);
+    if (readings.length < 2) return projectHistoryAssessment({});
+    return projectHistoryAssessment({ previous: readings[0], current: readings[1] });
+  }
+
   report(projectId: string, minimum: number) {
     const completed = Number((this.db.prepare("SELECT COUNT(*) total FROM participations WHERE project_id = ? AND status = 'completed'").get(projectId) as { total: number }).total);
     const modelVersion = this.modelVersion();
@@ -376,6 +448,17 @@ export class InferenceService {
     const outcome = decideReportOutcome({ classification, branches: capabilityGroups, findings, perspectiveGaps });
     const transformationPortfolio = TransformationPortfolioPlanner.plan(findings);
     const index = measurementModel === 'm2' ? this.measureIndex(projectId) : undefined;
+    if (index?.published) {
+      this.captureIndexReading(projectId, {
+        label: `Leitura · ${completed} pessoas`,
+        index: index.index,
+        band: index.band,
+        ...(index.distribution ? { distribution: index.distribution as StageDistribution } : { distribution: peakedDistribution(index.index) }),
+        instrumentVersion: GRAPH_VERSION,
+        modelVersion: measurementModel,
+        completed,
+      });
+    }
     const literacy = this.literacyPublication(projectId, minimum);
     const listTechnique = this.listTechniquePublication(projectId);
     return { completed, minimum, modelVersion, measurementModel, index, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), literacy, listTechnique, scopes, outcome };
@@ -483,12 +566,14 @@ export class InferenceService {
           if (!fallback) fallback = { published: false, reason: 'Faixa larga demais para publicar índice.' };
           continue;
         }
-        publishedLeaves[leaf] = peakedDistribution(hierarchical.index);
+        const distribution = peakedDistribution(hierarchical.index);
+        publishedLeaves[leaf] = distribution;
         singleLeafDirect.set(leaf, {
           published: true,
           index: hierarchical.index,
           band: hierarchical.band,
           coverage: Math.min(1, allResponses.length / 5),
+          distribution,
         });
       } else {
         const only = [...unitReadings.values()][0] ?? gate.posterior;
@@ -498,6 +583,7 @@ export class InferenceService {
           index: only.index,
           band: only.interval90,
           coverage: Math.min(1, allResponses.length / 5),
+          distribution: only.distribution,
         });
       }
       weights[leaf] = 1;
@@ -513,6 +599,7 @@ export class InferenceService {
       index: parent.index,
       band: parent.band,
       coverage: Math.min(1, keys.length / 8),
+      distribution: peakedDistribution(parent.index),
     };
   }
 

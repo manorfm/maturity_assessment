@@ -26,7 +26,7 @@ import { disciplineBrief, disciplineScope } from '../inference/domain/discipline
 import { problemsForNode, projectProblemTree, type HierarchicalBranch, type HierarchicalFinding, type HierarchicalProblem } from '../inference/domain/hierarchical-problems.js';
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
-import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, projectFrontierPage, projectHistoryPage, projectReadinessPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, projectFrontierPage, projectReadinessPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
 import { renderAdminAside, renderAdminMetric, renderAdminShell, renderTermsPanel } from './admin-view.js';
@@ -437,8 +437,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.get('/projects/:publicId/manage/:adminSecret/report/history', async (request, reply) => {
     const params = request.params as Params;
-    requireProject(params);
-    const history = projectHistoryPage({});
+    const auth = requireProject(params);
+    const history = inference.projectIndexHistory(String(auth.project.id));
     return reply.type('text/html').send(reportPage(params, 'history', renderHistoryPage(history)));
   });
 
