@@ -12,7 +12,7 @@ import {
   type PrerequisitePosterior,
   type ReadinessAssessment,
 } from './advanced-readiness.js';
-import { learningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
+import { learningFrontier, projectLearningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
 import { projectHistoryAssessment, type HistoryAssessment, type IndexReading } from './reading-history.js';
 import { classifyCynefin, classifyEvidenceGrade, foundationIsReplicated, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
 import { primaryArchetypeFor } from './systemic-archetypes.js';
@@ -230,8 +230,13 @@ export function projectCatalogReadiness(
   })));
 }
 
-export function projectFrontierPage(input: { nodes: string[]; edges: EnablementEdge[] } | undefined): { nodes: FrontierNode[]; gap?: string } {
-  if (!input?.edges.length) return { nodes: [], gap: 'O grafo de habilitação ainda não foi elicitado. A fronteira não é inventada a partir do nome das folhas.' };
+export function projectFrontierPage(
+  input: { nodes: string[]; edges: EnablementEdge[] } | { leaves: Record<string, LeafEvidence> } | undefined,
+): { nodes: FrontierNode[]; gap?: string } {
+  if (input && 'leaves' in input) return projectLearningFrontier(input.leaves);
+  if (!input || !('edges' in input) || !input.edges.length) {
+    return { nodes: [], gap: 'O grafo de habilitação ainda não foi elicitado. A fronteira não é inventada a partir do nome das folhas.' };
+  }
   return { nodes: learningFrontier(input.nodes, input.edges) };
 }
 

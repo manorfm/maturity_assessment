@@ -27,6 +27,7 @@ import { problemsForNode, projectProblemTree, type HierarchicalBranch, type Hier
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js';
+import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/learning-frontier.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
@@ -432,8 +433,13 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.get('/projects/:publicId/manage/:adminSecret/report/frontier', async (request, reply) => {
     const params = request.params as Params;
-    requireProject(params);
-    const frontier = projectFrontierPage(undefined);
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const leaves = Object.fromEntries(report.capabilities.map((capability) => [capability.id, {
+      level: capability.level,
+      coverage: capability.coverage ?? 0,
+    }]));
+    const frontier = projectFrontierPage({ leaves });
     return reply.type('text/html').send(reportPage(params, 'frontier', renderFrontierPage(frontier.nodes, frontier.gap)));
   });
 
@@ -453,6 +459,10 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const area = path.at(-1)!;
     const chapter = projectAreaChapter({ area, findings: report.findings, organizationalAreas: report.organizationalAreas });
     const plan = projectTreatmentPlan(report.findings);
+    const leaves = Object.fromEntries(report.capabilities.map((capability) => [capability.id, {
+      level: capability.level,
+      coverage: capability.coverage ?? 0,
+    }]));
     const walk = projectAreaWalkthrough({
       area,
       findings: report.findings,
@@ -462,6 +472,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       conducts: [...plan.active, ...plan.later],
       pulse: plan.pulse,
       summary: chapter.observes,
+      enablementEdges: evaluateEnablementEdges(enablementCatalog, leaves),
     });
     return reply.type('text/html').send(reportPage(params, 'walkthrough', renderWalkthrough(walk)));
   });

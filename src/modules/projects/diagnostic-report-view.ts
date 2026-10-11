@@ -238,9 +238,18 @@ export function renderReadinessPage(items: Array<{ label: string; assessment?: R
 
 export function renderFrontierPage(nodes: FrontierNode[], gap?: string): string {
   const list = nodes.length
-    ? `<ul>${nodes.map((node) => `<li>${escapeHtml(node.id)} — ${node.learnable ? 'pode aprender agora' : `bloqueado por ${escapeHtml(node.blockedBy.join(', '))}`}</li>`).join('')}</ul>`
+    ? `<ul>${nodes.map((node) => {
+      const title = escapeHtml(node.label ?? node.id);
+      if (node.band === 'near') {
+        return `<li>${title} — Perto${node.blockedBy.length ? ` · falta ${escapeHtml(node.blockedBy.join(', '))}` : ''}</li>`;
+      }
+      if (node.learnable || node.band === 'frontier') {
+        return `<li>${title} — pode aprender agora</li>`;
+      }
+      return `<li>${title} — bloqueado por ${escapeHtml(node.blockedBy.join(', ') || 'pré-requisito sem evidência')}</li>`;
+    }).join('')}</ul>`
     : `<p class="report-gap">${escapeHtml(gap ?? 'Sem fronteira publicada.')}</p>`;
-  return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1></header>${list}`;
+  return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1><p>Degraus com P(desbloqueado) ≥ 0,6 entram na fronteira; abaixo de 0,25 ficam bloqueados.</p></header>${list}`;
 }
 
 export function renderHistoryPage(input: {

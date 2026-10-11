@@ -49,6 +49,9 @@ selecionável.
   mesh; `p_k = P(S ≥ mínimo)` a partir da posterior ou nível provisório das
   folhas; rota de prontidão usa `projectCatalogReadiness`. Sofisticação F nas
   trilhas e biblioteca completa de 22 §5 ainda abertas.
-- WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.
+- WP21 (parcial): `enablementCatalog` com arestas de 23 §3.3;
+  `P(desbloqueado)` por produto das essenciais; fronteira/perto/bloqueado;
+  walkthrough restringe próxima fase à fronteira. Elicitação SHELF do
+  restante do grafo e modalidades de aprendizado nas condutas ainda abertas.
 
 WP4 no runtime está fechado; fórmulas ICC→ω no motor; E0/PyMC no WP10.

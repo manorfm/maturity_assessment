@@ -1,21 +1,181 @@
+import { probabilityStageAtLeast, type LeafEvidence } from './advanced-readiness.js';
+import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
+import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
+import type { CapabilityStageLevel } from './capability-reference.js';
+
+export type EnablementStrength = 'essential' | 'comfort';
+export type EnablementType = 'technical' | 'cognitive' | 'social' | 'structural' | 'governance';
+export type EnablementOrigin = 'A' | 'B' | 'C' | 'D';
+
+export type EnablementDependency = {
+  id: string;
+  fromLeafId: string;
+  fromLabel: string;
+  fromMinimum: number;
+  toLeafId: string;
+  toFromStage: number;
+  toToStage: number;
+  type: EnablementType;
+  strength: EnablementStrength;
+  keyBehavior: string;
+  origin: EnablementOrigin;
+};
+
 export type EnablementEdge = {
   from: string;
   to: string;
   probability: number;
   unlocks: string;
+  strength?: EnablementStrength;
+  fromLabel?: string;
 };
+
+export type FrontierBand = 'frontier' | 'near' | 'blocked';
 
 export type FrontierNode = {
   id: string;
   blockedBy: string[];
   learnable: boolean;
+  probability?: number;
+  band?: FrontierBand;
+  label?: string;
 };
+
+export type LearningFrontierProjection = {
+  nodes: FrontierNode[];
+  gap?: string;
+};
+
+/** Amostra inicial 23 §3.3 — conteúdo versionado; força SHELF ainda aberta. */
+export const enablementCatalog: EnablementDependency[] = [
+  dep('voice-to-learning', 'leadership-management', 'Voz e segurança', 2, 'organizational-learning', 2, 3, 'social', 'essential', 'Contar o próprio erro sem medo', 'B'),
+  dep('priority-to-wip', 'portfolio-management', 'Clareza de prioridade', 2, 'work-management', 1, 2, 'governance', 'essential', 'Dizer "isto não agora"', 'C'),
+  dep('flow-to-metrics', 'work-management', 'Fluxo visível', 2, 'work-management', 1, 2, 'technical', 'essential', 'Manter o quadro igual ao trabalho real', 'B'),
+  dep('obs-to-incident', 'observability-practice', 'Observabilidade', 2, 'incident-management', 2, 3, 'technical', 'essential', 'Investigar pelos dados, não por suposição', 'B'),
+  dep('incident-to-learning', 'incident-management', 'Resposta a incidentes', 2, 'organizational-learning', 1, 2, 'technical', 'essential', 'Registrar o que aconteceu', 'B'),
+  dep('batch-to-ci', 'work-management', 'Lote pequeno', 2, 'continuous-integration', 2, 3, 'technical', 'essential', 'Integrar diariamente', 'A'),
+  dep('testability-to-qa', 'sustainable-design', 'Testabilidade', 2, 'quality-strategy', 1, 2, 'technical', 'essential', 'Escrever código que dá para testar', 'B'),
+  dep('ci-to-release', 'continuous-integration', 'Integração contínua', 3, 'release-feedback', 2, 3, 'technical', 'essential', 'Confiar no pipeline', 'A'),
+  dep('ownership-to-obs', 'team-ownership', 'Ownership ponta a ponta', 2, 'observability-practice', 2, 3, 'structural', 'essential', 'Operar o que construiu', 'B'),
+  dep('obs-to-slo', 'observability-practice', 'Observabilidade', 3, 'reliability-practice', 2, 3, 'technical', 'essential', 'Medir o que o usuário sente', 'B'),
+  dep('decision-to-gov', 'leadership-management', 'Direitos de decisão', 2, 'enabling-governance', 1, 2, 'governance', 'essential', 'Decidir por risco, não por hierarquia', 'B'),
+  dep('refine-to-ai', 'planning-refinement', 'Refinamento com critérios', 3, 'sdlc-automation', 3, 4, 'cognitive', 'essential', 'Definir o "o quê" e o critério de pronto', 'C'),
+  dep('discovery-to-direction', 'discovery-validation', 'Descoberta', 2, 'product-direction', 2, 3, 'cognitive', 'essential', 'Escrever a hipótese antes de construir', 'B'),
+  dep('team-to-collab', 'team-ownership', 'Desenho do time', 2, 'collaboration', 2, 3, 'structural', 'comfort', 'Times estáveis com fronteira clara', 'B'),
+];
 
 export function learningFrontier(nodes: string[], edges: EnablementEdge[]): FrontierNode[] {
   return nodes.map((id) => {
     const incoming = edges.filter((edge) => edge.to === id);
-    const blockedBy = incoming.filter((edge) => edge.probability < 0.25).map((edge) => edge.from);
-    const learnable = incoming.length === 0 || incoming.every((edge) => edge.probability >= 0.25);
-    return { id, blockedBy, learnable };
+    if (!incoming.length) {
+      return { id, blockedBy: [], learnable: true, probability: 1, band: 'frontier' as const };
+    }
+    const essential = incoming.filter((edge) => (edge.strength ?? 'essential') === 'essential');
+    const governing = essential.length ? essential : incoming;
+    const probability = round4(governing.reduce((product, edge) => product * edge.probability, 1));
+    const band: FrontierBand = probability >= 0.6 ? 'frontier' : probability >= 0.25 ? 'near' : 'blocked';
+    const blockedBy = governing
+      .filter((edge) => (band === 'blocked' ? edge.probability < 0.25 : band === 'near' ? edge.probability < 0.6 : false))
+      .map((edge) => edge.fromLabel ?? edge.from);
+    return {
+      id,
+      blockedBy,
+      learnable: band === 'frontier',
+      probability,
+      band,
+    };
   });
+}
+
+export function evaluateEnablementEdges(
+  catalog: EnablementDependency[],
+  leaves: Record<string, LeafEvidence>,
+): EnablementEdge[] {
+  return catalog.map((dependency) => {
+    const distribution = distributionFor(leaves[dependency.fromLeafId]);
+    const probability = distribution
+      ? probabilityStageAtLeast(distribution, dependency.fromMinimum)
+      : 0;
+    const unlocks = unlockId(dependency);
+    return {
+      from: dependency.fromLeafId,
+      to: unlocks,
+      probability,
+      unlocks,
+      strength: dependency.strength,
+      fromLabel: dependency.fromLabel,
+    };
+  });
+}
+
+export function projectLearningFrontier(
+  leaves: Record<string, LeafEvidence>,
+  catalog: EnablementDependency[] = enablementCatalog,
+): LearningFrontierProjection {
+  if (!catalog.length) {
+    return { nodes: [], gap: 'O grafo de habilitação ainda não foi elicitado. A fronteira não é inventada a partir do nome das folhas.' };
+  }
+  const edges = evaluateEnablementEdges(catalog, leaves);
+  const nodeIds = [...new Set(edges.map((edge) => edge.to))];
+  const nodes = learningFrontier(nodeIds, edges).map((node) => {
+    const sample = catalog.find((item) => unlockId(item) === node.id);
+    return {
+      ...node,
+      ...(sample ? { label: `${sample.toLeafId} ${sample.toFromStage}→${sample.toToStage}` } : {}),
+    };
+  });
+  return { nodes };
+}
+
+/** 16 §3.1 + 23 §6.1: sobe um degrau só se o desbloqueio estiver na fronteira. */
+export function nextPhaseWithinFrontier(input: {
+  leafId: string;
+  current: number;
+  target?: number;
+  edges: EnablementEdge[];
+}): CapabilityStageLevel {
+  const floor = Math.max(0, Math.min(4, Math.floor(input.current))) as CapabilityStageLevel;
+  const cap = Math.max(0, Math.min(4, Math.floor(input.target ?? 4))) as CapabilityStageLevel;
+  const candidate = Math.max(0, Math.min(4, Math.min(cap, floor + 1))) as CapabilityStageLevel;
+  if (candidate === floor) return candidate;
+  const unlock = `${input.leafId}:${floor}→${candidate}`;
+  const incoming = input.edges.filter((edge) => edge.to === unlock);
+  if (!incoming.length) return candidate;
+  const essential = incoming.filter((edge) => (edge.strength ?? 'essential') === 'essential');
+  const probability = essential.reduce((product, edge) => product * edge.probability, 1);
+  return probability >= 0.6 ? candidate : floor;
+}
+
+function unlockId(dependency: EnablementDependency): string {
+  return `${dependency.toLeafId}:${dependency.toFromStage}→${dependency.toToStage}`;
+}
+
+function dep(
+  id: string,
+  fromLeafId: string,
+  fromLabel: string,
+  fromMinimum: number,
+  toLeafId: string,
+  toFromStage: number,
+  toToStage: number,
+  type: EnablementType,
+  strength: EnablementStrength,
+  keyBehavior: string,
+  origin: EnablementOrigin,
+): EnablementDependency {
+  return {
+    id, fromLeafId, fromLabel, fromMinimum, toLeafId, toFromStage, toToStage, type, strength, keyBehavior, origin,
+  };
+}
+
+function distributionFor(evidence?: LeafEvidence): StageDistribution | undefined {
+  if (!evidence) return undefined;
+  if (evidence.distribution) return evidence.distribution;
+  if (evidence.coverage !== undefined && evidence.coverage < 1) return undefined;
+  if (evidence.level === undefined) return undefined;
+  return peakedDistribution(Math.max(0, Math.min(100, (evidence.level / 4) * 100)));
+}
+
+function round4(value: number): number {
+  return Number(value.toFixed(4));
 }

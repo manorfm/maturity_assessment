@@ -4,6 +4,7 @@ import { primaryArchetypeFor } from './systemic-archetypes.js';
 import { uniqueFindingsByPattern, type OutcomeFinding, type ReportOutcomeKind } from './report-outcome.js';
 import type { TreatmentConduct } from './treatment-contract.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from './organizational-areas.js';
+import { nextPhaseWithinFrontier, type EnablementEdge } from './learning-frontier.js';
 
 export const AREA_WALKTHROUGH_VERSION = 'area-walkthrough-v1' as const;
 
@@ -61,6 +62,7 @@ export function projectAreaWalkthrough(input: {
   conducts: TreatmentConduct[];
   pulse: WalkthroughPulse[];
   summary?: string;
+  enablementEdges?: EnablementEdge[];
 }): AreaWalkthrough {
   const leaves = new Set(leavesOf(input.area));
   const published = uniqueFindingsByPattern(input.findings).filter((finding) => finding.confidence >= 0.5);
@@ -77,7 +79,7 @@ export function projectAreaWalkthrough(input: {
       where: projectWhere(prioritized, local),
       arrived: projectArrived(local),
       working: projectWorking(input.outcomeKind, prioritized),
-      next: projectNext(prioritized),
+      next: projectNext(prioritized, input.enablementEdges),
       path: projectPath(input.conducts),
       milestones: projectMilestones(input.pulse, leaves, input.conducts),
       risks: projectRisks(prioritized, local),
@@ -124,14 +126,22 @@ function projectWorking(kind: ReportOutcomeKind, caps: Array<WalkthroughCapabili
   return 'Nada neste recorte foi publicado como prática a preservar.';
 }
 
-function projectNext(caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>): string[] {
+function projectNext(
+  caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>,
+  edges?: EnablementEdge[],
+): string[] {
   if (!caps.length) return ['Sem próxima fase enquanto não houver capacidade ou conduta publicada neste recorte.'];
   return caps.map((cap) => {
     const current = clampStage(cap.level);
-    const next = nextPhaseStage(current);
+    const next = edges?.length
+      ? nextPhaseWithinFrontier({ leafId: cap.id, current, edges })
+      : nextPhaseStage(current);
+    const label = cap.label ?? CapabilityTaxonomy.labelFor(cap.id);
+    if (next === current) {
+      return `${label}: próximo degrau ainda fora da fronteira de aprendizado (23 §6.1).`;
+    }
     const ref = capabilityReferenceCatalog[cap.id];
     const behavior = ref?.stage(next).behavior;
-    const label = cap.label ?? CapabilityTaxonomy.labelFor(cap.id);
     const arrow = `${current} → ${next} (${STAGE_LABELS[current]} → ${STAGE_LABELS[next]})`;
     return behavior
       ? `${label} ${arrow}: ${behavior}`

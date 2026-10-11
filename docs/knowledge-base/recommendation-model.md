@@ -134,6 +134,10 @@ A prontidão para práticas avançadas (`advancedPracticeCatalog`) calcula
 (22 §1.1) quando as folhas têm posterior ou nível com cobertura; sem
 evidência essencial, declara lacuna e não inventa índice. Chaos, QA,
 AI-DLC e service mesh entram na página de prontidão.
+O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia
+`P(desbloqueado)` por aresta; a fronteira exige ≥ 0,6, o bloqueio
+aparece abaixo de 0,25, e a próxima fase do walkthrough só sobe dentro
+da fronteira.
 A biblioteca `systemic-archetypes-v1` publica arquétipo só com ≥ 2 elos
 observados ("padrão provável"). O portfólio escolhe a **restrição
 principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e
