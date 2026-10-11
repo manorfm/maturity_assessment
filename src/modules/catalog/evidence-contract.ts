@@ -251,6 +251,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'qa-feedback-por-risco': 4,
   'qa-guiado-por-producao': 5,
 
+  // 22 §4.4–§4.6 AI-DLC (prática avançada)
+  'ai-dlc-sem-verificacao': 0,
+  'ai-dlc-leitura-humana': 1,
+  'ai-dlc-pessoa-integra': 2,
+  'ai-dlc-testes-existentes': 3,
+  'ai-dlc-criterios-antes': 4,
+  'ai-dlc-ciclos-autonomos': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

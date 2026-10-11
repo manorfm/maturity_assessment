@@ -27,6 +27,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'qa-minutos-antes-integrar': { practiceId: 'quality-automation', phase: 3 },
   'qa-feedback-por-risco': { practiceId: 'quality-automation', phase: 4 },
   'qa-guiado-por-producao': { practiceId: 'quality-automation', phase: 5 },
+
+  // AI-DLC (22 §4.4–§4.6)
+  'ai-dlc-sem-verificacao': { practiceId: 'ai-dlc', phase: 0 },
+  'ai-dlc-leitura-humana': { practiceId: 'ai-dlc', phase: 1 },
+  'ai-dlc-pessoa-integra': { practiceId: 'ai-dlc', phase: 2 },
+  'ai-dlc-testes-existentes': { practiceId: 'ai-dlc', phase: 3 },
+  'ai-dlc-criterios-antes': { practiceId: 'ai-dlc', phase: 4 },
+  'ai-dlc-ciclos-autonomos': { practiceId: 'ai-dlc', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

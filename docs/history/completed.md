@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Pergunta de evento de AI-DLC (WP20)
+
+- `ai-dlc-verification` (F0–F5) após contexto de assistência; fase de
+  `ai-dlc` alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-11 — Pergunta de evento de QA (WP20)
 
 - `quality-break-detection` (F0–F5) no fluxo de entrega; fase de

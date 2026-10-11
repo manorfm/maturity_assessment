@@ -857,6 +857,22 @@ const authoredNodes: AssessmentNode[] = [
     ],
   },
   {
+    id: 'ai-dlc-verification',
+    type: 'probe',
+    title: 'Como se soube que a saída estava correta',
+    scenario: 'Na última tarefa em que alguém do seu time usou IA para gerar código ou outra saída técnica.',
+    prompt: 'Como se soube que o resultado estava correto?',
+    options: [
+      { id: 'ai-unchecked', label: 'Não se verificou de forma sistemática; a saída seguiu adiante.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-sem-verificacao', weight: -2, details: ['sdlc-automation', 'quality-strategy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ai-human-read', label: 'Alguém leu o código ou a saída gerada e decidiu se podia seguir.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-leitura-humana', weight: -1, details: ['technical-capability'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ai-person-integrates', label: 'A pessoa escreveu e integrou; a assistência ajudou trechos, e a confiança veio da revisão local.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-pessoa-integra', weight: 1, details: ['continuous-integration', 'technical-capability'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ai-existing-tests', label: 'Os testes e portões já existentes passaram antes de integrar.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-testes-existentes', weight: 2, details: ['sdlc-automation', 'quality-strategy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ai-criteria-first', label: 'Testes e critérios de conclusão foram definidos antes da tarefa; a IA trabalhou contra eles.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-criterios-antes', weight: 2, details: ['planning-refinement', 'sdlc-automation'], layer: 'practice', constraint: 'none' }] },
+      { id: 'ai-autonomous-cycles', label: 'Ciclos seguiram até o critério, com guardrails; humanos revisaram o resultado e o efeito foi medido.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-ciclos-autonomos', weight: 2, details: ['sdlc-automation', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+    ],
+    next: 'ai-practice',
+  },
+  {
     id: 'ai-practice', title: 'Quando a assistência erra no risco',
     scenario: 'Uma alteração ou resposta assistida por modelo chegou perto de produção ou de um cliente com um erro sutil de autorização, dado ou entendimento.',
     prompt: 'Como o grupo descobre, contém e muda o modo de usar a assistência?',
@@ -1427,8 +1443,12 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, 'ai-context'),
   ];
   if (node.id === 'ai-context') return [
-    { from: node.id, optionId: 'occurs', to: 'ai-practice' },
+    { from: node.id, optionId: 'occurs', to: 'ai-dlc-verification' },
     ...skipEdges(node, 'accidental-complexity'),
+  ];
+  if (node.id === 'ai-dlc-verification') return [
+    { from: node.id, to: 'ai-practice' },
+    ...skipEdges(node, 'ai-practice'),
   ];
   if (node.id === 'ready-to-release') return [
     { from: node.id, optionId: 'small-automated', to: 'release-event-consequence' },

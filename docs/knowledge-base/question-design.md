@@ -259,7 +259,9 @@ exercício até experimentos que mudam o design — e declara a fase técnica da
 prática avançada sem subir o índice de maturidade. No fluxo de entrega,
 `quality-break-detection` pergunta quando se soube se a última mudança quebrou
 algo (só em produção → feedback por risco e guiado por produção) e declara a
-fase de automação de qualidade (22 §3.4).
+fase de automação de qualidade (22 §3.4). Quando há assistência de modelo,
+`ai-dlc-verification` pergunta como se soube que a saída estava correta
+(22 §4.6) e declara a fase de AI-DLC sem subir o índice.
 
 ### Objetivo, bloqueio e decisão
 

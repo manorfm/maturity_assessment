@@ -83,3 +83,27 @@ test('pergunta de evento de QA declara F0–F5 na prática quality-automation', 
   assert.ok(qa);
   assert.equal(qa!.phase, 4);
 });
+
+test('pergunta de evento de AI-DLC declara F0–F5 e só aparece quando há assistência', () => {
+  const node = graph.find((item) => item.id === 'ai-dlc-verification');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'ai-dlc');
+    assert.equal(link!.sophistication, event!.phase);
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'engineering', nodeId: 'ai-dlc-verification', optionId: 'ai-criteria-first' },
+  ];
+  const ai = advancedPracticePhasesById(observations).get('ai-dlc');
+  assert.ok(ai);
+  assert.equal(ai!.phase, 4);
+});
