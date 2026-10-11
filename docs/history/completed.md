@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Eixo de sofisticação F0–F5 (WP12)
+
+- `EvidenceLink.sophistication`, quadrantes, amostra de padrões e matriz
+  no walkthrough; F fora do índice. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Grafo de habilitação e fronteira (WP21)
 
 - Arestas 23 §3.3, P(desbloqueado), fronteira na rota e próxima fase do

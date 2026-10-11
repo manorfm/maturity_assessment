@@ -5,6 +5,7 @@ import { uniqueFindingsByPattern, type OutcomeFinding, type ReportOutcomeKind } 
 import type { TreatmentConduct } from './treatment-contract.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from './organizational-areas.js';
 import { nextPhaseWithinFrontier, type EnablementEdge } from './learning-frontier.js';
+import { projectSophisticationMatrix, type SophisticationPhase } from './sophistication-matrix.js';
 
 export const AREA_WALKTHROUGH_VERSION = 'area-walkthrough-v1' as const;
 
@@ -63,12 +64,23 @@ export function projectAreaWalkthrough(input: {
   pulse: WalkthroughPulse[];
   summary?: string;
   enablementEdges?: EnablementEdge[];
+  sophistication?: Array<{ leafId: string; phase: SophisticationPhase | number; appropriation: number }>;
 }): AreaWalkthrough {
   const leaves = new Set(leavesOf(input.area));
   const published = uniqueFindingsByPattern(input.findings).filter((finding) => finding.confidence >= 0.5);
   const local = published.filter((finding) => leaves.has(finding.detailCapability));
   const localCaps = input.capabilities.filter((cap) => leaves.has(cap.id) && (cap as { coverage?: number }).coverage !== 0);
   const prioritized = prioritizeCapabilities(local, localCaps).slice(0, 3);
+  const matrix = projectSophisticationMatrix(
+    (input.sophistication ?? [])
+      .filter((item) => leaves.has(item.leafId))
+      .map((item) => ({
+        leafId: item.leafId,
+        label: CapabilityTaxonomy.labelFor(item.leafId),
+        phase: item.phase,
+        appropriation: item.appropriation,
+      })),
+  );
 
   return {
     version: AREA_WALKTHROUGH_VERSION,
@@ -76,7 +88,7 @@ export function projectAreaWalkthrough(input: {
     areaLabel: input.area.label,
     summary: input.summary ?? `Roteiro da área ${input.area.label}: do que as entrevistas sustentaram para o próximo degrau.`,
     sections: {
-      where: projectWhere(prioritized, local),
+      where: projectWhere(prioritized, local, matrix.map((item) => item.reading)),
       arrived: projectArrived(local),
       working: projectWorking(input.outcomeKind, prioritized),
       next: projectNext(prioritized, input.enablementEdges),
@@ -88,8 +100,12 @@ export function projectAreaWalkthrough(input: {
   };
 }
 
-function projectWhere(caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>, findings: OutcomeFinding[]): string[] {
-  if (!caps.length && !findings.length) {
+function projectWhere(
+  caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>,
+  findings: OutcomeFinding[],
+  sophisticationLines: string[] = [],
+): string[] {
+  if (!caps.length && !findings.length && !sophisticationLines.length) {
     return ['As entrevistas ainda não publicaram índice nem achado neste recorte.'];
   }
   const lines = caps.map((cap) => {
@@ -102,6 +118,7 @@ function projectWhere(caps: Array<WalkthroughCapability & { finding?: OutcomeFin
     if (caps.some((cap) => cap.id === finding.detailCapability)) continue;
     lines.push(`Achado: ${finding.title}`);
   }
+  lines.push(...sophisticationLines);
   return lines.length ? lines : ['As entrevistas ainda não publicaram índice nem achado neste recorte.'];
 }
 

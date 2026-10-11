@@ -28,6 +28,8 @@ import { type InterviewProblem, type InterviewSolution } from '../inference/doma
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js';
 import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/learning-frontier.js';
+import { declaredSophistication } from '../catalog/evidence-contract.js';
+import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
@@ -463,6 +465,14 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       level: capability.level,
       coverage: capability.coverage ?? 0,
     }]));
+    const sophistication = report.capabilities.flatMap((capability) => {
+      const phases = report.findings
+        .filter((finding) => finding.detailCapability === capability.id || finding.affectedCapabilities?.includes(capability.id))
+        .map((finding) => declaredSophistication(finding.pattern))
+        .filter((phase): phase is NonNullable<typeof phase> => phase !== undefined);
+      if (!phases.length) return [];
+      return [{ leafId: capability.id, phase: measureSophisticationPhase(phases), appropriation: capability.level }];
+    });
     const walk = projectAreaWalkthrough({
       area,
       findings: report.findings,
@@ -473,6 +483,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       pulse: plan.pulse,
       summary: chapter.observes,
       enablementEdges: evaluateEnablementEdges(enablementCatalog, leaves),
+      sophistication,
     });
     return reply.type('text/html').send(reportPage(params, 'walkthrough', renderWalkthrough(walk)));
   });

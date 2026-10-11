@@ -3,6 +3,8 @@ import type { ConstraintKind, EvidenceLayer, Option, Signal } from './assessment
 export type AnchorStage = 0 | 1 | 2 | 3 | 4;
 export type Discrimination = 'low' | 'medium' | 'high';
 export type Appropriation = 'ritual' | 'heroism';
+/** Fase técnica F0–F5 (12); fora do índice de maturidade (R28). */
+export type SophisticationPhase = 0 | 1 | 2 | 3 | 4 | 5;
 
 /** Linha da matriz Q (04 §4.1). `pattern` e `pillar` sustentam o adaptador m1 até WP5. */
 export type EvidenceLink = {
@@ -13,6 +15,8 @@ export type EvidenceLink = {
   discrimination: Discrimination;
   layer: EvidenceLayer;
   appropriation?: Appropriation;
+  /** Segundo eixo: mecanismo técnico observado no evento; não altera o índice. */
+  sophistication?: SophisticationPhase;
   constraint: ConstraintKind;
   role: 'primary' | 'effect';
 };
@@ -37,6 +41,7 @@ export function anchorStageToWeight(stage: AnchorStage): number {
 export function signalToEvidenceLinks(signal: Signal): EvidenceLink[] {
   const leaves = signal.details.length ? signal.details : [signal.capability];
   const appropriation = appropriationFor(signal.pattern);
+  const sophistication = sophisticationForPattern(signal.pattern);
   // 04 §4.2: ritual/heroísmo são estágio 1 (forma sem função / esforço heroico),
   // não ausência (0). Peso autoral −2 sobe para âncora 1; adaptador m1 deriva −1.
   let anchorStage = weightToAnchorStage(signal.weight);
@@ -49,6 +54,7 @@ export function signalToEvidenceLinks(signal: Signal): EvidenceLink[] {
     discrimination: 'medium',
     layer: signal.layer,
     ...(appropriation ? { appropriation } : {}),
+    ...(sophistication !== undefined ? { sophistication } : {}),
     constraint: signal.constraint,
     role: index === 0 ? 'primary' : 'effect',
   }));
@@ -100,4 +106,34 @@ function appropriationFor(pattern: string): Appropriation | undefined {
   if (heroismPattern.test(pattern)) return 'heroism';
   if (ritualPattern.test(pattern)) return 'ritual';
   return undefined;
+}
+
+/**
+ * Amostra inicial das trilhas 12 §3: F declarado por padrão de evento.
+ * Independente da âncora de apropriação (R28).
+ */
+const patternSophistication: Record<string, SophisticationPhase> = {
+  'deteccao-tardia': 0,
+  'incidente-detectado-por-cliente': 0,
+  'telemetria-fragmentada': 1,
+  'limiar-sem-contexto': 2,
+  'diagnostico-correlacionado': 3,
+  'sinal-orientado-impacto': 4,
+  'incidente-orientado-impacto': 4,
+  'incidente-por-handoff': 2,
+  'incidente-depende-do-autor': 1,
+  'incidente-por-escalada-relacional': 1,
+  'severidade-operacional': 3,
+  'severidade-inconsistente': 2,
+  'empacotamento-manual': 1,
+  'integracao-tardia': 0,
+  'causa-processo-lote': 0,
+};
+
+export function declaredSophistication(pattern: string): SophisticationPhase | undefined {
+  return patternSophistication[pattern];
+}
+
+function sophisticationForPattern(pattern: string): SophisticationPhase | undefined {
+  return declaredSophistication(pattern);
 }
