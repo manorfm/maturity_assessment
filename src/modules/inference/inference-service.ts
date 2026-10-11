@@ -30,6 +30,11 @@ import { omegaForLeaf } from '../measurement/domain/icc.js';
 import { defaultMeasurementParams, type StageDistribution } from '../measurement/domain/measurement-params.js';
 import { measureLeafFromBundles } from '../measurement/domain/runtime-bridge.js';
 import { bundlesByLeafAndUnit, type ResponseObservation } from '../measurement/domain/response-observation.js';
+import {
+  sophisticationPosteriorByLeaf,
+  type SophisticationDistribution,
+  type SophisticationPhase,
+} from './domain/sophistication-matrix.js';
 import { projectHistoryAssessment, type HistoryAssessment, type IndexReading, type IndexReadingContext } from './domain/reading-history.js';
 import { projectEvolutionReport } from './domain/evolution-report.js';
 
@@ -410,6 +415,15 @@ export class InferenceService {
     })).reverse();
   }
 
+  /** Posterior F0–F5 por folha (12); fora do índice (R28). */
+  projectSophisticationByLeaf(projectId: string, unitId?: string): Map<string, {
+    distribution: SophisticationDistribution;
+    phase: SophisticationPhase;
+    expected: number;
+  }> {
+    return sophisticationPosteriorByLeaf(this.completedObservations(projectId), unitId);
+  }
+
   projectIndexHistory(projectId: string): HistoryAssessment {
     const readings = this.listIndexReadings(projectId, 2);
     if (readings.length < 2) return projectHistoryAssessment({});
@@ -544,21 +558,25 @@ export class InferenceService {
     return row?.measurement_model === 'm2' ? 'm2' : 'm1';
   }
 
-  /** Publica índice só em m2, a partir da matriz Q e do módulo de medição. */
-  private measureIndex(projectId: string): IndexPublication | undefined {
+  private completedObservations(projectId: string): ResponseObservation[] {
     const rows = this.db.prepare(`
       SELECT p.id participant_id, p.unit_id, p.profile, r.node_id, r.option_id
       FROM responses r JOIN participations p ON p.id = r.participation_id
       WHERE p.project_id = ? AND p.status = 'completed'
     `).all(projectId) as unknown as Array<{ participant_id: string; unit_id: string; profile: string; node_id: string; option_id: string }>;
-    if (!rows.length) return { published: false, reason: 'Menos de 5 respondentes neste recorte.' };
-    const observations: ResponseObservation[] = rows.map((row) => ({
+    return rows.map((row) => ({
       participantId: row.participant_id,
       unitId: row.unit_id,
       profile: row.profile,
       nodeId: row.node_id,
       optionId: row.option_id,
     }));
+  }
+
+  /** Publica índice só em m2, a partir da matriz Q e do módulo de medição. */
+  private measureIndex(projectId: string): IndexPublication | undefined {
+    const observations = this.completedObservations(projectId);
+    if (!observations.length) return { published: false, reason: 'Menos de 5 respondentes neste recorte.' };
     const orgUnits = this.db.prepare('SELECT id, parent_id FROM organization_units WHERE project_id = ?')
       .all(projectId) as unknown as Array<{ id: string; parent_id: string | null }>;
     const unitNodes = orgUnits.map((unit) => ({ id: unit.id, parentId: unit.parent_id }));

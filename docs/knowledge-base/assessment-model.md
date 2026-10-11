@@ -101,9 +101,12 @@ sem evolução publicada para unidade nova/extinta sem vínculo). A auditoria do
 folha com evidência no grafo v21 tem ≥ 2 testlets, âncora baixa (0–1) e caminho
 até âncora alta (consistência ≥ 3 ou outcome/system em 4), inclusive
 `knowledge-discovery`, `cognitive-load`, `identity-access` e `cloud-security`.
-A matriz Q aceita `sophistication` F0–F5 (12) como segundo eixo: o walkthrough
-projeta a matriz sofisticação × apropriação (quatro quadrantes); a fase
-técnica **não** entra no índice de maturidade (R28).
+A matriz Q aceita `sophistication` F0–F5 (12) como segundo eixo: o motor
+calcula a **posterior discreta P(F = 0..5)** por folha (e opcionalmente por
+unidade) com o mesmo modelo de observação de 05 (logit multinomial +
+heterogeneidade ψ), sem gates γ de apropriação. O modo da posterior alimenta
+a matriz sofisticação × apropriação no walkthrough; a fase técnica **não**
+entra no índice de maturidade (R28).
 
 ## Contexto não é evidência
 

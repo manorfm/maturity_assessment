@@ -465,7 +465,12 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       level: capability.level,
       coverage: capability.coverage ?? 0,
     }]));
+    const fByLeaf = inference.projectSophisticationByLeaf(String(auth.project.id));
     const sophistication = report.capabilities.flatMap((capability) => {
+      const fromResponses = fByLeaf.get(capability.id);
+      if (fromResponses) {
+        return [{ leafId: capability.id, phase: fromResponses.phase, appropriation: capability.level }];
+      }
       const phases = report.findings
         .filter((finding) => finding.detailCapability === capability.id || finding.affectedCapabilities?.includes(capability.id))
         .map((finding) => declaredSophistication(finding.pattern))

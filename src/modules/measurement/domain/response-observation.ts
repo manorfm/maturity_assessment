@@ -100,3 +100,29 @@ export function bundlesByLeafAndUnit(
   }
   return result;
 }
+
+/**
+ * Coleta fases F0–F5 declaradas nas evidências (12), por folha.
+ * Fora do índice (R28): não usa âncora de apropriação.
+ */
+export function sophisticationPhasesByLeaf(
+  observations: ResponseObservation[],
+  unitId?: string,
+): Map<string, number[]> {
+  const byLeaf = new Map<string, number[]>();
+  for (const observation of observations) {
+    if (unitId !== undefined && observation.unitId !== unitId) continue;
+    const lookup = optionLookup.get(`${observation.nodeId}:${observation.optionId}`);
+    if (!lookup?.evidence.length) continue;
+    for (const link of lookup.evidence) {
+      if (link.sophistication === undefined) continue;
+      if (link.role !== 'primary' && lookup.evidence.some((candidate) => candidate.role === 'primary' && candidate.capability === link.capability)) {
+        continue;
+      }
+      const phases = byLeaf.get(link.capability) ?? [];
+      phases.push(link.sophistication);
+      byLeaf.set(link.capability, phases);
+    }
+  }
+  return byLeaf;
+}

@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Posterior de sofisticação F0–F5 (WP12)
+
+- Posterior discreta P(F=0..5) por folha/unidade (modelo 05, escala 0–5);
+  walkthrough usa o modo; F continua fora do índice. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Texto livre no tronco com flag (WP7)
 
 - `selectFreeText` após a lista quando `free_text_enabled`; textarea na
