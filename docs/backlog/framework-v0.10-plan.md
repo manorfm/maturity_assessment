@@ -20,9 +20,9 @@ selecionável.
   e partial pooling hierárquico (unidade ← irmãos via mãe) no
   `measureIndex`. Fechado no motor.
 - WP10 (parcial): `icc.ts` com ICC(1)/ICC(2), k para 0,70, `omegaFromIcc1` e
-  `omegaForLeaf` no runtime; `lab/README` aponta protótipos e o fluxo de
-  exportar `pooling` no JSON m2. Estimação Bayesian (κ, δ, ρ, ψ) e E0 com
-  PyMC/Stan permanecem abertos.
+  `omegaForLeaf` no runtime; E0 de recuperação de S discreto em
+  `e0-recovery.ts` (aceite por teste) + `lab/e0_recovery.py`. Estimação
+  Bayesian (κ, δ, ρ, ψ) com PyMC/Stan permanece aberta.
 - WP5 (parcial): `causal-catalog-v11` em noisy-OR com proveniência tipada,
   `applyShelfSession` / `lambdaFromHundred` e auditoria no
   `audit:instrument`. Aplicar sessões SHELF reais (3–5 especialistas) às

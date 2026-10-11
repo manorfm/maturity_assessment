@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — E0 recuperação de estágio (WP10)
+
+- `e0-recovery.ts` simula respostas e recupera S (|viés| < 0,1, MAE < 0,25,
+  cobertura ≥ 0,85); `lab/e0_recovery.py` orquestra. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-11 — Adoção prematura no laudo (WP20)
 
 - `detectPrematureAdoptions` (F ≥ 3 e essencial p_k < 0,3) no laudo com

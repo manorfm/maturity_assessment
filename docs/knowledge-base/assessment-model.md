@@ -88,7 +88,10 @@ Projetos novos nascem em `m2`; `m1` permanece selecionável. Unidades irmãs
 compartilham prior da mãe por partial pooling (05 §7.1) antes da agregação do
 índice: `ω` vem de `pooling[folha]` quando o lab exportou ICC→ω
 (`omegaFromIcc1` = 1 − ICC(1)), senão `poolingDefault` (0,5). ICC(2) e k para
-confiabilidade ≥ 0,70 estão em `measurement/domain/icc.ts` (09 §4); pasta
+confiabilidade ≥ 0,70 estão em `measurement/domain/icc.ts` (09 §4). O estudo
+E0 (09 §3) simula respostas a partir de S conhecido e recupera a posterior
+(`e0-recovery.ts`): |viés| < 0,1, MAE < 0,25 e cobertura 90% ≥ 0,85 no S
+discreto; pasta
 `lab/` documenta o fluxo offline. Entre duas posteriores de estágio,
 `change-detection` publica melhora, piora ou estável só com P ≥ 0,8
 (05 §9 / 16 §5.1); sem distribuição, o histórico cai na comparação de
