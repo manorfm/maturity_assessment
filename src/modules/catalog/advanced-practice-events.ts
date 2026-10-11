@@ -12,12 +12,21 @@ export type AdvancedPracticeEventPhase = {
  * alimenta prontidão e adoção prematura via `practiceId`.
  */
 export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPhase> = {
+  // Chaos engineering (22 §2.3–§2.5)
   'chaos-nenhum-exercicio': { practiceId: 'chaos-engineering', phase: 0 },
   'chaos-tabletop': { practiceId: 'chaos-engineering', phase: 1 },
   'chaos-gameday-teste': { practiceId: 'chaos-engineering', phase: 2 },
   'chaos-gameday-producao': { practiceId: 'chaos-engineering', phase: 3 },
   'chaos-automatizado': { practiceId: 'chaos-engineering', phase: 4 },
   'chaos-alimenta-design': { practiceId: 'chaos-engineering', phase: 5 },
+
+  // Automação de qualidade (22 §3.4 / 12 §3.6)
+  'qa-so-em-producao': { practiceId: 'quality-automation', phase: 0 },
+  'qa-fase-dias-depois': { practiceId: 'quality-automation', phase: 1 },
+  'qa-pipeline-horas': { practiceId: 'quality-automation', phase: 2 },
+  'qa-minutos-antes-integrar': { practiceId: 'quality-automation', phase: 3 },
+  'qa-feedback-por-risco': { practiceId: 'quality-automation', phase: 4 },
+  'qa-guiado-por-producao': { practiceId: 'quality-automation', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

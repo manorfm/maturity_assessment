@@ -243,6 +243,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'chaos-automatizado': 4,
   'chaos-alimenta-design': 5,
 
+  // 22 §3.4 Automação de qualidade (prática avançada)
+  'qa-so-em-producao': 0,
+  'qa-fase-dias-depois': 1,
+  'qa-pipeline-horas': 2,
+  'qa-minutos-antes-integrar': 3,
+  'qa-feedback-por-risco': 4,
+  'qa-guiado-por-producao': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

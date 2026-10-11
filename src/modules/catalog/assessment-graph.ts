@@ -294,6 +294,22 @@ const authoredNodes: AssessmentNode[] = [
     ],
   },
   {
+    id: 'quality-break-detection',
+    type: 'probe',
+    title: 'Quando a mudança quebrou algo',
+    scenario: 'Na última mudança que você fez ou acompanhou de perto, algo podia ter quebrado o que já funcionava.',
+    prompt: 'Quando você soube se ela tinha quebrado algo?',
+    options: [
+      { id: 'qa-production-only', label: 'Só em produção, quando alguém reportou o efeito.', signals: [{ capability: 'qualidade', pattern: 'qa-so-em-producao', weight: -2, details: ['quality-strategy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'qa-days-later', label: 'Quando QA ou outra área testou, dias depois.', signals: [{ capability: 'qualidade', pattern: 'qa-fase-dias-depois', weight: -1, details: ['quality-strategy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'qa-pipeline-hours', label: 'Quando o pipeline rodou, horas depois da mudança.', signals: [{ capability: 'qualidade', pattern: 'qa-pipeline-horas', weight: 1, details: ['quality-strategy', 'sdlc-automation'], layer: 'practice', constraint: 'none' }] },
+      { id: 'qa-minutes-before', label: 'Em minutos, antes de integrar na versão compartilhada.', signals: [{ capability: 'qualidade', pattern: 'qa-minutos-antes-integrar', weight: 2, details: ['quality-strategy', 'continuous-integration'], layer: 'practice', constraint: 'none' }] },
+      { id: 'qa-risk-feedback', label: 'Em minutos, com verificações escolhidas pelo risco da mudança e retorno confiável.', signals: [{ capability: 'qualidade', pattern: 'qa-feedback-por-risco', weight: 2, details: ['quality-strategy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'qa-production-guided', label: 'O sinal veio de testes e monitores ligados a incidentes ou uso real; a suíte mudou com o que falhou.', signals: [{ capability: 'qualidade', pattern: 'qa-guiado-por-producao', weight: 2, details: ['quality-strategy', 'observability-practice'], layer: 'outcome', constraint: 'none' }] },
+    ],
+    next: 'release-control',
+  },
+  {
     id: 'delivery-cause', type: 'probe', title: 'O que mantém a mudança isolada?',
     scenario: 'A integração tardia reaparece mesmo quando as pessoas tentam antecipá-la. Considere o impedimento que permanece após uma tentativa concreta de reduzir o intervalo.',
     prompt: 'Na última tentativa de integrar mais cedo, qual impedimento permaneceu?',
@@ -302,7 +318,7 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'process-policy', label: 'Política, revisão ou processo exige acumular escopo ou aguardar uma etapa antes de compartilhar a mudança.', signals: [{ capability: 'governanca', pattern: 'causa-processo-lote', weight: -1 , details: ['enabling-governance'], layer: 'system', constraint: 'policy' }] },
       { id: 'team-boundary', label: 'Responsabilidades e prioridades atravessam times; concluir a integração exige combinar agendas e decisões de vários responsáveis.', signals: [{ capability: 'organizacao', pattern: 'causa-fronteira-times', weight: -1 , details: ['team-ownership'], layer: 'system', constraint: 'organization' }] },
       { id: 'architecture-coupling', label: 'O sistema exige alterar e validar muitas partes juntas; uma mudança pequena não permanece pequena.', signals: [{ capability: 'arquitetura', pattern: 'causa-acoplamento-entrega', weight: -1 , details: ['release-feedback', 'evolvability'], layer: 'system', constraint: 'architecture' }] },
-    ], next: 'release-control',
+    ], next: 'quality-break-detection',
   },
   {
     id: 'release-control', type: 'probe', title: 'Implantar e liberar são a mesma decisão?',
@@ -1300,7 +1316,8 @@ export function validateEventReconstruction(definition: EventReconstructionDefin
 
 const skipObservational: Record<string, string> = {
   'ready-to-release': 'integration-cadence',
-  'integration-cadence': 'release-control',
+  'integration-cadence': 'quality-break-detection',
+  'quality-break-detection': 'release-control',
   'incident-triage': 'incident-diagnosis',
   'incident-diagnosis': 'incident-remediation',
   'chaos-dependency-exercise': 'recurrence',
@@ -1425,10 +1442,14 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, optionId: 'integrated-few-days', to: 'architecture-pressure', when: { tracksAny: ['delivery'] } },
     { from: node.id, optionId: 'isolated-days', to: 'delivery-cause', when: { tracksAny: ['delivery'] } },
     { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause', when: { tracksAny: ['delivery'] } },
-    { from: node.id, optionId: 'integrated-daily', to: 'release-control' },
-    { from: node.id, optionId: 'integrated-few-days', to: 'release-control' },
+    { from: node.id, optionId: 'integrated-daily', to: 'quality-break-detection' },
+    { from: node.id, optionId: 'integrated-few-days', to: 'quality-break-detection' },
     { from: node.id, optionId: 'isolated-days', to: 'delivery-cause' },
     { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
+  ];
+  if (node.id === 'quality-break-detection') return [
+    { from: node.id, to: 'release-control' },
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'incident-triage') return [

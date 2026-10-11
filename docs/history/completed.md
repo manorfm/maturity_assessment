@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Pergunta de evento de QA (WP20)
+
+- `quality-break-detection` (F0–F5) no fluxo de entrega; fase de
+  `quality-automation` alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-11 — Pergunta de evento de chaos (WP20)
 
 - `chaos-dependency-exercise` (F0–F5) no tronco após remediação; fase da

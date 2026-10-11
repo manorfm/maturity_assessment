@@ -256,7 +256,10 @@ minimizado e capaz de aprender após a urgência. Depois da correção, a pergun
 evento de chaos (`chaos-dependency-exercise`) observa o que foi feito na última
 vez em que alguém quis saber o efeito de uma dependência falhar — da ausência de
 exercício até experimentos que mudam o design — e declara a fase técnica da
-prática avançada sem subir o índice de maturidade.
+prática avançada sem subir o índice de maturidade. No fluxo de entrega,
+`quality-break-detection` pergunta quando se soube se a última mudança quebrou
+algo (só em produção → feedback por risco e guiado por produção) e declara a
+fase de automação de qualidade (22 §3.4).
 
 ### Objetivo, bloqueio e decisão
 

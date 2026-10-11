@@ -58,3 +58,28 @@ test('resposta de chaos alimenta a fase técnica da prática e adoção prematur
   const premature = detectPrematureAdoptions(leaves);
   assert.ok(premature.some((item) => item.practiceId === 'chaos-engineering'));
 });
+
+test('pergunta de evento de QA declara F0–F5 na prática quality-automation', () => {
+  const node = graph.find((item) => item.id === 'quality-break-detection');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'quality-automation');
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'quality-strategy');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'engineering', nodeId: 'quality-break-detection', optionId: 'qa-risk-feedback' },
+  ];
+  const qa = advancedPracticePhasesById(observations).get('quality-automation');
+  assert.ok(qa);
+  assert.equal(qa!.phase, 4);
+});

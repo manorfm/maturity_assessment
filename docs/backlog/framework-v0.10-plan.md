@@ -52,8 +52,8 @@ selecionável.
   exclusivas de sofisticação ainda abertas.
 - WP13, WP14, WP16 a WP19: capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP20 (parcial): biblioteca 22 §5 (13 práticas); `p_k` com F;
-  adoção prematura no laudo; pergunta de evento de chaos (22 §2.5) no
-  tronco. Perguntas de evento de QA, AI-DLC e demais práticas ainda
+  adoção prematura no laudo; perguntas de evento de chaos e QA no
+  tronco. Pergunta de pressão de flaky, AI-DLC e demais práticas ainda
   abertas.
 - WP21 (parcial): `enablementCatalog` com arestas de 23 §3.3;
   `P(desbloqueado)` por produto das essenciais; fronteira/perto/bloqueado;
