@@ -115,7 +115,7 @@ export function projectDiagnosticLaudo(input: {
     authority: 'management',
     cynefin: 'complex',
     doesNotSolve: 'Não substitui subir observabilidade, reversão ou aprendizado; só contém o risco da prática cedo demais.',
-    learningMode: 'practice-in-work',
+    learningMode: 'work-experiment',
   }));
   const conduct = [
     ...prematureConduct,
