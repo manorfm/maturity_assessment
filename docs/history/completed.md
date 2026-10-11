@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Adoção prematura no laudo (WP20)
+
+- `detectPrematureAdoptions` (F ≥ 3 e essencial p_k < 0,3) no laudo com
+  conduta de reduzir escopo. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-11 — Biblioteca de práticas avançadas 22 §5 (WP20)
 
 - 13 práticas no catálogo; `minimumPhase` em p_k; rota de prontidão usa

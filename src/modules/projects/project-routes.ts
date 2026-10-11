@@ -31,6 +31,7 @@ import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/
 import { declaredSophistication } from '../catalog/evidence-contract.js';
 import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
 import { renderAdminAside, renderAdminMetric, renderAdminShell, renderTermsPanel } from './admin-view.js';
@@ -220,6 +221,15 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
     const orderedFindings = uniqueFindingsByPattern(report.findings);
     const competingFinding = orderedFindings.find((finding) => finding.pattern !== report.outcome.finding?.pattern);
+    const fByLeaf = inference.projectSophisticationByLeaf(projectId);
+    const readinessLeaves: Record<string, LeafEvidence> = Object.fromEntries(report.capabilities.map((capability) => {
+      const phase = fByLeaf.get(capability.id);
+      return [capability.id, {
+        level: capability.level,
+        coverage: capability.coverage ?? 0,
+        ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
+      }];
+    }));
     const firstScreen = renderFirstScreen({
       outcome: report.outcome,
       ...(report.classification ? { classification: report.classification } : {}),
@@ -242,6 +252,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       perspectiveGaps: report.perspectiveGaps,
       ...(report.index ? { index: report.index } : {}),
       instrument: `Instrumento vigente · modelo ${report.measurementModel}`,
+      leaves: readinessLeaves,
     });
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
@@ -708,6 +719,7 @@ export function renderFirstScreen(input: {
   perspectiveGaps?: Array<{ title: string; capability?: string }>;
   index?: IndexPublication;
   instrument?: string;
+  leaves?: Record<string, LeafEvidence>;
 }): string {
   const reportBase = input.areaBase.replace(/\/areas$/, '/report');
   const laudo = projectDiagnosticLaudo({
@@ -718,6 +730,7 @@ export function renderFirstScreen(input: {
     ...(input.perspectiveGaps ? { perspectiveGaps: input.perspectiveGaps } : {}),
     ...(input.index ? { index: input.index } : {}),
     ...(input.instrument ? { instrument: input.instrument } : {}),
+    ...(input.leaves ? { leaves: input.leaves } : {}),
   });
   const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
   const shell = renderReportShell({

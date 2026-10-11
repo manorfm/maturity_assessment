@@ -1,7 +1,7 @@
 import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
 import type { SophisticationDistribution } from './sophistication-matrix.js';
-import { observeSophistication } from './sophistication-matrix.js';
+import { modeSophistication, observeSophistication } from './sophistication-matrix.js';
 
 export type ReadinessBand = 'ready' | 'near' | 'not-ready';
 
@@ -146,6 +146,67 @@ function phaseDistributionFor(evidence?: LeafEvidence): SophisticationDistributi
   if (evidence.phaseDistribution) return evidence.phaseDistribution;
   if (evidence.phase === undefined) return undefined;
   return observeSophistication([evidence.phase]);
+}
+
+/** Fase técnica da prática: declaração explícita ou maior F observado nos pré-requisitos. */
+export function technicalPhaseFor(
+  practice: AdvancedPractice,
+  leaves: Record<string, LeafEvidence>,
+): number | undefined {
+  const declared = leaves[practice.id];
+  const declaredDist = phaseDistributionFor(declared);
+  if (declaredDist) return modeSophistication(declaredDist);
+  if (declared?.phase !== undefined) return Math.max(0, Math.min(5, Math.floor(declared.phase)));
+
+  let max = -1;
+  for (const prerequisite of practice.prerequisites) {
+    const dist = phaseDistributionFor(leaves[prerequisite.leafId]);
+    if (!dist) continue;
+    max = Math.max(max, modeSophistication(dist));
+  }
+  return max >= 0 ? max : undefined;
+}
+
+export type PrematureAdoptionFinding = {
+  practiceId: string;
+  practiceLabel: string;
+  technicalPhase: number;
+  bottleneckId?: string;
+  weakEssentials: string[];
+  title: string;
+  reading: string;
+  action: string;
+};
+
+/** Achados 22 §1.1: F da prática ≥ 3 e algum essencial com p_k < 0,3. */
+export function detectPrematureAdoptions(
+  leaves: Record<string, LeafEvidence>,
+  practices: AdvancedPractice[] = advancedPracticeCatalog,
+): PrematureAdoptionFinding[] {
+  const findings: PrematureAdoptionFinding[] = [];
+  for (const practice of practices) {
+    const prerequisites = resolvePrerequisitePosteriors(practice, leaves);
+    if (!prerequisites) continue;
+    const technicalPhase = technicalPhaseFor(practice, leaves);
+    if (technicalPhase === undefined) continue;
+    const assessment = assessReadiness({ prerequisites, technicalPhase });
+    if (!assessment.premature) continue;
+    const weakEssentials = prerequisites
+      .filter((item) => item.essential && item.probability < 0.3)
+      .map((item) => item.label);
+    const bottleneck = weakEssentials[0] ?? assessment.missing[0] ?? 'os pré-requisitos essenciais';
+    findings.push({
+      practiceId: practice.id,
+      practiceLabel: practice.label,
+      technicalPhase,
+      ...(assessment.bottleneckId ? { bottleneckId: assessment.bottleneckId } : {}),
+      weakEssentials,
+      title: `Adoção prematura: ${practice.label}`,
+      reading: `A fase técnica (F${technicalPhase}) está à frente de pré-requisitos essenciais (${bottleneck}). É risco, não prontidão.`,
+      action: `Reduzir o escopo de ${practice.label} até os pré-requisitos essenciais subirem; não ampliar automação nem raio de impacto.`,
+    });
+  }
+  return findings;
 }
 
 function round2(value: number): number {

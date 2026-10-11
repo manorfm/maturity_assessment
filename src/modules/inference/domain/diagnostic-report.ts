@@ -6,7 +6,9 @@ import type { IndexPublication } from './stage-posterior.js';
 import {
   advancedPracticeCatalog,
   assessReadiness,
+  detectPrematureAdoptions,
   resolvePrerequisitePosteriors,
+  technicalPhaseFor,
   type AdvancedPractice,
   type LeafEvidence,
   type PrerequisitePosterior,
@@ -77,20 +79,48 @@ export function projectDiagnosticLaudo(input: {
   index?: IndexPublication;
   instrument?: string;
   calibration?: string;
+  leaves?: Record<string, LeafEvidence>;
 }): DiagnosticLaudo {
   const published = uniqueFindingsByPattern(input.findings).filter((finding) => finding.confidence >= 0.5);
-  const primary = published.slice(0, 3);
-  const findings = primary.map((finding, index) => ({
+  const premature = input.leaves ? detectPrematureAdoptions(input.leaves) : [];
+  const prematureLaudo: LaudoFinding[] = premature.slice(0, 2).map((item, index) => ({
     order: index + 1,
-    title: finding.title,
-    reading: guidanceFor(finding.pattern, finding.foundation, finding.title).plainExplanation,
-    path: areaPath(input.organizationalAreas, finding.detailCapability),
-    support: supportLabel(finding.confidence),
-    nodeId: finding.detailCapability,
-    areas: Math.max(1, finding.affectedCapabilities?.length ?? 1),
+    title: item.title,
+    reading: item.reading,
+    path: 'Práticas avançadas',
+    support: 'Achado de risco',
+    nodeId: item.practiceId,
+    areas: 1,
   }));
+  const slots = Math.max(0, 3 - prematureLaudo.length);
+  const primary = published.slice(0, slots);
+  const findings = [
+    ...prematureLaudo,
+    ...primary.map((finding, index) => ({
+      order: prematureLaudo.length + index + 1,
+      title: finding.title,
+      reading: guidanceFor(finding.pattern, finding.foundation, finding.title).plainExplanation,
+      path: areaPath(input.organizationalAreas, finding.detailCapability),
+      support: supportLabel(finding.confidence),
+      nodeId: finding.detailCapability,
+      areas: Math.max(1, finding.affectedCapabilities?.length ?? 1),
+    })),
+  ];
   const observedPatterns = published.map((finding) => finding.pattern);
-  const conduct = primary.slice(0, 3).map((finding) => conductFrom(finding, observedPatterns));
+  const prematureConduct: TreatmentConduct[] = premature.slice(0, 2).map((item) => ({
+    action: item.action,
+    owner: 'Quem autoriza a prática avançada neste recorte',
+    success: `Pré-requisitos essenciais de ${item.practiceLabel} com p_k ≥ 0,3 antes de ampliar escopo`,
+    horizon: '0-30',
+    authority: 'management',
+    cynefin: 'complex',
+    doesNotSolve: 'Não substitui subir observabilidade, reversão ou aprendizado; só contém o risco da prática cedo demais.',
+    learningMode: 'practice-in-work',
+  }));
+  const conduct = [
+    ...prematureConduct,
+    ...primary.slice(0, Math.max(0, 3 - prematureConduct.length)).map((finding) => conductFrom(finding, observedPatterns)),
+  ];
   const constraint = input.outcome.finding
     ? {
       title: input.outcome.limiterLabel,
@@ -103,12 +133,14 @@ export function projectDiagnosticLaudo(input: {
   }));
   const unknowns = published.map((finding) => finding.missingEvidence).filter((item): item is string => Boolean(item)).slice(0, 4);
   if (!unknowns.length) unknowns.push('O motivo da avaliação ainda não foi registrado no projeto.');
+  const otherFromPublished = published.slice(slots).map((finding) => finding.title);
+  const otherFromPremature = premature.slice(2).map((item) => item.title);
   return {
     version: 'diagnostic-report-v2',
     complaint: { gap: 'O projeto ainda não registrou o motivo da avaliação nas palavras de quem contratou.' },
     reading: readingFrom(input.index),
     findings,
-    otherFindings: published.slice(3).map((finding) => finding.title),
+    otherFindings: [...otherFromPremature, ...otherFromPublished],
     divergences: divergences.length ? divergences : { gap: 'Ainda não há divergência publicada com faixa percentual. O modelo m1 não separa escala de visibilidade.' },
     constraint,
     conduct,
@@ -246,11 +278,16 @@ export function projectCatalogReadiness(
   leaves: Record<string, LeafEvidence>,
   practices: AdvancedPractice[] = advancedPracticeCatalog,
 ): Array<{ id: string; label: string; assessment?: ReadinessAssessment; gap?: string }> {
-  return projectReadinessPage(practices.map((practice) => ({
-    id: practice.id,
-    label: practice.label,
-    prerequisites: resolvePrerequisitePosteriors(practice, leaves) ?? undefined,
-  })));
+  return projectReadinessPage(practices.map((practice) => {
+    const prerequisites = resolvePrerequisitePosteriors(practice, leaves) ?? undefined;
+    const technicalPhase = technicalPhaseFor(practice, leaves);
+    return {
+      id: practice.id,
+      label: practice.label,
+      ...(prerequisites ? { prerequisites } : {}),
+      ...(technicalPhase !== undefined ? { technicalPhase } : {}),
+    };
+  }));
 }
 
 export function projectFrontierPage(
