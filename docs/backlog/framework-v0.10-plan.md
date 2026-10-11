@@ -41,7 +41,9 @@ selecionável.
   tratamento.
 - WP15 (parcial): `change-detection` com P ≥ 0,8; schema 26 `index_readings`
   captura fotografias imutáveis por amostra; histórico compara as duas
-  últimas. Reavaliação 6–12 meses e walkthrough por área ainda abertos.
+  últimas; `area-walkthrough-v1` com 8 seções e regra da próxima fase
+  nas quatro áreas. Reavaliação 6–12 meses (relatório de evolução completo
+  e tabela de correspondência de unidades) ainda aberta.
 - WP12 a WP14, WP16 a WP19: sofisticação, capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
 - WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.

@@ -122,6 +122,13 @@ Grau A exige fonte forte **e** achado replicado (`foundationIsReplicated`:
 `replicated: true` no fundamento ou corpus Accelerate/DORA no `source`).
 `projectTreatmentPlan` anexa pulso (`selectPulseItems`) com 3–6
 itens-âncora das folhas das condutas ativas, intervalo 4–8 semanas.
+O walkthrough por área (`area-walkthrough-v1`) projeta as 8 seções de
+16 §3 (onde estamos, como chegamos, o que funciona, próxima fase,
+caminho 30/90/180, marcos, riscos, premissas) para Produto, Engenharia,
+Operação e Organização. A próxima fase da capacidade é
+`min(alvo, estágio_atual + 1)`, com comportamento da rubrica quando a
+referência existir; marcos reusam itens de pulso e critérios das
+condutas.
 A biblioteca `systemic-archetypes-v1` publica arquétipo só com ≥ 2 elos
 observados ("padrão provável"). O portfólio escolhe a **restrição
 principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e

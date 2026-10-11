@@ -26,6 +26,7 @@ import { disciplineBrief, disciplineScope } from '../inference/domain/discipline
 import { problemsForNode, projectProblemTree, type HierarchicalBranch, type HierarchicalFinding, type HierarchicalProblem } from '../inference/domain/hierarchical-problems.js';
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
+import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, projectFrontierPage, projectReadinessPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
@@ -450,18 +451,18 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     if (!path) throw new ResourceNotFoundError('Área não encontrada.');
     const area = path.at(-1)!;
     const chapter = projectAreaChapter({ area, findings: report.findings, organizationalAreas: report.organizationalAreas });
-    const first = chapter.problems[0];
-    const body = renderWalkthrough({
-      areaLabel: area.label,
+    const plan = projectTreatmentPlan(report.findings);
+    const walk = projectAreaWalkthrough({
+      area,
+      findings: report.findings,
+      capabilities: report.capabilities,
+      organizationalAreas: report.organizationalAreas,
+      outcomeKind: report.outcome.kind,
+      conducts: [...plan.active, ...plan.later],
+      pulse: plan.pulse,
       summary: chapter.observes,
-      where: first?.title ?? 'As entrevistas ainda não publicaram uma dor neste recorte.',
-      arrived: first?.mechanism ?? 'O caminho até aqui ainda não foi publicado.',
-      working: report.outcome.kind === 'preserve' ? report.outcome.reading : 'Nada neste recorte foi publicado como prática a preservar.',
-      next: first?.solutions[0]?.action ?? 'Sem próxima fase enquanto não houver conduta.',
-      risks: first?.solutions[0]?.doesNotSolve ?? 'O risco de regressão acompanha a conduta, quando ela existe.',
-      assumptions: 'Premissas de índice, alvo e prognóstico continuam em aberto no modelo m1.',
     });
-    return reply.type('text/html').send(reportPage(params, 'walkthrough', body));
+    return reply.type('text/html').send(reportPage(params, 'walkthrough', renderWalkthrough(walk)));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {

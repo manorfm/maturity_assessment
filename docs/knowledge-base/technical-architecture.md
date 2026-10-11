@@ -132,8 +132,10 @@ achados, divergências, restrição principal, conduta de 30 dias,
 prognóstico, o que ainda não sabemos e rodapé de amostra e calibração.
 Onde o modelo `m1` não mede índice, faixa, alvo ou prognóstico, o bloco
 declara a lacuna. Não publica o exemplo numérico do protótipo. A navegação
-lateral liga mapa, ficha, prontidão, fronteira, plano, walkthrough,
-histórico e visão por público. O mapa tem quatro sistemas — Produto,
+lateral liga mapa, ficha, prontidão, fronteira, plano, walkthrough das
+quatro áreas, histórico e visão por público. O walkthrough usa
+`projectAreaWalkthrough` (`area-walkthrough-v1`) com as oito seções e a
+regra da próxima fase. O mapa tem quatro sistemas — Produto,
 Engenharia, Operação e Organização — e três cortes: por capacidade, por
 estrutura e por perspectiva. Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do

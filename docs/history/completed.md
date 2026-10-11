@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Walkthrough por área (WP15)
+
+- `area-walkthrough-v1`: 8 seções (16 §3), próxima fase =
+  `min(alvo, atual+1)`, nav nas quatro áreas. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-10 — Fotografias de índice no histórico (WP15)
 
 - Schema 26: `index_readings`; captura imutável por amostra; histórico

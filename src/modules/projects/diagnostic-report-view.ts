@@ -6,6 +6,7 @@ import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierNode } from '../inference/domain/learning-frontier.js';
+import type { AreaWalkthrough } from '../inference/domain/area-walkthrough.js';
 
 export type ReportPageId = 'laudo' | 'map' | 'node' | 'readiness' | 'frontier' | 'treatment' | 'walkthrough' | 'history' | 'audiences';
 
@@ -15,7 +16,10 @@ const NAV: Array<{ id: ReportPageId; label: string; href: (base: string) => stri
   { id: 'readiness', label: 'Prontidão para práticas avançadas', href: (base) => `${base}/readiness` },
   { id: 'frontier', label: 'Fronteira de aprendizado', href: (base) => `${base}/frontier` },
   { id: 'treatment', label: 'Plano de tratamento', href: (base) => `${base}/treatment` },
+  { id: 'walkthrough', label: 'Área: Produto', href: (base) => `${base}/walkthrough/product` },
+  { id: 'walkthrough', label: 'Área: Engenharia', href: (base) => `${base}/walkthrough/engineering` },
   { id: 'walkthrough', label: 'Área: Operação', href: (base) => `${base}/walkthrough/operations` },
+  { id: 'walkthrough', label: 'Área: Organização', href: (base) => `${base}/walkthrough/organization` },
   { id: 'history', label: 'Histórico e reavaliação', href: (base) => `${base}/history` },
   { id: 'audiences', label: 'Visão por público', href: (base) => `${base}/audiences` },
 ];
@@ -200,17 +204,24 @@ export function renderAudiencePage(groups: Array<{ title: string; verbs: Audienc
   return `<header class="report-hero"><p class="report-kicker">Visão por público</p><h1>O mesmo achado, para quem decide e para quem faz</h1><p>O conteúdo é o mesmo. Muda o que cada público precisa fazer com ele.</p></header>${body}`;
 }
 
-export function renderWalkthrough(input: { areaLabel: string; summary: string; where: string; arrived: string; working: string; next: string; risks: string; assumptions: string }): string {
+export function renderWalkthrough(input: AreaWalkthrough): string {
+  const list = (heading: string, lines: string[]) =>
+    `<section class="report-block"><h2>${heading}</h2><ul>${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul></section>`;
   const block = (heading: string, body: string) => `<section class="report-block"><h2>${heading}</h2><p>${escapeHtml(body)}</p></section>`;
+  const path = input.sections.path;
   return `<header class="report-hero"><p class="report-kicker">Walkthrough da área · ${escapeHtml(input.areaLabel)}</p><h1>${escapeHtml(input.areaLabel)}: do que as entrevistas sustentaram para o próximo passo</h1><p>${escapeHtml(input.summary)}</p></header>
-    ${block('Onde estamos', input.where)}
-    ${block('Como chegamos aqui', input.arrived)}
-    ${block('O que já funciona', input.working)}
-    ${block('Próxima fase', input.next)}
-    ${block('Marcos', 'O marco é o critério de sucesso da conduta publicada, não uma data inventada.')}
-    ${block('Riscos de regressão', input.risks)}
-    ${block('Premissas a revisar', input.assumptions)}
-    <p class="report-gap">Engenharia, Produto e Organização reutilizam este molde. O protótipo só desenhou Operação.</p>`;
+    ${list('Onde estamos', input.sections.where)}
+    ${block('Como chegamos aqui', input.sections.arrived)}
+    ${block('O que já funciona', input.sections.working)}
+    ${list('Próxima fase', input.sections.next)}
+    ${list('Caminho', [
+      `30 dias: ${path.d30}`,
+      `90 dias: ${path.d90}`,
+      `180 dias: ${path.d180}`,
+    ])}
+    ${list('Marcos', input.sections.milestones)}
+    ${list('Riscos de regressão', input.sections.risks)}
+    ${list('Premissas a revisar', input.sections.assumptions)}`;
 }
 
 export function renderReadinessPage(items: Array<{ label: string; assessment?: ReadinessAssessment; gap?: string }>): string {
