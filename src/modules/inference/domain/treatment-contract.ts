@@ -1,6 +1,17 @@
 export type CynefinDomain = 'clear' | 'complicated' | 'complex' | 'chaotic';
 export type EvidenceGrade = 'A' | 'B' | 'C' | 'D';
 
+/** Modalidade de aprendizado da conduta (23 §5). */
+export type LearningMode =
+  | 'course'
+  | 'guided-practice'
+  | 'immersion'
+  | 'pair'
+  | 'kata'
+  | 'community'
+  | 'rotation'
+  | 'work-experiment';
+
 export type TreatmentConduct = {
   action: string;
   owner: string;
@@ -12,6 +23,11 @@ export type TreatmentConduct = {
   doesNotSolve?: string;
   archetype?: string;
   prognosisWithoutTreatment?: string;
+  learningMode?: LearningMode;
+  /** Degraus que esta conduta ajuda a desbloquear (23 §6). */
+  unlocks?: string[];
+  /** Curso/treinamento sem mudança de ambiente (23 §5). */
+  lowTransferWarning?: boolean;
 };
 
 export function classifyCynefin(input: {
@@ -65,3 +81,31 @@ export const evidenceGradeReading: Record<EvidenceGrade, string> = {
   C: 'Consenso de prática, ainda sem estudo forte',
   D: 'Opinião ou analogia; tratar como hipótese',
 };
+
+export const learningModeReading: Record<LearningMode, string> = {
+  course: 'Curso ou treinamento isolado — transferência baixa sem mudar o ambiente',
+  'guided-practice': 'Prática guiada no trabalho real',
+  immersion: 'Imersão (dojo) no próprio trabalho',
+  pair: 'Trabalho em par ou em grupo',
+  kata: 'Kata — rotina curta e repetida',
+  community: 'Comunidade de prática',
+  rotation: 'Rodízio de pessoas',
+  'work-experiment': 'Experimento no trabalho real',
+};
+
+/** Classifica a modalidade a partir do texto da conduta (23 §5). */
+export function classifyLearningMode(action: string): LearningMode {
+  const text = action.toLowerCase();
+  if (/\b(curso|treinamento|workshop|certifica)/i.test(text)) return 'course';
+  if (/\b(dojo|imers[aã]o)\b/i.test(text)) return 'immersion';
+  if (/\bkata\b/i.test(text)) return 'kata';
+  if (/\b(em par|pair|mob)\b/i.test(text)) return 'pair';
+  if (/\b(rod[ií]zio|rota[cç][aã]o)\b/i.test(text)) return 'rotation';
+  if (/\b(comunidade|guilda)\b/i.test(text)) return 'community';
+  if (/\b(coach|coacha|habilita[cç]|acompanh)/i.test(text)) return 'guided-practice';
+  return 'work-experiment';
+}
+
+export function transferWarningFor(mode: LearningMode): boolean {
+  return mode === 'course';
+}

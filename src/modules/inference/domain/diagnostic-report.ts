@@ -14,8 +14,18 @@ import {
 } from './advanced-readiness.js';
 import { learningFrontier, projectLearningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
 import { projectHistoryAssessment, type HistoryAssessment, type IndexReading } from './reading-history.js';
-import { classifyCynefin, classifyEvidenceGrade, foundationIsReplicated, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
+import {
+  classifyCynefin,
+  classifyEvidenceGrade,
+  classifyLearningMode,
+  foundationIsReplicated,
+  transferWarningFor,
+  type CynefinDomain,
+  type EvidenceGrade,
+  type TreatmentConduct,
+} from './treatment-contract.js';
 import { primaryArchetypeFor } from './systemic-archetypes.js';
+import { enablementCatalog } from './learning-frontier.js';
 import { selectPulseItems, type PulseCatalogItem } from '../../catalog/item-catalog.js';
 
 export type ReportGap = { gap: string };
@@ -134,8 +144,11 @@ function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): Treat
     ...(finding.prescription?.status ? { prescription: finding.prescription.status } : {}),
   });
   const archetype = primaryArchetypeFor([finding.pattern, ...observedPatterns]);
+  const action = finding.experiment?.action || finding.intervention || guidance.plainExplanation;
+  const learningMode = classifyLearningMode(action);
+  const unlocks = unlocksForLeaf(finding.detailCapability);
   return {
-    action: finding.experiment?.action || finding.intervention || guidance.plainExplanation,
+    action,
     owner: finding.experiment?.owner || 'Quem autoriza neste recorte',
     success: finding.experiment?.successCriterion || guidance.successCriterion,
     horizon: '0-30',
@@ -147,11 +160,21 @@ function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): Treat
       replicated: foundationIsReplicated(finding.foundation),
     }),
     doesNotSolve: guidance.doesNotSolve,
+    learningMode,
+    ...(unlocks.length ? { unlocks } : {}),
+    ...(transferWarningFor(learningMode) ? { lowTransferWarning: true } : {}),
     ...(archetype ? {
       archetype: archetype.label,
       prognosisWithoutTreatment: archetype.prognosisWithoutTreatment,
     } : {}),
   };
+}
+
+function unlocksForLeaf(leafId: string): string[] {
+  return enablementCatalog
+    .filter((edge) => edge.fromLeafId === leafId || edge.toLeafId === leafId)
+    .map((edge) => `${edge.toLeafId} ${edge.toFromStage}→${edge.toToStage}`)
+    .slice(0, 3);
 }
 
 function areaPath(map: OrganizationalAreaMap, capabilityId: string): string {

@@ -55,7 +55,8 @@ selecionável.
   trilhas e biblioteca completa de 22 §5 ainda abertas.
 - WP21 (parcial): `enablementCatalog` com arestas de 23 §3.3;
   `P(desbloqueado)` por produto das essenciais; fronteira/perto/bloqueado;
-  walkthrough restringe próxima fase à fronteira. Elicitação SHELF do
-  restante do grafo e modalidades de aprendizado nas condutas ainda abertas.
+  walkthrough restringe próxima fase à fronteira; condutas com
+  `learningMode`, `unlocks` e aviso de baixa transferência (curso).
+  Elicitação SHELF do restante do grafo ainda aberta.
 
 WP4 no runtime está fechado; fórmulas ICC→ω no motor; E0/PyMC no WP10.

@@ -1,7 +1,7 @@
 import { escapeHtml } from '../../shared/html.js';
 import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnostic-report.js';
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
-import { cynefinReading, evidenceGradeReading } from '../inference/domain/treatment-contract.js';
+import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
@@ -101,8 +101,17 @@ function renderConduct(item: TreatmentConduct, order: number): string {
   const archetype = item.archetype
     ? `<p>Arquétipo (padrão provável): ${escapeHtml(item.archetype)}.${item.prognosisWithoutTreatment ? ` Sem tratamento: ${escapeHtml(item.prognosisWithoutTreatment)}` : ''}</p>`
     : '';
+  const learning = item.learningMode
+    ? `<p>Modalidade de aprendizado: ${escapeHtml(learningModeReading[item.learningMode])}.</p>`
+    : '';
+  const unlocks = item.unlocks?.length
+    ? `<p>Desbloqueia: ${escapeHtml(item.unlocks.join('; '))}.</p>`
+    : '';
+  const transfer = item.lowTransferWarning
+    ? '<p class="report-gap">Aviso: baixa transferência — treinamento sem mudar o ambiente raramente vira prática.</p>'
+    : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
-  return `<article class="report-conduct"><p class="report-kicker">${order || ''}</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${archetype}${limit}</article>`;
+  return `<article class="report-conduct"><p class="report-kicker">${order || ''}</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
 }
 
 function renderFooter(laudo: DiagnosticLaudo): string {

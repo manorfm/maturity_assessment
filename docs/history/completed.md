@@ -1,5 +1,10 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Modalidade de aprendizado nas condutas (WP21)
+
+- `learningMode`, `unlocks` e aviso de baixa transferência no plano.
+  Ver [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-10 — Eixo de sofisticação F0–F5 (WP12)
 
 - `EvidenceLink.sophistication`, quadrantes, amostra de padrões e matriz

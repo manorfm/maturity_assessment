@@ -137,7 +137,9 @@ AI-DLC e service mesh entram na página de prontidão.
 O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia
 `P(desbloqueado)` por aresta; a fronteira exige ≥ 0,6, o bloqueio
 aparece abaixo de 0,25, e a próxima fase do walkthrough só sobe dentro
-da fronteira.
+da fronteira. Cada conduta declara `learningMode` (23 §5) e `unlocks`
+ligados ao grafo; curso/treinamento isolado recebe aviso de baixa
+transferência.
 A biblioteca `systemic-archetypes-v1` publica arquétipo só com ≥ 2 elos
 observados ("padrão provável"). O portfólio escolhe a **restrição
 principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e
