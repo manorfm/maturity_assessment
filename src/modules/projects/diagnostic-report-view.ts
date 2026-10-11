@@ -7,6 +7,7 @@ import type { OrganizationalAreaMap, OrganizationalAreaNode } from '../inference
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierNode } from '../inference/domain/learning-frontier.js';
 import type { AreaWalkthrough } from '../inference/domain/area-walkthrough.js';
+import type { EvolutionReport } from '../inference/domain/evolution-report.js';
 
 export type ReportPageId = 'laudo' | 'map' | 'node' | 'readiness' | 'frontier' | 'treatment' | 'walkthrough' | 'history' | 'audiences';
 
@@ -247,14 +248,54 @@ export function renderHistoryPage(input: {
   gap?: string;
   pImprove?: number;
   pRegress?: number;
+  pStable?: number;
   threshold?: number;
+  evolution?: EvolutionReport;
 } = {}): string {
-  const { change, gap, pImprove, pRegress, threshold = 0.8 } = input;
+  const { change, gap, pImprove, pRegress, pStable, threshold = 0.8, evolution } = input;
   const probs = pImprove !== undefined && pRegress !== undefined
-    ? `<p>P(melhora) ${pImprove.toFixed(2)} · P(piora) ${pRegress.toFixed(2)} · limiar ${threshold.toFixed(2)} (05 §9).</p>`
+    ? `<p>P(melhora) ${pImprove.toFixed(2)} · P(piora) ${pRegress.toFixed(2)}${pStable !== undefined ? ` · P(estável) ${pStable.toFixed(2)}` : ''} · limiar ${threshold.toFixed(2)} (05 §9).</p>`
     : '';
+  const changeLine = change === 'improved'
+    ? 'Melhorou: P(melhora) atingiu o limiar de publicação.'
+    : change === 'regressed'
+      ? 'Piorou: P(piora) atingiu o limiar de publicação.'
+      : change === 'stable'
+        ? 'Estável: P(|S₂−S₁| < 1) atingiu o limiar — sem direção nova.'
+        : 'Incerto: ainda não há evidência suficiente de melhora, piora ou estabilidade.';
   const body = gap
     ? `<p class="report-gap">${escapeHtml(gap)}</p>`
-    : `<p>${change === 'improved' ? 'Melhorou: P(melhora) atingiu o limiar de publicação.' : change === 'regressed' ? 'Piorou: P(piora) atingiu o limiar de publicação.' : 'Incerto: ainda não há evidência suficiente de melhora ou piora.'}</p>${probs}`;
-  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora) ou P(piora) ≥ ${threshold.toFixed(2)}.</p></header>${body}`;
+    : `<p>${changeLine}</p>${probs}`;
+  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora), P(piora) ou P(estável) ≥ ${threshold.toFixed(2)}.</p></header>${body}${evolution ? renderEvolution(evolution) : ''}`;
+}
+
+function renderEvolution(report: EvolutionReport): string {
+  const stateLabel = { advanced: 'Avançou', regressed: 'Regrediu', stable: 'Estável', uncertain: 'Incerto' } as const;
+  const nodes = report.nodes.length
+    ? `<ul>${report.nodes.map((node) => `<li><strong>${escapeHtml(node.label)}</strong> — ${stateLabel[node.state]}. ${escapeHtml(node.reading)}</li>`).join('')}</ul>`
+    : '<p class="report-gap">Sem nós comparáveis entre as duas leituras.</p>';
+  const closed = report.findings.closed.length
+    ? `<p>Achados encerrados: ${report.findings.closed.map(escapeHtml).join(', ')}.</p>`
+    : '<p>Nenhum achado encerrado entre as leituras.</p>';
+  const opened = report.findings.opened.length
+    ? `<p>Achados novos: ${report.findings.opened.map(escapeHtml).join(', ')}.</p>`
+    : '<p>Nenhum achado novo entre as leituras.</p>';
+  const kindLabel = {
+    same: 'mesma',
+    renamed: 'renomeada',
+    merged: 'fundida',
+    split: 'dividida',
+    extinct: 'extinta',
+    new: 'nova',
+  } as const;
+  const units = report.units.length
+    ? `<ul>${report.units.map((row) => {
+      const from = row.previousLabel ?? '—';
+      const to = row.currentLabel ?? '—';
+      const pub = row.publishesEvolution ? 'com evolução' : 'sem evolução publicada';
+      return `<li>${escapeHtml(from)} → ${escapeHtml(to)} (${kindLabel[row.kind]}, ${pub})</li>`;
+    }).join('')}</ul>`
+    : '<p class="report-gap">Sem tabela de correspondência de unidades.</p>';
+  return `<section class="report-block"><h2>Relatório de evolução</h2>${nodes}${closed}${opened}<p>${escapeHtml(report.constraint.reading)}</p></section>
+    <section class="report-block"><h2>Correspondência de unidades</h2>${units}</section>`;
 }

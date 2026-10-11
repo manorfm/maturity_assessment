@@ -80,6 +80,7 @@ export function applyMigrations(db: DatabaseSync): void {
       band_low INTEGER NOT NULL,
       band_high INTEGER NOT NULL,
       distribution_json TEXT,
+      context_json TEXT,
       instrument_version TEXT NOT NULL,
       model_version TEXT NOT NULL,
       completed INTEGER NOT NULL,
@@ -87,5 +88,6 @@ export function applyMigrations(db: DatabaseSync): void {
     );
     CREATE INDEX idx_index_readings_project ON index_readings(project_id, captured_at);
     INSERT INTO schema_migrations (version, applied_at) VALUES (26, datetime('now'));
+    INSERT INTO schema_migrations (version, applied_at) VALUES (27, datetime('now'));
   `);
 }

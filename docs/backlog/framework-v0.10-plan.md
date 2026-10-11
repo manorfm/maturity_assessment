@@ -15,7 +15,7 @@ selecionável.
   `testlet`, auditoria, ritual/heroísmo em âncora 1 com peso m1 −1, folhas
   publicáveis com ≥ 2 testlets + âncora baixa + caminho até topo.
 - WP4: módulo `measurement` reproduz 05 §5.1/§7.3; projetos têm
-  `measurement_model` (padrão `m2`, schema 26); runtime mede folhas pela
+  `measurement_model` (padrão `m2`, schema 27); runtime mede folhas pela
   matriz Q, publica índice com regra de publicação, aceite dos sintéticos
   e partial pooling hierárquico (unidade ← irmãos via mãe) no
   `measureIndex`. Fechado no motor.
@@ -39,11 +39,11 @@ selecionável.
   `foundationIsReplicated`, arquétipos `systemic-archetypes-v1`, restrição
   principal por escore, pulso (`pulse-*` / `selectPulseItems`) no plano de
   tratamento.
-- WP15 (parcial): `change-detection` com P ≥ 0,8; schema 26 `index_readings`
-  captura fotografias imutáveis por amostra; histórico compara as duas
-  últimas; `area-walkthrough-v1` com 8 seções e regra da próxima fase
-  nas quatro áreas. Reavaliação 6–12 meses (relatório de evolução completo
-  e tabela de correspondência de unidades) ainda aberta.
+- WP15 (fechado no motor): `change-detection` com P ≥ 0,8 (inclui estável);
+  schema 27 `index_readings` + `context_json`; histórico com
+  `evolution-report-v1` e correspondência de unidades; walkthrough
+  `area-walkthrough-v1`. Validação empírica do ciclo 6–12 meses permanece
+  de campo.
 - WP12 a WP14, WP16 a WP19: sofisticação, capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
 - WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.

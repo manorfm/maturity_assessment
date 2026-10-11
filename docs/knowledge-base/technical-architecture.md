@@ -80,7 +80,7 @@ sintéticos do showcase em m2 está coberto por teste. Em `m2`, o índice
 agrega folhas com partial pooling entre unidades irmãs (prior da mãe
 sem a própria unidade; ω por folha via `omegaForLeaf` / lab ICC, senão
 `poolingDefault`). Fotografias de índice ficam em `index_readings`
-(schema 26). O laboratório offline está em `lab/`.
+(schema 27). O laboratório offline está em `lab/`.
 
 `shared` será pequeno: infraestrutura realmente transversal, não regras de negócio
 sem proprietário.

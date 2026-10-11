@@ -4,6 +4,15 @@ import {
   type ChangeAssessment,
 } from '../../measurement/domain/change-detection.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
+import type { EvolutionReport } from './evolution-report.js';
+
+export type IndexReadingContext = {
+  findingPatterns: string[];
+  limiterId?: string;
+  limiterLabel?: string;
+  units: Array<{ id: string; label: string }>;
+  treatedConduct?: string;
+};
 
 export type IndexReading = {
   id: string;
@@ -12,16 +21,19 @@ export type IndexReading = {
   band: [number, number];
   /** Posterior de estágio 0–4; habilita P(melhora) de 05 §9. */
   distribution?: StageDistribution;
+  context?: IndexReadingContext;
 };
 
-export type ReadingChange = 'improved' | 'regressed' | 'uncertain';
+export type ReadingChange = 'improved' | 'regressed' | 'stable' | 'uncertain';
 
 export type HistoryAssessment = {
   change?: ReadingChange;
   pImprove?: number;
   pRegress?: number;
+  pStable?: number;
   threshold?: number;
   gap?: string;
+  evolution?: EvolutionReport;
 };
 
 export function compareReadings(previous: IndexReading, current: IndexReading): ReadingChange {
@@ -54,6 +66,7 @@ export function projectHistoryAssessment(input: {
       change: assessed.change,
       pImprove: assessed.pImprove,
       pRegress: assessed.pRegress,
+      pStable: assessed.pStable,
       threshold: assessed.threshold,
     };
   }

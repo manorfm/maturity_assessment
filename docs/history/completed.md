@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Relatório de evolução e correspondência (WP15)
+
+- `evolution-report-v1`, P(estável), schema 27 `context_json`, unidades
+  sem vínculo sem evolução. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-10 — Walkthrough por área (WP15)
 
 - `area-walkthrough-v1`: 8 seções (16 §3), próxima fase =

@@ -30,7 +30,8 @@ import { omegaForLeaf } from '../measurement/domain/icc.js';
 import { defaultMeasurementParams, type StageDistribution } from '../measurement/domain/measurement-params.js';
 import { measureLeafFromBundles } from '../measurement/domain/runtime-bridge.js';
 import { bundlesByLeafAndUnit, type ResponseObservation } from '../measurement/domain/response-observation.js';
-import { projectHistoryAssessment, type HistoryAssessment, type IndexReading } from './domain/reading-history.js';
+import { projectHistoryAssessment, type HistoryAssessment, type IndexReading, type IndexReadingContext } from './domain/reading-history.js';
+import { projectEvolutionReport } from './domain/evolution-report.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -344,6 +345,7 @@ export class InferenceService {
     index: number;
     band: [number, number];
     distribution?: StageDistribution;
+    context?: IndexReadingContext;
     instrumentVersion: string;
     modelVersion: string;
     completed: number;
@@ -357,9 +359,9 @@ export class InferenceService {
     if (last && Number(last.completed) === input.completed) return;
     this.db.prepare(`
       INSERT INTO index_readings
-        (id, project_id, unit_id, label, index_value, band_low, band_high, distribution_json,
+        (id, project_id, unit_id, label, index_value, band_low, band_high, distribution_json, context_json,
          instrument_version, model_version, completed, captured_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       id(),
       projectId,
@@ -369,6 +371,7 @@ export class InferenceService {
       input.band[0],
       input.band[1],
       input.distribution ? JSON.stringify(input.distribution) : null,
+      input.context ? JSON.stringify(input.context) : null,
       input.instrumentVersion,
       input.modelVersion,
       input.completed,
@@ -378,7 +381,7 @@ export class InferenceService {
 
   listIndexReadings(projectId: string, limit = 2): IndexReading[] {
     const rows = this.db.prepare(`
-      SELECT id, label, index_value, band_low, band_high, distribution_json, captured_at
+      SELECT id, label, index_value, band_low, band_high, distribution_json, context_json, captured_at
       FROM index_readings
       WHERE project_id = ? AND unit_id IS NULL
       ORDER BY captured_at DESC
@@ -390,6 +393,7 @@ export class InferenceService {
       band_low: number;
       band_high: number;
       distribution_json: string | null;
+      context_json: string | null;
       captured_at: string;
     }>;
     return rows.map((row) => ({
@@ -400,13 +404,39 @@ export class InferenceService {
       ...(row.distribution_json ? {
         distribution: JSON.parse(row.distribution_json) as StageDistribution,
       } : {}),
+      ...(row.context_json ? {
+        context: JSON.parse(row.context_json) as IndexReadingContext,
+      } : {}),
     })).reverse();
   }
 
   projectIndexHistory(projectId: string): HistoryAssessment {
     const readings = this.listIndexReadings(projectId, 2);
     if (readings.length < 2) return projectHistoryAssessment({});
-    return projectHistoryAssessment({ previous: readings[0], current: readings[1] });
+    const previous = readings[0]!;
+    const current = readings[1]!;
+    const history = projectHistoryAssessment({ previous, current });
+    if (!previous.distribution || !current.distribution) return history;
+    const evolution = projectEvolutionReport({
+      nodes: [{
+        leafId: 'organization-index',
+        label: 'Índice da organização',
+        previous: previous.distribution,
+        current: current.distribution,
+        ...(current.context?.treatedConduct ? { appliedConduct: current.context.treatedConduct } : {}),
+      }],
+      previousFindings: previous.context?.findingPatterns ?? [],
+      currentFindings: current.context?.findingPatterns ?? [],
+      ...(previous.context?.limiterId && previous.context.limiterLabel
+        ? { previousLimiter: { id: previous.context.limiterId, label: previous.context.limiterLabel } }
+        : {}),
+      ...(current.context?.limiterId && current.context.limiterLabel
+        ? { currentLimiter: { id: current.context.limiterId, label: current.context.limiterLabel } }
+        : {}),
+      previousUnits: previous.context?.units ?? [],
+      currentUnits: current.context?.units ?? [],
+    });
+    return { ...history, evolution };
   }
 
   report(projectId: string, minimum: number) {
@@ -449,11 +479,19 @@ export class InferenceService {
     const transformationPortfolio = TransformationPortfolioPlanner.plan(findings);
     const index = measurementModel === 'm2' ? this.measureIndex(projectId) : undefined;
     if (index?.published) {
+      const publishedFindings = uniqueFindingsByPattern(findings).filter((finding) => finding.confidence >= 0.5);
+      const treated = publishedFindings[0];
       this.captureIndexReading(projectId, {
         label: `Leitura · ${completed} pessoas`,
         index: index.index,
         band: index.band,
         ...(index.distribution ? { distribution: index.distribution as StageDistribution } : { distribution: peakedDistribution(index.index) }),
+        context: {
+          findingPatterns: publishedFindings.map((finding) => finding.pattern),
+          ...(outcome.limiterId ? { limiterId: outcome.limiterId, limiterLabel: outcome.limiterLabel } : {}),
+          units: scopes.map((scope) => ({ id: scope.id, label: scope.path })),
+          ...(treated?.experiment?.action ? { treatedConduct: treated.experiment.action } : {}),
+        },
         instrumentVersion: GRAPH_VERSION,
         modelVersion: measurementModel,
         completed,

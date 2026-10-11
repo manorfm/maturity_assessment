@@ -90,11 +90,14 @@ compartilham prior da mãe por partial pooling (05 §7.1) antes da agregação d
 (`omegaFromIcc1` = 1 − ICC(1)), senão `poolingDefault` (0,5). ICC(2) e k para
 confiabilidade ≥ 0,70 estão em `measurement/domain/icc.ts` (09 §4); pasta
 `lab/` documenta o fluxo offline. Entre duas posteriores de estágio,
-`change-detection` publica melhora/piora só com P ≥ 0,8 (05 §9); sem
-distribuição, o histórico cai na comparação de faixas. Cada índice m2
-publicado grava uma fotografia imutável em `index_readings` (schema 26)
-quando a amostra (`completed`) muda; a página de histórico compara as
-duas últimas. A auditoria do instrumento bloqueia prática sem `evidence[]`. Toda
+`change-detection` publica melhora, piora ou estável só com P ≥ 0,8
+(05 §9 / 16 §5.1); sem distribuição, o histórico cai na comparação de
+faixas. Cada índice m2 publicado grava uma fotografia imutável em
+`index_readings` (schema 27, com `context_json` de achados, restrição e
+unidades) quando a amostra (`completed`) muda. O histórico compara as
+duas últimas e projeta `evolution-report-v1` (estado do nó, achados
+encerrados/novos, restrição que mudou, correspondência de unidades —
+sem evolução publicada para unidade nova/extinta sem vínculo). A auditoria do instrumento bloqueia prática sem `evidence[]`. Toda
 folha com evidência no grafo v21 tem ≥ 2 testlets, âncora baixa (0–1) e caminho
 até âncora alta (consistência ≥ 3 ou outcome/system em 4), inclusive
 `knowledge-discovery`, `cognitive-load`, `identity-access` e `cloud-security`.
