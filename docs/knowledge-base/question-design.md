@@ -84,10 +84,12 @@ referente de grupo e técnica de lista entram no tronco do grafo v21 (após
 - **Técnica de lista** — `list-metric-manipulation-{control,treatment}` estima
   prevalência sensível (`aggregateListTechnique` / Blair & Imai) só com ≥ 40
   por braço e intervalo; sem sinal de maturidade na resposta individual.
-- **Texto livre** — flag `free_text_enabled` desligada por padrão; PII removida
-  (`stripPii`); livro `strategy-purpose-v1`; fila de revisão humana no painel
+- **Texto livre** — flag `free_text_enabled` desligada por padrão; com a flag
+  ligada, o tronco insere `free-text-strategy-purpose` após a técnica de lista
+  (textarea + opção de pular); PII removida (`stripPii`); livro
+  `strategy-purpose-v1`; fila de revisão humana no painel
   (`free_text_entries` / `free_text_codings`); κ de Cohen ≥ 0,7 para publicar
-  código. Ainda fora do tronco da entrevista.
+  código.
 - **Pulso** — itens-âncora (`pulse-*`) das folhas tratadas, intervalo 4–8
   semanas, referente de grupo; `selectPulseItems` anexa ao plano de tratamento.
   Fora do tronco da entrevista; acompanhamento pós-conduta (08 §7).
