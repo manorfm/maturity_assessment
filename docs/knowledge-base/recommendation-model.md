@@ -129,6 +129,11 @@ Operação e Organização. A próxima fase da capacidade é
 `min(alvo, estágio_atual + 1)`, com comportamento da rubrica quando a
 referência existir; marcos reusam itens de pulso e critérios das
 condutas.
+A prontidão para práticas avançadas (`advancedPracticeCatalog`) calcula
+`p_k = P(S ≥ mínimo)` por pré-requisito e `P(pronto) = Π p_k` essencial
+(22 §1.1) quando as folhas têm posterior ou nível com cobertura; sem
+evidência essencial, declara lacuna e não inventa índice. Chaos, QA,
+AI-DLC e service mesh entram na página de prontidão.
 A biblioteca `systemic-archetypes-v1` publica arquétipo só com ≥ 2 elos
 observados ("padrão provável"). O portfólio escolhe a **restrição
 principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e

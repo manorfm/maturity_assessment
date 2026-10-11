@@ -45,7 +45,10 @@ selecionável.
   `area-walkthrough-v1`. Validação empírica do ciclo 6–12 meses permanece
   de campo.
 - WP12 a WP14, WP16 a WP19: sofisticação, capacidades novas, Laya, exames, reescrita do banco, dossiês.
-- WP20: prontidão calculada quando há `p_k`. Chaos engineering, AI-DLC e service mesh aparecem sem posterior.
+- WP20 (parcial): `advancedPracticeCatalog` com chaos, QA, AI-DLC e service
+  mesh; `p_k = P(S ≥ mínimo)` a partir da posterior ou nível provisório das
+  folhas; rota de prontidão usa `projectCatalogReadiness`. Sofisticação F nas
+  trilhas e biblioteca completa de 22 §5 ainda abertas.
 - WP21: fronteira quando houver arestas elicitadas. O grafo de habilitação ainda não entrou no conteúdo.
 
 WP4 no runtime está fechado; fórmulas ICC→ω no motor; E0/PyMC no WP10.

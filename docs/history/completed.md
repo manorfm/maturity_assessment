@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Prontidão com p_k a partir das folhas (WP20)
+
+- Catálogo chaos/QA/AI-DLC/service mesh; `P(S ≥ mín)` e
+  `projectCatalogReadiness` na rota. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-10 — Relatório de evolução e correspondência (WP15)
 
 - `evolution-report-v1`, P(estável), schema 27 `context_json`, unidades

@@ -27,7 +27,7 @@ import { problemsForNode, projectProblemTree, type HierarchicalBranch, type Hier
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js';
-import { evidenceGradeGap, projectAudienceVerbs, projectDiagnosticLaudo, projectFrontierPage, projectReadinessPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
 import { renderAdminAside, renderAdminMetric, renderAdminShell, renderTermsPanel } from './admin-view.js';
@@ -420,12 +420,13 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
 
   app.get('/projects/:publicId/manage/:adminSecret/report/readiness', async (request, reply) => {
     const params = request.params as Params;
-    requireProject(params);
-    const items = projectReadinessPage([
-      { id: 'chaos-engineering', label: 'Chaos engineering' },
-      { id: 'ai-dlc', label: 'AI-DLC' },
-      { id: 'service-mesh', label: 'Service mesh' },
-    ]);
+    const auth = requireProject(params);
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const leaves = Object.fromEntries(report.capabilities.map((capability) => [capability.id, {
+      level: capability.level,
+      coverage: capability.coverage ?? 0,
+    }]));
+    const items = projectCatalogReadiness(leaves);
     return reply.type('text/html').send(reportPage(params, 'readiness', renderReadinessPage(items)));
   });
 

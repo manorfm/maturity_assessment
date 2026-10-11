@@ -3,7 +3,15 @@ import type { OutcomeFinding, ReportOutcome } from './report-outcome.js';
 import { uniqueFindingsByPattern } from './report-outcome.js';
 import { guidanceFor, hasExplicitGuidance } from './solution-guidance.js';
 import type { IndexPublication } from './stage-posterior.js';
-import { assessReadiness, type PrerequisitePosterior, type ReadinessAssessment } from './advanced-readiness.js';
+import {
+  advancedPracticeCatalog,
+  assessReadiness,
+  resolvePrerequisitePosteriors,
+  type AdvancedPractice,
+  type LeafEvidence,
+  type PrerequisitePosterior,
+  type ReadinessAssessment,
+} from './advanced-readiness.js';
 import { learningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
 import { projectHistoryAssessment, type HistoryAssessment, type IndexReading } from './reading-history.js';
 import { classifyCynefin, classifyEvidenceGrade, foundationIsReplicated, type CynefinDomain, type EvidenceGrade, type TreatmentConduct } from './treatment-contract.js';
@@ -208,6 +216,18 @@ export function projectReadinessPage(practices: Array<{ id: string; label: strin
     if (!practice.prerequisites?.length) return { id: practice.id, label: practice.label, gap: 'Ainda não há posterior dos pré-requisitos. Prontidão não vira índice.' };
     return { id: practice.id, label: practice.label, assessment: assessReadiness({ prerequisites: practice.prerequisites, ...(practice.technicalPhase !== undefined ? { technicalPhase: practice.technicalPhase } : {}) }) };
   });
+}
+
+/** Prontidão a partir do catálogo 22 e evidência por folha (nível ou posterior). */
+export function projectCatalogReadiness(
+  leaves: Record<string, LeafEvidence>,
+  practices: AdvancedPractice[] = advancedPracticeCatalog,
+): Array<{ id: string; label: string; assessment?: ReadinessAssessment; gap?: string }> {
+  return projectReadinessPage(practices.map((practice) => ({
+    id: practice.id,
+    label: practice.label,
+    prerequisites: resolvePrerequisitePosteriors(practice, leaves) ?? undefined,
+  })));
 }
 
 export function projectFrontierPage(input: { nodes: string[]; edges: EnablementEdge[] } | undefined): { nodes: FrontierNode[]; gap?: string } {
