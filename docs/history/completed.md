@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Biblioteca de práticas avançadas 22 §5 (WP20)
+
+- 13 práticas no catálogo; `minimumPhase` em p_k; rota de prontidão usa
+  posterior F. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-11 — Trilhas de sofisticação 12 §3 no grafo (WP12)
 
 - Padrões das trilhas 3.1–3.10 e 3.12 declaram F0–F5 (baixo e alto por

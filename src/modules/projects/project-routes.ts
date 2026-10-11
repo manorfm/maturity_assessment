@@ -425,10 +425,15 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const params = request.params as Params;
     const auth = requireProject(params);
     const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
-    const leaves = Object.fromEntries(report.capabilities.map((capability) => [capability.id, {
-      level: capability.level,
-      coverage: capability.coverage ?? 0,
-    }]));
+    const fByLeaf = inference.projectSophisticationByLeaf(String(auth.project.id));
+    const leaves = Object.fromEntries(report.capabilities.map((capability) => {
+      const phase = fByLeaf.get(capability.id);
+      return [capability.id, {
+        level: capability.level,
+        coverage: capability.coverage ?? 0,
+        ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
+      }];
+    }));
     const items = projectCatalogReadiness(leaves);
     return reply.type('text/html').send(reportPage(params, 'readiness', renderReadinessPage(items)));
   });

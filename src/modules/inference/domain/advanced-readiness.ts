@@ -1,5 +1,7 @@
 import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
+import type { SophisticationDistribution } from './sophistication-matrix.js';
+import { observeSophistication } from './sophistication-matrix.js';
 
 export type ReadinessBand = 'ready' | 'near' | 'not-ready';
 
@@ -24,6 +26,8 @@ export type PracticePrerequisite = {
   label: string;
   leafId: string;
   minimumStage: number;
+  /** Fase F mínima (12); p_k multiplica P(F ≥ mínimo) quando presente. */
+  minimumPhase?: number;
   essential: boolean;
 };
 
@@ -37,6 +41,9 @@ export type LeafEvidence = {
   distribution?: StageDistribution;
   level?: number;
   coverage?: number;
+  phaseDistribution?: SophisticationDistribution;
+  /** Modo F provisório quando ainda não há posterior de sofisticação. */
+  phase?: number;
 };
 
 /** P(S ≥ mínimo) a partir da posterior 0–4 (22 §1.1). */
@@ -44,6 +51,14 @@ export function probabilityStageAtLeast(distribution: StageDistribution, minimum
   const floor = Math.max(0, Math.min(4, Math.floor(minimum)));
   let total = 0;
   for (let stage = floor; stage <= 4; stage += 1) total += distribution[stage]!;
+  return round2(total);
+}
+
+/** P(F ≥ mínimo) a partir da posterior 0–5 (12 / 22 §1.1). */
+export function probabilityPhaseAtLeast(distribution: SophisticationDistribution, minimum: number): number {
+  const floor = Math.max(0, Math.min(5, Math.floor(minimum)));
+  let total = 0;
+  for (let phase = floor; phase <= 5; phase += 1) total += distribution[phase]!;
   return round2(total);
 }
 
@@ -83,7 +98,7 @@ export function projectPracticeReadiness(
 
 /**
  * Resolve p_k por folha. Sem evidência em algum essencial, devolve undefined
- * (prontidão não inventa posterior).
+ * (prontidão não inventa posterior). Com minimumPhase, exige evidência F.
  */
 export function resolvePrerequisitePosteriors(
   practice: AdvancedPractice,
@@ -97,11 +112,20 @@ export function resolvePrerequisitePosteriors(
       if (prerequisite.essential) return undefined;
       continue;
     }
+    let probability = probabilityStageAtLeast(distribution, prerequisite.minimumStage);
+    if (prerequisite.minimumPhase !== undefined) {
+      const phaseDistribution = phaseDistributionFor(evidence);
+      if (!phaseDistribution) {
+        if (prerequisite.essential) return undefined;
+        continue;
+      }
+      probability = round2(probability * probabilityPhaseAtLeast(phaseDistribution, prerequisite.minimumPhase));
+    }
     resolved.push({
       id: prerequisite.id,
       label: prerequisite.label,
       essential: prerequisite.essential,
-      probability: probabilityStageAtLeast(distribution, prerequisite.minimumStage),
+      probability,
     });
   }
   if (!resolved.some((item) => item.essential)) return undefined;
@@ -117,6 +141,13 @@ function distributionFor(evidence?: LeafEvidence): StageDistribution | undefined
   return peakedDistribution(index);
 }
 
+function phaseDistributionFor(evidence?: LeafEvidence): SophisticationDistribution | undefined {
+  if (!evidence) return undefined;
+  if (evidence.phaseDistribution) return evidence.phaseDistribution;
+  if (evidence.phase === undefined) return undefined;
+  return observeSophistication([evidence.phase]);
+}
+
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
@@ -127,18 +158,26 @@ const prereq = (
   leafId: string,
   minimumStage: number,
   essential: boolean,
-): PracticePrerequisite => ({ id, label, leafId, minimumStage, essential });
+  minimumPhase?: number,
+): PracticePrerequisite => ({
+  id,
+  label,
+  leafId,
+  minimumStage,
+  essential,
+  ...(minimumPhase !== undefined ? { minimumPhase } : {}),
+});
 
-/** Biblioteca inicial 22 §5 — chaos, QA, AI-DLC e service mesh. */
+/** Biblioteca 22 §5 — práticas avançadas com pré-requisitos tipados. */
 export const advancedPracticeCatalog: AdvancedPractice[] = [
   {
     id: 'chaos-engineering',
     label: 'Chaos engineering',
     prerequisites: [
-      prereq('observability', 'Observabilidade', 'observability-practice', 3, true),
+      prereq('observability', 'Observabilidade', 'observability-practice', 3, true, 3),
       prereq('steady-state', 'Estado estável', 'reliability-practice', 3, true),
-      prereq('incident-response', 'Resposta a incidentes', 'incident-management', 2, true),
-      prereq('rollback', 'Reversão', 'release-feedback', 3, true),
+      prereq('incident-response', 'Resposta a incidentes', 'incident-management', 2, true, 2),
+      prereq('rollback', 'Reversão', 'release-feedback', 3, true, 3),
       prereq('learning', 'Aprendizado com incidentes', 'organizational-learning', 3, true),
       prereq('infra', 'Infraestrutura reproduzível', 'reproducible-infrastructure', 3, false),
       prereq('deps', 'Mapa de dependências', 'integration-data', 2, false),
@@ -149,11 +188,11 @@ export const advancedPracticeCatalog: AdvancedPractice[] = [
     label: 'Automação de qualidade',
     prerequisites: [
       prereq('design', 'Testabilidade no design', 'sustainable-design', 2, true),
-      prereq('ci', 'Integração contínua', 'continuous-integration', 3, true),
+      prereq('ci', 'Integração contínua', 'continuous-integration', 3, true, 3),
       prereq('owner', 'Quem escreve o código escreve os testes', 'quality-strategy', 2, true),
       prereq('feedback', 'Feedback técnico no pipeline', 'sdlc-automation', 3, true),
       prereq('env', 'Ambientes reproduzíveis', 'reproducible-infrastructure', 2, false),
-      prereq('obs', 'Observabilidade para verificar em produção', 'observability-practice', 2, false),
+      prereq('obs', 'Observabilidade para verificar em produção', 'observability-practice', 2, false, 3),
     ],
   },
   {
@@ -169,6 +208,87 @@ export const advancedPracticeCatalog: AdvancedPractice[] = [
     ],
   },
   {
+    id: 'continuous-delivery',
+    label: 'Entrega contínua',
+    prerequisites: [
+      prereq('tests', 'Testes confiáveis', 'quality-strategy', 3, true, 3),
+      prereq('rollback', 'Reversão', 'release-feedback', 3, true),
+      prereq('obs', 'Observabilidade', 'observability-practice', 3, true),
+      prereq('risk', 'Aprovação por risco', 'enabling-governance', 2, true),
+      prereq('ci', 'Integração contínua', 'continuous-integration', 3, false),
+    ],
+  },
+  {
+    id: 'trunk-based',
+    label: 'Desenvolvimento no tronco',
+    prerequisites: [
+      prereq('ci', 'CI rápido', 'continuous-integration', 3, true),
+      prereq('flags', 'Feature flags / liberação desacoplada', 'release-feedback', 3, true),
+      prereq('tests', 'Testes confiáveis', 'quality-strategy', 2, true),
+      prereq('feedback', 'Feedback técnico ágil', 'sdlc-automation', 3, true),
+    ],
+  },
+  {
+    id: 'slo-error-budget',
+    label: 'SLO com política de error budget',
+    prerequisites: [
+      prereq('obs', 'Observabilidade', 'observability-practice', 3, true),
+      prereq('slo', 'Estado estável / SLO', 'reliability-practice', 3, true),
+      prereq('product', 'Acordo com produto', 'product-direction', 2, true),
+      prereq('authority', 'Autoridade para pausar entregas', 'leadership-management', 2, true),
+    ],
+  },
+  {
+    id: 'platform-as-product',
+    label: 'Plataforma como produto',
+    prerequisites: [
+      prereq('self-service', 'Autosserviço com guardrails', 'platform-autonomy', 3, true),
+      prereq('product', 'Estratégia de produto da plataforma', 'product-direction', 2, true),
+      prereq('consumers', 'Times consumidores definidos', 'team-ownership', 2, true),
+      prereq('infra', 'Infraestrutura reproduzível', 'reproducible-infrastructure', 2, false),
+    ],
+  },
+  {
+    id: 'aiops-remediation',
+    label: 'Remediação automática (AIOps)',
+    prerequisites: [
+      prereq('obs', 'Observabilidade', 'observability-practice', 3, true, 4),
+      prereq('runbooks', 'Resposta a incidentes / runbooks', 'incident-management', 3, true),
+      prereq('rollback', 'Reversão', 'release-feedback', 3, true),
+      prereq('trust', 'Confiança no alerta', 'reliability-practice', 2, true),
+    ],
+  },
+  {
+    id: 'cell-architecture',
+    label: 'Arquitetura em células ou microsserviços',
+    prerequisites: [
+      prereq('ownership', 'Ownership por domínio', 'team-ownership', 3, true),
+      prereq('obs', 'Observabilidade distribuída', 'observability-practice', 3, true),
+      prereq('deploy', 'Automação de deploy', 'release-feedback', 3, true),
+      prereq('contracts', 'Contratos entre serviços', 'integration-data', 2, true),
+    ],
+  },
+  {
+    id: 'data-mesh',
+    label: 'Data mesh',
+    prerequisites: [
+      prereq('data', 'Domínios e contratos de dados', 'integration-data', 3, true),
+      prereq('ownership', 'Dono por domínio', 'team-ownership', 2, true),
+      prereq('governance', 'Governança federada', 'enabling-governance', 2, true),
+      prereq('literacy', 'Letramento de dados', 'technical-capability', 2, true),
+    ],
+  },
+  {
+    id: 'zero-trust',
+    label: 'Zero Trust',
+    prerequisites: [
+      prereq('identity', 'Identidade forte', 'cloud-security', 3, true),
+      prereq('devsec', 'Segurança na entrega', 'software-security', 2, true),
+      prereq('access-obs', 'Observabilidade de acesso', 'observability-practice', 2, true),
+      prereq('segment', 'Segmentação / infra como código', 'reproducible-infrastructure', 2, true),
+    ],
+  },
+  {
     id: 'service-mesh',
     label: 'Service mesh',
     prerequisites: [
@@ -176,6 +296,15 @@ export const advancedPracticeCatalog: AdvancedPractice[] = [
       prereq('obs', 'Observabilidade', 'observability-practice', 3, true),
       prereq('platform', 'Plataforma com dono', 'platform-autonomy', 2, true),
       prereq('ownership', 'Ownership por serviço', 'team-ownership', 2, true),
+    ],
+  },
+  {
+    id: 'cost-optimization',
+    label: 'Otimização automática de custo',
+    prerequisites: [
+      prereq('tags', 'Tags, dono e unit economics', 'cloud-efficiency', 3, true),
+      prereq('ownership', 'Dono do gasto', 'team-ownership', 2, true),
+      prereq('guardrails', 'Guardrails de custo', 'enabling-governance', 2, true),
     ],
   },
 ];

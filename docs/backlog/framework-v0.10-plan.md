@@ -51,10 +51,10 @@ selecionável.
   Folha/itens dedicados da trilha 3.11 (IA) e perguntas de evento
   exclusivas de sofisticação ainda abertas.
 - WP13, WP14, WP16 a WP19: capacidades novas, Laya, exames, reescrita do banco, dossiês.
-- WP20 (parcial): `advancedPracticeCatalog` com chaos, QA, AI-DLC e service
-  mesh; `p_k = P(S ≥ mínimo)` a partir da posterior ou nível provisório das
-  folhas; rota de prontidão usa `projectCatalogReadiness`. Sofisticação F nas
-  trilhas e biblioteca completa de 22 §5 ainda abertas.
+- WP20 (parcial): biblioteca 22 §5 (13 práticas) no
+  `advancedPracticeCatalog`; `p_k = P(S ≥ mín) × P(F ≥ fase)` quando
+  `minimumPhase` está declarado; rota de prontidão usa posteriores F.
+  Perguntas de evento e achado de adoção prematura na home ainda abertos.
 - WP21 (parcial): `enablementCatalog` com arestas de 23 §3.3;
   `P(desbloqueado)` por produto das essenciais; fronteira/perto/bloqueado;
   walkthrough restringe próxima fase à fronteira; condutas com
