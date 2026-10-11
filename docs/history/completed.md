@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Pergunta de evento de chaos (WP20)
+
+- `chaos-dependency-exercise` (F0–F5) no tronco após remediação; fase da
+  prática alimenta prontidão e adoção prematura. Ver
+  [`question-design.md`](../knowledge-base/question-design.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-11 — E0 recuperação de estágio (WP10)
 
 - `e0-recovery.ts` simula respostas e recupera S (|viés| < 0,1, MAE < 0,25,

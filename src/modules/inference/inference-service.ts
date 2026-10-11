@@ -31,6 +31,9 @@ import { defaultMeasurementParams, type StageDistribution } from '../measurement
 import { measureLeafFromBundles } from '../measurement/domain/runtime-bridge.js';
 import { bundlesByLeafAndUnit, type ResponseObservation } from '../measurement/domain/response-observation.js';
 import {
+  advancedPracticePhasesById,
+} from './domain/advanced-readiness.js';
+import {
   sophisticationPosteriorByLeaf,
   type SophisticationDistribution,
   type SophisticationPhase,
@@ -422,6 +425,15 @@ export class InferenceService {
     expected: number;
   }> {
     return sophisticationPosteriorByLeaf(this.completedObservations(projectId), unitId);
+  }
+
+  /** Fase técnica por prática avançada a partir das perguntas de evento (22). */
+  projectAdvancedPracticePhases(projectId: string, unitId?: string): Map<string, {
+    distribution: SophisticationDistribution;
+    phase: number;
+    expected: number;
+  }> {
+    return advancedPracticePhasesById(this.completedObservations(projectId), unitId);
   }
 
   projectIndexHistory(projectId: string): HistoryAssessment {

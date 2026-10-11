@@ -1,3 +1,4 @@
+import { advancedPracticePhaseForPattern } from '../../catalog/advanced-practice-events.js';
 import { graph, type Profile } from '../../catalog/assessment-graph.js';
 import { normalizeOptionEvidence, type EvidenceLink } from '../../catalog/evidence-contract.js';
 import type { Discrimination, Stage } from './measurement-params.js';
@@ -125,4 +126,25 @@ export function sophisticationPhasesByLeaf(
     }
   }
   return byLeaf;
+}
+
+/** Fases técnicas por prática avançada (22), a partir dos padrões de evento. */
+export function advancedPracticePhaseObservations(
+  observations: ResponseObservation[],
+  unitId?: string,
+): Map<string, number[]> {
+  const byPractice = new Map<string, number[]>();
+  for (const observation of observations) {
+    if (unitId !== undefined && observation.unitId !== unitId) continue;
+    const lookup = optionLookup.get(`${observation.nodeId}:${observation.optionId}`);
+    if (!lookup?.evidence.length) continue;
+    for (const link of lookup.evidence) {
+      const event = advancedPracticePhaseForPattern(link.pattern);
+      if (!event) continue;
+      const phases = byPractice.get(event.practiceId) ?? [];
+      phases.push(link.sophistication ?? event.phase);
+      byPractice.set(event.practiceId, phases);
+    }
+  }
+  return byPractice;
 }

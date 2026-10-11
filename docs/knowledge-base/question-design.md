@@ -252,7 +252,11 @@ dados permitem correlacionar a jornada e como mudanças em código, configuraç�
 infraestrutura ou dados chegam ao ambiente. Acesso direto ao runtime, busca por dado
 pessoal e alteração em console são comportamentos investigados por risco e efeito,
 não por nomes de produtos. Um caminho maduro continua reproduzível, auditável,
-minimizado e capaz de aprender após a urgência.
+minimizado e capaz de aprender após a urgência. Depois da correção, a pergunta de
+evento de chaos (`chaos-dependency-exercise`) observa o que foi feito na última
+vez em que alguém quis saber o efeito de uma dependência falhar — da ausência de
+exercício até experimentos que mudam o design — e declara a fase técnica da
+prática avançada sem subir o índice de maturidade.
 
 ### Objetivo, bloqueio e decisão
 

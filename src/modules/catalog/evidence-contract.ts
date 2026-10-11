@@ -235,6 +235,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'resiliencia-cloud-validada-periodicamente': 3,
   'resiliencia-cloud-validada-por-experimento': 4,
 
+  // 22 §2.3 Chaos engineering (prática avançada)
+  'chaos-nenhum-exercicio': 0,
+  'chaos-tabletop': 1,
+  'chaos-gameday-teste': 2,
+  'chaos-gameday-producao': 3,
+  'chaos-automatizado': 4,
+  'chaos-alimenta-design': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

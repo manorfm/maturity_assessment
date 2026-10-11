@@ -137,6 +137,9 @@ Sem evidência essencial (estágio ou F exigido), declara lacuna e não
 inventa índice. A biblioteca 22 §5 (13 práticas) entra na página de
 prontidão. **Adoção prematura** (F da prática ≥ 3 e algum essencial com
 `p_k < 0,3`) vira achado de risco no laudo com conduta de reduzir escopo.
+A pergunta de evento de chaos (`chaos-dependency-exercise`, 22 §2.5)
+declara F0–F5 da prática sem alterar o índice (R28); a fase alimenta
+prontidão e adoção prematura.
 O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia
 `P(desbloqueado)` por aresta; a fronteira exige ≥ 0,6, o bloqueio
 aparece abaixo de 0,25, e a próxima fase do walkthrough só sobe dentro

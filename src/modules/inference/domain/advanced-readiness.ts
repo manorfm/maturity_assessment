@@ -1,7 +1,11 @@
 import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
+import {
+  advancedPracticePhaseObservations,
+  type ResponseObservation,
+} from '../../measurement/domain/response-observation.js';
 import type { SophisticationDistribution } from './sophistication-matrix.js';
-import { modeSophistication, observeSophistication } from './sophistication-matrix.js';
+import { expectedSophistication, modeSophistication, observeSophistication } from './sophistication-matrix.js';
 
 export type ReadinessBand = 'ready' | 'near' | 'not-ready';
 
@@ -146,6 +150,24 @@ function phaseDistributionFor(evidence?: LeafEvidence): SophisticationDistributi
   if (evidence.phaseDistribution) return evidence.phaseDistribution;
   if (evidence.phase === undefined) return undefined;
   return observeSophistication([evidence.phase]);
+}
+
+/** Posterior F da prática avançada a partir das perguntas de evento (22). */
+export function advancedPracticePhasesById(
+  observations: ResponseObservation[],
+  unitId?: string,
+): Map<string, { distribution: SophisticationDistribution; phase: number; expected: number }> {
+  const phasesByPractice = advancedPracticePhaseObservations(observations, unitId);
+  const result = new Map<string, { distribution: SophisticationDistribution; phase: number; expected: number }>();
+  for (const [practiceId, phases] of phasesByPractice) {
+    const distribution = observeSophistication(phases);
+    result.set(practiceId, {
+      distribution,
+      phase: modeSophistication(distribution),
+      expected: expectedSophistication(distribution),
+    });
+  }
+  return result;
 }
 
 /** Fase técnica da prática: declaração explícita ou maior F observado nos pré-requisitos. */

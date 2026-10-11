@@ -222,6 +222,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const orderedFindings = uniqueFindingsByPattern(report.findings);
     const competingFinding = orderedFindings.find((finding) => finding.pattern !== report.outcome.finding?.pattern);
     const fByLeaf = inference.projectSophisticationByLeaf(projectId);
+    const practicePhases = inference.projectAdvancedPracticePhases(projectId);
     const readinessLeaves: Record<string, LeafEvidence> = Object.fromEntries(report.capabilities.map((capability) => {
       const phase = fByLeaf.get(capability.id);
       return [capability.id, {
@@ -230,6 +231,13 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
       }];
     }));
+    for (const [practiceId, phase] of practicePhases) {
+      readinessLeaves[practiceId] = {
+        ...(readinessLeaves[practiceId] ?? { coverage: 1 }),
+        phaseDistribution: phase.distribution,
+        phase: phase.phase,
+      };
+    }
     const firstScreen = renderFirstScreen({
       outcome: report.outcome,
       ...(report.classification ? { classification: report.classification } : {}),
@@ -437,6 +445,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const auth = requireProject(params);
     const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
     const fByLeaf = inference.projectSophisticationByLeaf(String(auth.project.id));
+    const practicePhases = inference.projectAdvancedPracticePhases(String(auth.project.id));
     const leaves = Object.fromEntries(report.capabilities.map((capability) => {
       const phase = fByLeaf.get(capability.id);
       return [capability.id, {
@@ -445,6 +454,13 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
       }];
     }));
+    for (const [practiceId, phase] of practicePhases) {
+      leaves[practiceId] = {
+        ...(leaves[practiceId] ?? { coverage: 1 }),
+        phaseDistribution: phase.distribution,
+        phase: phase.phase,
+      };
+    }
     const items = projectCatalogReadiness(leaves);
     return reply.type('text/html').send(reportPage(params, 'readiness', renderReadinessPage(items)));
   });
