@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Trilhas de sofisticação 12 §3 no grafo (WP12)
+
+- Padrões das trilhas 3.1–3.10 e 3.12 declaram F0–F5 (baixo e alto por
+  folha); R28 preservado. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-11 — Posterior de sofisticação F0–F5 (WP12)
 
 - Posterior discreta P(F=0..5) por folha/unidade (modelo 05, escala 0–5);

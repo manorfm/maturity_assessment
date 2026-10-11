@@ -45,10 +45,11 @@ selecionável.
   `area-walkthrough-v1`. Validação empírica do ciclo 6–12 meses permanece
   de campo.
 - WP12 (parcial): `EvidenceLink.sophistication` F0–F5; matriz de 4
-  quadrantes; amostra de padrões nas trilhas; walkthrough mostra F ×
-  apropriação; F fora do índice (R28); posterior discreta P(F=0..5) por
-  folha/unidade com o modelo de observação de 05. Trilhas completas
-  12 §3 ainda abertas.
+  quadrantes; walkthrough mostra F × apropriação; F fora do índice (R28);
+  posterior discreta P(F=0..5) por folha/unidade com o modelo de 05;
+  padrões das trilhas 12 §3.1–3.10 e 3.12 no grafo com F baixo e alto.
+  Folha/itens dedicados da trilha 3.11 (IA) e perguntas de evento
+  exclusivas de sofisticação ainda abertas.
 - WP13, WP14, WP16 a WP19: capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP20 (parcial): `advancedPracticeCatalog` com chaos, QA, AI-DLC e service
   mesh; `p_k = P(S ≥ mínimo)` a partir da posterior ou nível provisório das
