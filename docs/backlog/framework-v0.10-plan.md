@@ -31,10 +31,10 @@ selecionável.
   quente (`selectAfterTerminal` = `selectWithUnitCoverage`); vinheta com
   rodízio. Simulador de unidade e §8.2 de aceitação de campo permanecem como
   validação empírica.
-- WP7 (fechado no motor de tipos): vinheta, leitura, referente de grupo e
-  técnica de lista no tronco; texto livre com flag off, PII, livro de códigos,
-  fila de revisão no painel e κ ≥ 0,7. Ligar texto livre ao tronco da entrevista
-  quando a flag estiver ligada permanece hipótese aberta.
+- WP7 (fechado no motor): vinheta, leitura, referente de grupo, técnica de
+  lista e texto livre no tronco quando `free_text_enabled`; PII, livro de
+  códigos, fila de revisão e κ ≥ 0,7. Validação empírica de κ em campo
+  permanece aberta.
 - WP9 (fechado no motor de contrato): Cynefin, grau A–D com
   `foundationIsReplicated`, arquétipos `systemic-archetypes-v1`, restrição
   principal por escore, pulso (`pulse-*` / `selectPulseItems`) no plano de

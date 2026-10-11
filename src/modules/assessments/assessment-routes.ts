@@ -55,6 +55,7 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
       ? `aprofundamento · cerca de ${remainingMinutes} minuto${remainingMinutes === 1 ? '' : 's'} restante${remainingMinutes === 1 ? '' : 's'}`
       : `cerca de ${remainingMinutes} minuto${remainingMinutes === 1 ? '' : 's'} restante${remainingMinutes === 1 ? '' : 's'}`;
     const options = orderAssessmentOptions(node.options, resumeToken, node.id);
+    const isFreeText = node.id.startsWith('free-text-');
     return reply.type('text/html').send(layout(node.title, renderInterviewQuestion({
       kicker: profile,
       title: node.title,
@@ -63,16 +64,17 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
       progressLabel,
       progressPercent: interviewProgressPercent(remainingMinutes, budgetMinutes),
       action: `/respond/${resumeToken}`,
-      options,
+      options: isFreeText ? options.filter((option) => option.id === 'skip' || (option.observation ?? 'practice') !== 'practice') : options,
       nodeId: node.id,
+      ...(isFreeText ? { freeText: { maxChars: 280, submitOptionId: 'submitted' } } : {}),
     })));
   });
 
   app.post('/respond/:resumeToken', async (request, reply) => {
     const { resumeToken } = request.params as { resumeToken: string };
-    const body = (request.body ?? {}) as { optionId?: string };
+    const body = (request.body ?? {}) as { optionId?: string; freeText?: string };
     if (!body.optionId) return reply.code(400).send('Escolha uma alternativa');
-    const result = participations.answer(resumeToken, body.optionId);
+    const result = participations.answer(resumeToken, body.optionId, body.freeText ? { freeText: body.freeText } : undefined);
     if (result === 'invalid') return reply.redirect(`/respond/${resumeToken}`);
     return reply.redirect(`/respond/${resumeToken}`);
   });

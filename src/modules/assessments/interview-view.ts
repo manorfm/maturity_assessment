@@ -38,10 +38,18 @@ export function renderInterviewQuestion(input: {
   action: string;
   options: InterviewOption[];
   nodeId?: string;
+  freeText?: { maxChars: number; submitOptionId: string };
 }): string {
   const practice = input.options.filter((option) => (option.observation ?? 'practice') === 'practice');
   const observational = input.options.filter((option) => (option.observation ?? 'practice') !== 'practice');
-  const practiceChoices = practice.map(renderChoice).join('');
+  const freeTextBlock = input.freeText
+    ? `<label class="interview-free-text">
+        <span class="visually-hidden">Resposta escrita</span>
+        <textarea name="freeText" maxlength="${input.freeText.maxChars}" rows="4" placeholder="Uma frase, sem nomes de pessoas ou clientes."></textarea>
+        <input type="hidden" name="optionId" value="${escapeHtml(input.freeText.submitOptionId)}" />
+      </label>`
+    : '';
+  const practiceChoices = input.freeText ? '' : practice.map(renderChoice).join('');
   const observationalBlock = observational.length
     ? `<div class="interview-or" aria-hidden="true"><span></span><span>ou</span><span></span></div>
       <div class="interview-choices interview-choices-secondary">${observational.map(renderChoice).join('')}</div>`
@@ -55,6 +63,7 @@ export function renderInterviewQuestion(input: {
     <form class="interview-form" method="post" action="${escapeHtml(input.action)}"${input.nodeId ? ` data-assessment-node="${escapeHtml(input.nodeId)}"` : ''}>
       <fieldset>
         <legend>${escapeHtml(input.prompt)}</legend>
+        ${freeTextBlock}
         <div class="interview-choices">${practiceChoices}</div>
         ${observationalBlock}
       </fieldset>

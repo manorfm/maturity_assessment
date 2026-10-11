@@ -3,6 +3,7 @@ import { workContextOptions, type InterviewTrack, type ObservableEvent, type Wor
 import { normalizeOptionEvidence, type EvidenceLink } from './evidence-contract.js';
 import {
   approvalChangeVignette,
+  freeTextStrategy,
   groupErrorReferent,
   listTechniqueCountOptions,
   listTechniqueNodeId,
@@ -46,7 +47,7 @@ export function observationOf(option: Option): ObservationKind {
 }
 
 function attachObservationalExits(node: AssessmentNode): AssessmentNode {
-  if (node.id === 'respondent-context' || node.id.startsWith('vignette-') || node.id.startsWith('literacy-') || node.id.startsWith('list-')) return node;
+  if (node.id === 'respondent-context' || node.id.startsWith('vignette-') || node.id.startsWith('literacy-') || node.id.startsWith('list-') || node.id.startsWith('free-text-')) return node;
   if (node.options.some((option) => option.id === CANNOT_OBSERVE_ID)) return node;
   return { ...node, options: [...node.options, cannotObserve] };
 }
@@ -192,6 +193,19 @@ const authoredNodes: AssessmentNode[] = [
       label: option.label,
       signals: [] as Signal[],
     })),
+    next: 'urgent-change',
+  },
+  {
+    id: freeTextStrategy.id,
+    type: 'scenario',
+    title: freeTextStrategy.title,
+    scenario: freeTextStrategy.scenario,
+    prompt: freeTextStrategy.prompt,
+    // Sem sinais: texto vai para fila de revisão humana (07 §6); flag do projeto liga o tronco.
+    options: [
+      { id: 'submitted', label: 'Resposta escrita enviada.', signals: [] as Signal[], observation: 'practice' as const },
+      { id: 'skip', label: 'Prefiro não responder por escrito.', signals: [] as Signal[], observation: 'visibility' as const },
+    ],
     next: 'urgent-change',
   },
   {
@@ -1236,7 +1250,7 @@ export const graph: AssessmentNode[] = [...authoredNodes, ...eventFollowupNodes]
     : node;
   const withExits = attachObservationalExits(factual);
   const meta = evidenceMetaFor(withExits.id);
-  const scenario = factual.id.startsWith('literacy-') || factual.id.startsWith('vignette-') || factual.id.startsWith('list-')
+  const scenario = factual.id.startsWith('literacy-') || factual.id.startsWith('vignette-') || factual.id.startsWith('list-') || factual.id.startsWith('free-text-')
     ? factual.scenario
     : anchorRecentObservation(factual.scenario);
   return {
@@ -1300,6 +1314,16 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, to: listMetricTreatmentId },
   ];
   if (node.id === listMetricControlId || node.id === listMetricTreatmentId) return [
+    { from: node.id, to: 'ready-to-release', when: { tracksAny: ['delivery', 'full-cycle'] } },
+    { from: node.id, to: 'security-change', when: { tracksAny: ['risk'] } },
+    { from: node.id, to: 'environment-access', when: { tracksAny: ['capability'] } },
+    { from: node.id, to: 'architecture-pressure', when: { tracksAny: ['architecture'] } },
+    { from: node.id, to: 'product-outcome-evidence', when: { tracksAny: ['outcomes', 'portfolio', 'experience'] } },
+    { from: node.id, to: 'urgent-change' },
+    // Alcance estrutural; o tronco só entra aqui via selectFreeText quando a flag está ligada.
+    { from: node.id, to: freeTextStrategy.id },
+  ];
+  if (node.id === freeTextStrategy.id) return [
     { from: node.id, to: 'ready-to-release', when: { tracksAny: ['delivery', 'full-cycle'] } },
     { from: node.id, to: 'security-change', when: { tracksAny: ['risk'] } },
     { from: node.id, to: 'environment-access', when: { tracksAny: ['capability'] } },

@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-10 — Texto livre no tronco com flag (WP7)
+
+- `selectFreeText` após a lista quando `free_text_enabled`; textarea na
+  entrevista; enfileira sanitizado. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-10 — Modalidade de aprendizado nas condutas (WP21)
 
 - `learningMode`, `unlocks` e aviso de baixa transferência no plano.

@@ -500,6 +500,10 @@ export function optionForOrganizationalSynthetic(
   if (node.id.startsWith('list-')) {
     return node.options.find((option) => option.id === 'count-2')?.id ?? node.options[0]!.id;
   }
+  // Texto livre: sintéticos pulam a escrita (fila humana só com resposta real).
+  if (node.id.startsWith('free-text-')) {
+    return node.options.find((option) => option.id === 'skip')?.id ?? node.options[0]!.id;
+  }
   const fallbackBand = POC_VALIDATION_ORGS.find((org) => org.id === caseId)?.band ?? 'low';
   const wanted = scripts[caseId].units[unitIndex]?.[node.id] ?? scripts[caseId].shared[node.id] ?? optionByBand(node.options, fallbackBand);
   return node.options.some((option) => option.id === wanted) ? wanted : optionByBand(node.options, fallbackBand);

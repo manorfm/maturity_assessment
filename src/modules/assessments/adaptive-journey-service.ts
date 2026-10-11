@@ -1,6 +1,6 @@
 import type { Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
-import { itemCatalog, listTechniqueNodeId, metricManipulationList, type ListTechniqueArm } from '../catalog/item-catalog.js';
+import { freeTextStrategy, itemCatalog, listTechniqueNodeId, metricManipulationList, type ListTechniqueArm } from '../catalog/item-catalog.js';
 import { AdaptiveQuestionSelector, type QuestionCandidate } from '../inference/domain/adaptive-question-selector.js';
 import { BayesianInferenceEngine } from '../inference/domain/bayesian-inference-engine.js';
 import { DiagnosticModel } from '../inference/domain/diagnostic-model.js';
@@ -90,7 +90,23 @@ export class AdaptiveJourneyService {
     return nodeId;
   }
 
-  /** Próxima vinheta do rodízio na unidade (06 §3); inserção no tronco permanece WP7. */
+  /**
+   * Texto livre no tronco (07 §6) só quando o projeto liga `free_text_enabled`.
+   * Inserção após a técnica de lista; sem flag, o caminho declarativo segue.
+   */
+  selectFreeText(participationId: string): string | undefined {
+    const participation = this.db.prepare('SELECT project_id, graph_version FROM participations WHERE id = ?')
+      .get(participationId) as { project_id: string; graph_version: string } | undefined;
+    if (!participation) return undefined;
+    const enabled = Number((this.db.prepare('SELECT free_text_enabled FROM projects WHERE id = ?')
+      .get(participation.project_id) as { free_text_enabled: number } | undefined)?.free_text_enabled) === 1;
+    if (!enabled) return undefined;
+    if (this.answeredNodes(participationId).has(freeTextStrategy.id)) return undefined;
+    if (!this.nodeExists(participation.graph_version, freeTextStrategy.id)) return undefined;
+    return freeTextStrategy.id;
+  }
+
+  /** Próxima vinheta do rodízio na unidade (06 §3). */
   selectVignette(participationId: string): string | undefined {
     const answered = this.answeredNodes(participationId);
     const asked = [...answered].filter((nodeId) => VIGNETTE_IDS.has(nodeId)).length;

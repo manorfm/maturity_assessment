@@ -53,7 +53,7 @@ function auditQuestions(nodes: AssessmentNode[]): InstrumentIssue[] {
     const issues: InstrumentIssue[] = [];
     if (!observableAnchor.test(`${node.scenario} ${node.prompt}`)) issues.push(issue('warning', 'missing-observation-anchor', node.id, 'O cenário não ancora a resposta em um evento ou período recuperável.'));
     // Vinheta (07 §4.3) e leitura (07 §4.2) são estímulos comuns; leitura já oferece "não sei interpretar".
-    if (!node.id.startsWith('vignette-') && !node.id.startsWith('literacy-') && !node.id.startsWith('list-')
+    if (!node.id.startsWith('vignette-') && !node.id.startsWith('literacy-') && !node.id.startsWith('list-') && !node.id.startsWith('free-text-')
       && !node.options.some((option) => option.observation === 'visibility')) {
       issues.push(issue('error', 'missing-visibility-exit', node.id, 'A pergunta precisa permitir que a pessoa declare não observar a situação sem produzir sinal.'));
     }
