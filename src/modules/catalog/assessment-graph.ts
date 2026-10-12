@@ -307,6 +307,21 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'qa-risk-feedback', label: 'Em minutos, com verificações escolhidas pelo risco da mudança e retorno confiável.', signals: [{ capability: 'qualidade', pattern: 'qa-feedback-por-risco', weight: 2, details: ['quality-strategy'], layer: 'practice', constraint: 'none' }] },
       { id: 'qa-production-guided', label: 'O sinal veio de testes e monitores ligados a incidentes ou uso real; a suíte mudou com o que falhou.', signals: [{ capability: 'qualidade', pattern: 'qa-guiado-por-producao', weight: 2, details: ['quality-strategy', 'observability-practice'], layer: 'outcome', constraint: 'none' }] },
     ],
+    next: 'quality-flaky-pressure',
+  },
+  {
+    id: 'quality-flaky-pressure',
+    type: 'probe',
+    pressure: true,
+    title: 'Quando o teste falha sem motivo aparente',
+    scenario: 'Da última vez que um teste falhou sem motivo aparente — o sinal vermelho não batia com uma mudança óbvia.',
+    prompt: 'O que aconteceu?',
+    options: [
+      { id: 'flaky-rerun', label: 'Rodamos de novo até passar e seguimos.', signals: [{ capability: 'qualidade', pattern: 'qa-flaky-rerun', weight: -2, details: ['quality-strategy', 'sdlc-automation'], layer: 'practice', constraint: 'none' }] },
+      { id: 'flaky-disable', label: 'Desativamos o teste ou o marcamos para ignorar.', signals: [{ capability: 'qualidade', pattern: 'qa-flaky-desativado', weight: -2, details: ['quality-strategy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'flaky-investigated', label: 'Alguém investigou a causa e corrigiu o teste ou o produto.', signals: [{ capability: 'qualidade', pattern: 'qa-flaky-investigado', weight: 2, details: ['quality-strategy', 'sdlc-automation'], layer: 'practice', constraint: 'none' }] },
+      { id: 'flaky-process', label: 'Existe um processo: quarentena, dono, prazo e retorno do teste à suíte.', signals: [{ capability: 'qualidade', pattern: 'qa-flaky-processo', weight: 2, details: ['quality-strategy', 'organizational-learning'], layer: 'consistency', constraint: 'none' }] },
+    ],
     next: 'release-control',
   },
   {
@@ -1333,7 +1348,8 @@ export function validateEventReconstruction(definition: EventReconstructionDefin
 const skipObservational: Record<string, string> = {
   'ready-to-release': 'integration-cadence',
   'integration-cadence': 'quality-break-detection',
-  'quality-break-detection': 'release-control',
+  'quality-break-detection': 'quality-flaky-pressure',
+  'quality-flaky-pressure': 'release-control',
   'incident-triage': 'incident-diagnosis',
   'incident-diagnosis': 'incident-remediation',
   'chaos-dependency-exercise': 'recurrence',
@@ -1469,6 +1485,10 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'quality-break-detection') return [
+    { from: node.id, to: 'quality-flaky-pressure' },
+    ...skipEdges(node, skipObservational[node.id]!),
+  ];
+  if (node.id === 'quality-flaky-pressure') return [
     { from: node.id, to: 'release-control' },
     ...skipEdges(node, skipObservational[node.id]!),
   ];

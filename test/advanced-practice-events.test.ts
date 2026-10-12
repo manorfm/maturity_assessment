@@ -84,6 +84,34 @@ test('pergunta de evento de QA declara F0–F5 na prática quality-automation', 
   assert.equal(qa!.phase, 4);
 });
 
+test('pressão de flaky declara gestão de instabilidade na prática quality-automation', () => {
+  const node = graph.find((item) => item.id === 'quality-flaky-pressure');
+  assert.ok(node);
+  assert.equal(node!.pressure, true);
+  const byPattern = new Map<string, number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'quality-automation');
+    assert.equal(link!.sophistication, event!.phase);
+    byPattern.set(link!.pattern, event!.phase);
+  }
+  assert.equal(byPattern.get('qa-flaky-desativado'), 0);
+  assert.equal(byPattern.get('qa-flaky-rerun'), 1);
+  assert.equal(byPattern.get('qa-flaky-investigado'), 3);
+  assert.equal(byPattern.get('qa-flaky-processo'), 4);
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'quality', nodeId: 'quality-flaky-pressure', optionId: 'flaky-process' },
+  ];
+  const qa = advancedPracticePhasesById(observations).get('quality-automation');
+  assert.ok(qa);
+  assert.equal(qa!.phase, 4);
+});
+
 test('pergunta de evento de AI-DLC declara F0–F5 e só aparece quando há assistência', () => {
   const node = graph.find((item) => item.id === 'ai-dlc-verification');
   assert.ok(node);

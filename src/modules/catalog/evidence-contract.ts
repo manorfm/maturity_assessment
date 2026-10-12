@@ -250,6 +250,10 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'qa-minutos-antes-integrar': 3,
   'qa-feedback-por-risco': 4,
   'qa-guiado-por-producao': 5,
+  'qa-flaky-desativado': 0,
+  'qa-flaky-rerun': 1,
+  'qa-flaky-investigado': 3,
+  'qa-flaky-processo': 4,
 
   // 22 §4.4–§4.6 AI-DLC (prática avançada)
   'ai-dlc-sem-verificacao': 0,

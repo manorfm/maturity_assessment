@@ -27,6 +27,11 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'qa-minutos-antes-integrar': { practiceId: 'quality-automation', phase: 3 },
   'qa-feedback-por-risco': { practiceId: 'quality-automation', phase: 4 },
   'qa-guiado-por-producao': { practiceId: 'quality-automation', phase: 5 },
+  // Pressão: gestão de flaky (22 §3.4)
+  'qa-flaky-desativado': { practiceId: 'quality-automation', phase: 0 },
+  'qa-flaky-rerun': { practiceId: 'quality-automation', phase: 1 },
+  'qa-flaky-investigado': { practiceId: 'quality-automation', phase: 3 },
+  'qa-flaky-processo': { practiceId: 'quality-automation', phase: 4 },
 
   // AI-DLC (22 §4.4–§4.6)
   'ai-dlc-sem-verificacao': { practiceId: 'ai-dlc', phase: 0 },

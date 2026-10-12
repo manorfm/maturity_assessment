@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-11 — Pressão de flaky na automação de QA (WP20)
+
+- `quality-flaky-pressure` após detecção de quebra; gestão de
+  instabilidade na fase de `quality-automation`. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-11 — Pergunta de evento de AI-DLC (WP20)
 
 - `ai-dlc-verification` (F0–F5) após contexto de assistência; fase de
