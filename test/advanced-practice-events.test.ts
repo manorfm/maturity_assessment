@@ -135,3 +135,25 @@ test('pergunta de evento de AI-DLC declara F0–F5 e só aparece quando há assi
   assert.ok(ai);
   assert.equal(ai!.phase, 4);
 });
+
+test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
+  const node = graph.find((item) => item.id === 'ai-dlc-generalization');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'ai-dlc');
+    assert.equal(link!.layer, 'consistency');
+    phases.add(event!.phase);
+  }
+  assert.ok(phases.has(1) && phases.has(2) && phases.has(4));
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'platform', nodeId: 'ai-dlc-generalization', optionId: 'ai-gen-yes' },
+  ];
+  assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
+});

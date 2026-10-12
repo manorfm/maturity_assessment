@@ -40,6 +40,10 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'ai-dlc-testes-existentes': { practiceId: 'ai-dlc', phase: 3 },
   'ai-dlc-criterios-antes': { practiceId: 'ai-dlc', phase: 4 },
   'ai-dlc-ciclos-autonomos': { practiceId: 'ai-dlc', phase: 5 },
+  // Generalização: infra e dados (22 §4.6)
+  'ai-dlc-so-codigo': { practiceId: 'ai-dlc', phase: 1 },
+  'ai-dlc-parcial-superficie': { practiceId: 'ai-dlc', phase: 2 },
+  'ai-dlc-generaliza-superficies': { practiceId: 'ai-dlc', phase: 4 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-12 — Generalização AI-DLC para infra e dados (WP20)
+
+- `ai-dlc-generalization` após verificação; consistência do padrão em
+  infra/dados na fase de `ai-dlc`. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-11 — Pressão de flaky na automação de QA (WP20)
 
 - `quality-flaky-pressure` após detecção de quebra; gestão de

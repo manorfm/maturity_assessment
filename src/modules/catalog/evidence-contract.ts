@@ -262,6 +262,9 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'ai-dlc-testes-existentes': 3,
   'ai-dlc-criterios-antes': 4,
   'ai-dlc-ciclos-autonomos': 5,
+  'ai-dlc-so-codigo': 1,
+  'ai-dlc-parcial-superficie': 2,
+  'ai-dlc-generaliza-superficies': 4,
 
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,

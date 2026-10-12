@@ -264,7 +264,8 @@ fase de automação de qualidade (22 §3.4). Em seguida, a pressão
 motivo aparente (rerun, desativar, investigar ou processo com quarentena).
 Quando há assistência de modelo,
 `ai-dlc-verification` pergunta como se soube que a saída estava correta
-(22 §4.6) e declara a fase de AI-DLC sem subir o índice.
+(22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo padrão vale para
+infraestrutura e dados; ambas declaram a fase de AI-DLC sem subir o índice.
 
 ### Objetivo, bloqueio e decisão
 

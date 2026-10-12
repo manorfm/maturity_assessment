@@ -885,6 +885,20 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'ai-criteria-first', label: 'Testes e critérios de conclusão foram definidos antes da tarefa; a IA trabalhou contra eles.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-criterios-antes', weight: 2, details: ['planning-refinement', 'sdlc-automation'], layer: 'practice', constraint: 'none' }] },
       { id: 'ai-autonomous-cycles', label: 'Ciclos seguiram até o critério, com guardrails; humanos revisaram o resultado e o efeito foi medido.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-ciclos-autonomos', weight: 2, details: ['sdlc-automation', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
     ],
+    next: 'ai-dlc-generalization',
+  },
+  {
+    id: 'ai-dlc-generalization',
+    type: 'probe',
+    title: 'Infraestrutura e dados com a mesma verificação',
+    scenario: 'Você acabou de descrever como se soube que uma saída assistida por IA estava correta no trabalho de código ou aplicação.',
+    prompt: 'Isso também vale para mudanças de infraestrutura e de dados?',
+    options: [
+      { id: 'ai-gen-yes', label: 'Sim: o mesmo critério, portões e revisão valem quando a assistência mexe em infraestrutura ou dados.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-generaliza-superficies', weight: 2, details: ['sdlc-automation', 'reproducible-infrastructure', 'integration-data'], layer: 'consistency', constraint: 'none' }] },
+      { id: 'ai-gen-partial', label: 'Em parte: código tem portões claros; infraestrutura ou dados ficam com verificação mais solta ou manual.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-parcial-superficie', weight: -1, details: ['sdlc-automation', 'reproducible-infrastructure'], layer: 'consistency', constraint: 'none' }] },
+      { id: 'ai-gen-code-only', label: 'Não: só o código de aplicação segue esse padrão; o restante depende de quem executa.', signals: [{ capability: 'engenharia', pattern: 'ai-dlc-so-codigo', weight: -2, details: ['sdlc-automation'], layer: 'consistency', constraint: 'none' }] },
+      { ...notApplicableEvent, label: 'Não acompanho mudanças de infraestrutura ou de dados assistidas por IA.' },
+    ],
     next: 'ai-practice',
   },
   {
@@ -1463,6 +1477,10 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     ...skipEdges(node, 'accidental-complexity'),
   ];
   if (node.id === 'ai-dlc-verification') return [
+    { from: node.id, to: 'ai-dlc-generalization' },
+    ...skipEdges(node, 'ai-dlc-generalization'),
+  ];
+  if (node.id === 'ai-dlc-generalization') return [
     { from: node.id, to: 'ai-practice' },
     ...skipEdges(node, 'ai-practice'),
   ];
