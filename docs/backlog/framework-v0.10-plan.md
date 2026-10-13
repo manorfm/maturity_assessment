@@ -54,8 +54,8 @@ selecionável.
 - WP20 (parcial): biblioteca 22 §5 (13 práticas); `p_k` com F;
   adoção prematura no laudo; perguntas de evento de chaos, remediação
   automática, QA (flaky), tronco, entrega contínua, SLO, plataforma,
-  células e AI-DLC (verificação + generalização) no tronco. Eventos das
-  demais práticas (data mesh, Zero Trust, mesh, FinOps) ainda abertos.
+  células, data mesh e AI-DLC (verificação + generalização) no tronco.
+  Eventos das demais práticas (Zero Trust, mesh, FinOps) ainda abertos.
 - WP21 (parcial): `enablementCatalog` com arestas de 23 §3.3;
   `P(desbloqueado)` por produto das essenciais; fronteira/perto/bloqueado;
   walkthrough restringe próxima fase à fronteira; condutas com

@@ -314,6 +314,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'cell-falha-contida': 4,
   'cell-limites-evoluem': 5,
 
+  // 22 §5 Data mesh (prática avançada)
+  'mesh-central-fila': 0,
+  'mesh-repositorio-sem-dono': 1,
+  'mesh-copias-divergem': 2,
+  'mesh-dominio-contrato': 3,
+  'mesh-governanca-federada': 4,
+  'mesh-efeito-plataforma': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

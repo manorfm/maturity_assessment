@@ -92,6 +92,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'cell-limite-dono-contrato': { practiceId: 'cell-architecture', phase: 3 },
   'cell-falha-contida': { practiceId: 'cell-architecture', phase: 4 },
   'cell-limites-evoluem': { practiceId: 'cell-architecture', phase: 5 },
+
+  // Data mesh (22 §5)
+  'mesh-central-fila': { practiceId: 'data-mesh', phase: 0 },
+  'mesh-repositorio-sem-dono': { practiceId: 'data-mesh', phase: 1 },
+  'mesh-copias-divergem': { practiceId: 'data-mesh', phase: 2 },
+  'mesh-dominio-contrato': { practiceId: 'data-mesh', phase: 3 },
+  'mesh-governanca-federada': { practiceId: 'data-mesh', phase: 4 },
+  'mesh-efeito-plataforma': { practiceId: 'data-mesh', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

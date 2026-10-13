@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de data mesh (WP20)
+
+- `data-mesh-domain` após evolução de contratos e dados; F0–F5 de
+  `data-mesh` (22 §5) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-13 — Pergunta de evento de arquitetura em células (WP20)
 
 - `cell-architecture-boundary` após complexidade acidental; F0–F5 de

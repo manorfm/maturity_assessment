@@ -158,6 +158,49 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de data mesh declara F0–F5 na prática data-mesh', () => {
+  const node = graph.find((item) => item.id === 'data-mesh-domain');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'data-mesh');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'integration-data');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const contract = graph.find((item) => item.id === 'data-contract-change');
+  assert.equal(contract?.next, 'data-mesh-domain');
+  assert.equal(node!.next, 'reliability-objective');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'data', nodeId: 'data-mesh-domain', optionId: 'mesh-federated' },
+    { participantId: 'b', unitId: 'u1', profile: 'platform', nodeId: 'data-mesh-domain', optionId: 'mesh-federated' },
+  ];
+  const practicePhase = advancedPracticePhasesById(observations).get('data-mesh');
+  assert.ok(practicePhase);
+  assert.equal(practicePhase!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'data-mesh')!;
+  const leaves = {
+    'data-mesh': { phaseDistribution: practicePhase!.distribution, phase: practicePhase!.phase },
+    'integration-data': { distribution: peaked(1) },
+    'team-ownership': { distribution: peaked(1) },
+    'enabling-governance': { distribution: peaked(1) },
+    'technical-capability': { distribution: peaked(1) },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'data-mesh'));
+});
+
 test('pergunta de evento de arquitetura em células declara F0–F5 na prática cell-architecture', () => {
   const node = graph.find((item) => item.id === 'cell-architecture-boundary');
   assert.ok(node);
