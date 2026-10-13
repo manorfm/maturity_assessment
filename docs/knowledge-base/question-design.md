@@ -293,8 +293,11 @@ com governança federada → efeito na plataforma) e declara a fase de data
 mesh (22 §5) sem subir o índice. Após a prática de credencial,
 `zero-trust-access` pergunta como o último acesso entre sistemas foi
 decidido (confiança na rede → identidade e contexto → risco dinâmico) e
-declara a fase de Zero Trust (22 §5 / 24 §6.3) sem subir o índice. Quando
-há assistência de modelo,
+declara a fase de Zero Trust (22 §5 / 24 §6.3) sem subir o índice. Após a
+dependência lenta, `service-mesh-communication` pergunta como as partes se
+falaram sob pressão (chamada sem limite → padrão da plataforma → exposição
+e isolamento → política adaptativa) e declara a fase de service mesh
+(22 §5 / 24 §7.2) sem subir o índice. Quando há assistência de modelo,
 `ai-dlc-verification` pergunta como se soube que a saída estava correta
 (22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo padrão vale para
 infraestrutura e dados; ambas declaram a fase de AI-DLC sem subir o

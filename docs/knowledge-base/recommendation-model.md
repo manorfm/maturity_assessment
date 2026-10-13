@@ -145,7 +145,8 @@ tronco (`trunk-based-integration`, 22 §5 / 12 §3.3), entrega contínua
 (`slo-error-budget-policy`, 22 §5), plataforma como produto
 (`platform-as-product-offer`, 22 §5), arquitetura em células
 (`cell-architecture-boundary`, 22 §5), data mesh (`data-mesh-domain`,
-22 §5), Zero Trust (`zero-trust-access`, 22 §5 / 24 §6.3) e AI-DLC
+22 §5), Zero Trust (`zero-trust-access`, 22 §5 / 24 §6.3), service mesh
+(`service-mesh-communication`, 22 §5 / 24 §7.2) e AI-DLC
 (`ai-dlc-verification` + generalização `ai-dlc-generalization`, 22 §4.6)
 declaram F da prática sem alterar o índice (R28); a fase alimenta
 prontidão e adoção prematura.

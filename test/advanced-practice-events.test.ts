@@ -158,6 +158,49 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de service mesh declara F0–F5 na prática service-mesh', () => {
+  const node = graph.find((item) => item.id === 'service-mesh-communication');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'service-mesh');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'platform-autonomy');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const dependency = graph.find((item) => item.id === 'dependency-practice');
+  assert.equal(dependency?.next, 'service-mesh-communication');
+  assert.equal(node!.next, 'incentive-context');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'platform', nodeId: 'service-mesh-communication', optionId: 'sm-progressive' },
+    { participantId: 'b', unitId: 'u1', profile: 'engineering', nodeId: 'service-mesh-communication', optionId: 'sm-progressive' },
+  ];
+  const practicePhase = advancedPracticePhasesById(observations).get('service-mesh');
+  assert.ok(practicePhase);
+  assert.equal(practicePhase!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'service-mesh')!;
+  const leaves = {
+    'service-mesh': { phaseDistribution: practicePhase!.distribution, phase: practicePhase!.phase },
+    'reproducible-infrastructure': { distribution: peaked(1), phase: 1 },
+    'observability-practice': { distribution: peaked(1), phase: 1 },
+    'platform-autonomy': { distribution: peaked(1) },
+    'team-ownership': { distribution: peaked(1) },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'service-mesh'));
+});
+
 test('pergunta de evento de Zero Trust declara F0–F5 na prática zero-trust', () => {
   const node = graph.find((item) => item.id === 'zero-trust-access');
   assert.ok(node);

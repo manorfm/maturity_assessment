@@ -330,6 +330,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'zt-contexto-por-chamada': 4,
   'zt-risco-dinamico': 5,
 
+  // 22 §5 / 24 §7.2 Service mesh (prática avançada)
+  'mesh-chamada-sem-limite': 0,
+  'mesh-tratamento-ad-hoc': 1,
+  'mesh-biblioteca-padrao': 2,
+  'mesh-plataforma-comum': 3,
+  'mesh-exposicao-isolamento': 4,
+  'mesh-politica-adaptativa': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,
