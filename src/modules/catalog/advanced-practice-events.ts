@@ -52,6 +52,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'cd-automatizado-reversivel': { practiceId: 'continuous-delivery', phase: 3 },
   'cd-canary-slo': { practiceId: 'continuous-delivery', phase: 4 },
   'cd-promocao-aprendizado': { practiceId: 'continuous-delivery', phase: 5 },
+
+  // Desenvolvimento no tronco (22 §5 / 12 §3.3)
+  'trunk-lote-final': { practiceId: 'trunk-based', phase: 0 },
+  'trunk-merge-janela': { practiceId: 'trunk-based', phase: 1 },
+  'trunk-branches-semana': { practiceId: 'trunk-based', phase: 2 },
+  'trunk-diario': { practiceId: 'trunk-based', phase: 3 },
+  'trunk-libera-desacoplada': { practiceId: 'trunk-based', phase: 4 },
+  'trunk-risco-adaptativo': { practiceId: 'trunk-based', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

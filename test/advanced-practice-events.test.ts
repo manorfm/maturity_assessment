@@ -158,6 +158,47 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de desenvolvimento no tronco declara F0–F5 na prática trunk-based', () => {
+  const node = graph.find((item) => item.id === 'trunk-based-integration');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'trunk-based');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'continuous-integration');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  assert.equal(node!.next, 'quality-break-detection');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'engineering', nodeId: 'trunk-based-integration', optionId: 'trunk-decoupled' },
+    { participantId: 'b', unitId: 'u1', profile: 'platform', nodeId: 'trunk-based-integration', optionId: 'trunk-decoupled' },
+  ];
+  const trunk = advancedPracticePhasesById(observations).get('trunk-based');
+  assert.ok(trunk);
+  assert.equal(trunk!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'trunk-based')!;
+  const leaves = {
+    'trunk-based': { phaseDistribution: trunk!.distribution, phase: trunk!.phase },
+    'continuous-integration': { distribution: peaked(1), phase: 1 },
+    'release-feedback': { distribution: peaked(1), phase: 1 },
+    'quality-strategy': { distribution: peaked(1), phase: 1 },
+    'sdlc-automation': { distribution: peaked(1), phase: 1 },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'trunk-based'));
+});
+
 test('pergunta de evento de entrega contínua declara F0–F5 na prática continuous-delivery', () => {
   const node = graph.find((item) => item.id === 'continuous-delivery-cadence');
   assert.ok(node);

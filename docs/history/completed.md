@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de desenvolvimento no tronco (WP20)
+
+- `trunk-based-integration` após cadência de integração; F0–F5 de
+  `trunk-based` (12 §3.3) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-12 — Pergunta de evento de entrega contínua (WP20)
 
 - `continuous-delivery-cadence` após `release-control`; F0–F5 de

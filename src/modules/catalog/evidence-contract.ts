@@ -274,6 +274,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'cd-canary-slo': 4,
   'cd-promocao-aprendizado': 5,
 
+  // 22 §5 / 12 §3.3 Desenvolvimento no tronco (prática avançada)
+  'trunk-lote-final': 0,
+  'trunk-merge-janela': 1,
+  'trunk-branches-semana': 2,
+  'trunk-diario': 3,
+  'trunk-libera-desacoplada': 4,
+  'trunk-risco-adaptativo': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

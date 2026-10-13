@@ -294,6 +294,23 @@ const authoredNodes: AssessmentNode[] = [
     ],
   },
   {
+    id: 'trunk-based-integration',
+    type: 'probe',
+    title: 'Como a mudança encontrou as outras',
+    scenario: 'Na última alteração que você acompanhou de perto, outras mudanças ainda estavam em andamento quando a sua precisou encontrar a versão compartilhada.',
+    prompt: 'Como isso aconteceu na prática?',
+    options: [
+      { id: 'trunk-batch', label: 'Só no fim, em lote, com várias mudanças juntadas de uma vez.', signals: [{ capability: 'engenharia', pattern: 'trunk-lote-final', weight: -2, details: ['continuous-integration'], layer: 'practice', constraint: 'none' }] },
+      { id: 'trunk-window', label: 'Alguém juntou ou compilou à mão em uma janela combinada.', signals: [{ capability: 'engenharia', pattern: 'trunk-merge-janela', weight: -1, details: ['continuous-integration'], layer: 'practice', constraint: 'none' }] },
+      { id: 'trunk-weekly', label: 'Cada um avançou em um ramo separado; a junção com a versão compartilhada ocorreu cerca de uma vez por semana.', signals: [{ capability: 'engenharia', pattern: 'trunk-branches-semana', weight: 0, details: ['continuous-integration'], layer: 'practice', constraint: 'none' }] },
+      { id: 'trunk-daily', label: 'Mudanças pequenas entraram na versão compartilhada no mesmo dia, com verificação rápida.', signals: [{ capability: 'engenharia', pattern: 'trunk-diario', weight: 2, details: ['continuous-integration'], layer: 'practice', constraint: 'none' }] },
+      { id: 'trunk-decoupled', label: 'Entrou na versão compartilhada sem expor o comportamento, e a liberação ficou controlada à parte; se a verificação quebrou, todos pararam para corrigir.', signals: [{ capability: 'engenharia', pattern: 'trunk-libera-desacoplada', weight: 2, details: ['continuous-integration', 'release-feedback'], layer: 'practice', constraint: 'none' }] },
+      { id: 'trunk-adaptive', label: 'O caminho de verificação mudou conforme o risco da mudança, e o que aprendemos ajustou o que se verifica depois.', signals: [{ capability: 'engenharia', pattern: 'trunk-risco-adaptativo', weight: 2, details: ['continuous-integration', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { ...notApplicableEvent, label: 'Não acompanho como mudanças encontram a versão compartilhada.' },
+    ],
+    next: 'quality-break-detection',
+  },
+  {
     id: 'quality-break-detection',
     type: 'probe',
     title: 'Quando a mudança quebrou algo',
@@ -1378,7 +1395,8 @@ export function validateEventReconstruction(definition: EventReconstructionDefin
 
 const skipObservational: Record<string, string> = {
   'ready-to-release': 'integration-cadence',
-  'integration-cadence': 'quality-break-detection',
+  'integration-cadence': 'trunk-based-integration',
+  'trunk-based-integration': 'quality-break-detection',
   'quality-break-detection': 'quality-flaky-pressure',
   'quality-flaky-pressure': 'release-control',
   'incident-triage': 'incident-diagnosis',
@@ -1513,10 +1531,14 @@ export const edges: AssessmentEdge[] = graph.flatMap((node) => {
     { from: node.id, optionId: 'integrated-few-days', to: 'architecture-pressure', when: { tracksAny: ['delivery'] } },
     { from: node.id, optionId: 'isolated-days', to: 'delivery-cause', when: { tracksAny: ['delivery'] } },
     { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause', when: { tracksAny: ['delivery'] } },
-    { from: node.id, optionId: 'integrated-daily', to: 'quality-break-detection' },
-    { from: node.id, optionId: 'integrated-few-days', to: 'quality-break-detection' },
+    { from: node.id, optionId: 'integrated-daily', to: 'trunk-based-integration' },
+    { from: node.id, optionId: 'integrated-few-days', to: 'trunk-based-integration' },
     { from: node.id, optionId: 'isolated-days', to: 'delivery-cause' },
     { from: node.id, optionId: 'coordinated-window', to: 'delivery-cause' },
+    ...skipEdges(node, skipObservational[node.id]!),
+  ];
+  if (node.id === 'trunk-based-integration') return [
+    { from: node.id, to: 'quality-break-detection' },
     ...skipEdges(node, skipObservational[node.id]!),
   ];
   if (node.id === 'quality-break-detection') return [
