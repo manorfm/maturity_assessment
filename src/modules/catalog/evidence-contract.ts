@@ -306,6 +306,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'aiops-auto-conhecido': 4,
   'aiops-humano-melhora': 5,
 
+  // 22 §5 Arquitetura em células ou microsserviços (prática avançada)
+  'cell-monolito-acoplado': 0,
+  'cell-nomes-sem-independencia': 1,
+  'cell-partes-dado-compartilhado': 2,
+  'cell-limite-dono-contrato': 3,
+  'cell-falha-contida': 4,
+  'cell-limites-evoluem': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

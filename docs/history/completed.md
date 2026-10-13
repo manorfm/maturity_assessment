@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de arquitetura em células (WP20)
+
+- `cell-architecture-boundary` após complexidade acidental; F0–F5 de
+  `cell-architecture` (22 §5) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-13 — Pergunta de evento de remediação automática (WP20)
 
 - `aiops-auto-remediation` após correção no incidente; F0–F5 de

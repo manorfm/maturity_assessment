@@ -143,7 +143,8 @@ remediação automática (`aiops-auto-remediation`, 22 §5), QA
 tronco (`trunk-based-integration`, 22 §5 / 12 §3.3), entrega contínua
 (`continuous-delivery-cadence`, 22 §5 / 12 §3.4), SLO com error budget
 (`slo-error-budget-policy`, 22 §5), plataforma como produto
-(`platform-as-product-offer`, 22 §5) e AI-DLC (`ai-dlc-verification` +
+(`platform-as-product-offer`, 22 §5), arquitetura em células
+(`cell-architecture-boundary`, 22 §5) e AI-DLC (`ai-dlc-verification` +
 generalização `ai-dlc-generalization`, 22 §4.6) declaram F da prática sem
 alterar o índice (R28); a fase alimenta prontidão e adoção prematura.
 O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia

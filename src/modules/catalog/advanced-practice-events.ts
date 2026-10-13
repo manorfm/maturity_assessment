@@ -84,6 +84,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'aiops-humano-dispara': { practiceId: 'aiops-remediation', phase: 3 },
   'aiops-auto-conhecido': { practiceId: 'aiops-remediation', phase: 4 },
   'aiops-humano-melhora': { practiceId: 'aiops-remediation', phase: 5 },
+
+  // Arquitetura em células ou microsserviços (22 §5)
+  'cell-monolito-acoplado': { practiceId: 'cell-architecture', phase: 0 },
+  'cell-nomes-sem-independencia': { practiceId: 'cell-architecture', phase: 1 },
+  'cell-partes-dado-compartilhado': { practiceId: 'cell-architecture', phase: 2 },
+  'cell-limite-dono-contrato': { practiceId: 'cell-architecture', phase: 3 },
+  'cell-falha-contida': { practiceId: 'cell-architecture', phase: 4 },
+  'cell-limites-evoluem': { practiceId: 'cell-architecture', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

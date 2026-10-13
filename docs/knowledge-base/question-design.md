@@ -282,7 +282,12 @@ de error budget (22 §5) sem subir o índice. No ramo de plataforma, após
 o aprendizado do caminho, `platform-as-product-offer` pergunta como a
 última oferta comum foi tratada (sem oferta → autosserviço → prioridade
 com consumidores → efeito contínuo) e declara a fase de plataforma como
-produto (22 §5) sem subir o índice. Quando há assistência de modelo,
+produto (22 §5) sem subir o índice. Após complexidade acidental,
+`cell-architecture-boundary` pergunta como partes mantidas por grupos
+diferentes se comportaram na última mudança que as atravessou (acopladas
+→ falha contida → limites que evoluem com evidência) e declara a fase de
+arquitetura em células (22 §5) sem subir o índice. Quando há assistência
+de modelo,
 `ai-dlc-verification` pergunta como se soube que a saída estava correta
 (22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo padrão vale para
 infraestrutura e dados; ambas declaram a fase de AI-DLC sem subir o

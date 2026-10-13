@@ -158,6 +158,49 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de arquitetura em células declara F0–F5 na prática cell-architecture', () => {
+  const node = graph.find((item) => item.id === 'cell-architecture-boundary');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'cell-architecture');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'evolvability');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const accidental = graph.find((item) => item.id === 'accidental-complexity');
+  assert.equal(accidental?.next, 'cell-architecture-boundary');
+  assert.equal(node!.next, 'noisy-signal');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'architecture', nodeId: 'cell-architecture-boundary', optionId: 'cell-contained' },
+    { participantId: 'b', unitId: 'u1', profile: 'engineering', nodeId: 'cell-architecture-boundary', optionId: 'cell-contained' },
+  ];
+  const practicePhase = advancedPracticePhasesById(observations).get('cell-architecture');
+  assert.ok(practicePhase);
+  assert.equal(practicePhase!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'cell-architecture')!;
+  const leaves = {
+    'cell-architecture': { phaseDistribution: practicePhase!.distribution, phase: practicePhase!.phase },
+    'team-ownership': { distribution: peaked(1) },
+    'observability-practice': { distribution: peaked(1), phase: 1 },
+    'release-feedback': { distribution: peaked(1), phase: 1 },
+    'integration-data': { distribution: peaked(1) },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'cell-architecture'));
+});
+
 test('pergunta de evento de remediação automática declara F0–F5 na prática aiops-remediation', () => {
   const node = graph.find((item) => item.id === 'aiops-auto-remediation');
   assert.ok(node);
