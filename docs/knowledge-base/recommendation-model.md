@@ -138,7 +138,8 @@ inventa índice. A biblioteca 22 §5 (13 práticas) entra na página de
 prontidão. **Adoção prematura** (F da prática ≥ 3 e algum essencial com
 `p_k < 0,3`) vira achado de risco no laudo com conduta de reduzir escopo.
 As perguntas de evento de chaos (`chaos-dependency-exercise`, 22 §2.5),
-QA (`quality-break-detection` + pressão `quality-flaky-pressure`, 22 §3.4),
+remediação automática (`aiops-auto-remediation`, 22 §5), QA
+(`quality-break-detection` + pressão `quality-flaky-pressure`, 22 §3.4),
 tronco (`trunk-based-integration`, 22 §5 / 12 §3.3), entrega contínua
 (`continuous-delivery-cadence`, 22 §5 / 12 §3.4), SLO com error budget
 (`slo-error-budget-policy`, 22 §5), plataforma como produto

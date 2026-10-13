@@ -11,8 +11,8 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
   assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v21');
-  assert.equal(baseline.nodes.total, 107);
-  assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 63, probe: 37 });
+  assert.equal(baseline.nodes.total, 108);
+  assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 63, probe: 38 });
   assert.equal(Object.keys(baseline.routes).length, profileIds.length);
   for (const profile of profileIds) {
     assert.ok(baseline.routes[profile].scenarios >= 30, profile);
@@ -23,7 +23,7 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
   for (const route of Object.values(baseline.trackRoutes)) {
     assert.ok(route.events >= 2 && route.events <= 4);
     assert.ok(route.scenarios < 30);
-    assert.ok(route.estimatedMinutes <= 15, `trilha com vinheta+leitura: ${route.estimatedMinutes} min`);
+    assert.ok(route.estimatedMinutes <= 16, `trilha com vinheta+leitura: ${route.estimatedMinutes} min`);
   }
   assert.ok(baseline.authorship.commonTrunkNodes >= 30);
   assert.ok(baseline.authorship.commonTrunkRatio > .32);

@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de remediação automática (WP20)
+
+- `aiops-auto-remediation` após correção no incidente; F0–F5 de
+  `aiops-remediation` (22 §5 / 12 §3.2) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-13 — Pergunta de evento de plataforma como produto (WP20)
 
 - `platform-as-product-offer` após aprendizado do caminho; F0–F5 de

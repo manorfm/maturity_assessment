@@ -298,6 +298,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'plat-produto-consumidor': 4,
   'plat-efeito-continuo': 5,
 
+  // 22 §5 / 12 §3.2 Remediação automática (prática avançada)
+  'aiops-manual-ad-hoc': 0,
+  'aiops-instrucao-chat': 1,
+  'aiops-roteiro-humano': 2,
+  'aiops-humano-dispara': 3,
+  'aiops-auto-conhecido': 4,
+  'aiops-humano-melhora': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

@@ -76,6 +76,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'plat-autosservico': { practiceId: 'platform-as-product', phase: 3 },
   'plat-produto-consumidor': { practiceId: 'platform-as-product', phase: 4 },
   'plat-efeito-continuo': { practiceId: 'platform-as-product', phase: 5 },
+
+  // Remediação automática / AIOps (22 §5 / 12 §3.2 F5)
+  'aiops-manual-ad-hoc': { practiceId: 'aiops-remediation', phase: 0 },
+  'aiops-instrucao-chat': { practiceId: 'aiops-remediation', phase: 1 },
+  'aiops-roteiro-humano': { practiceId: 'aiops-remediation', phase: 2 },
+  'aiops-humano-dispara': { practiceId: 'aiops-remediation', phase: 3 },
+  'aiops-auto-conhecido': { practiceId: 'aiops-remediation', phase: 4 },
+  'aiops-humano-melhora': { practiceId: 'aiops-remediation', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

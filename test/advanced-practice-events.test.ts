@@ -158,6 +158,49 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de remediação automática declara F0–F5 na prática aiops-remediation', () => {
+  const node = graph.find((item) => item.id === 'aiops-auto-remediation');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'aiops-remediation');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'incident-management');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const remediation = graph.find((item) => item.id === 'incident-remediation');
+  assert.equal(remediation?.next, 'aiops-auto-remediation');
+  assert.equal(node!.next, 'chaos-dependency-exercise');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'platform', nodeId: 'aiops-auto-remediation', optionId: 'aiops-auto' },
+    { participantId: 'b', unitId: 'u1', profile: 'engineering', nodeId: 'aiops-auto-remediation', optionId: 'aiops-auto' },
+  ];
+  const practicePhase = advancedPracticePhasesById(observations).get('aiops-remediation');
+  assert.ok(practicePhase);
+  assert.equal(practicePhase!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'aiops-remediation')!;
+  const leaves = {
+    'aiops-remediation': { phaseDistribution: practicePhase!.distribution, phase: practicePhase!.phase },
+    'observability-practice': { distribution: peaked(1), phase: 1 },
+    'incident-management': { distribution: peaked(1), phase: 1 },
+    'release-feedback': { distribution: peaked(1), phase: 1 },
+    'reliability-practice': { distribution: peaked(1) },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'aiops-remediation'));
+});
+
 test('pergunta de evento de plataforma como produto declara F0–F5 na prática platform-as-product', () => {
   const node = graph.find((item) => item.id === 'platform-as-product-offer');
   assert.ok(node);
