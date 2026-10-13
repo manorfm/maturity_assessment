@@ -1276,6 +1276,23 @@ const authoredNodes: AssessmentNode[] = [
       { id: 'tickets-drive-roadmap', label: 'Chamados e pedidos mais frequentes orientam melhorias; quem contorna ou deixa de tentar não aparece na decisão.', signals: [{ capability: 'plataforma', pattern: 'suporte-substitui-feedback-de-produto-interno', weight: -1, details: ['platform-autonomy', 'product-direction'], layer: 'system', constraint: 'process' }] },
       { id: 'exceptions-stay-local', label: 'Exceções permanecem com cada time e só chegam à plataforma quando provocam incidente, custo ou cobrança.', signals: [{ capability: 'plataforma', pattern: 'excecoes-nao-retornam-ao-caminho', weight: -2, details: ['platform-autonomy', 'organizational-learning'], layer: 'system', constraint: 'organization' }] },
     ],
+    next: 'platform-as-product-offer',
+  },
+  {
+    id: 'platform-as-product-offer',
+    type: 'probe',
+    title: 'Como a oferta comum foi tratada',
+    scenario: 'Pense na última capacidade que o time tentou obter por um caminho comum de plataforma, infraestrutura ou operação — ou na última oferta que a plataforma passou a disponibilizar.',
+    prompt: 'Como essa oferta foi tratada na prática?',
+    options: [
+      { id: 'plat-local', label: 'Cada time montou o próprio caminho; não havia oferta comum.', signals: [{ capability: 'plataforma', pattern: 'plat-sem-oferta', weight: -2, details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'plat-queue', label: 'Alguém de uma área central fez por nós, ou o pedido esperou na fila.', signals: [{ capability: 'plataforma', pattern: 'plat-fila-central', weight: -1, details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'plat-docs', label: 'Havia documentação ou modelo; montamos sozinhos e pedimos ajuda quando travamos.', signals: [{ capability: 'plataforma', pattern: 'plat-docs-ajuda', weight: 0, details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'plat-selfserve', label: 'Havia um caminho que outra pessoa do time concluiu sozinha, com limite claro e tempo previsível.', signals: [{ capability: 'plataforma', pattern: 'plat-autosservico', weight: 2, details: ['platform-autonomy'], layer: 'practice', constraint: 'none' }] },
+      { id: 'plat-product', label: 'Quem usa a oferta participou da prioridade; abandono e exceções mudaram o que a plataforma oferece.', signals: [{ capability: 'plataforma', pattern: 'plat-produto-consumidor', weight: 2, details: ['platform-autonomy', 'product-direction'], layer: 'practice', constraint: 'none' }] },
+      { id: 'plat-outcomes', label: 'O efeito no trabalho dos times consumidores revisa a oferta de forma contínua; mudanças são testadas com quem usa.', signals: [{ capability: 'plataforma', pattern: 'plat-efeito-continuo', weight: 2, details: ['platform-autonomy', 'organizational-learning'], layer: 'outcome', constraint: 'none' }] },
+      { ...notApplicableEvent, label: 'Não uso nem ofereço caminhos comuns de plataforma neste ambiente.' },
+    ],
   },
 ];
 

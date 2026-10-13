@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de plataforma como produto (WP20)
+
+- `platform-as-product-offer` após aprendizado do caminho; F0–F5 de
+  `platform-as-product` (22 §5) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-13 — Pergunta de evento de SLO com error budget (WP20)
 
 - `slo-error-budget-policy` após objetivo de confiabilidade; F0–F5 de

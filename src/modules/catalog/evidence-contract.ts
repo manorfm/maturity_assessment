@@ -290,6 +290,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'slo-pausa-entregas': 4,
   'slo-ritmo-continuo': 5,
 
+  // 22 §5 Plataforma como produto (prática avançada)
+  'plat-sem-oferta': 0,
+  'plat-fila-central': 1,
+  'plat-docs-ajuda': 2,
+  'plat-autosservico': 3,
+  'plat-produto-consumidor': 4,
+  'plat-efeito-continuo': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

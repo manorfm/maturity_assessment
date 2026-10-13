@@ -68,6 +68,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'slo-alerta-conversa': { practiceId: 'slo-error-budget', phase: 3 },
   'slo-pausa-entregas': { practiceId: 'slo-error-budget', phase: 4 },
   'slo-ritmo-continuo': { practiceId: 'slo-error-budget', phase: 5 },
+
+  // Plataforma como produto (22 §5)
+  'plat-sem-oferta': { practiceId: 'platform-as-product', phase: 0 },
+  'plat-fila-central': { practiceId: 'platform-as-product', phase: 1 },
+  'plat-docs-ajuda': { practiceId: 'platform-as-product', phase: 2 },
+  'plat-autosservico': { practiceId: 'platform-as-product', phase: 3 },
+  'plat-produto-consumidor': { practiceId: 'platform-as-product', phase: 4 },
+  'plat-efeito-continuo': { practiceId: 'platform-as-product', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

@@ -11,8 +11,8 @@ test('linha de base mede percurso, autoria e profundidade por perspectiva', () =
   const baseline = measureInstrumentBaseline({ graph, nodeVariants, profiles, interventions, foundations: interventionFoundations });
 
   assert.equal(baseline.graphVersion, 'evidence-anamnesis-pilot-v21');
-  assert.equal(baseline.nodes.total, 106);
-  assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 63, probe: 36 });
+  assert.equal(baseline.nodes.total, 107);
+  assert.deepEqual(baseline.nodes.byType, { context: 7, scenario: 63, probe: 37 });
   assert.equal(Object.keys(baseline.routes).length, profileIds.length);
   for (const profile of profileIds) {
     assert.ok(baseline.routes[profile].scenarios >= 30, profile);

@@ -53,9 +53,9 @@ selecionável.
 - WP13, WP14, WP16 a WP19: capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP20 (parcial): biblioteca 22 §5 (13 práticas); `p_k` com F;
   adoção prematura no laudo; perguntas de evento de chaos, QA (flaky),
-  tronco, entrega contínua, SLO e AI-DLC (verificação + generalização)
-  no tronco. Eventos das demais práticas (plataforma, remediação, etc.)
-  ainda abertos.
+  tronco, entrega contínua, SLO, plataforma e AI-DLC (verificação +
+  generalização) no tronco. Eventos das demais práticas (remediação,
+  células, data mesh, etc.) ainda abertos.
 - WP21 (parcial): `enablementCatalog` com arestas de 23 §3.3;
   `P(desbloqueado)` por produto das essenciais; fronteira/perto/bloqueado;
   walkthrough restringe próxima fase à fronteira; condutas com
