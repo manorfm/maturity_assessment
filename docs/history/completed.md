@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de Zero Trust (WP20)
+
+- `zero-trust-access` após prática de credencial; F0–F5 de `zero-trust`
+  (22 §5 / 24 §6.3) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-13 — Pergunta de evento de data mesh (WP20)
 
 - `data-mesh-domain` após evolução de contratos e dados; F0–F5 de

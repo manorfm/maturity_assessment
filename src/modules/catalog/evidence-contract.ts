@@ -322,6 +322,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'mesh-governanca-federada': 4,
   'mesh-efeito-plataforma': 5,
 
+  // 22 §5 / 24 §6.3–§7.3 Zero Trust (prática avançada)
+  'zt-confianca-rede': 0,
+  'zt-perimetro-excecoes': 1,
+  'zt-identidade-pessoas': 2,
+  'zt-identidade-servicos': 3,
+  'zt-contexto-por-chamada': 4,
+  'zt-risco-dinamico': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

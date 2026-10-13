@@ -100,6 +100,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'mesh-dominio-contrato': { practiceId: 'data-mesh', phase: 3 },
   'mesh-governanca-federada': { practiceId: 'data-mesh', phase: 4 },
   'mesh-efeito-plataforma': { practiceId: 'data-mesh', phase: 5 },
+
+  // Zero Trust (22 §5 / 24 §6.3–§7.3)
+  'zt-confianca-rede': { practiceId: 'zero-trust', phase: 0 },
+  'zt-perimetro-excecoes': { practiceId: 'zero-trust', phase: 1 },
+  'zt-identidade-pessoas': { practiceId: 'zero-trust', phase: 2 },
+  'zt-identidade-servicos': { practiceId: 'zero-trust', phase: 3 },
+  'zt-contexto-por-chamada': { practiceId: 'zero-trust', phase: 4 },
+  'zt-risco-dinamico': { practiceId: 'zero-trust', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

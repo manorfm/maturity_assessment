@@ -158,6 +158,49 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de Zero Trust declara F0–F5 na prática zero-trust', () => {
+  const node = graph.find((item) => item.id === 'zero-trust-access');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'zero-trust');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'cloud-security');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const credential = graph.find((item) => item.id === 'credential-practice');
+  assert.equal(credential?.next, 'zero-trust-access');
+  assert.equal(node!.next, 'dependency-context');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'security', nodeId: 'zero-trust-access', optionId: 'zt-context' },
+    { participantId: 'b', unitId: 'u1', profile: 'platform', nodeId: 'zero-trust-access', optionId: 'zt-context' },
+  ];
+  const practicePhase = advancedPracticePhasesById(observations).get('zero-trust');
+  assert.ok(practicePhase);
+  assert.equal(practicePhase!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'zero-trust')!;
+  const leaves = {
+    'zero-trust': { phaseDistribution: practicePhase!.distribution, phase: practicePhase!.phase },
+    'cloud-security': { distribution: peaked(1), phase: 1 },
+    'software-security': { distribution: peaked(1) },
+    'observability-practice': { distribution: peaked(1) },
+    'reproducible-infrastructure': { distribution: peaked(1) },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'zero-trust'));
+});
+
 test('pergunta de evento de data mesh declara F0–F5 na prática data-mesh', () => {
   const node = graph.find((item) => item.id === 'data-mesh-domain');
   assert.ok(node);
