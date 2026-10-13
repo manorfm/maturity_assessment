@@ -266,6 +266,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'ai-dlc-parcial-superficie': 2,
   'ai-dlc-generaliza-superficies': 4,
 
+  // 22 §5 / 12 §3.4 Entrega contínua (prática avançada)
+  'cd-manual-pessoa': 0,
+  'cd-roteiro-janela': 1,
+  'cd-script-aprovacao': 2,
+  'cd-automatizado-reversivel': 3,
+  'cd-canary-slo': 4,
+  'cd-promocao-aprendizado': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

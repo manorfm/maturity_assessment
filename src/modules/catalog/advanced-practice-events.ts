@@ -44,6 +44,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'ai-dlc-so-codigo': { practiceId: 'ai-dlc', phase: 1 },
   'ai-dlc-parcial-superficie': { practiceId: 'ai-dlc', phase: 2 },
   'ai-dlc-generaliza-superficies': { practiceId: 'ai-dlc', phase: 4 },
+
+  // Entrega contínua (22 §5 / 12 §3.4)
+  'cd-manual-pessoa': { practiceId: 'continuous-delivery', phase: 0 },
+  'cd-roteiro-janela': { practiceId: 'continuous-delivery', phase: 1 },
+  'cd-script-aprovacao': { practiceId: 'continuous-delivery', phase: 2 },
+  'cd-automatizado-reversivel': { practiceId: 'continuous-delivery', phase: 3 },
+  'cd-canary-slo': { practiceId: 'continuous-delivery', phase: 4 },
+  'cd-promocao-aprendizado': { practiceId: 'continuous-delivery', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

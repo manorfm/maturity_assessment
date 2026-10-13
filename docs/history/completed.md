@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-12 — Pergunta de evento de entrega contínua (WP20)
+
+- `continuous-delivery-cadence` após `release-control`; F0–F5 de
+  `continuous-delivery` (12 §3.4) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-12 — Generalização AI-DLC para infra e dados (WP20)
 
 - `ai-dlc-generalization` após verificação; consistência do padrão em

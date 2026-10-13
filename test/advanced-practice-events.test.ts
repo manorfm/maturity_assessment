@@ -157,3 +157,47 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   ];
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
+
+test('pergunta de evento de entrega contínua declara F0–F5 na prática continuous-delivery', () => {
+  const node = graph.find((item) => item.id === 'continuous-delivery-cadence');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'continuous-delivery');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'release-feedback');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const releaseControl = graph.find((item) => item.id === 'release-control');
+  assert.equal(releaseControl?.next, 'continuous-delivery-cadence');
+  assert.equal(node!.next, 'release-validation');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'engineering', nodeId: 'continuous-delivery-cadence', optionId: 'cd-canary' },
+    { participantId: 'b', unitId: 'u1', profile: 'platform', nodeId: 'continuous-delivery-cadence', optionId: 'cd-canary' },
+  ];
+  const cd = advancedPracticePhasesById(observations).get('continuous-delivery');
+  assert.ok(cd);
+  assert.equal(cd!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'continuous-delivery')!;
+  const leaves = {
+    'continuous-delivery': { phaseDistribution: cd!.distribution, phase: cd!.phase },
+    'quality-strategy': { distribution: peaked(1), phase: 1 },
+    'release-feedback': { distribution: peaked(1), phase: 1 },
+    'observability-practice': { distribution: peaked(1), phase: 1 },
+    'enabling-governance': { distribution: peaked(1) },
+    'continuous-integration': { distribution: peaked(1), phase: 1 },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'continuous-delivery'));
+});

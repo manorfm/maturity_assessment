@@ -11,7 +11,7 @@ test('auditoria relata todos os problemas editoriais sem parar no primeiro', () 
   const intervention = { title: 'Problema', cause: 'Causa suficientemente descrita.', action: 'Agir.', intervention: 'Agir.', owner: 'Responsável pela capacidade com o time', metric: 'tempo de espera, recorrência e efeito observado na capacidade afetada', reviewHorizon: '30 dias', successCriterion: 'a métrica escolhida melhora no período sem deslocar risco ou espera para outra etapa', evidencePatterns: ['p'], contradictionPatterns: [], foundation: { source: 'Melhoria contínua', principle: 'Revisar', why: 'A intervenção ataca o comportamento observado, não um inventário de práticas.' } } satisfies InterventionDefinition;
   const issues = auditInstrument(nodes, { p: intervention });
   assert.ok(issues.length >= 6);
-  assert.deepEqual(new Set(issues.map((item) => item.code)), new Set(['missing-observation-anchor', 'missing-visibility-exit', 'abstract-prompt', 'compound-option', 'desirability-cue', 'signal-overload', 'missing-evidence', 'generic-success', 'generic-metric', 'generic-owner', 'generic-foundation']));
+  assert.deepEqual(new Set(issues.map((item) => item.code)), new Set(['missing-observation-anchor', 'missing-visibility-exit', 'abstract-prompt', 'compound-option', 'desirability-cue', 'signal-overload', 'missing-evidence', 'generic-success', 'generic-metric', 'generic-owner', 'generic-foundation', 'provisional-lambda']));
 });
 
 test('pergunta sem saída de visibilidade é bloqueada', () => {

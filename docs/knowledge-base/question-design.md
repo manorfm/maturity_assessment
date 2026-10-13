@@ -262,10 +262,14 @@ algo (só em produção → feedback por risco e guiado por produção) e declar
 fase de automação de qualidade (22 §3.4). Em seguida, a pressão
 `quality-flaky-pressure` observa o que acontece quando um teste falha sem
 motivo aparente (rerun, desativar, investigar ou processo com quarentena).
-Quando há assistência de modelo,
-`ai-dlc-verification` pergunta como se soube que a saída estava correta
-(22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo padrão vale para
-infraestrutura e dados; ambas declaram a fase de AI-DLC sem subir o índice.
+Após controlar implantar × liberar, `continuous-delivery-cadence` pergunta
+como a última mudança pronta chegou às pessoas (deploy manual → canary
+ligado a SLO → promoção/reversão que alimenta aprendizado) e declara a fase
+de entrega contínua (22 §5 / 12 §3.4) sem subir o índice. Quando há
+assistência de modelo, `ai-dlc-verification` pergunta como se soube que a
+saída estava correta (22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo
+padrão vale para infraestrutura e dados; ambas declaram a fase de AI-DLC
+sem subir o índice.
 
 ### Objetivo, bloqueio e decisão
 
