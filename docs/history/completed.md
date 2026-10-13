@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de SLO com error budget (WP20)
+
+- `slo-error-budget-policy` após objetivo de confiabilidade; F0–F5 de
+  `slo-error-budget` (22 §5) alimenta prontidão. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-13 — Pergunta de evento de desenvolvimento no tronco (WP20)
 
 - `trunk-based-integration` após cadência de integração; F0–F5 de

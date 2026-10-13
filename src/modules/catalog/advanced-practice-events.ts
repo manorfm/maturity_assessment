@@ -60,6 +60,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'trunk-diario': { practiceId: 'trunk-based', phase: 3 },
   'trunk-libera-desacoplada': { practiceId: 'trunk-based', phase: 4 },
   'trunk-risco-adaptativo': { practiceId: 'trunk-based', phase: 5 },
+
+  // SLO com política de error budget (22 §5)
+  'slo-sem-acordo': { practiceId: 'slo-error-budget', phase: 0 },
+  'slo-meta-verbal': { practiceId: 'slo-error-budget', phase: 1 },
+  'slo-numero-sem-decisao': { practiceId: 'slo-error-budget', phase: 2 },
+  'slo-alerta-conversa': { practiceId: 'slo-error-budget', phase: 3 },
+  'slo-pausa-entregas': { practiceId: 'slo-error-budget', phase: 4 },
+  'slo-ritmo-continuo': { practiceId: 'slo-error-budget', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

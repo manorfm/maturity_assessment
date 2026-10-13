@@ -270,10 +270,15 @@ sem subir o índice. Após controlar implantar × liberar,
 `continuous-delivery-cadence` pergunta como a última mudança pronta chegou
 às pessoas (deploy manual → canary ligado a SLO → promoção/reversão que
 alimenta aprendizado) e declara a fase de entrega contínua (22 §5 /
-12 §3.4) sem subir o índice. Quando há assistência de modelo,
-`ai-dlc-verification` pergunta como se soube que a saída estava correta
-(22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo padrão vale para
-infraestrutura e dados; ambas declaram a fase de AI-DLC sem subir o índice.
+12 §3.4) sem subir o índice. Após o objetivo de confiabilidade,
+`slo-error-budget-policy` pergunta o que orientou a última disputa entre
+estabilizar e entregar (sem acordo → pausa explícita de entregas → ritmo
+contínuo revisado pelo aprendizado) e declara a fase de SLO com política
+de error budget (22 §5) sem subir o índice. Quando há assistência de
+modelo, `ai-dlc-verification` pergunta como se soube que a saída estava
+correta (22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo padrão
+vale para infraestrutura e dados; ambas declaram a fase de AI-DLC sem
+subir o índice.
 
 ### Objetivo, bloqueio e decisão
 

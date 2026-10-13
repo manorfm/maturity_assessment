@@ -282,6 +282,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'trunk-libera-desacoplada': 4,
   'trunk-risco-adaptativo': 5,
 
+  // 22 §5 SLO com política de error budget (prática avançada)
+  'slo-sem-acordo': 0,
+  'slo-meta-verbal': 1,
+  'slo-numero-sem-decisao': 2,
+  'slo-alerta-conversa': 3,
+  'slo-pausa-entregas': 4,
+  'slo-ritmo-continuo': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

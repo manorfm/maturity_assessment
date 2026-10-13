@@ -158,6 +158,49 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de SLO com error budget declara F0–F5 na prática slo-error-budget', () => {
+  const node = graph.find((item) => item.id === 'slo-error-budget-policy');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'slo-error-budget');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'reliability-practice');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const reliability = graph.find((item) => item.id === 'reliability-objective');
+  assert.equal(reliability?.next, 'slo-error-budget-policy');
+  assert.equal(node!.next, 'credential-context');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'platform', nodeId: 'slo-error-budget-policy', optionId: 'slo-pause' },
+    { participantId: 'b', unitId: 'u1', profile: 'product', nodeId: 'slo-error-budget-policy', optionId: 'slo-pause' },
+  ];
+  const slo = advancedPracticePhasesById(observations).get('slo-error-budget');
+  assert.ok(slo);
+  assert.equal(slo!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'slo-error-budget')!;
+  const leaves = {
+    'slo-error-budget': { phaseDistribution: slo!.distribution, phase: slo!.phase },
+    'observability-practice': { distribution: peaked(1), phase: 1 },
+    'reliability-practice': { distribution: peaked(1), phase: 1 },
+    'product-direction': { distribution: peaked(1) },
+    'leadership-management': { distribution: peaked(1) },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'slo-error-budget'));
+});
+
 test('pergunta de evento de desenvolvimento no tronco declara F0–F5 na prática trunk-based', () => {
   const node = graph.find((item) => item.id === 'trunk-based-integration');
   assert.ok(node);

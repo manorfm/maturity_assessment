@@ -140,10 +140,10 @@ prontidão. **Adoção prematura** (F da prática ≥ 3 e algum essencial com
 As perguntas de evento de chaos (`chaos-dependency-exercise`, 22 §2.5),
 QA (`quality-break-detection` + pressão `quality-flaky-pressure`, 22 §3.4),
 tronco (`trunk-based-integration`, 22 §5 / 12 §3.3), entrega contínua
-(`continuous-delivery-cadence`, 22 §5 / 12 §3.4) e AI-DLC
-(`ai-dlc-verification` + generalização `ai-dlc-generalization`, 22 §4.6)
-declaram F da prática sem alterar o índice (R28); a fase alimenta
-prontidão e adoção prematura.
+(`continuous-delivery-cadence`, 22 §5 / 12 §3.4), SLO com error budget
+(`slo-error-budget-policy`, 22 §5) e AI-DLC (`ai-dlc-verification` +
+generalização `ai-dlc-generalization`, 22 §4.6) declaram F da prática sem
+alterar o índice (R28); a fase alimenta prontidão e adoção prematura.
 O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia
 `P(desbloqueado)` por aresta; a fronteira exige ≥ 0,6, o bloqueio
 aparece abaixo de 0,25, e a próxima fase do walkthrough só sobe dentro
