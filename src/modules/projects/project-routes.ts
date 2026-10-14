@@ -475,7 +475,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
     const plan = projectTreatmentPlan(report.findings);
     const grades = evidenceGradeGap([...plan.active, ...plan.later]);
-    return reply.type('text/html').send(reportPage(params, 'treatment', renderTreatmentPage(plan.active, plan.later, grades.gap, plan.pulse)));
+    return reply.type('text/html').send(reportPage(params, 'treatment', renderTreatmentPage(plan, grades.gap)));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/report/audiences', async (request, reply) => {

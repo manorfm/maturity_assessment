@@ -29,6 +29,7 @@ import {
 import { primaryArchetypeFor } from './systemic-archetypes.js';
 import { enablementCatalog } from './learning-frontier.js';
 import { selectPulseItems, type PulseCatalogItem } from '../../catalog/item-catalog.js';
+import { TransformationPortfolioPlanner } from './transformation-portfolio.js';
 
 export type ReportGap = { gap: string };
 
@@ -269,27 +270,45 @@ export function projectAudienceVerbs(finding: OutcomeFinding): AudienceVerb[] {
 
 export function projectTreatmentPlan(findings: OutcomeFinding[]): {
   active: TreatmentConduct[];
+  waiting: TreatmentConduct[];
+  deferred: TreatmentConduct[];
   later: TreatmentConduct[];
   pulse: PulseCatalogItem[];
 } {
   const published = uniqueFindingsByPattern(findings).filter((finding) => finding.confidence >= 0.5);
   const observedPatterns = published.map((finding) => finding.pattern);
-  const conducts = published.map((finding) => conductFrom(finding, observedPatterns));
-  // No máximo 3 condutas ativas por nível de autoridade (08 §7).
+  const dependsOn = new Map(TransformationPortfolioPlanner.plan(published).sequence.map((step) => [step.pattern, step.dependsOn]));
+  const rows = published.map((finding) => {
+    const conduct = conductFrom(finding, observedPatterns);
+    const predecessor = published.find((item) => (dependsOn.get(finding.pattern) ?? []).includes(item.pattern));
+    const dependency = predecessor
+      ? `depende de ${predecessor.experiment?.action || predecessor.intervention || predecessor.title}`
+      : 'sem dependência';
+    return { conduct: { ...conduct, dependency }, leafId: finding.detailCapability };
+  });
+  // No máximo 3 condutas ativas por nível de autoridade (08 §7). Quem depende de outra fica na espera.
   const active: TreatmentConduct[] = [];
-  const later: TreatmentConduct[] = [];
+  const waiting: TreatmentConduct[] = [];
+  const deferred: TreatmentConduct[] = [];
+  const activeLeaves: string[] = [];
   const byAuthority = new Map<TreatmentConduct['authority'], number>();
-  for (const conduct of conducts) {
-    const count = byAuthority.get(conduct.authority) ?? 0;
+  for (const row of rows) {
+    if (row.conduct.dependency?.startsWith('depende de')) {
+      waiting.push(row.conduct);
+      continue;
+    }
+    const count = byAuthority.get(row.conduct.authority) ?? 0;
     if (count < 3 && active.length < 9) {
-      active.push(conduct);
-      byAuthority.set(conduct.authority, count + 1);
+      active.push(row.conduct);
+      activeLeaves.push(row.leafId);
+      byAuthority.set(row.conduct.authority, count + 1);
     } else {
-      later.push(conduct);
+      deferred.push(row.conduct);
     }
   }
-  const treatedLeaves = [...new Set(published.map((finding) => finding.detailCapability))];
-  return { active, later: later.slice(0, 6), pulse: selectPulseItems(treatedLeaves) };
+  const treatedLeaves = [...new Set(activeLeaves)];
+  const later = [...waiting, ...deferred].slice(0, 6);
+  return { active, waiting, deferred, later, pulse: selectPulseItems(treatedLeaves) };
 }
 
 export function projectReadinessPage(practices: Array<{ id: string; label: string; prerequisites?: PrerequisitePosterior[]; technicalPhase?: number }>): Array<{ id: string; label: string; assessment?: ReadinessAssessment; gap?: string }> {

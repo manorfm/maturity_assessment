@@ -164,7 +164,13 @@ transferência.
 A biblioteca `systemic-archetypes-v1` publica arquétipo só com ≥ 2 elos
 observados ("padrão provável"). O portfólio escolhe a **restrição
 principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e
-limita a 3 condutas ativas por autoridade.
+limita a 3 condutas ativas por autoridade. Conduta cujo passo do
+portfólio `dependsOn` aponta outra conduta publicada sai das ativas:
+o plano diz “depende de” essa ação e a coloca depois da seta. Sem
+dependência, a linha é “sem dependência”. O pulso de 4–8 semanas só
+lista item-âncora das folhas ativas; sem âncora, a página declara a
+lacuna. Cynefin na conduta é uma linha (aplicar, analisar, experimentar,
+estabilizar). Grau D entra como experimento explícito.
 O `interview-report-v1`
 continua a montar o dossiê de cada dor usado na ficha e no capítulo.
 O inventário por frente permanece no motor,

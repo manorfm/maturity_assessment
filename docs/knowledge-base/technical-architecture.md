@@ -170,7 +170,10 @@ acima do limiar, sem índice percentual. Quem ficou abaixo do limiar
 não ganha linha própria: as respostas entram só no total. Causa, lugar,
 ação, critério, relações, lacuna e referência saem de `projectFichaClose`:
 texto publicado vira cartão; campo vazio vira a lacuna, sem o caso de
-exemplo do protótipo.
+exemplo do protótipo. O plano de tratamento (`projectTreatmentPlan`)
+publica o cartão ativo com ação, dono, critério, linha Cynefin e grau
+A–D. A seta usa `dependsOn` do portfólio: quem espera não se mistura
+com as ativas. O pulso só aparece com item-âncora.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

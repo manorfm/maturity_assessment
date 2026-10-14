@@ -281,7 +281,9 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-quote p { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; line-height:1.3; font-weight:500 }
     .report-quote footer { margin-top:8px; color:var(--ink3); font-size:13px }
     .report-divergence-sides { display:grid; grid-template-columns:1fr 1fr; gap:16px }
-    .report-conduct { margin:0 0 16px }
+    .report-conduct { margin:0 0 16px; background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px }
+    .report-conduct-action { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; margin:0 0 8px }
+    .treatment-depends { color:var(--ink2); font-size:14px }
     .report-conduct h3 { margin:.15rem 0 .4rem; font-size:1.05rem }
     .report-index { font-family:Newsreader, Georgia, serif; font-size:40px; line-height:1; margin:0 }
     .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--rule); color:var(--ink3); font-size:13px; max-width:52rem }

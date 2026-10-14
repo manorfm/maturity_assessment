@@ -51,7 +51,7 @@ acessíveis; só saíram do menu.
 | Ficha | Trilha até o mapa; definição; “como está” com lacuna de 0–4 ou quadrante só com leitura; relatos por perspectiva e por time; cartões de causa, lugar, ação, critério, relações, lacuna e referência; “o que já funciona” só na preservação | Gráfico de distribuição 0–4 e o laço causal do protótipo, que o modelo ainda não publica |
 | Prontidão | Lista com banda e `p_k` | Cartão por prática (chaos, AI-DLC, service mesh no exemplo) com grade de pré-requisitos e legenda Pronto / Perto / Não pronto |
 | Fronteira | Lista por banda | Faixas (dominado, pode aprender, bloqueado), condições humanas e bloco “Comece por” |
-| Plano | Condutas 0–30, depois, pulso e lista Cynefin | Cartões de conduta ativa e setas de dependência. O protótipo não mostra “Depois” nem pulso como seções próprias |
+| Plano | Cartão ativo (ação, dono, critério, Cynefin, evidência), seta “depende de” ou “sem dependência”, espera fora das ativas, grau D como experimento, pulso só com item-âncora | Colunas 1–3 meses e 3–12 meses do protótipo; o modelo ainda não publica esses horizontes |
 | Walkthrough de Operação | Oito seções em listas | Caminho 30/90/180 como trilha, marcos em grade, chip de alvo |
 | Histórico | Probabilidades e, quando há duas leituras, evolução e correspondência de unidades | Seletor da leitura anterior, comparação por capacidade, chips do que melhorou e piorou, nota de atenção |
 | Visão por público | O achado reescrito por verbo | Um achado com pilha por público e o cartão da decisão de política |

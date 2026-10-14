@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Plano separa conduta ativa da que espera dependência
+
+- O cartão ativo traz ação, dono, critério, Cynefin e grau. Quem depende
+  de outra conduta fica depois da seta. O pulso só entra com item-âncora.
+  Ver [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-14 — Ficha fecha com cartões ou lacuna
 
 - Causa, lugar, ação, critério, relações, lacuna e referência saem do

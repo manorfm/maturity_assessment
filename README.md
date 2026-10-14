@@ -44,6 +44,12 @@ com leitura de sofisticação e apropriação. Perspectiva e time abaixo do
 limiar entram só no agregado. “O que já funciona” só entra na leitura de
 preservação. Campo vazio é lacuna explícita.
 
+**Plano de tratamento.** As condutas ativas mostram ação, dono, critério,
+domínio e grau de evidência. Quem depende de outra conduta aparece
+depois da seta, com “depende de”. Sem dependência, a linha diz isso.
+Grau D entra como experimento. O pulso de 4–8 semanas só aparece quando
+há item-âncora.
+
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)
 e [`docs/knowledge-base/assessment-model.md`](docs/knowledge-base/assessment-model.md).

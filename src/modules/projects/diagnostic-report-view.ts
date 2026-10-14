@@ -3,7 +3,7 @@ import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
 import { uniqueFindingsByPattern, type OutcomeFinding } from '../inference/domain/report-outcome.js';
 import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnostic-report.js';
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
-import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
+import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { FichaClose, FichaLine, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
 import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
@@ -133,10 +133,11 @@ function supportMarks(support: string): number {
 }
 
 function renderConduct(item: TreatmentConduct, order: number): string {
-  const cynefin = item.cynefin ? `<p>Domínio: ${escapeHtml(cynefinReading[item.cynefin])}.</p>` : '';
+  const cynefin = item.cynefin ? `<p>${escapeHtml(cynefinLine(item.cynefin))}</p>` : '';
   const grade = item.evidenceGrade
-    ? `<p>Grau de evidência ${item.evidenceGrade}: ${escapeHtml(evidenceGradeReading[item.evidenceGrade])}.</p>`
+    ? `<p>Evidência ${item.evidenceGrade}. ${escapeHtml(evidenceGradeReading[item.evidenceGrade])}.</p>${item.evidenceGrade === 'D' ? '<p>Conduta D entra como experimento explícito.</p>' : ''}`
     : '';
+  const dependency = item.dependency ? `<p class="treatment-depends">${escapeHtml(item.dependency)}</p>` : '';
   const archetype = item.archetype
     ? `<p>Arquétipo (padrão provável): ${escapeHtml(item.archetype)}.${item.prognosisWithoutTreatment ? ` Sem tratamento: ${escapeHtml(item.prognosisWithoutTreatment)}` : ''}</p>`
     : '';
@@ -150,7 +151,7 @@ function renderConduct(item: TreatmentConduct, order: number): string {
     ? '<p class="report-gap">Aviso: baixa transferência — treinamento sem mudar o ambiente raramente vira prática.</p>'
     : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
-  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
+  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p class="report-conduct-action">${escapeHtml(item.action)}</p><p>Dono: ${escapeHtml(item.owner)}</p><p>Critério: ${escapeHtml(item.success)}</p>${cynefin}${grade}${dependency}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
 }
 
 function renderFooter(laudo: DiagnosticLaudo): string {
@@ -274,24 +275,26 @@ function renderHowItIs(how: HowItIs): string {
   return `${stage}${quadrant}`;
 }
 
-export function renderTreatmentPage(
-  active: TreatmentConduct[],
-  later: TreatmentConduct[],
-  evidenceGap?: string,
-  pulse: PulseCatalogItem[] = [],
-): string {
+export function renderTreatmentPage(plan: {
+  active: TreatmentConduct[];
+  waiting: TreatmentConduct[];
+  deferred: TreatmentConduct[];
+  pulse: PulseCatalogItem[];
+}, evidenceGap?: string): string {
   const list = (items: TreatmentConduct[]) => items.map((item, index) => renderConduct(item, index + 1)).join('') || '<p class="report-gap">Nenhuma conduta neste horizonte.</p>';
   const grades = evidenceGap
     ? `<p class="report-gap">${escapeHtml(evidenceGap)}</p>`
     : '<p>O grau A–D descreve a base da prática, não o suporte local da amostra. Condutas D só entram como experimento explícito.</p>';
-  const pulseList = pulse.length
-    ? `<ul>${pulse.map((item) => `<li><strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.prompt)} <span class="report-meta">(${item.intervalWeeks.min}–${item.intervalWeeks.max} semanas · ${escapeHtml(item.leafId)})</span></li>`).join('')}</ul>`
+  const pulse = plan.pulse.length
+    ? `<p>3 a 6 itens-âncora das folhas tratadas, nas mesmas unidades. Mudança só com P(melhora) ≥ 0,8.</p><ul>${plan.pulse.map((item) => `<li><strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.prompt)} <span class="report-meta">(${item.intervalWeeks.min}–${item.intervalWeeks.max} semanas · ${escapeHtml(item.leafId)})</span></li>`).join('')}</ul>`
     : '<p class="report-gap">Ainda não há folhas tratadas com item-âncora de pulso no catálogo.</p>';
+  const domains = (['clear', 'complicated', 'complex', 'chaotic'] as const).map((domain) => `<li>${escapeHtml(cynefinLine(domain))}</li>`).join('');
   return `<header class="report-hero"><p class="report-kicker">Plano de tratamento</p><h1>Quem faz o quê, e em que ordem</h1></header>
-    <section class="report-block"><h2>0–30 dias · ativas agora</h2>${list(active)}</section>
-    <section class="report-block"><h2>Depois</h2>${list(later)}</section>
-    <section class="report-block"><h2>Pulso · 4–8 semanas</h2><p>3 a 6 itens-âncora das folhas tratadas, nas mesmas unidades. Mudança só com P(melhora) ≥ 0,8.</p>${pulseList}</section>
-    <section class="report-block"><h2>Domínio Cynefin</h2><ul><li>Claro — a resposta é conhecida: aplicar</li><li>Complicado — exige análise de especialista</li><li>Complexo — só se descobre testando: experimento pequeno</li><li>Caótico — agir primeiro para estabilizar</li></ul>${grades}</section>`;
+    <section class="report-block"><h2>0–30 dias · ativas agora</h2>${list(plan.active)}</section>
+    <section class="report-block"><h2>Setas</h2><p>A conduta de destino depende da de origem. O que espera começa quando a dependência mostrar resultado.</p>${list(plan.waiting)}</section>
+    <section class="report-block"><h2>Depois</h2>${list(plan.deferred)}</section>
+    <section class="report-block"><h2>Pulso · 4–8 semanas</h2>${pulse}</section>
+    <section class="report-block"><h2>Domínio Cynefin</h2><ul>${domains}</ul>${grades}</section>`;
 }
 
 export function renderAudiencePage(groups: Array<{ title: string; verbs: AudienceVerb[] }>): string {

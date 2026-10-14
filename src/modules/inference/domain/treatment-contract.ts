@@ -28,6 +28,8 @@ export type TreatmentConduct = {
   unlocks?: string[];
   /** Curso/treinamento sem mudança de ambiente (23 §5). */
   lowTransferWarning?: boolean;
+  /** “sem dependência” ou “depende de …” a partir do portfólio. */
+  dependency?: string;
 };
 
 export function classifyCynefin(input: {
@@ -66,6 +68,24 @@ export function classifyEvidenceGrade(input: {
   if (/consenso|prática amplamente|plataforma como produto|cncf|lean\b/.test(text)) return 'C';
   if (input.foundationSource || input.matureReference) return 'C';
   return 'D';
+}
+
+const cynefinLabel: Record<CynefinDomain, string> = {
+  clear: 'Claro',
+  complicated: 'Complicado',
+  complex: 'Complexo',
+  chaotic: 'Caótico',
+};
+
+const cynefinVerb: Record<CynefinDomain, string> = {
+  clear: 'aplicar',
+  complicated: 'analisar',
+  complex: 'experimentar',
+  chaotic: 'estabilizar',
+};
+
+export function cynefinLine(domain: CynefinDomain): string {
+  return `${cynefinLabel[domain]} — ${cynefinVerb[domain]}`;
 }
 
 export const cynefinReading: Record<CynefinDomain, string> = {

@@ -61,7 +61,7 @@ test('plano de tratamento declara modalidade, unlocks e aviso de curso', () => {
   assert.equal(pair!.learningMode, 'pair');
   assert.equal(pair!.lowTransferWarning ?? false, false);
 
-  const html = renderTreatmentPage(plan.active, plan.later, undefined, plan.pulse);
+  const html = renderTreatmentPage(plan);
   assert.match(html, /Modalidade|aprendizado/i);
   assert.match(html, /baixa transferência|sem mudar o ambiente/i);
 });
