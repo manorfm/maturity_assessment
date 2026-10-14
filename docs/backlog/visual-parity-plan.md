@@ -46,7 +46,7 @@ acessíveis; só saíram do menu.
 
 | Tela | Já existe | Falta no visual |
 | --- | --- | --- |
-| Laudo | Motivo, leitura, até três achados, divergências, restrição, conduta, prognóstico, lacunas, rodapé | Cartões com caminho (`Engenharia › Entrega`), chip de sustentação e “Ver ficha”. Tema escuro é variante de tela no protótipo; o produto usa um botão no chrome |
+| Laudo | Motivo em citação ou lacuna, leitura com mecanismo, até três achados em cartão (caminho, sustentação, “Ver ficha”), divergência nos dois lados, restrição com efeito, conduta, prognóstico sem promessa, lacunas e exames separados, rodapé | Tema escuro é variante de tela no protótipo; o produto usa um botão no chrome |
 | Mapa | Três cortes, blocos dos quatro sistemas, tabela de unidades, lista de perspectivas | Radar das capacidades, perfil por domínio, marcas de índice/faixa/alvo, matriz visual de times × capacidades e de perspectivas × capacidades. Célula sem cobertura fica cinza, sem índice |
 | Ficha | As doze seções em texto; distribuição 0–4 declarada como lacuna | Trilha `Tecnologia › Engenharia › …`, gráfico de “como está”, grade do que as pessoas relataram, etiquetas de causa, linha de ação |
 | Prontidão | Lista com banda e `p_k` | Cartão por prática (chaos, AI-DLC, service mesh no exemplo) com grade de pré-requisitos e legenda Pronto / Perto / Não pronto |

@@ -418,11 +418,15 @@ substitui o diagnóstico de arquitetura, segurança ou fluxo. O resumo global co
 inconclusivo quando qualquer divergência elegível impede uma leitura única do sistema.
 
 Na interface gerencial, o relatório global é um laudo. A first screen
-mostra, nesta ordem: motivo da avaliação (ou a lacuna, se o projeto não
-registrou a queixa), leitura geral (índice com faixa, cobertura e alvo,
-ou a lacuna enquanto o modelo for `m1`), até três achados, divergências,
-restrição principal, conduta de 30 dias, prognóstico, o que ainda não
-sabemos, o rodapé de amostra e calibração, e a consistência do elo
+mostra, nesta ordem: motivo da avaliação (citação de quem pediu, ou a
+lacuna se o projeto não registrou a queixa), leitura geral (frase de
+mecanismo e índice com faixa, cobertura e alvo, ou a lacuna enquanto o
+modelo for `m1`), até três achados em cartão (caminho, frase, áreas,
+sustentação e ficha), divergências com os dois lados sem declarar quem
+está certo, restrição principal (com o efeito de melhorar o resto antes),
+conduta de 30 dias, prognóstico (direção, não promessa), lacunas e exames
+complementares em listas separadas, o rodapé de amostra e calibração, e a
+consistência do elo
 limitante dentro do mesmo chrome. Convites e calibração ficam na seção
 de operação abaixo do laudo, não num segundo cabeçalho. O mapa tem quatro sistemas
 (Produto, Engenharia, Operação e Organização). Organização não é faixa.

@@ -79,6 +79,7 @@ test('laudo não inventa índice nem motivo e limita achados a três', () => {
   assert.equal(laudo.findings.length, 3);
   assert.deepEqual(laudo.otherFindings, ['Quatro']);
   assert.equal('gap' in laudo.reading, true);
+  assert.ok('gap' in laudo.complaint);
   assert.match(laudo.complaint.gap, /motivo da avaliação/);
   assert.match(laudo.footer.sample, /18 pessoas em 2 unidades/);
   assert.match(laudo.footer.sample, /Gama \(9\)/);

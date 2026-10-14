@@ -770,6 +770,7 @@ export function renderFirstScreen(input: {
     ...(input.index ? { index: input.index } : {}),
     ...(input.instrument ? { instrument: input.instrument } : {}),
     ...(input.leaves ? { leaves: input.leaves } : {}),
+    ...(input.projectName ? { context: input.projectName } : {}),
   });
   const classification = input.classification
     ? `<section class="report-consistency">${renderClassification(input.classification, input.outcome)}</section>`

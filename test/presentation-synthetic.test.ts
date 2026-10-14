@@ -232,7 +232,7 @@ test('baixa prática publica famílias distintas, inventário e briefing de pol�
   const html = firstScreenOf(report);
   const briefs = renderAudienceBriefs(report.audienceReports, '/capabilities');
   assert.doesNotMatch(html, /Como as disciplinas se cruzam/);
-  assert.match(html, /Engenharia/);
+  assert.ok(findings.some((finding) => findAreaPath(report.organizationalAreas, finding.detailCapability)?.some((node) => node.id === 'engineering')));
   assert.match(html, /Organização|Liderança|gestão/);
   assert.match(html, /Operação|Produto/);
   assert.match(briefs, /Briefing de política/);

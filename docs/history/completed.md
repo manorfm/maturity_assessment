@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Voz do laudo no formato do protótipo
+
+- Cabeçalho com contexto e amostra, motivo em citação ou lacuna, achado
+  em cartão, divergência nos dois lados, restrição com o efeito de mexer
+  no resto antes, prognóstico que não é promessa, lacunas separadas dos
+  exames. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-14 — Menu do relatório alinhado ao protótipo
 
 - Navegação lateral com laudo, mapa, ficha, prontidão, fronteira, plano,

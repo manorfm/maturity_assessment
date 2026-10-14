@@ -42,17 +42,24 @@ export type LaudoFinding = {
   areas: number;
 };
 
+export type LaudoComplaint = ReportGap | { quote: string; author: string };
+
+export type LaudoDivergence = { title: string; left: string; right: string };
+
 export type DiagnosticLaudo = {
   version: 'diagnostic-report-v2';
-  complaint: ReportGap;
+  context: string;
+  complaint: LaudoComplaint;
+  mechanism: string | ReportGap;
   reading: ReportGap | { index: number; band: [number, number]; coverage: number; target?: number; technical?: number; organizational?: number; profile?: string; narrative: string };
   findings: LaudoFinding[];
   otherFindings: string[];
-  divergences: Array<{ title: string; body: string }> | ReportGap;
+  divergences: LaudoDivergence[] | ReportGap;
   constraint: { title: string; body: string } | ReportGap;
   conduct: TreatmentConduct[];
   prognosis: ReportGap;
   unknowns: string[];
+  exams: string[];
   footer: { sample: string; instrument: string; calibration: string };
 };
 
@@ -75,7 +82,9 @@ export function projectDiagnosticLaudo(input: {
   findings: OutcomeFinding[];
   organizationalAreas: OrganizationalAreaMap;
   sample?: { completed: number; units: Array<{ path: string; completed: number }> };
-  perspectiveGaps?: Array<{ title: string; capability?: string }>;
+  context?: string;
+  complaint?: { quote: string; author: string };
+  perspectiveGaps?: Array<{ title: string; capability?: string; strongerProfiles?: string[]; constrainedProfiles?: string[] }>;
   index?: IndexPublication;
   instrument?: string;
   calibration?: string;
@@ -121,36 +130,53 @@ export function projectDiagnosticLaudo(input: {
     ...prematureConduct,
     ...primary.slice(0, Math.max(0, 3 - prematureConduct.length)).map((finding) => conductFrom(finding, observedPatterns)),
   ];
+  const constraintFact = input.outcome.finding
+    ? input.outcome.finding.cause || input.outcome.reading || input.outcome.finding.title
+    : '';
+  const queueEffect = 'Enquanto essa restrição existir, melhorar outras capacidades antes dela tende a aumentar a fila, não a velocidade.';
   const constraint = input.outcome.finding
-    ? {
-      title: input.outcome.limiterLabel,
-      body: input.outcome.finding.cause || input.outcome.reading || input.outcome.finding.title,
-    }
+    ? { title: input.outcome.limiterLabel, body: `${constraintFact} ${queueEffect}` }
     : { gap: 'Ainda não há uma restrição principal publicada.' };
-  const divergences = (input.perspectiveGaps ?? []).slice(0, 3).map((gap) => ({
-    title: gap.title,
-    body: 'As perspectivas descrevem sistemas diferentes. Isso não mostra quem está certo.',
-  }));
+  const divergences = (input.perspectiveGaps ?? []).slice(0, 3).map(divergenceFrom);
   const unknowns = published.map((finding) => finding.missingEvidence).filter((item): item is string => Boolean(item)).slice(0, 4);
   if (!unknowns.length) unknowns.push('O motivo da avaliação ainda não foi registrado no projeto.');
   const otherFromPublished = published.slice(slots).map((finding) => finding.title);
   const otherFromPremature = premature.slice(2).map((item) => item.title);
+  const quote = input.complaint?.quote.trim() ?? '';
+  const author = input.complaint?.author.trim() ?? '';
+  const mechanismText = input.outcome.reading.trim();
   return {
     version: 'diagnostic-report-v2',
-    complaint: { gap: 'O projeto ainda não registrou o motivo da avaliação nas palavras de quem contratou.' },
+    context: input.context?.trim() || 'O contexto do projeto ainda não foi registrado.',
+    complaint: quote && author
+      ? { quote, author }
+      : { gap: 'O projeto ainda não registrou o motivo da avaliação nas palavras de quem contratou.' },
+    mechanism: mechanismText || { gap: 'Ainda não há uma frase de mecanismo publicada.' },
     reading: readingFrom(input.index),
     findings,
     otherFindings: [...otherFromPremature, ...otherFromPublished],
     divergences: divergences.length ? divergences : { gap: 'Ainda não há divergência publicada com faixa percentual. O modelo m1 não separa escala de visibilidade.' },
     constraint,
     conduct,
-    prognosis: { gap: 'Prognóstico em seis meses exige duas distribuições do índice. Esta leitura ainda não as publica.' },
+    prognosis: { gap: 'Prognóstico em seis meses exige duas distribuições do índice. Esta leitura ainda não as publica. É uma direção provável, não é uma promessa.' },
     unknowns,
+    exams: [],
     footer: {
       sample: sampleLine(input.sample),
       instrument: input.instrument ?? 'Instrumento vigente · modelo m1',
       calibration: input.calibration ?? 'Estimativas provisórias até a calibração com piloto.',
     },
+  };
+}
+
+function divergenceFrom(gap: { title: string; strongerProfiles?: string[]; constrainedProfiles?: string[] }): LaudoDivergence {
+  const side = (profiles: string[] | undefined, verb: string) => profiles?.length
+    ? `${profiles.join(', ')} ${verb}`
+    : 'Este lado da divergência ainda não tem relato.';
+  return {
+    title: gap.title,
+    left: side(gap.strongerProfiles, 'descreve um sistema mais folgado.'),
+    right: side(gap.constrainedProfiles, 'descreve a restrição no mesmo recorte.'),
   };
 }
 

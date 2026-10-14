@@ -79,18 +79,29 @@ export function renderReportShell(input: {
 }
 
 export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: string; reportBase: string }): string {
-  const complaint = `<section class="report-block"><h2>Motivo da avaliação</h2><p class="report-gap">${escapeHtml(laudo.complaint.gap)}</p></section>`;
+  const complaint = 'gap' in laudo.complaint
+    ? `<p class="report-gap">${escapeHtml(laudo.complaint.gap)}</p>`
+    : `<blockquote class="report-quote"><p>${escapeHtml(laudo.complaint.quote)}</p><footer>${escapeHtml(laudo.complaint.author)}</footer></blockquote>`;
+  const mechanism = typeof laudo.mechanism === 'string'
+    ? `<p>${escapeHtml(laudo.mechanism)}</p>`
+    : `<p class="report-gap">${escapeHtml(laudo.mechanism.gap)}</p>`;
+  const queue = 'gap' in laudo.constraint
+    ? ''
+    : '<p>Enquanto essa restrição existir, melhorar outras capacidades antes dela tende a aumentar a fila, não a velocidade.</p>';
   const reading = 'gap' in laudo.reading
-    ? `<section class="report-block"><h2>Leitura geral</h2><p class="report-gap">${escapeHtml(laudo.reading.gap)}</p></section>`
-    : `<section class="report-block"><h2>Leitura geral</h2><p class="report-index">${laudo.reading.index}%</p><p>faixa ${laudo.reading.band[0]}–${laudo.reading.band[1]}% · cobertura ${Math.round(laudo.reading.coverage * 100)}%${laudo.reading.target !== undefined ? ` · alvo ${laudo.reading.target}%` : ''}</p><p>${escapeHtml(laudo.reading.narrative)}</p></section>`;
-  const findings = laudo.findings.map((finding) => (
-    `<article class="report-finding"><p class="report-kicker">${finding.order}</p><h3 class="executive-reading">${escapeHtml(finding.title)}</h3><p>${escapeHtml(finding.reading)}</p><p>${escapeHtml(finding.path)} · ${finding.areas} ${finding.areas === 1 ? 'área afetada' : 'áreas afetadas'} · ${escapeHtml(finding.support)}</p><p><a href="${escapeHtml(`${urls.capabilityBase}/${finding.nodeId}`)}">Ver ficha →</a></p></article>`
-  )).join('');
+    ? `<p class="report-gap">${escapeHtml(laudo.reading.gap)}</p>`
+    : `<p class="report-index">${laudo.reading.index}%</p><p>faixa ${laudo.reading.band[0]}–${laudo.reading.band[1]}% · cobertura ${Math.round(laudo.reading.coverage * 100)}%${laudo.reading.target !== undefined ? ` · alvo ${laudo.reading.target}%` : ''}</p><p>${escapeHtml(laudo.reading.narrative)}</p>`;
+  const findings = laudo.findings.map((finding) => {
+    const areas = `${finding.areas} ${finding.areas === 1 ? 'área afetada' : 'áreas afetadas'}`;
+    const marks = supportMarks(finding.support);
+    const dots = Array.from({ length: marks }, () => '<i></i>').join('');
+    return `<article class="report-finding"><div class="report-finding-path"><span>${escapeHtml(finding.path)}</span><span>${finding.order}</span></div><p class="report-finding-fact">${escapeHtml(finding.title)}</p><p>${escapeHtml(finding.reading)}</p><p class="report-finding-meta"><span>${escapeHtml(areas)}</span><span class="report-support"><span aria-hidden="true">${dots}</span>${escapeHtml(finding.support)}</span></p><a href="${escapeHtml(`${urls.capabilityBase}/${finding.nodeId}`)}">Ver ficha →</a></article>`;
+  }).join('');
   const others = laudo.otherFindings.length
     ? `<ul class="report-other">${laudo.otherFindings.map((title) => `<li>${escapeHtml(title)}</li>`).join('')}</ul>`
     : '';
   const divergences = Array.isArray(laudo.divergences)
-    ? laudo.divergences.map((item) => `<article><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.body)}</p></article>`).join('')
+    ? `<p>Divergência mostra que as perspectivas vivem sistemas diferentes. Não mostra quem está certo.</p>${laudo.divergences.map((item) => `<article class="report-divergence"><h3>${escapeHtml(item.title)}</h3><div class="report-divergence-sides"><p>${escapeHtml(item.left)}</p><p>${escapeHtml(item.right)}</p></div></article>`).join('')}`
     : `<p class="report-gap">${escapeHtml(laudo.divergences.gap)}</p>`;
   const constraint = 'gap' in laudo.constraint
     ? `<p class="report-gap">${escapeHtml(laudo.constraint.gap)}</p>`
@@ -98,15 +109,25 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
   const conduct = laudo.conduct.map((item, index) => renderConduct(item, index + 1)).join('')
     || '<p class="report-gap">Nenhuma conduta de 30 dias foi publicada.</p>';
   const unknowns = laudo.unknowns.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
-  return `<header class="report-hero"><p class="report-kicker">Laudo · primeira página</p><h1>Diagnóstico da área de tecnologia</h1><p class="report-note">Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas nem como meta de bônus.</p></header>
-    ${complaint}${reading}
-    <section class="report-block"><h2>Achados</h2><p>O que está acontecendo, em ordem de impacto no que as entrevistas sustentaram.</p>${findings}${others}</section>
+  const exams = laudo.exams.length
+    ? `<ul>${laudo.exams.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
+    : '<p class="report-gap">Nenhum exame complementar foi sugerido nesta leitura.</p>';
+  return `<header class="report-hero"><p class="report-kicker">Laudo · primeira página</p><h1>Diagnóstico da área de tecnologia</h1><p class="report-note">Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas nem como meta de bônus.</p><p class="report-context">${escapeHtml(laudo.context)}</p><p>${escapeHtml(laudo.footer.sample)}</p></header>
+    <section class="report-block"><h2>Motivo da avaliação</h2>${complaint}</section>
+    <section class="report-block"><h2>Leitura geral</h2>${mechanism}${queue}${reading}</section>
+    <section class="report-block"><h2>Achados</h2><p>O que está acontecendo, em ordem de impacto no motivo da avaliação.</p>${findings}${others}</section>
     <section class="report-block"><h2>Divergências</h2>${divergences}</section>
     <section class="report-block"><h2>Restrição principal</h2>${constraint}</section>
     <section class="report-block"><h2>Conduta para 30 dias</h2>${conduct}<p><a href="${escapeHtml(`${urls.reportBase}/treatment`)}">Ver o plano de tratamento completo →</a></p></section>
     <section class="report-block"><h2>Prognóstico</h2><p class="report-gap">${escapeHtml(laudo.prognosis.gap)}</p></section>
-    <section class="report-block"><h2>O que ainda não sabemos</h2><ul>${unknowns}</ul><p>Exames complementares sugeridos ficam neste bloco até existir página própria.</p></section>
+    <section class="report-block"><h2>O que ainda não sabemos</h2><h3>Lacunas</h3><ul>${unknowns}</ul><h3>Exames complementares sugeridos</h3>${exams}</section>
     ${renderFooter(laudo)}`;
+}
+
+function supportMarks(support: string): number {
+  if (support === 'Sustentação forte' || support === 'Achado de risco') return 3;
+  if (support === 'Sustentação moderada') return 2;
+  return 1;
 }
 
 function renderConduct(item: TreatmentConduct, order: number): string {
@@ -127,7 +148,7 @@ function renderConduct(item: TreatmentConduct, order: number): string {
     ? '<p class="report-gap">Aviso: baixa transferência — treinamento sem mudar o ambiente raramente vira prática.</p>'
     : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
-  return `<article class="report-conduct"><p class="report-kicker">${order || ''}</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
+  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p><strong>${escapeHtml(item.action)}</strong></p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
 }
 
 function renderFooter(laudo: DiagnosticLaudo): string {

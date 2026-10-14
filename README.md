@@ -21,11 +21,12 @@ resultado em ranking de pessoas ou times.
 
 ## Como ler o relatório agora
 
-**Home vigente.** O relatório abre no laudo: motivo, leitura geral,
-até três achados, divergências, restrição, conduta de 30 dias,
-prognóstico, o que ainda não sabemos, e o rodapé de amostra. Onde o
-modelo em execução (`m1`) ainda não mede, o bloco declara a lacuna —
-não inventa índice nem prognóstico. O mapa tem quatro sistemas
+**Home vigente.** O relatório abre no laudo: motivo em citação ou lacuna,
+leitura geral, até três achados em cartão, divergências nos dois lados,
+restrição, conduta de 30 dias, prognóstico (direção, não promessa),
+lacunas e exames separados, e o rodapé de amostra. Onde o modelo em
+execução (`m1`) ainda não mede, o bloco declara a lacuna — não inventa
+índice nem prognóstico. O mapa tem quatro sistemas
 (Produto, Engenharia, Operação e Organização) em três cortes. Ficha
 do nó, plano de tratamento, visão por público, walkthrough de Operação,
 prontidão, fronteira e histórico usam o mesmo chrome. O menu lista a

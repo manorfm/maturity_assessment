@@ -129,9 +129,11 @@ e não oferecem navegação. A apresentação não recalcula a inferência nem d
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
-é o laudo (`diagnostic-report-v2`): motivo, leitura geral, até três
-achados, divergências, restrição principal, conduta de 30 dias,
-prognóstico, o que ainda não sabemos e rodapé de amostra e calibração.
+é o laudo (`diagnostic-report-v2`): motivo em citação ou lacuna, leitura
+geral com frase de mecanismo, até três achados em cartão, divergências
+nos dois lados, restrição principal, conduta de 30 dias, prognóstico
+como direção, lacunas e exames em listas separadas, e rodapé de amostra
+e calibração.
 Onde o modelo `m1` não mede índice, faixa, alvo ou prognóstico, o bloco
 declara a lacuna. Não publica o exemplo numérico do protótipo. A navegação
 lateral segue o protótipo, nesta ordem: laudo, mapa, ficha do primeiro

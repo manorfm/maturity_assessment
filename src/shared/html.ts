@@ -265,8 +265,21 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-block > :not(h2) { grid-column:2 }
     .report-consistency { max-width:52rem; margin-top:28px; padding-top:28px; border-top:1px solid var(--rule) }
     .report-consistency .card { margin:0; box-shadow:none; background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px 20px }
-    .report-finding, .report-conduct { margin:0 0 16px }
-    .report-finding h3, .report-conduct h3 { margin:.15rem 0 .4rem; font-size:1.05rem }
+    .report-finding { margin:0 0 16px; background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px; display:flex; flex-direction:column; gap:14px }
+    .report-finding-path { display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3) }
+    .report-finding-path span:last-child { font-family:Newsreader, Georgia, serif; font-size:15px; letter-spacing:0; text-transform:none; font-weight:600 }
+    .report-finding-fact { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; line-height:1.3; font-weight:500; text-wrap:pretty; min-height:110px }
+    .report-finding-meta { margin:0; display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--ink2) }
+    .report-support { display:inline-flex; align-items:center; gap:8px }
+    .report-support span { display:inline-flex; gap:3px }
+    .report-support i { width:8px; height:8px; border-radius:50%; background:var(--ink2) }
+    .report-finding a { font-size:14px; font-weight:600 }
+    .report-quote { margin:0; padding:0 0 0 16px; border-left:3px solid var(--rule) }
+    .report-quote p { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; line-height:1.3; font-weight:500 }
+    .report-quote footer { margin-top:8px; color:var(--ink3); font-size:13px }
+    .report-divergence-sides { display:grid; grid-template-columns:1fr 1fr; gap:16px }
+    .report-conduct { margin:0 0 16px }
+    .report-conduct h3 { margin:.15rem 0 .4rem; font-size:1.05rem }
     .report-index { font-family:Newsreader, Georgia, serif; font-size:40px; line-height:1; margin:0 }
     .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--rule); color:var(--ink3); font-size:13px; max-width:52rem }
     .report-tabs { display:flex; gap:4px; padding:4px; background:var(--sunk); border-radius:10px; width:max-content; margin:24px 0 }
@@ -280,7 +293,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness.near { color:var(--ink); background:#F5E6D0 }
     .readiness.blocked { color:var(--red); background:var(--red-soft) }
     .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-main{padding:24px 16px 48px} .area-map-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-main{padding:24px 16px 48px} .report-divergence-sides{grid-template-columns:1fr} .area-map-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>
