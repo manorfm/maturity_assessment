@@ -11,6 +11,7 @@ import {
 } from './advanced-readiness.js';
 import { nextPhaseWithinFrontier, type EnablementEdge } from './learning-frontier.js';
 import { projectSophisticationMatrix, type SophisticationPhase } from './sophistication-matrix.js';
+import type { IndexPublication } from './stage-posterior.js';
 
 export const AREA_WALKTHROUGH_VERSION = 'area-walkthrough-v1' as const;
 
@@ -44,11 +45,29 @@ export type AreaWalkthroughSections = {
   assumptions: string[];
 };
 
+export type WalkthroughOpening =
+  | { state: string; chip?: string; chipGap?: string }
+  | { gap: string };
+
+export type WalkthroughStep =
+  | { label: string; expect: string; withinFrontier: true }
+  | { gap: string };
+
+export type WalkthroughTrailStep = {
+  horizon: '30 dias' | '90 dias' | '180 dias';
+  action?: string;
+  expect?: string;
+  gap?: string;
+};
+
 export type AreaWalkthrough = {
   version: typeof AREA_WALKTHROUGH_VERSION;
   areaId: string;
   areaLabel: string;
   summary: string;
+  opening: WalkthroughOpening;
+  step: WalkthroughStep;
+  trail: WalkthroughTrailStep[];
   sections: AreaWalkthroughSections;
 };
 
@@ -74,6 +93,7 @@ export function projectAreaWalkthrough(input: {
   leaves?: Record<string, LeafEvidence>;
   /** Práticas candidatas; padrão = catálogo 22 §5 filtrado pelas folhas da área. */
   targetPracticeIds?: string[];
+  index?: IndexPublication;
 }): AreaWalkthrough {
   const leaves = new Set(leavesOf(input.area));
   const published = uniqueFindingsByPattern(input.findings).filter((finding) => finding.confidence >= 0.5);
@@ -99,6 +119,9 @@ export function projectAreaWalkthrough(input: {
     areaId: input.area.id,
     areaLabel: input.area.label,
     summary: input.summary ?? `Roteiro da área ${input.area.label}: do que as entrevistas sustentaram para o próximo degrau.`,
+    opening: projectOpening(local, localCaps, input.index),
+    step: projectStep(prioritized, input.enablementEdges),
+    trail: projectTrail(input.conducts),
     sections: {
       where: projectWhere(prioritized, local, matrix.map((item) => item.reading)),
       arrived: projectArrived(local),
@@ -112,6 +135,63 @@ export function projectAreaWalkthrough(input: {
       assumptions: projectAssumptions(prioritized),
     },
   };
+}
+
+function projectOpening(
+  findings: OutcomeFinding[],
+  caps: WalkthroughCapability[],
+  index?: IndexPublication,
+): WalkthroughOpening {
+  if (!findings.length && !caps.length) {
+    return { gap: 'As entrevistas ainda não publicaram o estado desta área.' };
+  }
+  const lead = findings[0];
+  const cap = [...caps].sort((left, right) => left.level - right.level)[0];
+  const state = lead
+    ? (lead.cause || lead.title)
+    : `${cap?.label ?? CapabilityTaxonomy.labelFor(cap?.id ?? '')} está em ${STAGE_LABELS[clampStage(cap?.level ?? 0)]}.`;
+  if (index?.published) {
+    const target = index.target !== undefined ? ` · alvo ${index.target}%` : '';
+    return { state, chip: `faixa ${index.band[0]}–${index.band[1]}% · cobertura ${index.coverage}%${target}` };
+  }
+  return { state, chipGap: 'Estimativa, faixa e alvo só entram quando o modelo publicar a leitura.' };
+}
+
+function projectStep(
+  caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>,
+  edges?: EnablementEdge[],
+): WalkthroughStep {
+  const cap = caps[0];
+  if (!cap) return { gap: 'Sem próxima fase enquanto não houver capacidade ou conduta publicada neste recorte.' };
+  const current = clampStage(cap.level);
+  const next = edges?.length
+    ? nextPhaseWithinFrontier({ leafId: cap.id, current, edges })
+    : nextPhaseStage(current);
+  const label = cap.label ?? CapabilityTaxonomy.labelFor(cap.id);
+  if (edges?.length && next === current) {
+    return { gap: `${label}: o próximo degrau ainda está fora da fronteira.` };
+  }
+  const behavior = capabilityReferenceCatalog[cap.id]?.stage(next).behavior
+    ?? 'quando chegarmos lá, veremos o comportamento do próximo degrau.';
+  return { label, expect: behavior, withinFrontier: true };
+}
+
+function projectTrail(conducts: TreatmentConduct[]): WalkthroughTrailStep[] {
+  const horizons: Array<['30 dias' | '90 dias' | '180 dias', TreatmentConduct['horizon']]> = [
+    ['30 dias', '0-30'],
+    ['90 dias', '1-3'],
+    ['180 dias', '3-12'],
+  ];
+  return horizons.map(([horizon, key]) => {
+    const items = conducts.filter((conduct) => conduct.horizon === key);
+    if (!items.length) return { horizon, gap: 'Sem conduta sequenciada neste horizonte.' };
+    const expect = items.map((conduct) => conduct.success).filter(Boolean).join('; ');
+    return {
+      horizon,
+      action: items.map((conduct) => conduct.action).join('; '),
+      ...(expect ? { expect } : { gap: 'O que esperar ainda não foi publicado.' }),
+    };
+  });
 }
 
 function projectWhere(

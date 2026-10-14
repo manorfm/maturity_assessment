@@ -52,7 +52,7 @@ acessíveis; só saíram do menu.
 | Prontidão | Cartão com pré-requisitos e `p_k`; status pelo mais fraco; adoção prematura como risco do sistema | Grade visual do exemplo (chaos, AI-DLC, service mesh) com percentuais fixos |
 | Fronteira | Faixas dominado, pode aprender agora e ainda bloqueado; “Comece por”; condições humanas em paralelo com “Ver prontidão →” | Marcas numéricas 0–5 do exemplo |
 | Plano | Cartão ativo (ação, dono, critério, Cynefin, evidência), seta “depende de” ou “sem dependência”, espera fora das ativas, grau D como experimento, pulso só com item-âncora | Colunas 1–3 meses e 3–12 meses do protótipo; o modelo ainda não publica esses horizontes |
-| Walkthrough de Operação | Oito seções em listas | Caminho 30/90/180 como trilha, marcos em grade, chip de alvo |
+| Walkthrough de Operação | Abertura com estado ou lacuna; próxima fase dentro da fronteira; trilha 30/90/180 com o que esperar; marcos são o critério da conduta; riscos e premissas fecham | Grade de marcos com prazo e alvo percentual do exemplo |
 | Histórico | Probabilidades e, quando há duas leituras, evolução e correspondência de unidades | Seletor da leitura anterior, comparação por capacidade, chips do que melhorou e piorou, nota de atenção |
 | Visão por público | O achado reescrito por verbo | Um achado com pilha por público e o cartão da decisão de política |
 

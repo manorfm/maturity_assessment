@@ -143,8 +143,11 @@ achado publicado (ou da capacidade aberta), prontidão, fronteira, plano,
 walkthrough de Operação, histórico e visão por público. Produto,
 Engenharia e Organização permanecem no mapa e nas rotas de walkthrough,
 fora desse menu. O walkthrough usa
-`projectAreaWalkthrough` (`area-walkthrough-v1`) com as oito seções e a
-regra da próxima fase restrita à fronteira (`enablementCatalog`).
+`projectAreaWalkthrough` (`area-walkthrough-v1`) com as oito seções. A
+abertura traz a frase do estado e o chip da leitura publicada, ou a
+lacuna. A próxima fase é um degrau e não sobe quando a fronteira bloqueia.
+O caminho 30, 90 e 180 é uma trilha: cada etapa diz o que esperar, e o
+marco é o critério da conduta. Riscos e premissas fecham o percurso.
 A página de fronteira projeta `projectFrontierBrief` a partir das
 folhas medidas: dominado, pode aprender agora e ainda bloqueado. “Comece
 por” é um degrau desbloqueado. Condição humana (aresta social ou

@@ -308,17 +308,24 @@ export function renderWalkthrough(input: AreaWalkthrough): string {
   const list = (heading: string, lines: string[]) =>
     `<section class="report-block"><h2>${heading}</h2><ul>${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul></section>`;
   const block = (heading: string, body: string) => `<section class="report-block"><h2>${heading}</h2><p>${escapeHtml(body)}</p></section>`;
-  const path = input.sections.path;
-  return `<header class="report-hero"><p class="report-kicker">Walkthrough da área · ${escapeHtml(input.areaLabel)}</p><h1>${escapeHtml(input.areaLabel)}: do que as entrevistas sustentaram para o próximo passo</h1><p>${escapeHtml(input.summary)}</p></header>
+  const opening = 'gap' in input.opening
+    ? `<p class="report-gap">${escapeHtml(input.opening.gap)}</p>`
+    : `<p class="walk-state">${escapeHtml(input.opening.state)}</p>${input.opening.chip ? `<p class="walk-chip">${escapeHtml(input.opening.chip)}</p>` : `<p class="report-gap">${escapeHtml(input.opening.chipGap ?? '')}</p>`}`;
+  const step = 'gap' in input.step
+    ? `<p class="report-gap">${escapeHtml(input.step.gap)}</p>`
+    : `<article class="readiness-card"><p class="report-conduct-action">${escapeHtml(input.step.label)}</p><p>Quando chegarmos lá, veremos…</p><p>${escapeHtml(input.step.expect)}</p></article>`;
+  const trail = `<ol class="walk-trail">${input.trail.map((item) => {
+    const body = item.gap
+      ? `<p class="report-gap">${escapeHtml(item.gap)}</p>`
+      : `<p>${escapeHtml(item.action ?? '')}</p><p>O que esperar: ${escapeHtml(item.expect ?? '')}</p>`;
+    return `<li><p class="walk-horizon">${escapeHtml(item.horizon)}</p>${body}</li>`;
+  }).join('')}</ol>`;
+  return `<header class="report-hero"><p class="report-kicker">Walkthrough da área · ${escapeHtml(input.areaLabel)}</p><h1>${escapeHtml(input.areaLabel)}: do esforço de poucos para um sistema</h1>${opening}<p>${escapeHtml(input.summary)}</p></header>
     ${list('Onde estamos', input.sections.where)}
     ${block('Como chegamos aqui', input.sections.arrived)}
     ${block('O que já funciona', input.sections.working)}
-    ${list('Próxima fase', input.sections.next)}
-    ${list('Caminho', [
-      `30 dias: ${path.d30}`,
-      `90 dias: ${path.d90}`,
-      `180 dias: ${path.d180}`,
-    ])}
+    <section class="report-block"><h2>Próxima fase</h2>${step}</section>
+    <section class="report-block"><h2>Caminho</h2>${trail}</section>
     ${list('Marcos', input.sections.milestones)}
     ${list('Riscos de regressão', input.sections.risks)}
     ${list('Premissas a revisar', input.sections.assumptions)}`;

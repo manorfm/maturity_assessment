@@ -281,6 +281,11 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-quote p { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; line-height:1.3; font-weight:500 }
     .report-quote footer { margin-top:8px; color:var(--ink3); font-size:13px }
     .report-divergence-sides { display:grid; grid-template-columns:1fr 1fr; gap:16px }
+    .walk-trail { list-style:none; margin:0; padding:0; display:flex; flex-direction:column }
+    .walk-trail li { border-left:2px solid var(--accent); padding:0 0 18px 16px }
+    .walk-horizon { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink3); margin:0 0 4px }
+    .walk-state { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35 }
+    .walk-chip { display:inline-block; font-size:13px; color:var(--ink2); border:1px solid var(--rule); border-radius:999px; padding:4px 10px }
     .readiness-card, .report-conduct { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px; margin:0 0 16px }
     .readiness-card h2 { margin:0 0 8px; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500 }
     .report-conduct-action { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; margin:0 0 8px }

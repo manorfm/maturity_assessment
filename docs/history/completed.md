@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Walkthrough de Operação vira um percurso
+
+- A abertura publica o estado ou a lacuna do índice. A próxima fase não
+  sobe fora da fronteira. O caminho 30/90/180 diz o que esperar, e o
+  marco é o critério da conduta. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Prontidão e fronteira concordam no próximo passo
 
 - O status segue o pré-requisito mais fraco. A fronteira separa dominado,

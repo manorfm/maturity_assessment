@@ -592,6 +592,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       enablementEdges: evaluateEnablementEdges(enablementCatalog, leaves),
       sophistication,
       leaves,
+      ...(report.index ? { index: report.index } : {}),
     });
     return reply.type('text/html').send(reportPage(params, 'walkthrough', renderWalkthrough(walk), { areaId: params.areaId }));
   });

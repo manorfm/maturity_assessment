@@ -125,10 +125,11 @@ itens-âncora das folhas das condutas ativas, intervalo 4–8 semanas.
 O walkthrough por área (`area-walkthrough-v1`) projeta as 8 seções de
 16 §3 (onde estamos, como chegamos, o que funciona, próxima fase,
 caminho 30/90/180, marcos, riscos, premissas) para Produto, Engenharia,
-Operação e Organização. A próxima fase da capacidade é
-`min(alvo, estágio_atual + 1)`, com comportamento da rubrica quando a
-referência existir; marcos reusam itens de pulso e critérios das
-condutas.
+Operação e Organização. A abertura usa a frase do estado e o chip só
+quando o índice está publicado. A próxima fase sobe no máximo um degrau,
+`min(alvo, estágio atual + 1)`, e fica no estágio atual quando a fronteira
+bloqueia. Cada etapa do caminho diz o que esperar; o marco é o critério
+da conduta, reusando também o item de pulso quando existe.
 A prontidão para práticas avançadas (`advancedPracticeCatalog`) calcula
 `p_k = P(S ≥ mínimo)` por pré-requisito e, quando o pré-requisito declara
 `minimumPhase`, multiplica por `P(F ≥ fase)` (12); `P(pronto) = Π p_k`

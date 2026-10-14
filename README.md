@@ -57,6 +57,12 @@ agora e o que segue bloqueado. “Comece por” é um degrau desbloqueado.
 Condição humana fica em paralelo. Adoção prematura é risco do sistema de
 trabalho, não culpa de uma pessoa.
 
+**Walkthrough de Operação.** A página abre com o estado da área, ou com
+a lacuna quando o índice ainda não foi publicado. A próxima fase é um
+degrau e não sobe se a fronteira bloqueia. O caminho de 30, 90 e 180
+dias diz o que esperar em cada etapa. O marco é o critério da conduta.
+Riscos e premissas fecham o percurso.
+
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)
 e [`docs/knowledge-base/assessment-model.md`](docs/knowledge-base/assessment-model.md).
