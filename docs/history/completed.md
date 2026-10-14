@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Visão por público separa decisão e semana
+
+- O mesmo achado vira leitura da direção e leitura do time. “A quem
+  recorrer” nomeia papéis. O acompanhamento não vira meta de bônus. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-14 — Histórico compara sem atribuir causa
 
 - O seletor da leitura anterior só aparece quando há escolha. Folha com

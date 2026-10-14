@@ -31,7 +31,7 @@ import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js'
 import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/learning-frontier.js';
 import { declaredSophistication } from '../catalog/evidence-contract.js';
 import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
-import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { evidenceGradeGap, projectAudienceReadings, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import { projectFrontierBrief } from '../inference/domain/learning-frontier.js';
 import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
@@ -483,8 +483,8 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const params = request.params as Params;
     const auth = requireProject(params);
     const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
-    const groups = uniqueFindingsByPattern(report.findings).slice(0, 3).map((finding) => ({ title: finding.title, verbs: projectAudienceVerbs(finding) }));
-    return reply.type('text/html').send(reportPage(params, 'audiences', renderAudiencePage(groups)));
+    const readings = projectAudienceReadings({ findings: report.findings, map: report.organizationalAreas });
+    return reply.type('text/html').send(reportPage(params, 'audiences', renderAudiencePage(readings)));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/report/readiness', async (request, reply) => {

@@ -1,7 +1,7 @@
 import { escapeHtml } from '../../shared/html.js';
 import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
 import { uniqueFindingsByPattern, type OutcomeFinding } from '../inference/domain/report-outcome.js';
-import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnostic-report.js';
+import type { DiagnosticLaudo, AudienceReading } from '../inference/domain/diagnostic-report.js';
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
@@ -151,7 +151,7 @@ function renderConduct(item: TreatmentConduct, order: number): string {
     ? '<p class="report-gap">Aviso: baixa transferência — treinamento sem mudar o ambiente raramente vira prática.</p>'
     : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
-  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p class="report-conduct-action">${escapeHtml(item.action)}</p><p>Dono: ${escapeHtml(item.owner)}</p><p>Critério: ${escapeHtml(item.success)}</p>${cynefin}${grade}${dependency}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
+  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p class="report-conduct-action">${escapeHtml(item.action)}</p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${dependency}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
 }
 
 function renderFooter(laudo: DiagnosticLaudo): string {
@@ -297,11 +297,23 @@ export function renderTreatmentPage(plan: {
     <section class="report-block"><h2>Domínio Cynefin</h2><ul>${domains}</ul>${grades}</section>`;
 }
 
-export function renderAudiencePage(groups: Array<{ title: string; verbs: AudienceVerb[] }>): string {
-  const body = groups.length
-    ? groups.map((group) => `<section class="report-block"><h2>${escapeHtml(group.title)}</h2>${group.verbs.map((verb) => `<p><strong>${escapeHtml(verb.label)}.</strong> ${escapeHtml(verb.ask)}</p>`).join('')}</section>`).join('')
+export function renderAudiencePage(readings: AudienceReading[]): string {
+  const field = (item: AudienceReading['direction'][number]) => item.published
+    ? `<p><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`
+    : `<p class="report-gap"><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`;
+  const body = readings.length
+    ? readings.map((reading) => `<section class="report-block"><h2>${escapeHtml(reading.title)}</h2><div>
+        <p class="${reading.pathPublished ? 'report-kicker' : 'report-gap'}">${escapeHtml(reading.path)}</p>
+        <p>${escapeHtml(reading.fact)}</p>
+        <div class="audience-side"><h3>Versão para a direção</h3><p class="report-note">Para quem autoriza.</p>${reading.direction.map(field).join('')}</div>
+        <div class="audience-side"><h3>Versão para o time</h3><p class="report-note">Para quem executa no recorte.</p>${reading.team.map(field).join('')}</div>
+        <div class="audience-side"><h3>A quem recorrer</h3><p class="${reading.rolesPublished ? '' : 'report-gap'}">${escapeHtml(reading.roles)}</p></div>
+      </div></section>`).join('')
     : '<p class="report-gap">Nenhum achado publicado para reescrever por público.</p>';
-  return `<header class="report-hero"><p class="report-kicker">Visão por público</p><h1>O mesmo achado, para quem decide e para quem faz</h1><p>O conteúdo é o mesmo. Muda o que cada público precisa fazer com ele.</p></header>${body}`;
+  const bonus = readings.length
+    ? `<aside class="report-block"><h2>Acompanhamento</h2><p>${escapeHtml(readings[0]!.bonus)}</p></aside>`
+    : '';
+  return `<header class="report-hero"><p class="report-kicker">Visão por público</p><h1>O mesmo achado, para quem decide e para quem faz</h1><p>O conteúdo é o mesmo. Muda o que cada público precisa fazer com ele.</p></header>${body}${bonus}`;
 }
 
 export function renderWalkthrough(input: AreaWalkthrough): string {

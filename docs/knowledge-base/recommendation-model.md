@@ -357,6 +357,11 @@ decisão diferentes; a posição, o padrão e a intervenção continuam únicos.
 recorte local, autoridade de time produz ação local e as demais autoridades
 produzem dependência recebida e escalada. Achados ainda investigativos permanecem
 no detalhe especialista e não são promovidos a decisão executiva.
+A página de visão por público reescreve o mesmo achado, um por vez: caminho,
+frase do fato, decisão da direção (pedir, risco, investimento, acompanhamento,
+parada) e semana do time (o que muda, como fazer, o que registrar). “A quem
+recorrer” usa o papel da autoridade e o dono do experimento quando o dono já é
+um papel. Nome de pessoa não entra. O acompanhamento não vira meta de bônus.
 
 Título, mecanismo causal e ação são campos distintos. O título descreve o efeito
 observado; a causa explica por que **este** padrão se reproduz; a ação propõe o

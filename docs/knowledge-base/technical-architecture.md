@@ -153,6 +153,12 @@ só entra quando há mais de uma anterior. Folha com posterior nas duas
 fotografias publica avançou, regrediu, estável ou incerto; sem essa
 posterior, a página declara a lacuna. A nota de atenção diz que outras
 mudanças no período também explicam o resultado.
+A visão por público reescreve cada achado publicado, um por vez. A direção
+recebe a decisão, o risco de não agir, o investimento, o que acompanhar e
+quando parar. O time recebe o que muda na semana, como fazer e o que
+registrar. “A quem recorrer” nomeia papéis. O acompanhamento não vira meta
+de bônus.
+
 A página de fronteira projeta `projectFrontierBrief` a partir das
 folhas medidas: dominado, pode aprender agora e ainda bloqueado. “Comece
 por” é um degrau desbloqueado. Condição humana (aresta social ou

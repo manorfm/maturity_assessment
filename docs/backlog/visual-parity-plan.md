@@ -54,7 +54,7 @@ acessíveis; só saíram do menu.
 | Plano | Cartão ativo (ação, dono, critério, Cynefin, evidência), seta “depende de” ou “sem dependência”, espera fora das ativas, grau D como experimento, pulso só com item-âncora | Colunas 1–3 meses e 3–12 meses do protótipo; o modelo ainda não publica esses horizontes |
 | Walkthrough de Operação | Abertura com estado ou lacuna; próxima fase dentro da fronteira; trilha 30/90/180 com o que esperar; marcos são o critério da conduta; riscos e premissas fecham | Grade de marcos com prazo e alvo percentual do exemplo |
 | Histórico | Seletor quando há mais de uma leitura anterior; estados do índice e das folhas guardadas; achados encerrados e novos; correspondência de unidades; nota de que a melhora não prova causa | Chips com alvo percentual do exemplo |
-| Visão por público | O achado reescrito por verbo | Um achado com pilha por público e o cartão da decisão de política |
+| Visão por público | Um achado por vez, com caminho e fato; versão da direção e versão do time; papéis em “A quem recorrer”; acompanhamento que não vira bônus | Nomes de cargo do exemplo (CTO, CFO) e o caso de Pagamentos |
 
 ## Administração
 

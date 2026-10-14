@@ -186,7 +186,9 @@ sequência até que mecanismo, contenção e autoridade sejam discriminados.
 e do mesmo `TransformationPortfolio`. A projeção organizacional separa decisões e
 restrições compartilhadas; a técnica seleciona restrições sistêmicas; a local
 separa ação própria, restrição recebida e escalada; a especialista preserva o
-contrato completo. Projeções carregam referências sem criar uma nova identidade de
+contrato completo. A visão por público (`projectAudienceReadings`) reescreve o
+mesmo achado para a direção e para o time, com papéis e sem meta de bônus.
+Projeções carregam referências sem criar uma nova identidade de
 problema ou uma regra alternativa de recomendação.
 
 `projectFrontInventory` produz `front-inventory-v1`: uma linha por frente

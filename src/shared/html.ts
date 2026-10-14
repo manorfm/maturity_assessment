@@ -289,6 +289,8 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .history-selector { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0 }
     .history-selector a { border:1px solid var(--rule); border-radius:999px; padding:6px 12px; text-decoration:none; color:var(--ink2); font-size:14px }
     .history-selector a[aria-current="page"] { background:var(--accent-soft); color:var(--accent-ink); font-weight:600 }
+    .audience-side + .audience-side { margin-top:22px }
+    .audience-side h3 { font-family:Newsreader, Georgia, serif; font-size:18px; font-weight:500; margin:0 0 8px }
     .readiness-card, .report-conduct { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px; margin:0 0 16px }
     .readiness-card h2 { margin:0 0 8px; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500 }
     .report-conduct-action { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; margin:0 0 8px }

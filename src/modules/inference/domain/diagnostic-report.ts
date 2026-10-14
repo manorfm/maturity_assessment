@@ -30,7 +30,8 @@ import {
 import { primaryArchetypeFor } from './systemic-archetypes.js';
 import { enablementCatalog } from './learning-frontier.js';
 import { selectPulseItems, type PulseCatalogItem } from '../../catalog/item-catalog.js';
-import { TransformationPortfolioPlanner } from './transformation-portfolio.js';
+import { TransformationPortfolioPlanner, type QualitativeLevel } from './transformation-portfolio.js';
+import { authorityRole } from './finding-narrative.js';
 
 export type ReportGap = { gap: string };
 
@@ -253,20 +254,106 @@ function sampleLine(sample?: { completed: number; units: Array<{ path: string; c
   return `${sample.completed} pessoas em ${count} ${count === 1 ? 'unidade' : 'unidades'}${units ? ` — ${units}` : ''}. Recortes com menos de 5 pessoas permanecem agregados.`;
 }
 
-export type AudienceVerb = {
-  audience: 'direction' | 'management' | 'team' | 'specialist';
-  label: string;
-  ask: string;
+export type AudienceField = { label: string; body: string; published: boolean };
+
+export type AudienceReading = {
+  path: string;
+  pathPublished: boolean;
+  title: string;
+  fact: string;
+  direction: AudienceField[];
+  team: AudienceField[];
+  roles: string;
+  rolesPublished: boolean;
+  bonus: string;
 };
 
-export function projectAudienceVerbs(finding: OutcomeFinding): AudienceVerb[] {
-  const title = finding.title;
-  return [
-    { audience: 'direction', label: 'Direção', ask: `Decidir se remove a restrição que mantém “${title}”.` },
-    { audience: 'management', label: 'Gestão', ask: `Priorizar o experimento deste achado no seu escopo, ou escalar o que não controla.` },
-    { audience: 'team', label: 'Time', ask: `Escolher o menor experimento reversível ligado a “${title}”, sem comparar times.` },
-    { audience: 'specialist', label: 'Especialista', ask: `Aprofundar a ficha do nó e checar pré-condição antes de indicar prática.` },
-  ];
+export const audienceBonus = 'O acompanhamento não vira meta de bônus nem avaliação individual.';
+
+const costLine: Record<QualitativeLevel, string> = {
+  low: 'Custo baixo no recorte do experimento. A ordem de grandeza se estima com o time; não exige contratação.',
+  moderate: 'Custo moderado: tempo de quem já opera o fluxo. A ordem de grandeza se estima com o time; não exige contratação.',
+  high: 'Custo alto: muda capacidade ou estrutura. A ordem de grandeza se estima com quem autoriza.',
+};
+
+const roleMark = /liderança|responsável|plataforma|engenharia|governança|time|segurança|produto|arquitetura|qualidade|operação|fluxo|política|capacidade/i;
+
+/** Um achado por vez, com a decisão de quem autoriza e a semana de quem executa. */
+export function projectAudienceReadings(input: {
+  findings: OutcomeFinding[];
+  map: OrganizationalAreaMap;
+}): AudienceReading[] {
+  const published = uniqueFindingsByPattern(input.findings).filter((finding) => finding.confidence >= 0.5).slice(0, 3);
+  const portfolio = TransformationPortfolioPlanner.plan(published);
+  const patterns = published.map((finding) => finding.pattern);
+  const prognosis = primaryArchetypeFor(patterns)?.prognosisWithoutTreatment;
+  return published.map((finding) => {
+    const trail = findAreaPath(input.map, finding.detailCapability);
+    const guidance = guidanceFor(finding.pattern, finding.foundation, finding.title);
+    const ready = finding.prescription?.status !== 'investigate' && Boolean(finding.experiment || finding.intervention);
+    const action = finding.experiment?.action || finding.intervention;
+    const step = portfolio.sequence.find((item) => item.pattern === finding.pattern);
+    const local = finding.containment === 'team';
+    const owner = finding.experiment?.owner;
+    const roles = [authorityRole(finding.decisionAuthority), owner && roleMark.test(owner) ? owner : '']
+      .filter((item) => item && item !== 'ainda não determinada');
+    const investigation = 'Este achado ainda é investigação. A decisão e a semana entram quando o experimento estiver publicado.';
+    return {
+      path: trail?.length ? trail.map((node) => node.label).join(' › ') : 'O caminho desta capacidade ainda não está no mapa.',
+      pathPublished: Boolean(trail?.length),
+      title: finding.title,
+      fact: guidance.plainExplanation,
+      direction: ready
+        ? [
+          { label: 'Decisão pedida', body: `Autorizar ou recusar: ${action}. Revisão: ${finding.experiment?.reviewHorizon ?? 'quando o efeito puder ser visto'}.`, published: true },
+          prognosis
+            ? { label: 'Risco de não agir', body: prognosis, published: true }
+            : { label: 'Risco de não agir', body: 'O risco de não agir entra quando dois padrões do mesmo arquétipo estiverem publicados.', published: false },
+          step
+            ? { label: 'Investimento', body: costLine[step.cost], published: true }
+            : { label: 'Investimento', body: 'O investimento entra quando o passo publicar o custo.', published: false },
+          finding.experiment?.metric
+            ? { label: 'O que acompanhar', body: `${finding.experiment.metric}. Não use como meta de bônus.`, published: true }
+            : { label: 'O que acompanhar', body: 'O que acompanhar entra quando o experimento publicar o indicador.', published: false },
+          step
+            ? { label: 'Quando parar', body: `${step.riskDisplacement} Revisão: ${finding.experiment?.reviewHorizon ?? 'no horizonte do experimento'}.`, published: true }
+            : { label: 'Quando parar', body: 'Quando parar entra quando o passo publicar o risco que pode se deslocar.', published: false },
+        ]
+        : [
+          { label: 'Decisão pedida', body: investigation, published: false },
+          { label: 'Risco de não agir', body: investigation, published: false },
+          { label: 'Investimento', body: investigation, published: false },
+          { label: 'O que acompanhar', body: investigation, published: false },
+          { label: 'Quando parar', body: investigation, published: false },
+        ],
+      team: ready
+        ? [
+          {
+            label: 'O que muda',
+            body: local
+              ? `Nesta semana: ${action}.`
+              : `A restrição não se resolve no time. Depois da autorização, o que muda é: ${action}.`,
+            published: true,
+          },
+          { label: 'Como fazer', body: guidance.solutionClass, published: true },
+          {
+            label: 'O que registrar',
+            body: finding.experiment?.metric
+              ? `Registre ${finding.experiment.metric}. Isso alimenta a próxima leitura; não avalia ninguém.`
+              : 'O que registrar entra quando o experimento publicar o indicador.',
+            published: Boolean(finding.experiment?.metric),
+          },
+        ]
+        : [
+          { label: 'O que muda', body: investigation, published: false },
+          { label: 'Como fazer', body: investigation, published: false },
+          { label: 'O que registrar', body: investigation, published: false },
+        ],
+      roles: roles.length ? roles.join('. ') : 'Ainda não há papel publicado para recorrer.',
+      rolesPublished: roles.length > 0,
+      bonus: audienceBonus,
+    };
+  });
 }
 
 export function projectTreatmentPlan(findings: OutcomeFinding[]): {

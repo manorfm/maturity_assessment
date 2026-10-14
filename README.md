@@ -69,6 +69,12 @@ foi guardada. O seletor da leitura anterior só aparece quando há escolha.
 Achados que encerraram e que abriram, e a correspondência de unidades,
 saem das fotografias. Melhora depois da conduta não prova causa.
 
+**Visão por público.** O achado é o mesmo do laudo: caminho e frase do
+fato. A direção lê a decisão, o risco de não agir, o investimento, o que
+acompanhar e quando parar. O time lê o que muda na semana, como fazer e
+o que registrar. “A quem recorrer” nomeia papéis. O acompanhamento não
+vira meta de bônus nem avaliação individual.
+
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)
 e [`docs/knowledge-base/assessment-model.md`](docs/knowledge-base/assessment-model.md).

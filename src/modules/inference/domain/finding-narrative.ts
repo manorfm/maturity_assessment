@@ -20,6 +20,10 @@ const authorityLabels: Record<string, string> = {
   team: 'liderança e pessoas do time', 'cross-team': 'responsáveis dos times envolvidos', platform: 'plataforma ou responsável pela capacidade compartilhada', architecture: 'responsáveis pelas fronteiras arquiteturais',
   'organizational-governance': 'governança e liderança organizacional', 'portfolio-leadership': 'liderança de produto, portfólio e orçamento', 'external-owner': 'responsável pela relação externa', undetermined: 'ainda não determinada',
 };
+
+export function authorityRole(authority?: string): string {
+  return authorityLabels[authority ?? 'undetermined'] ?? 'ainda não determinada';
+}
 const profileLabels: Record<string, string> = { management: 'Gestão', product: 'Produto', quality: 'Qualidade / QA', engineering: 'Engenharia', platform: 'Plataforma / Operações', architecture: 'Arquitetura', security: 'Segurança', data: 'Dados', design: 'Design / Experiência' };
 
 export function projectFindingNarrative(finding: OutcomeFinding): FindingNarrative {
@@ -52,7 +56,7 @@ function section(id: FindingNarrativeSectionId, title: string, body: string): Fi
 
 function decisionBody(finding: OutcomeFinding): string {
   const action = finding.experiment?.action ?? finding.intervention;
-  const authority = authorityLabels[finding.decisionAuthority ?? 'undetermined'] ?? finding.decisionAuthority ?? 'ainda não determinada';
+  const authority = authorityRole(finding.decisionAuthority);
   const horizon = finding.experiment?.reviewHorizon;
   return horizon
     ? `${action} Quem autoriza: ${authority}. Horizonte: ${horizon}.`
@@ -65,12 +69,12 @@ function importanceBody(finding: OutcomeFinding): string {
     const impacts = (finding.impacts ?? []).map((impact) => impactLabels[impact] ?? impact);
     return `A consequência alcança ${joinNatural(impacts)} no recorte observado.`;
   }
-  const authority = authorityLabels[finding.decisionAuthority ?? 'undetermined'] ?? finding.decisionAuthority ?? 'ainda não determinada';
+  const authority = authorityRole(finding.decisionAuthority);
   return `Se o padrão continuar, a decisão fica com ${authority}. O impacto ainda não foi medido nas entrevistas.`;
 }
 
 function capabilityBody(finding: OutcomeFinding): string {
-  const authority = authorityLabels[finding.decisionAuthority ?? 'undetermined'] ?? finding.decisionAuthority ?? 'ainda não determinada';
+  const authority = authorityRole(finding.decisionAuthority);
   const containment = containmentLabels[finding.containment ?? 'undetermined'] ?? finding.containment ?? 'ainda não determinada';
   if (finding.containment === 'organizational-policy' || finding.containment === 'organizational-structure' || finding.decisionAuthority === 'portfolio-leadership') {
     return `A restrição é ${containment}. Quem autoriza a mudança é ${authority}, não o time ocupado.`;
@@ -118,7 +122,7 @@ function mechanismBody(finding: OutcomeFinding): string {
 function containmentBody(finding: OutcomeFinding): string {
   const mechanism = mechanismLabels[finding.mechanism ?? 'undetermined'] ?? finding.mechanism ?? 'ainda não determinado';
   const containment = containmentLabels[finding.containment ?? 'undetermined'] ?? finding.containment ?? 'ainda não determinada';
-  const authority = authorityLabels[finding.decisionAuthority ?? 'undetermined'] ?? finding.decisionAuthority ?? 'ainda não determinada';
+  const authority = authorityRole(finding.decisionAuthority);
   return `Mecanismo observado: ${mechanism}. Contenção provável: ${containment}. Autoridade para decidir: ${authority}. A recorrência não amplia essa contenção automaticamente.`;
 }
 
