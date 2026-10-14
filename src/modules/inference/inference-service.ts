@@ -39,8 +39,7 @@ import {
   type SophisticationDistribution,
   type SophisticationPhase,
 } from './domain/sophistication-matrix.js';
-import { projectHistoryAssessment, type HistoryAssessment, type IndexReading, type IndexReadingContext } from './domain/reading-history.js';
-import { projectEvolutionReport } from './domain/evolution-report.js';
+import { projectHistoryComparison, type HistoryPage, type IndexReading, type IndexReadingContext } from './domain/reading-history.js';
 
 export type Finding = {
   kind: 'correction' | 'evolution'; capability: string; detailCapability: string; pattern: string;
@@ -363,7 +362,7 @@ export class InferenceService {
     const last = this.db.prepare(`
       SELECT completed FROM index_readings
       WHERE project_id = ? AND ${(input.unitId ? 'unit_id = ?' : 'unit_id IS NULL')}
-      ORDER BY captured_at DESC LIMIT 1
+      ORDER BY captured_at DESC, rowid DESC LIMIT 1
     `).get(...(input.unitId ? [projectId, input.unitId] : [projectId])) as { completed: number } | undefined;
     if (last && Number(last.completed) === input.completed) return;
     this.db.prepare(`
@@ -393,7 +392,7 @@ export class InferenceService {
       SELECT id, label, index_value, band_low, band_high, distribution_json, context_json, captured_at
       FROM index_readings
       WHERE project_id = ? AND unit_id IS NULL
-      ORDER BY captured_at DESC
+      ORDER BY captured_at DESC, rowid DESC
       LIMIT ?
     `).all(projectId, limit) as unknown as Array<{
       id: string;
@@ -437,33 +436,11 @@ export class InferenceService {
     return advancedPracticePhasesById(this.completedObservations(projectId), unitId);
   }
 
-  projectIndexHistory(projectId: string): HistoryAssessment {
-    const readings = this.listIndexReadings(projectId, 2);
-    if (readings.length < 2) return projectHistoryAssessment({});
-    const previous = readings[0]!;
-    const current = readings[1]!;
-    const history = projectHistoryAssessment({ previous, current });
-    if (!previous.distribution || !current.distribution) return history;
-    const evolution = projectEvolutionReport({
-      nodes: [{
-        leafId: 'organization-index',
-        label: 'Índice da organização',
-        previous: previous.distribution,
-        current: current.distribution,
-        ...(current.context?.treatedConduct ? { appliedConduct: current.context.treatedConduct } : {}),
-      }],
-      previousFindings: previous.context?.findingPatterns ?? [],
-      currentFindings: current.context?.findingPatterns ?? [],
-      ...(previous.context?.limiterId && previous.context.limiterLabel
-        ? { previousLimiter: { id: previous.context.limiterId, label: previous.context.limiterLabel } }
-        : {}),
-      ...(current.context?.limiterId && current.context.limiterLabel
-        ? { currentLimiter: { id: current.context.limiterId, label: current.context.limiterLabel } }
-        : {}),
-      previousUnits: previous.context?.units ?? [],
-      currentUnits: current.context?.units ?? [],
+  projectIndexHistory(projectId: string, previousId?: string): HistoryPage {
+    return projectHistoryComparison({
+      readings: this.listIndexReadings(projectId, 12),
+      ...(previousId ? { previousId } : {}),
     });
-    return { ...history, evolution };
   }
 
   report(projectId: string, minimum: number) {
@@ -509,6 +486,12 @@ export class InferenceService {
     if (index?.published) {
       const publishedFindings = uniqueFindingsByPattern(findings).filter((finding) => finding.confidence >= 0.5);
       const treated = publishedFindings[0];
+      const capabilityLabels = new Map(capabilities.map((item) => [item.id, item.label]));
+      const leafReadings = (index.leaves ?? []).map((leaf) => ({
+        id: leaf.id,
+        label: capabilityLabels.get(leaf.id) ?? leaf.id,
+        distribution: leaf.distribution as StageDistribution,
+      }));
       this.captureIndexReading(projectId, {
         label: `Leitura · ${completed} pessoas`,
         index: index.index,
@@ -518,6 +501,7 @@ export class InferenceService {
           findingPatterns: publishedFindings.map((finding) => finding.pattern),
           ...(outcome.limiterId ? { limiterId: outcome.limiterId, limiterLabel: outcome.limiterLabel } : {}),
           units: scopes.map((scope) => ({ id: scope.id, label: scope.path })),
+          ...(leafReadings.length ? { capabilities: leafReadings } : {}),
           ...(treated?.experiment?.action ? { treatedConduct: treated.experiment.action } : {}),
         },
         instrumentVersion: GRAPH_VERSION,
@@ -660,7 +644,11 @@ export class InferenceService {
     }
     const keys = Object.keys(publishedLeaves);
     if (!keys.length) return fallback ?? { published: false, reason: 'Ainda não há amostra suficiente para publicar índice.' };
-    if (keys.length === 1) return singleLeafDirect.get(keys[0]!)!;
+    if (keys.length === 1) {
+      const only = singleLeafDirect.get(keys[0]!)!;
+      if (!only.published) return only;
+      return { ...only, leaves: [{ id: keys[0]!, distribution: publishedLeaves[keys[0]!]! }] };
+    }
     const parent = aggregateParentIndex({ leaves: publishedLeaves, weights, draws: 8_000, seed: 1 });
     const width = parent.band[1] - parent.band[0];
     if (width > 50) return { published: false, reason: 'Faixa larga demais para publicar índice.' };
@@ -670,6 +658,7 @@ export class InferenceService {
       band: parent.band,
       coverage: Math.min(1, keys.length / 8),
       distribution: peakedDistribution(parent.index),
+      leaves: keys.map((id) => ({ id, distribution: publishedLeaves[id]! })),
     };
   }
 

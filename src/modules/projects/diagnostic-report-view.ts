@@ -383,8 +383,15 @@ export function renderHistoryPage(input: {
   pStable?: number;
   threshold?: number;
   evolution?: EvolutionReport;
+  options?: Array<{ id: string; label: string; selected: boolean }>;
+  caution?: string;
+  capabilityGap?: string;
 } = {}): string {
-  const { change, gap, pImprove, pRegress, pStable, threshold = 0.8, evolution } = input;
+  const { change, gap, pImprove, pRegress, pStable, threshold = 0.8, evolution, caution, capabilityGap } = input;
+  const options = input.options ?? [];
+  const selector = options.length > 1
+    ? `<nav class="history-selector" aria-label="Leitura anterior">${options.map((item) => `<a href="?previous=${escapeHtml(item.id)}"${item.selected ? ' aria-current="page"' : ''}>${escapeHtml(item.label)}</a>`).join('')}</nav>`
+    : '';
   const probs = pImprove !== undefined && pRegress !== undefined
     ? `<p>P(melhora) ${pImprove.toFixed(2)} · P(piora) ${pRegress.toFixed(2)}${pStable !== undefined ? ` · P(estável) ${pStable.toFixed(2)}` : ''} · limiar ${threshold.toFixed(2)} (05 §9).</p>`
     : '';
@@ -398,13 +405,17 @@ export function renderHistoryPage(input: {
   const body = gap
     ? `<p class="report-gap">${escapeHtml(gap)}</p>`
     : `<p>${changeLine}</p>${probs}`;
-  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora), P(piora) ou P(estável) ≥ ${threshold.toFixed(2)}.</p></header>${body}${evolution ? renderEvolution(evolution) : ''}`;
+  const note = !gap && caution
+    ? `<aside class="report-block"><h2>Atenção</h2><p>${escapeHtml(caution)}</p></aside>`
+    : '';
+  const leaves = capabilityGap ? `<p class="report-gap">${escapeHtml(capabilityGap)}</p>` : '';
+  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora), P(piora) ou P(estável) ≥ ${threshold.toFixed(2)}.</p>${selector}</header>${body}${evolution ? renderEvolution(evolution) : ''}${leaves}${note}`;
 }
 
 function renderEvolution(report: EvolutionReport): string {
   const stateLabel = { advanced: 'Avançou', regressed: 'Regrediu', stable: 'Estável', uncertain: 'Incerto' } as const;
   const nodes = report.nodes.length
-    ? `<ul>${report.nodes.map((node) => `<li><strong>${escapeHtml(node.label)}</strong> — ${stateLabel[node.state]}. ${escapeHtml(node.reading)}</li>`).join('')}</ul>`
+    ? `<p>Estados publicados: Avançou, Regrediu, Estável, Incerto. Direção só entra quando a probabilidade chega ao limiar.</p><ul>${report.nodes.map((node) => `<li><strong>${escapeHtml(node.label)}</strong> — ${stateLabel[node.state]}. ${escapeHtml(node.reading)}</li>`).join('')}</ul>`
     : '<p class="report-gap">Sem nós comparáveis entre as duas leituras.</p>';
   const closed = report.findings.closed.length
     ? `<p>Achados encerrados: ${report.findings.closed.map(escapeHtml).join(', ')}.</p>`

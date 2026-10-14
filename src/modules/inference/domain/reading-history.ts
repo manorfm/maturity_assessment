@@ -4,13 +4,16 @@ import {
   type ChangeAssessment,
 } from '../../measurement/domain/change-detection.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
-import type { EvolutionReport } from './evolution-report.js';
+import type { EvolutionReport, UnitCorrespondenceLink } from './evolution-report.js';
+import { projectEvolutionReport } from './evolution-report.js';
 
 export type IndexReadingContext = {
   findingPatterns: string[];
   limiterId?: string;
   limiterLabel?: string;
   units: Array<{ id: string; label: string }>;
+  unitLinks?: UnitCorrespondenceLink[];
+  capabilities?: Array<{ id: string; label: string; distribution: StageDistribution }>;
   treatedConduct?: string;
 };
 
@@ -73,5 +76,74 @@ export function projectHistoryAssessment(input: {
   return {
     change: compareReadings(input.previous, input.current),
     threshold: CHANGE_PUBLICATION_THRESHOLD,
+  };
+}
+
+export type HistoryOption = { id: string; label: string; selected: boolean };
+
+export type HistoryPage = HistoryAssessment & {
+  options: HistoryOption[];
+  caution: string;
+  capabilityGap?: string;
+};
+
+export const historyCaution = 'Melhora depois da conduta não prova que a conduta causou a melhora. Outras mudanças no período também explicam o resultado.';
+
+/** Leituras da mais antiga para a mais recente. A atual é a última; o seletor só aparece com duas anteriores ou mais. */
+export function projectHistoryComparison(input: {
+  readings: IndexReading[];
+  previousId?: string;
+}): HistoryPage {
+  const current = input.readings.at(-1);
+  const candidates = input.readings.slice(0, -1).reverse();
+  if (!current || !candidates.length) {
+    return { ...projectHistoryAssessment({}), options: [], caution: historyCaution };
+  }
+  const selected = candidates.find((item) => item.id === input.previousId) ?? candidates[0]!;
+  const options = candidates.length > 1
+    ? candidates.map((item) => ({ id: item.id, label: item.label, selected: item.id === selected.id }))
+    : [];
+  const history = projectHistoryAssessment({ previous: selected, current });
+  if (!selected.distribution || !current.distribution) {
+    return { ...history, options, caution: historyCaution };
+  }
+  const previousCapabilities = new Map((selected.context?.capabilities ?? []).map((item) => [item.id, item]));
+  const leafNodes = (current.context?.capabilities ?? []).flatMap((item) => {
+    const previous = previousCapabilities.get(item.id);
+    if (!previous) return [];
+    return [{
+      leafId: item.id,
+      label: item.label,
+      previous: previous.distribution,
+      current: item.distribution,
+    }];
+  });
+  const evolution = projectEvolutionReport({
+    nodes: [{
+      leafId: 'organization-index',
+      label: 'Índice da organização',
+      previous: selected.distribution,
+      current: current.distribution,
+      ...(current.context?.treatedConduct ? { appliedConduct: current.context.treatedConduct } : {}),
+    }, ...leafNodes],
+    previousFindings: selected.context?.findingPatterns ?? [],
+    currentFindings: current.context?.findingPatterns ?? [],
+    ...(selected.context?.limiterId && selected.context.limiterLabel
+      ? { previousLimiter: { id: selected.context.limiterId, label: selected.context.limiterLabel } }
+      : {}),
+    ...(current.context?.limiterId && current.context.limiterLabel
+      ? { currentLimiter: { id: current.context.limiterId, label: current.context.limiterLabel } }
+      : {}),
+    previousUnits: selected.context?.units ?? [],
+    currentUnits: current.context?.units ?? [],
+    unitLinks: current.context?.unitLinks ?? selected.context?.unitLinks ?? [],
+  });
+  const leavesCompared = evolution.nodes.some((node) => node.leafId !== 'organization-index');
+  return {
+    ...history,
+    evolution,
+    options,
+    caution: historyCaution,
+    ...(leavesCompared ? {} : { capabilityGap: 'A posterior de cada capacidade ainda não é guardada entre leituras.' }),
   };
 }

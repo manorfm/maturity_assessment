@@ -85,6 +85,8 @@ export type IndexPublication =
     target?: number;
     /** Posterior 0–4 quando disponível para P(melhora) (05 §9). */
     distribution?: readonly [number, number, number, number, number];
+    /** Posteriores de folha guardadas na fotografia para a comparação. */
+    leaves?: ReadonlyArray<{ id: string; distribution: readonly [number, number, number, number, number] }>;
   };
 
 export function publishIndex(input: {

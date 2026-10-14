@@ -63,6 +63,12 @@ degrau e não sobe se a fronteira bloqueia. O caminho de 30, 90 e 180
 dias diz o que esperar em cada etapa. O marco é o critério da conduta.
 Riscos e premissas fecham o percurso.
 
+**Histórico.** Uma leitura só mostra a lacuna de comparação. Com duas,
+a página mostra a direção do índice e de cada capacidade cuja posterior
+foi guardada. O seletor da leitura anterior só aparece quando há escolha.
+Achados que encerraram e que abriram, e a correspondência de unidades,
+saem das fotografias. Melhora depois da conduta não prova causa.
+
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)
 e [`docs/knowledge-base/assessment-model.md`](docs/knowledge-base/assessment-model.md).

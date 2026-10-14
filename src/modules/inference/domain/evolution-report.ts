@@ -216,7 +216,7 @@ function projectConstraint(
       moved: true,
       previous: previous.label,
       current: current.label,
-      reading: `A restrição principal mudou de “${previous.label}” para “${current.label}” — progresso esperado quando a anterior foi tratada.`,
+      reading: `A restrição principal mudou de “${previous.label}” para “${current.label}”. A mudança não prova que a conduta causou o deslocamento.`,
     };
   }
   const label = current?.label ?? previous?.label ?? '';

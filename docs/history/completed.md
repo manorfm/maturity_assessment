@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Histórico compara sem atribuir causa
+
+- O seletor da leitura anterior só aparece quando há escolha. Folha com
+  posterior nas duas fotografias publica direção; sem isso, a página diz
+  a lacuna. A nota de atenção permanece: melhora não prova causa. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-14 — Walkthrough de Operação vira um percurso
 
 - A abertura publica o estado ou a lacuna do índice. A próxima fase não

@@ -538,7 +538,10 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
   app.get('/projects/:publicId/manage/:adminSecret/report/history', async (request, reply) => {
     const params = request.params as Params;
     const auth = requireProject(params);
-    const history = inference.projectIndexHistory(String(auth.project.id));
+    const previousId = (request.query as { previous?: string }).previous;
+    const history = previousId
+      ? inference.projectIndexHistory(String(auth.project.id), previousId)
+      : inference.projectIndexHistory(String(auth.project.id));
     return reply.type('text/html').send(reportPage(params, 'history', renderHistoryPage(history)));
   });
 

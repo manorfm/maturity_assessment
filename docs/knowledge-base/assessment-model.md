@@ -96,11 +96,16 @@ discreto; pasta
 `change-detection` publica melhora, piora ou estável só com P ≥ 0,8
 (05 §9 / 16 §5.1); sem distribuição, o histórico cai na comparação de
 faixas. Cada índice m2 publicado grava uma fotografia imutável em
-`index_readings` (schema 27, com `context_json` de achados, restrição e
-unidades) quando a amostra (`completed`) muda. O histórico compara as
-duas últimas e projeta `evolution-report-v1` (estado do nó, achados
-encerrados/novos, restrição que mudou, correspondência de unidades —
-sem evolução publicada para unidade nova/extinta sem vínculo). A auditoria do instrumento bloqueia prática sem `evidence[]`. Toda
+`index_readings` (schema 27, com `context_json` de achados, restrição,
+unidades, vínculos e posteriores de folha) quando a amostra (`completed`)
+muda. O histórico compara a leitura mais recente com uma anterior. O
+seletor só aparece quando há mais de uma anterior. Cada folha presente
+nas duas fotografias publica avançou, regrediu, estável ou incerto. Sem
+essa posterior, a página diz a lacuna em vez de inventar a capacidade.
+Achados encerrados e novos, a restrição e a correspondência de unidades
+saem do mesmo relatório (`evolution-report-v1`). Unidade nova ou extinta
+sem vínculo não publica evolução. A nota de atenção permanece: melhora
+depois da conduta não prova que a conduta causou a melhora. A auditoria do instrumento bloqueia prática sem `evidence[]`. Toda
 folha com evidência no grafo v21 tem ≥ 2 testlets, âncora baixa (0–1) e caminho
 até âncora alta (consistência ≥ 3 ou outcome/system em 4), inclusive
 `knowledge-discovery`, `cognitive-load`, `identity-access` e `cloud-security`.
