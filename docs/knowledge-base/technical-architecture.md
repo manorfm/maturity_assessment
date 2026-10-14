@@ -167,7 +167,10 @@ pessoas querem; o meio não ajuda” começa pelo meio. “O que já funciona”
 só entra quando a leitura do laudo é de preservação. O relato da ficha
 (`projectReportedReadings`) publica perspectiva e time com cobertura
 acima do limiar, sem índice percentual. Quem ficou abaixo do limiar
-não ganha linha própria: as respostas entram só no total.
+não ganha linha própria: as respostas entram só no total. Causa, lugar,
+ação, critério, relações, lacuna e referência saem de `projectFichaClose`:
+texto publicado vira cartão; campo vazio vira a lacuna, sem o caso de
+exemplo do protótipo.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

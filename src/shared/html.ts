@@ -263,6 +263,9 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-block { display:grid; grid-template-columns:200px minmax(0,1fr); gap:8px 40px; border-top:1px solid var(--rule); padding-top:28px; margin-top:28px; max-width:52rem }
     .report-block h2 { grid-column:1; grid-row:1; margin:0; font-size:15px; font-weight:600 }
     .report-block > :not(h2) { grid-column:2 }
+    .ficha-card { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px }
+    .ficha-card p { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35 }
+    .ficha-card.report-gap p { font-family:inherit; font-size:14px; font-weight:400 }
     .report-consistency { max-width:52rem; margin-top:28px; padding-top:28px; border-top:1px solid var(--rule) }
     .report-consistency .card { margin:0; box-shadow:none; background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px 20px }
     .report-finding { margin:0 0 16px; background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px; display:flex; flex-direction:column; gap:14px }

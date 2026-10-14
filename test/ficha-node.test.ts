@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../src/modules/inference/domain/ficha-node.js';
+import { projectFichaClose, projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../src/modules/inference/domain/ficha-node.js';
 import { OrganizationalAreaProjector, projectFichaTrail } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderNodeCard } from '../src/modules/projects/diagnostic-report-view.js';
 
@@ -61,19 +61,45 @@ test('relato próprio exige o limiar; abaixo dele a resposta fica só no total',
     how: projectHowItIs({}),
     reported: readings,
     preserve: projectPreserve('correct'),
-    why: '',
-    where: '',
-    action: '',
-    check: '',
-    relations: '',
-    unknown: '',
-    references: '',
+    close: projectFichaClose({}),
   });
   assert.match(html, /Por perspectiva/);
   assert.match(html, /Por time/);
   assert.match(html, /<strong>Pagamentos<\/strong>/);
   assert.doesNotMatch(html, /<strong>Engenharia<\/strong>/);
   assert.doesNotMatch(html, /<strong>Conciliação<\/strong>/);
+});
+
+test('causa, lugar, ação e critério são cartões; vazio vira lacuna, sem o caso do protótipo', () => {
+  const empty = projectFichaClose({});
+  assert.equal(empty.cause.published, false);
+  assert.match(empty.cause.body, /Ainda não há causa publicada/);
+  assert.equal(empty.place.published, false);
+  assert.equal(empty.action.published, false);
+  assert.equal(empty.check.published, false);
+  assert.match(empty.unknown.body, /Lacuna ainda não nomeada/);
+  assert.match(empty.references.body, /Referência ainda não ligada/);
+  const filled = projectFichaClose({
+    cause: 'A aprovação encarece cada encontro das mudanças.',
+    place: 'No caminho compartilhado.',
+    action: 'Encurte um lote.',
+    check: 'A espera cai.',
+    relations: 'Entrega',
+  });
+  assert.equal(filled.cause.published, true);
+  assert.equal(filled.cause.body, 'A aprovação encarece cada encontro das mudanças.');
+  const html = renderNodeCard({
+    title: 'Entrega',
+    trail: [],
+    definition: projectNodeDefinition('delivery'),
+    how: projectHowItIs({}),
+    reported: projectReportedReadings({ capabilityIds: ['delivery'], minimum: 5, samples: [], units: [] }),
+    preserve: projectPreserve('correct'),
+    close: empty,
+  });
+  assert.match(html, /class="ficha-card report-gap"/);
+  assert.match(html, /Ainda não há causa publicada/);
+  assert.doesNotMatch(html, /4 relatos|22%/);
 });
 
 test('ficha mostra a frase de por que importa, a lacuna de estágio e omite o quadrante sem leitura', () => {
@@ -91,13 +117,12 @@ test('ficha mostra a frase de por que importa, a lacuna de estágio e omite o qu
     how,
     preserve: projectPreserve('correct'),
     reported: projectReportedReadings({ capabilityIds: ['delivery'], minimum: 5, samples: [], units: [] }),
-    why: 'A espera se repete.',
-    where: 'No caminho compartilhado.',
-    action: 'Encurte um lote.',
-    check: 'A espera cai.',
-    relations: '',
-    unknown: '',
-    references: '',
+    close: projectFichaClose({
+      cause: 'A espera se repete.',
+      place: 'No caminho compartilhado.',
+      action: 'Encurte um lote.',
+      check: 'A espera cai.',
+    }),
   });
   assert.match(html, /Abrange o caminho da mudança/);
   assert.match(html, /Trata espera escondida/);

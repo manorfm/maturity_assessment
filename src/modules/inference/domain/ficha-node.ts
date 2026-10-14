@@ -95,6 +95,52 @@ function withheldLine(label: string, completed: number): string {
   return `${label} teve ${completed} ${people}. As respostas entram só no total.`;
 }
 
+export type FichaLine = { published: boolean; body: string };
+
+export type FichaClose = {
+  cause: FichaLine;
+  place: FichaLine;
+  action: FichaLine;
+  check: FichaLine;
+  relations: FichaLine;
+  unknown: FichaLine;
+  references: FichaLine;
+};
+
+const closeGaps = {
+  cause: 'Ainda não há causa publicada neste nó.',
+  place: 'Ainda não há lugar publicado para resolver.',
+  action: 'Sem conduta publicada.',
+  check: 'O teste ainda não foi publicado.',
+  relations: 'Relações com outros nós ainda não foram publicadas.',
+  unknown: 'Lacuna ainda não nomeada.',
+  references: 'Referência ainda não ligada a esta ficha.',
+} as const;
+
+export function projectFichaClose(input: {
+  cause?: string;
+  place?: string;
+  action?: string;
+  check?: string;
+  relations?: string;
+  unknown?: string;
+  references?: string;
+}): FichaClose {
+  const line = (key: keyof typeof closeGaps, value?: string): FichaLine => {
+    const body = value?.trim();
+    return body ? { published: true, body } : { published: false, body: closeGaps[key] };
+  };
+  return {
+    cause: line('cause', input.cause),
+    place: line('place', input.place),
+    action: line('action', input.action),
+    check: line('check', input.check),
+    relations: line('relations', input.relations),
+    unknown: line('unknown', input.unknown),
+    references: line('references', input.references),
+  };
+}
+
 function perspectiveBody(label: string, mean: number): string {
   if (mean >= 1) return `${label} descreve um sistema mais folgado neste recorte.`;
   if (mean <= -1) return `${label} descreve a restrição neste recorte.`;

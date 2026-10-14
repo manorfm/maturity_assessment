@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Ficha fecha com cartões ou lacuna
+
+- Causa, lugar, ação, critério, relações, lacuna e referência saem do
+  domínio. Campo vazio é lacuna, não o caso de exemplo. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Ficha publica relato por perspectiva e por time
 
 - Perspectiva e time com cobertura acima do limiar ganham linha própria,

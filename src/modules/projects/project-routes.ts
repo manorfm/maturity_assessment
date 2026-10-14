@@ -23,7 +23,7 @@ import { policyBriefingFor } from '../inference/domain/multi-front-inventory.js'
 import { crossingsForCapability, type DisciplineCrossing } from '../inference/domain/discipline-crossing.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
 import { disciplineScope } from '../inference/domain/discipline-brief.js';
-import { projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../inference/domain/ficha-node.js';
+import { projectFichaClose, projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../inference/domain/ficha-node.js';
 import { problemsForNode, projectProblemTree, type HierarchicalBranch, type HierarchicalFinding, type HierarchicalProblem } from '../inference/domain/hierarchical-problems.js';
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
@@ -345,6 +345,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const primary = relevant[0];
     const areaBase = `/projects/${params.publicId}/manage/${params.adminSecret}/areas`;
     const sophistication = inference.projectSophisticationByLeaf(String(auth.project.id)).get(selected.id);
+    const relations = relationLabels(primary?.affectedCapabilities, selected.id);
     const pattern = report.outcome.finding?.pattern;
     const detail = `<div class="report-home">${renderDisciplineDetail({ selected, findings: relevant, projectFindings: findings, capabilityBase: base, ...(pattern ? { primaryPattern: pattern } : {}) })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}</div>`;
     const card = renderNodeCard({
@@ -371,14 +372,16 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         })),
       }),
       detail,
-      why: primary?.cause || 'Ainda não há causa publicada neste nó.',
-      where: containmentLabel(primary?.containment && primary.containment !== 'undetermined' ? primary.containment : 'undetermined'),
-      action: primary?.experiment?.action || primary?.intervention || 'Sem conduta publicada.',
-      check: primary?.experiment?.successCriterion || 'O teste ainda não foi publicado.',
       preserve: projectPreserve(report.outcome.kind, report.outcome.kind === 'preserve' ? primary?.intervention : undefined),
-      relations: relationLabels(primary?.affectedCapabilities, selected.id),
-      unknown: primary?.missingEvidence || 'Lacuna ainda não nomeada.',
-      references: primary?.foundation?.source || 'Referência ainda não ligada a esta ficha.',
+      close: projectFichaClose({
+        ...(primary?.cause ? { cause: primary.cause } : {}),
+        ...(primary?.containment && primary.containment !== 'undetermined' ? { place: containmentLabel(primary.containment) } : {}),
+        ...((primary?.experiment?.action || primary?.intervention) ? { action: primary.experiment?.action || primary.intervention } : {}),
+        ...(primary?.experiment?.successCriterion ? { check: primary.experiment.successCriterion } : {}),
+        ...(relations ? { relations } : {}),
+        ...(primary?.missingEvidence ? { unknown: primary.missingEvidence } : {}),
+        ...(primary?.foundation?.source ? { references: primary.foundation.source } : {}),
+      }),
     });
     return reply.type('text/html').send(layout(selected.label, renderReportShell({
       page: 'node',
@@ -1072,7 +1075,7 @@ function restrictionLabel(value: string): string {
 
 function relationLabels(ids: string[] | undefined, selfId: string): string {
   const labels = [...new Set((ids ?? []).filter((id) => id && id !== selfId))].map((id) => CapabilityTaxonomy.labelFor(id));
-  return labels.length ? labels.join(', ') : 'Nenhuma relação publicada além deste nó.';
+  return labels.length ? labels.join(', ') : '';
 }
 
 function containmentLabel(value: string): string {

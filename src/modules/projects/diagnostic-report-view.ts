@@ -5,7 +5,7 @@ import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnost
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
-import type { HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
+import type { FichaClose, FichaLine, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
 import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
@@ -229,7 +229,7 @@ function renderCells(cells: Array<{ kind: 'uncovered' | 'unpublished' | 'diverge
   }).join('');
 }
 
-export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: NodeDefinition; how: HowItIs; reported: ReportedReadings; detail?: string; why: string; where: string; action: string; check: string; preserve: PreservePublication; relations: string; unknown: string; references: string }): string {
+export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: NodeDefinition; how: HowItIs; reported: ReportedReadings; detail?: string; preserve: PreservePublication; close: FichaClose }): string {
   const block = (heading: string, body: string) => `<section class="report-block"><h2>${escapeHtml(heading)}</h2>${body}</section>`;
   const trail = input.trail.map((crumb, index) => {
     const separator = index === 0 ? '' : '<span aria-hidden="true">›</span>';
@@ -242,14 +242,19 @@ export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; defi
     ${block('O que é e por que importa', `<p>${escapeHtml(input.definition.what)}</p><p>${escapeHtml(input.definition.why)}</p>`)}
     ${block('Como está', renderHowItIs(input.how))}
     ${block('O que as pessoas relataram', `${renderReported(input.reported)}${input.detail ?? ''}`)}
-    ${block('Por que provavelmente acontece', `<p>${escapeHtml(input.why)}</p>`)}
-    ${block('Onde se resolve', `<p>${escapeHtml(input.where)}</p>`)}
-    ${block('O que fazer', `<p>${escapeHtml(input.action)}</p>`)}
-    ${block('Como saber se funcionou', `<p>${escapeHtml(input.check)}</p>`)}
+    ${block('Por que provavelmente acontece', renderFichaLine(input.close.cause))}
+    ${block('Onde se resolve', renderFichaLine(input.close.place))}
+    ${block('O que fazer', renderFichaLine(input.close.action))}
+    ${block('Como saber se funcionou', renderFichaLine(input.close.check))}
     ${block('O que já funciona', `<p class="${input.preserve.shown ? '' : 'report-gap'}">${escapeHtml(input.preserve.body)}</p>`)}
-    ${block('Relações com outros nós', `<p>${escapeHtml(input.relations)}</p>`)}
-    ${block('O que não sabemos', `<p>${escapeHtml(input.unknown)}</p>`)}
-    ${block('Referências', `<p>${escapeHtml(input.references)}</p>`)}`;
+    ${block('Relações com outros nós', renderFichaLine(input.close.relations))}
+    ${block('O que não sabemos', renderFichaLine(input.close.unknown))}
+    ${block('Referências', renderFichaLine(input.close.references))}`;
+}
+
+function renderFichaLine(line: FichaLine): string {
+  const tone = line.published ? 'ficha-card' : 'ficha-card report-gap';
+  return `<article class="${tone}"><p>${escapeHtml(line.body)}</p></article>`;
 }
 
 function renderReported(readings: ReportedReadings): string {

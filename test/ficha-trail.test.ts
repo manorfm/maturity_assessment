@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../src/modules/inference/domain/ficha-node.js';
+import { projectFichaClose, projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../src/modules/inference/domain/ficha-node.js';
 import { OrganizationalAreaProjector, projectFichaTrail } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderNodeCard } from '../src/modules/projects/diagnostic-report-view.js';
 
@@ -32,14 +32,8 @@ test('ficha desenha a trilha clicável e não transforma o nome aberto em link',
     definition: projectNodeDefinition('continuous-integration'),
     how: projectHowItIs({}),
     reported: projectReportedReadings({ capabilityIds: ['continuous-integration'], minimum: 5, samples: [], units: [] }),
-    why: '',
-    where: '',
-    action: '',
-    check: '',
     preserve: projectPreserve('correct'),
-    relations: '',
-    unknown: '',
-    references: '',
+    close: projectFichaClose({}),
   });
   assert.match(html, /aria-label="Caminho"/);
   assert.match(html, /href="\/report\/map"/);
