@@ -429,7 +429,7 @@ mecanismo e índice com faixa, cobertura e alvo, ou a lacuna enquanto o
 modelo for `m1`), até três achados em cartão (caminho, frase, áreas,
 sustentação e ficha), divergências com os dois lados sem declarar quem
 está certo, restrição principal (com o efeito de melhorar o resto antes),
-conduta de 30 dias, prognóstico (direção, não promessa), lacunas e exames
+conduta cujo horizonte publicado é 0–30 dias, prognóstico (direção, não promessa), lacunas e exames
 complementares em listas separadas, o rodapé de amostra e calibração, e a
 consistência do elo
 limitante dentro do mesmo chrome. Convites e calibração ficam na seção

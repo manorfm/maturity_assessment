@@ -172,8 +172,9 @@ observados ("padrão provável"). O portfólio escolhe a **restrição
 principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e
 limita a 3 condutas ativas por autoridade. Conduta cujo passo do
 portfólio `dependsOn` aponta outra conduta publicada sai das ativas:
-o plano diz “depende de” essa ação e a coloca depois da seta. Sem
-dependência, a linha é “sem dependência”. O horizonte sai dessa
+o plano diz “depende de” essa ação no cartão. Sem
+dependência, a linha é “sem dependência”. O laudo usa a mesma
+dependência, e a seção de 30 dias só lista horizonte 0–30. O horizonte sai dessa
 dependência e do modo de aprendizado: conduta dependente não é
 experimento de 30 dias, e coluna sem conduta declara a lacuna. O pulso de 4–8 semanas só
 lista item-âncora das folhas ativas; sem âncora, a página declara a

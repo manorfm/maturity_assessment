@@ -111,7 +111,8 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
   const constraint = 'gap' in laudo.constraint
     ? `<p class="report-gap">${escapeHtml(laudo.constraint.gap)}</p>`
     : `<h3>${escapeHtml(laudo.constraint.title)}</h3><p>${escapeHtml(laudo.constraint.body)}</p>`;
-  const conduct = laudo.conduct.map((item, index) => renderConduct(item, index + 1)).join('')
+  const thirtyDay = laudo.conduct.filter((item) => item.horizon === '0-30');
+  const conduct = thirtyDay.map((item, index) => renderConduct(item, index + 1)).join('')
     || '<p class="report-gap">Nenhuma conduta de 30 dias foi publicada.</p>';
   const unknowns = laudo.unknowns.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   const exams = laudo.exams.length
@@ -314,7 +315,7 @@ export function renderTreatmentPage(plan: {
   return `<header class="report-hero"><p class="report-kicker">Plano de tratamento</p><h1>Quem faz o quê, e em que ordem</h1></header>
     <div class="treatment-horizons">
       <section class="treatment-horizon treatment-horizon-now"><h2>0–30 dias</h2>${list('0-30')}</section>
-      <section class="treatment-horizon"><h2>1–3 meses</h2><p>A conduta de destino depende da de origem. O que espera começa quando a dependência mostrar resultado.</p>${list('1-3')}</section>
+      <section class="treatment-horizon"><h2>1–3 meses</h2>${list('1-3')}</section>
       <section class="treatment-horizon"><h2>3–12 meses</h2>${list('3-12')}</section>
     </div>
     <section class="report-block"><h2>Pulso · 4–8 semanas</h2>${pulse}</section>

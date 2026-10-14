@@ -90,10 +90,11 @@ test('plano desenha o cartão, a seta e o pulso só com item-âncora', () => {
     }),
   ]);
   const html = renderTreatmentPage(plan);
-  const arrow = html.indexOf('A conduta de destino depende da de origem');
   const activeAt = html.indexOf('Nomear quem responde pelo serviço');
+  const months = html.indexOf('1–3 meses');
   const waitingAt = html.indexOf('Integrar o trabalho no mesmo dia');
-  assert.ok(activeAt >= 0 && arrow > activeAt && waitingAt > arrow);
+  assert.ok(activeAt >= 0 && months > activeAt && waitingAt > months);
+  assert.doesNotMatch(html, /depende da de origem/);
   assert.match(html, /sem dependência/);
   assert.match(html, /depende de Nomear quem responde pelo serviço/);
   assert.match(html, /Direção/);

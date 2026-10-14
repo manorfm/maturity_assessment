@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectTreatmentPlan } from '../src/modules/inference/domain/diagnostic-report.js';
-import { renderTreatmentPage } from '../src/modules/projects/diagnostic-report-view.js';
+import { projectDiagnosticLaudo, projectTreatmentPlan } from '../src/modules/inference/domain/diagnostic-report.js';
+import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
+import { renderLaudo, renderTreatmentPage } from '../src/modules/projects/diagnostic-report-view.js';
 import type { OutcomeFinding } from '../src/modules/inference/domain/report-outcome.js';
 
 function finding(partial: Partial<OutcomeFinding> & Pick<OutcomeFinding, 'pattern' | 'title' | 'detailCapability'>): OutcomeFinding {
@@ -141,5 +142,54 @@ test('capacidade que não é experimento imediato fica em 1–3 meses', () => {
   const months = column(html, '1–3 meses', '3–12 meses');
   assert.equal(days.includes('Dojo de seis semanas'), false);
   assert.equal(months.includes('Dojo de seis semanas'), true);
+  assert.equal(months.includes('depende da de origem'), false);
   assert.equal(column(html, '3–12 meses', 'Pulso').includes('Nenhuma conduta neste horizonte.'), true);
+});
+
+test('coluna de 1–3 meses vazia não afirma dependência', () => {
+  const html = renderTreatmentPage({ active: [], waiting: [], deferred: [], pulse: [] });
+  const months = column(html, '1–3 meses', '3–12 meses');
+  assert.equal(months.includes('depende da de origem'), false);
+  assert.equal(months.includes('Nenhuma conduta neste horizonte.'), true);
+});
+
+test('laudo não mostra conduta dependente na seção de 30 dias', () => {
+  const findings = [
+    finding({
+      pattern: 'servico-sem-owner',
+      title: 'Nomear quem responde pelo serviço',
+      detailCapability: 'team-ownership',
+      mechanism: 'organization',
+      containment: 'organizational-structure',
+      decisionAuthority: 'cross-team',
+    }),
+    finding({
+      pattern: 'integracao-tardia',
+      title: 'Integrar o trabalho no mesmo dia',
+      detailCapability: 'continuous-integration',
+      mechanism: 'process',
+      containment: 'team',
+      decisionAuthority: 'team',
+    }),
+  ];
+  const laudo = projectDiagnosticLaudo({
+    outcome: {
+      kind: 'correct',
+      kindLabel: 'Precisa de correção',
+      limiterLabel: 'Dono do serviço',
+      reading: 'O serviço não tem quem responda.',
+      nextStepTitle: '',
+      nextStepBody: '',
+      finding: findings[0],
+    },
+    findings,
+    organizationalAreas: OrganizationalAreaProjector.empty(),
+  });
+  const html = renderLaudo(laudo, { capabilityBase: '/c', reportBase: '/r' });
+  const start = html.indexOf('Conduta para 30 dias');
+  const end = html.indexOf('Prognóstico', start);
+  assert.ok(start >= 0 && end > start);
+  const section = html.slice(start, end);
+  assert.equal(section.includes('Integrar o trabalho no mesmo dia'), false);
+  assert.equal(section.includes('Nomear quem responde pelo serviço'), true);
 });

@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Laudo deixa a conduta dependente fora dos 30 dias
+
+- A conduta do laudo recebe a dependência do portfólio. A seção de 30
+  dias só lista horizonte 0–30. A coluna de 1–3 meses não afirma
+  dependência fora do cartão. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Plano publica os três horizontes
 
 - O horizonte da conduta sai da dependência e do modo de aprendizado.

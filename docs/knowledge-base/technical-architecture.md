@@ -133,7 +133,7 @@ framework de frontend.
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
 é o laudo (`diagnostic-report-v2`): motivo em citação ou lacuna, leitura
 geral com frase de mecanismo, até três achados em cartão, divergências
-nos dois lados, restrição principal, conduta de 30 dias, prognóstico
+nos dois lados, restrição principal, conduta cujo horizonte publicado é 0–30 dias, prognóstico
 como direção, lacunas e exames em listas separadas, e rodapé de amostra
 e calibração.
 Onde o modelo `m1` não mede índice, faixa, alvo ou prognóstico, o bloco
@@ -206,9 +206,10 @@ mantém a lacuna de que o grafo não ligou aquele nó. O plano de tratamento
 linha Cynefin e grau A–D. O horizonte sai da dependência e do modo de
 aprendizado: o que destrava agora fica em 0–30 dias, o que espera um
 pré-requisito fica em 1–3 meses e o que só cabe depois da fronteira fica
-em 3–12 meses. Conduta dependente não é experimento de 30 dias. A tela
-mostra as três colunas; coluna vazia diz que não há conduta naquele
-horizonte. A seta usa `dependsOn` do portfólio. O pulso só aparece com item-âncora.
+em 3–12 meses. Conduta dependente não é experimento de 30 dias. O laudo
+recebe a mesma dependência do portfólio e a seção de 30 dias só lista
+horizonte 0–30. A tela mostra as três colunas; coluna vazia diz que não
+há conduta naquele horizonte. “depende de” fica no cartão. O pulso só aparece com item-âncora.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

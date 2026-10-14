@@ -126,6 +126,7 @@ export function projectDiagnosticLaudo(input: {
     })),
   ];
   const observedPatterns = published.map((finding) => finding.pattern);
+  const dependsOn = portfolioDependsOn(published);
   const prematureConduct: TreatmentConduct[] = premature.slice(0, 2).map((item) => {
     const learningMode = 'work-experiment' as const;
     return {
@@ -141,7 +142,9 @@ export function projectDiagnosticLaudo(input: {
   });
   const conduct = [
     ...prematureConduct,
-    ...primary.slice(0, Math.max(0, 3 - prematureConduct.length)).map((finding) => conductFrom(finding, observedPatterns)),
+    ...primary.slice(0, Math.max(0, 3 - prematureConduct.length)).map((finding) => (
+      conductFrom(finding, observedPatterns, dependencyOf(finding, published, dependsOn))
+    )),
   ];
   const constraintFact = input.outcome.finding
     ? input.outcome.finding.cause || input.outcome.reading || input.outcome.finding.title
@@ -223,7 +226,18 @@ function publishConductHorizon(conduct: { dependency?: string; learningMode?: Le
   return '0-30';
 }
 
-function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): TreatmentConduct {
+function portfolioDependsOn(published: OutcomeFinding[]): Map<string, string[]> {
+  return new Map(TransformationPortfolioPlanner.plan(published).sequence.map((step) => [step.pattern, step.dependsOn]));
+}
+
+function dependencyOf(finding: OutcomeFinding, published: OutcomeFinding[], dependsOn: Map<string, string[]>): string {
+  const predecessor = published.find((item) => (dependsOn.get(finding.pattern) ?? []).includes(item.pattern));
+  return predecessor
+    ? `depende de ${predecessor.experiment?.action || predecessor.intervention || predecessor.title}`
+    : 'sem dependência';
+}
+
+function conductFrom(finding: OutcomeFinding, observedPatterns: string[], dependency = 'sem dependência'): TreatmentConduct {
   const guidance = guidanceFor(finding.pattern, finding.foundation, finding.title);
   const cynefin: CynefinDomain = classifyCynefin({
     ...(finding.mechanism ? { mechanism: finding.mechanism } : {}),
@@ -239,7 +253,8 @@ function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): Treat
     action,
     owner: finding.experiment?.owner || 'Quem autoriza neste recorte',
     success: finding.experiment?.successCriterion || guidance.successCriterion,
-    horizon: publishConductHorizon({ learningMode }),
+    dependency,
+    horizon: publishConductHorizon({ dependency, learningMode }),
     authority: authorityOwner(finding.decisionAuthority),
     cynefin,
     evidenceGrade: classifyEvidenceGrade({
@@ -392,23 +407,11 @@ export function projectTreatmentPlan(findings: OutcomeFinding[]): {
 } {
   const published = uniqueFindingsByPattern(findings).filter((finding) => finding.confidence >= 0.5);
   const observedPatterns = published.map((finding) => finding.pattern);
-  const dependsOn = new Map(TransformationPortfolioPlanner.plan(published).sequence.map((step) => [step.pattern, step.dependsOn]));
-  const rows = published.map((finding) => {
-    const conduct = conductFrom(finding, observedPatterns);
-    const predecessor = published.find((item) => (dependsOn.get(finding.pattern) ?? []).includes(item.pattern));
-    const dependency = predecessor
-      ? `depende de ${predecessor.experiment?.action || predecessor.intervention || predecessor.title}`
-      : 'sem dependência';
-    const sequenced = {
-      ...conduct,
-      dependency,
-      horizon: publishConductHorizon({
-        dependency,
-        ...(conduct.learningMode ? { learningMode: conduct.learningMode } : {}),
-      }),
-    };
-    return { conduct: sequenced, leafId: finding.detailCapability };
-  });
+  const dependsOn = portfolioDependsOn(published);
+  const rows = published.map((finding) => ({
+    conduct: conductFrom(finding, observedPatterns, dependencyOf(finding, published, dependsOn)),
+    leafId: finding.detailCapability,
+  }));
   // No máximo 3 condutas ativas por nível de autoridade (08 §7). Quem depende de outra fica na espera.
   const active: TreatmentConduct[] = [];
   const waiting: TreatmentConduct[] = [];
