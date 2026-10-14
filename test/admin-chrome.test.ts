@@ -21,6 +21,19 @@ test('shell administrativo usa tokens e tipografia do design-graph', () => {
   assert.match(html, /aria-current="step"/);
 });
 
+test('shell embutido omite a barra superior de marca', () => {
+  const html = renderAdminShell({
+    title: 'Convites e participação',
+    step: 'invites',
+    embedded: true,
+    body: '<p>corpo</p>',
+  });
+  assert.match(html, /class="admin admin--embedded"/);
+  assert.doesNotMatch(html, /class="admin-top"/);
+  assert.doesNotMatch(html, />Administração</);
+  assert.match(html, /Convites e participação/);
+});
+
 test('criar projeto e painel servem o chrome administrativo', async () => {
   const db = createDatabase(':memory:');
   const app = await createApp(db);
@@ -40,10 +53,19 @@ test('criar projeto e painel servem o chrome administrativo', async () => {
   const manageUrl = created.headers.location!;
   const manage = await app.inject({ method: 'GET', url: manageUrl });
   assert.equal(manage.statusCode, 200);
-  assert.match(manage.body, /class="admin"/);
+  assert.match(manage.body, /class="manage-workspace"/);
+  assert.match(manage.body, /class="manage-report"/);
+  assert.match(manage.body, /class="manage-ops"/);
+  assert.match(manage.body, /admin--embedded/);
+  assert.doesNotMatch(manage.body, /class="report-home"/);
+  assert.doesNotMatch(manage.body, /<p class="eyebrow">Diagnóstico<\/p>/);
+  assert.match(manage.body, /class="admin admin--embedded"/);
   assert.match(manage.body, /Convites e participação/);
   assert.match(manage.body, /admin-metric/);
   assert.match(manage.body, /Gerar convites individuais/);
+  const reportIdx = manage.body.indexOf('diagnostic-report');
+  const opsIdx = manage.body.indexOf('manage-ops');
+  assert.ok(reportIdx >= 0 && opsIdx > reportIdx);
   await app.close();
 });
 

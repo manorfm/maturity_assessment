@@ -143,13 +143,16 @@ folhas medidas. O mapa tem quatro sistemas — Produto,
 Engenharia, Operação e Organização — e três cortes: por capacidade, por
 estrutura e por perspectiva. Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
-protótipo, Newsreader e IBM Plex Sans. A entrevista SSR (`interview-view`)
-separa práticas de saídas observacionais, mostra progresso por minutos
-restantes e preserva anonimato e retomada. A administração SSR
-(`admin-view`) cobre criar projeto, acesso, convites, termo informativo,
-showcase e erros com o mesmo sistema visual; campos de contexto do
-protótipo (porte, regulação, aceite formal do termo) ainda não entram no
-domínio. Radar não é a leitura principal.
+protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)
+empilha o laudo no chrome do relatório e, abaixo, a operação do piloto no
+shell administrativo embutido (`admin--embedded`), sem segunda barra de
+marca nem cabeçalho solto fora do chrome. A entrevista SSR
+(`interview-view`) separa práticas de saídas observacionais, mostra
+progresso por minutos restantes e preserva anonimato e retomada. A
+administração SSR (`admin-view`) cobre criar projeto, acesso, convites,
+termo informativo, showcase e erros com o mesmo sistema visual; campos de
+contexto do protótipo (porte, regulação, aceite formal do termo) ainda não
+entram no domínio. Radar não é a leitura principal.
 A página da disciplina começa por uma linha do recorte (o que não
 é); depois vêm a dor daquele nível, o efeito que ela gera acima,
 onde mais isso chega, a ação e o teste. Folha sem finding não lista

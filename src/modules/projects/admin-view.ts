@@ -21,6 +21,8 @@ export function renderAdminShell(input: {
   body: string;
   stepHrefs?: Partial<Record<AdminStep, string>>;
   showSteps?: boolean;
+  /** When true, omit the top brand bar — used under the report chrome on manage. */
+  embedded?: boolean;
 }): string {
   const status = input.status
     ? `<span class="admin-status">${escapeHtml(input.status)}</span>`
@@ -43,14 +45,18 @@ export function renderAdminShell(input: {
         ? `<a class="${className}" href="${escapeHtml(href)}"${attrs}>${mark}</a>`
         : `<span class="${className}"${attrs}>${mark}</span>`;
     }).join('')}</nav>`;
-  return `<div class="admin" data-theme="claro" style="${TOKEN_STYLE};font-family:'IBM Plex Sans',sans-serif">
-  <header class="admin-top">
+  const top = input.embedded
+    ? ''
+    : `<header class="admin-top">
     <div class="admin-brand"><strong style="font-family:Newsreader,Georgia,serif">${escapeHtml(BRAND)}</strong><span>Administração</span></div>
     <div class="admin-top-meta">${projectLabel}</div>
-  </header>
+  </header>`;
+  const rootClass = input.embedded ? 'admin admin--embedded' : 'admin';
+  return `<div class="${rootClass}" data-theme="claro" style="${TOKEN_STYLE};font-family:'IBM Plex Sans',sans-serif">
+  ${top}
   <div class="admin-body">
     ${nav}
-    <main class="admin-main">${heading}${input.body}</main>
+    <div class="admin-main">${heading}${input.body}</div>
   </div>
 </div>`;
 }

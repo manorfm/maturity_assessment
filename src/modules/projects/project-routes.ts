@@ -276,6 +276,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       step: 'invites',
       projectName: String(auth.project.name),
       status: 'Coleta aberta',
+      embedded: true,
       stepHrefs: {
         invites: '#operacao',
         terms: '#termo',
@@ -300,10 +301,9 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       <p class="admin-actions"><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`,
     });
     return reply.type('text/html').send(layout(String(auth.project.name), `
-      <div class="report-home">
-      <header><p class="eyebrow">Diagnóstico</p><h1>${escapeHtml(auth.project.name)}</h1></header>
-      <section id="report-diagnosis">${firstScreen}${reportAvailability}</section>
-      ${adminOps}
+      <div class="manage-workspace">
+        <section class="manage-report" id="report-diagnosis">${firstScreen}${reportAvailability}</section>
+        <section class="manage-ops" aria-label="Operação do projeto">${adminOps}</section>
       </div>`));
   });
 
@@ -761,14 +761,15 @@ export function renderFirstScreen(input: {
     ...(input.instrument ? { instrument: input.instrument } : {}),
     ...(input.leaves ? { leaves: input.leaves } : {}),
   });
-  const classification = input.classification ? renderClassification(input.classification, input.outcome) : '';
-  const shell = renderReportShell({
+  const classification = input.classification
+    ? `<section class="report-consistency">${renderClassification(input.classification, input.outcome)}</section>`
+    : '';
+  return renderReportShell({
     page: 'laudo',
     base: reportBase,
     projectName: input.projectName ?? 'Diagnóstico',
-    body: renderLaudo(laudo, { capabilityBase: input.capabilityBase, reportBase }),
+    body: `${renderLaudo(laudo, { capabilityBase: input.capabilityBase, reportBase })}${classification}`,
   });
-  return `${shell}${classification}`;
 }
 
 function renderInterviewProblem(problem: InterviewProblem, capabilityBase: string): string {

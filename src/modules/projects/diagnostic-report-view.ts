@@ -12,7 +12,7 @@ import type { EvolutionReport } from '../inference/domain/evolution-report.js';
 export type ReportPageId = 'laudo' | 'map' | 'node' | 'readiness' | 'frontier' | 'treatment' | 'walkthrough' | 'history' | 'audiences';
 
 const NAV: Array<{ id: ReportPageId; label: string; href: (base: string) => string }> = [
-  { id: 'laudo', label: 'Laudo', href: (base) => base },
+  { id: 'laudo', label: 'Laudo', href: (base) => base.replace(/\/report$/, '') || base },
   { id: 'map', label: 'Mapa', href: (base) => `${base}/map` },
   { id: 'readiness', label: 'Prontidão para práticas avançadas', href: (base) => `${base}/readiness` },
   { id: 'frontier', label: 'Fronteira de aprendizado', href: (base) => `${base}/frontier` },

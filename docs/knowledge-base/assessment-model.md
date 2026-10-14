@@ -422,7 +422,9 @@ mostra, nesta ordem: motivo da avaliação (ou a lacuna, se o projeto não
 registrou a queixa), leitura geral (índice com faixa, cobertura e alvo,
 ou a lacuna enquanto o modelo for `m1`), até três achados, divergências,
 restrição principal, conduta de 30 dias, prognóstico, o que ainda não
-sabemos e o rodapé de amostra e calibração. O mapa tem quatro sistemas
+sabemos, o rodapé de amostra e calibração, e a consistência do elo
+limitante dentro do mesmo chrome. Convites e calibração ficam na seção
+de operação abaixo do laudo, não num segundo cabeçalho. O mapa tem quatro sistemas
 (Produto, Engenharia, Operação e Organização). Organização não é faixa.
 Quem autoriza decide depois de ler.
 O cartão compacto permanece no detalhe da disciplina e quando não há

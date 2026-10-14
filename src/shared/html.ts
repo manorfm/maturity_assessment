@@ -16,7 +16,15 @@ export const layout = (title: string, content: string): string => `<!doctype htm
   <style>
     :root { color-scheme: light; --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --muted:#625B51; --line:#DCD4C6; --accent:#0D5C63; --soft:#DCEAE8; --critical:#A2372A; --reactive:#94560F; --repeatable:#b78a00; --managed:#2563a8; --unknown:#B9B2A7; --serif:Newsreader,Georgia,"Times New Roman",serif; --sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; }
     * { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 var(--sans) }
-    main { width:min(920px,calc(100% - 32px)); margin:48px auto 80px } body:has(.report-home) main, body:has(.admin) main, body:has(.interview) main, body:has(.diagnostic-report) main { width:100%; max-width:none; margin:0; padding:0 } body:has(.showcase-compare) main { width:min(1180px,calc(100% - 32px)) } header { margin-bottom:32px } h1 { font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.04em; margin:.25rem 0 1rem } h2 { margin-top:2rem } h3 { margin-bottom:.4rem }
+    main { width:min(920px,calc(100% - 32px)); margin:48px auto 80px } body:has(.report-home) main, body:has(.manage-workspace) main, body:has(.admin) main, body:has(.interview) main, body:has(.diagnostic-report) main { width:100%; max-width:none; margin:0; padding:0 } body:has(.showcase-compare) main { width:min(1180px,calc(100% - 32px)) } body > main > header { margin-bottom:32px } body > main > header h1, .admin-heading h1 { font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.04em; margin:.25rem 0 1rem } h2 { margin-top:2rem } h3 { margin-bottom:.4rem }
+    .manage-workspace { display:flex; flex-direction:column; min-height:100vh; background:var(--bg) }
+    .manage-report { flex:none }
+    .manage-report .diagnostic-report { min-height:0 }
+    .manage-report .report-sidebar { position:sticky; top:0; max-height:100vh; overflow:auto }
+    .manage-ops { border-top:1px solid var(--line); background:var(--bg) }
+    .manage-ops .admin--embedded { min-height:0 }
+    .manage-ops .admin--embedded .admin-body { min-height:0 }
+    .manage-report .notice { margin:0; padding:16px clamp(20px,4vw,48px); border-bottom:1px solid var(--line); background:var(--soft); color:var(--ink); font-size:14px }
     .admin { min-height:100vh; display:flex; flex-direction:column; background:var(--bg); color:var(--ink) }
     .admin-top { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:20px clamp(20px,4vw,48px); border-bottom:1px solid var(--rule,#DCD4C6); background:var(--surface) }
     .admin-brand { display:flex; gap:20px; align-items:baseline }
@@ -31,6 +39,8 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .admin-step-mark { flex:none; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; border:1.5px solid var(--ink3,#625B51); box-sizing:border-box }
     .admin-step.current .admin-step-mark { border:0; background:var(--accent); color:var(--on-accent,#fff) }
     .admin-main { flex:1; min-width:0; box-sizing:border-box; padding:44px clamp(20px,5vw,64px); display:flex; flex-direction:column; gap:32px }
+    .admin--embedded .admin-steps { padding-top:28px }
+    .admin--embedded .admin-main { padding-top:36px }
     .admin-heading { display:flex; flex-direction:column; gap:10px; max-width:760px }
     .admin-heading h2 { margin:0; font-family:Newsreader,Georgia,serif; font-size:clamp(28px,3vw,36px); line-height:1.15; font-weight:500; letter-spacing:-.01em }
     .admin-heading p { margin:0; font-size:16px; color:var(--ink2,#46413A); max-width:72ch }
@@ -233,7 +243,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .interview-actions button { flex:1 1 160px; max-width:320px; margin:0 0 0 auto; min-height:48px; padding:0 20px; border:0; border-radius:10px; background:var(--accent); color:var(--on-accent); font:inherit; font-weight:600; cursor:pointer }
     .interview-notice { margin:0; padding:14px 16px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-soft); color:var(--ink); font-size:15px }
     .interview-hint { margin:0; color:var(--ink3); font-size:13px; max-width:60ch }
-    .diagnostic-report { --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-soft:#DCEAE8; --accent-ink:#0A4B51; --sunk:#EFE9DE; --ochre:#94560F; --red:#A2372A; --red-soft:#F6E3DE; --na:#B9B2A7; display:flex; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:15px; line-height:1.5 }
+    .diagnostic-report { --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-soft:#DCEAE8; --accent-ink:#0A4B51; --sunk:#EFE9DE; --ochre:#94560F; --red:#A2372A; --red-soft:#F6E3DE; --na:#B9B2A7; display:flex; align-items:stretch; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:15px; line-height:1.5 }
     .diagnostic-report[data-theme="escuro"] { --bg:#171614; --surface:#211F1C; --ink:#EDE8DF; --ink2:#CBC3B6; --ink3:#A89F91; --rule:#3A3631; --accent:#5FB0B0; --accent-soft:#1C3435; --accent-ink:#8FD0CF; --sunk:#1B1A17; --ochre:#E0A35C; --red:#E8826F; --red-soft:#3C2420; --na:#6A645B; color-scheme:dark }
     .report-sidebar { width:248px; flex:none; box-sizing:border-box; padding:40px 20px; border-right:1px solid var(--rule); background:var(--sunk); display:flex; flex-direction:column; gap:28px }
     .report-brand { display:flex; flex-direction:column; gap:4px; padding:0 12px }
@@ -243,18 +253,22 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-sidebar a { display:block; padding:8px 12px; border-radius:6px; color:var(--ink2); text-decoration:none; font-size:14px }
     .report-sidebar a[aria-current="page"] { background:var(--accent-soft); color:var(--accent-ink); font-weight:600 }
     .report-sidebar-note { margin-top:auto; padding:0 12px; font-size:12px; line-height:1.5 }
-    .report-theme { margin:0 12px; background:transparent; color:var(--accent-ink); border:1px solid var(--rule); border-radius:6px; padding:8px 12px }
-    .report-main { flex:1; min-width:0; padding:40px 48px 72px }
+    .report-theme { margin:0 12px; background:transparent; color:var(--accent-ink); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; cursor:pointer }
+    .report-main { flex:1; min-width:0; padding:48px clamp(24px,5vw,72px) 80px; display:flex; flex-direction:column; align-items:stretch }
+    .report-hero { max-width:40rem; margin:0 0 8px }
     .report-hero h1, .report-block h2 { font-family:Newsreader, Georgia, serif; font-weight:500 }
-    .report-hero h1 { font-size:46px; line-height:1.1; margin:0 0 12px }
-    .report-kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3) }
-    .report-note, .report-gap { color:var(--ink2) }
-    .report-block { display:grid; grid-template-columns:200px minmax(0,1fr); gap:8px 40px; border-top:1px solid var(--rule); padding-top:28px; margin-top:28px }
+    .report-hero h1 { font-size:clamp(2rem,4vw,2.75rem); line-height:1.12; letter-spacing:-.02em; margin:8px 0 12px }
+    .report-kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3); margin:0 }
+    .report-note, .report-gap { color:var(--ink2); margin:0; max-width:42rem }
+    .report-block { display:grid; grid-template-columns:200px minmax(0,1fr); gap:8px 40px; border-top:1px solid var(--rule); padding-top:28px; margin-top:28px; max-width:52rem }
     .report-block h2 { grid-column:1; grid-row:1; margin:0; font-size:15px; font-weight:600 }
     .report-block > :not(h2) { grid-column:2 }
+    .report-consistency { max-width:52rem; margin-top:28px; padding-top:28px; border-top:1px solid var(--rule) }
+    .report-consistency .card { margin:0; box-shadow:none; background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px 20px }
     .report-finding, .report-conduct { margin:0 0 16px }
+    .report-finding h3, .report-conduct h3 { margin:.15rem 0 .4rem; font-size:1.05rem }
     .report-index { font-family:Newsreader, Georgia, serif; font-size:40px; line-height:1; margin:0 }
-    .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--rule); color:var(--ink3); font-size:13px }
+    .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--rule); color:var(--ink3); font-size:13px; max-width:52rem }
     .report-tabs { display:flex; gap:4px; padding:4px; background:var(--sunk); border-radius:10px; width:max-content; margin:24px 0 }
     .report-tabs a { min-height:44px; padding:0 20px; border-radius:8px; display:inline-flex; align-items:center; text-decoration:none; color:var(--ink2) }
     .report-tabs a[aria-selected="true"] { background:var(--surface); color:var(--ink); font-weight:600 }
@@ -266,7 +280,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness.near { color:var(--ink); background:#F5E6D0 }
     .readiness.blocked { color:var(--red); background:var(--red-soft) }
     .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:32px} .report-main{padding:24px 16px 48px} .area-map-systems{grid-template-columns:1fr} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-main{padding:24px 16px 48px} .area-map-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>

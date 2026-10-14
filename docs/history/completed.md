@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Layout manage: um chrome, laudo centrado
+
+- Removido cabeçalho solto e segunda barra admin; `manage-workspace`
+  empilha laudo e operação embutida. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-13 — Walkthrough mira prática avançada e checklist p_k (WP20)
 
 - `nextStepTowardPractice` no walkthrough (gargalo, um degrau); checklist
