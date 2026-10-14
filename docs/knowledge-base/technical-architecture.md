@@ -158,7 +158,13 @@ diz “entrevista não atravessou” e não lista disciplinas. A legenda
 mostra estimativa e faixa quando o índice está publicado, e o alvo só
 quando o modelo inclui o alvo. A ficha abre com a trilha do mapa
 (`projectFichaTrail`): Tecnologia e os ancestrais da área são links; o
-nome da capacidade aberta não é link.
+nome da capacidade aberta não é link. O corpo da ficha sai de
+`ficha-node`: o que a capacidade abrange e o que ela trata, sem nome de
+ferramenta; a distribuição de estágio 0–4 só quando o modelo a publica,
+senão a frase “ainda não publicamos”; o quadrante sofisticação ×
+apropriação só com as duas leituras, e a conduta do quadrante “as
+pessoas querem; o meio não ajuda” começa pelo meio. “O que já funciona”
+só entra quando a leitura do laudo é de preservação.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

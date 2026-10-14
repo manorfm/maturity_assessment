@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Ficha publica definição, estágio e quadrante
+
+- A ficha diz o que a capacidade abrange e por que importa. A distribuição
+  0–4 fica como lacuna até o modelo publicá-la. O quadrante só entra com
+  leitura, e “o que já funciona” só na preservação. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Trilha da ficha até o mapa
 
 - A ficha publica o caminho Tecnologia › área › disciplina, com links, e

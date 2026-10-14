@@ -22,7 +22,8 @@ import { compactMechanismBody, projectFindingNarrative, type FindingNarrativeSec
 import { policyBriefingFor } from '../inference/domain/multi-front-inventory.js';
 import { crossingsForCapability, type DisciplineCrossing } from '../inference/domain/discipline-crossing.js';
 import { WAVE_SIX_SHOWCASE_CASES, type HumanShowcaseValidationReport } from '../inference/domain/showcase-validation.js';
-import { disciplineBrief, disciplineScope } from '../inference/domain/discipline-brief.js';
+import { disciplineScope } from '../inference/domain/discipline-brief.js';
+import { projectHowItIs, projectNodeDefinition, projectPreserve } from '../inference/domain/ficha-node.js';
 import { problemsForNode, projectProblemTree, type HierarchicalBranch, type HierarchicalFinding, type HierarchicalProblem } from '../inference/domain/hierarchical-problems.js';
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
@@ -343,6 +344,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const reportBase = `/projects/${params.publicId}/manage/${params.adminSecret}/report`;
     const primary = relevant[0];
     const areaBase = `/projects/${params.publicId}/manage/${params.adminSecret}/areas`;
+    const sophistication = inference.projectSophisticationByLeaf(String(auth.project.id)).get(selected.id);
     const card = renderNodeCard({
       title: selected.label,
       trail: projectFichaTrail({
@@ -352,13 +354,16 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         mapHref: `${reportBase}/map`,
         areaBase,
       }),
-      definition: disciplineBrief(selected.id),
+      definition: projectNodeDefinition(selected.id),
+      how: projectHowItIs(selected.assessed && sophistication
+        ? { phase: sophistication.phase, appropriation: selected.level }
+        : {}),
       reported: '',
       why: primary?.cause || 'Ainda não há causa publicada neste nó.',
       where: containmentLabel(primary?.containment && primary.containment !== 'undetermined' ? primary.containment : 'undetermined'),
       action: primary?.experiment?.action || primary?.intervention || 'Sem conduta publicada.',
       check: primary?.experiment?.successCriterion || 'O teste ainda não foi publicado.',
-      preserve: 'O que já funciona só entra quando a leitura é de preservação.',
+      preserve: projectPreserve(report.outcome.kind, report.outcome.kind === 'preserve' ? primary?.intervention : undefined),
       relations: relationLabels(primary?.affectedCapabilities, selected.id),
       unknown: primary?.missingEvidence || 'Lacuna ainda não nomeada.',
       references: primary?.foundation?.source || 'Referência ainda não ligada a esta ficha.',

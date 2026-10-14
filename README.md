@@ -35,10 +35,13 @@ abrem pelo mapa. Quem autoriza decide depois
 de ler. O que o framework v0.10 ainda não liga ao runtime está em
 [`docs/backlog/framework-v0.10-plan.md`](docs/backlog/framework-v0.10-plan.md).
 
-**Ficha do nó.** O mesmo molde em qualquer capacidade: o que é, como
-está, o que relataram, por que acontece, onde se resolve, o que fazer,
-como saber se funcionou, o que já funciona, relações, lacunas e
-referências. Campo vazio é lacuna explícita.
+**Ficha do nó.** O mesmo molde em qualquer capacidade: o que é e por que
+importa, como está, o que relataram, por que acontece, onde se resolve,
+o que fazer, como saber se funcionou, o que já funciona, relações,
+lacunas e referências. A distribuição de estágio 0–4 entra quando o
+modelo a publica; até lá a ficha diz a lacuna. O quadrante só aparece
+com leitura de sofisticação e apropriação. “O que já funciona” só entra
+na leitura de preservação. Campo vazio é lacuna explícita.
 
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)

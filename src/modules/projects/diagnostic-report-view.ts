@@ -5,6 +5,7 @@ import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnost
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
+import type { HowItIs, NodeDefinition, PreservePublication } from '../inference/domain/ficha-node.js';
 import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
@@ -228,7 +229,7 @@ function renderCells(cells: Array<{ kind: 'uncovered' | 'unpublished' | 'diverge
   }).join('');
 }
 
-export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: string; reported: string; why: string; where: string; action: string; check: string; preserve: string; relations: string; unknown: string; references: string }): string {
+export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: NodeDefinition; how: HowItIs; reported: string; why: string; where: string; action: string; check: string; preserve: PreservePublication; relations: string; unknown: string; references: string }): string {
   const block = (heading: string, body: string) => `<section class="report-block"><h2>${escapeHtml(heading)}</h2>${body}</section>`;
   const trail = input.trail.map((crumb, index) => {
     const separator = index === 0 ? '' : '<span aria-hidden="true">›</span>';
@@ -238,17 +239,25 @@ export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; defi
     return `${separator}${item}`;
   }).join('');
   return `<header class="report-hero"><nav class="ficha-trail" aria-label="Caminho">${trail}</nav><p class="report-kicker">Ficha do nó</p><h1>${escapeHtml(input.title)}</h1></header>
-    ${block('O que é e por que importa', `<p>${escapeHtml(input.definition)}</p>`)}
-    ${block('Como está', '<p class="report-gap">Distribuição de estágio 0–4 ainda não é publicada. A estimativa ordinal interna continua no detalhe abaixo, sem índice percentual.</p>')}
+    ${block('O que é e por que importa', `<p>${escapeHtml(input.definition.what)}</p><p>${escapeHtml(input.definition.why)}</p>`)}
+    ${block('Como está', renderHowItIs(input.how))}
     ${block('O que as pessoas relataram', input.reported)}
     ${block('Por que provavelmente acontece', `<p>${escapeHtml(input.why)}</p>`)}
     ${block('Onde se resolve', `<p>${escapeHtml(input.where)}</p>`)}
     ${block('O que fazer', `<p>${escapeHtml(input.action)}</p>`)}
     ${block('Como saber se funcionou', `<p>${escapeHtml(input.check)}</p>`)}
-    ${block('O que já funciona', `<p>${escapeHtml(input.preserve)}</p>`)}
+    ${block('O que já funciona', `<p class="${input.preserve.shown ? '' : 'report-gap'}">${escapeHtml(input.preserve.body)}</p>`)}
     ${block('Relações com outros nós', `<p>${escapeHtml(input.relations)}</p>`)}
     ${block('O que não sabemos', `<p>${escapeHtml(input.unknown)}</p>`)}
     ${block('Referências', `<p>${escapeHtml(input.references)}</p>`)}`;
+}
+
+function renderHowItIs(how: HowItIs): string {
+  const stage = how.stage.published
+    ? `<p>${how.stage.shares.map((share, index) => `Estágio ${index}: ${share}`).join(' · ')}</p>`
+    : `<p class="report-gap">${escapeHtml(how.stage.gap)}</p>`;
+  const quadrant = how.quadrant.published ? `<p>${escapeHtml(how.quadrant.conduct)}</p>` : '';
+  return `${stage}${quadrant}`;
 }
 
 export function renderTreatmentPage(
