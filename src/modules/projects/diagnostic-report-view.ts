@@ -383,7 +383,7 @@ export function renderReadinessPage(items: Array<{ id?: string; label: string; a
     return `<article class="readiness-card"><h2>${escapeHtml(item.label)}</h2><p>${bandLabel(verdict.band)}</p><p>${escapeHtml(verdict.line)}</p><p>P(pronto) ${item.assessment.probability}. Isto não é índice da organização.</p>${premature}<p>Pré-requisitos</p>${checklist}${step}</article>`;
   }).join('');
   return `<header class="report-hero"><p class="report-kicker">Prontidão para práticas avançadas</p><h1>Prontidão para práticas avançadas</h1><p>A probabilidade de pronto nunca passa a ser índice da organização. O gargalo decide.</p></header>
-    <p><span class="readiness ready">Pronto</span> pré-requisitos atendidos · <span class="readiness near">Perto</span> um pré-requisito faltando · <span class="readiness blocked">Não pronto</span> gargalo sem conduta que destrave</p>
+    <p>O essencial mais fraco decide. <span class="readiness ready">Pronto</span> p_k ≥ 0,6 · <span class="readiness near">Perto</span> p_k ≥ 0,25 · <span class="readiness blocked">Não pronto</span> p_k abaixo de 0,25. A conduta é uma linha à parte.</p>
     ${cards}`;
 }
 

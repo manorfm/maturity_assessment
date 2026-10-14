@@ -16,6 +16,33 @@ const phasePeaked = (phase: 0 | 1 | 2 | 3 | 4 | 5): SophisticationDistribution =
   [0, 1, 2, 3, 4, 5].map((item) => (item === phase ? 1 : 0)) as unknown as SophisticationDistribution
 );
 
+test('a legenda segue o essencial mais fraco e a conduta continua no cartão não pronto', () => {
+  const conduct = 'Para Chaos engineering: próximo degrau é Observabilidade (gargalo · p_k 0.12); um degrau por vez até a prática.';
+  const html = renderReadinessPage([{
+    id: 'chaos-engineering',
+    label: 'Chaos engineering',
+    assessment: {
+      probability: 0.1,
+      comfort: 0.1,
+      band: 'not-ready',
+      premature: false,
+      missing: ['Observabilidade'],
+      checklist: [
+        { id: 'obs', label: 'Observabilidade', essential: true, probability: 0.12 },
+        { id: 'slo', label: 'Estado estável', essential: true, probability: 0.8 },
+      ],
+    },
+    conduct,
+  }]);
+  assert.equal(html.includes('Não pronto'), true);
+  assert.equal(html.includes(conduct), true);
+  assert.equal(html.includes('sem conduta'), false);
+  assert.equal(html.includes('um pré-requisito faltando'), false);
+  assert.equal(html.includes('não é índice da organização'), true);
+  assert.equal(html.includes('essencial mais fraco'), true);
+  assert.equal(html.includes('linha à parte'), true);
+});
+
 test('prática com posterior publica p_k, o mais fraco e a conduta; nível sem posterior fica lacuna', () => {
   const page = projectCatalogReadiness({
     'observability-practice': { distribution: peaked(1), phaseDistribution: phasePeaked(1) },
@@ -55,7 +82,8 @@ test('prática com posterior publica p_k, o mais fraco e a conduta; nível sem p
   assert.ok(levelOnly.every((item) => item.gap && !item.assessment));
   const gapHtml = renderReadinessPage(levelOnly);
   assert.equal(gapHtml.includes('class="readiness-card"'), false);
-  assert.equal(gapHtml.includes('p_k'), false);
+  assert.equal(gapHtml.includes('readiness-checklist'), false);
+  assert.equal(/p_k \d/.test(gapHtml), false);
   assert.equal(gapHtml.includes('P(pronto)'), false);
   assert.equal(gapHtml.includes('13%'), false);
   assert.equal(gapHtml.includes('45%'), false);
