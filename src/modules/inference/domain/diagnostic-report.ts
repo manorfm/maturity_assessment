@@ -6,6 +6,7 @@ import type { IndexPublication } from './stage-posterior.js';
 import {
   advancedPracticeCatalog,
   assessReadiness,
+  bottleneckStatus,
   detectPrematureAdoptions,
   nextStepTowardPractice,
   resolvePrerequisitePosteriors,
@@ -30,6 +31,8 @@ import {
 import { primaryArchetypeFor } from './systemic-archetypes.js';
 import { enablementCatalog } from './learning-frontier.js';
 import { selectPulseItems, type PulseCatalogItem } from '../../catalog/item-catalog.js';
+import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
+import type { SophisticationDistribution } from './sophistication-matrix.js';
 import { TransformationPortfolioPlanner, type QualitativeLevel } from './transformation-portfolio.js';
 import { authorityRole } from './finding-narrative.js';
 
@@ -409,21 +412,91 @@ export function projectReadinessPage(practices: Array<{ id: string; label: strin
   });
 }
 
-/** Prontidão a partir do catálogo 22 e evidência por folha (nível ou posterior). */
+export type CatalogReadinessItem = {
+  id: string;
+  label: string;
+  assessment?: ReadinessAssessment;
+  gap?: string;
+  weakest?: string;
+  conduct?: string;
+};
+
+/**
+ * Prontidão do catálogo 22. Só há leitura quando o pré-requisito essencial
+ * tem posterior de estágio. Nível pontual não publica p_k nem “Pronto”.
+ */
 export function projectCatalogReadiness(
   leaves: Record<string, LeafEvidence>,
   practices: AdvancedPractice[] = advancedPracticeCatalog,
-): Array<{ id: string; label: string; assessment?: ReadinessAssessment; gap?: string }> {
-  return projectReadinessPage(practices.map((practice) => {
-    const prerequisites = resolvePrerequisitePosteriors(practice, leaves) ?? undefined;
-    const technicalPhase = technicalPhaseFor(practice, leaves);
+): CatalogReadinessItem[] {
+  const observed = leavesWithStageReading(leaves);
+  return practices.map((practice) => {
+    const prerequisites = resolvePrerequisitePosteriors(practice, observed);
+    if (!prerequisites) {
+      return { id: practice.id, label: practice.label, gap: 'Ainda não há posterior dos pré-requisitos. Prontidão não vira índice.' };
+    }
+    const technicalPhase = technicalPhaseFor(practice, observed);
+    const assessment = assessReadiness({
+      prerequisites,
+      ...(technicalPhase !== undefined ? { technicalPhase } : {}),
+    });
+    const step = nextStepTowardPractice(practice, observed);
     return {
       id: practice.id,
       label: practice.label,
-      ...(prerequisites ? { prerequisites } : {}),
-      ...(technicalPhase !== undefined ? { technicalPhase } : {}),
+      assessment,
+      weakest: bottleneckStatus(assessment).bottleneck,
+      ...(step ? { conduct: step.reading } : {}),
     };
-  }));
+  });
+}
+
+const readinessRespondentMinimum = 5;
+
+/** Folhas com pelo menos 5 respondentes entram como posterior. Abaixo disso não há leitura. */
+export function leavesForReadinessPage(input: {
+  stages: ReadonlyArray<{ id: string; respondents: number; distribution: StageDistribution }>;
+  phases?: ReadonlyMap<string, { distribution: SophisticationDistribution; phase: number }>;
+  practicePhases?: ReadonlyMap<string, { distribution: SophisticationDistribution; phase: number }>;
+}): Record<string, LeafEvidence> {
+  const leaves: Record<string, LeafEvidence> = {};
+  for (const stage of input.stages) {
+    if (stage.respondents < readinessRespondentMinimum) continue;
+    const phase = input.phases?.get(stage.id);
+    leaves[stage.id] = {
+      distribution: stage.distribution,
+      ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
+    };
+  }
+  for (const [practiceId, phase] of input.practicePhases ?? []) {
+    leaves[practiceId] = {
+      ...(leaves[practiceId] ?? {}),
+      phaseDistribution: phase.distribution,
+      phase: phase.phase,
+    };
+  }
+  return leaves;
+}
+
+/** Posterior de estágio entra; nível sem distribuição não. Fase técnica pode acompanhar. */
+function leavesWithStageReading(leaves: Record<string, LeafEvidence>): Record<string, LeafEvidence> {
+  const observed: Record<string, LeafEvidence> = {};
+  for (const [id, evidence] of Object.entries(leaves)) {
+    if (evidence.distribution) {
+      observed[id] = {
+        distribution: evidence.distribution,
+        ...(evidence.phaseDistribution ? { phaseDistribution: evidence.phaseDistribution } : {}),
+        ...(evidence.phase !== undefined ? { phase: evidence.phase } : {}),
+      };
+      continue;
+    }
+    if (!evidence.phaseDistribution && evidence.phase === undefined) continue;
+    observed[id] = {
+      ...(evidence.phaseDistribution ? { phaseDistribution: evidence.phaseDistribution } : {}),
+      ...(evidence.phase !== undefined ? { phase: evidence.phase } : {}),
+    };
+  }
+  return observed;
 }
 
 export function projectFrontierPage(

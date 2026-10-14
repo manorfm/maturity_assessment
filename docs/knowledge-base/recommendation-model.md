@@ -133,10 +133,12 @@ da conduta, reusando também o item de pulso quando existe.
 A prontidão para práticas avançadas (`advancedPracticeCatalog`) calcula
 `p_k = P(S ≥ mínimo)` por pré-requisito e, quando o pré-requisito declara
 `minimumPhase`, multiplica por `P(F ≥ fase)` (12); `P(pronto) = Π p_k`
-essencial (22 §1.1) quando as folhas têm posterior ou nível com cobertura.
-Sem evidência essencial (estágio ou F exigido), declara lacuna e não
-inventa índice. A biblioteca 22 §5 (13 práticas) entra na página de
-prontidão. O status visível segue o essencial mais fraco; a média dos
+essencial (22 §1.1). A função de fórmula ainda aceita nível com
+cobertura; a página só publica `p_k`, o pré-requisito mais fraco e a
+conduta quando há posterior de estágio com pelo menos 5 respondentes.
+Sem essa leitura, declara lacuna e não inventa 0% nem “Pronto”. A
+probabilidade de pronto não é índice da organização. A biblioteca 22 §5
+(13 práticas) entra na página de prontidão. O status visível segue o essencial mais fraco; a média dos
 `p_k` não decide. **Adoção prematura** (F da prática ≥ 3 e algum essencial com
 `p_k < 0,3`) vira achado de risco no laudo com conduta de reduzir escopo,
 e o texto não atribui culpa a uma pessoa. Degrau que a fronteira marca

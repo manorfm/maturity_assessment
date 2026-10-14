@@ -418,6 +418,30 @@ export class InferenceService {
     })).reverse();
   }
 
+  /** Posterior de estágio por folha. O limiar de 5 fica na publicação da prontidão, não aqui. */
+  projectLeafStages(projectId: string): Array<{ id: string; respondents: number; distribution: StageDistribution }> {
+    const byLeaf = bundlesByLeafAndUnit(this.completedObservations(projectId));
+    const params = defaultMeasurementParams();
+    const stages: Array<{ id: string; respondents: number; distribution: StageDistribution }> = [];
+    for (const [leaf, byUnit] of byLeaf) {
+      const responses = [...byUnit.values()].flat();
+      if (!responses.length) continue;
+      const measured = measureLeafFromBundles({
+        unit: projectId,
+        leaf,
+        responses,
+        coverage: Math.min(1, responses.length / 5),
+        params,
+      });
+      stages.push({
+        id: leaf,
+        respondents: measured.posterior.respondents,
+        distribution: measured.posterior.distribution,
+      });
+    }
+    return stages;
+  }
+
   /** Posterior F0–F5 por folha (12); fora do índice (R28). */
   projectSophisticationByLeaf(projectId: string, unitId?: string): Map<string, {
     distribution: SophisticationDistribution;

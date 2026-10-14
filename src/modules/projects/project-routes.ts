@@ -31,7 +31,7 @@ import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js'
 import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/learning-frontier.js';
 import { declaredSophistication } from '../catalog/evidence-contract.js';
 import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
-import { evidenceGradeGap, projectAudienceReadings, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { evidenceGradeGap, leavesForReadinessPage, projectAudienceReadings, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import { projectFrontierBrief } from '../inference/domain/learning-frontier.js';
 import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
@@ -508,34 +508,18 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
   app.get('/projects/:publicId/manage/:adminSecret/report/readiness', async (request, reply) => {
     const params = request.params as Params;
     const auth = requireProject(params);
-    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
-    const fByLeaf = inference.projectSophisticationByLeaf(String(auth.project.id));
-    const practicePhases = inference.projectAdvancedPracticePhases(String(auth.project.id));
-    const leaves = Object.fromEntries(report.capabilities.map((capability) => {
-      const phase = fByLeaf.get(capability.id);
-      return [capability.id, {
-        level: capability.level,
-        coverage: capability.coverage ?? 0,
-        ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
-      }];
-    }));
-    for (const [practiceId, phase] of practicePhases) {
-      leaves[practiceId] = {
-        ...(leaves[practiceId] ?? { coverage: 1 }),
-        phaseDistribution: phase.distribution,
-        phase: phase.phase,
-      };
-    }
+    const projectId = String(auth.project.id);
+    const leaves = leavesForReadinessPage({
+      stages: inference.projectLeafStages(projectId),
+      phases: inference.projectSophisticationByLeaf(projectId),
+      practicePhases: inference.projectAdvancedPracticePhases(projectId),
+    });
     const items = projectCatalogReadiness(leaves);
     const brief = projectFrontierBrief(leaves);
     const steps = projectReadinessSteps(leaves, brief);
     const cards = items.map((item) => {
-      const step = steps.get(item.id);
-      return {
-        ...item,
-        ...(step?.next ? { nextStep: step.next } : {}),
-        ...(step?.withheld ? { withheld: step.withheld } : {}),
-      };
+      const withheld = steps.get(item.id)?.withheld;
+      return withheld ? { ...item, withheld } : item;
     });
     return reply.type('text/html').send(reportPage(params, 'readiness', renderReadinessPage(cards)));
   });

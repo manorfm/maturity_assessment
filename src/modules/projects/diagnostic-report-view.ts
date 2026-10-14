@@ -361,7 +361,7 @@ export function renderWalkthrough(input: AreaWalkthrough): string {
     ${list('Premissas a revisar', input.sections.assumptions)}`;
 }
 
-export function renderReadinessPage(items: Array<{ id?: string; label: string; assessment?: ReadinessAssessment; gap?: string; verdict?: ReturnType<typeof bottleneckStatus>; nextStep?: string; withheld?: string; premature?: boolean }>): string {
+export function renderReadinessPage(items: Array<{ id?: string; label: string; assessment?: ReadinessAssessment; gap?: string; verdict?: ReturnType<typeof bottleneckStatus>; nextStep?: string; conduct?: string; withheld?: string; premature?: boolean }>): string {
   const bandLabel = (band: ReadinessAssessment['band']) => band === 'ready' ? 'Pronto' : band === 'near' ? 'Perto' : 'Não pronto';
   const cards = items.map((item) => {
     if (item.gap || !item.assessment) return `<article class="report-block"><h2>${escapeHtml(item.label)}</h2><p class="report-gap">${escapeHtml(item.gap ?? 'Sem posterior.')}</p></article>`;
@@ -374,10 +374,11 @@ export function renderReadinessPage(items: Array<{ id?: string; label: string; a
     const premature = item.premature || item.assessment.premature
       ? '<p>Adoção prematura: a fase técnica está à frente de um pré-requisito essencial. É risco do sistema de trabalho, não culpa de uma pessoa.</p>'
       : '';
+    const conduct = item.nextStep ?? item.conduct;
     const step = item.withheld
       ? `<p class="report-gap">${escapeHtml(item.withheld)}</p>`
-      : item.nextStep
-        ? `<p>${escapeHtml(item.nextStep)}</p>`
+      : conduct
+        ? `<p>${escapeHtml(conduct)}</p>`
         : '';
     return `<article class="readiness-card"><h2>${escapeHtml(item.label)}</h2><p>${bandLabel(verdict.band)}</p><p>${escapeHtml(verdict.line)}</p><p>P(pronto) ${item.assessment.probability}. Isto não é índice da organização.</p>${premature}<p>Pré-requisitos</p>${checklist}${step}</article>`;
   }).join('');
