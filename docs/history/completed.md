@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Entrevista abre falando com quem responde
+
+- O convite começa na boas-vindas, sem sinal. Cada passo do grafo diz
+  por que está ali. A conclusão lembra o limiar de cinco pessoas e que
+  o percurso não reabre. Ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-10-14 — Administração liga os quatro passos
 
 - Criar o projeto, montar a árvore, gerar convite e ler o termo usam o

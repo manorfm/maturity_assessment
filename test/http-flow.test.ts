@@ -44,8 +44,14 @@ test('fluxo HTTP cria projeto e protege convite reutilizado', async () => {
   const resumeToken = first.headers.location!.split('/').at(-1)!;
   const firstRespond = await app.inject({ method: 'GET', url: `/respond/${resumeToken}` });
   assert.equal(firstRespond.statusCode, 200);
-  assert.match(firstRespond.body, /minuto/);
-  assert.match(firstRespond.body, /Guarde este endereço para retomar/);
+  assert.match(firstRespond.body, /Começar/);
+  assert.match(firstRespond.body, /anônimas/);
+  const started = await app.inject({ method: 'POST', url: `/respond/${resumeToken}/intro` });
+  assert.equal(started.statusCode, 302);
+  const question = await app.inject({ method: 'GET', url: `/respond/${resumeToken}` });
+  assert.equal(question.statusCode, 200);
+  assert.match(question.body, /minuto/);
+  assert.match(question.body, /Guarde este endereço para retomar/);
   assert.match(invitationPage.body, /guarde o endereço depois do primeiro acesso/);
   assert.match(dashboard.body, /Diagnóstico da área de tecnologia/);
   assert.match(dashboard.body, /Operação do piloto/);

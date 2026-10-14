@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../shared/database.js';
 import { layout } from '../../shared/html.js';
-import { profiles, type Profile, estimateRemainingMinutes } from '../catalog/assessment-graph.js';
+import { estimateRemainingMinutes } from '../catalog/assessment-graph.js';
 import { CatalogService } from '../catalog/catalog-service.js';
 import { InvitationService } from './invitation-service.js';
 import { ParticipationService } from './participation-service.js';
@@ -12,7 +12,9 @@ import {
   renderInterviewComplete,
   renderInterviewQuestion,
   renderInterviewStatus,
+  renderInterviewWelcome,
 } from './interview-view.js';
+import { projectInterviewStep, projectInterviewWelcome } from './domain/interview-step.js';
 
 export function registerAssessmentRoutes(app: FastifyInstance, db: Database): void {
   const invitations = new InvitationService(db);
@@ -46,28 +48,43 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
     if (participation.status === 'completed') {
       return reply.type('text/html').send(layout('Obrigado', renderInterviewComplete()));
     }
+    if (participations.introPending(participation.id)) {
+      const minutes = estimateRemainingMinutes(participation.current_node, participation.profile, participation.workContext?.interviewTrack);
+      const welcome = projectInterviewWelcome(minutes);
+      return reply.type('text/html').send(layout(welcome.title, renderInterviewWelcome({
+        ...welcome,
+        action: `/respond/${resumeToken}/intro`,
+      })));
+    }
     const node = catalog.getNode(participation.graph_version, participation.current_node, participation.profile);
     if (!node) throw new Error('Published assessment node was not found');
     const remainingMinutes = estimateRemainingMinutes(node.id, participation.profile, participation.workContext?.interviewTrack);
     const budgetMinutes = estimateRemainingMinutes('respondent-context', participation.profile);
-    const profile = profiles[participation.profile as Profile] ?? 'Participante';
     const progressLabel = node.type === 'probe'
       ? `aprofundamento · cerca de ${remainingMinutes} minuto${remainingMinutes === 1 ? '' : 's'} restante${remainingMinutes === 1 ? '' : 's'}`
       : `cerca de ${remainingMinutes} minuto${remainingMinutes === 1 ? '' : 's'} restante${remainingMinutes === 1 ? '' : 's'}`;
+    const step = projectInterviewStep(node);
     const options = orderAssessmentOptions(node.options, resumeToken, node.id);
-    const isFreeText = node.id.startsWith('free-text-');
+    const isFreeText = step.kind === 'example';
     return reply.type('text/html').send(layout(node.title, renderInterviewQuestion({
-      kicker: profile,
+      kicker: step.kicker,
       title: node.title,
       lead: node.scenario,
+      why: step.why,
       prompt: node.prompt,
       progressLabel,
       progressPercent: interviewProgressPercent(remainingMinutes, budgetMinutes),
       action: `/respond/${resumeToken}`,
       options: isFreeText ? options.filter((option) => option.id === 'skip' || (option.observation ?? 'practice') !== 'practice') : options,
       nodeId: node.id,
-      ...(isFreeText ? { freeText: { maxChars: 280, submitOptionId: 'submitted' } } : {}),
+      ...(isFreeText && step.maxChars ? { freeText: { maxChars: step.maxChars, submitOptionId: 'submitted' } } : {}),
     })));
+  });
+
+  app.post('/respond/:resumeToken/intro', async (request, reply) => {
+    const { resumeToken } = request.params as { resumeToken: string };
+    participations.acknowledgeIntro(resumeToken);
+    return reply.redirect(`/respond/${resumeToken}`);
   });
 
   app.post('/respond/:resumeToken', async (request, reply) => {

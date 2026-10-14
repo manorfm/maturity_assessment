@@ -18,6 +18,7 @@ test('nó de texto livre existe no grafo e a UI oferece área de texto', () => {
     title: freeTextStrategy.title,
     lead: freeTextStrategy.scenario,
     prompt: freeTextStrategy.prompt,
+    why: 'Não escreva nomes de pessoas, times ou clientes.',
     progressLabel: 'cerca de 10 minutos',
     progressPercent: 40,
     action: '/respond/token',

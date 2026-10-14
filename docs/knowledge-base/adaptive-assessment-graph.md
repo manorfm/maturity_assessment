@@ -11,6 +11,14 @@ versão publicada em tabelas SQLite. Participações guardam a versão usada; o 
 carrega nós, opções, sinais e arestas do banco. Alterar o arquivo sem criar uma nova
 versão não modifica campanhas já semeadas.
 
+O convite abre numa tela de boas-vindas, sem sinal: anonimato, duração
+estimada e a pausa pelo mesmo link. Só depois entra o nó de entrada do
+grafo. Cada passo publicado diz por que está ali. Perspectiva e contexto
+de trabalho não pontuam. O evento separa a prática de “não observo”. O
+exemplo pede uma frase sem nomes, no limite do item. O aprofundamento
+só aparece quando o nó é probe. A leitura avisa que o quadro é estímulo.
+A conclusão lembra o limiar de cinco pessoas e que o percurso não reabre.
+
 A versão pré-piloto vigente `evidence-anamnesis-pilot-v20` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,
 autoridade, alcance e eventos observáveis. A pessoa recebe um tronco comum e,

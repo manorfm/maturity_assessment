@@ -133,7 +133,10 @@ são atendidos.
 
 ### 3. Identificação da perspectiva
 
-O mesmo link serve para qualquer integrante da unidade. Ao iniciar, a pessoa escolhe
+O mesmo link serve para qualquer integrante da unidade. Antes da primeira
+pergunta, a pessoa vê que as respostas são anônimas, quanto tempo o
+percurso estima e que pode pausar pelo mesmo endereço. Começar não pontua.
+Em seguida escolhe
 a perspectiva mais próxima do seu trabalho — por exemplo, gestão, produto, qualidade,
 engenharia, plataforma/operações, arquitetura, segurança, dados ou design. O perfil
 adapta linguagem e observabilidade; ele não produz nota e não cria uma avaliação

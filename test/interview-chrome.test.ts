@@ -26,6 +26,7 @@ test('pergunta separa práticas de saídas observacionais e mostra progresso', (
     kicker: 'Incidentes',
     title: 'Pense na última falha',
     lead: 'Vale a mais recente.',
+    why: 'Não precisa ser a mais grave. Vale a mais recente de que você se lembra bem.',
     prompt: 'O que aconteceu primeiro?',
     progressLabel: 'cerca de 9 minutos restantes',
     progressPercent: 40,
@@ -68,10 +69,13 @@ test('rota /respond serve o chrome de entrevista do design-graph', async () => {
   const resume = claim.headers.location!;
   const page = await app.inject({ method: 'GET', url: resume });
   assert.equal(page.statusCode, 200);
-  assert.match(page.body, /class="interview"/);
-  assert.match(page.body, /Anamnese de Tecnologia/);
-  assert.match(page.body, /role="progressbar"/);
-  assert.match(page.body, /interview-choice/);
-  assert.match(page.body, /minuto/);
+  assert.match(page.body, /Começar/);
+  await app.inject({ method: 'POST', url: `${resume}/intro` });
+  const question = await app.inject({ method: 'GET', url: resume });
+  assert.match(question.body, /class="interview"/);
+  assert.match(question.body, /Anamnese de Tecnologia/);
+  assert.match(question.body, /role="progressbar"/);
+  assert.match(question.body, /class="interview-choice"/);
+  assert.match(question.body, /minuto/);
   await app.close();
 });

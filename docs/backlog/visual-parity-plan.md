@@ -73,22 +73,20 @@ da organização e avisa que o aceite não é gravado.
 
 ## Entrevista
 
-O produto abre direto na pergunta, com progresso, práticas separadas de
-saídas observacionais e tela de conclusão. O protótipo tem uma jornada
-de telas, cada uma em web e celular:
+O convite abre na boas-vindas: anonimato, minutos estimados, pausa e
+Começar. Perspectiva e contexto são telas próprias e avisam que não
+pontuam. O evento separa a prática de “não observo”. O exemplo limita
+os caracteres e pede para não citar nomes. O aprofundamento só entra
+quando o grafo pede. A leitura usa o estímulo publicado. A conclusão
+lembra o limiar de 5 e que o percurso não reabre. No celular a coluna
+empilha.
 
-1. Boas-vindas
-2. Contexto
-3. Sua perspectiva
-4. Pergunta de evento
-5. Pedido de exemplo
-6. Aprofundamento de pressão
-7. Pergunta de leitura
-8. Conclusão
-
-A boas-vindas dedicada já está como hipótese em `future-evolution.md`.
-As outras telas também não são compromisso: só entram se o grafo publicar
-o passo sem transformar a entrevista em prova de conhecimento.
+| Tela | Já existe | Falta no visual |
+| --- | --- | --- |
+| Boas-vindas | Anonimato, tempo estimado, pausa e começar | Link “Como tratamos os dados”, que o domínio ainda não publica |
+| Contexto e perspectiva | Telas do grafo, sem pontuação | Senioridade e tempo de empresa. Continuam fora do domínio |
+| Evento, exemplo, pressão e leitura | Moldura do passo, limite do texto e probe só no grafo | Gráfico semanal de exemplo da leitura; o modelo publica a frase do estímulo |
+| Conclusão | Limiar de 5 e percurso que não reabre | Compromisso da organização de devolver o resumo, que o domínio não registra |
 
 ## Fora deste plano
 

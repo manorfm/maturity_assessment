@@ -243,6 +243,10 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .interview-actions button { flex:1 1 160px; max-width:320px; margin:0 0 0 auto; min-height:48px; padding:0 20px; border:0; border-radius:10px; background:var(--accent); color:var(--on-accent); font:inherit; font-weight:600; cursor:pointer }
     .interview-notice { margin:0; padding:14px 16px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-soft); color:var(--ink); font-size:15px }
     .interview-hint { margin:0; color:var(--ink3); font-size:13px; max-width:60ch }
+    .interview-why { margin:0; color:var(--ink2); font-size:15px; max-width:46ch }
+    .interview-free-text { display:flex; flex-direction:column; gap:8px }
+    .interview-free-text textarea { width:100%; box-sizing:border-box; min-height:120px; padding:12px 14px; border:1.5px solid var(--rule); border-radius:10px; background:var(--surface); color:var(--ink); font:inherit }
+    @media(max-width:700px){ .interview-main{flex-direction:column;padding:24px 16px 40px} .interview-actions button{max-width:none;width:100%;margin:0} .interview-choices-secondary{grid-template-columns:1fr} }
     .diagnostic-report { --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-soft:#DCEAE8; --accent-ink:#0A4B51; --sunk:#EFE9DE; --ochre:#94560F; --red:#A2372A; --red-soft:#F6E3DE; --na:#B9B2A7; --na-ink:#5E584E; display:flex; align-items:stretch; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:15px; line-height:1.5 }
     .diagnostic-report[data-theme="escuro"] { --bg:#171614; --surface:#211F1C; --ink:#EDE8DF; --ink2:#CBC3B6; --ink3:#A89F91; --rule:#3A3631; --accent:#5FB0B0; --accent-soft:#1C3435; --accent-ink:#8FD0CF; --sunk:#1B1A17; --ochre:#E0A35C; --red:#E8826F; --red-soft:#3C2420; --na:#6A645B; --na-ink:#B5AC9E; color-scheme:dark }
     .report-sidebar { width:248px; flex:none; box-sizing:border-box; padding:40px 20px; border-right:1px solid var(--rule); background:var(--sunk); display:flex; flex-direction:column; gap:28px }

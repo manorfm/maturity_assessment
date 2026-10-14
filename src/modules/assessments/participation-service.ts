@@ -29,6 +29,20 @@ export class ParticipationService {
     return Number((this.db.prepare('SELECT COUNT(*) total FROM responses WHERE participation_id = ?').get(participationId) as { total: number }).total);
   }
 
+  introPending(participationId: string): boolean {
+    const rows = this.db.prepare('SELECT node_id FROM responses WHERE participation_id = ?').all(participationId) as unknown as Array<{ node_id: string }>;
+    if (rows.some((row) => row.node_id === 'interview-welcome')) return false;
+    return rows.length === 0;
+  }
+
+  acknowledgeIntro(resumeToken: string): void {
+    const participation = this.find(resumeToken);
+    if (!participation || participation.status !== 'in_progress') return;
+    if (!this.introPending(participation.id)) return;
+    this.db.prepare('INSERT INTO responses (id, participation_id, node_id, option_id, created_at) VALUES (?, ?, ?, ?, ?)')
+      .run(id(), participation.id, 'interview-welcome', 'start', new Date().toISOString());
+  }
+
   answer(resumeToken: string, optionId: string, extras?: { freeText?: string }): 'next' | 'complete' | 'invalid' {
     const participation = this.find(resumeToken);
     if (!participation || participation.status !== 'in_progress') return 'invalid';

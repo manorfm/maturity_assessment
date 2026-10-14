@@ -1497,7 +1497,7 @@ export const graph: AssessmentNode[] = [...authoredNodes, ...eventFollowupNodes]
     : node;
   const withExits = attachObservationalExits(factual);
   const meta = evidenceMetaFor(withExits.id);
-  const scenario = factual.id.startsWith('literacy-') || factual.id.startsWith('vignette-') || factual.id.startsWith('list-') || factual.id.startsWith('free-text-')
+  const scenario = factual.id === 'respondent-context' || factual.id === 'work-context' || factual.type === 'context' || factual.id.startsWith('literacy-') || factual.id.startsWith('vignette-') || factual.id.startsWith('list-') || factual.id.startsWith('free-text-')
     ? factual.scenario
     : anchorRecentObservation(factual.scenario);
   return {

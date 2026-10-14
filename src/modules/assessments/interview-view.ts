@@ -27,11 +27,37 @@ export function renderInterviewShell(input: {
 </div>`;
 }
 
+export function renderInterviewWelcome(welcome: {
+  title: string;
+  purpose: string;
+  cases: string;
+  anonymity: string;
+  pause: string;
+  duration: string;
+  start: string;
+  action: string;
+}): string {
+  const body = `<div class="interview-copy">
+    <h1>${escapeHtml(welcome.title)}</h1>
+    <p class="interview-lead">${escapeHtml(welcome.cases)}</p>
+    <p class="interview-lead">${escapeHtml(welcome.purpose)}</p>
+  </div>
+  <div class="interview-panel">
+    <p class="interview-notice">${escapeHtml(welcome.anonymity)}</p>
+    <p class="interview-lead">${escapeHtml(welcome.pause)}</p>
+    <form method="post" action="${escapeHtml(welcome.action)}">
+      <div class="interview-actions"><button type="submit">${escapeHtml(welcome.start)}</button></div>
+    </form>
+  </div>`;
+  return renderInterviewShell({ title: welcome.title, body, progressLabel: welcome.duration, progressPercent: 0 });
+}
+
 export function renderInterviewQuestion(input: {
   brand?: string;
   kicker: string;
   title: string;
   lead: string;
+  why: string;
   prompt: string;
   progressLabel: string;
   progressPercent: number;
@@ -46,6 +72,7 @@ export function renderInterviewQuestion(input: {
     ? `<label class="interview-free-text">
         <span class="visually-hidden">Resposta escrita</span>
         <textarea name="freeText" maxlength="${input.freeText.maxChars}" rows="4" placeholder="Uma frase, sem nomes de pessoas ou clientes."></textarea>
+        <span class="interview-hint">Até ${input.freeText.maxChars} caracteres</span>
         <input type="hidden" name="optionId" value="${escapeHtml(input.freeText.submitOptionId)}" />
       </label>`
     : '';
@@ -58,6 +85,7 @@ export function renderInterviewQuestion(input: {
     <p class="interview-kicker">${escapeHtml(input.kicker)}</p>
     <h1>${escapeHtml(input.title)}</h1>
     <p class="interview-lead">${escapeHtml(input.lead)}</p>
+    <p class="interview-why">${escapeHtml(input.why)}</p>
   </div>
   <div class="interview-panel">
     <form class="interview-form" method="post" action="${escapeHtml(input.action)}"${input.nodeId ? ` data-assessment-node="${escapeHtml(input.nodeId)}"` : ''}>
@@ -87,7 +115,7 @@ export function renderInterviewComplete(): string {
     <h1>Obrigado.</h1>
     <p class="interview-lead">Suas respostas foram registradas de forma anônima.</p>
     <p class="interview-lead">Elas vão se somar às de outras pessoas e só entram em resultados com 5 ou mais participantes.</p>
-    <p class="interview-lead">Por segurança, elas e o percurso não são exibidos novamente.</p>
+    <p class="interview-lead">Por segurança, elas e o percurso não são exibidos novamente. O percurso não reabre.</p>
     <p class="interview-hint">Você já pode fechar esta página.</p>
   </div>`;
   return renderInterviewShell({ title: 'Obrigado', body, progressLabel: 'concluído', progressPercent: 100 });

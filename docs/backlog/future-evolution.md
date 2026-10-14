@@ -38,12 +38,10 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
   aceite formal do termo de uso antes de liberar convites; hipótese, ainda
   não compromisso — a tela informa o pacto, não grava aceite e não trava
   os convites;
-- tela de boas-vindas dedicada antes da primeira pergunta, quando o grafo
-  publicar um nó de abertura sem sinal; hipótese, ainda não compromisso;
-- fechar a paridade visual das telas do protótipo com o HTML vigente;
-  o menu do relatório já segue o protótipo; o restante está no
-  [`plano de paridade visual`](visual-parity-plan.md), hipótese, ainda
-  não compromisso.
+- fechar os restos visuais do protótipo: gráfico semanal de exemplo,
+  senioridade, tempo de empresa e aceite formal; hipótese, ainda não
+  compromisso — o que já entrou está no
+  [`plano de paridade visual`](visual-parity-plan.md).
 
 ## Modelo de inferência
 
