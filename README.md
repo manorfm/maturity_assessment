@@ -57,8 +57,10 @@ pré-requisito mais fraco e a conduta só com posterior de estágio; sem
 essa leitura, fica a lacuna. A probabilidade de pronto não vira índice
 da organização. O status segue o pré-requisito mais fraco; a média não
 decide. A fronteira separa o que já está dominado, o que dá para aprender
-agora e o que segue bloqueado. “Comece por” é um degrau desbloqueado.
-Condição humana fica em paralelo. Adoção prematura é risco do sistema de
+agora e o que segue bloqueado. A marca F0–F5 aparece só quando a folha
+tem posterior de sofisticação; sem essa posterior, a faixa permanece
+textual. “Comece por” é um degrau desbloqueado. Condição humana fica em
+paralelo. Adoção prematura é risco do sistema de
 trabalho, não culpa de uma pessoa.
 
 **Walkthrough de Operação.** A página abre com o estado da área, ou com

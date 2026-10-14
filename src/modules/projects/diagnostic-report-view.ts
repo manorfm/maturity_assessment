@@ -388,20 +388,23 @@ export function renderReadinessPage(items: Array<{ id?: string; label: string; a
 }
 
 export function renderFrontierPage(input: FrontierBrief & { readinessHref?: string; gap?: string }): string {
+  const titled = (item: FrontierBrief['mastered'][number]) => (
+    item.mark ? `${escapeHtml(item.label)} ${escapeHtml(item.mark)}` : escapeHtml(item.label)
+  );
   const place = (items: FrontierBrief['mastered'], empty: string, line: (item: FrontierBrief['mastered'][number]) => string) => (
     items.length ? `<ul>${items.map((item) => `<li>${line(item)}</li>`).join('')}</ul>` : `<p class="report-gap">${escapeHtml(empty)}</p>`
   );
   const start = 'gap' in input.start
     ? `<p class="report-gap">${escapeHtml(input.start.gap)}</p>`
-    : `<article class="readiness-card"><p class="report-conduct-action">${escapeHtml(input.start.step)}</p><p>Destrava: ${escapeHtml(input.start.unlocks)}</p></article>`;
+    : `<article class="readiness-card"><p class="report-conduct-action">${escapeHtml(input.start.step)}${input.start.mark ? ` ${escapeHtml(input.start.mark)}` : ''}</p><p>Destrava: ${escapeHtml(input.start.unlocks)}</p></article>`;
   const parallel = input.parallel.map((item) => `<p><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`).join('')
     || '<p class="report-gap">Nenhuma condição humana publicada neste grafo.</p>';
   const href = input.readinessHref ?? '/readiness';
   const gap = input.gap ? `<p class="report-gap">${escapeHtml(input.gap)}</p>` : '';
   return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1><p>Degraus com P(desbloqueado) ≥ 0,6 entram na fronteira; abaixo de 0,25 ficam bloqueados.</p></header>${gap}
-    <section class="report-block"><h2>Dominado</h2>${place(input.mastered, 'Nenhum degrau dominado nesta leitura.', (item) => escapeHtml(item.label))}</section>
-    <section class="report-block"><h2>Pode aprender agora</h2>${place(input.learnable, 'Nenhum degrau desbloqueado para aprender agora.', (item) => `${escapeHtml(item.label)} — pode aprender agora`)}</section>
-    <section class="report-block"><h2>Ainda bloqueado</h2>${place(input.blocked, 'Nenhum degrau bloqueado nesta leitura.', (item) => `${escapeHtml(item.label)} — ainda bloqueado${item.blockedBy.length ? ` · bloqueado por ${escapeHtml(item.blockedBy.join(', '))}` : ''}`)}</section>
+    <section class="report-block"><h2>Dominado</h2>${place(input.mastered, 'Nenhum degrau dominado nesta leitura.', (item) => titled(item))}</section>
+    <section class="report-block"><h2>Pode aprender agora</h2>${place(input.learnable, 'Nenhum degrau desbloqueado para aprender agora.', (item) => `${titled(item)} — pode aprender agora`)}</section>
+    <section class="report-block"><h2>Ainda bloqueado</h2>${place(input.blocked, 'Nenhum degrau bloqueado nesta leitura.', (item) => `${titled(item)} — ainda bloqueado${item.blockedBy.length ? ` · bloqueado por ${escapeHtml(item.blockedBy.join(', '))}` : ''}`)}</section>
     <section class="report-block"><h2>Comece por</h2>${start}</section>
     <section class="report-block"><h2>Em paralelo</h2>${parallel}<p>${escapeHtml(input.advancedAside)}</p><p><a href="${escapeHtml(href)}">Ver prontidão →</a></p></section>`;
 }

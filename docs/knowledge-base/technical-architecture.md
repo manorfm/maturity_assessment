@@ -160,9 +160,11 @@ registrar. “A quem recorrer” nomeia papéis. O acompanhamento não vira meta
 de bônus.
 
 A página de fronteira projeta `projectFrontierBrief` a partir das
-folhas medidas: dominado, pode aprender agora e ainda bloqueado. “Comece
-por” é um degrau desbloqueado. Condição humana (aresta social ou
-cognitiva) fica em paralelo, com link para a prontidão. Cada prática do
+folhas medidas: dominado, pode aprender agora e ainda bloqueado. A marca
+F0–F5 aparece só quando a folha tem posterior de sofisticação; sem essa
+posterior, a faixa permanece textual. “Comece por” é um degrau
+desbloqueado. Condição humana (aresta social ou cognitiva) fica em
+paralelo, com link para a prontidão. Cada prática do
 catálogo publica `p_k`, o pré-requisito mais fraco e a conduta só quando
 o pré-requisito essencial tem posterior de estágio com pelo menos 5
 respondentes; sem essa leitura, a página mantém a lacuna. Nível pontual

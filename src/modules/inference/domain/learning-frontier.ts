@@ -3,6 +3,7 @@ import { CapabilityTaxonomy } from './capability-taxonomy.js';
 import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
 import type { CapabilityStageLevel } from './capability-reference.js';
+import { modeSophistication, type SophisticationDistribution, type SophisticationPhase } from './sophistication-matrix.js';
 
 export type EnablementStrength = 'essential' | 'comfort';
 export type EnablementType = 'technical' | 'cognitive' | 'social' | 'structural' | 'governance';
@@ -128,22 +129,51 @@ export function projectLearningFrontier(
   return { nodes };
 }
 
+export type FrontierSophisticationMark = `F${SophisticationPhase}`;
+
 export type FrontierPlace = {
   leafId: string;
   label: string;
   blockedBy: string[];
   unlocks: string;
   probability: number;
+  /** Modo da posterior F0–F5. Ausente quando a folha não tem essa posterior. */
+  mark?: FrontierSophisticationMark;
 };
 
 export type FrontierBrief = {
   mastered: FrontierPlace[];
   learnable: FrontierPlace[];
   blocked: FrontierPlace[];
-  start: { step: string; unlocks: string; leafId: string } | { gap: string };
+  start: { step: string; unlocks: string; leafId: string; mark?: FrontierSophisticationMark } | { gap: string };
   parallel: Array<{ label: string; body: string }>;
   advancedAside: string;
 };
+
+/** Nível de estágio permanece nível. A posterior de sofisticação entra à parte e não é inventada. */
+export function frontierLeaves(input: {
+  capabilities: ReadonlyArray<{ id: string; level: number; coverage?: number }>;
+  phases?: ReadonlyMap<string, { distribution: SophisticationDistribution; phase: number }>;
+}): Record<string, LeafEvidence> {
+  const phases = input.phases ?? new Map<string, { distribution: SophisticationDistribution; phase: number }>();
+  const leaves: Record<string, LeafEvidence> = {};
+  for (const capability of input.capabilities) {
+    const phase = phases.get(capability.id);
+    leaves[capability.id] = {
+      level: capability.level,
+      coverage: capability.coverage ?? 0,
+      ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
+    };
+  }
+  for (const [leafId, phase] of phases) {
+    if (leaves[leafId]) continue;
+    leaves[leafId] = {
+      phaseDistribution: phase.distribution,
+      phase: phase.phase,
+    };
+  }
+  return leaves;
+}
 
 const advancedAside = 'Práticas avançadas a dois passos não são o próximo passo.';
 
@@ -159,12 +189,14 @@ export function projectFrontierBrief(
   for (const node of projection.nodes) {
     const parsed = parseUnlock(node.id);
     const edge = catalog.find((item) => unlockId(item) === node.id);
+    const mark = sophisticationMark(leaves[parsed?.leafId ?? node.id]);
     const place: FrontierPlace = {
       leafId: parsed?.leafId ?? node.id,
       label: parsed ? CapabilityTaxonomy.labelFor(parsed.leafId) : (node.label ?? node.id),
       blockedBy: node.blockedBy,
       unlocks: edge?.keyBehavior ?? 'O comportamento desta aresta ainda não foi nomeado.',
       probability: node.probability ?? 0,
+      ...(mark ? { mark } : {}),
     };
     const stage = observedStage(leaves[place.leafId]);
     if (parsed && stage !== undefined && stage >= parsed.toStage) mastered.push(place);
@@ -174,7 +206,12 @@ export function projectFrontierBrief(
   learnable.sort((left, right) => right.probability - left.probability || left.label.localeCompare(right.label));
   const first = learnable[0];
   const start = first
-    ? { step: first.label, unlocks: first.unlocks, leafId: first.leafId }
+    ? {
+      step: first.label,
+      unlocks: first.unlocks,
+      leafId: first.leafId,
+      ...(first.mark ? { mark: first.mark } : {}),
+    }
     : { gap: 'Nada está desbloqueado para aprender agora.' };
   const parallel = catalog
     .filter((item) => item.type === 'social' || item.type === 'cognitive')
@@ -199,6 +236,11 @@ export function nextPhaseWithinFrontier(input: {
   const essential = incoming.filter((edge) => (edge.strength ?? 'essential') === 'essential');
   const probability = essential.reduce((product, edge) => product * edge.probability, 1);
   return probability >= 0.6 ? candidate : floor;
+}
+
+function sophisticationMark(evidence?: LeafEvidence): FrontierSophisticationMark | undefined {
+  if (!evidence?.phaseDistribution) return undefined;
+  return `F${modeSophistication(evidence.phaseDistribution)}`;
 }
 
 function unlockId(dependency: EnablementDependency): string {

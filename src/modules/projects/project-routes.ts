@@ -32,7 +32,7 @@ import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/
 import { declaredSophistication } from '../catalog/evidence-contract.js';
 import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
 import { evidenceGradeGap, leavesForReadinessPage, projectAudienceReadings, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
-import { projectFrontierBrief } from '../inference/domain/learning-frontier.js';
+import { frontierLeaves, projectFrontierBrief } from '../inference/domain/learning-frontier.js';
 import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
@@ -527,11 +527,15 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
   app.get('/projects/:publicId/manage/:adminSecret/report/frontier', async (request, reply) => {
     const params = request.params as Params;
     const auth = requireProject(params);
-    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
-    const leaves = Object.fromEntries(report.capabilities.map((capability) => [capability.id, {
-      level: capability.level,
-      coverage: capability.coverage ?? 0,
-    }]));
+    const projectId = String(auth.project.id);
+    const report = inference.report(projectId, Number(auth.project.minimum_group_size));
+    const phases = report.completed >= report.minimum
+      ? inference.projectSophisticationByLeaf(projectId)
+      : undefined;
+    const leaves = frontierLeaves({
+      capabilities: report.capabilities,
+      ...(phases ? { phases } : {}),
+    });
     const brief = projectFrontierBrief(leaves);
     const readinessHref = `/projects/${params.publicId}/manage/${params.adminSecret}/report/readiness`;
     return reply.type('text/html').send(reportPage(params, 'frontier', renderFrontierPage({ ...brief, readinessHref, ...(brief.mastered.length + brief.learnable.length + brief.blocked.length === 0 ? { gap: 'Sem fronteira publicada.' } : {}) })));

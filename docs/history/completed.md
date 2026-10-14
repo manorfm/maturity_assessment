@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Fronteira marca a posterior de sofisticação
+
+- A marca F0–F5 aparece só quando a folha tem posterior de sofisticação.
+  Sem essa posterior, a faixa permanece textual. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Prontidão publica a leitura do catálogo
 
 - Prática com posterior de estágio mostra `p_k`, o pré-requisito mais
