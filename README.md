@@ -40,8 +40,9 @@ importa, como está, o que relataram, por que acontece, onde se resolve,
 o que fazer, como saber se funcionou, o que já funciona, relações,
 lacunas e referências. A distribuição de estágio 0–4 entra quando o
 modelo a publica; até lá a ficha diz a lacuna. O quadrante só aparece
-com leitura de sofisticação e apropriação. “O que já funciona” só entra
-na leitura de preservação. Campo vazio é lacuna explícita.
+com leitura de sofisticação e apropriação. Perspectiva e time abaixo do
+limiar entram só no agregado. “O que já funciona” só entra na leitura de
+preservação. Campo vazio é lacuna explícita.
 
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)

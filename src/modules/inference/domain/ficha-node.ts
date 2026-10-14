@@ -1,3 +1,4 @@
+import type { PerspectiveSample } from './map-matrix.js';
 import type { ReportOutcomeKind } from './report-outcome.js';
 import { disciplineScope } from './discipline-brief.js';
 import { classifySophisticationQuadrant, type SophisticationQuadrant } from './sophistication-matrix.js';
@@ -46,4 +47,56 @@ export function projectHowItIs(input: {
 export function projectPreserve(kind?: ReportOutcomeKind, body?: string): PreservePublication {
   if (kind === 'preserve' && body) return { shown: true, body };
   return { shown: false, body: 'O que já funciona entra quando a leitura é de preservação.' };
+}
+
+export type ReportedAccount = { label: string; body: string };
+
+export type ReportedReadings = {
+  perspectives: ReportedAccount[];
+  units: ReportedAccount[];
+  withheld: string[];
+  gap: string | null;
+};
+
+export function projectReportedReadings(input: {
+  capabilityIds: string[];
+  minimum: number;
+  samples: PerspectiveSample[];
+  units: Array<{ label: string; completed: number; observed: boolean }>;
+}): ReportedReadings {
+  const perspectives: ReportedAccount[] = [];
+  const withheld: string[] = [];
+  for (const sample of input.samples) {
+    const reading = sample.readings.find((item) => input.capabilityIds.includes(item.capabilityId) && item.signals > 0);
+    if (!reading) continue;
+    if (sample.completed < input.minimum) {
+      withheld.push(withheldLine(sample.label, sample.completed));
+      continue;
+    }
+    perspectives.push({ label: sample.label, body: perspectiveBody(sample.label, reading.mean) });
+  }
+  const units: ReportedAccount[] = [];
+  for (const unit of input.units) {
+    if (!unit.observed) continue;
+    if (unit.completed < input.minimum) {
+      withheld.push(withheldLine(unit.label, unit.completed));
+      continue;
+    }
+    units.push({ label: unit.label, body: 'Este time tem cobertura neste recorte. O índice do time não é publicado nesta ficha.' });
+  }
+  const gap = perspectives.length === 0 && units.length === 0 && withheld.length === 0
+    ? 'Ainda não há relato publicado neste nó.'
+    : null;
+  return { perspectives, units, withheld, gap };
+}
+
+function withheldLine(label: string, completed: number): string {
+  const people = completed === 1 ? 'pessoa' : 'pessoas';
+  return `${label} teve ${completed} ${people}. As respostas entram só no total.`;
+}
+
+function perspectiveBody(label: string, mean: number): string {
+  if (mean >= 1) return `${label} descreve um sistema mais folgado neste recorte.`;
+  if (mean <= -1) return `${label} descreve a restrição neste recorte.`;
+  return `${label} relata este recorte, sem direção publicada.`;
 }

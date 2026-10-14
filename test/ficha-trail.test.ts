@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectHowItIs, projectNodeDefinition, projectPreserve } from '../src/modules/inference/domain/ficha-node.js';
+import { projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../src/modules/inference/domain/ficha-node.js';
 import { OrganizationalAreaProjector, projectFichaTrail } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderNodeCard } from '../src/modules/projects/diagnostic-report-view.js';
 
@@ -31,7 +31,7 @@ test('ficha desenha a trilha clicável e não transforma o nome aberto em link',
     }),
     definition: projectNodeDefinition('continuous-integration'),
     how: projectHowItIs({}),
-    reported: '',
+    reported: projectReportedReadings({ capabilityIds: ['continuous-integration'], minimum: 5, samples: [], units: [] }),
     why: '',
     where: '',
     action: '',

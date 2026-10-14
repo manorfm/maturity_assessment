@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Ficha publica relato por perspectiva e por time
+
+- Perspectiva e time com cobertura acima do limiar ganham linha própria,
+  sem índice. Abaixo do limiar, as respostas entram só no total. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Ficha publica definição, estágio e quadrante
 
 - A ficha diz o que a capacidade abrange e por que importa. A distribuição

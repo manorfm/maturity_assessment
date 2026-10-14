@@ -5,7 +5,7 @@ import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnost
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
-import type { HowItIs, NodeDefinition, PreservePublication } from '../inference/domain/ficha-node.js';
+import type { HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
 import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
@@ -229,7 +229,7 @@ function renderCells(cells: Array<{ kind: 'uncovered' | 'unpublished' | 'diverge
   }).join('');
 }
 
-export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: NodeDefinition; how: HowItIs; reported: string; why: string; where: string; action: string; check: string; preserve: PreservePublication; relations: string; unknown: string; references: string }): string {
+export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: NodeDefinition; how: HowItIs; reported: ReportedReadings; detail?: string; why: string; where: string; action: string; check: string; preserve: PreservePublication; relations: string; unknown: string; references: string }): string {
   const block = (heading: string, body: string) => `<section class="report-block"><h2>${escapeHtml(heading)}</h2>${body}</section>`;
   const trail = input.trail.map((crumb, index) => {
     const separator = index === 0 ? '' : '<span aria-hidden="true">›</span>';
@@ -241,7 +241,7 @@ export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; defi
   return `<header class="report-hero"><nav class="ficha-trail" aria-label="Caminho">${trail}</nav><p class="report-kicker">Ficha do nó</p><h1>${escapeHtml(input.title)}</h1></header>
     ${block('O que é e por que importa', `<p>${escapeHtml(input.definition.what)}</p><p>${escapeHtml(input.definition.why)}</p>`)}
     ${block('Como está', renderHowItIs(input.how))}
-    ${block('O que as pessoas relataram', input.reported)}
+    ${block('O que as pessoas relataram', `${renderReported(input.reported)}${input.detail ?? ''}`)}
     ${block('Por que provavelmente acontece', `<p>${escapeHtml(input.why)}</p>`)}
     ${block('Onde se resolve', `<p>${escapeHtml(input.where)}</p>`)}
     ${block('O que fazer', `<p>${escapeHtml(input.action)}</p>`)}
@@ -250,6 +250,15 @@ export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; defi
     ${block('Relações com outros nós', `<p>${escapeHtml(input.relations)}</p>`)}
     ${block('O que não sabemos', `<p>${escapeHtml(input.unknown)}</p>`)}
     ${block('Referências', `<p>${escapeHtml(input.references)}</p>`)}`;
+}
+
+function renderReported(readings: ReportedReadings): string {
+  if (readings.gap) return `<p class="report-gap">${escapeHtml(readings.gap)}</p>`;
+  const list = (title: string, accounts: ReportedReadings['perspectives']) => accounts.length === 0
+    ? ''
+    : `<h3>${escapeHtml(title)}</h3>${accounts.map((account) => `<p><strong>${escapeHtml(account.label)}</strong> ${escapeHtml(account.body)}</p>`).join('')}`;
+  const withheld = readings.withheld.map((line) => `<p class="report-gap">${escapeHtml(line)}</p>`).join('');
+  return `${list('Por perspectiva', readings.perspectives)}${list('Por time', readings.units)}${withheld}`;
 }
 
 function renderHowItIs(how: HowItIs): string {

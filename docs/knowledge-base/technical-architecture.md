@@ -164,7 +164,10 @@ ferramenta; a distribuição de estágio 0–4 só quando o modelo a publica,
 senão a frase “ainda não publicamos”; o quadrante sofisticação ×
 apropriação só com as duas leituras, e a conduta do quadrante “as
 pessoas querem; o meio não ajuda” começa pelo meio. “O que já funciona”
-só entra quando a leitura do laudo é de preservação.
+só entra quando a leitura do laudo é de preservação. O relato da ficha
+(`projectReportedReadings`) publica perspectiva e time com cobertura
+acima do limiar, sem índice percentual. Quem ficou abaixo do limiar
+não ganha linha própria: as respostas entram só no total.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

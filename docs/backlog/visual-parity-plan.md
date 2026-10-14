@@ -48,7 +48,7 @@ acessíveis; só saíram do menu.
 | --- | --- | --- |
 | Laudo | Motivo em citação ou lacuna, leitura com mecanismo, até três achados em cartão (caminho, sustentação, “Ver ficha”), divergência nos dois lados, restrição com efeito, conduta, prognóstico sem promessa, lacunas e exames separados, rodapé | Tema escuro é variante de tela no protótipo; o produto usa um botão no chrome |
 | Mapa | Três cortes, sistema observado abre disciplinas, matrizes com célula do domínio, radar, perfil e legenda de estimativa, faixa e alvo só quando o modelo publica | — |
-| Ficha | Trilha até o mapa; definição do que é e por que importa; “como está” com lacuna de 0–4 ou quadrante só quando há leitura; “o que já funciona” só na preservação | Grade do que as pessoas relataram, cartões separados de causa, lugar, ação e critério |
+| Ficha | Trilha até o mapa; definição; “como está” com lacuna de 0–4 ou quadrante só com leitura; relatos por perspectiva e por time, com agregado abaixo do limiar; “o que já funciona” só na preservação | Cartões separados de causa, lugar, ação e critério |
 | Prontidão | Lista com banda e `p_k` | Cartão por prática (chaos, AI-DLC, service mesh no exemplo) com grade de pré-requisitos e legenda Pronto / Perto / Não pronto |
 | Fronteira | Lista por banda | Faixas (dominado, pode aprender, bloqueado), condições humanas e bloco “Comece por” |
 | Plano | Condutas 0–30, depois, pulso e lista Cynefin | Cartões de conduta ativa e setas de dependência. O protótipo não mostra “Depois” nem pulso como seções próprias |
