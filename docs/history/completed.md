@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Plano publica os três horizontes
+
+- O horizonte da conduta sai da dependência e do modo de aprendizado.
+  Conduta dependente não é experimento de 30 dias. Coluna vazia declara
+  a lacuna. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Fronteira marca a posterior de sofisticação
 
 - A marca F0–F5 aparece só quando a folha tem posterior de sofisticação.

@@ -173,7 +173,9 @@ principal** pelo escore `P(causa) × Σ severidade × alcance` (08 §4) e
 limita a 3 condutas ativas por autoridade. Conduta cujo passo do
 portfólio `dependsOn` aponta outra conduta publicada sai das ativas:
 o plano diz “depende de” essa ação e a coloca depois da seta. Sem
-dependência, a linha é “sem dependência”. O pulso de 4–8 semanas só
+dependência, a linha é “sem dependência”. O horizonte sai dessa
+dependência e do modo de aprendizado: conduta dependente não é
+experimento de 30 dias, e coluna sem conduta declara a lacuna. O pulso de 4–8 semanas só
 lista item-âncora das folhas ativas; sem âncora, a página declara a
 lacuna. Cynefin na conduta é uma linha (aplicar, analisar, experimentar,
 estabilizar). Grau D entra como experimento explícito.

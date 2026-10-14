@@ -299,7 +299,11 @@ export function renderTreatmentPage(plan: {
   deferred: TreatmentConduct[];
   pulse: PulseCatalogItem[];
 }, evidenceGap?: string): string {
-  const list = (items: TreatmentConduct[]) => items.map((item, index) => renderConduct(item, index + 1)).join('') || '<p class="report-gap">Nenhuma conduta neste horizonte.</p>';
+  const published = [...plan.active, ...plan.waiting, ...plan.deferred];
+  const list = (horizon: TreatmentConduct['horizon']) => {
+    const items = published.filter((item) => item.horizon === horizon);
+    return items.map((item, index) => renderConduct(item, index + 1)).join('') || '<p class="report-gap">Nenhuma conduta neste horizonte.</p>';
+  };
   const grades = evidenceGap
     ? `<p class="report-gap">${escapeHtml(evidenceGap)}</p>`
     : '<p>O grau A–D descreve a base da prática, não o suporte local da amostra. Condutas D só entram como experimento explícito.</p>';
@@ -308,9 +312,11 @@ export function renderTreatmentPage(plan: {
     : '<p class="report-gap">Ainda não há folhas tratadas com item-âncora de pulso no catálogo.</p>';
   const domains = (['clear', 'complicated', 'complex', 'chaotic'] as const).map((domain) => `<li>${escapeHtml(cynefinLine(domain))}</li>`).join('');
   return `<header class="report-hero"><p class="report-kicker">Plano de tratamento</p><h1>Quem faz o quê, e em que ordem</h1></header>
-    <section class="report-block"><h2>0–30 dias · ativas agora</h2>${list(plan.active)}</section>
-    <section class="report-block"><h2>Setas</h2><p>A conduta de destino depende da de origem. O que espera começa quando a dependência mostrar resultado.</p>${list(plan.waiting)}</section>
-    <section class="report-block"><h2>Depois</h2>${list(plan.deferred)}</section>
+    <div class="treatment-horizons">
+      <section class="treatment-horizon treatment-horizon-now"><h2>0–30 dias</h2>${list('0-30')}</section>
+      <section class="treatment-horizon"><h2>1–3 meses</h2><p>A conduta de destino depende da de origem. O que espera começa quando a dependência mostrar resultado.</p>${list('1-3')}</section>
+      <section class="treatment-horizon"><h2>3–12 meses</h2>${list('3-12')}</section>
+    </div>
     <section class="report-block"><h2>Pulso · 4–8 semanas</h2>${pulse}</section>
     <section class="report-block"><h2>Domínio Cynefin</h2><ul>${domains}</ul>${grades}</section>`;
 }

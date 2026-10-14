@@ -202,9 +202,13 @@ exemplo do protótipo. Relações são as arestas publicadas do nó
 (evidencia, amplifica, bloqueia, depende-de); o cartão mostra o outro
 lado e o tipo. Tipo sem aresta naquele nó fica de fora. Nó sem aresta
 mantém a lacuna de que o grafo não ligou aquele nó. O plano de tratamento
-(`projectTreatmentPlan`) publica o cartão ativo com ação, dono, critério,
-linha Cynefin e grau A–D. A seta usa `dependsOn` do portfólio: quem espera não se mistura
-com as ativas. O pulso só aparece com item-âncora.
+(`projectTreatmentPlan`) publica o cartão com ação, dono, critério,
+linha Cynefin e grau A–D. O horizonte sai da dependência e do modo de
+aprendizado: o que destrava agora fica em 0–30 dias, o que espera um
+pré-requisito fica em 1–3 meses e o que só cabe depois da fronteira fica
+em 3–12 meses. Conduta dependente não é experimento de 30 dias. A tela
+mostra as três colunas; coluna vazia diz que não há conduta naquele
+horizonte. A seta usa `dependsOn` do portfólio. O pulso só aparece com item-âncora.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

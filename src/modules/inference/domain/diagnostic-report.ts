@@ -26,6 +26,7 @@ import {
   transferWarningFor,
   type CynefinDomain,
   type EvidenceGrade,
+  type LearningMode,
   type TreatmentConduct,
 } from './treatment-contract.js';
 import { primaryArchetypeFor } from './systemic-archetypes.js';
@@ -125,16 +126,19 @@ export function projectDiagnosticLaudo(input: {
     })),
   ];
   const observedPatterns = published.map((finding) => finding.pattern);
-  const prematureConduct: TreatmentConduct[] = premature.slice(0, 2).map((item) => ({
-    action: item.action,
-    owner: 'Quem autoriza a prática avançada neste recorte',
-    success: `Pré-requisitos essenciais de ${item.practiceLabel} com p_k ≥ 0,3 antes de ampliar escopo`,
-    horizon: '0-30',
-    authority: 'management',
-    cynefin: 'complex',
-    doesNotSolve: 'Não substitui subir observabilidade, reversão ou aprendizado; só contém o risco da prática cedo demais.',
-    learningMode: 'work-experiment',
-  }));
+  const prematureConduct: TreatmentConduct[] = premature.slice(0, 2).map((item) => {
+    const learningMode = 'work-experiment' as const;
+    return {
+      action: item.action,
+      owner: 'Quem autoriza a prática avançada neste recorte',
+      success: `Pré-requisitos essenciais de ${item.practiceLabel} com p_k ≥ 0,3 antes de ampliar escopo`,
+      horizon: publishConductHorizon({ learningMode }),
+      authority: 'management',
+      cynefin: 'complex',
+      doesNotSolve: 'Não substitui subir observabilidade, reversão ou aprendizado; só contém o risco da prática cedo demais.',
+      learningMode,
+    };
+  });
   const conduct = [
     ...prematureConduct,
     ...primary.slice(0, Math.max(0, 3 - prematureConduct.length)).map((finding) => conductFrom(finding, observedPatterns)),
@@ -202,6 +206,23 @@ function readingFrom(index?: IndexPublication): DiagnosticLaudo['reading'] {
   };
 }
 
+const immediateExperiment = new Set<LearningMode>(['work-experiment', 'kata', 'pair']);
+/** Comunidade e rodízio espalham o que já foi aprendido: só cabem depois da fronteira (23 §5). */
+const afterFrontier = new Set<LearningMode>(['community', 'rotation']);
+
+/**
+ * Horizonte da conduta (01 §8). A tela desenha este campo e não escolhe outro.
+ * O que destrava agora — sem predecessora e experimento imediato (trabalho, kata, par) — fica em 0–30.
+ * O que espera um pré-requisito (“depende de”) fica em 1–3 meses, como a capacidade que ainda não é experimento imediato (curso, prática guiada, imersão).
+ * Comunidade e rodízio ficam em 3–12 meses. Contenção de adoção prematura sem outra conduta na frente permanece em 0–30.
+ */
+function publishConductHorizon(conduct: { dependency?: string; learningMode?: LearningMode }): TreatmentConduct['horizon'] {
+  if (conduct.learningMode && afterFrontier.has(conduct.learningMode)) return '3-12';
+  if (conduct.dependency?.startsWith('depende de')) return '1-3';
+  if (conduct.learningMode && !immediateExperiment.has(conduct.learningMode)) return '1-3';
+  return '0-30';
+}
+
 function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): TreatmentConduct {
   const guidance = guidanceFor(finding.pattern, finding.foundation, finding.title);
   const cynefin: CynefinDomain = classifyCynefin({
@@ -218,7 +239,7 @@ function conductFrom(finding: OutcomeFinding, observedPatterns: string[]): Treat
     action,
     owner: finding.experiment?.owner || 'Quem autoriza neste recorte',
     success: finding.experiment?.successCriterion || guidance.successCriterion,
-    horizon: '0-30',
+    horizon: publishConductHorizon({ learningMode }),
     authority: authorityOwner(finding.decisionAuthority),
     cynefin,
     evidenceGrade: classifyEvidenceGrade({
@@ -378,7 +399,15 @@ export function projectTreatmentPlan(findings: OutcomeFinding[]): {
     const dependency = predecessor
       ? `depende de ${predecessor.experiment?.action || predecessor.intervention || predecessor.title}`
       : 'sem dependência';
-    return { conduct: { ...conduct, dependency }, leafId: finding.detailCapability };
+    const sequenced = {
+      ...conduct,
+      dependency,
+      horizon: publishConductHorizon({
+        dependency,
+        ...(conduct.learningMode ? { learningMode: conduct.learningMode } : {}),
+      }),
+    };
+    return { conduct: sequenced, leafId: finding.detailCapability };
   });
   // No máximo 3 condutas ativas por nível de autoridade (08 §7). Quem depende de outra fica na espera.
   const active: TreatmentConduct[] = [];

@@ -305,6 +305,11 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness-card h2 { margin:0 0 8px; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500 }
     .report-conduct-action { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; margin:0 0 8px }
     .treatment-depends { color:var(--ink2); font-size:14px }
+    .treatment-horizons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; width:100%; margin-top:28px; padding-top:28px; border-top:1px solid var(--rule) }
+    .treatment-horizon { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px; min-width:0 }
+    .treatment-horizon-now { background:var(--accent-soft) }
+    .treatment-horizon h2 { margin:0 0 12px; font-family:"IBM Plex Sans",sans-serif; font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink2) }
+    .treatment-horizon > p { margin:0 0 12px; color:var(--ink2); font-size:14px }
     .report-conduct h3 { margin:.15rem 0 .4rem; font-size:1.05rem }
     .report-index { font-family:Newsreader, Georgia, serif; font-size:40px; line-height:1; margin:0 }
     .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--rule); color:var(--ink3); font-size:13px; max-width:52rem }
@@ -334,7 +339,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness.near { color:var(--ink); background:#F5E6D0 }
     .readiness.blocked { color:var(--red); background:var(--red-soft) }
     .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-main{padding:24px 16px 48px} .report-divergence-sides{grid-template-columns:1fr} .area-map-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-main{padding:24px 16px 48px} .report-divergence-sides{grid-template-columns:1fr} .area-map-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>

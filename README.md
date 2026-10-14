@@ -46,11 +46,13 @@ apropriação. Perspectiva e time abaixo do limiar entram só no agregado,
 sem série própria. “O que já funciona” só entra na leitura de
 preservação. Campo vazio é lacuna explícita.
 
-**Plano de tratamento.** As condutas ativas mostram ação, dono, critério,
-domínio e grau de evidência. Quem depende de outra conduta aparece
-depois da seta, com “depende de”. Sem dependência, a linha diz isso.
-Grau D entra como experimento. O pulso de 4–8 semanas só aparece quando
-há item-âncora.
+**Plano de tratamento.** As condutas mostram ação, dono, critério,
+domínio e grau de evidência nas três colunas de horizonte. O horizonte
+sai da dependência e do modo de aprendizado; conduta dependente não é
+experimento de 30 dias. Coluna sem conduta diz que não há conduta
+naquele horizonte. Quem depende de outra conduta aparece com “depende
+de”. Sem dependência, a linha diz isso. Grau D entra como experimento. O
+pulso de 4–8 semanas só aparece quando há item-âncora.
 
 **Prontidão e fronteira.** Cada prática do catálogo publica `p_k`, o
 pré-requisito mais fraco e a conduta só com posterior de estágio; sem
