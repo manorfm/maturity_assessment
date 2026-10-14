@@ -243,8 +243,8 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .interview-actions button { flex:1 1 160px; max-width:320px; margin:0 0 0 auto; min-height:48px; padding:0 20px; border:0; border-radius:10px; background:var(--accent); color:var(--on-accent); font:inherit; font-weight:600; cursor:pointer }
     .interview-notice { margin:0; padding:14px 16px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-soft); color:var(--ink); font-size:15px }
     .interview-hint { margin:0; color:var(--ink3); font-size:13px; max-width:60ch }
-    .diagnostic-report { --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-soft:#DCEAE8; --accent-ink:#0A4B51; --sunk:#EFE9DE; --ochre:#94560F; --red:#A2372A; --red-soft:#F6E3DE; --na:#B9B2A7; display:flex; align-items:stretch; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:15px; line-height:1.5 }
-    .diagnostic-report[data-theme="escuro"] { --bg:#171614; --surface:#211F1C; --ink:#EDE8DF; --ink2:#CBC3B6; --ink3:#A89F91; --rule:#3A3631; --accent:#5FB0B0; --accent-soft:#1C3435; --accent-ink:#8FD0CF; --sunk:#1B1A17; --ochre:#E0A35C; --red:#E8826F; --red-soft:#3C2420; --na:#6A645B; color-scheme:dark }
+    .diagnostic-report { --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E1C19; --ink2:#46413A; --ink3:#625B51; --rule:#DCD4C6; --accent:#0D5C63; --accent-soft:#DCEAE8; --accent-ink:#0A4B51; --sunk:#EFE9DE; --ochre:#94560F; --red:#A2372A; --red-soft:#F6E3DE; --na:#B9B2A7; --na-ink:#5E584E; display:flex; align-items:stretch; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans", sans-serif; font-size:15px; line-height:1.5 }
+    .diagnostic-report[data-theme="escuro"] { --bg:#171614; --surface:#211F1C; --ink:#EDE8DF; --ink2:#CBC3B6; --ink3:#A89F91; --rule:#3A3631; --accent:#5FB0B0; --accent-soft:#1C3435; --accent-ink:#8FD0CF; --sunk:#1B1A17; --ochre:#E0A35C; --red:#E8826F; --red-soft:#3C2420; --na:#6A645B; --na-ink:#B5AC9E; color-scheme:dark }
     .report-sidebar { width:248px; flex:none; box-sizing:border-box; padding:40px 20px; border-right:1px solid var(--rule); background:var(--sunk); display:flex; flex-direction:column; gap:28px }
     .report-brand { display:flex; flex-direction:column; gap:4px; padding:0 12px }
     .report-brand strong { font-family:Newsreader, Georgia, serif; font-size:20px; font-weight:600; line-height:1.2 }
@@ -285,9 +285,15 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-tabs { display:flex; gap:4px; padding:4px; background:var(--sunk); border-radius:10px; width:max-content; margin:24px 0 }
     .report-tabs a { min-height:44px; padding:0 20px; border-radius:8px; display:inline-flex; align-items:center; text-decoration:none; color:var(--ink2) }
     .report-tabs a[aria-selected="true"] { background:var(--surface); color:var(--ink); font-weight:600 }
-    .report-matrix { width:100%; border-collapse:collapse }
-    .report-matrix th, .report-matrix td { border-bottom:1px solid var(--rule); padding:8px; text-align:left }
-    .na-cell { color:var(--na) }
+    .report-matrix-block { display:flex; flex-direction:column; gap:14px }
+    .report-matrix-legend { display:flex; flex-direction:column; gap:8px; max-width:64ch; color:var(--ink2); font-size:15px }
+    .report-matrix-legend p { margin:0 }
+    .coverage-swatch { display:inline-block; width:22px; height:12px; margin-right:6px; border-radius:3px; border:1px solid var(--na); background:repeating-linear-gradient(45deg, var(--na) 0 2px, transparent 2px 6px); vertical-align:-1px }
+    .report-matrix { width:100%; border-collapse:separate; border-spacing:0 }
+    .report-matrix th, .report-matrix td { padding:8px 4px; text-align:center; font-size:12px; color:var(--ink2); font-weight:600 }
+    .report-matrix th[scope="row"] { text-align:left; width:170px; font-size:14px }
+    .coverage-gap { background:repeating-linear-gradient(45deg, var(--na) 0 2px, transparent 2px 6px); color:var(--na-ink); border:1px solid var(--na) }
+    .index-gap { color:var(--ink3); font-weight:500 }
     .readiness { padding:2px 10px; border-radius:999px; font-weight:700; font-size:12px }
     .readiness.ready { color:var(--accent-ink); background:var(--accent-soft) }
     .readiness.near { color:var(--ink); background:#F5E6D0 }

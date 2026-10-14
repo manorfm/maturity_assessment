@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Célula do mapa por estrutura sem índice falso
+
+- Time abaixo de 5 pessoas fica cinza, com “sem cobertura”. Time elegível
+  declara que o índice da célula ainda não foi publicado. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Voz do laudo no formato do protótipo
 
 - Cabeçalho com contexto e amostra, motivo em citação ou lacuna, achado

@@ -194,13 +194,17 @@ function childHref(child: OrganizationalAreaNode, areaBase: string, capabilityBa
 
 function renderStructureCut(units: Array<{ path: string; completed: number }>, map: OrganizationalAreaMap): string {
   if (!units.length) return '<p class="report-gap">Nenhuma unidade com leitura publicada.</p>';
-  const headers = map.systems.map((system) => `<th>${escapeHtml(system.label)}</th>`).join('');
+  const columns = map.systems.flatMap((system) => system.children);
+  const headers = columns.map((column) => `<th scope="col">${escapeHtml(column.label)}</th>`).join('');
   const rows = units.map((unit) => {
     const name = unit.path.split('/').at(-1) ?? unit.path;
-    const cells = map.systems.map(() => `<td class="na-cell">${unit.completed < 5 ? 'sem cobertura' : 'agregado'}</td>`).join('');
-    return `<tr><th>${escapeHtml(name)} (${unit.completed})</th>${cells}</tr>`;
+    const belowThreshold = unit.completed < 5;
+    const cells = columns.map(() => belowThreshold
+      ? '<td class="coverage-gap">sem cobertura</td>'
+      : '<td class="index-gap">índice não publicado</td>').join('');
+    return `<tr><th scope="row">${escapeHtml(name)} (${unit.completed})</th>${cells}</tr>`;
   }).join('');
-  return `<table class="report-matrix"><caption>Times × capacidades. Célula neutra não tem cobertura própria.</caption><thead><tr><th>Unidade</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+  return `<section class="report-matrix-block"><div class="report-matrix-legend"><p>Times × capacidades, na ordem da estrutura, não por resultado.</p><p><span class="coverage-swatch" aria-hidden="true"></span>sem cobertura</p><p>Estimativa, faixa e alvo só entram quando o modelo publicar a célula.</p></div><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
 function renderPerspectiveCut(perspectives: Array<{ title: string }>): string {
