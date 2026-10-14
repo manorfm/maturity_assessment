@@ -150,7 +150,6 @@ test('causa, lugar, ação e critério são cartões; vazio vira lacuna, sem o c
     place: 'No caminho compartilhado.',
     action: 'Encurte um lote.',
     check: 'A espera cai.',
-    relations: 'Entrega',
   });
   assert.equal(filled.cause.published, true);
   assert.equal(filled.cause.body, 'A aprovação encarece cada encontro das mudanças.');
@@ -166,6 +165,51 @@ test('causa, lugar, ação e critério são cartões; vazio vira lacuna, sem o c
   assert.match(html, /class="ficha-card report-gap"/);
   assert.match(html, /Ainda não há causa publicada/);
   assert.doesNotMatch(html, /4 relatos|22%/);
+});
+
+test('a ficha mostra o outro lado da aresta publicada e não desenha laço sem aresta', () => {
+  const linked = projectFichaClose({ nodeId: 'organizational-learning' });
+  assert.equal(linked.relations.published, true);
+  if (!linked.relations.published) return;
+  const depende = linked.relations.edges.find((edge) => edge.kind === 'depende-de' && edge.otherLabel === 'Liderança e gestão');
+  assert.ok(depende);
+  assert.equal(depende.text.includes('depende-de'), true);
+  assert.equal(depende.text.includes('Liderança e gestão'), true);
+  assert.equal(linked.relations.edges.some((edge) => edge.kind === 'bloqueia'), false);
+  const amplified = projectFichaClose({ nodeId: 'platform-autonomy' });
+  assert.equal(amplified.relations.published, true);
+  if (!amplified.relations.published) return;
+  const amplifica = amplified.relations.edges.find((edge) => edge.kind === 'amplifica' && edge.otherLabel === 'Fluxo de trabalho');
+  assert.ok(amplifica);
+  const card = {
+    title: 'Aprendizado e adaptação',
+    trail: [],
+    definition: { what: 'Abrange o aprendizado do sistema.', why: 'Trata o que muda depois do evento.' },
+    how: projectHowItIs({}),
+    reported: projectReportedReadings({ capabilityIds: ['organizational-learning'], minimum: 5, samples: [], units: [] }),
+    preserve: projectPreserve('correct'),
+  };
+  const html = renderNodeCard({ ...card, close: linked });
+  assert.equal(html.includes('depende-de'), true);
+  assert.equal(html.includes('Liderança e gestão'), true);
+  assert.equal(html.includes('Orbital'), false);
+  assert.equal(html.includes('13%'), false);
+  assert.equal(html.includes('45%'), false);
+  const empty = projectFichaClose({ nodeId: 'cloud-efficiency' });
+  assert.equal(empty.relations.published, false);
+  if (empty.relations.published) return;
+  assert.equal(empty.relations.body.includes('grafo não ligou'), true);
+  const emptyHtml = renderNodeCard({
+    ...card,
+    title: 'Eficiência de operação',
+    close: empty,
+  });
+  assert.equal(emptyHtml.includes('grafo não ligou'), true);
+  assert.equal(emptyHtml.includes('class="ficha-relations"'), false);
+  assert.equal(emptyHtml.includes('Orbital'), false);
+  assert.equal(emptyHtml.includes('Integração contínua'), false);
+  assert.equal(emptyHtml.includes('13%'), false);
+  assert.equal(emptyHtml.includes('45%'), false);
 });
 
 test('ficha mostra a frase de por que importa, a lacuna de estágio e omite o quadrante sem leitura', () => {

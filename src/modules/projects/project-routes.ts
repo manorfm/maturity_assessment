@@ -364,7 +364,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const areaBase = `/projects/${params.publicId}/manage/${params.adminSecret}/areas`;
     const sophistication = inference.projectSophisticationByLeaf(String(auth.project.id)).get(selected.id);
     const stageDistribution = leafStageDistribution(report.index, selected.id);
-    const relations = relationLabels(primary?.affectedCapabilities, selected.id);
     const pattern = report.outcome.finding?.pattern;
     const detail = `<div class="report-home">${renderDisciplineDetail({ selected, findings: relevant, projectFindings: findings, capabilityBase: base, ...(pattern ? { primaryPattern: pattern } : {}) })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}</div>`;
     const card = renderNodeCard({
@@ -394,11 +393,11 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       detail,
       preserve: projectPreserve(report.outcome.kind, report.outcome.kind === 'preserve' ? primary?.intervention : undefined),
       close: projectFichaClose({
+        nodeId: selected.id,
         ...(primary?.cause ? { cause: primary.cause } : {}),
         ...(primary?.containment && primary.containment !== 'undetermined' ? { place: containmentLabel(primary.containment) } : {}),
         ...((primary?.experiment?.action || primary?.intervention) ? { action: primary.experiment?.action || primary.intervention } : {}),
         ...(primary?.experiment?.successCriterion ? { check: primary.experiment.successCriterion } : {}),
-        ...(relations ? { relations } : {}),
         ...(primary?.missingEvidence ? { unknown: primary.missingEvidence } : {}),
         ...(primary?.foundation?.source ? { references: primary.foundation.source } : {}),
       }),
@@ -1120,11 +1119,6 @@ function priorityComparison(primary: OutcomeFinding, competing?: OutcomeFinding)
 
 function restrictionLabel(value: string): string {
   return ({ none: 'Nenhum mecanismo restritivo demonstrado', undetermined: 'Ainda não determinado', knowledge: 'Conhecimento', capacity: 'Capacidade disponível', process: 'Processo', policy: 'Política', tooling: 'Ferramenta', platform: 'Plataforma', access: 'Acesso', architecture: 'Arquitetura', organization: 'Estrutura organizacional', governance: 'Governança', culture: 'Cultura', incentive: 'Incentivo', priority: 'Prioridade ou alocação de capacidade', 'external-dependency': 'Dependência externa' } as Record<string, string>)[value] ?? value;
-}
-
-function relationLabels(ids: string[] | undefined, selfId: string): string {
-  const labels = [...new Set((ids ?? []).filter((id) => id && id !== selfId))].map((id) => CapabilityTaxonomy.labelFor(id));
-  return labels.length ? labels.join(', ') : '';
 }
 
 function containmentLabel(value: string): string {

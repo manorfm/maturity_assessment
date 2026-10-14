@@ -39,6 +39,10 @@ const FEEDS: Feed[] = [
   { from: 'causa-capacidade-tomada-pela-proxima-iniciativa', to: 'war-room-como-gestao', because: 'Sem capacidade para aprender, a crise vira o modo de gestão.' },
 ];
 
+export function patternFeeds(): Array<{ from: string; to: string }> {
+  return FEEDS.map((feed) => ({ from: feed.from, to: feed.to }));
+}
+
 export function publishedIntersections(findings: OutcomeFinding[]): DisciplineCrossing[] {
   const unique = uniqueByPattern(findings).filter((item) => item.detailCapability);
   if (unique.length < 2) return [];

@@ -2,6 +2,7 @@ import type { IndexPublication } from './stage-posterior.js';
 import type { PerspectiveSample } from './map-matrix.js';
 import type { ReportOutcomeKind } from './report-outcome.js';
 import { disciplineScope } from './discipline-brief.js';
+import { projectNodeRelations, type FichaRelations } from './node-relations.js';
 import { classifySophisticationQuadrant, type SophisticationQuadrant } from './sophistication-matrix.js';
 
 export type NodeDefinition = { what: string; why: string };
@@ -124,12 +125,14 @@ function withheldLine(label: string, completed: number): string {
 
 export type FichaLine = { published: boolean; body: string };
 
+export type { FichaRelation, FichaRelations } from './node-relations.js';
+
 export type FichaClose = {
   cause: FichaLine;
   place: FichaLine;
   action: FichaLine;
   check: FichaLine;
-  relations: FichaLine;
+  relations: FichaRelations;
   unknown: FichaLine;
   references: FichaLine;
 };
@@ -139,17 +142,16 @@ const closeGaps = {
   place: 'Ainda não há lugar publicado para resolver.',
   action: 'Sem conduta publicada.',
   check: 'O teste ainda não foi publicado.',
-  relations: 'Relações com outros nós ainda não foram publicadas.',
   unknown: 'Lacuna ainda não nomeada.',
   references: 'Referência ainda não ligada a esta ficha.',
 } as const;
 
 export function projectFichaClose(input: {
+  nodeId?: string;
   cause?: string;
   place?: string;
   action?: string;
   check?: string;
-  relations?: string;
   unknown?: string;
   references?: string;
 }): FichaClose {
@@ -162,7 +164,7 @@ export function projectFichaClose(input: {
     place: line('place', input.place),
     action: line('action', input.action),
     check: line('check', input.check),
-    relations: line('relations', input.relations),
+    relations: projectNodeRelations(input.nodeId),
     unknown: line('unknown', input.unknown),
     references: line('references', input.references),
   };

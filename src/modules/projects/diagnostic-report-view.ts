@@ -5,7 +5,7 @@ import type { DiagnosticLaudo, AudienceReading } from '../inference/domain/diagn
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
-import type { FichaClose, FichaLine, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
+import type { FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
 import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
@@ -251,7 +251,7 @@ export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; defi
     ${block('O que fazer', renderFichaLine(input.close.action))}
     ${block('Como saber se funcionou', renderFichaLine(input.close.check))}
     ${block('O que já funciona', `<p class="${input.preserve.shown ? '' : 'report-gap'}">${escapeHtml(input.preserve.body)}</p>`)}
-    ${block('Relações com outros nós', renderFichaLine(input.close.relations))}
+    ${block('Relações com outros nós', renderRelations(input.close.relations))}
     ${block('O que não sabemos', renderFichaLine(input.close.unknown))}
     ${block('Referências', renderFichaLine(input.close.references))}`;
 }
@@ -259,6 +259,12 @@ export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; defi
 function renderFichaLine(line: FichaLine): string {
   const tone = line.published ? 'ficha-card' : 'ficha-card report-gap';
   return `<article class="${tone}"><p>${escapeHtml(line.body)}</p></article>`;
+}
+
+function renderRelations(relations: FichaRelations): string {
+  if (!relations.published) return `<article class="ficha-card report-gap"><p>${escapeHtml(relations.body)}</p></article>`;
+  const items = relations.edges.map((edge) => `<li>${escapeHtml(edge.text)}</li>`).join('');
+  return `<article class="ficha-card"><ul class="ficha-relations">${items}</ul></article>`;
 }
 
 function renderReported(readings: ReportedReadings): string {

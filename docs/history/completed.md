@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Ficha lista as arestas publicadas do nó
+
+- A ficha mostra o outro lado de cada aresta publicada. Sem aresta, a
+  lacuna permanece. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Ficha desenha a posterior de estágio
 
 - A ficha mostra os cinco pesos 0–4 quando a posterior da folha está no

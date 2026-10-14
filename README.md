@@ -40,7 +40,8 @@ importa, como está, o que relataram, por que acontece, onde se resolve,
 o que fazer, como saber se funcionou, o que já funciona, relações,
 lacunas e referências. A distribuição de estágio 0–4 desenha os cinco
 pesos da posterior da folha quando o índice publicado a traz; sem isso a
-ficha diz a lacuna. O quadrante só aparece com leitura de sofisticação e
+ficha diz a lacuna. Relações são as arestas publicadas do nó; sem
+aresta, a ficha mantém a lacuna. O quadrante só aparece com leitura de sofisticação e
 apropriação. Perspectiva e time abaixo do limiar entram só no agregado,
 sem série própria. “O que já funciona” só entra na leitura de
 preservação. Campo vazio é lacuna explícita.

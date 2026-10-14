@@ -270,6 +270,8 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .ficha-card { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px }
     .ficha-card p { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35 }
     .ficha-card.report-gap p { font-family:inherit; font-size:14px; font-weight:400 }
+    .ficha-relations { list-style:none; margin:0; padding:0; display:grid; gap:12px }
+    .ficha-relations li { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; color:var(--ink) }
     .stage-distribution { list-style:none; margin:12px 0 0; padding:0; display:grid; gap:8px }
     .stage-distribution li { display:grid; grid-template-columns:5.5rem 1fr 3rem; align-items:center; gap:10px; font-size:13px; color:var(--ink2) }
     .stage-track { display:block; height:8px; background:var(--rule); border-radius:99px; overflow:hidden }

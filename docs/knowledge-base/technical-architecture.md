@@ -190,11 +190,14 @@ só entra quando a leitura do laudo é de preservação. O relato da ficha
 (`projectReportedReadings`) publica perspectiva e time com cobertura
 acima do limiar, sem índice percentual. Quem ficou abaixo do limiar
 não ganha linha própria: as respostas entram só no total. Causa, lugar,
-ação, critério, relações, lacuna e referência saem de `projectFichaClose`:
+ação, critério, lacuna e referência saem de `projectFichaClose`:
 texto publicado vira cartão; campo vazio vira a lacuna, sem o caso de
-exemplo do protótipo. O plano de tratamento (`projectTreatmentPlan`)
-publica o cartão ativo com ação, dono, critério, linha Cynefin e grau
-A–D. A seta usa `dependsOn` do portfólio: quem espera não se mistura
+exemplo do protótipo. Relações são as arestas publicadas do nó
+(evidencia, amplifica, bloqueia, depende-de); o cartão mostra o outro
+lado e o tipo. Tipo sem aresta naquele nó fica de fora. Nó sem aresta
+mantém a lacuna de que o grafo não ligou aquele nó. O plano de tratamento
+(`projectTreatmentPlan`) publica o cartão ativo com ação, dono, critério,
+linha Cynefin e grau A–D. A seta usa `dependsOn` do portfólio: quem espera não se mistura
 com as ativas. O pulso só aparece com item-âncora.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
