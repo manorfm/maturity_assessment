@@ -238,7 +238,12 @@ export function renderReadinessPage(items: Array<{ label: string; assessment?: R
   const cards = items.map((item) => {
     if (item.gap || !item.assessment) return `<article class="report-block"><h2>${escapeHtml(item.label)}</h2><p class="report-gap">${escapeHtml(item.gap ?? 'Sem posterior.')}</p></article>`;
     const band = item.assessment.band === 'ready' ? 'Pronto' : item.assessment.band === 'near' ? 'Perto' : 'Não pronto';
-    return `<article class="report-block"><h2>${escapeHtml(item.label)}</h2><p>${band} · P(pronto) ${item.assessment.probability}</p>${item.assessment.premature ? '<p>Adoção prematura: a fase técnica está à frente de um pré-requisito essencial.</p>' : ''}</article>`;
+    const checklist = item.assessment.checklist?.length
+      ? `<ul class="readiness-checklist">${item.assessment.checklist.map((row) => (
+        `<li>${escapeHtml(row.label)}${row.essential ? ' (essencial)' : ''}: p_k ${row.probability.toFixed(2)}</li>`
+      )).join('')}</ul>`
+      : '';
+    return `<article class="report-block"><h2>${escapeHtml(item.label)}</h2><p>${band} · P(pronto) ${item.assessment.probability}</p>${item.assessment.premature ? '<p>Adoção prematura: a fase técnica está à frente de um pré-requisito essencial.</p>' : ''}<p>Checklist de pré-requisitos</p>${checklist}</article>`;
   }).join('');
   return `<header class="report-hero"><p class="report-kicker">Prontidão para práticas avançadas</p><h1>Prontidão para práticas avançadas</h1><p>A probabilidade de pronto nunca passa a ser índice da organização.</p></header>
     <p><span class="readiness ready">Pronto</span> pré-requisitos atendidos · <span class="readiness near">Perto</span> um pré-requisito faltando · <span class="readiness blocked">Não pronto</span> gargalo sem conduta que destrave</p>

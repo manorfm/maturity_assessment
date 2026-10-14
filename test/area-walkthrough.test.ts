@@ -96,6 +96,33 @@ test('walkthrough da Operação projeta as 8 seções e a próxima fase da rubri
   assert.doesNotMatch(html, /O protótipo só desenhou Operação/);
 });
 
+test('próxima fase pode mirar prática avançada pelo gargalo de prontidão', () => {
+  const findings = [
+    ready('conhecimento-concentrado', 'Investigar depende de poucas pessoas', 'incident-management'),
+  ];
+  const capabilities = [
+    { id: 'incident-management', label: 'Incidentes', level: 1, confidence: 0.8, evidence: 4, hasContradiction: false, coverage: 1 },
+    { id: 'observability-practice', label: 'Observabilidade', level: 1, confidence: 0.7, evidence: 3, hasContradiction: false, coverage: 1 },
+    { id: 'reliability-practice', label: 'Confiabilidade', level: 1, confidence: 0.7, evidence: 3, hasContradiction: false, coverage: 1 },
+    { id: 'release-feedback', label: 'Liberação', level: 2, confidence: 0.7, evidence: 3, hasContradiction: false, coverage: 1 },
+    { id: 'organizational-learning', label: 'Aprendizado', level: 2, confidence: 0.7, evidence: 3, hasContradiction: false, coverage: 1 },
+  ];
+  const map = OrganizationalAreaProjector.project({ capabilities, findings });
+  const operations = map.systems.find((system) => system.id === 'operations')!;
+  const walk = projectAreaWalkthrough({
+    area: operations,
+    findings,
+    capabilities,
+    organizationalAreas: map,
+    outcomeKind: 'correct',
+    conducts: [],
+    pulse: [],
+    leaves: Object.fromEntries(capabilities.map((cap) => [cap.id, { level: cap.level, coverage: 1 }])),
+    targetPracticeIds: ['chaos-engineering'],
+  });
+  assert.ok(walk.sections.next.some((line) => /Chaos engineering/i.test(line) && /gargalo|próximo degrau/i.test(line)));
+});
+
 test('área sem achados locais declara lacuna sem inventar próxima fase', () => {
   const findings = [ready('war-room-como-gestao', 'O war room virou a gestão', 'leadership-management')];
   const capabilities = [

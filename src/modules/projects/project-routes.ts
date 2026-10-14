@@ -493,11 +493,23 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const area = path.at(-1)!;
     const chapter = projectAreaChapter({ area, findings: report.findings, organizationalAreas: report.organizationalAreas });
     const plan = projectTreatmentPlan(report.findings);
-    const leaves = Object.fromEntries(report.capabilities.map((capability) => [capability.id, {
-      level: capability.level,
-      coverage: capability.coverage ?? 0,
-    }]));
     const fByLeaf = inference.projectSophisticationByLeaf(String(auth.project.id));
+    const practicePhases = inference.projectAdvancedPracticePhases(String(auth.project.id));
+    const leaves = Object.fromEntries(report.capabilities.map((capability) => {
+      const phase = fByLeaf.get(capability.id);
+      return [capability.id, {
+        level: capability.level,
+        coverage: capability.coverage ?? 0,
+        ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
+      }];
+    }));
+    for (const [practiceId, phase] of practicePhases) {
+      leaves[practiceId] = {
+        ...(leaves[practiceId] ?? { coverage: 1 }),
+        phaseDistribution: phase.distribution,
+        phase: phase.phase,
+      };
+    }
     const sophistication = report.capabilities.flatMap((capability) => {
       const fromResponses = fByLeaf.get(capability.id);
       if (fromResponses) {
@@ -521,6 +533,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       summary: chapter.observes,
       enablementEdges: evaluateEnablementEdges(enablementCatalog, leaves),
       sophistication,
+      leaves,
     });
     return reply.type('text/html').send(reportPage(params, 'walkthrough', renderWalkthrough(walk)));
   });

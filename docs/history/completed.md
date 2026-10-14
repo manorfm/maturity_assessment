@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Walkthrough mira prática avançada e checklist p_k (WP20)
+
+- `nextStepTowardPractice` no walkthrough (gargalo, um degrau); checklist
+  `p_k` na página de prontidão (22 §6). Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-13 — Pergunta de evento de otimização automática de custo (WP20)
 
 - `cost-optimization-auto` após eficiência sustentada; F0–F5 de

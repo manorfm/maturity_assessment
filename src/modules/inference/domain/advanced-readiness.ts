@@ -16,6 +16,13 @@ export type PrerequisitePosterior = {
   probability: number;
 };
 
+export type PrerequisiteChecklistItem = {
+  id: string;
+  label: string;
+  essential: boolean;
+  probability: number;
+};
+
 export type ReadinessAssessment = {
   probability: number;
   comfort: number;
@@ -23,6 +30,18 @@ export type ReadinessAssessment = {
   bottleneckId?: string;
   premature: boolean;
   missing: string[];
+  /** Checklist 22 §6: p_k de cada pré-requisito. */
+  checklist: PrerequisiteChecklistItem[];
+};
+
+export type PracticeNextStep = {
+  practiceId: string;
+  practiceLabel: string;
+  bottleneckLabel: string;
+  leafId: string;
+  probability: number;
+  band: ReadinessBand;
+  reading: string;
 };
 
 export type PracticePrerequisite = {
@@ -86,7 +105,86 @@ export function assessReadiness(input: {
     ...(bottleneck ? { bottleneckId: bottleneck.id } : {}),
     premature,
     missing: essential.filter((item) => item.probability < 0.7).map((item) => item.label),
+    checklist: input.prerequisites.map((item) => ({
+      id: item.id,
+      label: item.label,
+      essential: item.essential,
+      probability: item.probability,
+    })),
   };
+}
+
+/**
+ * Próximo degrau rumo a uma prática avançada (22 §6 / 16): um pré-requisito
+ * por vez, o gargalo essencial, sem pular para a prática.
+ */
+export function nextStepTowardPractice(
+  practice: AdvancedPractice,
+  leaves: Record<string, LeafEvidence>,
+): PracticeNextStep | undefined {
+  const prerequisites = resolvePrerequisitePosteriors(practice, leaves);
+  if (!prerequisites) {
+    const gap = firstEssentialGap(practice, leaves);
+    if (!gap) return undefined;
+    return {
+      practiceId: practice.id,
+      practiceLabel: practice.label,
+      bottleneckLabel: gap.label,
+      leafId: gap.leafId,
+      probability: 0,
+      band: 'not-ready',
+      reading: `Para ${practice.label}: próximo degrau é ${gap.label} (${gap.reason}); um degrau por vez até a prática.`,
+    };
+  }
+  const technicalPhase = technicalPhaseFor(practice, leaves);
+  const assessment = assessReadiness({
+    prerequisites,
+    ...(technicalPhase !== undefined ? { technicalPhase } : {}),
+  });
+  const bottleneck = practice.prerequisites.find((item) => item.id === assessment.bottleneckId)
+    ?? practice.prerequisites.find((item) => item.essential);
+  if (!bottleneck) return undefined;
+  const probability = prerequisites.find((item) => item.id === bottleneck.id)?.probability ?? 0;
+  if (assessment.band === 'ready') {
+    return {
+      practiceId: practice.id,
+      practiceLabel: practice.label,
+      bottleneckLabel: bottleneck.label,
+      leafId: bottleneck.leafId,
+      probability,
+      band: assessment.band,
+      reading: `${practice.label}: pré-requisitos essenciais no limiar de pronto; comece pequeno e monitore adoção prematura.`,
+    };
+  }
+  return {
+    practiceId: practice.id,
+    practiceLabel: practice.label,
+    bottleneckLabel: bottleneck.label,
+    leafId: bottleneck.leafId,
+    probability,
+    band: assessment.band,
+    reading: `Para ${practice.label}: próximo degrau é ${bottleneck.label} (gargalo · p_k ${probability.toFixed(2)}); um degrau por vez até a prática.`,
+  };
+}
+
+function firstEssentialGap(
+  practice: AdvancedPractice,
+  leaves: Record<string, LeafEvidence>,
+): { label: string; leafId: string; reason: string } | undefined {
+  for (const prerequisite of practice.prerequisites.filter((item) => item.essential)) {
+    const evidence = leaves[prerequisite.leafId];
+    if (!distributionFor(evidence)) {
+      return { label: prerequisite.label, leafId: prerequisite.leafId, reason: 'ainda sem evidência de estágio' };
+    }
+    if (prerequisite.minimumPhase !== undefined && !phaseDistributionFor(evidence)) {
+      return {
+        label: prerequisite.label,
+        leafId: prerequisite.leafId,
+        reason: `falta evidência de fase técnica F≥${prerequisite.minimumPhase}`,
+      };
+    }
+  }
+  return undefined;
 }
 
 export function projectPracticeReadiness(

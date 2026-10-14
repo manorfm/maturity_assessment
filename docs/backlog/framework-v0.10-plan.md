@@ -53,10 +53,10 @@ selecionável.
 - WP13, WP14, WP16 a WP19: capacidades novas, Laya, exames, reescrita do banco, dossiês.
 - WP20 (parcial): biblioteca 22 §5 (13 práticas); `p_k` com F;
   adoção prematura no laudo; perguntas de evento no tronco para as 13
-  práticas (chaos, remediação, QA+flaky, tronco, CD, SLO, plataforma,
-  células, data mesh, Zero Trust, mesh, FinOps, AI-DLC+generalização).
-  Walkthrough “próxima fase” mirando prática avançada e checklist no
-  laudo ainda podem aprofundar.
+  práticas; checklist `p_k` na página de prontidão; walkthrough mira
+  prática avançada pelo gargalo (`nextStepTowardPractice`). Conduta no
+  tratamento quando a organização declara a prática como objetivo ainda
+  pode aprofundar.
 - WP21 (parcial): `enablementCatalog` com arestas de 23 §3.3;
   `P(desbloqueado)` por produto das essenciais; fronteira/perto/bloqueado;
   walkthrough restringe próxima fase à fronteira; condutas com

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   advancedPracticeCatalog,
+  nextStepTowardPractice,
   probabilityStageAtLeast,
   projectPracticeReadiness,
   resolvePrerequisitePosteriors,
@@ -88,3 +89,46 @@ test('nível pontual vira distribuição provisória para p_k', () => {
   assert.ok(assessment.probability > 0);
   assert.equal(typeof assessment.band, 'string');
 });
+
+test('checklist de prontidão lista p_k de cada pré-requisito', () => {
+  const assessment = projectPracticeReadiness(
+    advancedPracticeCatalog.find((item) => item.id === 'chaos-engineering')!,
+    chaosEngineeringExample(),
+  );
+  assert.ok(assessment.checklist.length >= 5);
+  assert.ok(assessment.checklist.every((item) => typeof item.probability === 'number' && item.label));
+  const html = renderReadinessPage([{
+    id: 'chaos-engineering',
+    label: 'Chaos engineering',
+    assessment,
+  }]);
+  assert.match(html, /p_k|pré-requisito/i);
+  assert.match(html, /Observabilidade|Estado estável/i);
+});
+
+test('próximo degrau rumo à prática aponta o gargalo, um de cada vez', () => {
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'chaos-engineering')!;
+  const leaves = {
+    'observability-practice': { distribution: peaked(1), phaseDistribution: phasePeaked(1) },
+    'reliability-practice': { distribution: peaked(1) },
+    'incident-management': { distribution: peaked(3), phaseDistribution: phasePeaked(2) },
+    'release-feedback': { distribution: peaked(2), phaseDistribution: phasePeaked(2) },
+    'organizational-learning': { distribution: peaked(2) },
+  };
+  const step = nextStepTowardPractice(practice, leaves);
+  assert.ok(step);
+  assert.equal(step!.practiceId, 'chaos-engineering');
+  assert.ok(step!.leafId);
+  assert.match(step!.reading, /próximo degrau|gargalo|um degrau/i);
+  assert.notEqual(step!.band, 'ready');
+});
+
+function chaosEngineeringExample() {
+  return [
+    { id: 'observability', label: 'Observabilidade', essential: true, probability: 0.35 },
+    { id: 'steady-state', label: 'Estado estável', essential: true, probability: 0.2 },
+    { id: 'incident-response', label: 'Resposta a incidentes', essential: true, probability: 0.7 },
+    { id: 'rollback', label: 'Reversão', essential: true, probability: 0.5 },
+    { id: 'learning', label: 'Aprendizado', essential: true, probability: 0.4 },
+  ];
+}

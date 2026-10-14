@@ -151,7 +151,10 @@ tronco (`trunk-based-integration`, 22 §5 / 12 §3.3), entrega contínua
 (`ai-dlc-verification` + generalização `ai-dlc-generalization`, 22 §4.6)
 declaram F da prática sem alterar o índice (R28); a fase alimenta
 prontidão e adoção prematura. As 13 práticas da biblioteca 22 §5 têm
-pergunta de evento no grafo.
+pergunta de evento no grafo. A página de prontidão lista o checklist de
+`p_k` por pré-requisito. O walkthrough pode mirar uma prática avançada
+na “próxima fase”: `nextStepTowardPractice` aponta o gargalo essencial
+e um degrau por vez, sem pular para a prática.
 O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia
 `P(desbloqueado)` por aresta; a fronteira exige ≥ 0,6, o bloqueio
 aparece abaixo de 0,25, e a próxima fase do walkthrough só sobe dentro

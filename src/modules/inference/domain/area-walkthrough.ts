@@ -4,6 +4,11 @@ import { primaryArchetypeFor } from './systemic-archetypes.js';
 import { uniqueFindingsByPattern, type OutcomeFinding, type ReportOutcomeKind } from './report-outcome.js';
 import type { TreatmentConduct } from './treatment-contract.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from './organizational-areas.js';
+import {
+  advancedPracticeCatalog,
+  nextStepTowardPractice,
+  type LeafEvidence,
+} from './advanced-readiness.js';
 import { nextPhaseWithinFrontier, type EnablementEdge } from './learning-frontier.js';
 import { projectSophisticationMatrix, type SophisticationPhase } from './sophistication-matrix.js';
 
@@ -65,6 +70,10 @@ export function projectAreaWalkthrough(input: {
   summary?: string;
   enablementEdges?: EnablementEdge[];
   sophistication?: Array<{ leafId: string; phase: SophisticationPhase | number; appropriation: number }>;
+  /** Evidência por folha para mirar práticas avançadas na próxima fase (22 §6). */
+  leaves?: Record<string, LeafEvidence>;
+  /** Práticas candidatas; padrão = catálogo 22 §5 filtrado pelas folhas da área. */
+  targetPracticeIds?: string[];
 }): AreaWalkthrough {
   const leaves = new Set(leavesOf(input.area));
   const published = uniqueFindingsByPattern(input.findings).filter((finding) => finding.confidence >= 0.5);
@@ -81,6 +90,9 @@ export function projectAreaWalkthrough(input: {
         appropriation: item.appropriation,
       })),
   );
+  const capabilityNext = projectNext(prioritized, input.enablementEdges);
+  const practiceNext = projectPracticeNext(leaves, input.leaves, input.targetPracticeIds);
+  const next = [...capabilityNext, ...practiceNext];
 
   return {
     version: AREA_WALKTHROUGH_VERSION,
@@ -91,7 +103,9 @@ export function projectAreaWalkthrough(input: {
       where: projectWhere(prioritized, local, matrix.map((item) => item.reading)),
       arrived: projectArrived(local),
       working: projectWorking(input.outcomeKind, prioritized),
-      next: projectNext(prioritized, input.enablementEdges),
+      next: next.length
+        ? next
+        : ['Sem próxima fase enquanto não houver capacidade ou conduta publicada neste recorte.'],
       path: projectPath(input.conducts),
       milestones: projectMilestones(input.pulse, leaves, input.conducts),
       risks: projectRisks(prioritized, local),
@@ -147,7 +161,7 @@ function projectNext(
   caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>,
   edges?: EnablementEdge[],
 ): string[] {
-  if (!caps.length) return ['Sem próxima fase enquanto não houver capacidade ou conduta publicada neste recorte.'];
+  if (!caps.length) return [];
   return caps.map((cap) => {
     const current = clampStage(cap.level);
     const next = edges?.length
@@ -164,6 +178,29 @@ function projectNext(
       ? `${label} ${arrow}: ${behavior}`
       : `${label} ${arrow}: quando chegarmos lá, veremos o comportamento do próximo degrau.`;
   });
+}
+
+/** 22 §6: próxima fase pode mirar prática avançada — um pré-requisito (gargalo) por vez. */
+function projectPracticeNext(
+  areaLeaves: Set<string>,
+  evidence?: Record<string, LeafEvidence>,
+  targetPracticeIds?: string[],
+): string[] {
+  if (!evidence) return [];
+  const practices = targetPracticeIds?.length
+    ? advancedPracticeCatalog.filter((practice) => targetPracticeIds.includes(practice.id))
+    : advancedPracticeCatalog.filter((practice) => (
+      practice.prerequisites.some((item) => areaLeaves.has(item.leafId))
+    ));
+  const lines: string[] = [];
+  for (const practice of practices) {
+    const step = nextStepTowardPractice(practice, evidence);
+    if (!step || step.band === 'ready') continue;
+    if (!areaLeaves.has(step.leafId) && !practice.prerequisites.some((item) => areaLeaves.has(item.leafId))) continue;
+    lines.push(step.reading);
+    if (lines.length >= 2) break;
+  }
+  return lines;
 }
 
 function projectPath(conducts: TreatmentConduct[]): AreaWalkthroughPath {
