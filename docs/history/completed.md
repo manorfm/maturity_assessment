@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Ficha desenha a posterior de estágio
+
+- A ficha mostra os cinco pesos 0–4 quando a posterior da folha está no
+  índice publicado. Sem posterior, a lacuna permanece. Perspectiva e
+  unidade abaixo do mínimo não ganham série. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Entrevista abre falando com quem responde
 
 - O convite começa na boas-vindas, sem sinal. Cada passo do grafo diz

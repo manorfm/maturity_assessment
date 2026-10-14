@@ -180,8 +180,10 @@ quando o modelo inclui o alvo. A ficha abre com a trilha do mapa
 (`projectFichaTrail`): Tecnologia e os ancestrais da área são links; o
 nome da capacidade aberta não é link. O corpo da ficha sai de
 `ficha-node`: o que a capacidade abrange e o que ela trata, sem nome de
-ferramenta; a distribuição de estágio 0–4 só quando o modelo a publica,
-senão a frase “ainda não publicamos”; o quadrante sofisticação ×
+ferramenta; a distribuição de estágio 0–4 desenha os cinco pesos da
+posterior da folha quando o índice publicado a traz, senão a frase
+“ainda não publicamos”; perspectiva e unidade abaixo do limiar não
+ganham série própria; o quadrante sofisticação ×
 apropriação só com as duas leituras, e a conduta do quadrante “as
 pessoas querem; o meio não ajuda” começa pelo meio. “O que já funciona”
 só entra quando a leitura do laudo é de preservação. O relato da ficha

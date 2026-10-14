@@ -270,9 +270,18 @@ function renderReported(readings: ReportedReadings): string {
   return `${list('Por perspectiva', readings.perspectives)}${list('Por time', readings.units)}${withheld}`;
 }
 
+function renderStageWeights(shares: readonly number[], label?: string): string {
+  const rows = shares.map((share, index) => {
+    const percent = Math.round(share * 100);
+    return `<li><span>Estágio ${index}</span><span class="stage-track" aria-hidden="true"><span class="stage-fill" style="width:${percent}%"></span></span><span>${percent}%</span></li>`;
+  }).join('');
+  const caption = label ? `<p><strong>${escapeHtml(label)}</strong></p>` : '';
+  return `${caption}<ol class="stage-distribution">${rows}</ol>`;
+}
+
 function renderHowItIs(how: HowItIs): string {
   const stage = how.stage.published
-    ? `<p>${how.stage.shares.map((share, index) => `Estágio ${index}: ${share}`).join(' · ')}</p>`
+    ? `${renderStageWeights(how.stage.shares)}${how.stage.series.map((series) => renderStageWeights(series.shares, series.label)).join('')}${how.stage.withheld.map((line) => `<p class="report-gap">${escapeHtml(line)}</p>`).join('')}`
     : `<p class="report-gap">${escapeHtml(how.stage.gap)}</p>`;
   const quadrant = how.quadrant.published ? `<p>${escapeHtml(how.quadrant.conduct)}</p>` : '';
   return `${stage}${quadrant}`;

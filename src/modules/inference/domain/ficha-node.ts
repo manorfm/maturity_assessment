@@ -1,3 +1,4 @@
+import type { IndexPublication } from './stage-posterior.js';
 import type { PerspectiveSample } from './map-matrix.js';
 import type { ReportOutcomeKind } from './report-outcome.js';
 import { disciplineScope } from './discipline-brief.js';
@@ -5,9 +6,15 @@ import { classifySophisticationQuadrant, type SophisticationQuadrant } from './s
 
 export type NodeDefinition = { what: string; why: string };
 
+export type StageShares = readonly [number, number, number, number, number];
+
+export type StageSeries = { label: string; shares: StageShares };
+
+export type StageSlice = { label: string; completed: number; distribution?: StageShares };
+
 export type StagePublication =
   | { published: false; gap: string }
-  | { published: true; shares: readonly [number, number, number, number, number] };
+  | { published: true; shares: StageShares; series: StageSeries[]; withheld: string[] };
 
 export type QuadrantPublication =
   | { published: false }
@@ -31,13 +38,20 @@ export function projectNodeDefinition(id: string): NodeDefinition {
   return { what: scope.covers, why: scope.treats };
 }
 
+export function leafStageDistribution(index: IndexPublication | undefined, leafId: string): StageShares | undefined {
+  if (!index?.published) return undefined;
+  return index.leaves?.find((leaf) => leaf.id === leafId)?.distribution;
+}
+
 export function projectHowItIs(input: {
-  stageDistribution?: readonly [number, number, number, number, number];
+  stageDistribution?: StageShares;
+  minimum?: number;
+  slices?: StageSlice[];
   phase?: number;
   appropriation?: number;
 }): HowItIs {
   const stage: StagePublication = input.stageDistribution
-    ? { published: true, shares: input.stageDistribution }
+    ? { published: true, shares: input.stageDistribution, ...stageSlices(input.slices ?? [], input.minimum ?? 5) }
     : { published: false, gap: stageGap };
   if (input.phase === undefined || input.appropriation === undefined) return { stage, quadrant: { published: false } };
   const quadrant = classifySophisticationQuadrant({ phase: input.phase, appropriation: input.appropriation });
@@ -88,6 +102,19 @@ export function projectReportedReadings(input: {
     ? 'Ainda não há relato publicado neste nó.'
     : null;
   return { perspectives, units, withheld, gap };
+}
+
+function stageSlices(slices: StageSlice[], minimum: number): { series: StageSeries[]; withheld: string[] } {
+  const series: StageSeries[] = [];
+  const withheld: string[] = [];
+  for (const slice of slices) {
+    if (slice.completed < minimum) {
+      withheld.push(`${slice.label} teve ${slice.completed} ${slice.completed === 1 ? 'pessoa' : 'pessoas'}. A distribuição entra só no total.`);
+      continue;
+    }
+    if (slice.distribution) series.push({ label: slice.label, shares: slice.distribution });
+  }
+  return { series, withheld };
 }
 
 function withheldLine(label: string, completed: number): string {

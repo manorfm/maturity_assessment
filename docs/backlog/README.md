@@ -58,10 +58,11 @@ das lacunas do mapa permanece em
 do cartão, em
 [`executive-decision-narrative-plan.md`](executive-decision-narrative-plan.md).
 
-A paridade visual com o protótipo do design-graph — componentes que
-existem nas telas e ainda não estão no HTML — está no
-[`plano de paridade visual`](visual-parity-plan.md). O menu do relatório
-já segue o protótipo; o restante desse plano ainda não é compromisso.
+A paridade das telas com o protótipo está no
+[`plano de paridade visual`](visual-parity-plan.md): o menu e as páginas
+já abrem. A publicação que o motor ainda deve ao desenho está em
+`sdd-docs/maturity-model-publication`, fora deste repositório. Isso não
+é calibração nem piloto humano.
 
 A decisão de deixar de se apresentar como framework de maturidade e passar a
 ser um diagnóstico de engenharia está em

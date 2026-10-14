@@ -1,13 +1,13 @@
 # Plano: paridade visual com o protótipo
 
-O protótipo `maturity` no design-graph é a referência visual. Este plano
-lista o que as telas mostram e o HTML ainda não desenha. Não é compromisso
-de implementação, ordem de prioridade nem licença para copiar os números
-de exemplo (Orbital Pagamentos, índice 13%, “Integração contínua” como
-dado fixo). Onde o modelo `m1` não mede, o bloco continua declarando a
+O protótipo `maturity` no design-graph é a referência visual. As telas
+do relatório, da administração e da entrevista já abrem. O que ainda
+falta desenhar porque o motor não publica o bloco está em
+`sdd-docs/maturity-model-publication`, fora deste repositório. Este
+arquivo guarda o inventário. Não é licença para copiar os números de
+exemplo (Orbital Pagamentos, índice 13%, “Integração contínua” como
+dado fixo). Onde o modelo não mede, o bloco continua declarando a
 lacuna.
-
-O menu do relatório já segue o protótipo. O restante abaixo ainda não.
 
 ## Problema
 
@@ -48,7 +48,7 @@ acessíveis; só saíram do menu.
 | --- | --- | --- |
 | Laudo | Motivo em citação ou lacuna, leitura com mecanismo, até três achados em cartão (caminho, sustentação, “Ver ficha”), divergência nos dois lados, restrição com efeito, conduta, prognóstico sem promessa, lacunas e exames separados, rodapé | Tema escuro é variante de tela no protótipo; o produto usa um botão no chrome |
 | Mapa | Três cortes, sistema observado abre disciplinas, matrizes com célula do domínio, radar, perfil e legenda de estimativa, faixa e alvo só quando o modelo publica | — |
-| Ficha | Trilha até o mapa; definição; “como está” com lacuna de 0–4 ou quadrante só com leitura; relatos por perspectiva e por time; cartões de causa, lugar, ação, critério, relações, lacuna e referência; “o que já funciona” só na preservação | Gráfico de distribuição 0–4 e o laço causal do protótipo, que o modelo ainda não publica |
+| Ficha | Trilha até o mapa; definição; “como está” com os cinco pesos 0–4 quando a posterior da folha está publicada, senão a lacuna; quadrante só com leitura; relatos por perspectiva e por time; cartões de causa, lugar, ação, critério, relações, lacuna e referência; “o que já funciona” só na preservação | O laço causal do protótipo (evidencia, amplifica, bloqueia, depende-de), que o modelo ainda não publica |
 | Prontidão | Cartão com pré-requisitos e `p_k`; status pelo mais fraco; adoção prematura como risco do sistema | Grade visual do exemplo (chaos, AI-DLC, service mesh) com percentuais fixos |
 | Fronteira | Faixas dominado, pode aprender agora e ainda bloqueado; “Comece por”; condições humanas em paralelo com “Ver prontidão →” | Marcas numéricas 0–5 do exemplo |
 | Plano | Cartão ativo (ação, dono, critério, Cynefin, evidência), seta “depende de” ou “sem dependência”, espera fora das ativas, grau D como experimento, pulso só com item-âncora | Colunas 1–3 meses e 3–12 meses do protótipo; o modelo ainda não publica esses horizontes |

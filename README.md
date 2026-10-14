@@ -38,10 +38,11 @@ de ler. O que o framework v0.10 ainda não liga ao runtime está em
 **Ficha do nó.** O mesmo molde em qualquer capacidade: o que é e por que
 importa, como está, o que relataram, por que acontece, onde se resolve,
 o que fazer, como saber se funcionou, o que já funciona, relações,
-lacunas e referências. A distribuição de estágio 0–4 entra quando o
-modelo a publica; até lá a ficha diz a lacuna. O quadrante só aparece
-com leitura de sofisticação e apropriação. Perspectiva e time abaixo do
-limiar entram só no agregado. “O que já funciona” só entra na leitura de
+lacunas e referências. A distribuição de estágio 0–4 desenha os cinco
+pesos da posterior da folha quando o índice publicado a traz; sem isso a
+ficha diz a lacuna. O quadrante só aparece com leitura de sofisticação e
+apropriação. Perspectiva e time abaixo do limiar entram só no agregado,
+sem série própria. “O que já funciona” só entra na leitura de
 preservação. Campo vazio é lacuna explícita.
 
 **Plano de tratamento.** As condutas ativas mostram ação, dono, critério,

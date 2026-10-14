@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectFichaClose, projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../src/modules/inference/domain/ficha-node.js';
+import { leafStageDistribution, projectFichaClose, projectHowItIs, projectNodeDefinition, projectPreserve, projectReportedReadings } from '../src/modules/inference/domain/ficha-node.js';
 import { OrganizationalAreaProjector, projectFichaTrail } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderNodeCard } from '../src/modules/projects/diagnostic-report-view.js';
 
@@ -9,6 +9,72 @@ test('definição diz o que a capacidade é e por que importa, sem nome de ferra
   assert.match(definition.what, /Abrange/);
   assert.match(definition.why, /Trata/);
   assert.doesNotMatch(`${definition.what} ${definition.why}`, /Jenkins|Kubernetes|SAST|Jira/);
+});
+
+test('posterior publicada desenha os cinco pesos; sem posterior e abaixo do mínimo não há curva', () => {
+  const shares = [0.05, 0.1, 0.2, 0.4, 0.25] as const;
+  const how = projectHowItIs({
+    stageDistribution: shares,
+    minimum: 5,
+    slices: [
+      { label: 'Gestão', completed: 6, distribution: [0.1, 0.1, 0.2, 0.4, 0.2] },
+      { label: 'Engenharia', completed: 2, distribution: [0.7, 0.1, 0.1, 0.05, 0.05] },
+      { label: 'Pagamentos', completed: 3, distribution: [0, 0, 1, 0, 0] },
+    ],
+  });
+  assert.equal(how.stage.published, true);
+  if (!how.stage.published) return;
+  assert.deepEqual([...how.stage.shares], [...shares]);
+  assert.equal(how.stage.series.length, 1);
+  assert.equal(how.stage.series[0]?.label, 'Gestão');
+  assert.match(how.stage.withheld.join(' '), /Engenharia teve 2 pessoas/);
+  assert.match(how.stage.withheld.join(' '), /Pagamentos teve 3 pessoas/);
+  assert.doesNotMatch(how.stage.withheld.join(' '), /0\.7/);
+  const card = {
+    title: 'Entrega',
+    trail: [],
+    definition: projectNodeDefinition('delivery'),
+    reported: projectReportedReadings({ capabilityIds: ['delivery'], minimum: 5, samples: [], units: [] }),
+    preserve: projectPreserve('correct'),
+    close: projectFichaClose({}),
+  };
+  const html = renderNodeCard({ ...card, how });
+  for (const stage of [0, 1, 2, 3, 4]) assert.match(html, new RegExp(`Estágio ${stage}`));
+  assert.match(html, /class="stage-distribution"/);
+  assert.match(html, /40%/);
+  assert.match(html, /Gestão/);
+  assert.doesNotMatch(html, /70%/);
+  const empty = renderNodeCard({ ...card, how: projectHowItIs({}) });
+  assert.match(empty, /Ainda não publicamos a distribuição de estágio 0–4/);
+  assert.doesNotMatch(empty, /class="stage-distribution"/);
+  const onlySmall = projectHowItIs({
+    minimum: 5,
+    slices: [{ label: 'Engenharia', completed: 2, distribution: [0.7, 0.1, 0.1, 0.05, 0.05] }],
+  });
+  assert.equal(onlySmall.stage.published, false);
+});
+
+test('a ficha lê a posterior da folha, não o índice agregado', () => {
+  const leaf = [0.05, 0.1, 0.2, 0.4, 0.25] as const;
+  const parent = [0.2, 0.2, 0.2, 0.2, 0.2] as const;
+  assert.equal(leafStageDistribution(undefined, 'delivery'), undefined);
+  assert.equal(leafStageDistribution({ published: false, reason: 'Faixa larga demais para publicar índice.' }, 'delivery'), undefined);
+  assert.deepEqual(leafStageDistribution({
+    published: true,
+    index: 40,
+    band: [25, 75],
+    coverage: 1,
+    distribution: parent,
+    leaves: [{ id: 'delivery', distribution: leaf }],
+  }, 'delivery'), leaf);
+  assert.equal(leafStageDistribution({
+    published: true,
+    index: 40,
+    band: [25, 75],
+    coverage: 1,
+    distribution: parent,
+    leaves: [{ id: 'flow', distribution: leaf }],
+  }, 'delivery'), undefined);
 });
 
 test('como está publica a lacuna de 0–4 e o quadrante só com leitura', () => {
