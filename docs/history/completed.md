@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Células do mapa publicadas pelo domínio
+
+- Estrutura e perspectiva deixam de inventar a célula na view. Cobertura,
+  índice ausente e os dois lados da divergência vêm de `map-matrix`.
+  Perspectiva abaixo do limiar entra na amostra e fica sem linha própria.
+  Ver [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Perfil dos domínios no mesmo radar
 
 - A área nomeia o perfil dos domínios e declara que domínio sem cobertura

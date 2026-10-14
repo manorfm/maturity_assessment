@@ -31,6 +31,7 @@ import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/
 import { declaredSophistication } from '../catalog/evidence-contract.js';
 import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { disciplineColumns, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, reportMenuFicha, type ReportFicha, type ReportPageId } from './diagnostic-report-view.js';
@@ -422,13 +423,23 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
     const cut = (request.query as { cut?: string }).cut;
     const selected = cut === 'est' || cut === 'per' ? cut : 'cap';
+    const columns = disciplineColumns(report.organizationalAreas);
+    const minimum = Number(auth.project.minimum_group_size);
     const body = renderMapPage({
       map: report.organizationalAreas,
       cut: selected,
       areaBase: `/projects/${params.publicId}/manage/${params.adminSecret}/areas`,
       capabilityBase: `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`,
-      units: report.scopes.filter((scope) => scope.path.split('/').length > 1).map((scope) => ({ path: scope.path, completed: scope.completed })),
-      perspectives: report.perspectiveGaps,
+      structure: projectStructureMatrix({
+        minimum,
+        columns,
+        units: report.scopes.filter((scope) => scope.path.split('/').length > 1).map((scope) => ({
+          path: scope.path,
+          completed: scope.completed,
+          capabilities: scope.capabilities.map((capability) => ({ id: capability.id, coverage: capability.coverage ?? 0 })),
+        })),
+      }),
+      perspectives: projectPerspectiveMatrix({ minimum, columns, samples: report.perspectiveSamples }),
     });
     return reply.type('text/html').send(reportPage(params, 'map', body));
   });
@@ -1172,7 +1183,7 @@ type ScopeReportView = {
   id: string;
   path: string;
   classification: { level: number; label: string; limitingCapabilities: string[] };
-  capabilityGroups: Parameters<typeof renderCapabilityRadar>[0];
+  capabilityGroups: CapabilityRadarNode[];
   findings: OutcomeFinding[];
   perspectiveGaps: Array<{ title: string; capability?: string }>;
   audienceReport?: UnitManagementReport;
@@ -1236,6 +1247,7 @@ function summarizeLimiters(limiters: string[]): string {
 }
 
 type CapabilityRadarNode = { id: string; label: string; level: number; confidence: number; evidence: number; observers?: number; interval?: { lower: number; upper: number }; hasContradiction: boolean; assessed: boolean; coverage: number; children: CapabilityRadarNode[] };
+type RadarAxis = { id: string; label: string; assessed: boolean; level?: number; coverage: number; confidence: number; evidence: number; hasContradiction: boolean };
 
 export function renderOrganizationalAreaMap(
   map: OrganizationalAreaMap,
@@ -1324,23 +1336,23 @@ function flattenRadarNodes(nodes: CapabilityRadarNode[]): CapabilityRadarNode[] 
   return nodes.flatMap((node) => [node, ...flattenRadarNodes(node.children)]);
 }
 
-function areaChildrenAsRadar(selected: OrganizationalAreaNode, capabilities: CapabilityRadarNode[]): CapabilityRadarNode[] {
+function areaChildrenAsRadar(selected: OrganizationalAreaNode, capabilities: CapabilityRadarNode[]): RadarAxis[] {
   const flat = flattenRadarNodes(capabilities);
   const children = selected.children.length ? selected.children : [selected];
   return children.map((child) => {
     const ids = new Set(areaLeafIds(child));
     const matches = flat.filter((node) => ids.has(node.id));
-    const assessed = matches.filter((node) => node.assessed);
+    const assessed = matches.filter((node) => node.assessed && node.level !== undefined);
+    const level = assessed.length ? Math.min(...assessed.map((node) => node.level!)) : undefined;
     return {
       id: child.leafId ?? child.id,
       label: child.label,
-      level: assessed.length ? Math.min(...assessed.map((node) => node.level)) : 0,
+      ...(level !== undefined ? { level } : {}),
       confidence: assessed[0]?.confidence ?? 0,
       evidence: assessed.reduce((sum, node) => sum + node.evidence, 0),
       hasContradiction: assessed.some((node) => node.hasContradiction),
       assessed: assessed.length > 0,
       coverage: assessed.length ? assessed.reduce((sum, node) => sum + node.coverage, 0) / assessed.length : 0,
-      children: [],
     };
   });
 }
@@ -1353,7 +1365,7 @@ function areaChildHref(node: OrganizationalAreaNode, urls: { areaBase: string; c
 }
 
 export function renderCapabilityRadar(
-  capabilities: CapabilityRadarNode[],
+  capabilities: RadarAxis[],
   baseUrl: string,
   scopeId?: string,
 ): string {
@@ -1368,19 +1380,19 @@ export function renderCapabilityRadar(
   };
   const axes = capabilities.map((_, index) => `<line x1="${center}" y1="${center}" x2="${point(index, 1).split(',')[0]}" y2="${point(index, 1).split(',')[1]}" />`).join('');
   const rings = [1, 2, 3, 4].map((level) => `<polygon points="${capabilities.map((_, index) => point(index, level / 4)).join(' ')}" />`).join('');
-  const covered = capabilities.flatMap((capability, index) => capability.assessed ? [index] : []);
-  const result = covered.map((index) => point(index, capabilities[index]!.level / 4)).join(' ');
+  const covered = capabilities.flatMap((capability, index) => capability.assessed && capability.level !== undefined ? [index] : []);
+  const result = covered.map((index) => point(index, capabilities[index]!.level! / 4)).join(' ');
   const polygon = covered.length >= 3 ? `<polygon class="radar-result" points="${result}" />` : '';
   const capabilityUrl = (id: string) => `${baseUrl}/${id}${scopeId ? `?scope=${encodeURIComponent(scopeId)}` : ''}`;
   const labels = capabilities.map((capability, index) => {
     const [labelX, labelY] = point(index, 1.14).split(',');
-    if (!capability.assessed) {
+    if (!capability.assessed || capability.level === undefined) {
       return `<text class="radar-axis-label radar-axis-unassessed" x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}<tspan x="${labelX}" dy="12">sem cobertura temática</tspan></text>`;
     }
     return `<text class="radar-axis-label" x="${labelX}" y="${labelY}">${escapeHtml(capability.label)}</text>`;
   }).join('');
   const markers = capabilities.map((capability, index) => {
-    if (!capability.assessed) {
+    if (!capability.assessed || capability.level === undefined) {
       const [x, y] = point(index, .12).split(',');
       return `<g class="radar-marker radar-marker-unassessed" tabindex="0" role="img" aria-label="${escapeHtml(capability.label)}: sem cobertura temática; detalhe indisponível"><circle cx="${x}" cy="${y}" r="9"/><text class="radar-question" x="${x}" y="${Number(y) + 4}">?</text>${radarTooltip(x!, y!, capability.label, 'Sem cobertura temática', 'As entrevistas não passaram por dois padrões distintos nesta disciplina. Não é falta de pessoas.')}</g>`;
     }
@@ -1388,7 +1400,7 @@ export function renderCapabilityRadar(
     const status = radarStatus(capability.level);
     return `<a href="${capabilityUrl(capability.id)}" class="radar-point radar-status-${status.id}" aria-label="${escapeHtml(capability.label)}: ${executiveStage(capability.level)}. ${escapeHtml(status.summary)}"><circle cx="${x}" cy="${y}" r="8"/>${radarTooltip(x!, y!, capability.label, executiveStage(capability.level), status.summary)}</a>`;
   }).join('');
-  const drillNavigation = capabilities.map((capability) => capability.assessed
+  const drillNavigation = capabilities.map((capability) => capability.assessed && capability.level !== undefined
     ? `<a class="radar-drill-link radar-status-${radarStatus(capability.level).id}" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${executiveStage(capability.level)} · ${coverageLabel(capability.coverage)}</span></a>`
     : `<span class="radar-drill-link disabled" aria-disabled="true">${escapeHtml(capability.label)} <span>Sem cobertura temática</span></span>`).join('');
   return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p class="muted">Use o mapa para localizar contraste e aprofundar, não para comparar décimos. “?” significa que a entrevista não cobriu dois padrões desta disciplina. Não é falta de pessoas nem fragilidade. Eixo não avaliado fica fora do polígono e não vale zero.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Mapa de contraste das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${polygon}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;

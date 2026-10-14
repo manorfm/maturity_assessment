@@ -475,7 +475,9 @@ test('triangulação só compara perfis elegíveis e detecta perspectivas diverg
   };
   invitations.createBatch(String(project.id), unit.id, 5).tokens.forEach((token) => complete(token, 'replan-together', 'management'));
   invitations.createBatch(String(project.id), unit.id, 4).tokens.forEach((token) => complete(token, 'add-to-sprint', 'engineering'));
-  assert.deepEqual(inference.report(String(project.id), 5).perspectiveGaps, []);
+  const belowThreshold = inference.report(String(project.id), 5);
+  assert.deepEqual(belowThreshold.perspectiveGaps, []);
+  assert.equal(belowThreshold.perspectiveSamples.some((sample) => sample.label === 'Engenharia' && sample.completed === 4), true);
 
   invitations.createBatch(String(project.id), unit.id, 1).tokens.forEach((token) => complete(token, 'add-to-sprint', 'engineering'));
   const gaps = inference.report(String(project.id), 5).perspectiveGaps;

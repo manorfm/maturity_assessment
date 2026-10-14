@@ -294,6 +294,8 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-matrix th[scope="row"] { text-align:left; width:170px; font-size:14px }
     .coverage-gap { background:repeating-linear-gradient(45deg, var(--na) 0 2px, transparent 2px 6px); color:var(--na-ink); border:1px solid var(--na) }
     .index-gap { color:var(--ink3); font-weight:500 }
+    .divergence-cell { text-align:left; font-weight:500; color:var(--ink2); border:1px solid var(--accent); background:var(--accent-soft) }
+    .divergence-cell p { margin:0 }
     .readiness { padding:2px 10px; border-radius:999px; font-weight:700; font-size:12px }
     .readiness.ready { color:var(--accent-ink); background:var(--accent-soft) }
     .readiness.near { color:var(--ink); background:#F5E6D0 }

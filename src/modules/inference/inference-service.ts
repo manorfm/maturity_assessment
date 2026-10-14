@@ -1,6 +1,7 @@
 import type { Database } from '../../shared/database.js';
 import { id } from '../../shared/ids.js';
 import { GRAPH_VERSION, profiles, type Profile } from '../catalog/assessment-graph.js';
+import type { PerspectiveSample } from './domain/map-matrix.js';
 import { CapabilityAssessment } from './domain/capability-assessment.js';
 import { CausalKnowledgeGraph, type CausalPath } from './domain/causal-knowledge-graph.js';
 import { TeamClassification } from './domain/team-classification.js';
@@ -471,7 +472,7 @@ export class InferenceService {
     const measurementModel = this.measurementModel(projectId);
     if (completed < minimum) {
       const transformationPortfolio = TransformationPortfolioPlanner.plan([]);
-      return { completed, minimum, modelVersion, measurementModel, index: undefined as IndexPublication | undefined, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], organizationalAreas: OrganizationalAreaProjector.empty(), perspectiveGaps: [] as PerspectiveGap[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), literacy: { published: false, n: 0, reason: 'Amostra abaixo do limiar.' } as LiteracyPublication, listTechnique: { published: false, controlN: 0, treatmentN: 0, reason: 'Amostra abaixo do limiar.' } as ListTechniquePublication, scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
+      return { completed, minimum, modelVersion, measurementModel, index: undefined as IndexPublication | undefined, hypotheses: [] as DiagnosticPosterior[], classification: null, findings: [] as Finding[], transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings: [], portfolio: transformationPortfolio }), areas: [] as DiagnosticArea[], capabilities: [] as CapabilityLevel[], capabilityGroups: [], organizationalAreas: OrganizationalAreaProjector.empty(), perspectiveGaps: [] as PerspectiveGap[], perspectiveSamples: [] as PerspectiveSample[], visibilityGaps: [] as VisibilityGap[], previousMeasurement: null as MeasurementDelta | null, calibration: this.calibration(modelVersion), literacy: { published: false, n: 0, reason: 'Amostra abaixo do limiar.' } as LiteracyPublication, listTechnique: { published: false, controlN: 0, treatmentN: 0, reason: 'Amostra abaixo do limiar.' } as ListTechniquePublication, scopes: [] as ScopeReport[], outcome: decideReportOutcome({ classification: null, branches: [], findings: [] }) };
     }
     const findings = uniqueFindingsByPattern(this.findings(projectId, completed));
     this.persistTransformation(projectId, completed, findings);
@@ -479,6 +480,7 @@ export class InferenceService {
     const capabilities = this.capabilityDetails(projectId);
     const organizationalPrior = new Map(capabilities.map((capability) => [capability.id, capability.level]));
     const capabilityGroups = CapabilityTaxonomy.organize(capabilities);
+    const perspectiveSamples = this.perspectiveSamples(projectId);
     const perspectiveGaps = this.perspectiveGaps(projectId, minimum);
     const visibilityGaps = this.visibilityGaps(projectId, minimum);
     const previousMeasurement = this.previousMeasurement(projectId);
@@ -525,7 +527,7 @@ export class InferenceService {
     }
     const literacy = this.literacyPublication(projectId, minimum);
     const listTechnique = this.listTechniquePublication(projectId);
-    return { completed, minimum, modelVersion, measurementModel, index, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), literacy, listTechnique, scopes, outcome };
+    return { completed, minimum, modelVersion, measurementModel, index, hypotheses, classification, findings, transformationPortfolio, audienceReports: AudienceReportProjector.project({ findings, portfolio: transformationPortfolio }), areas, capabilities, capabilityGroups, organizationalAreas: OrganizationalAreaProjector.project({ capabilities, findings }), perspectiveGaps, perspectiveSamples, visibilityGaps, previousMeasurement, calibration: this.calibration(modelVersion), literacy, listTechnique, scopes, outcome };
   }
 
   private literacyPublication(projectId: string, minimum: number): LiteracyPublication {
@@ -805,15 +807,15 @@ export class InferenceService {
     }));
   }
 
-  private perspectiveGaps(projectId: string, minimum: number, unitId?: string): PerspectiveGap[] {
+  private perspectiveSamples(projectId: string, unitId?: string): PerspectiveSample[] {
     const scope = this.scope(projectId, unitId);
-    const eligible = this.db.prepare(`
+    const counts = this.db.prepare(`
       SELECT p.profile, COUNT(*) total FROM participations p
       WHERE p.project_id = ? AND p.status = 'completed' ${scope.sql}
-      GROUP BY p.profile HAVING total >= ?
-    `).all(...[...scope.parameters, minimum]) as unknown as Array<{ profile: Profile; total: number }>;
-    if (eligible.length < 2) return [];
-    const profileValues = eligible.map((item) => item.profile);
+      GROUP BY p.profile
+    `).all(...scope.parameters) as unknown as Array<{ profile: Profile; total: number }>;
+    if (!counts.length) return [];
+    const profileValues = counts.map((item) => item.profile);
     const placeholders = profileValues.map(() => '?').join(',');
     const rows = this.db.prepare(`
       SELECT p.profile, s.detail_capabilities, s.weight
@@ -833,12 +835,26 @@ export class InferenceService {
         aggregates.set(key, current);
       }
     }
-    const scores = [...aggregates.values()].map((item) => ({ profile: item.profile, capability: item.capability, score: item.total / item.count }));
-    const capabilities = [...new Set(scores.map((score) => score.capability))];
+    return counts.map((count) => ({
+      label: profiles[count.profile],
+      completed: Number(count.total),
+      readings: [...aggregates.values()]
+        .filter((item) => item.profile === count.profile)
+        .map((item) => ({ capabilityId: item.capability, signals: item.count, mean: item.total / item.count })),
+    }));
+  }
+
+  private perspectiveGaps(projectId: string, minimum: number, unitId?: string): PerspectiveGap[] {
+    const eligible = this.perspectiveSamples(projectId, unitId).filter((sample) => sample.completed >= minimum);
+    if (eligible.length < 2) return [];
+    const capabilities = [...new Set(eligible.flatMap((sample) => sample.readings.map((reading) => reading.capabilityId)))];
     return capabilities.flatMap((capability) => {
-      const comparable = scores.filter((score) => score.capability === capability);
-      const stronger = comparable.filter((score) => Number(score.score) >= 1).map((score) => profiles[score.profile]);
-      const constrained = comparable.filter((score) => Number(score.score) <= -1).map((score) => profiles[score.profile]);
+      const comparable = eligible.flatMap((sample) => {
+        const reading = sample.readings.find((item) => item.capabilityId === capability);
+        return reading ? [{ label: sample.label, mean: reading.mean }] : [];
+      });
+      const stronger = comparable.filter((item) => item.mean >= 1).map((item) => item.label);
+      const constrained = comparable.filter((item) => item.mean <= -1).map((item) => item.label);
       if (!stronger.length || !constrained.length) return [];
       return [{
         capability,

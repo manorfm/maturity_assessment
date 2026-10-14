@@ -5,6 +5,7 @@ import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnost
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
+import { mapCopy, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierNode } from '../inference/domain/learning-frontier.js';
@@ -160,8 +161,8 @@ export function renderMapPage(input: {
   cut: 'cap' | 'est' | 'per';
   areaBase: string;
   capabilityBase: string;
-  units: Array<{ path: string; completed: number }>;
-  perspectives: Array<{ title: string }>;
+  structure?: StructureMatrix;
+  perspectives?: PerspectiveMatrix;
 }): string {
   const tabs = [
     ['cap', 'Por capacidade'],
@@ -169,7 +170,7 @@ export function renderMapPage(input: {
     ['per', 'Por perspectiva'],
   ].map(([id, label]) => `<a role="tab" aria-selected="${input.cut === id ? 'true' : 'false'}" href="?cut=${id}">${label}</a>`).join('');
   const body = input.cut === 'est'
-    ? renderStructureCut(input.units, input.map)
+    ? renderStructureCut(input.structure)
     : input.cut === 'per'
       ? renderPerspectiveCut(input.perspectives)
       : renderCapabilityCut(input.map, input.areaBase, input.capabilityBase);
@@ -192,24 +193,32 @@ function childHref(child: OrganizationalAreaNode, areaBase: string, capabilityBa
   return `${areaBase}/${child.id}`;
 }
 
-function renderStructureCut(units: Array<{ path: string; completed: number }>, map: OrganizationalAreaMap): string {
-  if (!units.length) return '<p class="report-gap">Nenhuma unidade com leitura publicada.</p>';
-  const columns = map.systems.flatMap((system) => system.children);
-  const headers = columns.map((column) => `<th scope="col">${escapeHtml(column.label)}</th>`).join('');
-  const rows = units.map((unit) => {
-    const name = unit.path.split('/').at(-1) ?? unit.path;
-    const belowThreshold = unit.completed < 5;
-    const cells = columns.map(() => belowThreshold
-      ? '<td class="coverage-gap">sem cobertura</td>'
-      : '<td class="index-gap">índice não publicado</td>').join('');
-    return `<tr><th scope="row">${escapeHtml(name)} (${unit.completed})</th>${cells}</tr>`;
-  }).join('');
-  return `<section class="report-matrix-block"><div class="report-matrix-legend"><p>Times × capacidades, na ordem da estrutura, não por resultado.</p><p><span class="coverage-swatch" aria-hidden="true"></span>sem cobertura</p><p>Estimativa, faixa e alvo só entram quando o modelo publicar a célula.</p></div><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></section>`;
+function renderStructureCut(matrix: StructureMatrix | undefined): string {
+  if (!matrix?.rows.length) return '<p class="report-gap">Nenhuma unidade com leitura publicada.</p>';
+  const headers = matrix.columns.map((column) => `<th scope="col">${escapeHtml(column.label)}</th>`).join('');
+  const rows = matrix.rows.map((row) => `<tr><th scope="row">${escapeHtml(row.label)} (${row.completed})</th>${renderCells(row.cells)}</tr>`).join('');
+  return `<section class="report-matrix-block"><div class="report-matrix-legend"><p>${escapeHtml(mapCopy.structureLead)}</p><p><span class="coverage-swatch" aria-hidden="true"></span>${escapeHtml(mapCopy.uncovered)}</p><p>${escapeHtml(mapCopy.estimateGap)}</p></div><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
-function renderPerspectiveCut(perspectives: Array<{ title: string }>): string {
-  if (!perspectives.length) return '<p class="report-gap">Nenhuma divergência de perspectiva publicada acima do limiar.</p>';
-  return `<ul>${perspectives.map((item) => `<li>${escapeHtml(item.title)}</li>`).join('')}</ul>`;
+function renderPerspectiveCut(matrix: PerspectiveMatrix | undefined): string {
+  if (!matrix?.rows.length && !matrix?.withoutOwnRow.length) return `<p class="report-gap">${escapeHtml(mapCopy.noDivergence)}</p>`;
+  const headers = matrix.columns.map((column) => `<th scope="col">${escapeHtml(column.label)}</th>`).join('');
+  const rows = matrix.rows.map((row) => `<tr><th scope="row">${escapeHtml(row.label)} (${row.completed})</th>${renderCells(row.cells)}</tr>`).join('');
+  const withheld = matrix.withheld
+    ? `<p class="report-gap"><strong>${escapeHtml(mapCopy.noOwnRow)}.</strong> ${escapeHtml(matrix.withheld)}</p>`
+    : '';
+  const table = matrix.rows.length
+    ? `<p>${escapeHtml(matrix.notice)}</p><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table>`
+    : '';
+  return `<section class="report-matrix-block">${table}${withheld}</section>`;
+}
+
+function renderCells(cells: Array<{ kind: 'uncovered' | 'unpublished' | 'divergence'; left?: string; right?: string }>): string {
+  return cells.map((cell) => {
+    if (cell.kind === 'divergence') return `<td class="divergence-cell"><p>${escapeHtml(cell.left ?? '')}</p><p>${escapeHtml(cell.right ?? '')}</p></td>`;
+    if (cell.kind === 'unpublished') return `<td class="index-gap">${escapeHtml(mapCopy.unpublished)}</td>`;
+    return `<td class="coverage-gap">${escapeHtml(mapCopy.uncovered)}</td>`;
+  }).join('');
 }
 
 export function renderNodeCard(input: { title: string; path: string; definition: string; reported: string; why: string; where: string; action: string; check: string; preserve: string; relations: string; unknown: string; references: string }): string {

@@ -148,9 +148,12 @@ regra da próxima fase restrita à fronteira (`enablementCatalog`).
 A página de fronteira projeta `projectLearningFrontier` a partir das
 folhas medidas. O mapa tem quatro sistemas — Produto,
 Engenharia, Operação e Organização — e três cortes: por capacidade, por
-estrutura e por perspectiva. No corte por estrutura, as colunas são as
-disciplinas e a célula abaixo de 5 pessoas é cinza, com “sem cobertura”;
-não publica 0 nem índice enquanto o modelo não medir a célula.
+estrutura e por perspectiva. As células saem do domínio (`map-matrix`):
+unidade abaixo do limiar, ou disciplina sem cobertura temática, publica
+“sem cobertura”; disciplina coberta sem índice publica “índice não
+publicado”. A perspectiva abaixo do limiar não ganha linha. Divergência
+traz os dois relatos e não declara quem está certo. Nenhuma célula
+publica 0.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

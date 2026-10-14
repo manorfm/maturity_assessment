@@ -261,8 +261,8 @@ function mapOf(report: ReturnType<typeof runOrganizationalSynthetic>['report']) 
     cut: 'cap',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
-    units: [],
-    perspectives: [],
+    structure: { columns: [], rows: [] },
+    perspectives: { columns: [], rows: [], withoutOwnRow: [], withheld: null, notice: '' },
   });
 }
 
