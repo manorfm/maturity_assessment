@@ -1365,8 +1365,9 @@ export function renderCapabilityRadar(
   };
   const axes = capabilities.map((_, index) => `<line x1="${center}" y1="${center}" x2="${point(index, 1).split(',')[0]}" y2="${point(index, 1).split(',')[1]}" />`).join('');
   const rings = [1, 2, 3, 4].map((level) => `<polygon points="${capabilities.map((_, index) => point(index, level / 4)).join(' ')}" />`).join('');
-  const completeResult = capabilities.every((capability) => capability.assessed);
-  const result = capabilities.map((capability, index) => point(index, capability.level / 4)).join(' ');
+  const covered = capabilities.flatMap((capability, index) => capability.assessed ? [index] : []);
+  const result = covered.map((index) => point(index, capabilities[index]!.level / 4)).join(' ');
+  const polygon = covered.length >= 3 ? `<polygon class="radar-result" points="${result}" />` : '';
   const capabilityUrl = (id: string) => `${baseUrl}/${id}${scopeId ? `?scope=${encodeURIComponent(scopeId)}` : ''}`;
   const labels = capabilities.map((capability, index) => {
     const [labelX, labelY] = point(index, 1.14).split(',');
@@ -1387,7 +1388,7 @@ export function renderCapabilityRadar(
   const drillNavigation = capabilities.map((capability) => capability.assessed
     ? `<a class="radar-drill-link radar-status-${radarStatus(capability.level).id}" href="${capabilityUrl(capability.id)}">${escapeHtml(capability.label)} <span>${executiveStage(capability.level)} · ${coverageLabel(capability.coverage)}</span></a>`
     : `<span class="radar-drill-link disabled" aria-disabled="true">${escapeHtml(capability.label)} <span>Sem cobertura temática</span></span>`).join('');
-  return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p class="muted">Use o mapa para localizar contraste e aprofundar, não para comparar décimos. “?” significa que a entrevista não cobriu dois padrões desta disciplina. Não é falta de pessoas nem fragilidade.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Mapa de contraste das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${completeResult ? `<polygon class="radar-result" points="${result}" />` : ''}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
+  return `<article class="card radar-card"><h3>Mapa de contraste e cobertura</h3><p class="muted">Use o mapa para localizar contraste e aprofundar, não para comparar décimos. “?” significa que a entrevista não cobriu dois padrões desta disciplina. Não é falta de pessoas nem fragilidade. Eixo não avaliado fica fora do polígono e não vale zero.</p><svg class="radar" viewBox="0 0 420 420" role="img" aria-label="Mapa de contraste das capacidades observadas"><g class="radar-grid">${rings}${axes}</g>${polygon}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg><nav class="radar-drill-navigation" aria-label="Aprofundar capacidades">${drillNavigation}</nav></article>`;
 }
 
 function radarStatus(level: number): { id: string; summary: string } {

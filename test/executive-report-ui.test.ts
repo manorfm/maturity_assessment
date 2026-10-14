@@ -52,6 +52,24 @@ test('radar diferencia fragilidade confirmada de ausência de evidência', () =>
   assert.match(html, /aria-disabled="true"/);
 });
 
+test('radar desenha o polígono só com eixos cobertos e deixa o descoberto fora', () => {
+  const html = renderCapabilityRadar([
+    leaf({ id: 'delivery', label: 'Entrega', level: 3 }),
+    leaf({ id: 'quality', label: 'Qualidade', level: 2 }),
+    leaf({ id: 'platform', label: 'Plataforma', level: 1 }),
+    leaf({ id: 'security', label: 'Segurança', assessed: false, level: 0, confidence: 0, evidence: 0, coverage: 0 }),
+  ], '/capabilities');
+  const points = html.match(/class="radar-result" points="([^"]+)"/)?.[1] ?? '';
+  const vertices = points.split(' ').filter(Boolean);
+  assert.equal(vertices.length, 3);
+  assert.doesNotMatch(points, /210\.0,210\.0/);
+  assert.doesNotMatch(points, /194\.4,210\.0/);
+  assert.match(html, /Segurança/);
+  assert.match(html, /sem cobertura temática/);
+  assert.match(html, /fora do polígono/);
+  assert.doesNotMatch(html, /href="\/capabilities\/security"/);
+});
+
 test('mapa sem nenhum pilar avaliado não desenha pontos sobrepostos', () => {
   const html = renderCapabilityRadar([
     leaf({ id: 'delivery', assessed: false }),
