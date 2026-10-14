@@ -300,6 +300,9 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .legend-estimate { width:8px; height:8px; background:var(--accent); transform:rotate(45deg) }
     .legend-band { width:22px; height:8px; border-radius:4px; background:var(--accent-soft); border:1px solid var(--accent) }
     .legend-target { width:2px; height:14px; background:var(--ink) }
+    .ficha-trail { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:14px; color:var(--ink3); margin:0 0 12px }
+    .ficha-trail a { color:var(--ink2); text-decoration:none }
+    .ficha-trail span:last-child { color:var(--ink); font-weight:500 }
     .readiness { padding:2px 10px; border-radius:999px; font-weight:700; font-size:12px }
     .readiness.ready { color:var(--accent-ink); background:var(--accent-soft) }
     .readiness.near { color:var(--ink); background:#F5E6D0 }

@@ -156,7 +156,9 @@ traz os dois relatos e não declara quem está certo. Nenhuma célula
 publica 0. Sistema observado abre as disciplinas; sistema não atravessado
 diz “entrevista não atravessou” e não lista disciplinas. A legenda
 mostra estimativa e faixa quando o índice está publicado, e o alvo só
-quando o modelo inclui o alvo.
+quando o modelo inclui o alvo. A ficha abre com a trilha do mapa
+(`projectFichaTrail`): Tecnologia e os ancestrais da área são links; o
+nome da capacidade aberta não é link.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

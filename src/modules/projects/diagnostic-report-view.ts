@@ -6,7 +6,7 @@ import type { TreatmentConduct } from '../inference/domain/treatment-contract.js
 import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
-import { projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
+import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierNode } from '../inference/domain/learning-frontier.js';
 import type { AreaWalkthrough } from '../inference/domain/area-walkthrough.js';
@@ -228,9 +228,16 @@ function renderCells(cells: Array<{ kind: 'uncovered' | 'unpublished' | 'diverge
   }).join('');
 }
 
-export function renderNodeCard(input: { title: string; path: string; definition: string; reported: string; why: string; where: string; action: string; check: string; preserve: string; relations: string; unknown: string; references: string }): string {
+export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: string; reported: string; why: string; where: string; action: string; check: string; preserve: string; relations: string; unknown: string; references: string }): string {
   const block = (heading: string, body: string) => `<section class="report-block"><h2>${escapeHtml(heading)}</h2>${body}</section>`;
-  return `<header class="report-hero"><p class="report-kicker">Ficha do nó</p><h1>${escapeHtml(input.title)}</h1><p>${escapeHtml(input.path)}</p></header>
+  const trail = input.trail.map((crumb, index) => {
+    const separator = index === 0 ? '' : '<span aria-hidden="true">›</span>';
+    const item = crumb.href
+      ? `<a href="${escapeHtml(crumb.href)}">${escapeHtml(crumb.label)}</a>`
+      : `<span>${escapeHtml(crumb.label)}</span>`;
+    return `${separator}${item}`;
+  }).join('');
+  return `<header class="report-hero"><nav class="ficha-trail" aria-label="Caminho">${trail}</nav><p class="report-kicker">Ficha do nó</p><h1>${escapeHtml(input.title)}</h1></header>
     ${block('O que é e por que importa', `<p>${escapeHtml(input.definition)}</p>`)}
     ${block('Como está', '<p class="report-gap">Distribuição de estágio 0–4 ainda não é publicada. A estimativa ordinal interna continua no detalhe abaixo, sem índice percentual.</p>')}
     ${block('O que as pessoas relataram', input.reported)}

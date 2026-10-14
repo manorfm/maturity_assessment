@@ -9,7 +9,7 @@ import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
 import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
 import { CapabilityTaxonomy, organizationalCapabilityIds } from '../inference/domain/capability-taxonomy.js';
-import { findAreaPath, projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
+import { findAreaPath, projectFichaTrail, projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { decideReportOutcome, distinctiveScopes, findingScopeOccurrences, uniqueConfirmedCauses, uniqueFindingsByPattern, type ConfirmedCause, type FindingScopeOccurrence, type OutcomeFinding, type ReportOutcome } from '../inference/domain/report-outcome.js';
 import { guidanceFor, type SolutionGuidance } from '../inference/domain/solution-guidance.js';
 import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
@@ -342,9 +342,16 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
     const reportBase = `/projects/${params.publicId}/manage/${params.adminSecret}/report`;
     const primary = relevant[0];
+    const areaBase = `/projects/${params.publicId}/manage/${params.adminSecret}/areas`;
     const card = renderNodeCard({
       title: selected.label,
-      path: path.map((item) => item.label).join(' › '),
+      trail: projectFichaTrail({
+        map: report.organizationalAreas,
+        capabilityId: selected.id,
+        capabilityLabel: selected.label,
+        mapHref: `${reportBase}/map`,
+        areaBase,
+      }),
       definition: disciplineBrief(selected.id),
       reported: '',
       why: primary?.cause || 'Ainda não há causa publicada neste nó.',

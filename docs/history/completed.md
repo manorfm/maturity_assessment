@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Trilha da ficha até o mapa
+
+- A ficha publica o caminho Tecnologia › área › disciplina, com links, e
+  deixa a capacidade aberta sem link. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Mapa fecha sistema observado e legenda do índice
 
 - Sistema não atravessado não abre disciplinas. A legenda traz estimativa

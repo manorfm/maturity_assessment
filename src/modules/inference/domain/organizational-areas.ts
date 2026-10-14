@@ -169,6 +169,24 @@ export function collectAreaLeaves(map: Pick<OrganizationalAreaMap, 'systems' | '
   return leaves;
 }
 
+export type FichaCrumb = { label: string; href?: string };
+
+export function projectFichaTrail(input: {
+  map: OrganizationalAreaMap;
+  capabilityId: string;
+  capabilityLabel: string;
+  mapHref: string;
+  areaBase: string;
+}): FichaCrumb[] {
+  const areaPath = findAreaPath(input.map, input.capabilityId) ?? [];
+  const ancestors = areaPath.filter((node) => node.leafId !== input.capabilityId && node.id !== input.capabilityId);
+  return [
+    { label: 'Tecnologia', href: input.mapHref },
+    ...ancestors.map((node) => ({ label: node.label, href: `${input.areaBase}/${node.id}` })),
+    { label: input.capabilityLabel },
+  ];
+}
+
 export function findAreaPath(map: OrganizationalAreaMap, id: string): OrganizationalAreaNode[] | undefined {
   const search = (nodes: OrganizationalAreaNode[], ancestors: OrganizationalAreaNode[] = []): OrganizationalAreaNode[] | undefined => {
     for (const node of nodes) {
