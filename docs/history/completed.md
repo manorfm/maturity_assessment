@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Perfil dos domínios no mesmo radar
+
+- A área nomeia o perfil dos domínios e declara que domínio sem cobertura
+  fica em cinza, sem índice, fora do polígono. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Radar sem tratar eixo descoberto como zero
 
 - O polígono do mapa de contraste liga só capacidades cobertas. O eixo

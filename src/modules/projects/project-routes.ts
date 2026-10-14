@@ -1296,7 +1296,10 @@ export function renderAreaRecorte(
   const chapter = map && urls.findings
     ? renderAreaChapter(projectAreaChapter({ area: selected, findings: urls.findings, organizationalAreas: map }), urls.capabilityBase)
     : urls.findings?.length ? renderAreaProblems(path, urls.findings, urls.capabilityBase) : '';
-  return `<section class="area-recorte">${chapter}<h2>Disciplinas de ${escapeHtml(selected.label)}</h2>${index}${radar}</section>`;
+  const profile = radar
+    ? `<h2>${escapeHtml(selected.label)}: perfil dos domínios</h2><p class="muted">Domínios na ordem do modelo, não por resultado. Domínio sem cobertura aparece em cinza, sem índice, e fica fora do polígono.</p>`
+    : '';
+  return `<section class="area-recorte">${chapter}<h2>Disciplinas de ${escapeHtml(selected.label)}</h2>${index}${profile}${radar}</section>`;
 }
 
 function renderAreaChapter(chapter: ReturnType<typeof projectAreaChapter>, capabilityBase: string): string {

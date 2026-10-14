@@ -238,6 +238,29 @@ test('recorte de área abre com o que a disciplina é e os problemas do nível',
   assert.match(html, /Disciplinas de Engenharia/);
 });
 
+test('perfil da área usa o radar e não publica índice no domínio sem cobertura', () => {
+  const wound = finding('provisionamento-em-fila', 'Pedido de ambiente espera outro grupo', 'platform-autonomy');
+  const map = OrganizationalAreaProjector.project({
+    capabilities: [{ id: 'platform-autonomy', label: 'Acesso', level: 1, confidence: .8, evidence: 4, hasContradiction: false, coverage: 1 }],
+    findings: [wound],
+  });
+  const path = map.systems.filter((system) => system.id === 'engineering');
+  const html = renderAreaRecorte(path, {
+    areaBase: '/areas',
+    capabilityBase: '/capabilities',
+    findings: [wound],
+    organizationalAreas: map,
+    capabilities: [leafNode('platform-autonomy', 'Acesso a capacidades')],
+  });
+  assert.match(html, /Engenharia: perfil dos domínios/);
+  assert.match(html, /Domínios na ordem do modelo, não por resultado/);
+  assert.match(html, /sem índice/);
+  assert.match(html, /fora do polígono/);
+  assert.match(html, /Segurança[\s\S]{0,120}sem cobertura temática/);
+  assert.doesNotMatch(html, /0%/);
+  assert.doesNotMatch(html, /href="\/capabilities\/security"/);
+});
+
 test('cobertura sem finding, no recorte com problemas, não se lê como disciplina saudável', () => {
   const wound = finding('provisionamento-em-fila', 'Pedido de ambiente espera outro grupo', 'platform-autonomy');
   const map = OrganizationalAreaProjector.project({

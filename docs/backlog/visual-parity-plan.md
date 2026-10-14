@@ -47,7 +47,7 @@ acessíveis; só saíram do menu.
 | Tela | Já existe | Falta no visual |
 | --- | --- | --- |
 | Laudo | Motivo em citação ou lacuna, leitura com mecanismo, até três achados em cartão (caminho, sustentação, “Ver ficha”), divergência nos dois lados, restrição com efeito, conduta, prognóstico sem promessa, lacunas e exames separados, rodapé | Tema escuro é variante de tela no protótipo; o produto usa um botão no chrome |
-| Mapa | Três cortes, blocos dos quatro sistemas, matriz de times × disciplinas com célula cinza “sem cobertura” (sem índice), radar cujo polígono omite o eixo sem cobertura | Perfil por domínio na mesma regra, marcas de índice/faixa/alvo e matriz de perspectivas × capacidades |
+| Mapa | Três cortes, blocos dos quatro sistemas, matriz de times × disciplinas com célula cinza “sem cobertura” (sem índice), radar e perfil de domínios cujo polígono omite o eixo sem cobertura | Marcas de índice/faixa/alvo e matriz de perspectivas × capacidades |
 | Ficha | As doze seções em texto; distribuição 0–4 declarada como lacuna | Trilha `Tecnologia › Engenharia › …`, gráfico de “como está”, grade do que as pessoas relataram, etiquetas de causa, linha de ação |
 | Prontidão | Lista com banda e `p_k` | Cartão por prática (chaos, AI-DLC, service mesh no exemplo) com grade de pré-requisitos e legenda Pronto / Perto / Não pronto |
 | Fronteira | Lista por banda | Faixas (dominado, pode aprender, bloqueado), condições humanas e bloco “Comece por” |

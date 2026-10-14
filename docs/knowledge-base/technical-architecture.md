@@ -125,8 +125,9 @@ recortes pequenos e publica intervalo beta-binomial de 90%. Sinais contraditóri
 reduzem confiança sem criar condicionais nas rotas. O radar usa SVG acessível,
 marcadores focáveis, resumos em hover/foco e links nativos somente para capacidades
 avaliadas. O polígono liga só os eixos com cobertura; o eixo não avaliado fica
-de fora e não entra como zero. Capacidades sem cobertura usam marcador neutro
-e não oferecem navegação. A apresentação não recalcula a inferência nem depende de
+de fora e não entra como zero. O perfil dos domínios de uma área usa esse
+mesmo radar: domínio sem cobertura aparece em cinza, sem índice.
+Capacidades sem cobertura usam marcador neutro e não oferecem navegação. A apresentação não recalcula a inferência nem depende de
 framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
