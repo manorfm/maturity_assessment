@@ -153,7 +153,10 @@ unidade abaixo do limiar, ou disciplina sem cobertura temática, publica
 “sem cobertura”; disciplina coberta sem índice publica “índice não
 publicado”. A perspectiva abaixo do limiar não ganha linha. Divergência
 traz os dois relatos e não declara quem está certo. Nenhuma célula
-publica 0.
+publica 0. Sistema observado abre as disciplinas; sistema não atravessado
+diz “entrevista não atravessou” e não lista disciplinas. A legenda
+mostra estimativa e faixa quando o índice está publicado, e o alvo só
+quando o modelo inclui o alvo.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

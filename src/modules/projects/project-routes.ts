@@ -9,7 +9,7 @@ import { ProjectService } from './project-service.js';
 import type { Database } from '../../shared/database.js';
 import type { DiagnosticPosterior } from '../inference/domain/bayesian-inference-engine.js';
 import { CapabilityTaxonomy, organizationalCapabilityIds } from '../inference/domain/capability-taxonomy.js';
-import { findAreaPath, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
+import { findAreaPath, projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { decideReportOutcome, distinctiveScopes, findingScopeOccurrences, uniqueConfirmedCauses, uniqueFindingsByPattern, type ConfirmedCause, type FindingScopeOccurrence, type OutcomeFinding, type ReportOutcome } from '../inference/domain/report-outcome.js';
 import { guidanceFor, type SolutionGuidance } from '../inference/domain/solution-guidance.js';
 import type { PilotReport } from '../inference/domain/pilot-evaluation.js';
@@ -31,7 +31,7 @@ import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/
 import { declaredSophistication } from '../catalog/evidence-contract.js';
 import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
 import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
-import { disciplineColumns, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
+import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, reportMenuFicha, type ReportFicha, type ReportPageId } from './diagnostic-report-view.js';
@@ -440,6 +440,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         })),
       }),
       perspectives: projectPerspectiveMatrix({ minimum, columns, samples: report.perspectiveSamples }),
+      legend: projectMapLegend(report.index),
     });
     return reply.type('text/html').send(reportPage(params, 'map', body));
   });
@@ -1256,20 +1257,13 @@ export function renderOrganizationalAreaMap(
 ): string {
   const query = urls.scopeQuery ?? '';
   const problemReading = options.reading === 'problem';
-  const tiles = map.systems.map((system) => {
-    const chips = system.children.filter((child) => problemReading ? child.findingCount > 0 : child.observed).map((child) => (
+  const tiles = projectSystemTiles(map, problemReading ? 'problem' : 'preserve').map((tile) => {
+    const chips = tile.disciplines.map((child) => (
       `<a class="area-chip" href="${escapeHtml(areaChildHref(child, urls) + query)}">${escapeHtml(child.label)}</a>`
     )).join('');
-    const status = system.findingCount
-      ? `${system.findingCount} ${system.findingCount === 1 ? 'problema' : 'problemas'}`
-      : problemReading
-        ? ''
-        : system.observed
-          ? 'cobertura sem problema publicado'
-          : 'entrevista não atravessou — não conclui ausência de problema';
-    const heading = `<a href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}"><h3>${escapeHtml(system.label)}</h3></a>`;
-    const drill = `<p><a class="area-drill" href="${escapeHtml(`${urls.areaBase}/${system.id}${query}`)}">Ver disciplinas</a></p>`;
-    return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}">${heading}${status ? `<p class="muted">${escapeHtml(status)}</p>` : ''}${chips ? `<p class="area-chips">${chips}</p>` : ''}${drill}</article>`;
+    const heading = `<a href="${escapeHtml(`${urls.areaBase}/${tile.id}${query}`)}"><h3>${escapeHtml(tile.label)}</h3></a>`;
+    const drill = tile.observed ? `<p><a class="area-drill" href="${escapeHtml(`${urls.areaBase}/${tile.id}${query}`)}">Ver disciplinas</a></p>` : '';
+    return `<article class="area-tile${tile.observed ? ' observed' : ' unobserved'}">${heading}${tile.status ? `<p class="muted">${escapeHtml(tile.status)}</p>` : ''}${chips ? `<p class="area-chips">${chips}</p>` : ''}${drill}</article>`;
   }).join('');
   return `<section class="area-map" aria-label="Sistemas da organização"><div class="area-map-systems">${tiles}</div></section>`;
 }

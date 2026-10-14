@@ -5,8 +5,8 @@ import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnost
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
-import { mapCopy, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
-import type { OrganizationalAreaMap, OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
+import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
+import { projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierNode } from '../inference/domain/learning-frontier.js';
 import type { AreaWalkthrough } from '../inference/domain/area-walkthrough.js';
@@ -163,6 +163,7 @@ export function renderMapPage(input: {
   capabilityBase: string;
   structure?: StructureMatrix;
   perspectives?: PerspectiveMatrix;
+  legend?: MapLegend;
 }): string {
   const tabs = [
     ['cap', 'Por capacidade'],
@@ -177,13 +178,19 @@ export function renderMapPage(input: {
   return `<header class="report-hero"><p class="report-kicker">Mapa navegável</p><h1>Onde está cada parte do sistema</h1><p>Abra um bloco para descer até a capacidade. Célula sem cobertura não é zero.</p></header>
     <div class="report-tabs" role="tablist" aria-label="Corte">${tabs}</div>
     ${body}
-    <p class="report-gap">Índice com faixa ainda não entra na célula. O modelo em execução é m1.</p>`;
+    ${input.legend ? renderLegend(input.legend) : ''}`;
+}
+
+function renderLegend(legend: MapLegend): string {
+  const marks = legend.marks.map((mark) => `<p><span class="legend-mark legend-${mark.id}" aria-hidden="true"></span>${escapeHtml(mark.label)} ${escapeHtml(mark.value)}</p>`).join('');
+  const gap = legend.gap ? `<p>${escapeHtml(legend.gap)}</p>` : '';
+  return `<div class="report-matrix-legend" aria-label="Legenda do mapa">${marks}${gap}</div>`;
 }
 
 function renderCapabilityCut(map: OrganizationalAreaMap, areaBase: string, capabilityBase: string): string {
-  const tiles = map.systems.map((system) => {
-    const chips = system.children.map((child) => `<a class="area-chip" href="${escapeHtml(childHref(child, areaBase, capabilityBase))}">${escapeHtml(child.label)}</a>`).join('');
-    return `<article class="area-tile${system.observed ? ' observed' : ' unobserved'}" data-area="${escapeHtml(system.id)}"><a href="${escapeHtml(`${areaBase}/${system.id}`)}"><h3>${escapeHtml(system.label)}</h3></a><p class="muted">${system.observed ? `${system.findingCount} ${system.findingCount === 1 ? 'problema' : 'problemas'}` : 'entrevista não atravessou — não conclui ausência'}</p><p class="area-chips">${chips}</p></article>`;
+  const tiles = projectSystemTiles(map).map((tile) => {
+    const chips = tile.disciplines.map((child) => `<a class="area-chip" href="${escapeHtml(childHref(child, areaBase, capabilityBase))}">${escapeHtml(child.label)}</a>`).join('');
+    return `<article class="area-tile${tile.observed ? ' observed' : ' unobserved'}" data-area="${escapeHtml(tile.id)}"><a href="${escapeHtml(`${areaBase}/${tile.id}`)}"><h3>${escapeHtml(tile.label)}</h3></a><p class="muted">${escapeHtml(tile.status)}</p>${chips ? `<p class="area-chips">${chips}</p>` : ''}</article>`;
   }).join('');
   return `<section class="area-map" aria-label="Sistemas da organização"><h2>Sistemas da organização</h2><div class="area-map-systems">${tiles}</div></section>`;
 }
@@ -197,7 +204,7 @@ function renderStructureCut(matrix: StructureMatrix | undefined): string {
   if (!matrix?.rows.length) return '<p class="report-gap">Nenhuma unidade com leitura publicada.</p>';
   const headers = matrix.columns.map((column) => `<th scope="col">${escapeHtml(column.label)}</th>`).join('');
   const rows = matrix.rows.map((row) => `<tr><th scope="row">${escapeHtml(row.label)} (${row.completed})</th>${renderCells(row.cells)}</tr>`).join('');
-  return `<section class="report-matrix-block"><div class="report-matrix-legend"><p>${escapeHtml(mapCopy.structureLead)}</p><p><span class="coverage-swatch" aria-hidden="true"></span>${escapeHtml(mapCopy.uncovered)}</p><p>${escapeHtml(mapCopy.estimateGap)}</p></div><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></section>`;
+  return `<section class="report-matrix-block"><div class="report-matrix-legend"><p>${escapeHtml(mapCopy.structureLead)}</p><p><span class="coverage-swatch" aria-hidden="true"></span>${escapeHtml(mapCopy.uncovered)}</p></div><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
 function renderPerspectiveCut(matrix: PerspectiveMatrix | undefined): string {

@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Mapa fecha sistema observado e legenda do índice
+
+- Sistema não atravessado não abre disciplinas. A legenda traz estimativa
+  e faixa só com índice publicado, e o alvo só quando o modelo o inclui.
+  Ver [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Células do mapa publicadas pelo domínio
 
 - Estrutura e perspectiva deixam de inventar a célula na view. Cobertura,

@@ -132,6 +132,33 @@ export class OrganizationalAreaProjector {
   }
 }
 
+export type SystemTile = {
+  id: string;
+  label: string;
+  observed: boolean;
+  status: string;
+  disciplines: OrganizationalAreaNode[];
+};
+
+export function projectSystemTiles(map: OrganizationalAreaMap, reading: 'problem' | 'preserve' = 'preserve'): SystemTile[] {
+  return map.systems.map((system) => {
+    if (!system.observed) {
+      return {
+        id: system.id,
+        label: system.label,
+        observed: false,
+        status: reading === 'problem' ? '' : 'entrevista não atravessou',
+        disciplines: [],
+      };
+    }
+    const disciplines = system.children.filter((child) => reading === 'problem' ? child.findingCount > 0 : child.observed);
+    const status = system.findingCount
+      ? `${system.findingCount} ${system.findingCount === 1 ? 'problema' : 'problemas'}`
+      : reading === 'problem' ? '' : 'cobertura sem problema publicado';
+    return { id: system.id, label: system.label, observed: true, status, disciplines };
+  });
+}
+
 export function collectAreaLeaves(map: Pick<OrganizationalAreaMap, 'systems' | 'band'>): string[] {
   const leaves: string[] = [];
   const walk = (node: OrganizationalAreaNode) => {

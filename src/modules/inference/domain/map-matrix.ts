@@ -1,3 +1,4 @@
+import type { IndexPublication } from './stage-posterior.js';
 import type { OrganizationalAreaMap, OrganizationalAreaNode } from './organizational-areas.js';
 
 export type MapColumn = { id: string; label: string; leafIds: string[] };
@@ -25,6 +26,20 @@ export type PerspectiveSample = {
   completed: number;
   readings: Array<{ capabilityId: string; signals: number; mean: number }>;
 };
+
+export type MapLegendMark = { id: 'estimate' | 'band' | 'target'; label: string; value: string };
+
+export type MapLegend = { marks: MapLegendMark[]; gap: string | null };
+
+export function projectMapLegend(index?: IndexPublication): MapLegend {
+  if (!index?.published) return { marks: [], gap: mapCopy.estimateGap };
+  const marks: MapLegendMark[] = [
+    { id: 'estimate', label: 'estimativa', value: `${index.index}%` },
+    { id: 'band', label: 'faixa', value: `${index.band[0]}–${index.band[1]}%` },
+  ];
+  if (index.target !== undefined) marks.push({ id: 'target', label: 'alvo', value: `${index.target}%` });
+  return { marks, gap: null };
+}
 
 export const mapCopy = {
   uncovered: 'sem cobertura',

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectPerspectiveMatrix, projectStructureMatrix } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../src/modules/inference/domain/map-matrix.js';
+import { projectSystemTiles } from '../src/modules/inference/domain/organizational-areas.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 
 const columns = disciplineColumns(OrganizationalAreaProjector.empty());
@@ -54,4 +55,32 @@ test('perspectiva abaixo do limiar não ganha linha e divergência não publica 
   assert.equal(`${cell.left} ${cell.right}`.includes('%'), false);
   const security = matrix.rows[0]?.cells[columns.findIndex((column) => column.id === 'security')];
   assert.equal(security?.kind, 'uncovered');
+});
+
+test('sistema observado abre disciplinas e o não atravessado não publica nota', () => {
+  const map = OrganizationalAreaProjector.project({
+    capabilities: [{ id: 'work-management', label: 'Fluxo', level: 1, confidence: .8, evidence: 4, hasContradiction: false, coverage: 1 }],
+    findings: [],
+  });
+  const tiles = projectSystemTiles(map);
+  const engineering = tiles.find((tile) => tile.id === 'engineering');
+  const product = tiles.find((tile) => tile.id === 'product');
+  assert.equal(engineering?.observed, true);
+  assert.ok(engineering?.disciplines.some((discipline) => discipline.label === 'Entrega'));
+  assert.equal(product?.observed, false);
+  assert.equal(product?.status, 'entrevista não atravessou');
+  assert.deepEqual(product?.disciplines, []);
+});
+
+test('legenda publica estimativa e faixa, e o alvo só quando o modelo o publica', () => {
+  const missing = projectMapLegend(undefined);
+  assert.deepEqual(missing.marks, []);
+  assert.match(missing.gap ?? '', /estimativa/i);
+  assert.match(missing.gap ?? '', /alvo/i);
+  assert.equal((missing.gap ?? '').includes('%'), false);
+  const withoutTarget = projectMapLegend({ published: true, index: 27, band: [21, 34], coverage: .7 });
+  assert.deepEqual(withoutTarget.marks.map((mark) => mark.id), ['estimate', 'band']);
+  const withTarget = projectMapLegend({ published: true, index: 27, band: [21, 34], coverage: .7, target: 40 });
+  assert.equal(withTarget.marks.find((mark) => mark.id === 'target')?.value, '40%');
+  assert.equal(withTarget.gap, null);
 });

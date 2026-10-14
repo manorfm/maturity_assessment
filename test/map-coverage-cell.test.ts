@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectPerspectiveMatrix, projectStructureMatrix } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 
@@ -58,4 +58,27 @@ test('matriz de perspectiva desenha os dois relatos e omite quem ficou abaixo do
   assert.match(html, /Dados teve menos de 5 pessoas/);
   assert.doesNotMatch(html, /0%/);
   assert.doesNotMatch(html, /Dados \(3\)/);
+});
+
+test('sistema não atravessado não abre disciplinas e a legenda omite o alvo sem publicação', () => {
+  const map = OrganizationalAreaProjector.project({
+    capabilities: [{ id: 'work-management', label: 'Fluxo', level: 1, confidence: .8, evidence: 4, hasContradiction: false, coverage: 1 }],
+    findings: [],
+  });
+  const html = renderMapPage({
+    map,
+    cut: 'cap',
+    areaBase: '/areas',
+    capabilityBase: '/capabilities',
+    legend: projectMapLegend(undefined),
+  });
+  const product = html.slice(html.indexOf('data-area="product"'), html.indexOf('data-area="engineering"'));
+  const engineering = html.slice(html.indexOf('data-area="engineering"'), html.indexOf('data-area="operations"'));
+  assert.match(product, /entrevista não atravessou/);
+  assert.doesNotMatch(product, /area-chip/);
+  assert.match(engineering, /area-chip/);
+  assert.match(engineering, /Entrega/);
+  assert.match(html, /Estimativa, faixa e alvo só entram quando o modelo publicar/);
+  assert.doesNotMatch(html, /legend-target/);
+  assert.doesNotMatch(html, /45%/);
 });
