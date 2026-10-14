@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-13 — Pergunta de evento de otimização automática de custo (WP20)
+
+- `cost-optimization-auto` após eficiência sustentada; F0–F5 de
+  `cost-optimization` (22 §5 / 12 §3.9) alimenta prontidão. Com isso,
+  as 13 práticas da biblioteca 22 §5 têm pergunta de evento. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-13 — Pergunta de evento de service mesh (WP20)
 
 - `service-mesh-communication` após dependência lenta; F0–F5 de

@@ -338,6 +338,14 @@ const patternSophistication: Record<string, SophisticationPhase> = {
   'mesh-exposicao-isolamento': 4,
   'mesh-politica-adaptativa': 5,
 
+  // 22 §5 / 12 §3.9 Otimização automática de custo (prática avançada)
+  'cost-fatura-opaca': 0,
+  'cost-analise-manual': 1,
+  'cost-marcacao-relatorio': 2,
+  'cost-visivel-alerta': 3,
+  'cost-por-resultado': 4,
+  'cost-otimizacao-auto': 5,
+
   // 3.9 FinOps e custo
   'eficiencia-cloud-reativa-a-fatura': 0,
   'eficiencia-cloud-por-campanha': 1,

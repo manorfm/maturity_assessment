@@ -116,6 +116,14 @@ export const advancedPracticeEventPhases: Record<string, AdvancedPracticeEventPh
   'mesh-plataforma-comum': { practiceId: 'service-mesh', phase: 3 },
   'mesh-exposicao-isolamento': { practiceId: 'service-mesh', phase: 4 },
   'mesh-politica-adaptativa': { practiceId: 'service-mesh', phase: 5 },
+
+  // Otimização automática de custo / FinOps (22 §5 / 12 §3.9)
+  'cost-fatura-opaca': { practiceId: 'cost-optimization', phase: 0 },
+  'cost-analise-manual': { practiceId: 'cost-optimization', phase: 1 },
+  'cost-marcacao-relatorio': { practiceId: 'cost-optimization', phase: 2 },
+  'cost-visivel-alerta': { practiceId: 'cost-optimization', phase: 3 },
+  'cost-por-resultado': { practiceId: 'cost-optimization', phase: 4 },
+  'cost-otimizacao-auto': { practiceId: 'cost-optimization', phase: 5 },
 };
 
 export function advancedPracticePhaseForPattern(pattern: string): AdvancedPracticeEventPhase | undefined {

@@ -158,6 +158,48 @@ test('generalização AI-DLC cobre infra e dados na mesma prática', () => {
   assert.equal(advancedPracticePhasesById(observations).get('ai-dlc')?.phase, 4);
 });
 
+test('pergunta de evento de otimização automática de custo declara F0–F5 na prática cost-optimization', () => {
+  const node = graph.find((item) => item.id === 'cost-optimization-auto');
+  assert.ok(node);
+  const phases = new Set<number>();
+  for (const option of node!.options) {
+    if (option.observation) continue;
+    const link = normalizeOptionEvidence(option).evidence.find((item) => item.role === 'primary');
+    assert.ok(link, option.id);
+    const event = advancedPracticeEventPhases[link!.pattern];
+    assert.ok(event, link!.pattern);
+    assert.equal(event!.practiceId, 'cost-optimization');
+    assert.equal(declaredSophistication(link!.pattern), event!.phase);
+    assert.equal(link!.sophistication, event!.phase);
+    assert.equal(link!.capability, 'cloud-efficiency');
+    phases.add(event!.phase);
+  }
+  assert.deepEqual([...phases].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);
+
+  const sustainability = graph.find((item) => item.id === 'platform-cloud-sustainability');
+  assert.equal(sustainability?.next, 'cost-optimization-auto');
+  assert.equal(node!.next, 'platform-path-to-capability');
+
+  const observations: ResponseObservation[] = [
+    { participantId: 'a', unitId: 'u1', profile: 'platform', nodeId: 'cost-optimization-auto', optionId: 'cost-unit' },
+    { participantId: 'b', unitId: 'u1', profile: 'management', nodeId: 'cost-optimization-auto', optionId: 'cost-unit' },
+  ];
+  const practicePhase = advancedPracticePhasesById(observations).get('cost-optimization');
+  assert.ok(practicePhase);
+  assert.equal(practicePhase!.phase, 4);
+
+  const practice = advancedPracticeCatalog.find((item) => item.id === 'cost-optimization')!;
+  const leaves = {
+    'cost-optimization': { phaseDistribution: practicePhase!.distribution, phase: practicePhase!.phase },
+    'cloud-efficiency': { distribution: peaked(1), phase: 1 },
+    'team-ownership': { distribution: peaked(1) },
+    'enabling-governance': { distribution: peaked(1) },
+  };
+  assert.equal(technicalPhaseFor(practice, leaves), 4);
+  const premature = detectPrematureAdoptions(leaves);
+  assert.ok(premature.some((item) => item.practiceId === 'cost-optimization'));
+});
+
 test('pergunta de evento de service mesh declara F0–F5 na prática service-mesh', () => {
   const node = graph.find((item) => item.id === 'service-mesh-communication');
   assert.ok(node);

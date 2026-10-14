@@ -297,7 +297,11 @@ declara a fase de Zero Trust (22 §5 / 24 §6.3) sem subir o índice. Após a
 dependência lenta, `service-mesh-communication` pergunta como as partes se
 falaram sob pressão (chamada sem limite → padrão da plataforma → exposição
 e isolamento → política adaptativa) e declara a fase de service mesh
-(22 §5 / 24 §7.2) sem subir o índice. Quando há assistência de modelo,
+(22 §5 / 24 §7.2) sem subir o índice. No ramo de nuvem, após eficiência
+sustentada, `cost-optimization-auto` pergunta como a última decisão de
+gasto foi tomada (fatura opaca → custo por resultado → ajuste automático
+com limites) e declara a fase de otimização automática de custo
+(22 §5 / 12 §3.9) sem subir o índice. Quando há assistência de modelo,
 `ai-dlc-verification` pergunta como se soube que a saída estava correta
 (22 §4.6) e `ai-dlc-generalization` pergunta se o mesmo padrão vale para
 infraestrutura e dados; ambas declaram a fase de AI-DLC sem subir o

@@ -146,10 +146,12 @@ tronco (`trunk-based-integration`, 22 §5 / 12 §3.3), entrega contínua
 (`platform-as-product-offer`, 22 §5), arquitetura em células
 (`cell-architecture-boundary`, 22 §5), data mesh (`data-mesh-domain`,
 22 §5), Zero Trust (`zero-trust-access`, 22 §5 / 24 §6.3), service mesh
-(`service-mesh-communication`, 22 §5 / 24 §7.2) e AI-DLC
+(`service-mesh-communication`, 22 §5 / 24 §7.2), otimização de custo
+(`cost-optimization-auto`, 22 §5 / 12 §3.9) e AI-DLC
 (`ai-dlc-verification` + generalização `ai-dlc-generalization`, 22 §4.6)
 declaram F da prática sem alterar o índice (R28); a fase alimenta
-prontidão e adoção prematura.
+prontidão e adoção prematura. As 13 práticas da biblioteca 22 §5 têm
+pergunta de evento no grafo.
 O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia
 `P(desbloqueado)` por aresta; a fronteira exige ≥ 0,6, o bloqueio
 aparece abaixo de 0,25, e a próxima fase do walkthrough só sobe dentro
