@@ -27,8 +27,10 @@ prognóstico, o que ainda não sabemos, e o rodapé de amostra. Onde o
 modelo em execução (`m1`) ainda não mede, o bloco declara a lacuna —
 não inventa índice nem prognóstico. O mapa tem quatro sistemas
 (Produto, Engenharia, Operação e Organização) em três cortes. Ficha
-do nó, plano de tratamento, visão por público, walkthrough, prontidão,
-fronteira e histórico usam o mesmo chrome. Quem autoriza decide depois
+do nó, plano de tratamento, visão por público, walkthrough de Operação,
+prontidão, fronteira e histórico usam o mesmo chrome. O menu lista a
+ficha e só o walkthrough de Operação; Produto, Engenharia e Organização
+abrem pelo mapa. Quem autoriza decide depois
 de ler. O que o framework v0.10 ainda não liga ao runtime está em
 [`docs/backlog/framework-v0.10-plan.md`](docs/backlog/framework-v0.10-plan.md).
 

@@ -1,4 +1,6 @@
 import { escapeHtml } from '../../shared/html.js';
+import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
+import { uniqueFindingsByPattern, type OutcomeFinding } from '../inference/domain/report-outcome.js';
 import type { DiagnosticLaudo, AudienceVerb } from '../inference/domain/diagnostic-report.js';
 import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinReading, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
@@ -11,38 +13,52 @@ import type { EvolutionReport } from '../inference/domain/evolution-report.js';
 
 export type ReportPageId = 'laudo' | 'map' | 'node' | 'readiness' | 'frontier' | 'treatment' | 'walkthrough' | 'history' | 'audiences';
 
+export type ReportFicha = { label: string; href: string };
+
 const NAV: Array<{ id: ReportPageId; label: string; href: (base: string) => string }> = [
   { id: 'laudo', label: 'Laudo', href: (base) => base.replace(/\/report$/, '') || base },
   { id: 'map', label: 'Mapa', href: (base) => `${base}/map` },
   { id: 'readiness', label: 'Prontidão para práticas avançadas', href: (base) => `${base}/readiness` },
   { id: 'frontier', label: 'Fronteira de aprendizado', href: (base) => `${base}/frontier` },
   { id: 'treatment', label: 'Plano de tratamento', href: (base) => `${base}/treatment` },
-  { id: 'walkthrough', label: 'Área: Produto', href: (base) => `${base}/walkthrough/product` },
-  { id: 'walkthrough', label: 'Área: Engenharia', href: (base) => `${base}/walkthrough/engineering` },
   { id: 'walkthrough', label: 'Área: Operação', href: (base) => `${base}/walkthrough/operations` },
-  { id: 'walkthrough', label: 'Área: Organização', href: (base) => `${base}/walkthrough/organization` },
   { id: 'history', label: 'Histórico e reavaliação', href: (base) => `${base}/history` },
   { id: 'audiences', label: 'Visão por público', href: (base) => `${base}/audiences` },
 ];
+
+export function reportMenuFicha(findings: OutcomeFinding[], capabilityBase: string): ReportFicha | undefined {
+  const published = uniqueFindingsByPattern(findings).find((finding) => finding.confidence >= 0.5 && finding.detailCapability);
+  if (!published) return undefined;
+  return {
+    label: CapabilityTaxonomy.labelFor(published.detailCapability),
+    href: `${capabilityBase}/${published.detailCapability}`,
+  };
+}
+
+function renderNavLink(label: string, href: string, current: boolean): string {
+  const currentAttr = current ? ' aria-current="page"' : '';
+  return `<a${currentAttr} href="${escapeHtml(href)}">${escapeHtml(label)}</a>`;
+}
 
 export function renderReportShell(input: {
   page: ReportPageId;
   base: string;
   projectName: string;
   body: string;
-  nodeLabel?: string;
+  ficha?: ReportFicha;
+  areaId?: string;
 }): string {
-  const links = NAV.map((item) => {
-    const current = item.id === input.page ? ' aria-current="page"' : '';
-    return `<a${current} href="${escapeHtml(item.href(input.base))}">${escapeHtml(item.label)}</a>`;
+  const links = NAV.flatMap((item) => {
+    const ficha = item.id === 'readiness' && input.ficha
+      ? [renderNavLink(`Ficha: ${input.ficha.label}`, input.ficha.href, input.page === 'node')]
+      : [];
+    const current = item.id === input.page && (item.id !== 'walkthrough' || !input.areaId || input.areaId === 'operations');
+    return [...ficha, renderNavLink(item.label, item.href(input.base), current)];
   }).join('');
-  const node = input.nodeLabel
-    ? `<a href="${escapeHtml(`${input.base}/nodes/${encodeURIComponent(input.nodeLabel)}`)}">Ficha: ${escapeHtml(input.nodeLabel)}</a>`
-    : '';
   return `<div class="diagnostic-report" data-theme="claro">
     <aside class="report-sidebar">
       <div class="report-brand"><strong>Anamnese de Tecnologia</strong><span>${escapeHtml(input.projectName)}</span></div>
-      <nav aria-label="Relatório">${links}${node}</nav>
+      <nav aria-label="Relatório">${links}</nav>
       <p class="report-sidebar-note">Instrumento vigente<br>Estimativas provisórias</p>
       <button type="button" class="report-theme" data-report-theme>Tema escuro</button>
     </aside>

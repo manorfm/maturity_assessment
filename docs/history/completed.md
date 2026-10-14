@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Menu do relatório alinhado ao protótipo
+
+- Navegação lateral com laudo, mapa, ficha, prontidão, fronteira, plano,
+  walkthrough de Operação, histórico e visão por público. As outras áreas
+  saem do menu e continuam no mapa. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md)
+  e [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-10-13 — Layout manage: um chrome, laudo centrado
 
 - Removido cabeçalho solto e segunda barra admin; `manage-workspace`

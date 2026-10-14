@@ -134,8 +134,11 @@ achados, divergências, restrição principal, conduta de 30 dias,
 prognóstico, o que ainda não sabemos e rodapé de amostra e calibração.
 Onde o modelo `m1` não mede índice, faixa, alvo ou prognóstico, o bloco
 declara a lacuna. Não publica o exemplo numérico do protótipo. A navegação
-lateral liga mapa, ficha, prontidão, fronteira, plano, walkthrough das
-quatro áreas, histórico e visão por público. O walkthrough usa
+lateral segue o protótipo, nesta ordem: laudo, mapa, ficha do primeiro
+achado publicado (ou da capacidade aberta), prontidão, fronteira, plano,
+walkthrough de Operação, histórico e visão por público. Produto,
+Engenharia e Organização permanecem no mapa e nas rotas de walkthrough,
+fora desse menu. O walkthrough usa
 `projectAreaWalkthrough` (`area-walkthrough-v1`) com as oito seções e a
 regra da próxima fase restrita à fronteira (`enablementCatalog`).
 A página de fronteira projeta `projectLearningFrontier` a partir das

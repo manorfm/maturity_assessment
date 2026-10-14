@@ -33,7 +33,7 @@ import { measureSophisticationPhase } from '../inference/domain/sophistication-m
 import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
-import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, type ReportPageId } from './diagnostic-report-view.js';
+import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, reportMenuFicha, type ReportFicha, type ReportPageId } from './diagnostic-report-view.js';
 import { renderAdminAside, renderAdminMetric, renderAdminShell, renderTermsPanel } from './admin-view.js';
 import { FreeTextReviewService, strategyPurposeCodebook } from '../inference/domain/free-text-review.js';
 
@@ -362,7 +362,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       page: 'node',
       base: reportBase,
       projectName: String(auth.project.name),
-      nodeLabel: selected.label,
+      ficha: { label: selected.label, href: `${base}/${selected.id}${scopeQuery}` },
       body: `<nav class="capability-navigation" aria-label="Navegação da capacidade"><a class="back-link" href="${backUrl}">Voltar</a></nav>${body}`,
     })));
   });
@@ -395,10 +395,20 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     return reply.type('text/html').send(layout(selected.label, `<nav class="capability-navigation" aria-label="Navegação da área"><a class="back-link" href="${backUrl}"><span aria-hidden="true">←</span> Voltar</a><div class="breadcrumb"><a href="${dashboardUrl}">Projeto</a><span class="breadcrumb-separator" aria-hidden="true">›</span>${breadcrumbItems}</div></nav><header><p class="eyebrow">${escapeHtml(source?.path ?? 'Visão global')}</p><h1>${escapeHtml(selected.label)}</h1></header>${renderAreaRecorte(path, { areaBase, capabilityBase, scopeQuery, capabilities: groups, findings: areaFindings, organizationalAreas: map })}`));
   });
 
-  const reportPage = (params: Params, page: ReportPageId, body: string, nodeLabel?: string) => {
+  const reportPage = (params: Params, page: ReportPageId, body: string, options?: { ficha?: ReportFicha; areaId?: string }) => {
     const auth = requireProject(params);
     const base = `/projects/${params.publicId}/manage/${params.adminSecret}/report`;
-    return layout(String(auth.project.name), renderReportShell({ page, base, projectName: String(auth.project.name), body, ...(nodeLabel ? { nodeLabel } : {}) }));
+    const capabilityBase = `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`;
+    const report = inference.report(String(auth.project.id), Number(auth.project.minimum_group_size));
+    const ficha = options?.ficha ?? reportMenuFicha(report.findings, capabilityBase);
+    return layout(String(auth.project.name), renderReportShell({
+      page,
+      base,
+      projectName: String(auth.project.name),
+      body,
+      ...(ficha ? { ficha } : {}),
+      ...(options?.areaId ? { areaId: options.areaId } : {}),
+    }));
   };
 
   app.get('/projects/:publicId/manage/:adminSecret/report', async (request, reply) => {
@@ -535,7 +545,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       sophistication,
       leaves,
     });
-    return reply.type('text/html').send(reportPage(params, 'walkthrough', renderWalkthrough(walk)));
+    return reply.type('text/html').send(reportPage(params, 'walkthrough', renderWalkthrough(walk), { areaId: params.areaId }));
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitations', async (request, reply) => {
@@ -764,11 +774,13 @@ export function renderFirstScreen(input: {
   const classification = input.classification
     ? `<section class="report-consistency">${renderClassification(input.classification, input.outcome)}</section>`
     : '';
+  const ficha = reportMenuFicha(input.findings, input.capabilityBase);
   return renderReportShell({
     page: 'laudo',
     base: reportBase,
     projectName: input.projectName ?? 'Diagnóstico',
     body: `${renderLaudo(laudo, { capabilityBase: input.capabilityBase, reportBase })}${classification}`,
+    ...(ficha ? { ficha } : {}),
   });
 }
 
