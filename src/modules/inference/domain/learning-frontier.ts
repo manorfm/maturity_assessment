@@ -1,4 +1,5 @@
 import { probabilityStageAtLeast, type LeafEvidence } from './advanced-readiness.js';
+import { CapabilityTaxonomy } from './capability-taxonomy.js';
 import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
 import type { CapabilityStageLevel } from './capability-reference.js';
@@ -127,6 +128,60 @@ export function projectLearningFrontier(
   return { nodes };
 }
 
+export type FrontierPlace = {
+  leafId: string;
+  label: string;
+  blockedBy: string[];
+  unlocks: string;
+  probability: number;
+};
+
+export type FrontierBrief = {
+  mastered: FrontierPlace[];
+  learnable: FrontierPlace[];
+  blocked: FrontierPlace[];
+  start: { step: string; unlocks: string; leafId: string } | { gap: string };
+  parallel: Array<{ label: string; body: string }>;
+  advancedAside: string;
+};
+
+const advancedAside = 'Práticas avançadas a dois passos não são o próximo passo.';
+
+/** Três faixas e um único começo. Degrau bloqueado não entra em “comece por”. */
+export function projectFrontierBrief(
+  leaves: Record<string, LeafEvidence>,
+  catalog: EnablementDependency[] = enablementCatalog,
+): FrontierBrief {
+  const projection = projectLearningFrontier(leaves, catalog);
+  const mastered: FrontierPlace[] = [];
+  const learnable: FrontierPlace[] = [];
+  const blocked: FrontierPlace[] = [];
+  for (const node of projection.nodes) {
+    const parsed = parseUnlock(node.id);
+    const edge = catalog.find((item) => unlockId(item) === node.id);
+    const place: FrontierPlace = {
+      leafId: parsed?.leafId ?? node.id,
+      label: parsed ? CapabilityTaxonomy.labelFor(parsed.leafId) : (node.label ?? node.id),
+      blockedBy: node.blockedBy,
+      unlocks: edge?.keyBehavior ?? 'O comportamento desta aresta ainda não foi nomeado.',
+      probability: node.probability ?? 0,
+    };
+    const stage = observedStage(leaves[place.leafId]);
+    if (parsed && stage !== undefined && stage >= parsed.toStage) mastered.push(place);
+    else if (node.band === 'frontier') learnable.push(place);
+    else blocked.push(place);
+  }
+  learnable.sort((left, right) => right.probability - left.probability || left.label.localeCompare(right.label));
+  const first = learnable[0];
+  const start = first
+    ? { step: first.label, unlocks: first.unlocks, leafId: first.leafId }
+    : { gap: 'Nada está desbloqueado para aprender agora.' };
+  const parallel = catalog
+    .filter((item) => item.type === 'social' || item.type === 'cognitive')
+    .map((item) => ({ label: item.fromLabel, body: item.keyBehavior }));
+  return { mastered, learnable, blocked, start, parallel, advancedAside };
+}
+
 /** 16 §3.1 + 23 §6.1: sobe um degrau só se o desbloqueio estiver na fronteira. */
 export function nextPhaseWithinFrontier(input: {
   leafId: string;
@@ -148,6 +203,30 @@ export function nextPhaseWithinFrontier(input: {
 
 function unlockId(dependency: EnablementDependency): string {
   return `${dependency.toLeafId}:${dependency.toFromStage}→${dependency.toToStage}`;
+}
+
+function parseUnlock(id: string): { leafId: string; toStage: number } | undefined {
+  const match = /^(.+):(\d+)→(\d+)$/.exec(id);
+  if (!match?.[1] || !match[3]) return undefined;
+  return { leafId: match[1], toStage: Number(match[3]) };
+}
+
+function observedStage(evidence?: LeafEvidence): number | undefined {
+  if (!evidence) return undefined;
+  if (evidence.distribution) {
+    let best = -1;
+    let mode = 0;
+    evidence.distribution.forEach((weight, index) => {
+      if (weight > best) {
+        best = weight;
+        mode = index;
+      }
+    });
+    return mode;
+  }
+  if (evidence.level === undefined) return undefined;
+  if (evidence.coverage !== undefined && evidence.coverage < 1) return undefined;
+  return evidence.level;
 }
 
 function dep(

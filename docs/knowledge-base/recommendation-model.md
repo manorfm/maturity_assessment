@@ -135,8 +135,11 @@ A prontidão para práticas avançadas (`advancedPracticeCatalog`) calcula
 essencial (22 §1.1) quando as folhas têm posterior ou nível com cobertura.
 Sem evidência essencial (estágio ou F exigido), declara lacuna e não
 inventa índice. A biblioteca 22 §5 (13 práticas) entra na página de
-prontidão. **Adoção prematura** (F da prática ≥ 3 e algum essencial com
-`p_k < 0,3`) vira achado de risco no laudo com conduta de reduzir escopo.
+prontidão. O status visível segue o essencial mais fraco; a média dos
+`p_k` não decide. **Adoção prematura** (F da prática ≥ 3 e algum essencial com
+`p_k < 0,3`) vira achado de risco no laudo com conduta de reduzir escopo,
+e o texto não atribui culpa a uma pessoa. Degrau que a fronteira marca
+como bloqueado não aparece como próximo passo da prontidão.
 As perguntas de evento de chaos (`chaos-dependency-exercise`, 22 §2.5),
 remediação automática (`aiops-auto-remediation`, 22 §5), QA
 (`quality-break-detection` + pressão `quality-flaky-pressure`, 22 §3.4),

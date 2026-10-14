@@ -49,8 +49,8 @@ acessíveis; só saíram do menu.
 | Laudo | Motivo em citação ou lacuna, leitura com mecanismo, até três achados em cartão (caminho, sustentação, “Ver ficha”), divergência nos dois lados, restrição com efeito, conduta, prognóstico sem promessa, lacunas e exames separados, rodapé | Tema escuro é variante de tela no protótipo; o produto usa um botão no chrome |
 | Mapa | Três cortes, sistema observado abre disciplinas, matrizes com célula do domínio, radar, perfil e legenda de estimativa, faixa e alvo só quando o modelo publica | — |
 | Ficha | Trilha até o mapa; definição; “como está” com lacuna de 0–4 ou quadrante só com leitura; relatos por perspectiva e por time; cartões de causa, lugar, ação, critério, relações, lacuna e referência; “o que já funciona” só na preservação | Gráfico de distribuição 0–4 e o laço causal do protótipo, que o modelo ainda não publica |
-| Prontidão | Lista com banda e `p_k` | Cartão por prática (chaos, AI-DLC, service mesh no exemplo) com grade de pré-requisitos e legenda Pronto / Perto / Não pronto |
-| Fronteira | Lista por banda | Faixas (dominado, pode aprender, bloqueado), condições humanas e bloco “Comece por” |
+| Prontidão | Cartão com pré-requisitos e `p_k`; status pelo mais fraco; adoção prematura como risco do sistema | Grade visual do exemplo (chaos, AI-DLC, service mesh) com percentuais fixos |
+| Fronteira | Faixas dominado, pode aprender agora e ainda bloqueado; “Comece por”; condições humanas em paralelo com “Ver prontidão →” | Marcas numéricas 0–5 do exemplo |
 | Plano | Cartão ativo (ação, dono, critério, Cynefin, evidência), seta “depende de” ou “sem dependência”, espera fora das ativas, grau D como experimento, pulso só com item-âncora | Colunas 1–3 meses e 3–12 meses do protótipo; o modelo ainda não publica esses horizontes |
 | Walkthrough de Operação | Oito seções em listas | Caminho 30/90/180 como trilha, marcos em grade, chip de alvo |
 | Histórico | Probabilidades e, quando há duas leituras, evolução e correspondência de unidades | Seletor da leitura anterior, comparação por capacidade, chips do que melhorou e piorou, nota de atenção |

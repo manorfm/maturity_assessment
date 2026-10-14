@@ -145,8 +145,13 @@ Engenharia e Organização permanecem no mapa e nas rotas de walkthrough,
 fora desse menu. O walkthrough usa
 `projectAreaWalkthrough` (`area-walkthrough-v1`) com as oito seções e a
 regra da próxima fase restrita à fronteira (`enablementCatalog`).
-A página de fronteira projeta `projectLearningFrontier` a partir das
-folhas medidas. O mapa tem quatro sistemas — Produto,
+A página de fronteira projeta `projectFrontierBrief` a partir das
+folhas medidas: dominado, pode aprender agora e ainda bloqueado. “Comece
+por” é um degrau desbloqueado. Condição humana (aresta social ou
+cognitiva) fica em paralelo, com link para a prontidão. O status da
+prontidão segue o pré-requisito essencial mais fraco; a média não
+decide. Degrau bloqueado na fronteira não entra como próximo passo da
+prontidão. O mapa tem quatro sistemas — Produto,
 Engenharia, Operação e Organização — e três cortes: por capacidade, por
 estrutura e por perspectiva. As células saem do domínio (`map-matrix`):
 unidade abaixo do limiar, ou disciplina sem cobertura temática, publica

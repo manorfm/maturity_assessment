@@ -31,7 +31,8 @@ import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js'
 import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/learning-frontier.js';
 import { declaredSophistication } from '../catalog/evidence-contract.js';
 import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
-import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectFrontierPage, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { evidenceGradeGap, projectAudienceVerbs, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
+import { projectFrontierBrief } from '../inference/domain/learning-frontier.js';
 import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
@@ -508,7 +509,17 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       };
     }
     const items = projectCatalogReadiness(leaves);
-    return reply.type('text/html').send(reportPage(params, 'readiness', renderReadinessPage(items)));
+    const brief = projectFrontierBrief(leaves);
+    const steps = projectReadinessSteps(leaves, brief);
+    const cards = items.map((item) => {
+      const step = steps.get(item.id);
+      return {
+        ...item,
+        ...(step?.next ? { nextStep: step.next } : {}),
+        ...(step?.withheld ? { withheld: step.withheld } : {}),
+      };
+    });
+    return reply.type('text/html').send(reportPage(params, 'readiness', renderReadinessPage(cards)));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/report/frontier', async (request, reply) => {
@@ -519,8 +530,9 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       level: capability.level,
       coverage: capability.coverage ?? 0,
     }]));
-    const frontier = projectFrontierPage({ leaves });
-    return reply.type('text/html').send(reportPage(params, 'frontier', renderFrontierPage(frontier.nodes, frontier.gap)));
+    const brief = projectFrontierBrief(leaves);
+    const readinessHref = `/projects/${params.publicId}/manage/${params.adminSecret}/report/readiness`;
+    return reply.type('text/html').send(reportPage(params, 'frontier', renderFrontierPage({ ...brief, readinessHref, ...(brief.mastered.length + brief.learnable.length + brief.blocked.length === 0 ? { gap: 'Sem fronteira publicada.' } : {}) })));
   });
 
   app.get('/projects/:publicId/manage/:adminSecret/report/history', async (request, reply) => {

@@ -114,6 +114,20 @@ export function assessReadiness(input: {
   };
 }
 
+/** O status visível segue o essencial mais fraco. A média dos p_k não decide. */
+export function bottleneckStatus(assessment: ReadinessAssessment): { bottleneck: string; band: ReadinessBand; line: string } {
+  const essential = assessment.checklist.filter((item) => item.essential);
+  const weakest = [...essential].sort((left, right) => left.probability - right.probability)[0];
+  const probability = weakest?.probability ?? assessment.probability;
+  const band: ReadinessBand = probability >= 0.6 ? 'ready' : probability >= 0.25 ? 'near' : 'not-ready';
+  const bottleneck = weakest?.label ?? 'o pré-requisito essencial';
+  return {
+    bottleneck,
+    band,
+    line: `O status segue ${bottleneck}, o pré-requisito mais fraco. A média não decide.`,
+  };
+}
+
 /**
  * Próximo degrau rumo a uma prática avançada (22 §6 / 16): um pré-requisito
  * por vez, o gargalo essencial, sem pular para a prática.
@@ -322,7 +336,7 @@ export function detectPrematureAdoptions(
       ...(assessment.bottleneckId ? { bottleneckId: assessment.bottleneckId } : {}),
       weakEssentials,
       title: `Adoção prematura: ${practice.label}`,
-      reading: `A fase técnica (F${technicalPhase}) está à frente de pré-requisitos essenciais (${bottleneck}). É risco, não prontidão.`,
+      reading: `A fase técnica (F${technicalPhase}) está à frente de pré-requisitos essenciais (${bottleneck}). É risco do sistema de trabalho, não culpa de uma pessoa.`,
       action: `Reduzir o escopo de ${practice.label} até os pré-requisitos essenciais subirem; não ampliar automação nem raio de impacto.`,
     });
   }

@@ -50,6 +50,13 @@ depois da seta, com “depende de”. Sem dependência, a linha diz isso.
 Grau D entra como experimento. O pulso de 4–8 semanas só aparece quando
 há item-âncora.
 
+**Prontidão e fronteira.** O status de uma prática segue o pré-requisito
+mais fraco; a média não decide. A probabilidade de pronto não vira
+índice. A fronteira separa o que já está dominado, o que dá para aprender
+agora e o que segue bloqueado. “Comece por” é um degrau desbloqueado.
+Condição humana fica em paralelo. Adoção prematura é risco do sistema de
+trabalho, não culpa de uma pessoa.
+
 A especificação do motor (não da anamnese) está em
 [`docs/knowledge-base/recommendation-model.md`](docs/knowledge-base/recommendation-model.md)
 e [`docs/knowledge-base/assessment-model.md`](docs/knowledge-base/assessment-model.md).

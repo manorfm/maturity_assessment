@@ -8,8 +8,8 @@ import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { FichaClose, FichaLine, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
 import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
-import type { ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
-import type { FrontierNode } from '../inference/domain/learning-frontier.js';
+import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
+import type { FrontierBrief } from '../inference/domain/learning-frontier.js';
 import type { AreaWalkthrough } from '../inference/domain/area-walkthrough.js';
 import type { EvolutionReport } from '../inference/domain/evolution-report.js';
 
@@ -324,36 +324,48 @@ export function renderWalkthrough(input: AreaWalkthrough): string {
     ${list('Premissas a revisar', input.sections.assumptions)}`;
 }
 
-export function renderReadinessPage(items: Array<{ label: string; assessment?: ReadinessAssessment; gap?: string }>): string {
+export function renderReadinessPage(items: Array<{ id?: string; label: string; assessment?: ReadinessAssessment; gap?: string; verdict?: ReturnType<typeof bottleneckStatus>; nextStep?: string; withheld?: string; premature?: boolean }>): string {
+  const bandLabel = (band: ReadinessAssessment['band']) => band === 'ready' ? 'Pronto' : band === 'near' ? 'Perto' : 'Não pronto';
   const cards = items.map((item) => {
     if (item.gap || !item.assessment) return `<article class="report-block"><h2>${escapeHtml(item.label)}</h2><p class="report-gap">${escapeHtml(item.gap ?? 'Sem posterior.')}</p></article>`;
-    const band = item.assessment.band === 'ready' ? 'Pronto' : item.assessment.band === 'near' ? 'Perto' : 'Não pronto';
+    const verdict = item.verdict ?? bottleneckStatus(item.assessment);
     const checklist = item.assessment.checklist?.length
       ? `<ul class="readiness-checklist">${item.assessment.checklist.map((row) => (
-        `<li>${escapeHtml(row.label)}${row.essential ? ' (essencial)' : ''}: p_k ${row.probability.toFixed(2)}</li>`
+        `<li>${escapeHtml(row.label)}${row.essential ? ' (essencial)' : ''}${row.label === verdict.bottleneck ? ' · gargalo' : ''}: p_k ${row.probability.toFixed(2)}</li>`
       )).join('')}</ul>`
       : '';
-    return `<article class="report-block"><h2>${escapeHtml(item.label)}</h2><p>${band} · P(pronto) ${item.assessment.probability}</p>${item.assessment.premature ? '<p>Adoção prematura: a fase técnica está à frente de um pré-requisito essencial.</p>' : ''}<p>Checklist de pré-requisitos</p>${checklist}</article>`;
+    const premature = item.premature || item.assessment.premature
+      ? '<p>Adoção prematura: a fase técnica está à frente de um pré-requisito essencial. É risco do sistema de trabalho, não culpa de uma pessoa.</p>'
+      : '';
+    const step = item.withheld
+      ? `<p class="report-gap">${escapeHtml(item.withheld)}</p>`
+      : item.nextStep
+        ? `<p>${escapeHtml(item.nextStep)}</p>`
+        : '';
+    return `<article class="readiness-card"><h2>${escapeHtml(item.label)}</h2><p>${bandLabel(verdict.band)}</p><p>${escapeHtml(verdict.line)}</p><p>P(pronto) ${item.assessment.probability}. Isto não é índice da organização.</p>${premature}<p>Pré-requisitos</p>${checklist}${step}</article>`;
   }).join('');
-  return `<header class="report-hero"><p class="report-kicker">Prontidão para práticas avançadas</p><h1>Prontidão para práticas avançadas</h1><p>A probabilidade de pronto nunca passa a ser índice da organização.</p></header>
+  return `<header class="report-hero"><p class="report-kicker">Prontidão para práticas avançadas</p><h1>Prontidão para práticas avançadas</h1><p>A probabilidade de pronto nunca passa a ser índice da organização. O gargalo decide.</p></header>
     <p><span class="readiness ready">Pronto</span> pré-requisitos atendidos · <span class="readiness near">Perto</span> um pré-requisito faltando · <span class="readiness blocked">Não pronto</span> gargalo sem conduta que destrave</p>
     ${cards}`;
 }
 
-export function renderFrontierPage(nodes: FrontierNode[], gap?: string): string {
-  const list = nodes.length
-    ? `<ul>${nodes.map((node) => {
-      const title = escapeHtml(node.label ?? node.id);
-      if (node.band === 'near') {
-        return `<li>${title} — Perto${node.blockedBy.length ? ` · falta ${escapeHtml(node.blockedBy.join(', '))}` : ''}</li>`;
-      }
-      if (node.learnable || node.band === 'frontier') {
-        return `<li>${title} — pode aprender agora</li>`;
-      }
-      return `<li>${title} — bloqueado por ${escapeHtml(node.blockedBy.join(', ') || 'pré-requisito sem evidência')}</li>`;
-    }).join('')}</ul>`
-    : `<p class="report-gap">${escapeHtml(gap ?? 'Sem fronteira publicada.')}</p>`;
-  return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1><p>Degraus com P(desbloqueado) ≥ 0,6 entram na fronteira; abaixo de 0,25 ficam bloqueados.</p></header>${list}`;
+export function renderFrontierPage(input: FrontierBrief & { readinessHref?: string; gap?: string }): string {
+  const place = (items: FrontierBrief['mastered'], empty: string, line: (item: FrontierBrief['mastered'][number]) => string) => (
+    items.length ? `<ul>${items.map((item) => `<li>${line(item)}</li>`).join('')}</ul>` : `<p class="report-gap">${escapeHtml(empty)}</p>`
+  );
+  const start = 'gap' in input.start
+    ? `<p class="report-gap">${escapeHtml(input.start.gap)}</p>`
+    : `<article class="readiness-card"><p class="report-conduct-action">${escapeHtml(input.start.step)}</p><p>Destrava: ${escapeHtml(input.start.unlocks)}</p></article>`;
+  const parallel = input.parallel.map((item) => `<p><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`).join('')
+    || '<p class="report-gap">Nenhuma condição humana publicada neste grafo.</p>';
+  const href = input.readinessHref ?? '/readiness';
+  const gap = input.gap ? `<p class="report-gap">${escapeHtml(input.gap)}</p>` : '';
+  return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1><p>Degraus com P(desbloqueado) ≥ 0,6 entram na fronteira; abaixo de 0,25 ficam bloqueados.</p></header>${gap}
+    <section class="report-block"><h2>Dominado</h2>${place(input.mastered, 'Nenhum degrau dominado nesta leitura.', (item) => escapeHtml(item.label))}</section>
+    <section class="report-block"><h2>Pode aprender agora</h2>${place(input.learnable, 'Nenhum degrau desbloqueado para aprender agora.', (item) => `${escapeHtml(item.label)} — pode aprender agora`)}</section>
+    <section class="report-block"><h2>Ainda bloqueado</h2>${place(input.blocked, 'Nenhum degrau bloqueado nesta leitura.', (item) => `${escapeHtml(item.label)} — ainda bloqueado${item.blockedBy.length ? ` · bloqueado por ${escapeHtml(item.blockedBy.join(', '))}` : ''}`)}</section>
+    <section class="report-block"><h2>Comece por</h2>${start}</section>
+    <section class="report-block"><h2>Em paralelo</h2>${parallel}<p>${escapeHtml(input.advancedAside)}</p><p><a href="${escapeHtml(href)}">Ver prontidão →</a></p></section>`;
 }
 
 export function renderHistoryPage(input: {

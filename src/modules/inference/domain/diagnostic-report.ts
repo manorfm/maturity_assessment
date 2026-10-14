@@ -7,6 +7,7 @@ import {
   advancedPracticeCatalog,
   assessReadiness,
   detectPrematureAdoptions,
+  nextStepTowardPractice,
   resolvePrerequisitePosteriors,
   technicalPhaseFor,
   type AdvancedPractice,
@@ -14,7 +15,7 @@ import {
   type PrerequisitePosterior,
   type ReadinessAssessment,
 } from './advanced-readiness.js';
-import { learningFrontier, projectLearningFrontier, type EnablementEdge, type FrontierNode } from './learning-frontier.js';
+import { learningFrontier, projectLearningFrontier, type EnablementEdge, type FrontierBrief, type FrontierNode } from './learning-frontier.js';
 import { projectHistoryAssessment, type HistoryAssessment, type IndexReading } from './reading-history.js';
 import {
   classifyCynefin,
@@ -343,6 +344,27 @@ export function projectFrontierPage(
     return { nodes: [], gap: 'O grafo de habilitação ainda não foi elicitado. A fronteira não é inventada a partir do nome das folhas.' };
   }
   return { nodes: learningFrontier(input.nodes, input.edges) };
+}
+
+/** Passo da prontidão some quando a folha está só na faixa bloqueada da fronteira. */
+export function projectReadinessSteps(
+  leaves: Record<string, LeafEvidence>,
+  brief: FrontierBrief,
+): Map<string, { next?: string; withheld?: string }> {
+  const steps = new Map<string, { next?: string; withheld?: string }>();
+  for (const practice of advancedPracticeCatalog) {
+    const step = nextStepTowardPractice(practice, leaves);
+    if (!step) continue;
+    const blocked = brief.blocked.some((item) => item.leafId === step.leafId);
+    const open = brief.learnable.some((item) => item.leafId === step.leafId)
+      || brief.mastered.some((item) => item.leafId === step.leafId);
+    if (blocked && !open) {
+      steps.set(practice.id, { withheld: `${step.bottleneckLabel} está bloqueado na fronteira e não é o próximo passo.` });
+      continue;
+    }
+    steps.set(practice.id, { next: step.reading });
+  }
+  return steps;
 }
 
 export function projectHistoryPage(input: { previous?: IndexReading; current?: IndexReading }): HistoryAssessment {

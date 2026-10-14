@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Prontidão e fronteira concordam no próximo passo
+
+- O status segue o pré-requisito mais fraco. A fronteira separa dominado,
+  o que dá para aprender e o que segue bloqueado. O que está bloqueado
+  não vira o próximo passo. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-14 — Plano separa conduta ativa da que espera dependência
 
 - O cartão ativo traz ação, dono, critério, Cynefin e grau. Quem depende

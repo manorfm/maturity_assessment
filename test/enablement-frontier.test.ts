@@ -4,6 +4,7 @@ import {
   enablementCatalog,
   evaluateEnablementEdges,
   learningFrontier,
+  projectFrontierBrief,
   projectLearningFrontier,
 } from '../src/modules/inference/domain/learning-frontier.js';
 import type { StageDistribution } from '../src/modules/measurement/domain/measurement-params.js';
@@ -54,7 +55,7 @@ test('P(desbloqueado) é o produto das arestas essenciais; bloqueio abaixo de 0,
   assert.equal(release!.band, 'frontier');
   assert.equal(release!.learnable, true);
 
-  const html = renderFrontierPage(frontier.nodes, frontier.gap);
+  const html = renderFrontierPage({ ...projectFrontierBrief(leaves), readinessHref: '/report/readiness' });
   assert.match(html, /pode aprender agora|bloqueado por|Perto/);
   assert.doesNotMatch(html, /ainda não foi elicitado/i);
 });
