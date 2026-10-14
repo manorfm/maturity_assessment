@@ -10,6 +10,10 @@ type InvitationBatchSummary = {
   id: string; unitPath: string; quantity: number;
   status: 'issued' | 'partially_used' | 'claimed' | 'revoked' | 'expired';
   createdAt: string;
+  issued: number;
+  claimed: number;
+  revoked: number;
+  expired: number;
 };
 
 export class InvitationService {
@@ -76,6 +80,10 @@ export class InvitationService {
       quantity: Number(row.quantity),
       status: batchStatus(row),
       createdAt: row.created_at,
+      issued: Number(row.issued),
+      claimed: Number(row.claimed),
+      revoked: Number(row.revoked),
+      expired: Number(row.expired),
     }));
   }
 

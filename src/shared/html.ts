@@ -66,7 +66,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .admin-terms li { display:grid; grid-template-columns:40px minmax(0,1fr); gap:12px; padding:18px 0; border-top:1px solid var(--rule,#DCD4C6) }
     .admin-terms li > span { font-family:Newsreader,Georgia,serif; font-size:22px; color:var(--ink3,#625B51) }
     .admin-terms li p { margin:4px 0 0; color:var(--ink2,#46413A) }
-    .admin .hierarchy-row { background:transparent; border:0; padding:6px 0; grid-template-columns:18px minmax(180px,1fr) auto }
+    .admin .hierarchy-row { background:var(--surface); border:1px solid var(--rule,#DCD4C6); border-radius:10px; padding:16px 18px; margin:12px 0 12px min(calc(var(--level) * 28px),45%); display:grid; gap:8px }
     .admin .hierarchy-editor { border:1px solid var(--rule,#DCD4C6); border-radius:10px; padding:24px 28px; background:var(--surface); margin:0 }
     @media(max-width:980px){ .admin-body{flex-direction:column} .admin-steps{width:auto;border-right:0;border-bottom:1px solid var(--rule,#DCD4C6);flex-direction:row;flex-wrap:wrap;padding:16px} .admin-metrics,.admin-panel{grid-template-columns:1fr} .admin-main{padding:28px 16px 48px} }
     .eyebrow { color:var(--accent); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:.78rem }.lead { color:var(--muted); font-size:1.12rem; max-width:70ch }

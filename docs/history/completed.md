@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Administração liga os quatro passos
+
+- Criar o projeto, montar a árvore, gerar convite e ler o termo usam o
+  mesmo passo a passo. A amostra do lote agrega abaixo do mínimo. O
+  lembrete não é enviado. O aceite do termo não é gravado. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md)
+  e [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
 ## 2026-10-14 — Visão por público separa decisão e semana
 
 - O mesmo achado vira leitura da direção e leitura do time. “A quem

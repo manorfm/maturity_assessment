@@ -58,17 +58,18 @@ acessíveis; só saíram do menu.
 
 ## Administração
 
-Os quatro rótulos já coincidem com o protótipo: 1 Projeto, 2 Estrutura,
-3 Convites e participação, 4 Termo de uso. Na criação, só os dois
-primeiros são links. No painel, só convites e termo. O protótipo deixa
-os quatro clicáveis em todas essas telas.
+Os quatro passos são links na criação e no painel: Projeto, Estrutura,
+Convites e participação, Termo de uso. A estrutura é cartão de unidade,
+com adicionar abaixo e remover. O lote mostra estado, amostra agregada
+e o lembrete, sem fingir envio. O termo usa as cinco cláusulas no nome
+da organização e avisa que o aceite não é gravado.
 
 | Tela | Já existe | Falta no visual |
 | --- | --- | --- |
-| Criar projeto | Nome e criação | Campos de contexto do protótipo (porte, regulação, estágio). Continuam fora do domínio; ver `future-evolution.md` |
-| Estrutura | Hierarquia editável | Cartões de tribo e squad e a ação de adicionar squad no molde do protótipo |
-| Convites | Lotes, revogar, reemitir, limiar | Linha de amostra, estado do lote e lembrar lote |
-| Termo | Cinco cláusulas informativas | Aceite formal antes de liberar convites. Ainda é hipótese, não compromisso |
+| Criar projeto | Nome, os quatro passos e a lacuna dos passos que só existem depois do projeto | Campos de contexto (porte, regulação, estágio). Continuam fora do domínio; ver `future-evolution.md` |
+| Estrutura | Cartões, adicionar abaixo e remover; unidade com convite permanece final | — |
+| Convites | Amostra agregada, estado do lote, revogar, reemitir e lembrar | — |
+| Termo | Cinco cláusulas e a frase de que o aceite não é gravado | Aceite formal antes de liberar convites. Ainda é hipótese, não compromisso |
 
 ## Entrevista
 

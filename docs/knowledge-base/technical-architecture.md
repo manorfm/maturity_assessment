@@ -165,7 +165,8 @@ por” é um degrau desbloqueado. Condição humana (aresta social ou
 cognitiva) fica em paralelo, com link para a prontidão. O status da
 prontidão segue o pré-requisito essencial mais fraco; a média não
 decide. Degrau bloqueado na fronteira não entra como próximo passo da
-prontidão. O mapa tem quatro sistemas — Produto,
+prontidão. Achado de prática avançada no laudo abre essa página; a ficha
+de capacidade fica para a capacidade publicada. O mapa tem quatro sistemas — Produto,
 Engenharia, Operação e Organização — e três cortes: por capacidade, por
 estrutura e por perspectiva. As células saem do domínio (`map-matrix`):
 unidade abaixo do limiar, ou disciplina sem cobertura temática, publica
@@ -201,10 +202,14 @@ shell administrativo embutido (`admin--embedded`), sem segunda barra de
 marca nem cabeçalho solto fora do chrome. A entrevista SSR
 (`interview-view`) separa práticas de saídas observacionais, mostra
 progresso por minutos restantes e preserva anonimato e retomada. A
-administração SSR (`admin-view`) cobre criar projeto, acesso, convites,
-termo informativo, showcase e erros com o mesmo sistema visual; campos de
-contexto do protótipo (porte, regulação, aceite formal do termo) ainda não
-entram no domínio. Radar não é a leitura principal.
+administração SSR (`admin-view`) usa os quatro passos — projeto, estrutura,
+convites e termo — na criação e no painel. A estrutura lista unidades em
+cartão, com adicionar abaixo e remover enquanto não há convite nem
+participação. O lote publica estado, a amostra agregada abaixo do mínimo
+e o texto do lembrete; o produto não envia a mensagem nem grava envio.
+O termo traz as cinco cláusulas no nome da organização e diz que o aceite
+formal ainda não é gravado. Porte, regulação e estágio continuam fora do
+domínio. Acesso, showcase e erros usam o mesmo sistema visual. Radar não é a leitura principal.
 A página da disciplina começa por uma linha do recorte (o que não
 é); depois vêm a dor daquele nível, o efeito que ela gera acima,
 onde mais isso chega, a ação e o teste. Folha sem finding não lista

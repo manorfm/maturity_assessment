@@ -26,6 +26,12 @@ digita caminhos nem separadores. O editor impede nomes vazios, barras, irmãos c
 o mesmo nome, mais de doze níveis e mais de duzentas unidades. Apenas no envio as
 folhas são serializadas no formato interno validado pelo domínio.
 
+No painel, a mesma árvore segue em cartões. Dá para acrescentar uma unidade
+abaixo ou remover uma folha sem atividade. Unidade que já tem convite ou
+participação permanece final: não ganha filha e não sai. A última unidade
+do projeto permanece. O nome é o do dia a dia; a tela não impõe tribo nem
+squad.
+
 O convite não recebe perfil. O mesmo lote atende qualquer integrante da unidade, e
 a primeira etapa coleta uma perspectiva ampla somente para roteamento. Os relatórios
 só permitem comparações por perspectiva quando o limiar de anonimato for cumprido.

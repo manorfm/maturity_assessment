@@ -116,8 +116,12 @@ contexto → comportamento → evidência → sintoma → causa provável
 
 O responsável cria um projeto e monta uma hierarquia organizacional livre. Os nomes
 e a profundidade não são fixos: organização, área, tribo, cluster, squad ou qualquer
-outra estrutura podem ser representados. Convites são emitidos para as unidades
+outra estrutura podem ser representados. O mesmo passo a passo — projeto, estrutura,
+convites e termo — segue no painel. Unidade que já recebeu convite permanece final.
+Convites são emitidos para as unidades
 folha; os resultados são consolidados progressivamente nos níveis ancestrais.
+Recorte abaixo do mínimo aparece agregado ao nível acima. O termo informa o pacto;
+o aceite formal ainda não é gravado.
 
 ### 2. Convites anônimos e participação única
 

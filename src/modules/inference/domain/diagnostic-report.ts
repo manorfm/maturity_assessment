@@ -42,6 +42,7 @@ export type LaudoFinding = {
   path: string;
   support: string;
   nodeId: string;
+  destination: 'capability' | 'readiness';
   areas: number;
 };
 
@@ -102,6 +103,7 @@ export function projectDiagnosticLaudo(input: {
     path: 'Práticas avançadas',
     support: 'Achado de risco',
     nodeId: item.practiceId,
+    destination: 'readiness',
     areas: 1,
   }));
   const slots = Math.max(0, 3 - prematureLaudo.length);
@@ -115,6 +117,7 @@ export function projectDiagnosticLaudo(input: {
       path: areaPath(input.organizationalAreas, finding.detailCapability),
       support: supportLabel(finding.confidence),
       nodeId: finding.detailCapability,
+      destination: 'capability',
       areas: Math.max(1, finding.affectedCapabilities?.length ?? 1),
     })),
   ];

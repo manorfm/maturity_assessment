@@ -37,7 +37,7 @@ import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectS
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, reportMenuFicha, type ReportFicha, type ReportPageId } from './diagnostic-report-view.js';
-import { renderAdminAside, renderAdminMetric, renderAdminShell, renderTermsPanel } from './admin-view.js';
+import { renderAdminAside, renderAdminMetric, renderAdminShell, renderInvitationBatch, renderStructureBoard, renderTermsPanel } from './admin-view.js';
 import { FreeTextReviewService, strategyPurposeCodebook } from '../inference/domain/free-text-review.js';
 
 type Params = { publicId: string; adminSecret: string };
@@ -117,10 +117,10 @@ const projectForm = () => layout('Novo projeto', renderAdminShell({
   title: 'Novo diagnóstico',
   lead: 'Descreva o que motivou a avaliação e monte a estrutura com os nomes usados no dia a dia. Convites só nascem nas unidades finais.',
   step: 'project',
-  stepHrefs: { project: '/projects/new', structure: '#estrutura' },
-  body: `<div class="admin-panel">
+  stepHrefs: { project: '#projeto', structure: '#estrutura', invites: '#operacao', terms: '#termo' },
+  body: `<div class="admin-panel" id="projeto">
     <form class="admin-form" method="post" action="/projects">
-      <div><label for="name">Nome do projeto</label><input id="name" name="name" required maxlength="100" placeholder="Diagnóstico 2026 — Orbital Pagamentos"></div>
+      <div><label for="name">Nome do projeto</label><input id="name" name="name" required maxlength="100" placeholder="Nome usado no dia a dia"></div>
       <fieldset class="hierarchy-editor" id="estrutura" data-hierarchy-editor>
         <legend>Estrutura organizacional</legend>
         <p class="muted">Monte a árvore com os nomes usados na sua organização. Convites serão gerados somente para as unidades finais.</p>
@@ -136,6 +136,8 @@ const projectForm = () => layout('Novo projeto', renderAdminShell({
       'O nome e a estrutura orientam a leitura do relatório. Eles não mudam as perguntas nem os índices.',
       'Times com menos de 5 respondentes aparecem agregados ao nível acima.',
     ])}
+    <section id="operacao"><h2>Convites e participação</h2><p>Convites nascem na unidade final, depois que o projeto existir. Recorte com menos de 5 pessoas aparece agregado ao nível acima.</p></section>
+    <section id="termo"><h2>Termo de uso</h2><p>O termo informa o pacto no nome da organização. O aceite formal ainda não é gravado.</p></section>
   </div>${hierarchyEditorScript}`,
 }));
 
@@ -269,7 +271,18 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
     const audienceBriefs = renderAudienceBriefs(report.audienceReports, capabilityBase);
     const issued = batches.reduce((sum, item) => sum + item.quantity, 0);
-    const batchCards = batches.map((batch) => `<article class="admin-batch"><span class="tag">${escapeHtml(batch.status)}</span><h3>${escapeHtml(batch.unitPath)}</h3><p class="muted">${batch.quantity} convites no lote · perfil escolhido por cada participante</p>${batch.status === 'issued' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/revoke"><button type="submit">Revogar links disponíveis</button></form>` : ''}${batch.status === 'revoked' || batch.status === 'expired' || batch.status === 'partially_used' ? `<form method="post" action="/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}/invitation-batches/${batch.id}/reissue"><button class="button secondary" type="submit">Reemitir indisponíveis</button></form>` : ''}</article>`).join('');
+    const completedByPath = new Map(report.scopes.map((scope) => [scope.path, scope.completed]));
+    const actionBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`;
+    const batchCards = batches.map((batch) => renderInvitationBatch({
+      id: batch.id,
+      unitPath: batch.unitPath,
+      quantity: batch.quantity,
+      status: batch.status,
+      claimed: batch.claimed,
+      completed: completedByPath.get(batch.unitPath) ?? 0,
+      minimum: report.minimum,
+      actionBase,
+    })).join('');
     const audienceArchive = audienceNavigation || audienceBriefs || perspectives
       ? `<details class="methodology"><summary>Leituras por público</summary>${audienceNavigation}${audienceBriefs}${perspectives}</details>`
       : '';
@@ -281,10 +294,14 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       status: 'Coleta aberta',
       embedded: true,
       stepHrefs: {
+        project: '#projeto',
+        structure: '#estrutura',
         invites: '#operacao',
         terms: '#termo',
       },
-      body: `<div id="operacao" class="admin-metrics">
+      body: `<section id="projeto"><h2>Projeto</h2><p>${escapeHtml(String(auth.project.name))}</p><p>O nome orienta a leitura. Ele não muda as perguntas nem os índices.</p></section>
+      ${renderStructureBoard({ units: projects.structureBoard(projectId), actionBase: `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}` })}
+      <div id="operacao" class="admin-metrics">
         ${renderAdminMetric('Convites emitidos', issued, `em ${batches.length} ${batches.length === 1 ? 'lote' : 'lotes'}`)}
         ${renderAdminMetric('Concluídos', report.completed, report.completed === 1 ? 'jornada concluída' : 'jornadas concluídas')}
         ${renderAdminMetric('Mínimo do relatório', report.minimum, report.completed < report.minimum ? `faltam ${report.minimum - report.completed}` : 'limiar atingido')}
@@ -607,6 +624,20 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     if (!body.unitId || !units.some((unit) => unit.id === body.unitId)) throw new DomainValidationError();
     const batch = invitations.createBatch(String(auth.project.id), body.unitId, Number(body.count ?? 1));
     return reply.type('text/html').send(invitationLinksPage(request.protocol, request.host, batch.tokens, auth.params));
+  });
+
+  app.post('/projects/:publicId/manage/:adminSecret/units', async (request, reply) => {
+    const auth = requireProject(request.params as Params);
+    const body = (request.body ?? {}) as { parentPath?: string; name?: string };
+    projects.addUnit(String(auth.project.id), body.parentPath ?? '', body.name ?? '');
+    return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}#estrutura`);
+  });
+
+  app.post('/projects/:publicId/manage/:adminSecret/units/remove', async (request, reply) => {
+    const auth = requireProject(request.params as Params);
+    const body = (request.body ?? {}) as { path?: string };
+    projects.removeUnit(String(auth.project.id), body.path ?? '');
+    return reply.redirect(`/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}#estrutura`);
   });
 
   app.post('/projects/:publicId/manage/:adminSecret/invitation-batches/:batchId/revoke', async (request, reply) => {

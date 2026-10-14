@@ -97,7 +97,10 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
     const areas = `${finding.areas} ${finding.areas === 1 ? 'área afetada' : 'áreas afetadas'}`;
     const marks = supportMarks(finding.support);
     const dots = Array.from({ length: marks }, () => '<i></i>').join('');
-    return `<article class="report-finding"><div class="report-finding-path"><span>${escapeHtml(finding.path)}</span><span>${finding.order}</span></div><p class="report-finding-fact">${escapeHtml(finding.title)}</p><p>${escapeHtml(finding.reading)}</p><p class="report-finding-meta"><span>${escapeHtml(areas)}</span><span class="report-support"><span aria-hidden="true">${dots}</span>${escapeHtml(finding.support)}</span></p><a href="${escapeHtml(`${urls.capabilityBase}/${finding.nodeId}`)}">Ver ficha →</a></article>`;
+    const href = finding.destination === 'readiness'
+      ? `${urls.reportBase}/readiness`
+      : `${urls.capabilityBase}/${finding.nodeId}`;
+    return `<article class="report-finding"><div class="report-finding-path"><span>${escapeHtml(finding.path)}</span><span>${finding.order}</span></div><p class="report-finding-fact">${escapeHtml(finding.title)}</p><p>${escapeHtml(finding.reading)}</p><p class="report-finding-meta"><span>${escapeHtml(areas)}</span><span class="report-support"><span aria-hidden="true">${dots}</span>${escapeHtml(finding.support)}</span></p><a href="${escapeHtml(href)}">Ver ficha →</a></article>`;
   }).join('');
   const others = laudo.otherFindings.length
     ? `<ul class="report-other">${laudo.otherFindings.map((title) => `<li>${escapeHtml(title)}</li>`).join('')}</ul>`

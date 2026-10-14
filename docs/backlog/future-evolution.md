@@ -36,7 +36,8 @@ permanecem como hipóteses não sequenciadas ou de plataforma e pesquisa.
 - feedback ao respondente sem revelar alternativas supostamente “certas”;
 - persistir contexto do protótipo (motivo, porte, regulação, estágio) e
   aceite formal do termo de uso antes de liberar convites; hipótese, ainda
-  não compromisso — o chrome já mostra o termo informativo;
+  não compromisso — a tela informa o pacto, não grava aceite e não trava
+  os convites;
 - tela de boas-vindas dedicada antes da primeira pergunta, quando o grafo
   publicar um nó de abertura sem sinal; hipótese, ainda não compromisso;
 - fechar a paridade visual das telas do protótipo com o HTML vigente;
