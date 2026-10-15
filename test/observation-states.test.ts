@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { CANNOT_OBSERVE_ID, GRAPH_VERSION, graph, observationOf, type Option } from '../src/modules/catalog/assessment-graph.js';
+import { projectInterviewStep } from '../src/modules/assessments/domain/interview-step.js';
 import { CapabilityAssessment } from '../src/modules/inference/domain/capability-assessment.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 import { edges } from '../src/modules/catalog/assessment-graph.js';
@@ -10,6 +11,8 @@ import { createDatabase } from '../src/shared/database.js';
 const practice = (weight: number): Option => ({
   id: 'practice', label: 'prática', signals: [{ capability: 'fluxo', pattern: 'x', weight, details: ['work-management'], layer: 'practice', constraint: 'none' }],
 });
+
+const observationalExitExemptKinds = new Set(['perspective', 'vignette', 'reading', 'list', 'example']);
 
 test('opções de visibilidade e não aplicabilidade não alimentam o nível', () => {
   const practiced = CapabilityAssessment.from([2, 1]);
@@ -21,8 +24,21 @@ test('opções de visibilidade e não aplicabilidade não alimentam o nível', (
 });
 
 test('cenários e probes oferecem saída de visibilidade que não pontua', () => {
-  const interview = graph.filter((node) => node.id !== 'respondent-context' && !node.id.startsWith('vignette-') && !node.id.startsWith('literacy-'));
-  for (const node of interview) {
+  for (const node of graph) {
+    const kind = projectInterviewStep(node).kind;
+    if (kind === 'list') {
+      assert.ok(node.options.every((option) => option.observation !== 'visibility'), `list ${node.id} must not offer visibility`);
+      assert.ok(node.options.every((option) => option.signals.length === 0), `list ${node.id} must not score`);
+      continue;
+    }
+    if (kind === 'example') {
+      const visibility = node.options.find((option) => option.observation === 'visibility');
+      assert.ok(visibility, `missing visibility exit on ${node.id}`);
+      assert.equal(visibility!.signals.length, 0);
+      assert.ok(node.options.every((option) => option.signals.length === 0), `example ${node.id} must not score`);
+      continue;
+    }
+    if (observationalExitExemptKinds.has(kind)) continue;
     const option = node.options.find((item) => item.id === CANNOT_OBSERVE_ID);
     assert.ok(option, `missing cannot-observe on ${node.id}`);
     assert.equal(option!.observation, 'visibility');

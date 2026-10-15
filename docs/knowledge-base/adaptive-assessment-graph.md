@@ -70,8 +70,10 @@ alterou a decisão antes da integração, chegou depois e gerou retrabalho, foi
 contornado pelo prazo ou deixou um efeito escapar. Esses fatos alcançam a camada de
 resultado de `sdlc-automation`, sem escolher causa, técnica ou ferramenta.
 
-Cenários e probes (exceto a escolha de perspectiva) oferecem “não observo”, sem
-sinal. Nós de contexto sobre credencial, dependência, reconhecimento e assistência
+Cenários e probes oferecem “não observo”, sem sinal. Exceções: perspectiva (só
+adapta o roteiro), vinheta e leitura (estímulos comuns, sem observação pessoal),
+técnica de lista (a contagem entra só no agregado) e texto livre (já oferece
+pular sem pontuar). Nós de contexto sobre credencial, dependência, reconhecimento e assistência
 de modelo roteiam para a prática somente quando o evento ocorre; caso contrário a
 folha permanece não avaliada. Identidade, resiliência de dependência, incentivo, uso
 de modelo, complexidade acidental e leitura de sinal ruidoso alimentam folhas já

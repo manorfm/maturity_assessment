@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Teste de saída de visibilidade alinhado às exceções do grafo
+
+- O teste de observação passou a usar `projectInterviewStep` e isentar
+  perspectiva, vinheta, leitura, lista e texto livre, com asserções
+  específicas para lista e exemplo. Ver
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-10-14 — Testes do grafo alinhados ao encadeamento vigente
 
 - Três testes de `assessment-flow` passaram a afirmar o caminho declarado
