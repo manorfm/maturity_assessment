@@ -88,6 +88,27 @@ empilha.
 | Evento, exemplo, pressão e leitura | Moldura do passo, limite do texto e probe só no grafo | Gráfico semanal de exemplo da leitura; o modelo publica a frase do estímulo |
 | Conclusão | Limiar de 5 e percurso que não reabre | Compromisso da organização de devolver o resumo, que o domínio não registra |
 
+## Hipóteses abertas do recorte do laudo
+
+Descobertas ao fechar o recorte técnico/organizacional do laudo. São hipóteses
+abertas, não compromisso, ordem ou prazo.
+
+1. **Rótulo e índice separados.** O protótipo mostra o rótulo do recorte
+   (15px/600) à esquerda, o índice serifado (~34px) à direita e a faixa numa
+   linha secundária. Exigiria elemento próprio para o índice e um contrato de
+   teste por texto acessível, não por HTML literal. O `quality-reviewer` precisa
+   aceitar esse contrato antes de qualquer código de produção.
+2. **Medidor, cobertura e alvo por recorte.** O protótipo os desenha, mas o
+   domínio não tem fonte para eles. Só entram se a publicação os trouxer; o
+   valor de exemplo continua proibido.
+3. **Lacunas de prova no teste do recorte.** Hoje o teste não é sensível ao
+   limite de 50 pontos da faixa (subir o corte para 60 continua verde) nem ao
+   número de sorteios (`maturitySliceDraws` de 8000 para 500 continua verde).
+   Cabe um teste de fronteira e outro sensível à amostragem.
+4. **Duas lacunas no e2e.** O estado em que os recortes técnico e organizacional
+   ficam sem faixa só tem teste unitário. Nenhum caso da fixture e2e o renderiza.
+   Falta um caso de fixture que o exiba.
+
 ## Fora deste plano
 
 - Copiar índices, faixas e alvos desenhados no protótipo.
