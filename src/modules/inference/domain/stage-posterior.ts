@@ -89,13 +89,9 @@ export type IndexPublication =
     band: [number, number];
     coverage: number;
     target?: number;
-    /** Maturidade técnica (Produto, Engenharia, Operação) só quando o procedimento a publica. */
-    technical?: MaturitySlice;
-    /** Maturidade organizacional (Organização) só quando o procedimento a publica. */
-    organizational?: MaturitySlice;
     /** Posterior 0–4 quando disponível para P(melhora) (05 §9). */
     distribution?: readonly [number, number, number, number, number];
-    /** Posteriores de folha guardadas na fotografia para a comparação. */
+    /** Posteriores de folha guardadas na fotografia para a comparação e para os recortes do laudo (05 §7.4). */
     leaves?: ReadonlyArray<{ id: string; distribution: readonly [number, number, number, number, number] }>;
   };
 

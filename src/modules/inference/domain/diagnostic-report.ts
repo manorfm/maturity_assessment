@@ -245,12 +245,7 @@ function readingFrom(index: IndexPublication | undefined, map: OrganizationalAre
   if (!index?.published) {
     return { gap: index?.published === false ? index.reason : 'Esta leitura ainda não publica índice com faixa, cobertura e alvo. O modelo em execução é m1.' };
   }
-  const slices = index.leaves
-    ? publishMaturitySlices(index.leaves, map)
-    : {
-        ...(index.technical ? { technical: index.technical } : {}),
-        ...(index.organizational ? { organizational: index.organizational } : {}),
-      };
+  const slices = index.leaves ? publishMaturitySlices(index.leaves, map) : {};
   return {
     index: index.index,
     band: index.band,

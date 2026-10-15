@@ -69,7 +69,6 @@ function htmlFor(index: IndexPublication): { html: string; reading: ReturnType<t
 test('laudo com índice parcial não completa a maturidade que o domínio não publicou', () => {
   const organizational = parentOf({ 'leadership-management': peaked(1) });
   const { html, reading } = htmlFor(published({
-    technical: { index: 62, band: [50, 75] },
     leaves: [
       { id: 'leadership-management', distribution: peaked(1) },
       { id: 'not-in-the-map', distribution: peaked(4) },
@@ -133,6 +132,69 @@ test('laudo mostra maturidade técnica e organizacional só com a faixa que o í
   assert.equal(html.includes('Estágio'), false);
 });
 
+type Distribution = [number, number, number, number, number];
+
+/** Esperança exata de min(média, mínimo + 1) / 4 · 100 por enumeração; confere a simulação sem repeti-la. */
+function exactIndex(distributions: Distribution[]): number {
+  let total = 0;
+  const walk = (position: number, probability: number, stages: number[]): void => {
+    if (position === distributions.length) {
+      const average = stages.reduce((sum, stage) => sum + stage, 0) / stages.length;
+      total += probability * (Math.min(average, Math.min(...stages) + 1) / 4) * 100;
+      return;
+    }
+    distributions[position]!.forEach((mass, stage) => {
+      if (mass > 0) walk(position + 1, probability * mass, [...stages, stage]);
+    });
+  };
+  walk(0, 1, []);
+  return total;
+}
+
+test('a folha de Operação entra no recorte técnico com índice e faixa fixos', () => {
+  const product: Distribution = [0, 0, 0, 0.25, 0.75];
+  const engineering: Distribution = [0, 0, 0.75, 0.25, 0];
+  const operations: Distribution = [0, 0.25, 0.75, 0, 0];
+  const { html, reading } = htmlFor(published({
+    leaves: [
+      { id: 'product-direction', distribution: product },
+      { id: 'continuous-integration', distribution: engineering },
+      { id: 'reliability-practice', distribution: operations },
+      { id: 'team-ownership', distribution: peaked(1) },
+    ],
+  }));
+  assert.equal('gap' in reading, false);
+  if ('gap' in reading) return;
+  // 62,5 exato: a simulação de 8 000 sorteios com a semente da raiz arredonda para 63.
+  assert.equal(exactIndex([product, engineering, operations]), 62.5);
+  assert.deepEqual(reading.technical, { index: 63, band: [50, 75] });
+  assert.ok(Math.abs((reading.technical?.index ?? 0) - exactIndex([product, engineering, operations])) <= 1);
+  // Sem a folha de Operação o mesmo recorte seria 75 (faixa 75–100): a folha pesa no índice.
+  assert.equal(exactIndex([product, engineering]), 75);
+  assert.ok(html.includes('Maturidade técnica 63% · faixa 50–75%'));
+  assert.equal(html.includes('Maturidade técnica 75%'), false);
+  assert.equal(html.includes('faixa 75–100%'), false);
+});
+
+test('leitura sem nenhum recorte mostra as duas lacunas juntas e não herda o índice geral', () => {
+  const noLeaves = htmlFor({ published: true, index: 62, band: [50, 75], coverage: 0.8, target: 60 });
+  const unmapped = htmlFor(published({ leaves: [{ id: 'not-in-the-map', distribution: peaked(4) }] }));
+  for (const { html, reading } of [noLeaves, unmapped]) {
+    assert.equal('gap' in reading, false);
+    if (!('gap' in reading)) {
+      assert.equal(reading.technical, undefined);
+      assert.equal(reading.organizational, undefined);
+      assert.equal(reading.index, 62);
+    }
+    assert.ok(html.includes('Esta leitura ainda não publica a maturidade técnica com faixa.'));
+    assert.ok(html.includes('Esta leitura ainda não publica a maturidade organizacional com faixa.'));
+    assert.equal(html.includes('Maturidade técnica 62%'), false);
+    assert.equal(html.includes('Maturidade organizacional 62%'), false);
+    assert.ok(html.includes('faixa 50–75% · cobertura 80%'));
+  }
+  assert.ok(noLeaves.html.includes('alvo 60%'));
+});
+
 test('faixa larga demais não publica o recorte e o alvo entra só quando a publicação o traz', () => {
   const wideLeaves = {
     'product-direction': [0.05, 0.05, 0.05, 0.05, 0.8] as [number, number, number, number, number],
@@ -164,23 +226,6 @@ test('faixa larga demais não publica o recorte e o alvo entra só quando a publ
 
   const withoutTarget = htmlFor(published({ leaves: [{ id: 'leadership-management', distribution: peaked(1) }] }));
   assert.equal(withoutTarget.html.includes('alvo'), false);
-
-  const copied = htmlFor({
-    published: true,
-    index: 62,
-    band: [50, 75],
-    coverage: 0.8,
-    organizational: { index: 25, band: [25, 25] },
-  });
-  assert.equal('gap' in copied.reading, false);
-  if (!('gap' in copied.reading)) {
-    assert.equal(JSON.stringify(copied.reading.organizational), JSON.stringify({ index: 25, band: [25, 25] }));
-    assert.equal(JSON.stringify(copied.reading.technical), undefined);
-    assert.equal(copied.reading.profile, undefined);
-  }
-  assert.ok(copied.html.includes('Maturidade organizacional 25% · faixa 25–25%'));
-  assert.ok(copied.html.includes('Esta leitura ainda não publica a maturidade técnica com faixa.'));
-  assert.equal(copied.html.includes('Maturidade técnica 62%'), false);
 
   const blocked = htmlFor({ published: false, reason: 'Menos de 5 respondentes neste recorte.' });
   assert.equal('gap' in blocked.reading, true);
