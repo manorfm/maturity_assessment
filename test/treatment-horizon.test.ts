@@ -154,15 +154,16 @@ test('coluna de 1–3 meses vazia não afirma dependência', () => {
 });
 
 test('laudo não mostra conduta dependente na seção de 30 dias', () => {
+  const ownerFinding = finding({
+    pattern: 'servico-sem-owner',
+    title: 'Nomear quem responde pelo serviço',
+    detailCapability: 'team-ownership',
+    mechanism: 'organization',
+    containment: 'organizational-structure',
+    decisionAuthority: 'cross-team',
+  });
   const findings = [
-    finding({
-      pattern: 'servico-sem-owner',
-      title: 'Nomear quem responde pelo serviço',
-      detailCapability: 'team-ownership',
-      mechanism: 'organization',
-      containment: 'organizational-structure',
-      decisionAuthority: 'cross-team',
-    }),
+    ownerFinding,
     finding({
       pattern: 'integracao-tardia',
       title: 'Integrar o trabalho no mesmo dia',
@@ -180,7 +181,7 @@ test('laudo não mostra conduta dependente na seção de 30 dias', () => {
       reading: 'O serviço não tem quem responda.',
       nextStepTitle: '',
       nextStepBody: '',
-      finding: findings[0],
+      finding: ownerFinding,
     },
     findings,
     organizationalAreas: OrganizationalAreaProjector.empty(),
