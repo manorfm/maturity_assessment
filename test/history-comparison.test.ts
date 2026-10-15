@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { projectHistoryComparison } from '../src/modules/inference/domain/reading-history.js';
 import { renderHistoryPage } from '../src/modules/projects/diagnostic-report-view.js';
+import { layout } from '../src/shared/html.js';
 import type { IndexReading } from '../src/modules/inference/domain/reading-history.js';
 import type { StageDistribution } from '../src/modules/measurement/domain/measurement-params.js';
 
@@ -168,4 +169,10 @@ test('o chip de alvo só entra quando as duas fotografias guardaram o alvo', () 
   });
   assert.equal(onlyCurrent.targetChip, undefined);
   assert.equal(renderHistoryPage(onlyCurrent).includes('alvo'), false);
+});
+
+test('o chip de alvo ocupa só a largura do texto', () => {
+  const served = layout('Histórico', '');
+  const rule = served.match(/\.history-target\s*\{([^}]+)\}/)?.[1]?.replace(/\s+/g, '') ?? '';
+  assert.equal(rule.includes('align-self:flex-start') || rule.includes('width:fit-content'), true);
 });

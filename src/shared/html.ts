@@ -296,7 +296,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .walk-horizon { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink3); margin:0 0 4px }
     .walk-state { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35 }
     .walk-chip { display:inline-block; font-size:13px; color:var(--ink2); border:1px solid var(--rule); border-radius:999px; padding:4px 10px }
-    .history-target { display:inline-flex; align-items:center; gap:8px; margin:12px 0 0; padding:6px 14px; border:1px solid var(--rule); border-radius:999px; background:var(--surface); color:var(--ink2); font-size:14px; font-weight:700 }
+    .history-target { display:inline-flex; align-self:flex-start; align-items:center; gap:8px; margin:12px 0 0; padding:6px 14px; border:1px solid var(--rule); border-radius:999px; background:var(--surface); color:var(--ink2); font-size:14px; font-weight:700 }
     .history-selector { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0 }
     .history-selector a { border:1px solid var(--rule); border-radius:999px; padding:6px 12px; text-decoration:none; color:var(--ink2); font-size:14px }
     .history-selector a[aria-current="page"] { background:var(--accent-soft); color:var(--accent-ink); font-weight:600 }
