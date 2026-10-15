@@ -130,7 +130,7 @@ export function projectAreaWalkthrough(input: {
         ? next
         : ['Sem próxima fase enquanto não houver capacidade ou conduta publicada neste recorte.'],
       path: projectPath(input.conducts),
-      milestones: projectMilestones(input.pulse, leaves, input.conducts),
+      milestones: projectMilestones(input.pulse, leaves, input.conducts, input.index),
       risks: projectRisks(prioritized, local),
       assumptions: projectAssumptions(prioritized),
     },
@@ -294,15 +294,28 @@ function projectPath(conducts: TreatmentConduct[]): AreaWalkthroughPath {
   };
 }
 
-function projectMilestones(pulse: WalkthroughPulse[], leaves: Set<string>, conducts: TreatmentConduct[]): string[] {
+function projectMilestones(
+  pulse: WalkthroughPulse[],
+  leaves: Set<string>,
+  conducts: TreatmentConduct[],
+  index?: IndexPublication,
+): string[] {
   const localPulse = pulse.filter((item) => leaves.has(item.leafId));
   const fromPulse = localPulse.map((item) => `Pulso: ${item.prompt}`);
-  const fromSuccess = conducts
-    .filter((conduct) => conduct.horizon === '0-30' || conduct.horizon === '1-3')
-    .slice(0, 2)
-    .map((conduct) => `Marco: ${conduct.success}`);
-  const lines = [...fromPulse, ...fromSuccess];
+  const target = publishedMilestoneTarget(index);
+  const fromConduct = conducts.map((conduct) => conductMilestone(conduct, target));
+  const lines = [...fromPulse, ...fromConduct];
   return lines.length ? lines : ['O marco é o critério de sucesso da conduta publicada, não uma data inventada.'];
+}
+
+/** O percentual do marco é o alvo da publicação do índice, quando ele existe. */
+function publishedMilestoneTarget(index?: IndexPublication): string {
+  if (!index?.published || index.target === undefined) return '';
+  return ` · alvo ${index.target}%`;
+}
+
+function conductMilestone(conduct: TreatmentConduct, target: string): string {
+  return `Marco: ${conduct.action} · horizonte ${conduct.horizon} · critério ${conduct.success}${target}`;
 }
 
 function projectRisks(caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>, findings: OutcomeFinding[]): string[] {

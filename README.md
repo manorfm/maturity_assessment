@@ -68,8 +68,9 @@ trabalho, não culpa de uma pessoa.
 **Walkthrough de Operação.** A página abre com o estado da área, ou com
 a lacuna quando o índice ainda não foi publicado. A próxima fase é um
 degrau e não sobe se a fronteira bloqueia. O caminho de 30, 90 e 180
-dias diz o que esperar em cada etapa. O marco é o critério da conduta.
-Riscos e premissas fecham o percurso.
+dias diz o que esperar em cada etapa. O marco repete a ação, o horizonte
+e o critério da conduta. O percentual só aparece quando a publicação do
+índice inclui alvo. Riscos e premissas fecham o percurso.
 
 **Histórico.** Uma leitura só mostra a lacuna de comparação. Com duas,
 a página mostra a direção do índice e de cada capacidade cuja posterior

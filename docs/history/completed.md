@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Walkthrough publica o marco da conduta
+
+- O marco repete a ação, o horizonte e o critério da conduta. O percentual
+  só entra quando a publicação do índice traz alvo. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Laudo deixa a conduta dependente fora dos 30 dias
 
 - A conduta do laudo recebe a dependência do portfólio. A seção de 30

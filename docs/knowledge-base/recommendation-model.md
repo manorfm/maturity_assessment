@@ -128,8 +128,9 @@ caminho 30/90/180, marcos, riscos, premissas) para Produto, Engenharia,
 Operação e Organização. A abertura usa a frase do estado e o chip só
 quando o índice está publicado. A próxima fase sobe no máximo um degrau,
 `min(alvo, estágio atual + 1)`, e fica no estágio atual quando a fronteira
-bloqueia. Cada etapa do caminho diz o que esperar; o marco é o critério
-da conduta, reusando também o item de pulso quando existe.
+bloqueia. Cada etapa do caminho diz o que esperar. O marco repete a
+ação, o horizonte e o critério da conduta; o percentual só entra quando
+a publicação do índice inclui alvo. O pulso continua o item do catálogo.
 A prontidão para práticas avançadas (`advancedPracticeCatalog`) calcula
 `p_k = P(S ≥ mínimo)` por pré-requisito e, quando o pré-requisito declara
 `minimumPhase`, multiplica por `P(F ≥ fase)` (12); `P(pronto) = Π p_k`

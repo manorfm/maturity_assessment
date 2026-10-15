@@ -123,6 +123,108 @@ test('próxima fase pode mirar prática avançada pelo gargalo de prontidão', (
   assert.ok(walk.sections.next.some((line) => /Chaos engineering/i.test(line) && /gargalo|próximo degrau/i.test(line)));
 });
 
+function milestoneSection(html: string): string {
+  const start = html.indexOf('<h2>Marcos</h2>');
+  const end = html.indexOf('<h2>Riscos de regressão</h2>');
+  return html.slice(start, end < 0 ? undefined : end);
+}
+
+test('marco da Operação repete ação, horizonte e critério da conduta', () => {
+  const findings = [
+    ready('conhecimento-concentrado', 'Investigar depende de poucas pessoas', 'incident-management'),
+  ];
+  const capabilities = [
+    { id: 'incident-management', label: 'Incidentes', level: 1, confidence: 0.8, evidence: 4, hasContradiction: false, coverage: 1 },
+  ];
+  const map = OrganizationalAreaProjector.project({ capabilities, findings });
+  const operations = map.systems.find((system) => system.id === 'operations')!;
+  const conducts = [
+    {
+      action: 'Escrever runbook dos incidentes frequentes',
+      owner: 'Time de operação',
+      success: 'runbooks usados no próximo evento',
+      horizon: '0-30' as const,
+      authority: 'team' as const,
+    },
+    {
+      action: 'Plantão com rodízio semanal',
+      owner: 'Gestão',
+      success: 'rodízio cobrindo uma semana inteira',
+      horizon: '1-3' as const,
+      authority: 'management' as const,
+    },
+    {
+      action: 'Comunidade de investigação entre times',
+      owner: 'Operação',
+      success: 'investigação compartilhada sem herói fixo',
+      horizon: '3-12' as const,
+      authority: 'team' as const,
+    },
+  ];
+  const pulse = [{ prompt: 'Quem investigou o último problema?', leafId: 'incident-management' }];
+  const base = {
+    area: operations,
+    findings,
+    capabilities,
+    organizationalAreas: map,
+    outcomeKind: 'correct' as const,
+    conducts,
+    pulse,
+  };
+  const publishedWithoutTarget = {
+    published: true as const,
+    index: 28,
+    band: [20, 40] as [number, number],
+    coverage: 60,
+  };
+  const walk = projectAreaWalkthrough({ ...base, index: publishedWithoutTarget });
+  for (const conduct of conducts) {
+    assert.ok(
+      walk.sections.milestones.some((line) => line.includes(conduct.action) && line.includes(conduct.horizon) && line.includes(conduct.success)),
+      walk.sections.milestones.join(' | '),
+    );
+  }
+  const pulseLine = walk.sections.milestones.find((line) => line.startsWith('Pulso:'));
+  assert.ok(pulseLine?.includes('Quem investigou o último problema?'));
+  assert.equal(pulseLine?.includes('%'), false);
+
+  const milestones = milestoneSection(renderWalkthrough(walk));
+  assert.ok(milestones.includes(conducts[2]!.success));
+  assert.equal(milestones.includes('%'), false);
+  assert.equal(milestones.includes('Orbital'), false);
+  assert.equal(milestones.includes('45%'), false);
+  assert.equal(milestones.includes('13%'), false);
+  assert.equal(milestones.includes('alvo 45%'), false);
+
+  const targeted = projectAreaWalkthrough({
+    ...base,
+    index: { ...publishedWithoutTarget, target: 62 },
+  });
+  const targetedMilestones = milestoneSection(renderWalkthrough(targeted));
+  assert.ok(targetedMilestones.includes(conducts[2]!.success));
+  assert.ok(targetedMilestones.includes('alvo 62%'));
+  assert.equal(targetedMilestones.includes('45%'), false);
+  assert.equal(targetedMilestones.includes('13%'), false);
+  assert.equal(targetedMilestones.includes('Orbital'), false);
+  assert.equal(targetedMilestones.includes('alvo 45%'), false);
+  const targetedPulse = targeted.sections.milestones.find((line) => line.startsWith('Pulso:'));
+  assert.equal(targetedPulse?.includes('%'), false);
+
+  const empty = projectAreaWalkthrough({
+    ...base,
+    conducts: [],
+    pulse: [],
+    index: { ...publishedWithoutTarget, target: 62 },
+  });
+  const emptyMilestones = milestoneSection(renderWalkthrough(empty));
+  assert.ok(empty.sections.milestones.some((line) => line.includes('conduta publicada')));
+  assert.ok(emptyMilestones.includes('conduta publicada'));
+  assert.equal(emptyMilestones.includes('%'), false);
+  assert.equal(emptyMilestones.includes('Orbital'), false);
+  assert.equal(emptyMilestones.includes('45%'), false);
+  assert.equal(emptyMilestones.includes('13%'), false);
+});
+
 test('área sem achados locais declara lacuna sem inventar próxima fase', () => {
   const findings = [ready('war-room-como-gestao', 'O war room virou a gestão', 'leadership-management')];
   const capabilities = [
