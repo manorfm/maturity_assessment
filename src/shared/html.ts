@@ -313,6 +313,13 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .treatment-horizon > p { margin:0 0 12px; color:var(--ink2); font-size:14px }
     .report-conduct h3 { margin:.15rem 0 .4rem; font-size:1.05rem }
     .report-index { font-family:Newsreader, Georgia, serif; font-size:40px; line-height:1; margin:0 }
+    .report-slices { margin-top:20px; display:flex; flex-direction:column; gap:12px }
+    .report-slice-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px }
+    .report-slice { padding:4px 0 4px 14px; border-left:3px solid var(--accent) }
+    .report-slice p { margin:0 }
+    .report-slice-reading { font-size:15px; font-weight:600; line-height:1.4; color:var(--ink) }
+    .report-slice-gap { border-left:3px dashed var(--na) }
+    .report-slice-note { font-size:13px; font-weight:400; font-style:italic; line-height:1.5; color:var(--ink3) }
     .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--rule); color:var(--ink3); font-size:13px; max-width:52rem }
     .report-tabs { display:flex; gap:4px; padding:4px; background:var(--sunk); border-radius:10px; width:max-content; margin:24px 0 }
     .report-tabs a { min-height:44px; padding:0 20px; border-radius:8px; display:inline-flex; align-items:center; text-decoration:none; color:var(--ink2) }

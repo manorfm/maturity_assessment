@@ -133,16 +133,15 @@ function renderReading(reading: DiagnosticLaudo['reading']): string {
   const target = reading.target !== undefined ? ` · alvo ${reading.target}%` : '';
   const overall = `<p class="report-index">${reading.index}%</p><p>faixa ${reading.band[0]}–${reading.band[1]}% · cobertura ${Math.round(reading.coverage * 100)}%${target}</p><p>${escapeHtml(reading.narrative)}</p>`;
   const slices = [
-    '<p class="report-kicker">Técnica × organizacional</p>',
     renderMaturitySlice('Maturidade técnica', reading.technical, 'Esta leitura ainda não publica a maturidade técnica com faixa.'),
     renderMaturitySlice('Maturidade organizacional', reading.organizational, 'Esta leitura ainda não publica a maturidade organizacional com faixa.'),
   ].join('');
-  return `${overall}${slices}`;
+  return `${overall}<section class="report-slices" aria-labelledby="report-slices-title"><p class="report-kicker" id="report-slices-title">Técnica × organizacional</p><ul class="report-slice-list">${slices}</ul></section>`;
 }
 
 function renderMaturitySlice(label: string, slice: { index: number; band: [number, number] } | undefined, gap: string): string {
-  if (!slice) return `<p class="report-gap">${escapeHtml(gap)}</p>`;
-  return `<p>${escapeHtml(label)} ${slice.index}% · faixa ${slice.band[0]}–${slice.band[1]}%</p>`;
+  if (!slice) return `<li class="report-slice report-slice-gap"><p class="report-slice-note">${escapeHtml(gap)}</p></li>`;
+  return `<li class="report-slice"><p class="report-slice-reading">${escapeHtml(label)} ${slice.index}% · faixa ${slice.band[0]}–${slice.band[1]}%</p></li>`;
 }
 
 function supportMarks(support: string): number {

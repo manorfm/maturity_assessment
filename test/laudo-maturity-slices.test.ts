@@ -234,3 +234,40 @@ test('faixa larga demais não publica o recorte e o alvo entra só quando a publ
   assert.equal(blocked.html.includes('Maturidade organizacional'), false);
   assert.equal(blocked.html.includes('62%'), false);
 });
+
+function slicesOf(html: string): string {
+  const group = /<section class="report-slices"[\s\S]*?<\/section>/.exec(html);
+  assert.ok(group, 'o laudo agrupa os recortes numa seção própria');
+  return group[0];
+}
+
+test('os recortes formam um grupo nomeado pelo kicker e a lacuna tem variante própria', () => {
+  const technicalGap = 'Esta leitura ainda não publica a maturidade técnica com faixa.';
+  const organizational = parentOf({ 'leadership-management': peaked(1) });
+  const mixed = slicesOf(htmlFor(published({ leaves: [{ id: 'leadership-management', distribution: peaked(1) }] })).html);
+  assert.ok(mixed.startsWith('<section class="report-slices" aria-labelledby="report-slices-title">'));
+  assert.ok(mixed.includes('<p class="report-kicker" id="report-slices-title">Técnica × organizacional</p>'));
+  assert.equal(mixed.match(/<ul class="report-slice-list">/g)?.length, 1);
+  assert.equal(mixed.match(/<li class="report-slice[ "]/g)?.length, 2);
+  assert.ok(mixed.includes(`<li class="report-slice report-slice-gap"><p class="report-slice-note">${technicalGap}</p></li>`));
+  assert.ok(mixed.includes(`<li class="report-slice"><p class="report-slice-reading">Maturidade organizacional ${organizational.index}% · faixa ${organizational.band[0]}–${organizational.band[1]}%</p></li>`));
+  assert.equal(mixed.match(/report-slice-gap/g)?.length, 1);
+  assert.equal(mixed.includes('<span'), false);
+
+  const none = slicesOf(htmlFor(published({ leaves: [{ id: 'not-in-the-map', distribution: peaked(4) }] })).html);
+  assert.equal(none.match(/<li class="report-slice report-slice-gap">/g)?.length, 2);
+  assert.equal(none.includes('report-slice-reading'), false);
+
+  const both = slicesOf(htmlFor(published({
+    leaves: [
+      { id: 'product-direction', distribution: peaked(3) },
+      { id: 'continuous-integration', distribution: peaked(3) },
+      { id: 'reliability-practice', distribution: peaked(3) },
+      { id: 'team-ownership', distribution: peaked(1) },
+    ],
+  })).html);
+  assert.equal(both.match(/<p class="report-slice-reading">/g)?.length, 2);
+  assert.equal(both.includes('report-slice-gap'), false);
+
+  assert.equal(htmlFor({ published: false, reason: 'Menos de 5 respondentes neste recorte.' }).html.includes('report-slices'), false);
+});
