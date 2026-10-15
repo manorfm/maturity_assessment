@@ -41,7 +41,10 @@ maturidade — está no
 A home do relatório é o laudo: motivo, leitura, até três achados,
 divergência, restrição, conduta, prognóstico e lacunas, no chrome do
 relatório; a operação do piloto fica embutida abaixo, sem segundo
-cabeçalho. Quem autoriza decide depois de ler. Os quatro sistemas — Produto, Engenharia, Operação
+cabeçalho. Maturidade técnica, maturidade organizacional e alvo de
+contexto aparecem só com a faixa que a publicação do índice incluiu;
+recorte ausente continua lacuna. Porte, regulação e estágio não são
+campos vazios. Quem autoriza decide depois de ler. Os quatro sistemas — Produto, Engenharia, Operação
 e Organização — são o mapa, não a faixa de Gestão. O
 cruzamento não é sessão da home: o motor registra as arestas e a
 disciplina mostra o mesmo problema com outro nome. Radar e mapa

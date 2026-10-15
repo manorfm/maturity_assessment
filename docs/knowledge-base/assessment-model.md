@@ -428,8 +428,10 @@ inconclusivo quando qualquer divergência elegível impede uma leitura única do
 Na interface gerencial, o relatório global é um laudo. A first screen
 mostra, nesta ordem: motivo da avaliação (citação de quem pediu, ou a
 lacuna se o projeto não registrou a queixa), leitura geral (frase de
-mecanismo e índice com faixa, cobertura e alvo, ou a lacuna enquanto o
-modelo for `m1`), até três achados em cartão (caminho, frase, áreas,
+mecanismo; índice com faixa e cobertura quando há publicação, ou a lacuna
+enquanto o modelo for `m1`; maturidade técnica, maturidade organizacional
+e alvo de contexto só com a faixa que a publicação incluiu, e lacuna no
+recorte ausente; porte, regulação e estágio não são campos vazios), até três achados em cartão (caminho, frase, áreas,
 sustentação e ficha), divergências com os dois lados sem declarar quem
 está certo, restrição principal (com o efeito de melhorar o resto antes),
 conduta cujo horizonte publicado é 0–30 dias, prognóstico (direção, não promessa), lacunas e exames

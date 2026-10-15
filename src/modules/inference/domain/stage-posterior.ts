@@ -75,6 +75,12 @@ function credibleBand(probabilities: StagePosterior['probabilities']): [number, 
   return [Math.round((lower / 4) * 100), Math.round((upper / 4) * 100)];
 }
 
+/** Recorte da raiz (05 §7.4): índice e faixa do mesmo procedimento do índice geral. */
+export type MaturitySlice = {
+  index: number;
+  band: [number, number];
+};
+
 export type IndexPublication =
   | { published: false; reason: string }
   | {
@@ -83,6 +89,10 @@ export type IndexPublication =
     band: [number, number];
     coverage: number;
     target?: number;
+    /** Maturidade técnica (Produto, Engenharia, Operação) só quando o procedimento a publica. */
+    technical?: MaturitySlice;
+    /** Maturidade organizacional (Organização) só quando o procedimento a publica. */
+    organizational?: MaturitySlice;
     /** Posterior 0–4 quando disponível para P(melhora) (05 §9). */
     distribution?: readonly [number, number, number, number, number];
     /** Posteriores de folha guardadas na fotografia para a comparação. */

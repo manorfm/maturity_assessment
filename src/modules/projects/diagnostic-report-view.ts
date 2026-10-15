@@ -90,9 +90,7 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
   const queue = 'gap' in laudo.constraint
     ? ''
     : '<p>Enquanto essa restrição existir, melhorar outras capacidades antes dela tende a aumentar a fila, não a velocidade.</p>';
-  const reading = 'gap' in laudo.reading
-    ? `<p class="report-gap">${escapeHtml(laudo.reading.gap)}</p>`
-    : `<p class="report-index">${laudo.reading.index}%</p><p>faixa ${laudo.reading.band[0]}–${laudo.reading.band[1]}% · cobertura ${Math.round(laudo.reading.coverage * 100)}%${laudo.reading.target !== undefined ? ` · alvo ${laudo.reading.target}%` : ''}</p><p>${escapeHtml(laudo.reading.narrative)}</p>`;
+  const reading = renderReading(laudo.reading);
   const findings = laudo.findings.map((finding) => {
     const areas = `${finding.areas} ${finding.areas === 1 ? 'área afetada' : 'áreas afetadas'}`;
     const marks = supportMarks(finding.support);
@@ -128,6 +126,23 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
     <section class="report-block"><h2>Prognóstico</h2><p class="report-gap">${escapeHtml(laudo.prognosis.gap)}</p></section>
     <section class="report-block"><h2>O que ainda não sabemos</h2><h3>Lacunas</h3><ul>${unknowns}</ul><h3>Exames complementares sugeridos</h3>${exams}</section>
     ${renderFooter(laudo)}`;
+}
+
+function renderReading(reading: DiagnosticLaudo['reading']): string {
+  if ('gap' in reading) return `<p class="report-gap">${escapeHtml(reading.gap)}</p>`;
+  const target = reading.target !== undefined ? ` · alvo ${reading.target}%` : '';
+  const overall = `<p class="report-index">${reading.index}%</p><p>faixa ${reading.band[0]}–${reading.band[1]}% · cobertura ${Math.round(reading.coverage * 100)}%${target}</p><p>${escapeHtml(reading.narrative)}</p>`;
+  const slices = [
+    '<p class="report-kicker">Técnica × organizacional</p>',
+    renderMaturitySlice('Maturidade técnica', reading.technical, 'Esta leitura ainda não publica a maturidade técnica com faixa.'),
+    renderMaturitySlice('Maturidade organizacional', reading.organizational, 'Esta leitura ainda não publica a maturidade organizacional com faixa.'),
+  ].join('');
+  return `${overall}${slices}`;
+}
+
+function renderMaturitySlice(label: string, slice: { index: number; band: [number, number] } | undefined, gap: string): string {
+  if (!slice) return `<p class="report-gap">${escapeHtml(gap)}</p>`;
+  return `<p>${escapeHtml(label)} ${slice.index}% · faixa ${slice.band[0]}–${slice.band[1]}%</p>`;
 }
 
 function supportMarks(support: string): number {

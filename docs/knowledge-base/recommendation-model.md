@@ -116,7 +116,9 @@ SHELF com 3–5 especialistas ainda não foram aplicadas às famílias vigentes
 afunila o próximo probe para confirmar ou matar hipótese já reforçada. O
 projetor `diagnostic-report-v2` publica o laudo.
 A leitura geral só mostra índice com faixa quando há `IndexPublication`
-publicada. Cada conduta recebe Cynefin e grau de evidência A–D pela base
+publicada. Maturidade técnica, maturidade organizacional e alvo de
+contexto entram só com a faixa que essa publicação incluiu. Recorte
+ausente continua lacuna. Porte, regulação e estágio não são campos vazios. Cada conduta recebe Cynefin e grau de evidência A–D pela base
 da prática (`classifyEvidenceGrade`), não pelo suporte local da amostra.
 Grau A exige fonte forte **e** achado replicado (`foundationIsReplicated`:
 `replicated: true` no fundamento ou corpus Accelerate/DORA no `source`).

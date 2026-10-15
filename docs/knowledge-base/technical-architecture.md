@@ -136,6 +136,10 @@ geral com frase de mecanismo, até três achados em cartão, divergências
 nos dois lados, restrição principal, conduta cujo horizonte publicado é 0–30 dias, prognóstico
 como direção, lacunas e exames em listas separadas, e rodapé de amostra
 e calibração.
+A maturidade técnica, a maturidade organizacional e o alvo de contexto
+aparecem só com a faixa que a publicação do índice incluiu. Recorte
+ausente continua lacuna e não herda o índice geral. Porte, regulação e
+estágio não são campos vazios.
 Onde o modelo `m1` não mede índice, faixa, alvo ou prognóstico, o bloco
 declara a lacuna. Não publica o exemplo numérico do protótipo. A navegação
 lateral segue o protótipo, nesta ordem: laudo, mapa, ficha do primeiro

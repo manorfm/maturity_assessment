@@ -24,6 +24,7 @@ import { AudienceReportProjector, type UnitManagementReport } from './domain/aud
 import { sociotechnicalPatternFor, type SociotechnicalPatternView } from './domain/sociotechnical-pattern.js';
 import { technicalDirectionFor, type TechnicalDirection } from './domain/technical-practice-library.js';
 import type { IndexPublication } from './domain/stage-posterior.js';
+import { maturitySliceDraws, maturitySliceSeed, publishMaturitySlices } from './domain/diagnostic-report.js';
 import { leafPublicationToIndex } from './domain/measurement-adapter.js';
 import { aggregateParentIndex } from '../measurement/domain/index-aggregation.js';
 import { measureLeafAcrossUnits, peakedDistribution } from '../measurement/domain/hierarchical-pooling.js';
@@ -687,24 +688,32 @@ export class InferenceService {
       }
       weights[leaf] = 1;
     }
+    const withSlices = (publication: Extract<IndexPublication, { published: true }>): Extract<IndexPublication, { published: true }> => {
+      const slices = publishMaturitySlices(publication.leaves ?? [], OrganizationalAreaProjector.empty());
+      return {
+        ...publication,
+        ...(slices.technical ? { technical: slices.technical } : {}),
+        ...(slices.organizational ? { organizational: slices.organizational } : {}),
+      };
+    };
     const keys = Object.keys(publishedLeaves);
     if (!keys.length) return fallback ?? { published: false, reason: 'Ainda não há amostra suficiente para publicar índice.' };
     if (keys.length === 1) {
       const only = singleLeafDirect.get(keys[0]!)!;
       if (!only.published) return only;
-      return { ...only, leaves: [{ id: keys[0]!, distribution: publishedLeaves[keys[0]!]! }] };
+      return withSlices({ ...only, leaves: [{ id: keys[0]!, distribution: publishedLeaves[keys[0]!]! }] });
     }
-    const parent = aggregateParentIndex({ leaves: publishedLeaves, weights, draws: 8_000, seed: 1 });
+    const parent = aggregateParentIndex({ leaves: publishedLeaves, weights, draws: maturitySliceDraws, seed: maturitySliceSeed });
     const width = parent.band[1] - parent.band[0];
     if (width > 50) return { published: false, reason: 'Faixa larga demais para publicar índice.' };
-    return {
+    return withSlices({
       published: true,
       index: parent.index,
       band: parent.band,
       coverage: Math.min(1, keys.length / 8),
       distribution: peakedDistribution(parent.index),
       leaves: keys.map((id) => ({ id, distribution: publishedLeaves[id]! })),
-    };
+    });
   }
 
 

@@ -2,7 +2,7 @@ import { findAreaPath, type OrganizationalAreaMap } from './organizational-areas
 import type { OutcomeFinding, ReportOutcome } from './report-outcome.js';
 import { uniqueFindingsByPattern } from './report-outcome.js';
 import { guidanceFor, hasExplicitGuidance } from './solution-guidance.js';
-import type { IndexPublication } from './stage-posterior.js';
+import type { IndexPublication, MaturitySlice } from './stage-posterior.js';
 import {
   advancedPracticeCatalog,
   assessReadiness,
@@ -33,6 +33,7 @@ import { primaryArchetypeFor } from './systemic-archetypes.js';
 import { enablementCatalog } from './learning-frontier.js';
 import { selectPulseItems, type PulseCatalogItem } from '../../catalog/item-catalog.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
+import { aggregateParentIndex } from '../../measurement/domain/index-aggregation.js';
 import type { SophisticationDistribution } from './sophistication-matrix.js';
 import { TransformationPortfolioPlanner, type QualitativeLevel } from './transformation-portfolio.js';
 import { authorityRole } from './finding-narrative.js';
@@ -59,7 +60,7 @@ export type DiagnosticLaudo = {
   context: string;
   complaint: LaudoComplaint;
   mechanism: string | ReportGap;
-  reading: ReportGap | { index: number; band: [number, number]; coverage: number; target?: number; technical?: number; organizational?: number; profile?: string; narrative: string };
+  reading: ReportGap | { index: number; band: [number, number]; coverage: number; target?: number; technical?: MaturitySlice; organizational?: MaturitySlice; profile?: string; narrative: string };
   findings: LaudoFinding[];
   otherFindings: string[];
   divergences: LaudoDivergence[] | ReportGap;
@@ -168,7 +169,7 @@ export function projectDiagnosticLaudo(input: {
       ? { quote, author }
       : { gap: 'O projeto ainda não registrou o motivo da avaliação nas palavras de quem contratou.' },
     mechanism: mechanismText || { gap: 'Ainda não há uma frase de mecanismo publicada.' },
-    reading: readingFrom(input.index),
+    reading: readingFrom(input.index, input.organizationalAreas),
     findings,
     otherFindings: [...otherFromPremature, ...otherFromPublished],
     divergences: divergences.length ? divergences : { gap: 'Ainda não há divergência publicada com faixa percentual. O modelo m1 não separa escala de visibilidade.' },
@@ -196,15 +197,67 @@ function divergenceFrom(gap: { title: string; strongerProfiles?: string[]; const
   };
 }
 
-function readingFrom(index?: IndexPublication): DiagnosticLaudo['reading'] {
+const technicalSystemIds = new Set(['product', 'engineering', 'operations']);
+
+/** Mesma simulação da raiz (05 §7.3): o recorte só entra se a faixa publicar. */
+export const maturitySliceDraws = 8_000;
+export const maturitySliceSeed = 1;
+
+type LeafDistribution = readonly [number, number, number, number, number];
+
+/**
+ * Maturidade técnica (Produto, Engenharia, Operação) e organizacional (Organização).
+ * Grupo sem folha publicada, ou com faixa larga demais, fica de fora (05 §7.4).
+ */
+export function publishMaturitySlices(
+  leaves: ReadonlyArray<{ id: string; distribution: LeafDistribution }>,
+  map: OrganizationalAreaMap,
+): { technical?: MaturitySlice; organizational?: MaturitySlice } {
+  const technical: Record<string, LeafDistribution> = {};
+  const organizational: Record<string, LeafDistribution> = {};
+  for (const leaf of leaves) {
+    const systemId = findAreaPath(map, leaf.id)?.[0]?.id;
+    if (systemId === 'organization') organizational[leaf.id] = leaf.distribution;
+    else if (systemId && technicalSystemIds.has(systemId)) technical[leaf.id] = leaf.distribution;
+  }
+  const technicalSlice = sliceWhenPublished(technical);
+  const organizationalSlice = sliceWhenPublished(organizational);
+  return {
+    ...(technicalSlice ? { technical: technicalSlice } : {}),
+    ...(organizationalSlice ? { organizational: organizationalSlice } : {}),
+  };
+}
+
+function sliceWhenPublished(leaves: Record<string, LeafDistribution>): MaturitySlice | undefined {
+  const ids = Object.keys(leaves);
+  if (!ids.length) return undefined;
+  const parent = aggregateParentIndex({
+    leaves,
+    weights: Object.fromEntries(ids.map((id) => [id, 1])),
+    draws: maturitySliceDraws,
+    seed: maturitySliceSeed,
+  });
+  if (parent.band[1] - parent.band[0] > 50) return undefined;
+  return { index: parent.index, band: parent.band };
+}
+
+function readingFrom(index: IndexPublication | undefined, map: OrganizationalAreaMap): DiagnosticLaudo['reading'] {
   if (!index?.published) {
     return { gap: index?.published === false ? index.reason : 'Esta leitura ainda não publica índice com faixa, cobertura e alvo. O modelo em execução é m1.' };
   }
+  const slices = index.leaves
+    ? publishMaturitySlices(index.leaves, map)
+    : {
+        ...(index.technical ? { technical: index.technical } : {}),
+        ...(index.organizational ? { organizational: index.organizational } : {}),
+      };
   return {
     index: index.index,
     band: index.band,
     coverage: index.coverage,
     ...(index.target !== undefined ? { target: index.target } : {}),
+    ...(slices.technical ? { technical: slices.technical } : {}),
+    ...(slices.organizational ? { organizational: slices.organizational } : {}),
     narrative: 'O índice resume a posterior do estágio. Não é meta de bônus.',
   };
 }

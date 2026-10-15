@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Laudo mostra o recorte só quando o índice o publicou
+
+- Maturidade técnica, maturidade organizacional e alvo de contexto
+  aparecem só com a faixa incluída na publicação. Recorte ausente
+  continua lacuna. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Histórico mostra o alvo só quando as duas leituras o guardaram
 
 - O chip de alvo aparece só quando as duas fotografias incluem alvo.
