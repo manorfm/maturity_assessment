@@ -97,11 +97,14 @@ discreto; pasta
 (05 §9 / 16 §5.1); sem distribuição, o histórico cai na comparação de
 faixas. Cada índice m2 publicado grava uma fotografia imutável em
 `index_readings` (schema 27, com `context_json` de achados, restrição,
-unidades, vínculos e posteriores de folha) quando a amostra (`completed`)
-muda. O histórico compara a leitura mais recente com uma anterior. O
-seletor só aparece quando há mais de uma anterior. Cada folha presente
-nas duas fotografias publica avançou, regrediu, estável ou incerto. Sem
-essa posterior, a página diz a lacuna em vez de inventar a capacidade.
+unidades, vínculos, posteriores de folha e o alvo quando a publicação o
+inclui) quando a amostra (`completed`) muda. O histórico compara a
+leitura mais recente com uma anterior. O seletor só aparece quando há
+mais de uma anterior. O chip de alvo aparece só quando as duas
+fotografias guardaram alvo; sem alvo numa delas, a página compara
+estágio e folha e não mostra percentual. Cada folha presente nas duas
+fotografias publica avançou, regrediu, estável ou incerto. Sem essa
+posterior, a página diz a lacuna em vez de inventar a capacidade.
 Achados encerrados e novos, a restrição e a correspondência de unidades
 saem do mesmo relatório (`evolution-report-v1`). Unidade nova ou extinta
 sem vínculo não publica evolução. A nota de atenção permanece: melhora

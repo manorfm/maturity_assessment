@@ -116,3 +116,56 @@ test('duas leituras com posterior de folha comparam a capacidade e não inventam
   assert.doesNotMatch(html, /aria-label="Leitura anterior"/);
   assert.doesNotMatch(html, /por causa de/);
 });
+
+test('o chip de alvo só entra quando as duas fotografias guardaram o alvo', () => {
+  const stored = (id: string, label: string, stage: 0 | 1 | 2 | 3 | 4, target?: number): IndexReading => reading({
+    id,
+    label,
+    index: stage * 25,
+    band: [10, 30],
+    distribution: peaked(stage),
+    ...(target !== undefined ? { target } : {}),
+    context: {
+      findingPatterns: [],
+      units: [],
+      capabilities: [{ id: 'incident-response', label: 'Resposta a incidente', distribution: peaked(stage) }],
+    },
+  });
+  const both = projectHistoryComparison({
+    readings: [stored('antes', 'Março', 1, 28), stored('agora', 'Outubro', 3, 41)],
+  });
+  assert.equal(both.targetChip, 'alvo 28% · 41%');
+  assert.equal(both.change, 'improved');
+  assert.equal(both.evolution?.nodes.some((node) => node.label === 'Resposta a incidente' && node.state === 'advanced'), true);
+  const bothHtml = renderHistoryPage(both);
+  assert.equal(bothHtml.includes(both.targetChip!), true);
+  assert.equal(bothHtml.includes('45%'), false);
+  assert.equal(bothHtml.includes('13%'), false);
+  assert.equal(bothHtml.includes('Orbital'), false);
+
+  const none = projectHistoryComparison({
+    readings: [stored('antes', 'Março', 1), stored('agora', 'Outubro', 3)],
+  });
+  assert.equal(none.targetChip, undefined);
+  assert.equal(none.change, 'improved');
+  assert.equal(none.evolution?.nodes.some((node) => node.label === 'Resposta a incidente' && node.state === 'advanced'), true);
+  const noneHtml = renderHistoryPage(none);
+  assert.equal(noneHtml.includes('alvo'), false);
+  assert.equal(noneHtml.includes('45%'), false);
+  assert.equal(noneHtml.includes('13%'), false);
+  assert.equal(noneHtml.includes('Orbital'), false);
+  assert.equal(noneHtml.includes('Resposta a incidente'), true);
+
+  const onlyPrevious = projectHistoryComparison({
+    readings: [stored('antes', 'Março', 1, 28), stored('agora', 'Outubro', 3)],
+  });
+  assert.equal(onlyPrevious.targetChip, undefined);
+  assert.equal(onlyPrevious.change, 'improved');
+  assert.equal(renderHistoryPage(onlyPrevious).includes('alvo'), false);
+
+  const onlyCurrent = projectHistoryComparison({
+    readings: [stored('antes', 'Março', 1), stored('agora', 'Outubro', 3, 41)],
+  });
+  assert.equal(onlyCurrent.targetChip, undefined);
+  assert.equal(renderHistoryPage(onlyCurrent).includes('alvo'), false);
+});

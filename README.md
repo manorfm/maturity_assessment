@@ -76,7 +76,10 @@ e o critério da conduta. O percentual só aparece quando a publicação do
 a página mostra a direção do índice e de cada capacidade cuja posterior
 foi guardada. O seletor da leitura anterior só aparece quando há escolha.
 Achados que encerraram e que abriram, e a correspondência de unidades,
-saem das fotografias. Melhora depois da conduta não prova causa.
+saem das fotografias. O chip de alvo aparece só quando as duas leituras
+guardadas incluem alvo. Sem alvo numa delas, a página compara estágio e
+folha e não mostra percentual de alvo. Melhora depois da conduta não
+prova causa.
 
 **Visão por público.** O achado é o mesmo do laudo: caminho e frase do
 fato. A direção lê a decisão, o risco de não agir, o investimento, o que

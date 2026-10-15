@@ -1,5 +1,11 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Histórico mostra o alvo só quando as duas leituras o guardaram
+
+- O chip de alvo aparece só quando as duas fotografias incluem alvo.
+  Sem alvo, a página compara estágio e folha e não mostra percentual. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-10-14 — Walkthrough publica o marco da conduta
 
 - O marco repete a ação, o horizonte e o critério da conduta. O percentual

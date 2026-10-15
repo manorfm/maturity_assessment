@@ -85,3 +85,57 @@ test('duas fotografias de índice publicam P(melhora) no histórico', () => {
 test('sem duas fotografias o projetor declara lacuna', () => {
   assert.match(projectHistoryPage({}).gap ?? '', /duas leituras/);
 });
+
+test('a captura grava o alvo só quando a publicação o inclui', () => {
+  const db = createDatabase(':memory:');
+  const projects = new ProjectService(db);
+  const created = projects.create('Alvo', 'Org/Time');
+  const project = projects.authorize(created.publicId, created.adminSecret)!;
+  const projectId = String(project.id);
+  const inference = new InferenceService(db);
+  const context = {
+    findingPatterns: [] as string[],
+    units: [{ id: 'u1', label: 'Org/Time' }],
+  };
+
+  inference.captureIndexReading(projectId, {
+    label: 'Sem alvo',
+    index: 25,
+    band: [0, 50],
+    distribution: peakedDistribution(25),
+    context,
+    instrumentVersion: 'evidence-anamnesis-pilot-v21',
+    modelVersion: 'm2',
+    completed: 6,
+  });
+  inference.captureIndexReading(projectId, {
+    label: 'Com alvo',
+    index: 75,
+    band: [50, 100],
+    distribution: peakedDistribution(75),
+    target: 62,
+    context,
+    instrumentVersion: 'evidence-anamnesis-pilot-v21',
+    modelVersion: 'm2',
+    completed: 12,
+  });
+
+  const readings = inference.listIndexReadings(projectId);
+  assert.equal(readings.length, 2);
+  assert.equal(Object.hasOwn(readings[0]!, 'target'), false);
+  assert.deepEqual(readings[0]!.context?.units, [{ id: 'u1', label: 'Org/Time' }]);
+  assert.equal(readings[1]!.target, 62);
+  assert.deepEqual(readings[1]!.context?.units, [{ id: 'u1', label: 'Org/Time' }]);
+  assert.equal(Object.hasOwn(readings[1]!.context ?? {}, 'target'), false);
+
+  const rows = db.prepare(`
+    SELECT context_json FROM index_readings WHERE project_id = ? ORDER BY rowid ASC
+  `).all(projectId) as Array<{ context_json: string }>;
+  const without = JSON.parse(rows[0]!.context_json) as { target?: number };
+  const withTarget = JSON.parse(rows[1]!.context_json) as { target?: number };
+  assert.equal(Object.hasOwn(without, 'target'), false);
+  assert.equal(withTarget.target, 62);
+  assert.equal(rows[0]!.context_json.includes('45'), false);
+  assert.equal(rows[1]!.context_json.includes('Orbital'), false);
+  assert.equal((db.prepare('SELECT MAX(version) version FROM schema_migrations').get() as { version: number }).version, 27);
+});

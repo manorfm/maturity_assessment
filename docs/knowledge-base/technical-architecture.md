@@ -153,8 +153,10 @@ premissas fecham o percurso.
 O histórico compara a leitura mais recente com uma anterior. O seletor
 só entra quando há mais de uma anterior. Folha com posterior nas duas
 fotografias publica avançou, regrediu, estável ou incerto; sem essa
-posterior, a página declara a lacuna. A nota de atenção diz que outras
-mudanças no período também explicam o resultado.
+posterior, a página declara a lacuna. O chip de alvo aparece só quando
+as duas leituras guardadas incluem alvo; sem alvo numa delas, a página
+compara estágio e folha e não mostra percentual de alvo. A nota de
+atenção diz que outras mudanças no período também explicam o resultado.
 A visão por público reescreve cada achado publicado, um por vez. A direção
 recebe a decisão, o risco de não agir, o investimento, o que acompanhar e
 quando parar. O time recebe o que muda na semana, como fazer e o que

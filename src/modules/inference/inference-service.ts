@@ -344,6 +344,27 @@ const evolutionSeeds: Record<string, InterventionSeed> = {
 export const evolutionCatalog = defineInterventionCatalog(evolutionSeeds);
 export const causalKnowledgeGraph = CausalKnowledgeGraph.from({ ...interventionCatalog, ...evolutionCatalog });
 
+/** Alvo opcional dentro do snapshot já gravado em context_json. Sem alvo, a chave não entra. */
+function indexReadingContextJson(context: IndexReadingContext | undefined, target: number | undefined): string | null {
+  const storedTarget = typeof target === 'number' && Number.isFinite(target) ? target : undefined;
+  if (!context && storedTarget === undefined) return null;
+  if (storedTarget === undefined) return JSON.stringify(context);
+  if (!context) return JSON.stringify({ target: storedTarget });
+  return JSON.stringify({ ...context, target: storedTarget });
+}
+
+function indexReadingSnapshot(contextJson: string | null): { context?: IndexReadingContext; target?: number } {
+  if (!contextJson) return {};
+  const parsed = JSON.parse(contextJson) as IndexReadingContext & { target?: unknown };
+  const { target: rawTarget, ...rest } = parsed;
+  const target = typeof rawTarget === 'number' && Number.isFinite(rawTarget) ? rawTarget : undefined;
+  const context = Object.keys(rest).length > 0 ? rest as IndexReadingContext : undefined;
+  return {
+    ...(context ? { context } : {}),
+    ...(target !== undefined ? { target } : {}),
+  };
+}
+
 export class InferenceService {
   constructor(private readonly db: Database) {}
 
@@ -354,6 +375,7 @@ export class InferenceService {
     band: [number, number];
     distribution?: StageDistribution;
     context?: IndexReadingContext;
+    target?: number;
     instrumentVersion: string;
     modelVersion: string;
     completed: number;
@@ -379,7 +401,7 @@ export class InferenceService {
       input.band[0],
       input.band[1],
       input.distribution ? JSON.stringify(input.distribution) : null,
-      input.context ? JSON.stringify(input.context) : null,
+      indexReadingContextJson(input.context, input.target),
       input.instrumentVersion,
       input.modelVersion,
       input.completed,
@@ -412,9 +434,7 @@ export class InferenceService {
       ...(row.distribution_json ? {
         distribution: JSON.parse(row.distribution_json) as StageDistribution,
       } : {}),
-      ...(row.context_json ? {
-        context: JSON.parse(row.context_json) as IndexReadingContext,
-      } : {}),
+      ...indexReadingSnapshot(row.context_json),
     })).reverse();
   }
 
@@ -521,6 +541,7 @@ export class InferenceService {
         index: index.index,
         band: index.band,
         ...(index.distribution ? { distribution: index.distribution as StageDistribution } : { distribution: peakedDistribution(index.index) }),
+        ...(index.target !== undefined ? { target: index.target } : {}),
         context: {
           findingPatterns: publishedFindings.map((finding) => finding.pattern),
           ...(outcome.limiterId ? { limiterId: outcome.limiterId, limiterLabel: outcome.limiterLabel } : {}),

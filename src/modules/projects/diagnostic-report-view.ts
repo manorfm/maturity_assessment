@@ -427,8 +427,9 @@ export function renderHistoryPage(input: {
   options?: Array<{ id: string; label: string; selected: boolean }>;
   caution?: string;
   capabilityGap?: string;
+  targetChip?: string;
 } = {}): string {
-  const { change, gap, pImprove, pRegress, pStable, threshold = 0.8, evolution, caution, capabilityGap } = input;
+  const { change, gap, pImprove, pRegress, pStable, threshold = 0.8, evolution, caution, capabilityGap, targetChip } = input;
   const options = input.options ?? [];
   const selector = options.length > 1
     ? `<nav class="history-selector" aria-label="Leitura anterior">${options.map((item) => `<a href="?previous=${escapeHtml(item.id)}"${item.selected ? ' aria-current="page"' : ''}>${escapeHtml(item.label)}</a>`).join('')}</nav>`
@@ -450,7 +451,8 @@ export function renderHistoryPage(input: {
     ? `<aside class="report-block"><h2>Atenção</h2><p>${escapeHtml(caution)}</p></aside>`
     : '';
   const leaves = capabilityGap ? `<p class="report-gap">${escapeHtml(capabilityGap)}</p>` : '';
-  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora), P(piora) ou P(estável) ≥ ${threshold.toFixed(2)}.</p>${selector}</header>${body}${evolution ? renderEvolution(evolution) : ''}${leaves}${note}`;
+  const chip = targetChip ? `<p class="history-target">${escapeHtml(targetChip)}</p>` : '';
+  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora), P(piora) ou P(estável) ≥ ${threshold.toFixed(2)}.</p>${selector}</header>${body}${chip}${evolution ? renderEvolution(evolution) : ''}${leaves}${note}`;
 }
 
 function renderEvolution(report: EvolutionReport): string {

@@ -25,6 +25,8 @@ export type IndexReading = {
   /** Posterior de estágio 0–4; habilita P(melhora) de 05 §9. */
   distribution?: StageDistribution;
   context?: IndexReadingContext;
+  /** Percentual de alvo guardado com a fotografia, só quando a publicação o incluiu. */
+  target?: number;
 };
 
 export type ReadingChange = 'improved' | 'regressed' | 'stable' | 'uncertain';
@@ -85,7 +87,15 @@ export type HistoryPage = HistoryAssessment & {
   options: HistoryOption[];
   caution: string;
   capabilityGap?: string;
+  /** Os dois alvos guardados. Ausente quando uma das fotografias não tem alvo. */
+  targetChip?: string;
 };
+
+/** Chip só com os percentuais já guardados. Uma leitura sem alvo não publica percentual. */
+function storedTargetChip(previous: IndexReading, current: IndexReading): string | undefined {
+  if (previous.target === undefined || current.target === undefined) return undefined;
+  return `alvo ${previous.target}% · ${current.target}%`;
+}
 
 export const historyCaution = 'Melhora depois da conduta não prova que a conduta causou a melhora. Outras mudanças no período também explicam o resultado.';
 
@@ -104,8 +114,10 @@ export function projectHistoryComparison(input: {
     ? candidates.map((item) => ({ id: item.id, label: item.label, selected: item.id === selected.id }))
     : [];
   const history = projectHistoryAssessment({ previous: selected, current });
+  const targetChip = storedTargetChip(selected, current);
+  const publishedChip = targetChip !== undefined ? { targetChip } : {};
   if (!selected.distribution || !current.distribution) {
-    return { ...history, options, caution: historyCaution };
+    return { ...history, options, caution: historyCaution, ...publishedChip };
   }
   const previousCapabilities = new Map((selected.context?.capabilities ?? []).map((item) => [item.id, item]));
   const leafNodes = (current.context?.capabilities ?? []).flatMap((item) => {
@@ -144,6 +156,7 @@ export function projectHistoryComparison(input: {
     evolution,
     options,
     caution: historyCaution,
+    ...publishedChip,
     ...(leavesCompared ? {} : { capabilityGap: 'A posterior de cada capacidade ainda não é guardada entre leituras.' }),
   };
 }
