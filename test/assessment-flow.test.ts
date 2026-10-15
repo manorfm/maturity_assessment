@@ -6,9 +6,23 @@ import { InvitationService } from '../src/modules/assessments/invitation-service
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
 import { AdaptiveJourneyService } from '../src/modules/assessments/adaptive-journey-service.js';
 import { InferenceService, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
-import { edges, graph, GRAPH_VERSION, profileIds, estimateRemainingMinutes, estimateRemainingScenarios } from '../src/modules/catalog/assessment-graph.js';
+import { edges, graph, GRAPH_VERSION, profileIds, estimateRemainingMinutes, estimateRemainingScenarios, typicalSuccessor } from '../src/modules/catalog/assessment-graph.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 import { RespondentWorkContext } from '../src/modules/assessments/domain/respondent-work-context.js';
+
+const MAX_DECLARED_STEPS = 12;
+
+/** Segue o caminho declarado do grafo publicado, sempre pela primeira opção de prática, até alcançar o alvo. */
+function declaredPathTo(catalog: CatalogService, from: string, target: string): string[] | undefined {
+  const path = [from];
+  while (path.at(-1) !== target && path.length < MAX_DECLARED_STEPS) {
+    const node = catalog.getNode(GRAPH_VERSION, path.at(-1)!);
+    const next = node && catalog.nextNode(GRAPH_VERSION, node.id, node.options[0]!.id);
+    if (!next) return undefined;
+    path.push(next);
+  }
+  return path.at(-1) === target ? path : undefined;
+}
 
 test('convite é consumido uma vez e não mantém vínculo com a participação', () => {
   const db = createDatabase(':memory:');
@@ -310,7 +324,11 @@ test('entrega aprofunda sinais maduros e investiga bloqueio após integração f
   const db = createDatabase(':memory:');
   const catalog = new CatalogService(db);
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'ready-to-release', 'small-automated'), 'release-event-consequence');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'integrated-daily'), 'release-control');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'integrated-daily'), 'trunk-based-integration');
+  assert.deepEqual(
+    declaredPathTo(catalog, 'trunk-based-integration', 'release-control'),
+    ['trunk-based-integration', 'quality-break-detection', 'quality-flaky-pressure', 'release-control'],
+  );
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'integration-cadence', 'isolated-days'), 'delivery-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'delivery-cause', 'tooling-gap'), 'release-control');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'release-validation', 'bypass-under-pressure'), 'degradation');
@@ -323,11 +341,15 @@ test('entrega aprofunda sinais maduros e investiga bloqueio após integração f
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'leadership-enablement', 'system-owner', 'design'), 'design-in-change');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'management-safety', 'risk-changes-decision'), 'management-cognitive-load');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'architecture-language', 'shared-language'), 'architecture-wait');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'platform-cloud-sustainability', 'continuous-guardrails'), 'platform-path-to-capability');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'platform-cloud-sustainability', 'continuous-guardrails'), 'cost-optimization-auto');
+  assert.deepEqual(declaredPathTo(catalog, 'cost-optimization-auto', 'platform-path-to-capability'), ['cost-optimization-auto', 'platform-path-to-capability']);
 });
 
 test('estima o restante da entrevista sem contar probes opcionais', () => {
-  assert.equal(estimateRemainingScenarios('platform-path-to-capability', 'platform'), 3);
+  const platformPath = ['platform-path-to-capability', 'platform-path-adoption', 'platform-path-learning', 'platform-as-product-offer'];
+  assert.deepEqual(platformPath.slice(0, -1).map((node) => typicalSuccessor(node, 'platform')), platformPath.slice(1));
+  assert.equal(typicalSuccessor('platform-as-product-offer', 'platform'), undefined);
+  assert.equal(estimateRemainingScenarios('platform-path-to-capability', 'platform'), platformPath.length);
   assert.equal(estimateRemainingScenarios('architecture-wait', 'architecture'), 1);
   assert.ok(estimateRemainingScenarios('leadership-enablement', 'architecture') >= 3);
   assert.ok(estimateRemainingScenarios('respondent-context') >= 30);
@@ -343,7 +365,8 @@ test('incidente aprofunda roteamento diagnóstico e correção sem premiar ferra
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-triage', 'relationship-escalation'), 'incident-routing-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-diagnosis', 'direct-runtime-access'), 'diagnostic-cause');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'diagnostic-cause', 'telemetry-gap'), 'incident-remediation');
-  assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-remediation', 'reproducible-change'), 'recurrence');
+  assert.equal(catalog.nextNode(GRAPH_VERSION, 'incident-remediation', 'reproducible-change'), 'aiops-auto-remediation');
+  assert.deepEqual(declaredPathTo(catalog, 'aiops-auto-remediation', 'recurrence'), ['aiops-auto-remediation', 'chaos-dependency-exercise', 'recurrence']);
   const fullCycle = RespondentWorkContext.fromOption('build-and-operate');
   const architecture = RespondentWorkContext.fromOption('architecture-and-boundaries');
   assert.equal(catalog.nextNode(GRAPH_VERSION, 'recurrence', 'action-list', 'engineering', fullCycle), 'team-pressure');

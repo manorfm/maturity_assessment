@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-14 — Testes do grafo alinhados ao encadeamento vigente
+
+- Três testes de `assessment-flow` passaram a afirmar o caminho declarado
+  (integração → tronco → qualidade → controle de liberação; remediação →
+  AIOps → chaos → recorrência; plataforma até a oferta terminal), cada elo
+  protegido por mutação. Ver
+  [`question-design.md`](../knowledge-base/question-design.md).
+
 ## 2026-10-14 — Laudo mostra o recorte só quando o índice o publicou
 
 - Maturidade técnica, maturidade organizacional e alvo de contexto
