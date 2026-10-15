@@ -26,7 +26,7 @@ function finding(partial: Partial<OutcomeFinding> & Pick<OutcomeFinding, 'patter
     experiment: { action: 'Testar', owner: 'Gestão', metric: 'espera', reviewHorizon: '30 dias', successCriterion: 'espera cai' },
     foundation: { source: 'DORA', principle: 'x', why: 'y' },
     solutionCapability: 'continuous-integration',
-    solutionReadiness: { status: 'local', label: 'Local', evidence: [] },
+    solutionReadiness: { stage: 'local', label: 'Local', explanation: 'Aparece na prática, mas localizada.', evidence: 0 },
     causalAnalysis: { knowledgeVersion: 'causal-catalog-v11', hypothesis: partial.title, alternatives: [], evidenceFor: [], evidenceAgainst: [], missingEvidence: '', limitations: '' },
     ...partial,
   };
@@ -73,7 +73,6 @@ test('restrição principal é a causa de maior escore; portfólio a coloca prim
       confidence: 0.9,
       priorityFactors: { intensity: 0.9, reach: 0.9 },
       severity: 'high',
-      constraint: 'policy',
     }),
     finding({
       pattern: 'dependencia-de-heroi',

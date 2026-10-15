@@ -66,7 +66,7 @@ test('heroísmo e ritual em peso −2 recebem appropriation e sobem para âncora
 test('grafo vigente deriva peso −1 em ritual/heroísmo para o motor m1', async () => {
   const { graph } = await import('../src/modules/catalog/assessment-graph.js');
   const ritualOrHero = graph.flatMap((node) => node.options.flatMap((option) =>
-    option.evidence.filter((link) => link.appropriation === 'ritual' || link.appropriation === 'heroism')
+    (option.evidence ?? []).filter((link) => link.appropriation === 'ritual' || link.appropriation === 'heroism')
       .map((link) => ({ nodeId: node.id, optionId: option.id, signal: option.signals.find((item) => item.pattern === link.pattern) }))));
   assert.ok(ritualOrHero.length >= 3);
   for (const item of ritualOrHero) {
@@ -77,7 +77,7 @@ test('grafo vigente deriva peso −1 em ritual/heroísmo para o motor m1', async
 test('grafo vigente aplica âncora 1 em opções de ritual e heroísmo marcadas', async () => {
   const { graph } = await import('../src/modules/catalog/assessment-graph.js');
   const ritualOrHero = graph.flatMap((node) => node.options.flatMap((option) =>
-    option.evidence.filter((link) => link.appropriation === 'ritual' || link.appropriation === 'heroism')
+    (option.evidence ?? []).filter((link) => link.appropriation === 'ritual' || link.appropriation === 'heroism')
       .map((link) => ({ nodeId: node.id, optionId: option.id, link }))));
   assert.ok(ritualOrHero.length >= 3, 'deve haver opções marcadas como ritual ou heroísmo');
   for (const item of ritualOrHero) {

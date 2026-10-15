@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { capabilityIds, CapabilityTaxonomy } from '../src/modules/inference/domain/capability-taxonomy.js';
 import { disciplineBrief, disciplineScope, presentationDisciplineIds } from '../src/modules/inference/domain/discipline-brief.js';
-import { problemsForNode, projectProblemTree, systemicEffectFor } from '../src/modules/inference/domain/hierarchical-problems.js';
+import { problemsForNode, projectProblemTree, systemicEffectFor, type HierarchicalBranch } from '../src/modules/inference/domain/hierarchical-problems.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { crossingsForCapability, projectDisciplineCrossings } from '../src/modules/inference/domain/discipline-crossing.js';
-import { renderAreaRecorte, renderDisciplineDetail, renderFindingIndex, renderFirstScreen, renderOrganizationalAreaMap } from '../src/modules/projects/project-routes.js';
+import { renderAreaRecorte, renderDisciplineDetail, renderFindingIndex, renderOrganizationalAreaMap } from '../src/modules/projects/project-routes.js';
 import type { OutcomeFinding } from '../src/modules/inference/domain/report-outcome.js';
 
 const SLOGAN = /chegam com autonomia|preservam sustentabilidade|recebem proteção|recebem feedback técnico|necessárias entram|pode ser investigado|altera decisões|são contidos e geram|pode ser reproduzida|orienta operação e investimento|muda o caminho da entrega|preservam escopo|Recuperação de infraestrutura é/;
@@ -22,7 +22,9 @@ const finding = (pattern: string, title: string, detailCapability: string, inter
   prescription: { status: 'ready', reason: 'Mecanismo discriminado.' },
 });
 
-const leafNode = (id: string, label: string, children: ReturnType<typeof leafNode>[] = []) => ({
+type RadarNode = Parameters<typeof renderDisciplineDetail>[0]['selected'];
+
+const leafNode = (id: string, label: string, children: RadarNode[] = []): RadarNode => ({
   id, label, level: 1, confidence: .8, evidence: 4, hasContradiction: false, assessed: true, coverage: 1, children,
 });
 
@@ -275,11 +277,11 @@ test('cobertura sem finding, no recorte com problemas, não se lê como discipli
   assert.doesNotMatch(html, /Segurança[\s\S]{0,80}cobertura sem problema publicado/);
 });
 
-function flattenIds(nodes: { id: string; children: { id: string; children: never[] }[] }[]): string[] {
+function flattenIds(nodes: HierarchicalBranch[]): string[] {
   return nodes.flatMap((node) => [node.id, ...flattenIds(node.children)]);
 }
 
-function findId(nodes: { id: string; children: { id: string; children: never[] }[] }[], id: string): { id: string; status?: string } | undefined {
+function findId(nodes: HierarchicalBranch[], id: string): HierarchicalBranch | undefined {
   for (const node of nodes) {
     if (node.id === id) return node;
     const nested = findId(node.children, id);
@@ -288,6 +290,6 @@ function findId(nodes: { id: string; children: { id: string; children: never[] }
   return undefined;
 }
 
-function countProblems(nodes: { problems: unknown[]; children: { problems: unknown[]; children: never[] }[] }[]): number {
+function countProblems(nodes: HierarchicalBranch[]): number {
   return nodes.reduce((total, node) => total + node.problems.length + countProblems(node.children), 0);
 }

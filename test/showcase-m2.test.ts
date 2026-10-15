@@ -23,7 +23,11 @@ test('m2 nos sintéticos do showcase publica índice e preserva a narrativa por 
     assert.ok(entry.report.index?.published, `índice m2 deveria publicar: ${JSON.stringify(entry.report.index)}`);
   }
 
-  const indexes = [low, medium, high].map((entry) => (entry.report.index!.published ? entry.report.index.index : -1));
+  const indexes = [low, medium, high].map((entry) => {
+    const index = entry.report.index;
+    assert.ok(index, 'índice m2 deveria existir');
+    return index.published ? index.index : -1;
+  });
   assert.ok(indexes[0]! < indexes[1]!, `opaco (${indexes[0]}) abaixo de reativo (${indexes[1]})`);
   assert.ok(indexes[1]! < indexes[2]!, `reativo (${indexes[1]}) abaixo de adaptativo (${indexes[2]})`);
   assert.ok(indexes[0]! <= 40, `opaco deveria ficar baixo, got ${indexes[0]}`);

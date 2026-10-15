@@ -54,6 +54,7 @@ test('cada trilha 12 §3 no grafo declara F baixo e alto sem alterar âncora', (
     graph.flatMap((node) => node.options).find((option) => option.id === 'continuous')!,
   ).evidence.find((link) => link.pattern === 'integracao-frequente');
   assert.ok(sample);
-  const withF = { ...sample!, sophistication: declaredSophistication(sample!.pattern) };
+  const sophistication = declaredSophistication(sample!.pattern);
+  const withF = { ...sample!, ...(sophistication !== undefined ? { sophistication } : {}) };
   assert.equal(evidenceToAnchoredResponse(sample!).anchor, evidenceToAnchoredResponse(withF).anchor);
 });

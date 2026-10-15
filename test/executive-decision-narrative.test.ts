@@ -65,13 +65,14 @@ test('cartão do portfólio fecha decisão sem metáfora de aprender nem culpar 
 });
 
 test('panorama lista todos os padrões e separa investigar de decidir', () => {
+  const { experiment: _decided, ...withoutExperiment } = portfolioFinding;
   const findings = [
     portfolioFinding,
-    { ...portfolioFinding, pattern: 'empacotamento-manual', title: 'Preparação concentra espera', detailCapability: 'release-feedback', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' }, experiment: undefined },
-    { ...portfolioFinding, pattern: 'provisionamento-em-fila', title: 'Ambientes chegam por fila', detailCapability: 'platform-autonomy', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' }, experiment: undefined },
-    { ...portfolioFinding, pattern: 'mudanca-emergencial-reconciliada', title: 'Emergência exige trabalho posterior', detailCapability: 'reproducible-infrastructure', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' }, experiment: undefined },
-    { ...portfolioFinding, pattern: 'espera-normalizada', title: 'Espera some atrás de novo início', detailCapability: 'work-management', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' }, experiment: undefined },
-    { ...portfolioFinding, pattern: 'retrospectiva-sem-fechamento', title: 'A lista de melhoria não fecha', detailCapability: 'organizational-learning', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' }, experiment: undefined },
+    { ...withoutExperiment, pattern: 'empacotamento-manual', title: 'Preparação concentra espera', detailCapability: 'release-feedback', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' } },
+    { ...withoutExperiment, pattern: 'provisionamento-em-fila', title: 'Ambientes chegam por fila', detailCapability: 'platform-autonomy', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' } },
+    { ...withoutExperiment, pattern: 'mudanca-emergencial-reconciliada', title: 'Emergência exige trabalho posterior', detailCapability: 'reproducible-infrastructure', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' } },
+    { ...withoutExperiment, pattern: 'espera-normalizada', title: 'Espera some atrás de novo início', detailCapability: 'work-management', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' } },
+    { ...withoutExperiment, pattern: 'retrospectiva-sem-fechamento', title: 'A lista de melhoria não fecha', detailCapability: 'organizational-learning', prescription: { status: 'investigate' as const, reason: 'Ainda falta o mecanismo.' } },
   ];
   const html = renderFindingPortfolio(findings, portfolioFinding.pattern);
   assert.match(html, /5 padrões ainda pedem discriminação/i);

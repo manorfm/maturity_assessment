@@ -61,13 +61,12 @@ test('sem cobertura das folhas essenciais declara lacuna; não inventa índice',
   const practice = advancedPracticeCatalog.find((item) => item.id === 'chaos-engineering')!;
   assert.equal(resolvePrerequisitePosteriors(practice, {}), undefined);
   const page = projectReadinessPage(
-    advancedPracticeCatalog.map((item) => ({
-      id: item.id,
-      label: item.label,
-      prerequisites: resolvePrerequisitePosteriors(item, {
+    advancedPracticeCatalog.map((item) => {
+      const prerequisites = resolvePrerequisitePosteriors(item, {
         'observability-practice': { level: 1, coverage: 1 },
-      }) ?? undefined,
-    })),
+      });
+      return { id: item.id, label: item.label, ...(prerequisites ? { prerequisites } : {}) };
+    }),
   );
   assert.ok(page.every((item) => item.gap || item.assessment));
   assert.ok(page.find((item) => item.id === 'chaos-engineering')?.gap);
