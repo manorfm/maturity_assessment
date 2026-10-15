@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-10-15 — Testes do grafo isentam eventos de prática avançada do tratamento
+
+- O teste de metadados deixou de pinar 355 sinais e dispensa tratamento
+  só para padrões em `advancedPracticeEventPhases`. Um teste novo garante
+  que esses sinais medem a fase, não geram achado e não entram no modelo
+  diagnóstico. Ver
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-10-14 — Teste de saída de visibilidade alinhado às exceções do grafo
 
 - O teste de observação passou a usar `projectInterviewStep` e isentar

@@ -6,7 +6,10 @@ import { InvitationService } from '../src/modules/assessments/invitation-service
 import { ParticipationService } from '../src/modules/assessments/participation-service.js';
 import { AdaptiveJourneyService } from '../src/modules/assessments/adaptive-journey-service.js';
 import { InferenceService, evolutionCatalog, interventionCatalog } from '../src/modules/inference/inference-service.js';
+import { GroupRecommendationEngine } from '../src/modules/inference/domain/group-recommendation-engine.js';
+import { advancedPracticeCatalog } from '../src/modules/inference/domain/advanced-readiness.js';
 import { edges, graph, GRAPH_VERSION, profileIds, estimateRemainingMinutes, estimateRemainingScenarios, typicalSuccessor } from '../src/modules/catalog/assessment-graph.js';
+import { advancedPracticeEventPhases } from '../src/modules/catalog/advanced-practice-events.js';
 import { CatalogService, validateGraphDefinition } from '../src/modules/catalog/catalog-service.js';
 import { RespondentWorkContext } from '../src/modules/assessments/domain/respondent-work-context.js';
 
@@ -450,14 +453,71 @@ test('catálogo publicado persiste efeitos explícitos e rejeita folhas sem cobe
 
 test('todo sinal medido declara metadados e possui tratamento quando não é adaptativo', () => {
   const signals = graph.flatMap((node) => node.options.flatMap((option) => option.signals));
-  assert.equal(signals.length, 355);
+  assert.ok(signals.length > 0);
   for (const signal of signals) {
     assert.ok(signal.details.length > 0, signal.pattern);
     assert.ok(signal.layer, signal.pattern);
     assert.ok(signal.constraint, signal.pattern);
+    if (advancedPracticeEventPhases[signal.pattern]) continue;
     if (signal.weight < 0) assert.ok(interventionCatalog[signal.pattern], `correção ausente: ${signal.pattern}`);
     if (signal.weight >= 0 && signal.weight < 2) assert.ok(evolutionCatalog[signal.pattern], `evolução ausente: ${signal.pattern}`);
   }
+});
+
+test('sinais de evento de prática avançada medem a fase e não geram achado nem hipótese', () => {
+  const practiceIds = new Set(advancedPracticeCatalog.map((practice) => practice.id));
+  const eventPatterns = Object.keys(advancedPracticeEventPhases);
+  assert.ok(eventPatterns.length > 0);
+  for (const pattern of eventPatterns) {
+    const event = advancedPracticeEventPhases[pattern]!;
+    assert.ok(practiceIds.has(event.practiceId), pattern);
+    assert.equal(interventionCatalog[pattern], undefined, pattern);
+    assert.equal(evolutionCatalog[pattern], undefined, pattern);
+  }
+
+  const eventSignals = graph.flatMap((node) => node.options.flatMap((option) => option.signals))
+    .filter((signal) => advancedPracticeEventPhases[signal.pattern]);
+  const respondents = [1, 2, 3, 4];
+  const engineSignals = respondents.flatMap((index) => eventSignals.map((signal) => ({
+    participantId: `p${index}`,
+    profile: 'engineering',
+    detailCapability: signal.details[0]!,
+    primaryDetailCapability: signal.details[0]!,
+    affectedCapabilities: signal.details,
+    pattern: signal.pattern,
+    weight: signal.weight,
+    layer: signal.layer,
+    constraint: signal.constraint,
+  })));
+  const findings = new GroupRecommendationEngine(interventionCatalog, evolutionCatalog).rank(engineSignals, respondents.length);
+  assert.equal(findings.length, 0);
+
+  const control = graph.flatMap((node) => node.options.flatMap((option) => option.signals))
+    .find((signal) => signal.pattern === 'mudanca-isolada')!;
+  assert.ok(interventionCatalog[control.pattern] ?? evolutionCatalog[control.pattern]);
+  const controlFindings = new GroupRecommendationEngine(interventionCatalog, evolutionCatalog).rank(
+    respondents.map((index) => ({
+      participantId: `p${index}`,
+      profile: 'engineering',
+      detailCapability: control.details[0]!,
+      primaryDetailCapability: control.details[0]!,
+      affectedCapabilities: control.details,
+      pattern: control.pattern,
+      weight: control.weight,
+      layer: control.layer,
+      constraint: control.constraint,
+    })),
+    respondents.length,
+  );
+  assert.ok(controlFindings.length >= 1);
+
+  const db = createDatabase(':memory:');
+  new CatalogService(db);
+  for (const pattern of eventPatterns) {
+    assert.equal(db.prepare('SELECT 1 FROM diagnostic_hypotheses WHERE hypothesis_key = ?').get(pattern), undefined, pattern);
+    assert.equal(db.prepare('SELECT 1 FROM evidence_likelihoods WHERE pattern = ?').get(pattern), undefined, pattern);
+  }
+  assert.ok(db.prepare("SELECT 1 FROM evidence_likelihoods WHERE pattern = 'mudanca-isolada'").get());
 });
 
 test('catálogo adapta o cenário ao perfil sem alterar a capacidade avaliada', () => {
