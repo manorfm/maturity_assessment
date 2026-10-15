@@ -4,7 +4,7 @@ import {
   advancedPracticePhaseObservations,
   type ResponseObservation,
 } from '../../measurement/domain/response-observation.js';
-import type { SophisticationDistribution } from './sophistication-matrix.js';
+import type { SophisticationDistribution, SophisticationPhase } from './sophistication-matrix.js';
 import { expectedSophistication, modeSophistication, observeSophistication } from './sophistication-matrix.js';
 
 export type ReadinessBand = 'ready' | 'near' | 'not-ready';
@@ -202,7 +202,6 @@ function firstEssentialGap(
 }
 
 export function projectPracticeReadiness(
-  practice: AdvancedPractice,
   prerequisites: PrerequisitePosterior[],
   technicalPhase?: number,
 ): ReadinessAssessment {
@@ -268,9 +267,9 @@ function phaseDistributionFor(evidence?: LeafEvidence): SophisticationDistributi
 export function advancedPracticePhasesById(
   observations: ResponseObservation[],
   unitId?: string,
-): Map<string, { distribution: SophisticationDistribution; phase: number; expected: number }> {
+): Map<string, { distribution: SophisticationDistribution; phase: SophisticationPhase; expected: number }> {
   const phasesByPractice = advancedPracticePhaseObservations(observations, unitId);
-  const result = new Map<string, { distribution: SophisticationDistribution; phase: number; expected: number }>();
+  const result = new Map<string, { distribution: SophisticationDistribution; phase: SophisticationPhase; expected: number }>();
   for (const [practiceId, phases] of phasesByPractice) {
     const distribution = observeSophistication(phases);
     result.set(practiceId, {

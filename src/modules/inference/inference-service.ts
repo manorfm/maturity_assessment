@@ -475,7 +475,7 @@ export class InferenceService {
   /** Fase técnica por prática avançada a partir das perguntas de evento (22). */
   projectAdvancedPracticePhases(projectId: string, unitId?: string): Map<string, {
     distribution: SophisticationDistribution;
-    phase: number;
+    phase: SophisticationPhase;
     expected: number;
   }> {
     return advancedPracticePhasesById(this.completedObservations(projectId), unitId);

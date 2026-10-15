@@ -99,8 +99,8 @@ export function cohenKappaForCode(pairs: readonly CodingPair[], code: string): n
 
 export function reviewReasonFor(input: {
   entryId: string;
-  proposedCode?: string;
-  proposedConfidence?: number;
+  proposedCode?: string | undefined;
+  proposedConfidence?: number | undefined;
   codeFrequency?: number;
 }): ReviewReason {
   if (input.proposedConfidence === undefined || input.proposedConfidence < 0.6) return 'low_confidence';

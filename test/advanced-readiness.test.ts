@@ -40,7 +40,7 @@ test('chaos engineering resolve p_k pelas folhas e publica P(pronto)', () => {
     'integration-data': { distribution: peaked(2) },
   });
   assert.ok(posteriors);
-  const readiness = projectPracticeReadiness(practice, posteriors!);
+  const readiness = projectPracticeReadiness(posteriors!);
   assert.equal(readiness.band, 'not-ready');
   assert.ok(readiness.probability < 0.25);
   assert.ok(readiness.bottleneckId);
@@ -54,7 +54,7 @@ test('chaos engineering resolve p_k pelas folhas e publica P(pronto)', () => {
     'reproducible-infrastructure': { distribution: peaked(3) },
     'integration-data': { distribution: peaked(2) },
   });
-  assert.equal(projectPracticeReadiness(practice, strong!).band, 'ready');
+  assert.equal(projectPracticeReadiness(strong!).band, 'ready');
 });
 
 test('sem cobertura das folhas essenciais declara lacuna; não inventa índice', () => {
@@ -85,16 +85,13 @@ test('nível pontual vira distribuição provisória para p_k', () => {
     'platform-autonomy': { level: 2, coverage: 1 },
   });
   assert.ok(posteriors);
-  const assessment = projectPracticeReadiness(practice, posteriors!);
+  const assessment = projectPracticeReadiness(posteriors!);
   assert.ok(assessment.probability > 0);
   assert.equal(typeof assessment.band, 'string');
 });
 
 test('checklist de prontidão lista p_k de cada pré-requisito', () => {
-  const assessment = projectPracticeReadiness(
-    advancedPracticeCatalog.find((item) => item.id === 'chaos-engineering')!,
-    chaosEngineeringExample(),
-  );
+  const assessment = projectPracticeReadiness(chaosEngineeringExample());
   assert.ok(assessment.checklist.length >= 5);
   assert.ok(assessment.checklist.every((item) => typeof item.probability === 'number' && item.label));
   const html = renderReadinessPage([{

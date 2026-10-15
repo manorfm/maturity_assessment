@@ -6,9 +6,9 @@ export type ListTechniquePublication = {
   published: boolean;
   controlN: number;
   treatmentN: number;
-  prevalence?: number;
-  interval?: [number, number];
-  reason?: string;
+  prevalence?: number | undefined;
+  interval?: [number, number] | undefined;
+  reason?: string | undefined;
 };
 
 /**

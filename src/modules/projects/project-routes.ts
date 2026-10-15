@@ -562,7 +562,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const plan = projectTreatmentPlan(report.findings);
     const fByLeaf = inference.projectSophisticationByLeaf(String(auth.project.id));
     const practicePhases = inference.projectAdvancedPracticePhases(String(auth.project.id));
-    const leaves = Object.fromEntries(report.capabilities.map((capability) => {
+    const leaves: Record<string, LeafEvidence> = Object.fromEntries(report.capabilities.map((capability) => {
       const phase = fByLeaf.get(capability.id);
       return [capability.id, {
         level: capability.level,

@@ -66,7 +66,7 @@ export function bundlesByLeafAndUnit(
         continue;
       }
       const leafKey = link.capability;
-      const participants = byLeafParticipant.get(leafKey) ?? new Map();
+      const participants = byLeafParticipant.get(leafKey) ?? new Map<string, ParticipantDraft>();
       const current = participants.get(observation.participantId) ?? {
         perspective: observation.profile,
         unitId: observation.unitId,

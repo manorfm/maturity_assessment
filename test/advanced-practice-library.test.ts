@@ -64,7 +64,7 @@ test('p_k combina estágio e fase F quando o pré-requisito exige os dois', () =
     'organizational-learning': { distribution: peaked(3) },
   });
   assert.ok(withF);
-  assert.equal(projectPracticeReadiness(practice, withF!).band, 'ready');
+  assert.equal(projectPracticeReadiness(withF!).band, 'ready');
 
   const lowF = resolvePrerequisitePosteriors(practice, {
     'observability-practice': { distribution: peaked(3), phaseDistribution: phasePeaked(1) },
@@ -73,7 +73,7 @@ test('p_k combina estágio e fase F quando o pré-requisito exige os dois', () =
     'release-feedback': { distribution: peaked(3), phaseDistribution: phasePeaked(3) },
     'organizational-learning': { distribution: peaked(3) },
   });
-  const readiness = projectPracticeReadiness(practice, lowF!);
+  const readiness = projectPracticeReadiness(lowF!);
   assert.ok(readiness.probability < 0.6);
   assert.equal(readiness.bottleneckId, 'observability');
 });

@@ -63,7 +63,7 @@ const systemicByCapability: Record<string, string> = {
   'team-ownership': systemicBySystem['ownership-boundaries']!,
 };
 
-export function systemicEffectFor(finding: HierarchicalFinding): string {
+export function systemicEffectFor(finding: Pick<HierarchicalFinding, 'pattern' | 'title' | 'detailCapability'>): string {
   const system = diagnosticSystemFor(finding.pattern);
   const fromSystem = system ? systemicBySystem[system.id] : undefined;
   const fromCapability = systemicByCapability[finding.detailCapability];

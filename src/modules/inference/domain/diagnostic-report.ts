@@ -122,7 +122,7 @@ export function projectDiagnosticLaudo(input: {
       path: areaPath(input.organizationalAreas, finding.detailCapability),
       support: supportLabel(finding.confidence),
       nodeId: finding.detailCapability,
-      destination: 'capability',
+      destination: 'capability' as const,
       areas: Math.max(1, finding.affectedCapabilities?.length ?? 1),
     })),
   ];

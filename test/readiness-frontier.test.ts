@@ -30,8 +30,7 @@ const leaves = {
 };
 
 test('status da prontidão segue o pré-requisito mais fraco e a média não decide', () => {
-  const practice = advancedPracticeCatalog.find((item) => item.id === 'chaos-engineering')!;
-  const assessment = projectPracticeReadiness(practice, [
+  const assessment = projectPracticeReadiness([
     { id: 'a', label: 'Observabilidade', essential: true, probability: 0.9 },
     { id: 'b', label: 'Estado estável', essential: true, probability: 0.2 },
   ]);
@@ -97,7 +96,7 @@ test('próximo passo da prontidão não é um degrau bloqueado na fronteira', ()
 
 test('cartão de prontidão lista p_k, o gargalo e omite o passo bloqueado', () => {
   const practice = advancedPracticeCatalog.find((item) => item.id === 'chaos-engineering')!;
-  const assessment = projectPracticeReadiness(practice, [
+  const assessment = projectPracticeReadiness([
     { id: 'obs', label: 'Observabilidade dos serviços críticos', essential: true, probability: 0.12 },
     { id: 'slo', label: 'Estado estável definido', essential: true, probability: 0.8 },
   ]);

@@ -16,6 +16,11 @@ export type DisciplineCrossing = {
   generates: string;
 };
 
+/** Campos que o cruzamento lê; achados publicados no relatório podem omitir padrão e disciplina. */
+export type CrossingSource = Pick<OutcomeFinding, 'title'> & Partial<Pick<OutcomeFinding, 'pattern' | 'detailCapability'>>;
+
+type LocatedFinding = Pick<OutcomeFinding, 'title' | 'pattern' | 'detailCapability'>;
+
 type Feed = { from: string; to: string; because: string };
 
 const FEEDS: Feed[] = [
@@ -43,8 +48,8 @@ export function patternFeeds(): Array<{ from: string; to: string }> {
   return FEEDS.map((feed) => ({ from: feed.from, to: feed.to }));
 }
 
-export function publishedIntersections(findings: OutcomeFinding[]): DisciplineCrossing[] {
-  const unique = uniqueByPattern(findings).filter((item) => item.detailCapability);
+export function publishedIntersections(findings: CrossingSource[]): DisciplineCrossing[] {
+  const unique = uniqueLocatedByPattern(findings);
   if (unique.length < 2) return [];
   const byPattern = new Map(unique.map((item) => [item.pattern, item]));
   const best = new Map<string, DisciplineCrossing>();
@@ -72,8 +77,8 @@ export function publishedIntersections(findings: OutcomeFinding[]): DisciplineCr
   return [...best.values()];
 }
 
-export function projectDisciplineCrossings(findings: OutcomeFinding[], primaryPattern?: string): DisciplineCrossing[] {
-  const unique = uniqueByPattern(findings).filter((item) => item.detailCapability);
+export function projectDisciplineCrossings(findings: CrossingSource[], primaryPattern?: string): DisciplineCrossing[] {
+  const unique = uniqueLocatedByPattern(findings);
   if (unique.length < 2) return [];
   const scored: Array<DisciplineCrossing & { strength: number }> = [
     ...publishedIntersections(findings).map((edge) => ({ ...edge, strength: 3 })),
@@ -95,7 +100,7 @@ export function projectDisciplineCrossings(findings: OutcomeFinding[], primaryPa
   return pickEdges(scored, primaryPattern).slice(0, 3);
 }
 
-export function crossingsForCapability(findings: OutcomeFinding[], capabilityIds: string[], primaryPattern?: string): DisciplineCrossing[] {
+export function crossingsForCapability(findings: CrossingSource[], capabilityIds: string[], primaryPattern?: string): DisciplineCrossing[] {
   const ids = new Set(capabilityIds.filter(Boolean));
   if (!ids.size) return [];
   return projectDisciplineCrossings(findings, primaryPattern).filter((edge) => ids.has(edge.fromId) || ids.has(edge.toId));
@@ -132,15 +137,15 @@ function pickEdges(scored: Array<DisciplineCrossing & { strength: number }>, pri
   return picked;
 }
 
-function orderToward(left: OutcomeFinding, right: OutcomeFinding, primaryPattern?: string): [OutcomeFinding, OutcomeFinding] {
+function orderToward(left: LocatedFinding, right: LocatedFinding, primaryPattern?: string): [LocatedFinding, LocatedFinding] {
   if (primaryPattern && right.pattern === primaryPattern) return [left, right];
   if (primaryPattern && left.pattern === primaryPattern) return [right, left];
   return [left, right];
 }
 
-function crossingOf(from: OutcomeFinding, to: OutcomeFinding, because: string): DisciplineCrossing {
-  const fromId = from.detailCapability ?? '';
-  const toId = to.detailCapability ?? '';
+function crossingOf(from: LocatedFinding, to: LocatedFinding, because: string): DisciplineCrossing {
+  const fromId = from.detailCapability;
+  const toId = to.detailCapability;
   return {
     fromId,
     fromLabel: CapabilityTaxonomy.labelFor(fromId),
@@ -159,11 +164,16 @@ function firstSentence(text: string): string {
   return (match?.[0] ?? text).trim();
 }
 
-function uniqueByPattern(findings: OutcomeFinding[]): OutcomeFinding[] {
+/** Primeiro achado de cada padrão; só os que apontam uma disciplina entram no cruzamento. */
+function uniqueLocatedByPattern(findings: CrossingSource[]): LocatedFinding[] {
   const seen = new Set<string>();
-  return findings.filter((finding) => {
-    if (!finding.pattern || seen.has(finding.pattern)) return false;
+  const located: LocatedFinding[] = [];
+  for (const finding of findings) {
+    if (!finding.pattern || seen.has(finding.pattern)) continue;
     seen.add(finding.pattern);
-    return true;
-  });
+    if (finding.detailCapability) {
+      located.push({ title: finding.title, pattern: finding.pattern, detailCapability: finding.detailCapability });
+    }
+  }
+  return located;
 }

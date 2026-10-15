@@ -24,7 +24,7 @@ const situationByBand: Record<MaturityBand, string> = {
   high: 'Madura',
 };
 
-export function collectShowcaseSimulations(db: Database, options: { manifest?: ShowcaseManifestEntry[] } = {}): ShowcaseSimulation[] {
+export function collectShowcaseSimulations(db: Database, options: { manifest?: ShowcaseManifestEntry[] | undefined } = {}): ShowcaseSimulation[] {
   const rows = db.prepare('SELECT id, public_id, name FROM projects ORDER BY created_at').all() as Array<{ id: string; public_id: string; name: string }>;
   const inference = new InferenceService(db);
   return POC_SYNTHETIC_ORGS.flatMap((spec) => {
