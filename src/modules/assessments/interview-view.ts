@@ -122,20 +122,56 @@ export function renderInterviewQuestion(input: {
   });
 }
 
-/** Desenha só com índices de semana e valores publicados — sem inventar coordenadas. */
+const READING_BAND_FILLS = ['var(--accent)', 'var(--ochre)', 'var(--ink3)', 'var(--na)'] as const;
+const READING_BAND_CLASSES = [
+  'reading-stimulus-band reading-stimulus-band-accent',
+  'reading-stimulus-band reading-stimulus-band-ochre',
+  'reading-stimulus-band reading-stimulus-band-ink3',
+  'reading-stimulus-band reading-stimulus-band-na',
+] as const;
+
+/** Área empilhada só com índices de semana e valores publicados — sem pontos do protótipo. */
 function renderReadingStimulusFigure(figure: ReadingFigure): string {
   const weekCount = figure.stages.reduce((max, stage) => Math.max(max, figure.values[stage]?.length ?? 0), 0);
-  const peak = Math.max(0, ...figure.stages.flatMap((stage) => [...(figure.values[stage] ?? [])]));
+  const stackBottomFirst = [...figure.stages].reverse();
+  const weekTotals = Array.from({ length: weekCount }, (_, week) =>
+    stackBottomFirst.reduce((sum, stage) => sum + Number(figure.values[stage]?.[week] ?? 0), 0));
+  const peak = Math.max(0, ...weekTotals);
   const height = peak > 0 ? peak : weekCount;
-  const lines = figure.stages.map((stage) => {
-    const series = figure.values[stage] ?? [];
-    const points = series.map((value, index) => `${index + 1},${value}`).join(' ');
-    return `<polyline fill="none" stroke="currentColor" points="${escapeHtml(points)}"></polyline>`;
+  const bands = stackBottomFirst.map((stage, bandIndex) => {
+    const fill = READING_BAND_FILLS[Math.min(bandIndex, READING_BAND_FILLS.length - 1)]!;
+    const bandClass = READING_BAND_CLASSES[Math.min(bandIndex, READING_BAND_CLASSES.length - 1)]!;
+    const upper: string[] = [];
+    const lower: string[] = [];
+    for (let week = 0; week < weekCount; week += 1) {
+      const below = stackBottomFirst
+        .slice(0, bandIndex)
+        .reduce((sum, name) => sum + Number(figure.values[name]?.[week] ?? 0), 0);
+      const value = Number(figure.values[stage]?.[week] ?? 0);
+      const x = week + 1;
+      upper.push(`${x},${below + value}`);
+      lower.push(`${x},${below}`);
+    }
+    const points = [...upper, ...lower.reverse()].join(' ');
+    return `<polygon class="${bandClass}" fill="${fill}" points="${escapeHtml(points)}"></polygon>`;
   }).join('');
-  const legend = figure.stages.map((stage) => `<li>${escapeHtml(stage)}</li>`).join('');
-  return `<figure class="reading-stimulus" role="img" aria-label="${escapeHtml(figure.ariaLabel)}">
-    <svg viewBox="0 0 ${weekCount} ${height}" aria-hidden="true">${lines}</svg>
-    <ul class="reading-stimulus-legend">${legend}</ul>
+  const axis = weekCount > 0
+    ? `<line class="reading-stimulus-axis" x1="1" y1="${height}" x2="${weekCount}" y2="${height}"></line>`
+    : '';
+  const legend = figure.stages.map((stage, index) => {
+    const fromTop = figure.stages.length - 1 - index;
+    const swatchClass = ['reading-stimulus-swatch-accent', 'reading-stimulus-swatch-ochre', 'reading-stimulus-swatch-ink3', 'reading-stimulus-swatch-na'][
+      Math.min(fromTop, 3)
+    ];
+    return `<li class="${swatchClass}"><span class="reading-stimulus-swatch" aria-hidden="true"></span>${escapeHtml(stage)}</li>`;
+  }).join('');
+  const caption = weekCount > 0
+    ? `Itens de trabalho acumulados por estado, ${weekCount} semanas`
+    : 'Itens de trabalho acumulados por estado';
+  return `<figure class="reading-stimulus">
+    <figcaption>${escapeHtml(caption)}</figcaption>
+    <svg viewBox="0 0 ${weekCount} ${height}" role="img" aria-label="${escapeHtml(figure.ariaLabel)}"><g transform="translate(0 ${height}) scale(1 -1)">${bands}</g>${axis}</svg>
+    <ul class="reading-stimulus-legend" aria-hidden="true">${legend}</ul>
   </figure>`;
 }
 

@@ -244,6 +244,19 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .interview-notice { margin:0; padding:14px 16px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-soft); color:var(--ink); font-size:15px }
     .interview-hint { margin:0; color:var(--ink3); font-size:13px; max-width:60ch }
     .interview-why { margin:0; color:var(--ink2); font-size:15px; max-width:46ch }
+    .reading-stimulus { margin:0; display:flex; flex-direction:column; gap:8px; padding:14px 0 6px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule) }
+    .reading-stimulus figcaption { margin:0; font-size:13px; color:var(--ink2) }
+    .reading-stimulus svg { display:block; width:100%; max-width:100%; height:auto; min-height:12rem; overflow:visible }
+    .reading-stimulus-band { opacity:.9; stroke:var(--surface); stroke-width:1; vector-effect:non-scaling-stroke }
+    .reading-stimulus-band-na { opacity:.55 }
+    .reading-stimulus-axis { stroke:var(--ink3); stroke-width:1; vector-effect:non-scaling-stroke }
+    .reading-stimulus-legend { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px 14px; font-size:12px; color:var(--ink2) }
+    .reading-stimulus-legend li { display:inline-flex; align-items:center; gap:6px }
+    .reading-stimulus-swatch { flex:none; width:10px; height:10px; border-radius:2px; background:currentColor }
+    .reading-stimulus-swatch-accent { color:var(--accent) }
+    .reading-stimulus-swatch-ochre { color:var(--ochre) }
+    .reading-stimulus-swatch-ink3 { color:var(--ink3) }
+    .reading-stimulus-swatch-na { color:var(--na) }
     .interview-free-text { display:flex; flex-direction:column; gap:8px }
     .interview-free-text textarea { width:100%; box-sizing:border-box; min-height:120px; padding:12px 14px; border:1.5px solid var(--rule); border-radius:10px; background:var(--surface); color:var(--ink); font:inherit }
     @media(max-width:700px){ .interview-main{flex-direction:column;padding:24px 16px 40px} .interview-actions button{max-width:none;width:100%;margin:0} .interview-choices-secondary{grid-template-columns:1fr} }

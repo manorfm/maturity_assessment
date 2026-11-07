@@ -48,6 +48,7 @@ test('cada passo do grafo diz por que está ali e o aprofundamento só existe no
 
   const reading = projectInterviewStep({ id: 'literacy-wip-chart', type: 'scenario' });
   assert.equal(reading.kind, 'reading');
+  assert.equal(reading.kicker, 'Leitura de quadro');
   assert.match(reading.why, /estímulo/);
 });
 

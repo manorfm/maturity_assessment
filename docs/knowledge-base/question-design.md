@@ -79,9 +79,11 @@ referente de grupo e técnica de lista entram no tronco do grafo v21 (após
 - **Leitura** — estímulo sintético com vereditos correta / incorreta /
   letramento ausente; o item publica `series` (etapas nomeadas e valores
   semanais coerentes com a frase do estímulo). A entrevista desenha a
-  figura a partir dessa série; `aggregateLiteracy` publica no relatório
-  só taxas (separada da prática), acima do limiar — a série do estímulo
-  não entra no laudo nem na publicação agregada.
+  figura como área empilhada a partir dessa série (fills por etapa,
+  figcaption, kicker «Leitura de quadro»; `aria-label` no SVG = stimulus);
+  `aggregateLiteracy` publica no relatório só taxas (separada da prática),
+  acima do limiar — a série do estímulo não entra no laudo nem na
+  publicação agregada.
 - **Referente de grupo** — `group-error-climate` pergunta sobre o time (não o
   indivíduo) e alimenta `leadership-management` com âncoras de clima.
 - **Técnica de lista** — `list-metric-manipulation-{control,treatment}` estima

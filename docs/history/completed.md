@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-07 — Quadro de leitura como área empilhada legível
+
+- A figura da pergunta de leitura passou de polylines monocromáticas
+  para área empilhada com fills por etapa, figcaption, bordas `--rule`,
+  kicker «Leitura de quadro» e `role="img"` no SVG. Ver
+  [`question-design.md`](../knowledge-base/question-design.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-07 — Figura do estímulo de leitura na entrevista
 
 - O item de letramento publica `series` (etapas e oito semanas coerentes

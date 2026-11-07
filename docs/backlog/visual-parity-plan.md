@@ -85,7 +85,7 @@ empilha.
 | --- | --- | --- |
 | Boas-vindas | Anonimato, tempo estimado, pausa e começar | Link “Como tratamos os dados”, que o domínio ainda não publica |
 | Contexto e perspectiva | Telas do grafo, sem pontuação | Senioridade e tempo de empresa. Continuam fora do domínio |
-| Evento, exemplo, pressão e leitura | Moldura do passo, limite do texto, probe só no grafo; leitura desenha a série semanal do item | — |
+| Evento, exemplo, pressão e leitura | Moldura do passo, limite do texto, probe só no grafo; leitura desenha área empilhada da série semanal do item | — |
 | Conclusão | Limiar de 5 e percurso que não reabre | Compromisso da organização de devolver o resumo, que o domínio não registra |
 
 ## Hipóteses abertas do recorte do laudo

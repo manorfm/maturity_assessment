@@ -36,7 +36,7 @@ const kickerByKind: Record<InterviewStepKind, string> = {
   event: 'O que aconteceu',
   example: 'Opcional',
   pressure: 'Aprofundamento',
-  reading: 'Leitura',
+  reading: 'Leitura de quadro',
   vignette: 'Situação',
   list: 'Contagem',
 };

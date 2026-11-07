@@ -230,8 +230,9 @@ gravado só para o link de retomada não repetir a abertura. Cada nó
 publicado traz o motivo do passo: perspectiva e contexto não pontuam,
 evento separa prática de “não observo”, exemplo limita o texto e pede
 para não citar nomes, aprofundamento só quando o nó é probe, leitura
-trata o quadro como estímulo e renderiza a figura a partir de
-`LiteracyItem.series` (aria-label = frase do estímulo). A série não
+  trata o quadro como estímulo e renderiza área empilhada a partir de
+`LiteracyItem.series` (fills `--accent`/`--ochre`/`--ink3`/`--na`,
+figcaption e bordas `--rule`; `aria-label` no SVG = stimulus). A série não
 aparece no laudo nem em `LiteracyPublication`. A conclusão lembra o
 limiar de 5 e que o percurso não reabre. No celular a entrevista empilha.
 Senioridade e tempo de empresa continuam fora do domínio. A
