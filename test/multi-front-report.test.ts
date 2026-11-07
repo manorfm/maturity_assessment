@@ -43,14 +43,14 @@ const versionPath = ready('caminho-de-versao-sem-origem', 'A versão promovida n
   priority: .85, mechanism: 'process', containment: 'team', decisionAuthority: 'team',
 });
 const postmortem = ready('postmortem-sem-efeito', 'A análise não fecha solução', 'organizational-learning', {
-  priority: .8, mechanism: 'process',
+  priority: .9, mechanism: 'process',
 });
 const sustentacao = ready('causa-fronteira-sustentacao', 'Sustentação transfere contexto sem autoridade', 'organizational-learning', {
   mechanism: 'organization', containment: 'organizational-structure',
 });
 
 test('inventário publica uma ação por frente com crença relativa provisória', () => {
-  const inventory = projectFrontInventory([warRoom, versionPath, postmortem]);
+  const inventory = projectFrontInventory([warRoom, versionPath, { ...postmortem, priority: .8 }]);
   assert.equal(inventory.version, 'front-inventory-v1');
   assert.deepEqual(inventory.rows.map((row) => row.label), ['Produto', 'Engenharia', 'Operação', 'Gestão']);
   const product = inventory.rows.find((row) => row.front === 'product')!;

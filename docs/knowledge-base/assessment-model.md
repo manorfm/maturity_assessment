@@ -467,7 +467,9 @@ Mecanismo detalhado, classe de solução (prática, política, desenho organizac
 capacidade de plataforma ou família de ferramenta — nunca uma marca que pontue) e
 fundamentos ficam visíveis em cada caminho do índice. O limitador
 é o elo útil no piso da classificação, com finding amarrado; folhas de cloud
-aninhadas não ocupam o palco só porque a nota foi baixa. A página da folha usa o
+aninhadas não ocupam o palco só porque a nota foi baixa. Entre folhas com
+conduta ready elegíveis, o limitador prefere a de maior prioridade do finding
+amarrado; nível mais baixo e confiança só desempatam depois. A página da folha usa o
 estágio daquela folha, não o rótulo global. Divergência de perspectiva no home é
 o finding (as lentes não veem o mesmo sistema); contradição só discrimina quando
 está no limitador escolhido. A mesma suspensão vale no detalhamento: uma hipótese

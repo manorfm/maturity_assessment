@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-07 — Limitador ready prefere maior prioridade do finding
+
+- A fixture de contradição no mesmo evento sobe a prioridade do postmortem
+  acima do caminho de versão, e a base registra que, entre folhas ready
+  elegíveis, a prioridade do finding amarrado manda antes de nível e
+  confiança. Ver
+  [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-10-15 — Testes do grafo isentam eventos de prática avançada do tratamento
 
 - O teste de metadados deixou de pinar 355 sinais e dispensa tratamento
