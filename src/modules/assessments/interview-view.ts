@@ -52,6 +52,12 @@ export function renderInterviewWelcome(welcome: {
   return renderInterviewShell({ title: welcome.title, body, progressLabel: welcome.duration, progressPercent: 0 });
 }
 
+export type ReadingFigure = {
+  ariaLabel: string;
+  stages: readonly string[];
+  values: Readonly<Record<string, readonly number[]>>;
+};
+
 export function renderInterviewQuestion(input: {
   brand?: string;
   kicker: string;
@@ -65,6 +71,8 @@ export function renderInterviewQuestion(input: {
   options: InterviewOption[];
   nodeId?: string;
   freeText?: { maxChars: number; submitOptionId: string };
+  kind?: string;
+  readingFigure?: ReadingFigure;
 }): string {
   const practice = input.options.filter((option) => (option.observation ?? 'practice') === 'practice');
   const observational = input.options.filter((option) => (option.observation ?? 'practice') !== 'practice');
@@ -81,11 +89,15 @@ export function renderInterviewQuestion(input: {
     ? `<div class="interview-or" aria-hidden="true"><span></span><span>ou</span><span></span></div>
       <div class="interview-choices interview-choices-secondary">${observational.map(renderChoice).join('')}</div>`
     : '';
+  const stimulusFigure = input.kind === 'reading' && input.readingFigure
+    ? renderReadingStimulusFigure(input.readingFigure)
+    : '';
   const body = `<div class="interview-copy">
     <p class="interview-kicker">${escapeHtml(input.kicker)}</p>
     <h1>${escapeHtml(input.title)}</h1>
     <p class="interview-lead">${escapeHtml(input.lead)}</p>
     <p class="interview-why">${escapeHtml(input.why)}</p>
+    ${stimulusFigure}
   </div>
   <div class="interview-panel">
     <form class="interview-form" method="post" action="${escapeHtml(input.action)}"${input.nodeId ? ` data-assessment-node="${escapeHtml(input.nodeId)}"` : ''}>
@@ -108,6 +120,23 @@ export function renderInterviewQuestion(input: {
     progressLabel: input.progressLabel,
     progressPercent: input.progressPercent,
   });
+}
+
+/** Desenha só com índices de semana e valores publicados — sem inventar coordenadas. */
+function renderReadingStimulusFigure(figure: ReadingFigure): string {
+  const weekCount = figure.stages.reduce((max, stage) => Math.max(max, figure.values[stage]?.length ?? 0), 0);
+  const peak = Math.max(0, ...figure.stages.flatMap((stage) => [...(figure.values[stage] ?? [])]));
+  const height = peak > 0 ? peak : weekCount;
+  const lines = figure.stages.map((stage) => {
+    const series = figure.values[stage] ?? [];
+    const points = series.map((value, index) => `${index + 1},${value}`).join(' ');
+    return `<polyline fill="none" stroke="currentColor" points="${escapeHtml(points)}"></polyline>`;
+  }).join('');
+  const legend = figure.stages.map((stage) => `<li>${escapeHtml(stage)}</li>`).join('');
+  return `<figure class="reading-stimulus" role="img" aria-label="${escapeHtml(figure.ariaLabel)}">
+    <svg viewBox="0 0 ${weekCount} ${height}" aria-hidden="true">${lines}</svg>
+    <ul class="reading-stimulus-legend">${legend}</ul>
+  </figure>`;
 }
 
 export function renderInterviewComplete(): string {

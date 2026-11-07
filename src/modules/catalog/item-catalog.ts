@@ -37,6 +37,15 @@ export const literacyWipChart: LiteracyItem = {
   prompt: 'Se este fosse o quadro do seu time, o que você faria primeiro na segunda-feira?',
   stimulus: 'A faixa "aguardando teste" cresce todas as semanas e a faixa "concluído" quase não sobe.',
   leafId: 'work-management',
+  series: {
+    stages: ['A fazer', 'Em desenv.', 'Aguardando teste', 'Concluído'],
+    values: {
+      'A fazer': [6, 5, 5, 4, 4, 3, 3, 2],
+      'Em desenv.': [3, 3, 4, 4, 3, 3, 2, 2],
+      'Aguardando teste': [1, 2, 3, 4, 5, 6, 7, 8],
+      Concluído: [2, 2, 2, 2, 2, 2, 2, 3],
+    },
+  },
   readings: [
     { id: 'stop-starting', label: 'Parar de começar itens novos e ajudar a esvaziar "aguardando teste".', verdict: 'correct' },
     { id: 'faster-dev', label: 'Pedir para o time trabalhar mais rápido em desenvolvimento.', verdict: 'incorrect' },

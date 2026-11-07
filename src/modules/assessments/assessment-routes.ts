@@ -15,6 +15,7 @@ import {
   renderInterviewWelcome,
 } from './interview-view.js';
 import { projectInterviewStep, projectInterviewWelcome } from './domain/interview-step.js';
+import { itemCatalog } from '../catalog/item-catalog.js';
 
 export function registerAssessmentRoutes(app: FastifyInstance, db: Database): void {
   const invitations = new InvitationService(db);
@@ -66,6 +67,16 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
     const step = projectInterviewStep(node);
     const options = orderAssessmentOptions(node.options, resumeToken, node.id);
     const isFreeText = step.kind === 'example';
+    const literacyItem = step.kind === 'reading'
+      ? itemCatalog.find((item) => item.kind === 'literacy' && item.id === node.id)
+      : undefined;
+    const readingFigure = literacyItem?.kind === 'literacy' && literacyItem.series
+      ? {
+        ariaLabel: literacyItem.stimulus,
+        stages: literacyItem.series.stages,
+        values: literacyItem.series.values,
+      }
+      : undefined;
     return reply.type('text/html').send(layout(node.title, renderInterviewQuestion({
       kicker: step.kicker,
       title: node.title,
@@ -78,6 +89,7 @@ export function registerAssessmentRoutes(app: FastifyInstance, db: Database): vo
       options: isFreeText ? options.filter((option) => option.id === 'skip' || (option.observation ?? 'practice') !== 'practice') : options,
       nodeId: node.id,
       ...(isFreeText && step.maxChars ? { freeText: { maxChars: step.maxChars, submitOptionId: 'submitted' } } : {}),
+      ...(step.kind === 'reading' ? { kind: 'reading' as const, ...(readingFigure ? { readingFigure } : {}) } : {}),
     })));
   });
 

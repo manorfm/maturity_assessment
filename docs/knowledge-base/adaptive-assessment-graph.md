@@ -16,8 +16,10 @@ estimada e a pausa pelo mesmo link. Só depois entra o nó de entrada do
 grafo. Cada passo publicado diz por que está ali. Perspectiva e contexto
 de trabalho não pontuam. O evento separa a prática de “não observo”. O
 exemplo pede uma frase sem nomes, no limite do item. O aprofundamento
-só aparece quando o nó é probe. A leitura avisa que o quadro é estímulo.
-A conclusão lembra o limiar de cinco pessoas e que o percurso não reabre.
+só aparece quando o nó é probe. A leitura avisa que o quadro é estímulo e
+desenha a série semanal publicada no item (etapas e valores do catálogo),
+não o quadro da unidade. A conclusão lembra o limiar de cinco pessoas e
+que o percurso não reabre.
 
 A versão pré-piloto vigente `evidence-anamnesis-pilot-v20` começa por uma escolha neutra de
 perspectiva e por um contexto de trabalho sobre responsabilidades exercidas,

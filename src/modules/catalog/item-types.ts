@@ -35,10 +35,18 @@ export type VignetteItem = CatalogItemBase & {
   options: Array<{ id: string; label: string; anchor: AnchorStage }>;
 };
 
+/** Série semanal sintética do estímulo de leitura (não é medida da unidade). */
+export type LiteracyStimulusSeries = {
+  stages: readonly string[];
+  values: Readonly<Record<string, readonly number[]>>;
+};
+
 export type LiteracyItem = CatalogItemBase & {
   kind: 'literacy';
   stimulus: string;
   readings: ItemReading[];
+  /** Etapas e valores semanais alinhados à frase do estímulo. */
+  series?: LiteracyStimulusSeries;
 };
 
 export type GroupReferentItem = CatalogItemBase & {

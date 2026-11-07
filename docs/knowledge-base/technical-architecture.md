@@ -230,9 +230,11 @@ gravado só para o link de retomada não repetir a abertura. Cada nó
 publicado traz o motivo do passo: perspectiva e contexto não pontuam,
 evento separa prática de “não observo”, exemplo limita o texto e pede
 para não citar nomes, aprofundamento só quando o nó é probe, leitura
-trata o quadro como estímulo. A conclusão lembra o limiar de 5 e que o
-percurso não reabre. No celular a entrevista empilha. Senioridade e
-tempo de empresa continuam fora do domínio. A
+trata o quadro como estímulo e renderiza a figura a partir de
+`LiteracyItem.series` (aria-label = frase do estímulo). A série não
+aparece no laudo nem em `LiteracyPublication`. A conclusão lembra o
+limiar de 5 e que o percurso não reabre. No celular a entrevista empilha.
+Senioridade e tempo de empresa continuam fora do domínio. A
 administração SSR (`admin-view`) usa os quatro passos — projeto, estrutura,
 convites e termo — na criação e no painel. A estrutura lista unidades em
 cartão, com adicionar abaixo e remover enquanto não há convite nem

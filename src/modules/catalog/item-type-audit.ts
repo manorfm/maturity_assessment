@@ -1,4 +1,4 @@
-import type { CatalogItem } from './item-types.js';
+import type { CatalogItem, LiteracyItem, LiteracyStimulusSeries } from './item-types.js';
 
 export type ItemTypeIssue = {
   severity: 'error' | 'warning';
@@ -39,6 +39,7 @@ function auditItem(item: CatalogItem): ItemTypeIssue[] {
     if (!verdicts.has('correct')) issues.push(issue('error', 'literacy-missing-correct', item.id, 'O item de leitura precisa de uma opção correta.'));
     if (!verdicts.has('literacy-absent')) issues.push(issue('error', 'literacy-missing-absent', item.id, 'O item de leitura precisa permitir declarar que não sabe interpretar.'));
     if (!item.stimulus.trim()) issues.push(issue('error', 'literacy-missing-stimulus', item.id, 'O item de leitura precisa de um estímulo.'));
+    issues.push(...auditLiteracySeries(item));
   }
 
   if (item.kind === 'group-referent') {
@@ -87,6 +88,34 @@ function auditItem(item: CatalogItem): ItemTypeIssue[] {
   }
 
   return issues;
+}
+
+function auditLiteracySeries(item: LiteracyItem): ItemTypeIssue[] {
+  const series = item.series;
+  if (!seriesIsPresent(series)) {
+    return [issue('error', 'literacy-missing-series', item.id, 'O item de leitura precisa de etapas nomeadas e série semanal.')];
+  }
+  const waiting = series.stages.find((stage) => /aguardando teste/i.test(stage));
+  const done = series.stages.find((stage) => /conclu[ií]do/i.test(stage));
+  if (!waiting || !done || !series.values[waiting] || !series.values[done]) {
+    return [issue('error', 'literacy-missing-series', item.id, 'O item de leitura precisa das etapas aguardando teste e concluído na série.')];
+  }
+  const waitingValues = series.values[waiting];
+  const doneValues = series.values[done];
+  const waitingGrowth = waitingValues[waitingValues.length - 1]! - waitingValues[0]!;
+  const doneGrowth = doneValues[doneValues.length - 1]! - doneValues[0]!;
+  if (!(waitingValues[waitingValues.length - 1]! > waitingValues[0]!) || !(doneGrowth <= 1 || doneGrowth < waitingGrowth)) {
+    return [issue('error', 'literacy-series-incoherent-with-stimulus', item.id, 'A série do estímulo contradiz o movimento descrito na frase.')];
+  }
+  return [];
+}
+
+function seriesIsPresent(series: LiteracyStimulusSeries | undefined): series is LiteracyStimulusSeries {
+  if (!series || series.stages.length < 1) return false;
+  const lengths = series.stages.map((stage) => series.values[stage]?.length ?? 0);
+  if (lengths.some((length) => length < 2)) return false;
+  if (lengths.some((length) => length !== lengths[0])) return false;
+  return series.stages.every((stage) => Array.isArray(series.values[stage]));
 }
 
 function issue(severity: ItemTypeIssue['severity'], code: string, subject: string, message: string): ItemTypeIssue {

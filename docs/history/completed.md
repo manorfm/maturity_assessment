@@ -1,5 +1,14 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-07 — Figura do estímulo de leitura na entrevista
+
+- O item de letramento publica `series` (etapas e oito semanas coerentes
+  com o stimulus). A pergunta de leitura desenha a figura a partir do
+  catálogo; o relatório agrega só taxas e não trata o quadro como
+  evidência da unidade. Ver
+  [`question-design.md`](../knowledge-base/question-design.md) e
+  [`adaptive-assessment-graph.md`](../knowledge-base/adaptive-assessment-graph.md).
+
 ## 2026-11-07 — E2E showcase alinhado ao chrome e ao laudo v2
 
 - O showcase Playwright passou a criar pelo heading «Novo diagnóstico»,
