@@ -1,5 +1,14 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-07 — E2E showcase alinhado ao chrome e ao laudo v2
+
+- O showcase Playwright passou a criar pelo heading «Novo diagnóstico»,
+  abrir a entrevista com «Começar», concluir em «Obrigado.», tratar
+  texto livre sem `.check()` em `optionId` oculto e ler fato/narrativa
+  do laudo v2 (sem `.executive-reading`), com banda alta na emergência
+  reconciliada. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-07 — Limitador ready prefere maior prioridade do finding
 
 - A fixture de contradição no mesmo evento sobe a prioridade do postmortem

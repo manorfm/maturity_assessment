@@ -47,7 +47,7 @@ const expectations: Record<MaturityBand, { id: string; expectedOutcome: string; 
       'Folhas fortes com cobertura, pilares sem dois padrões continuam não avaliados.',
       'A melhoria é o resto observado, não um programa genérico.',
     ],
-    decision: /Achados|laudo|Pode evoluir/i,
+    decision: /Achados|laudo/i,
   },
 };
 
@@ -107,7 +107,7 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   await page.goto(org.adminPath);
   await expect(page.getByRole('heading', { name: 'Diagnóstico da área de tecnologia' })).toBeVisible();
   if (org.band === 'high') {
-    await expect(page.getByText(/Pode evoluir|emergência é reconciliada/i).first()).toBeVisible();
+    await expect(page.getByText(/emergência é reconciliada/i).first()).toBeVisible();
   }
   await expect(page.getByText(/Amostra desta leitura/).first()).toBeVisible();
   await expect(page.getByText(/18 pessoas em 2 unidades/).first()).toBeVisible();
@@ -119,8 +119,12 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   await expect(page.getByText('posterior exibido permanece provisório')).not.toBeVisible();
   const observed = await observeReport(page);
   if (expected.decision) expect(observed.decision).toMatch(expected.decision);
+  expect(observed.decision).toMatch(/Laudo/i);
   expect(observed.limiter).not.toMatch(/e mais/i);
   expect(observed.reading.length).toBeGreaterThan(40);
+  if (org.band === 'high') {
+    expect(observed.reading).toMatch(/emergência(?:\s+é)?\s+reconciliada/i);
+  }
   if (org.band !== 'high') {
     await page.getByText('Leituras por público').click();
     await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
@@ -147,11 +151,11 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
 }
 
 async function observeReport(page: Page) {
-  const reading = (await page.locator('.executive-reading').first().textContent())?.trim()
-    ?? (await page.locator('.report-hero h1').first().textContent())?.trim()
-    ?? '';
+  const fact = (await page.locator('.report-finding-fact').first().textContent())?.trim() ?? '';
+  const narrative = (await page.locator('.report-block').filter({ has: page.getByRole('heading', { name: 'Leitura geral' }) }).locator('p').last().textContent())?.trim() ?? '';
+  const reading = (fact.length > 40 ? fact : narrative.length > 40 ? narrative : fact || narrative).trim();
   const limiter = (await page.locator('.report-finding').first().textContent())?.trim() ?? '';
-  const decision = (await page.locator('a[aria-current="page"]').first().textContent())?.trim() ?? 'Laudo';
+  const decision = (await page.locator('a[aria-current="page"]').first().textContent())?.trim() ?? '';
   const classificationLocator = page.locator('.classification-level').first();
   const classification = await classificationLocator.count()
     ? await classificationLocator.evaluate((el) => el.textContent?.trim() ?? '')
@@ -169,16 +173,19 @@ function isBandedCase(org: SeededOrg): boolean {
 
 async function walkApplicationLoop(page: Page): Promise<void> {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Crie um mapa do sistema de trabalho' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Novo diagnóstico' })).toBeVisible();
   await page.getByLabel('Nome do projeto').fill('Demonstração ao vivo');
   const names = page.locator('[data-hierarchy-tree] input');
   await names.nth(0).fill('Organização demonstração');
   await names.nth(1).fill('Time Alfa');
   await expect(page.getByRole('button', { name: 'Criar projeto' })).toBeEnabled();
   await page.getByRole('button', { name: 'Criar projeto' }).click();
-  await expect(page.getByRole('heading', { name: 'Demonstração ao vivo' })).toBeVisible();
   await expect(page.getByText('Operação do piloto')).toBeVisible();
-  await page.getByText('Operação do piloto').click();
+  const pilotOps = page.locator('details').filter({ has: page.getByText('Operação do piloto', { exact: true }) }).first();
+  if (!(await pilotOps.evaluate((el) => (el as HTMLDetailsElement).open))) {
+    await pilotOps.locator('summary').click();
+  }
+  await expect(page.getByRole('button', { name: 'Gerar links' })).toBeVisible();
   await page.getByRole('button', { name: 'Gerar links' }).click();
   await expect(page.getByRole('heading', { name: 'Distribua um link por pessoa' })).toBeVisible();
   const invite = page.locator('#invitation-links code').first();
@@ -186,14 +193,21 @@ async function walkApplicationLoop(page: Page): Promise<void> {
   const href = (await invite.textContent())?.trim() ?? '';
   expect(href).toMatch(/\/invite\//);
   await page.goto(new URL(href).pathname);
+  await page.getByRole('button', { name: 'Começar' }).click();
   for (let step = 0; step < 80; step += 1) {
-    if (await page.getByRole('heading', { name: 'Obrigado pela participação' }).count()) break;
-    const option = page.locator('input[name="optionId"]').first();
-    await expect(option).toBeVisible();
-    await option.check();
+    if (await page.getByRole('heading', { name: 'Obrigado.' }).count()) break;
+    const freeText = page.locator('textarea[name="freeText"]');
+    if (await freeText.count()) {
+      await freeText.fill('Um exemplo anônimo do que costuma acontecer no time.');
+      await page.getByRole('button', { name: 'Continuar' }).click();
+      continue;
+    }
+    const choice = page.locator('.interview-choice').first();
+    await expect(choice).toBeVisible();
+    await choice.click();
     await page.getByRole('button', { name: 'Continuar' }).click();
   }
-  await expect(page.getByRole('heading', { name: 'Obrigado pela participação' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Obrigado.' })).toBeVisible();
 }
 
 async function inspectBoundaryOrg(browser: Browser, org: SeededOrg, baseURL: string | undefined): Promise<void> {
