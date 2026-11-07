@@ -246,7 +246,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .interview-why { margin:0; color:var(--ink2); font-size:15px; max-width:46ch }
     .reading-stimulus { margin:0; display:flex; flex-direction:column; gap:8px; padding:14px 0 6px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule) }
     .reading-stimulus figcaption { margin:0; font-size:13px; color:var(--ink2) }
-    .reading-stimulus svg { display:block; width:100%; max-width:100%; height:auto; min-height:12rem; overflow:visible }
+    .reading-stimulus svg { display:block; width:100%; max-width:100%; height:196px; max-height:196px; aspect-ratio:342/196; overflow:visible }
     .reading-stimulus-band { opacity:.9; stroke:var(--surface); stroke-width:1; vector-effect:non-scaling-stroke }
     .reading-stimulus-band-na { opacity:.55 }
     .reading-stimulus-axis { stroke:var(--ink3); stroke-width:1; vector-effect:non-scaling-stroke }

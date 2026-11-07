@@ -94,8 +94,44 @@ test('figura de leitura usa área empilhada, figcaption, fills por etapa e SVG c
   const exposedList = figure.match(/<ul(?![^>]*aria-hidden)[^>]*>[\s\S]*?<\/ul>/i);
   assert.equal(exposedList, null, 'lista de legendas não pode expor listitems sem aria-hidden');
 
+  assert.match(
+    figure,
+    /<li><span class="reading-stimulus-swatch reading-stimulus-swatch-(?:accent|ochre|ink3|na)"/,
+    'só o swatch leva a cor da faixa; o li não herda --na/--accent no texto',
+  );
+  assert.doesNotMatch(
+    figure,
+    /<li class="reading-stimulus-swatch-/,
+    'classe de cor da faixa não pode ficar no li (contraste do texto)',
+  );
+
   const styles = readFileSync(new URL('../src/shared/html.ts', import.meta.url), 'utf8');
   assert.match(styles, /\.reading-stimulus\s*\{[^}]*border-(?:top|bottom):[^;]*var\(--rule\)/);
+  assert.match(
+    styles,
+    /\.reading-stimulus\s+svg\s*\{[^}]*height:\s*196px/,
+    'SVG do estímulo precisa de altura compacta ~196px como o protótipo',
+  );
+  assert.match(
+    styles,
+    /\.reading-stimulus\s+svg\s*\{[^}]*max-height:\s*196px/,
+    'max-height 196px evita estouro do viewBox alto no celular',
+  );
+  assert.match(
+    styles,
+    /\.reading-stimulus\s+svg\s*\{[^}]*aspect-ratio:/,
+    'aspect-ratio no SVG sob .reading-stimulus sobrescreve o viewBox 8×N',
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.reading-stimulus\s+svg\s*\{[^}]*height:\s*auto/,
+    'height:auto no viewBox alto estoura ~670–880px no primeiro viewport',
+  );
+  assert.match(
+    styles,
+    /\.reading-stimulus-legend\s*\{[^}]*color:\s*var\(--ink2\)/,
+    'texto da legenda em --ink2 (≥4.5:1); faixa fica só no swatch',
+  );
 });
 
 test('renderização de leitura não inventa números fora do catálogo', () => {

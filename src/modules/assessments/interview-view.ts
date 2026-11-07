@@ -163,7 +163,7 @@ function renderReadingStimulusFigure(figure: ReadingFigure): string {
     const swatchClass = ['reading-stimulus-swatch-accent', 'reading-stimulus-swatch-ochre', 'reading-stimulus-swatch-ink3', 'reading-stimulus-swatch-na'][
       Math.min(fromTop, 3)
     ];
-    return `<li class="${swatchClass}"><span class="reading-stimulus-swatch" aria-hidden="true"></span>${escapeHtml(stage)}</li>`;
+    return `<li><span class="reading-stimulus-swatch ${swatchClass}" aria-hidden="true"></span>${escapeHtml(stage)}</li>`;
   }).join('');
   const caption = weekCount > 0
     ? `Itens de trabalho acumulados por estado, ${weekCount} semanas`
