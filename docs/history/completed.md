@@ -1,5 +1,14 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-07 — Fase 10: apresentação só com número publicado
+
+- Travessia das nove páginas remove atalhos m1: gaps/rodapé com o modelo
+  vigente, laudo sem classification ordinal, ficha sem detail/radar/`de 4`
+  quando a distribuição 0–4 publica, fronteira/walkthrough/prontidão sem
+  `peakedDistribution(level)`, manage sem archive «Leituras por público».
+  Ver [`technical-architecture.md`](../knowledge-base/technical-architecture.md)
+  e [`assessment-model.md`](../knowledge-base/assessment-model.md).
+
 ## 2026-11-07 — Quadro de leitura como área empilhada legível
 
 - A figura da pergunta de leitura passou de polylines monocromáticas

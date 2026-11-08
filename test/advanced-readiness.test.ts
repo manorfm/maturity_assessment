@@ -74,7 +74,7 @@ test('sem cobertura das folhas essenciais declara lacuna; não inventa índice',
   assert.match(html, /Sem posterior|Ainda não há posterior|Prontidão não vira índice/i);
 });
 
-test('nível pontual vira distribuição provisória para p_k', () => {
+test('nível pontual sem distribution não inventa p_k', () => {
   const practice = advancedPracticeCatalog.find((item) => item.id === 'ai-dlc')!;
   const posteriors = resolvePrerequisitePosteriors(practice, {
     'sdlc-automation': { level: 3, coverage: 1 },
@@ -83,10 +83,7 @@ test('nível pontual vira distribuição provisória para p_k', () => {
     'cloud-security': { level: 2, coverage: 1 },
     'platform-autonomy': { level: 2, coverage: 1 },
   });
-  assert.ok(posteriors);
-  const assessment = projectPracticeReadiness(posteriors!);
-  assert.ok(assessment.probability > 0);
-  assert.equal(typeof assessment.band, 'string');
+  assert.equal(posteriors, undefined);
 });
 
 test('checklist de prontidão lista p_k de cada pré-requisito', () => {

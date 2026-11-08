@@ -429,16 +429,17 @@ Na interface gerencial, o relatório global é um laudo. A first screen
 mostra, nesta ordem: motivo da avaliação (citação de quem pediu, ou a
 lacuna se o projeto não registrou a queixa), leitura geral (frase de
 mecanismo; índice com faixa e cobertura quando há publicação, ou a lacuna
-enquanto o modelo for `m1`; maturidade técnica, maturidade organizacional
-e alvo de contexto só com a faixa que a publicação incluiu, e lacuna no
-recorte ausente; porte, regulação e estágio não são campos vazios), até três achados em cartão (caminho, frase, áreas,
-sustentação e ficha), divergências com os dois lados sem declarar quem
-está certo, restrição principal (com o efeito de melhorar o resto antes),
-conduta cujo horizonte publicado é 0–30 dias, prognóstico (direção, não promessa), lacunas e exames
-complementares em listas separadas, o rodapé de amostra e calibração, e a
-consistência do elo
-limitante dentro do mesmo chrome. Convites e calibração ficam na seção
-de operação abaixo do laudo, não num segundo cabeçalho. O mapa tem quatro sistemas
+enquanto o modelo vigente não publica; maturidade técnica, maturidade
+organizacional e alvo de contexto só com a faixa que a publicação incluiu,
+e lacuna no recorte ausente; porte, regulação e estágio não são campos
+vazios), até três achados em cartão (caminho, frase, áreas, sustentação e
+ficha), divergências com os dois lados sem declarar quem está certo,
+restrição principal (com o efeito de melhorar o resto antes), conduta cujo
+horizonte publicado é 0–30 dias, prognóstico (direção, não promessa),
+lacunas e exames complementares em listas separadas e o rodapé de amostra
+e calibração no chrome do relatório — sem bloco ordinal paralelo de
+consistência do elo. Convites e calibração ficam na seção de operação
+abaixo do laudo, não num segundo cabeçalho. O mapa tem quatro sistemas
 (Produto, Engenharia, Operação e Organização). Organização não é faixa.
 Quem autoriza decide depois de ler.
 O cartão compacto permanece no detalhe da disciplina e quando não há

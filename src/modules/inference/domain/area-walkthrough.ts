@@ -98,7 +98,12 @@ export function projectAreaWalkthrough(input: {
   const leaves = new Set(leavesOf(input.area));
   const published = uniqueFindingsByPattern(input.findings).filter((finding) => finding.confidence >= 0.5);
   const local = published.filter((finding) => leaves.has(finding.detailCapability));
-  const localCaps = input.capabilities.filter((cap) => leaves.has(cap.id) && (cap as { coverage?: number }).coverage !== 0);
+  const localCaps = input.capabilities.filter((cap) => {
+    if (!leaves.has(cap.id) || (cap as { coverage?: number }).coverage === 0) return false;
+    // Sem posterior de estágio publicada, level não inventa faixa no walkthrough.
+    if (input.leaves && !input.leaves[cap.id]?.distribution) return false;
+    return true;
+  });
   const prioritized = prioritizeCapabilities(local, localCaps).slice(0, 3);
   const matrix = projectSophisticationMatrix(
     (input.sophistication ?? [])

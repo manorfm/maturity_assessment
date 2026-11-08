@@ -1,6 +1,5 @@
 import { probabilityStageAtLeast, type LeafEvidence } from './advanced-readiness.js';
 import { CapabilityTaxonomy } from './capability-taxonomy.js';
-import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
 import type { CapabilityStageLevel } from './capability-reference.js';
 import { modeSophistication, type SophisticationDistribution, type SophisticationPhase } from './sophistication-matrix.js';
@@ -93,20 +92,18 @@ export function evaluateEnablementEdges(
   catalog: EnablementDependency[],
   leaves: Record<string, LeafEvidence>,
 ): EnablementEdge[] {
-  return catalog.map((dependency) => {
+  return catalog.flatMap((dependency) => {
     const distribution = distributionFor(leaves[dependency.fromLeafId]);
-    const probability = distribution
-      ? probabilityStageAtLeast(distribution, dependency.fromMinimum)
-      : 0;
+    if (!distribution) return [];
     const unlocks = unlockId(dependency);
-    return {
+    return [{
       from: dependency.fromLeafId,
       to: unlocks,
-      probability,
+      probability: probabilityStageAtLeast(distribution, dependency.fromMinimum),
       unlocks,
       strength: dependency.strength,
       fromLabel: dependency.fromLabel,
-    };
+    }];
   });
 }
 
@@ -150,24 +147,32 @@ export type FrontierBrief = {
   advancedAside: string;
 };
 
-/** Nível de estágio permanece nível. A posterior de sofisticação entra à parte e não é inventada. */
+const frontierRespondentMinimum = 5;
+
+/**
+ * Folhas da fronteira. Só entra posterior de estágio publicada (como
+ * `leavesForReadinessPage`). Nível pontual não inventa distribuição.
+ * A posterior de sofisticação entra à parte e também não é inventada.
+ */
 export function frontierLeaves(input: {
-  capabilities: ReadonlyArray<{ id: string; level: number; coverage?: number }>;
+  stages?: ReadonlyArray<{ id: string; respondents: number; distribution: StageDistribution }>;
+  /** @deprecated Preferir `stages` com distribution; level não publica leitura. */
+  capabilities?: ReadonlyArray<{ id: string; level: number; coverage?: number }>;
   phases?: ReadonlyMap<string, { distribution: SophisticationDistribution; phase: number }>;
 }): Record<string, LeafEvidence> {
   const phases = input.phases ?? new Map<string, { distribution: SophisticationDistribution; phase: number }>();
   const leaves: Record<string, LeafEvidence> = {};
-  for (const capability of input.capabilities) {
-    const phase = phases.get(capability.id);
-    leaves[capability.id] = {
-      level: capability.level,
-      coverage: capability.coverage ?? 0,
+  for (const stage of input.stages ?? []) {
+    if (stage.respondents < frontierRespondentMinimum) continue;
+    const phase = phases.get(stage.id);
+    leaves[stage.id] = {
+      distribution: stage.distribution,
       ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
     };
   }
   for (const [leafId, phase] of phases) {
-    if (leaves[leafId]) continue;
     leaves[leafId] = {
+      ...(leaves[leafId] ?? {}),
       phaseDistribution: phase.distribution,
       phase: phase.phase,
     };
@@ -254,21 +259,16 @@ function parseUnlock(id: string): { leafId: string; toStage: number } | undefine
 }
 
 function observedStage(evidence?: LeafEvidence): number | undefined {
-  if (!evidence) return undefined;
-  if (evidence.distribution) {
-    let best = -1;
-    let mode = 0;
-    evidence.distribution.forEach((weight, index) => {
-      if (weight > best) {
-        best = weight;
-        mode = index;
-      }
-    });
-    return mode;
-  }
-  if (evidence.level === undefined) return undefined;
-  if (evidence.coverage !== undefined && evidence.coverage < 1) return undefined;
-  return evidence.level;
+  if (!evidence?.distribution) return undefined;
+  let best = -1;
+  let mode = 0;
+  evidence.distribution.forEach((weight, index) => {
+    if (weight > best) {
+      best = weight;
+      mode = index;
+    }
+  });
+  return mode;
 }
 
 function dep(
@@ -290,11 +290,7 @@ function dep(
 }
 
 function distributionFor(evidence?: LeafEvidence): StageDistribution | undefined {
-  if (!evidence) return undefined;
-  if (evidence.distribution) return evidence.distribution;
-  if (evidence.coverage !== undefined && evidence.coverage < 1) return undefined;
-  if (evidence.level === undefined) return undefined;
-  return peakedDistribution(Math.max(0, Math.min(100, (evidence.level / 4) * 100)));
+  return evidence?.distribution;
 }
 
 function round4(value: number): number {

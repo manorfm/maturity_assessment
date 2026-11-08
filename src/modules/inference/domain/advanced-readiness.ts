@@ -1,4 +1,3 @@
-import { peakedDistribution } from '../../measurement/domain/hierarchical-pooling.js';
 import type { StageDistribution } from '../../measurement/domain/measurement-params.js';
 import {
   advancedPracticePhaseObservations,
@@ -248,12 +247,7 @@ export function resolvePrerequisitePosteriors(
 }
 
 function distributionFor(evidence?: LeafEvidence): StageDistribution | undefined {
-  if (!evidence) return undefined;
-  if (evidence.distribution) return evidence.distribution;
-  if (evidence.coverage !== undefined && evidence.coverage < 1) return undefined;
-  if (evidence.level === undefined) return undefined;
-  const index = Math.max(0, Math.min(100, (evidence.level / 4) * 100));
-  return peakedDistribution(index);
+  return evidence?.distribution;
 }
 
 function phaseDistributionFor(evidence?: LeafEvidence): SophisticationDistribution | undefined {

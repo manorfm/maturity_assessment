@@ -28,11 +28,8 @@ import { problemsForNode, projectProblemTree, type HierarchicalBranch, type Hier
 import { type InterviewProblem, type InterviewSolution } from '../inference/domain/interview-report.js';
 import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js';
-import { evaluateEnablementEdges, enablementCatalog } from '../inference/domain/learning-frontier.js';
-import { declaredSophistication } from '../catalog/evidence-contract.js';
-import { measureSophisticationPhase } from '../inference/domain/sophistication-matrix.js';
 import { evidenceGradeGap, leavesForReadinessPage, projectAudienceReadings, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
-import { frontierLeaves, projectFrontierBrief } from '../inference/domain/learning-frontier.js';
+import { enablementCatalog, evaluateEnablementEdges, frontierLeaves, projectFrontierBrief } from '../inference/domain/learning-frontier.js';
 import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
@@ -215,7 +212,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       : report.findings.length ? '' : report.outcome.kind === 'preserve'
         ? '<p class="notice">A leitura principal é preservar a prática observada. Os pilares sem cobertura continuam não avaliados.</p>'
         : '<p class="notice">Ainda não há um padrão problemático com evidência agregada suficiente.</p>';
-    const perspectives = renderPerspectiveSynthesis(report.perspectiveGaps, report.visibilityGaps);
     const previous = report.previousMeasurement
       ? `<article class="card"><span class="tag">reaplicação</span><h3>Comparação com a medição anterior</h3><p class="muted">${report.previousMeasurement.previousCompleted} jornadas na captura anterior. Padrões abaixo mostram suporte coletivo, nunca pessoas.</p>${report.previousMeasurement.patternDeltas.length ? `<ul>${report.previousMeasurement.patternDeltas.map((delta) => `<li><code>${escapeHtml(delta.pattern)}</code>: ${delta.previous} → ${delta.current}</li>`).join('')}</ul>` : '<p>O suporte dos padrões publicados não mudou entre as capturas.</p>'}</article>`
       : '';
@@ -226,26 +222,13 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const distinctive = distinctiveScopes(report.scopes, report.classification?.level ?? 0);
     const orderedFindings = uniqueFindingsByPattern(report.findings);
     const competingFinding = orderedFindings.find((finding) => finding.pattern !== report.outcome.finding?.pattern);
-    const fByLeaf = inference.projectSophisticationByLeaf(projectId);
-    const practicePhases = inference.projectAdvancedPracticePhases(projectId);
-    const readinessLeaves: Record<string, LeafEvidence> = Object.fromEntries(report.capabilities.map((capability) => {
-      const phase = fByLeaf.get(capability.id);
-      return [capability.id, {
-        level: capability.level,
-        coverage: capability.coverage ?? 0,
-        ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
-      }];
-    }));
-    for (const [practiceId, phase] of practicePhases) {
-      readinessLeaves[practiceId] = {
-        ...(readinessLeaves[practiceId] ?? { coverage: 1 }),
-        phaseDistribution: phase.distribution,
-        phase: phase.phase,
-      };
-    }
+    const readinessLeaves = leavesForReadinessPage({
+      stages: inference.projectLeafStages(projectId),
+      phases: inference.projectSophisticationByLeaf(projectId),
+      practicePhases: inference.projectAdvancedPracticePhases(projectId),
+    });
     const firstScreen = renderFirstScreen({
       outcome: report.outcome,
-      ...(report.classification ? { classification: report.classification } : {}),
       organizationalAreas: report.organizationalAreas,
       findings: report.findings,
       scopes: distinctive,
@@ -268,8 +251,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       leaves: readinessLeaves,
     });
     const probabilisticSummary = renderProbabilisticSummary(report.hypotheses, report.modelVersion, 'Causas deste limitador', report.outcome.limiterId);
-    const audienceNavigation = renderAudienceNavigation({ executiveDecisions: report.audienceReports.executive.decisions.length, technologyConstraints: report.audienceReports.technology.systemicConstraints.length, localReports: distinctive.length, specialistFindings: report.audienceReports.specialist.findings.length });
-    const audienceBriefs = renderAudienceBriefs(report.audienceReports, capabilityBase);
     const issued = batches.reduce((sum, item) => sum + item.quantity, 0);
     const completedByPath = new Map(report.scopes.map((scope) => [scope.path, scope.completed]));
     const actionBase = `/projects/${auth.params.publicId}/manage/${auth.params.adminSecret}`;
@@ -283,9 +264,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       minimum: report.minimum,
       actionBase,
     })).join('');
-    const audienceArchive = audienceNavigation || audienceBriefs || perspectives
-      ? `<details class="methodology"><summary>Leituras por público</summary>${audienceNavigation}${audienceBriefs}${perspectives}</details>`
-      : '';
     const adminOps = renderAdminShell({
       title: 'Convites e participação',
       lead: 'Acompanhe a participação por lote. Os números são sempre agregados por unidade.',
@@ -315,7 +293,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ${batchCards ? `<section class="admin-batches"><h2>Lotes de convites</h2>${batchCards}</section>` : ''}
       <details class="methodology"><summary>Instrumento e calibração</summary>${renderSampleProgress(sampleProgress)}${renderCognitivePilotReadiness(cognitiveReadiness)}${renderPilotStatus(report.calibration)}${renderCognitiveReview(report.calibration, humanShowcaseValidation, auth.params)}${renderFreeTextReviewQueue(freeTextReviews, projectId, auth.params, projects.freeTextEnabled(projectId))}</details></details>
       ${renderTermsPanel(String(auth.project.name))}
-      ${audienceArchive}
       ${probabilisticSummary ? `<details class="methodology"><summary>Outras hipóteses do recorte</summary>${probabilisticSummary}</details>` : ''}
       ${previous}
       <p class="admin-actions"><a class="button secondary" href="/p/${auth.params.publicId}">Ver página pública</a></p>`,
@@ -347,17 +324,6 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const dashboardUrl = `/projects/${params.publicId}/manage/${params.adminSecret}`;
     const parent = path.at(-2);
     const backUrl = parent ? `${base}/${parent.id}${scopeQuery}` : dashboardUrl;
-    const coverage = `<p class="coverage"><strong>${coverageLabel(selected.coverage)}</strong><span class="coverage-track"><span style="width:${Math.round(selected.coverage * 100)}%"></span></span></p>`;
-    const assessedChildren = selected.children.filter((child) => child.assessed).length;
-    const breadth = selected.children.length ? ` ${assessedChildren} de ${selected.children.length} subcapacidades possuem cobertura suficiente.` : '';
-    const status = selected.assessed
-      ? `<div class="classification-level">${executiveStage(selected.level)}</div>${coverage}<p class="executive-reading">${escapeHtml(capabilityReading(selected.level))}</p><details class="methodology"><summary>Ver evidências da avaliação</summary><p>Estimativa ordinal interna: ${formatMaturityLevel(selected.level)} de 4. Faixa compatível com as evidências: ${formatMaturityLevel(selected.interval?.lower ?? selected.level)} a ${formatMaturityLevel(selected.interval?.upper ?? selected.level)} · ${selected.observers ?? 0} pessoas e ${selected.evidence} sinais agregados · cobertura temática ${Math.round(selected.coverage * 100)}%.${selected.hasContradiction ? ' Há evidências contraditórias; o resultado é inconclusivo até discriminar contextos e causas.' : ''}</p></details>`
-      : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
-    const diagnosis = selected.children.length
-      ? renderCapabilityRadar(selected.children, base, scopeId)
-      : scopeId && groups.length
-        ? renderCapabilityRadar(groups, base, scopeId)
-        : '';
     const probabilisticDetail = renderProbabilisticSummary(hypotheses.filter((item) => relevantIds.has(item.capability)), report.modelVersion, 'Causas deste recorte', selected.children.length ? undefined : selected.id);
     const reportBase = `/projects/${params.publicId}/manage/${params.adminSecret}/report`;
     const primary = relevant[0];
@@ -365,7 +331,22 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const sophistication = inference.projectSophisticationByLeaf(String(auth.project.id)).get(selected.id);
     const stageDistribution = leafStageDistribution(report.index, selected.id);
     const pattern = report.outcome.finding?.pattern;
-    const detail = `<div class="report-home">${renderDisciplineDetail({ selected, findings: relevant, projectFindings: findings, capabilityBase: base, ...(pattern ? { primaryPattern: pattern } : {}) })}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${diagnosis}${probabilisticDetail ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>` : ''}</div>`;
+    const discipline = renderDisciplineDetail({ selected, findings: relevant, projectFindings: findings, capabilityBase: base, ...(pattern ? { primaryPattern: pattern } : {}) });
+    const measure = probabilisticDetail
+      ? `<details class="methodology"><summary>Como medimos neste recorte</summary>${probabilisticDetail}</details>`
+      : '';
+    // Com distribuição 0–4 publicada, não compete ordinal/radar/formatMaturityLevel.
+    const detail = stageDistribution
+      ? `<div class="report-home">${discipline}${measure}</div>`
+      : (() => {
+        const coverage = `<p class="coverage"><strong>${coverageLabel(selected.coverage)}</strong><span class="coverage-track"><span style="width:${Math.round(selected.coverage * 100)}%"></span></span></p>`;
+        const assessedChildren = selected.children.filter((child) => child.assessed).length;
+        const breadth = selected.children.length ? ` ${assessedChildren} de ${selected.children.length} subcapacidades possuem cobertura suficiente.` : '';
+        const status = selected.assessed
+          ? `${coverage}<p class="notice">Ainda sem posterior de estágio 0–4 publicada para este nó.${breadth}</p>`
+          : `${coverage}<p class="notice">Esta capacidade ainda não possui variedade temática suficiente para publicar uma nota.${breadth} Ela não foi calculada como zero.</p>`;
+        return `<div class="report-home">${discipline}<details class="methodology consistency-detail"><summary>Consistência do comportamento neste recorte</summary>${status}</details>${measure}</div>`;
+      })();
     const card = renderNodeCard({
       title: selected.label,
       trail: projectFichaTrail({
@@ -533,7 +514,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       ? inference.projectSophisticationByLeaf(projectId)
       : undefined;
     const leaves = frontierLeaves({
-      capabilities: report.capabilities,
+      stages: inference.projectLeafStages(projectId),
       ...(phases ? { phases } : {}),
     });
     const brief = projectFrontierBrief(leaves);
@@ -561,38 +542,23 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const chapter = projectAreaChapter({ area, findings: report.findings, organizationalAreas: report.organizationalAreas });
     const plan = projectTreatmentPlan(report.findings);
     const fByLeaf = inference.projectSophisticationByLeaf(String(auth.project.id));
-    const practicePhases = inference.projectAdvancedPracticePhases(String(auth.project.id));
-    const leaves: Record<string, LeafEvidence> = Object.fromEntries(report.capabilities.map((capability) => {
-      const phase = fByLeaf.get(capability.id);
-      return [capability.id, {
-        level: capability.level,
-        coverage: capability.coverage ?? 0,
-        ...(phase ? { phaseDistribution: phase.distribution, phase: phase.phase } : {}),
-      }];
-    }));
-    for (const [practiceId, phase] of practicePhases) {
-      leaves[practiceId] = {
-        ...(leaves[practiceId] ?? { coverage: 1 }),
-        phaseDistribution: phase.distribution,
-        phase: phase.phase,
-      };
-    }
+    const leaves = leavesForReadinessPage({
+      stages: inference.projectLeafStages(String(auth.project.id)),
+      phases: fByLeaf,
+      practicePhases: inference.projectAdvancedPracticePhases(String(auth.project.id)),
+    });
     const sophistication = report.capabilities.flatMap((capability) => {
       const fromResponses = fByLeaf.get(capability.id);
-      if (fromResponses) {
+      if (fromResponses && leaves[capability.id]?.distribution) {
         return [{ leafId: capability.id, phase: fromResponses.phase, appropriation: capability.level }];
       }
-      const phases = report.findings
-        .filter((finding) => finding.detailCapability === capability.id || finding.affectedCapabilities?.includes(capability.id))
-        .map((finding) => declaredSophistication(finding.pattern))
-        .filter((phase): phase is NonNullable<typeof phase> => phase !== undefined);
-      if (!phases.length) return [];
-      return [{ leafId: capability.id, phase: measureSophisticationPhase(phases), appropriation: capability.level }];
+      return [];
     });
+    const walkCapabilities = report.capabilities.filter((capability) => leaves[capability.id]?.distribution);
     const walk = projectAreaWalkthrough({
       area,
       findings: report.findings,
-      capabilities: report.capabilities,
+      capabilities: walkCapabilities,
       organizationalAreas: report.organizationalAreas,
       outcomeKind: report.outcome.kind,
       conducts: [...plan.active, ...plan.later],
@@ -844,15 +810,12 @@ export function renderFirstScreen(input: {
     ...(input.leaves ? { leaves: input.leaves } : {}),
     ...(input.projectName ? { context: input.projectName } : {}),
   });
-  const classification = input.classification
-    ? `<section class="report-consistency">${renderClassification(input.classification, input.outcome)}</section>`
-    : '';
   const ficha = reportMenuFicha(input.findings, input.capabilityBase);
   return renderReportShell({
     page: 'laudo',
     base: reportBase,
     projectName: input.projectName ?? 'Diagnóstico',
-    body: `${renderLaudo(laudo, { capabilityBase: input.capabilityBase, reportBase })}${classification}`,
+    body: renderLaudo(laudo, { capabilityBase: input.capabilityBase, reportBase }),
     ...(ficha ? { ficha } : {}),
   });
 }
@@ -1467,10 +1430,6 @@ function radarTooltip(x: string, y: string, label: string, value: string, summar
   const tooltipX = Math.min(325, Math.max(95, Number(x)));
   const tooltipY = Math.max(72, Number(y) - 20);
   return `<g class="radar-tooltip" transform="translate(${tooltipX} ${tooltipY})" aria-hidden="true"><rect x="-92" y="-58" width="184" height="52" rx="8"/><text x="0" y="-40"><tspan class="tooltip-title" x="0">${escapeHtml(label)} · ${escapeHtml(value)}</tspan><tspan x="0" dy="16">${escapeHtml(summary)}</tspan></text></g>`;
-}
-
-function capabilityReading(level: number): string {
-  return radarStatus(level).summary;
 }
 
 function executiveStage(level: number): string {

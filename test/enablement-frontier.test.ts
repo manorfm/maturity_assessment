@@ -82,8 +82,7 @@ test('próxima fase do walkthrough fica dentro da fronteira', () => {
 test('API sem folhas usa o catálogo; sem input explícito de arestas declara lacuna antiga', () => {
   assert.match(projectFrontierPage(undefined).gap ?? '', /ainda não foi elicitado/i);
   const fromLeaves = projectFrontierPage({ leaves: {} });
-  assert.ok(fromLeaves.nodes.length > 0);
-  assert.ok(fromLeaves.nodes.every((node) => node.band === 'blocked' || node.band === 'near'));
+  assert.equal(fromLeaves.nodes.length, 0, 'sem distribution nas folhas, arestas do catálogo não inventam probabilidade');
   const nodes = learningFrontier(['fundacao', 'pratica'], [
     { from: 'fundacao', to: 'pratica', probability: 0.2, unlocks: 'pratica' },
   ]);

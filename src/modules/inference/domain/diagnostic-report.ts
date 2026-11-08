@@ -162,6 +162,7 @@ export function projectDiagnosticLaudo(input: {
   const quote = input.complaint?.quote.trim() ?? '';
   const author = input.complaint?.author.trim() ?? '';
   const mechanismText = input.outcome.reading.trim();
+  const model = measurementModelLabel(input.instrument);
   return {
     version: 'diagnostic-report-v2',
     context: input.context?.trim() || 'O contexto do projeto ainda não foi registrado.',
@@ -172,7 +173,7 @@ export function projectDiagnosticLaudo(input: {
     reading: readingFrom(input.index, input.organizationalAreas),
     findings,
     otherFindings: [...otherFromPremature, ...otherFromPublished],
-    divergences: divergences.length ? divergences : { gap: 'Ainda não há divergência publicada com faixa percentual. O modelo m1 não separa escala de visibilidade.' },
+    divergences: divergences.length ? divergences : { gap: `Ainda não há divergência publicada com faixa percentual. O modelo ${model} não separa escala de visibilidade.` },
     constraint,
     conduct,
     prognosis: { gap: 'Prognóstico em seis meses exige duas distribuições do índice. Esta leitura ainda não as publica. É uma direção provável, não é uma promessa.' },
@@ -180,10 +181,16 @@ export function projectDiagnosticLaudo(input: {
     exams: [],
     footer: {
       sample: sampleLine(input.sample),
-      instrument: input.instrument ?? 'Instrumento vigente · modelo m1',
+      instrument: input.instrument ?? `Instrumento vigente · modelo ${model}`,
       calibration: input.calibration ?? 'Estimativas provisórias até a calibração com piloto.',
     },
   };
+}
+
+function measurementModelLabel(instrument?: string): 'm1' | 'm2' {
+  if (instrument && /\bmodelo m2\b/i.test(instrument)) return 'm2';
+  if (instrument && /\bmodelo m1\b/i.test(instrument)) return 'm1';
+  return 'm2';
 }
 
 function divergenceFrom(gap: { title: string; strongerProfiles?: string[]; constrainedProfiles?: string[] }): LaudoDivergence {

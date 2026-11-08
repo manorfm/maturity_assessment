@@ -140,11 +140,16 @@ A maturidade técnica, a maturidade organizacional e o alvo de contexto
 aparecem só com a faixa que a publicação do índice incluiu. Recorte
 ausente continua lacuna e não herda o índice geral. Porte, regulação e
 estágio não são campos vazios.
-Onde o modelo `m1` não mede índice, faixa, alvo ou prognóstico, o bloco
-declara a lacuna. Não publica o exemplo numérico do protótipo. A navegação
-lateral segue o protótipo, nesta ordem: laudo, mapa, ficha do primeiro
-achado publicado (ou da capacidade aberta), prontidão, fronteira, plano,
-walkthrough de Operação, histórico e visão por público. Produto,
+Onde o modelo vigente (`m2` por padrão; `m1` só quando o instrumento o
+declara) não mede índice, faixa, alvo ou prognóstico, o bloco declara a
+lacuna com o rótulo correto do modelo. Não publica o exemplo numérico do
+protótipo. O laudo não acrescenta classificação ordinal paralela. Na ficha,
+com distribuição 0–4 publicada, detail/radar/`de 4` não competem com os
+pesos. O manage não arquiva «Leituras por público»; a visão por público é
+a página `audiences`. A navegação lateral segue o protótipo, nesta ordem:
+laudo, mapa, ficha do primeiro achado publicado (ou da capacidade aberta),
+prontidão, fronteira, plano, walkthrough de Operação, histórico e visão
+por público. Produto,
 Engenharia e Organização permanecem no mapa e nas rotas de walkthrough,
 fora desse menu. O walkthrough usa
 `projectAreaWalkthrough` (`area-walkthrough-v1`) com as oito seções. A
@@ -168,15 +173,17 @@ registrar. “A quem recorrer” nomeia papéis. O acompanhamento não vira meta
 de bônus.
 
 A página de fronteira projeta `projectFrontierBrief` a partir das
-folhas medidas: dominado, pode aprender agora e ainda bloqueado. A marca
-F0–F5 aparece só quando a folha tem posterior de sofisticação; sem essa
-posterior, a faixa permanece textual. “Comece por” é um degrau
+folhas com posterior de estágio publicada (`frontierLeaves` / mesmo
+critério de `leavesForReadinessPage`): dominado, pode aprender agora e
+ainda bloqueado. Nível pontual não inventa distribuição nem faixa.
+A marca F0–F5 aparece só quando a folha tem posterior de sofisticação;
+sem essa posterior, a faixa permanece textual. “Comece por” é um degrau
 desbloqueado. Condição humana (aresta social ou cognitiva) fica em
 paralelo, com link para a prontidão. Cada prática do
 catálogo publica `p_k`, o pré-requisito mais fraco e a conduta só quando
 o pré-requisito essencial tem posterior de estágio com pelo menos 5
 respondentes; sem essa leitura, a página mantém a lacuna. Nível pontual
-não vira 0% nem “Pronto”. A probabilidade de pronto não é índice da
+não vira `p_k`, 0% nem “Pronto”. A probabilidade de pronto não é índice da
 organização. O status segue o pré-requisito essencial mais fraco; a
 média não decide. Degrau bloqueado na fronteira não entra como próximo
 passo da prontidão. Achado de prática avançada no laudo abre essa página; a ficha

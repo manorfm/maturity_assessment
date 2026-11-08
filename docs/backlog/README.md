@@ -60,7 +60,7 @@ do cartão, em
 
 A paridade das telas com o protótipo está no
 [`plano de paridade visual`](visual-parity-plan.md): o menu e as páginas
-já abrem. A publicação que o motor ainda deve ao desenho está em
+já abrem. A publicação do motor para o desenho (fases 1–10) fechou em
 `sdd-docs/maturity-model-publication`, fora deste repositório. Isso não
 é calibração nem piloto humano.
 

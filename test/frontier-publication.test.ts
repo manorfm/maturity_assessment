@@ -48,9 +48,7 @@ test('fronteira marca F0–F5 só quando a folha tem posterior de sofisticação
     'continuous-integration': { level: 4, coverage: 1 },
     'release-feedback': { level: 4, coverage: 1 },
   });
-  const unmarked = places(levelOnly);
-  assert.ok(unmarked.some((item) => item.leafId === 'release-feedback'));
-  assert.ok(unmarked.every((item) => item.mark === undefined));
+  assert.equal(places(levelOnly).length, 0, 'nível sem distribution não entra na fronteira');
   const plain = renderFrontierPage({ ...levelOnly, readinessHref: '/report/readiness' });
   for (const token of marks) assert.equal(plain.includes(token), false);
   assert.equal(plain.includes('Dominado'), true);
@@ -62,9 +60,9 @@ test('fronteira marca F0–F5 só quando a folha tem posterior de sofisticação
 
 test('a folha da fronteira recebe a posterior publicada e o nível 4 não vira F4', () => {
   const leaves = frontierLeaves({
-    capabilities: [
-      { id: 'release-feedback', level: 4, coverage: 1 },
-      { id: 'continuous-integration', level: 4, coverage: 1 },
+    stages: [
+      { id: 'release-feedback', respondents: 6, distribution: peaked(3) },
+      { id: 'continuous-integration', respondents: 6, distribution: peaked(3) },
     ],
     phases: new Map([
       ['release-feedback', { distribution: phasePeaked(2), phase: 2 }],
@@ -72,19 +70,19 @@ test('a folha da fronteira recebe a posterior publicada e o nível 4 não vira F
     ]),
   });
   assert.equal(leaves['continuous-integration']?.phaseDistribution, undefined);
-  assert.equal(leaves['continuous-integration']?.level, 4);
-  assert.equal(leaves['release-feedback']?.level, 4);
+  assert.equal(leaves['continuous-integration']?.distribution?.[3], 1);
+  assert.equal(leaves['release-feedback']?.distribution?.[3], 1);
   assert.equal(leaves['release-feedback']?.phaseDistribution?.[2], 1);
-  assert.equal(leaves['incident-management']?.level, undefined);
-  assert.equal(leaves['incident-management']?.coverage, undefined);
+  assert.equal(leaves['incident-management']?.distribution, undefined);
+  assert.equal(leaves['incident-management']?.phaseDistribution?.[0], 1);
   const brief = projectFrontierBrief(leaves);
   const rows = places(brief);
+  assert.ok(rows.some((item) => item.leafId === 'release-feedback'));
   assert.ok(rows.filter((item) => item.leafId === 'release-feedback').every((item) => item.mark === 'F2'));
   assert.ok(rows.filter((item) => item.leafId === 'continuous-integration').every((item) => item.mark === undefined));
-  assert.ok(rows.filter((item) => item.leafId === 'incident-management').every((item) => item.mark === 'F0'));
+  assert.equal(rows.some((item) => item.leafId === 'incident-management'), false, 'fase sem distribution de estágio não inventa faixa');
   const html = renderFrontierPage({ ...brief, readinessHref: '/report/readiness' });
   assert.equal(html.includes('F2'), true);
-  assert.equal(html.includes('F0'), true);
   assert.equal(html.includes('F4'), false);
   assert.equal(html.includes('Dominado'), true);
   assert.equal(html.includes('Pode aprender agora'), true);

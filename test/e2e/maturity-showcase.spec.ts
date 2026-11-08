@@ -126,8 +126,8 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
     expect(observed.reading).toMatch(/emergência(?:\s+é)?\s+reconciliada/i);
   }
   if (org.band !== 'high') {
-    await page.getByText('Leituras por público').click();
-    await expect(page.getByRole('heading', { name: 'Briefing para diretoria' })).toBeVisible();
+    await page.getByRole('link', { name: 'Visão por público' }).click();
+    await expect(page.getByRole('heading', { name: /mesmo achado|Visão por público|direção/i })).toBeVisible();
   }
   await page.getByRole('link', { name: 'Mapa' }).click();
   await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
@@ -248,8 +248,8 @@ async function inspectEngineeringPracticeOrg(browser: Browser, org: SeededOrg, b
     await page.goto(org.adminPath);
     await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toHaveCount(0);
     await expect(page.getByText(/autoriza o recurso|identidade|credencial/i).first()).toBeVisible();
-    await page.getByText('Leituras por público').click();
-    await expect(page.getByRole('heading', { name: 'Briefing de política' })).toBeVisible();
+    await page.getByRole('link', { name: 'Visão por público' }).click();
+    await expect(page.getByText(/O que parar de autorizar|política|direção/i).first()).toBeVisible();
     await expect(page.getByText(/O que parar de autorizar/)).toBeVisible();
     await expect(page.getByText(/adote blameless/i)).toHaveCount(0);
     await walkHomeToLeaf(page);
