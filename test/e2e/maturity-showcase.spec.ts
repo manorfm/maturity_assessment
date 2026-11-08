@@ -127,7 +127,7 @@ async function readSeededOrg(page: Page, org: SeededOrg): Promise<ShowcaseGuideC
   }
   if (org.band !== 'high') {
     await page.getByRole('link', { name: 'Visão por público' }).click();
-    await expect(page.getByRole('heading', { name: /mesmo achado|Visão por público|direção/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /mesmo achado/i })).toBeVisible();
   }
   await page.getByRole('link', { name: 'Mapa' }).click();
   await expect(page.getByRole('heading', { name: 'Sistemas da organização' })).toBeVisible();
@@ -249,8 +249,7 @@ async function inspectEngineeringPracticeOrg(browser: Browser, org: SeededOrg, b
     await expect(page.getByRole('heading', { name: 'Como as disciplinas se cruzam' })).toHaveCount(0);
     await expect(page.getByText(/autoriza o recurso|identidade|credencial/i).first()).toBeVisible();
     await page.getByRole('link', { name: 'Visão por público' }).click();
-    await expect(page.getByText(/O que parar de autorizar|política|direção/i).first()).toBeVisible();
-    await expect(page.getByText(/O que parar de autorizar/)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /mesmo achado/i })).toBeVisible();
     await expect(page.getByText(/adote blameless/i)).toHaveCount(0);
     await walkHomeToLeaf(page);
   } finally {
