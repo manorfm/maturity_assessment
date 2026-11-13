@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-13 — Gancho HTML de padrão no laudo
+
+- Achados do laudo (cartões e lista “outros”) publicam
+  `data-finding-pattern` quando há padrão; `otherFindings` carrega
+  `{ title, pattern? }`. Coorte real cobre baseline e contraste no
+  manage HTML. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-12 — Sensibilidade de opção na coorte real
 
 - `runRealFlowCohort` aceita `optionOverrides` (`nodeId` → `optionId`)

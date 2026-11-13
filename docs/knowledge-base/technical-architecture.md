@@ -135,7 +135,10 @@ O HTML renderizado no servidor segue divulgação progressiva. A first screen
 geral com frase de mecanismo, até três achados em cartão, divergências
 nos dois lados, restrição principal, conduta cujo horizonte publicado é 0–30 dias, prognóstico
 como direção, lacunas e exames em listas separadas, e rodapé de amostra
-e calibração.
+e calibração. Cartões `.report-finding` e itens `.report-other` com
+padrão sociotécnico publicado carregam `data-finding-pattern` para
+ancoragem estável no HTML (achados além dos três primeiros entram em
+“outros” com o mesmo gancho).
 A maturidade técnica, a maturidade organizacional e o alvo de contexto
 aparecem só com a faixa que a publicação do índice incluiu. Recorte
 ausente continua lacuna e não herda o índice geral. Porte, regulação e

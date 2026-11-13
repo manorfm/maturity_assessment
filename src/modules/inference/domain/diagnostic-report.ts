@@ -49,6 +49,12 @@ export type LaudoFinding = {
   nodeId: string;
   destination: 'capability' | 'readiness';
   areas: number;
+  pattern?: string;
+};
+
+export type LaudoOtherFinding = {
+  title: string;
+  pattern?: string;
 };
 
 export type LaudoComplaint = ReportGap | { quote: string; author: string };
@@ -62,7 +68,7 @@ export type DiagnosticLaudo = {
   mechanism: string | ReportGap;
   reading: ReportGap | { index: number; band: [number, number]; coverage: number; target?: number; technical?: MaturitySlice; organizational?: MaturitySlice; profile?: string; narrative: string };
   findings: LaudoFinding[];
-  otherFindings: string[];
+  otherFindings: LaudoOtherFinding[];
   divergences: LaudoDivergence[] | ReportGap;
   constraint: { title: string; body: string } | ReportGap;
   conduct: TreatmentConduct[];
@@ -124,6 +130,7 @@ export function projectDiagnosticLaudo(input: {
       nodeId: finding.detailCapability,
       destination: 'capability' as const,
       areas: Math.max(1, finding.affectedCapabilities?.length ?? 1),
+      pattern: finding.pattern,
     })),
   ];
   const observedPatterns = published.map((finding) => finding.pattern);
@@ -157,8 +164,11 @@ export function projectDiagnosticLaudo(input: {
   const divergences = (input.perspectiveGaps ?? []).slice(0, 3).map(divergenceFrom);
   const unknowns = published.map((finding) => finding.missingEvidence).filter((item): item is string => Boolean(item)).slice(0, 4);
   if (!unknowns.length) unknowns.push('O motivo da avaliação ainda não foi registrado no projeto.');
-  const otherFromPublished = published.slice(slots).map((finding) => finding.title);
-  const otherFromPremature = premature.slice(2).map((item) => item.title);
+  const otherFromPublished = published.slice(slots).map((finding) => ({
+    title: finding.title,
+    pattern: finding.pattern,
+  }));
+  const otherFromPremature = premature.slice(2).map((item) => ({ title: item.title }));
   const quote = input.complaint?.quote.trim() ?? '';
   const author = input.complaint?.author.trim() ?? '';
   const mechanismText = input.outcome.reading.trim();

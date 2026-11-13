@@ -98,10 +98,18 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
     const href = finding.destination === 'readiness'
       ? `${urls.reportBase}/readiness`
       : `${urls.capabilityBase}/${finding.nodeId}`;
-    return `<article class="report-finding"><div class="report-finding-path"><span>${escapeHtml(finding.path)}</span><span>${finding.order}</span></div><p class="report-finding-fact">${escapeHtml(finding.title)}</p><p>${escapeHtml(finding.reading)}</p><p class="report-finding-meta"><span>${escapeHtml(areas)}</span><span class="report-support"><span aria-hidden="true">${dots}</span>${escapeHtml(finding.support)}</span></p><a href="${escapeHtml(href)}">Ver ficha →</a></article>`;
+    const patternAttr = finding.pattern
+      ? ` data-finding-pattern="${escapeHtml(finding.pattern)}"`
+      : '';
+    return `<article class="report-finding"${patternAttr}><div class="report-finding-path"><span>${escapeHtml(finding.path)}</span><span>${finding.order}</span></div><p class="report-finding-fact">${escapeHtml(finding.title)}</p><p>${escapeHtml(finding.reading)}</p><p class="report-finding-meta"><span>${escapeHtml(areas)}</span><span class="report-support"><span aria-hidden="true">${dots}</span>${escapeHtml(finding.support)}</span></p><a href="${escapeHtml(href)}">Ver ficha →</a></article>`;
   }).join('');
   const others = laudo.otherFindings.length
-    ? `<ul class="report-other">${laudo.otherFindings.map((title) => `<li>${escapeHtml(title)}</li>`).join('')}</ul>`
+    ? `<ul class="report-other">${laudo.otherFindings.map((item) => {
+      const patternAttr = item.pattern
+        ? ` data-finding-pattern="${escapeHtml(item.pattern)}"`
+        : '';
+      return `<li${patternAttr}>${escapeHtml(item.title)}</li>`;
+    }).join('')}</ul>`
     : '';
   const divergences = Array.isArray(laudo.divergences)
     ? `<p>Divergência mostra que as perspectivas vivem sistemas diferentes. Não mostra quem está certo.</p>${laudo.divergences.map((item) => `<article class="report-divergence"><h3>${escapeHtml(item.title)}</h3><div class="report-divergence-sides"><p>${escapeHtml(item.left)}</p><p>${escapeHtml(item.right)}</p></div></article>`).join('')}`
