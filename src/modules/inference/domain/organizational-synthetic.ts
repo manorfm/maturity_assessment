@@ -10,6 +10,16 @@ import { InferenceService } from '../inference-service.js';
 export type MaturityBand = 'low' | 'medium' | 'high';
 export type SyntheticCaseId = MaturityBand | 'boundary' | 'security-governance' | 'engineering-practice';
 
+export type SyntheticExpect = {
+  outcomeKinds: ReadonlyArray<'correct' | 'evolve'>;
+  requiredPatterns: string[];
+  patternGroups: ReadonlyArray<readonly string[]>;
+  minDistinctPatterns: number;
+  forbiddenPatterns: string[];
+  unitDivergence: true;
+  systemsObserved: string[];
+};
+
 export type PocSyntheticOrg = {
   id: SyntheticCaseId;
   band: MaturityBand;
@@ -18,6 +28,7 @@ export type PocSyntheticOrg = {
   units: readonly [string, string];
   story: string;
   lookFor: string[];
+  expect?: SyntheticExpect;
 };
 
 export const POC_SYNTHETIC_ORGS: readonly PocSyntheticOrg[] = [
@@ -102,6 +113,20 @@ export const POC_VALIDATION_ORGS: readonly PocSyntheticOrg[] = [
       'Briefing de política para diretoria: o que parar de autorizar.',
       'Cruzamento entre disciplinas, sem colapsar em espera na esteira.',
     ],
+    expect: {
+      outcomeKinds: ['correct', 'evolve'],
+      requiredPatterns: ['war-room-como-gestao'],
+      patternGroups: [
+        ['caminho-de-versao-sem-origem', 'empacotamento-manual'],
+        ['identidade-sem-autorizacao-no-recurso'],
+        ['postmortem-sem-efeito', 'cerimonia-sem-adaptacao'],
+        ['causa-responsabilidade-encerra-no-aceite', 'causa-fronteira-sustentacao'],
+      ],
+      minDistinctPatterns: 4,
+      forbiddenPatterns: [],
+      unitDivergence: true,
+      systemsObserved: ['engineering'],
+    },
   },
 ];
 

@@ -54,6 +54,8 @@ publicado abrem em detalhe. Disciplina aberta não vira pergunta na
 home. “?” não pede mais pessoas.
 A massa sintética valida apresentação — três bandas, fronteira,
 segurança≠governança e baixa prática de engenharia — sem calibração.
+A coorte `runRealFlowCohort` prova o expect de `engineering-practice`
+pelo fluxo de produto, sem seed; `optionOverrides` cobre sensibilidade.
 O `/showcase` apresenta três situações — menos madura, intermediária
 e madura. A madura ainda publica o resto observado.
 O contrato de família de capacidade, os cinco packs e as famílias

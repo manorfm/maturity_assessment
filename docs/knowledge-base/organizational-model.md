@@ -183,7 +183,13 @@ engenharia** (famílias distintas no panorama — origem da versão, autorizaç�
 no recurso, war room — com inventário e briefing de política, sem colapsar
 em espera). O caso opaco publica a mesma evidência em Produto,
 Engenharia e Gestão com nomes locais. Cada caso declara `lookFor`
-executivo. Essa massa valida coerência do mapa, do cartão e da
-leitura em três capítulos; não calibra o posterior, não substitui
+executivo; `engineering-practice` também declara `expect` estruturado
+para prova de domínio (padrões, divergência entre unidades, sistemas).
+Além do seed sintético, `runRealFlowCohort` fecha a mesma coorte pelo
+fluxo de produto (create → interview → report) e reusa a política de
+opções do caso, sem calibrar o posterior. `optionOverrides` opcional
+troca a opção de um nó em toda a coorte (ex.: sensibilidade de
+`war-room-como-gestao`). Essa massa valida coerência do mapa, do cartão
+e da leitura em três capítulos; não calibra o posterior, não substitui
 entrevista humana e não abre o gate 50–100.
 

@@ -1,5 +1,30 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-12 — Sensibilidade de opção na coorte real
+
+- `runRealFlowCohort` aceita `optionOverrides` (`nodeId` → `optionId`)
+  global na coorte; sem overrides mantém a política do caso. Prova de
+  sensibilidade em `test/real-flow-cohort-sensitivity.test.ts`.
+  Ver [`domain-model.md`](../knowledge-base/domain-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
+## 2026-11-12 — Coorte via fluxo real (sem seed)
+
+- `runRealFlowCohort` monta create → interview → report só com serviços
+  de produto e reusa a política de opções do caso rotulado; prova o
+  expect de `engineering-practice` sem chamar o seed sintético.
+  Ver [`domain-model.md`](../knowledge-base/domain-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
+## 2026-11-08 — Expect estruturado no sintético engineering-practice
+
+- `PocSyntheticOrg` aceita `expect` machine-checkable; o caso
+  `engineering-practice` declara outcomeKinds, padrões/grupos OR,
+  mínimo distinto, divergência entre unidades e sistemas observados.
+  Prova de domínio em `test/labeled-synthetic-domain.test.ts`, sem HTML.
+  Ver [`domain-model.md`](../knowledge-base/domain-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
 ## 2026-11-07 — Fase 10: apresentação só com número publicado
 
 - Travessia das nove páginas remove atalhos m1: gaps/rodapé com o modelo

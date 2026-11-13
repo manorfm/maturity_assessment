@@ -83,8 +83,21 @@
   (fronteira de times; segurança distinta de governança; baixa prática de
   engenharia). O opaco atravessa Produto, Engenharia e Organização com o
   mesmo evento e nomes locais. Cada caso declara
-  `lookFor` executivo. Valida coerência do produto e alimenta o deck em
-  `/showcase`; não calibra o posterior nem substitui entrevista real.
+  `lookFor` executivo. O contraste `engineering-practice` também declara
+  `expect` machine-checkable (outcomeKinds, padrões obrigatórios/grupos OR,
+  mínimo de padrões distintos, forbidden, divergência entre unidades e
+  sistemas observados) para prova de domínio/inferência sem HTML. Valida
+  coerência do produto e alimenta o deck em `/showcase`; não calibra o
+  posterior nem substitui entrevista real. A coorte `runRealFlowCohort`
+  percorre o mesmo expect pelo fluxo de produto (criar projeto → convites
+  → claim → answer → report), sem chamar o seed sintético. Aceita
+  `optionOverrides` opcional (`nodeId` → `optionId` global na coorte) para
+  prova de sensibilidade sem alterar a política do caso.
+- **RealFlowCohort:** orquestração de domínio que monta uma coorte completa
+  só com APIs/serviços de produto sobre um `Database` temporário e reusa a
+  política de opções do caso rotulado; prova o expect de
+  `engineering-practice` sem wrapper do seed. Overrides por nó substituem
+  a opção sintética quando presentes.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
   termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da
