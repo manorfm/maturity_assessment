@@ -1,0 +1,27 @@
+---
+description: Máquina de estados para mudança de comportamento, com revisor de qualidade separado da segurança.
+alwaysApply: true
+---
+
+# Fluxo de entrega
+
+Mudança de comportamento de código segue esta ordem. Pergunta e explicação não abrem a máquina.
+
+`readonly` do Cursor bloqueia edição e shell que muda estado. Fica só no `orchestrator`. Implementador, revisor de qualidade, segurança e UX executam comando e não editam fora do implementador. Playwright (`npm run test:e2e`) cabe ao revisor quando o teste do contrato é e2e, à segurança quando o risco está no navegador, e ao UX na experiência.
+
+1. Contrato — `quality-reviewer`, antes de código de produção.
+2. Red — `implementer` escreve o teste, executa e para na falha esperada.
+3. Aceite do red — `quality-reviewer` confirma comando, exit code e motivo da falha.
+4. Green — `implementer` faz a menor correção e verifica com `npm test` e `npm run check`.
+5. Prova — `quality-reviewer` reexecuta os testes no diff atual.
+6. Segurança — `qa-security`, somente depois de `PROVA_OK`.
+7. Experiência — `ux-ui`, somente se o diff alterar tela, template, CSS ou fluxo de navegador.
+8. Decisão — protocolo do `orchestrator`.
+
+A sessão que recebe o pedido conduz a máquina e chama esses subagentes. Não implemente e aprove no mesmo turno.
+
+Diff novo anula prova, segurança e experiência. Na terceira devolução do ciclo, pare e peça decisão humana.
+
+Sem `CONTRATO_OK` não há código de produção. Sem `PROVA_OK` no diff atual não há APROVADO. Parecer ausente não aprova.
+
+Não crie commit sem pedido explícito do usuário.

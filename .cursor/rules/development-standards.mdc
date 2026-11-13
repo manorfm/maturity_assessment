@@ -1,0 +1,21 @@
+---
+description: Regras obrigatórias de desenvolvimento seguro, qualidade, Git e evidências para todas as tarefas.
+alwaysApply: true
+---
+
+# Padrões de desenvolvimento
+
+- Entregue soluções corretas, seguras, testáveis, legíveis e sustentáveis, com a menor complexidade necessária.
+- Respeite o plano aprovado e o escopo definido.
+- Inspecione instruções do repositório, arquitetura, testes e estado do Git antes de alterar código.
+- Preserve alterações preexistentes do usuário. Nunca descarte ou inclua alterações alheias à tarefa.
+- Aplique TDD: Red → Green → Refactor, com ciclos pequenos e verificáveis.
+- Não altere testes apenas para mascarar defeitos.
+- Não declare testes, verificações ou commits sem evidências reais.
+- Preserve responsabilidades claras, minimize duplicação, acoplamento e abstrações desnecessárias.
+- Considere segurança desde a implementação. Nunca exponha segredos nem enfraqueça controles de segurança para facilitar testes.
+- Não adicione dependências ou funcionalidades sem necessidade justificada.
+- Não preserve retrocompatibilidade desnecessária, mas avalie os impactos internos das mudanças.
+- Investigue falhas relevantes e registre limitações de ferramentas ou ambiente.
+- Diferencie implementação, validação e aprovação. Mudança de comportamento segue `.cursor/rules/delivery-flow.mdc`: o revisor de qualidade julga a prova e a segurança entra depois.
+- Não considere a entrega aprovada quando houver critérios obrigatórios não verificados.
