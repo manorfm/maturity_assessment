@@ -97,7 +97,8 @@
   só com APIs/serviços de produto sobre um `Database` temporário e reusa a
   política de opções do caso rotulado; prova o expect de
   `engineering-practice` sem wrapper do seed. Overrides por nó substituem
-  a opção sintética quando presentes.
+  a opção sintética quando presentes. O CLI `npm run simulate:cohort`
+  expõe a mesma orquestração sem Playwright nem seed de showcase.
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
   termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da

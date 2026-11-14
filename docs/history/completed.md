@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-13 — CLI da coorte real-flow
+
+- `npm run simulate:cohort` (`scripts/run-real-flow-cohort.ts`) corre
+  `runRealFlowCohort` em `:memory:` e imprime resumo JSON verificável
+  (`--case`, `--override`), sem secrets. Ver
+  [`domain-model.md`](../knowledge-base/domain-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
 ## 2026-11-13 — Gancho HTML de padrão no laudo
 
 - Achados do laudo (cartões e lista “outros”) publicam

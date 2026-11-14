@@ -10,6 +10,7 @@
     "test": "node --import tsx --test test/**/*.test.ts",
     "test:e2e": "playwright test",
     "audit:instrument": "node --import tsx scripts/audit-instrument.ts",
+    "simulate:cohort": "node --import tsx scripts/run-real-flow-cohort.ts",
     "demo:test-server": "node --import tsx test/e2e/demo-server.ts",
     "demo:serve": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e-pilot-v1.sqlite SHOWCASE_MANIFEST=/private/tmp/maturity-assessment-showcase-poc.json PORT=3217 node --import tsx src/server.ts",
     "demo": "npm run test:e2e && npm run demo:serve",

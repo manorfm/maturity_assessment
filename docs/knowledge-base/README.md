@@ -56,6 +56,7 @@ A massa sintética valida apresentação — três bandas, fronteira,
 segurança≠governança e baixa prática de engenharia — sem calibração.
 A coorte `runRealFlowCohort` prova o expect de `engineering-practice`
 pelo fluxo de produto, sem seed; `optionOverrides` cobre sensibilidade.
+O CLI `npm run simulate:cohort` expõe a mesma coorte em resumo JSON.
 O `/showcase` apresenta três situações — menos madura, intermediária
 e madura. A madura ainda publica o resto observado.
 O contrato de família de capacidade, os cinco packs e as famílias

@@ -189,7 +189,12 @@ Além do seed sintético, `runRealFlowCohort` fecha a mesma coorte pelo
 fluxo de produto (create → interview → report) e reusa a política de
 opções do caso, sem calibrar o posterior. `optionOverrides` opcional
 troca a opção de um nó em toda a coorte (ex.: sensibilidade de
-`war-room-como-gestao`). Essa massa valida coerência do mapa, do cartão
-e da leitura em três capítulos; não calibra o posterior, não substitui
-entrevista humana e não abre o gate 50–100.
+`war-room-como-gestao`). O CLI `npm run simulate:cohort` (script
+`scripts/run-real-flow-cohort.ts`) corre a coorte em `:memory:` e
+imprime um resumo JSON (`caseId`, `completed`, `totalPeople`,
+`outcomeKind`, `patterns`, `overridesApplied`) sem secrets; `--case`
+default `engineering-practice` e `--override nodeId=optionId`
+repetível. Essa massa valida coerência do mapa, do cartão e da leitura
+em três capítulos; não calibra o posterior, não substitui entrevista
+humana e não abre o gate 50–100.
 
