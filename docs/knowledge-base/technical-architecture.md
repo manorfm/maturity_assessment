@@ -412,6 +412,14 @@ serve a porta 3217. `demo:test-server` faz o mesmo seed para o E2E;
 `demo:serve` reabre a mesma base. O catálogo `capability-narrative.ts` continua o único contrato
 de prosa para investigação e preservação.
 
+Agendamento local da coorte real-flow usa exatamente
+`npm run simulate:cohort` no diretório do repositório (substitua
+`REPO_ROOT`). O exemplo de crontab está em
+`scripts/cron/real-flow-cohort.crontab.example`; em macOS, launchd
+pode invocar o mesmo comando. Stdout/stderr vão para
+`/private/tmp/maturity-assessment-real-flow-*.log`. A entrada não
+carrega secrets e não engole falha com `|| true`.
+
 Banco, guia, manifesto e porta do E2E podem ser isolados com `E2E_DATABASE_PATH`,
 `E2E_SHOWCASE_GUIDE`, `SHOWCASE_MANIFEST` e `E2E_PORT`; `SHOWCASE_PUBLIC_URL` define a origem gravada
 nos links preservados para inspeção. Assim uma nova execução não precisa tocar em

@@ -1,5 +1,14 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-13 — Agendamento local da coorte real-flow
+
+- Exemplo de crontab em `scripts/cron/real-flow-cohort.crontab.example`:
+  `cd /REPO_ROOT && npm run simulate:cohort` com log em
+  `/private/tmp/maturity-assessment-real-flow-*.log`, sem `|| true` e
+  sem secrets; launchd pode reutilizar o mesmo comando. Ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-13 — CLI da coorte real-flow
 
 - `npm run simulate:cohort` (`scripts/run-real-flow-cohort.ts`) corre

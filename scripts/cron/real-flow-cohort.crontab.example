@@ -1,0 +1,7 @@
+# Example crontab entry for the real-flow cohort CLI.
+# Replace REPO_ROOT with the absolute path to this repository checkout.
+# Logs stay under /private/tmp/; do not put secrets in the schedule or log path.
+# Failures must surface: do not ignore the command exit status.
+#
+# Minute Hour Dom Month Dow command
+0 6 * * 1 cd /REPO_ROOT && npm run simulate:cohort >> /private/tmp/maturity-assessment-real-flow-cohort.log 2>&1

@@ -194,7 +194,12 @@ troca a opção de um nó em toda a coorte (ex.: sensibilidade de
 imprime um resumo JSON (`caseId`, `completed`, `totalPeople`,
 `outcomeKind`, `patterns`, `overridesApplied`) sem secrets; `--case`
 default `engineering-practice` e `--override nodeId=optionId`
-repetível. Essa massa valida coerência do mapa, do cartão e da leitura
-em três capítulos; não calibra o posterior, não substitui entrevista
-humana e não abre o gate 50–100.
+repetível. Agendamento local (cron ou launchd) usa o mesmo comando a
+partir do checkout, com log em
+`/private/tmp/maturity-assessment-real-flow-*.log` e sem
+`|| true`; o modelo está em
+`scripts/cron/real-flow-cohort.crontab.example`. Essa massa valida
+coerência do mapa, do cartão e da leitura em três capítulos; não
+calibra o posterior, não substitui entrevista humana e não abre o
+gate 50–100.
 
