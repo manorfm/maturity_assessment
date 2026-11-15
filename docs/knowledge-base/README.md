@@ -60,8 +60,10 @@ Arquétipos org (`bureaucratic-fixed-scope` / `digital-native-continuous`)
 são lentes estrutura/modo de entrega via `runArchetypeCohort`;
 `junior`/`pleno`/`senior` é lente de visibilidade, não maturidade; não
 calibram.
-O CLI `npm run simulate:cohort` expõe a mesma coorte em resumo JSON;
-cron/launchd usam o exemplo em
+O CLI `npm run simulate:cohort` expõe a coorte de caso em resumo JSON;
+`--archetype` / `npm run simulate:archetype` expõe `runArchetypeCohort`
+no mesmo script (`--level` opcional; exclusão mútua com
+`--case`/`--override`). Cron/launchd usam o exemplo em
 `scripts/cron/real-flow-cohort.crontab.example` e log em
 `/private/tmp/maturity-assessment-real-flow-*.log`, sem secrets.
 O `/showcase` apresenta três situações — menos madura, intermediária

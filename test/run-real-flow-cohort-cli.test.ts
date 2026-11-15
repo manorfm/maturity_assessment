@@ -9,12 +9,14 @@ const scriptPath = path.join(repoRoot, 'scripts', 'run-real-flow-cohort.ts');
 const COHORT_TIMEOUT_MS = 180_000;
 
 type CohortCliSummary = {
-  caseId: string;
+  caseId?: string;
+  archetypeId?: string;
+  level?: string;
   completed: number;
   totalPeople: number;
   outcomeKind: string;
   patterns: string[];
-  overridesApplied: Array<{ nodeId: string; optionId: string }>;
+  overridesApplied?: Array<{ nodeId: string; optionId: string }>;
 };
 
 function runCohortCli(args: string[]): Promise<{
@@ -116,5 +118,99 @@ test(
   async () => {
     const { exitCode } = await runCohortCli(['--case', 'not-a-real-case']);
     assert.notEqual(exitCode, 0, 'unknown case must exit non-zero');
+  },
+);
+
+test(
+  'CLI archetype bureaucratic-fixed-scope exits 0 with war-room',
+  { timeout: COHORT_TIMEOUT_MS },
+  async () => {
+    const { exitCode, stdout, stderr } = await runCohortCli([
+      '--archetype',
+      'bureaucratic-fixed-scope',
+    ]);
+    assert.equal(exitCode, 0, `expected exit 0; stderr=${stderr}`);
+    const summary = parseSummary(stdout);
+    assert.equal(summary.archetypeId, 'bureaucratic-fixed-scope');
+    assert.equal(summary.completed, summary.totalPeople);
+    assert.ok(
+      summary.patterns.includes('war-room-como-gestao'),
+      `expected war-room-como-gestao; got ${summary.patterns.join(', ')}`,
+    );
+    assert.equal('caseId' in summary, false, 'archetype path must not include caseId');
+    assertNoAdminSecret(stdout, stderr);
+  },
+);
+
+test(
+  'CLI archetype digital-native-continuous exits 0 without war-room evolve',
+  { timeout: COHORT_TIMEOUT_MS },
+  async () => {
+    const { exitCode, stdout, stderr } = await runCohortCli([
+      '--archetype',
+      'digital-native-continuous',
+    ]);
+    assert.equal(exitCode, 0, `expected exit 0; stderr=${stderr}`);
+    const summary = parseSummary(stdout);
+    assert.equal(summary.archetypeId, 'digital-native-continuous');
+    assert.equal(summary.outcomeKind, 'evolve');
+    assert.ok(
+      !summary.patterns.includes('war-room-como-gestao'),
+      `must not contain war-room-como-gestao; got ${summary.patterns.join(', ')}`,
+    );
+    assert.equal('caseId' in summary, false, 'archetype path must not include caseId');
+    assertNoAdminSecret(stdout, stderr);
+  },
+);
+
+test(
+  'CLI archetype with --level junior exits 0 and reports level',
+  { timeout: COHORT_TIMEOUT_MS },
+  async () => {
+    const { exitCode, stdout, stderr } = await runCohortCli([
+      '--archetype',
+      'bureaucratic-fixed-scope',
+      '--level',
+      'junior',
+    ]);
+    assert.equal(exitCode, 0, `expected exit 0; stderr=${stderr}`);
+    const summary = parseSummary(stdout);
+    assert.equal(summary.level, 'junior');
+    assert.equal(summary.archetypeId, 'bureaucratic-fixed-scope');
+    assert.equal(summary.completed, summary.totalPeople);
+    assertNoAdminSecret(stdout, stderr);
+  },
+);
+
+test(
+  'CLI unknown archetype exits non-zero',
+  { timeout: COHORT_TIMEOUT_MS },
+  async () => {
+    const { exitCode, stderr } = await runCohortCli(['--archetype', 'not-a-real-archetype']);
+    assert.notEqual(exitCode, 0, 'unknown archetype must exit non-zero');
+    assert.match(stderr, /unknown archetype/i, `stderr must mention unknown archetype; got: ${stderr}`);
+  },
+);
+
+test(
+  'CLI archetype mutually exclusive with --case',
+  { timeout: COHORT_TIMEOUT_MS },
+  async () => {
+    const { exitCode } = await runCohortCli([
+      '--archetype',
+      'bureaucratic-fixed-scope',
+      '--case',
+      'engineering-practice',
+    ]);
+    assert.notEqual(exitCode, 0, 'archetype + case must exit non-zero');
+  },
+);
+
+test(
+  'CLI --level without --archetype exits non-zero',
+  { timeout: COHORT_TIMEOUT_MS },
+  async () => {
+    const { exitCode } = await runCohortCli(['--level', 'junior']);
+    assert.notEqual(exitCode, 0, '--level without --archetype must exit non-zero');
   },
 );

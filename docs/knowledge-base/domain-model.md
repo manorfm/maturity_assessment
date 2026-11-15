@@ -112,7 +112,11 @@
   maturidade: `junior` escolhe `cannot-observe` em
   `improvement-cause`, `blocked-cause` e `deployment-probe` quando a
   opção existe; `pleno`/`senior` e omitir `level` usam a prática do
-  arquétipo; discriminadores A/B não mudam por nível. Não confundir com
+  arquétipo; discriminadores A/B não mudam por nível. O mesmo CLI
+  (`scripts/run-real-flow-cohort.ts`, alias `npm run simulate:archetype`)
+  aceita `--archetype` e `--level` opcional; JSON com `archetypeId`
+  (+ `level` se pedido), sem `caseId`/`overridesApplied`; exclusão
+  mútua com `--case`/`--override`. Não confundir com
   `systemic-archetypes-v1` (hipótese de realimentação no laudo).
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,

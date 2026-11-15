@@ -414,9 +414,11 @@ de prosa para investigação e preservação.
 
 Agendamento local da coorte real-flow usa exatamente
 `npm run simulate:cohort` no diretório do repositório (substitua
-`REPO_ROOT`). O exemplo de crontab está em
+`REPO_ROOT`). O mesmo script aceita `--archetype` (alias
+`npm run simulate:archetype`) para a coorte de arquétipo em
+`:memory:`. O exemplo de crontab está em
 `scripts/cron/real-flow-cohort.crontab.example`; em macOS, launchd
-pode invocar o mesmo comando. Stdout/stderr vão para
+pode invocar o comando legado. Stdout/stderr vão para
 `/private/tmp/maturity-assessment-real-flow-*.log`. A entrada não
 carrega secrets e não engole falha com `|| true`.
 

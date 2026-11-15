@@ -1,5 +1,15 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-14 — CLI --archetype / --level na coorte
+
+- `scripts/run-real-flow-cohort.ts` aceita `--archetype` e `--level`
+  opcional via `runArchetypeCohort`; exclusão mútua com
+  `--case`/`--override`; alias `npm run simulate:archetype`. JSON de
+  arquétipo sem `caseId`/`overridesApplied`. Ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md),
+  [`domain-model.md`](../knowledge-base/domain-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-14 — Nível junior/pleno/senior nos arquétipos org
 
 - `OrgArchetypeLevel` opcional em `optionForArchetype` e
