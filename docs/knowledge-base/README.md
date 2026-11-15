@@ -56,6 +56,9 @@ A massa sintética valida apresentação — três bandas, fronteira,
 segurança≠governança e baixa prática de engenharia — sem calibração.
 A coorte `runRealFlowCohort` prova o expect de `engineering-practice`
 pelo fluxo de produto, sem seed; `optionOverrides` cobre sensibilidade.
+Arquétipos org (`bureaucratic-fixed-scope` / `digital-native-continuous`)
+são lentes estrutura/modo de entrega via `runArchetypeCohort`; não
+calibram e não confundem nível com maturidade.
 O CLI `npm run simulate:cohort` expõe a mesma coorte em resumo JSON;
 cron/launchd usam o exemplo em
 `scripts/cron/real-flow-cohort.crontab.example` e log em

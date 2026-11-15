@@ -1,5 +1,15 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-14 — Coorte de arquétipos organizacionais
+
+- `ORG_ARCHETYPES` A/B (`bureaucratic-fixed-scope` /
+  `digital-native-continuous`) com `expect`, `optionForArchetype` e
+  `runArchetypeCohort` no fluxo de produto; contraste war-room
+  required vs forbidden. Lentes de estrutura/entrega — não calibram;
+  nível ≠ maturidade. Ver
+  [`domain-model.md`](../knowledge-base/domain-model.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
 ## 2026-11-13 — Agendamento local da coorte real-flow
 
 - Exemplo de crontab em `scripts/cron/real-flow-cohort.crontab.example`:

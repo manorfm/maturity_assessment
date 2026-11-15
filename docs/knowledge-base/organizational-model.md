@@ -203,3 +203,10 @@ coerência do mapa, do cartão e da leitura em três capítulos; não
 calibra o posterior, não substitui entrevista humana e não abre o
 gate 50–100.
 
+Arquétipos organizacionais (`ORG_ARCHETYPES`) são lentes de estrutura e
+modo de entrega — `bureaucratic-fixed-scope` versus
+`digital-native-continuous` — com política de opções própria e
+`runArchetypeCohort` no fluxo de produto. Contrastam war room
+obrigatório (A) versus proibido (B) sem estender `POC_VALIDATION_ORGS`.
+Não calibram; nível de respondente, quando existir, não é maturidade.
+

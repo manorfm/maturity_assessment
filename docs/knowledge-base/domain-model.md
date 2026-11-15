@@ -99,6 +99,17 @@
   `engineering-practice` sem wrapper do seed. Overrides por nó substituem
   a opção sintética quando presentes. O CLI `npm run simulate:cohort`
   expõe a mesma orquestração sem Playwright nem seed de showcase.
+- **OrgArchetype:** lente de estrutura (`bureaucratic` | `digital-native`) e
+  modo de entrega (`fixed-scope-batch` | `continuous-flow`) para simular
+  tipos de organização sem calibrar o posterior. Ids canônicos:
+  `bureaucratic-fixed-scope` (A) e `digital-native-continuous` (B). Cada
+  arquétipo declara `expect` machine-checkable; `optionForArchetype` aplica
+  política determinística (discriminadores em `team-pressure`,
+  `ready-to-release`, `improvement-loop`); `runArchetypeCohort` percorre
+  create → interview → report como `runRealFlowCohort`, sem seed sintético
+  nem `SyntheticCaseId`. Nível junior/pleno/sênior, quando existir, é lente
+  de observação/autoridade — não nota de maturidade. Não confundir com
+  `systemic-archetypes-v1` (hipótese de realimentação no laudo).
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
   termo confuso, viés de opção ouro, uso de “não observo”, reconhecimento da
