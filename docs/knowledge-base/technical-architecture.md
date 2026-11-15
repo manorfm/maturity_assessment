@@ -422,6 +422,17 @@ com `ORG_ARCHETYPES` e opcionalmente lê
 a porta 3218. Não usa `runOrganizationalSynthetic` e não altera o
 deck `/showcase`.
 
+Persona sintética opcional na coorte de arquétipo: `DecisionClient`
+(sync) e `LayaSystemOneClient.chooseAsync` (`POST {baseUrl}/v1/systemone`,
+corpo Jev/Laya `questions.pick` tipo `choice`). Subir o servidor local
+com `pip install laya` → `laya-serve` →
+`export LAYA_BASE_URL=http://127.0.0.1:<port>`. Sem `LAYA_BASE_URL` /
+sem `decisionClient` a coorte permanece 100% `optionForArchetype`.
+Zero-shot tipado é fraco: resposta inválida, erro HTTP ou abstain
+caem no fallback determinístico; não calibra e não decide estágio,
+causa, conduta nem próximo nó. O monólito TypeScript não embute
+Python nem depende de `laya` no `package.json`.
+
 Agendamento local da coorte real-flow usa exatamente
 `npm run simulate:cohort` no diretório do repositório (substitua
 `REPO_ROOT`). O mesmo script aceita `--archetype` (alias

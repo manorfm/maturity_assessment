@@ -217,7 +217,12 @@ obrigatório (A) versus proibido (B) sem estender `POC_VALIDATION_ORGS`.
 Não calibram. Nível `junior`/`pleno`/`senior` em
 `optionForArchetype`/`runArchetypeCohort` é só visibilidade
 (`cannot-observe` em causa/probe pinados para junior); não é maturidade
-nem altera discriminadores A/B. A página `/showcase/archetypes` lista
+nem altera discriminadores A/B. `decisionClient?` opcional em
+`runArchetypeCohort` (via `resolveArchetypeOption`) pode simular a
+persona em nós de prática; vignette/literacy/list/free-text/contexto e
+o ramo junior de visibilidade não consultam o client; null/id inválido
+volta a `optionForArchetype`. Laya/`LAYA_BASE_URL` é só wire HTTP
+opcional — zero-shot fraco, não calibra. A página `/showcase/archetypes` lista
 os dois cartões (structure, deliveryMode, hint de expect e link
 manage) a partir dos projetos semeados por `runArchetypeCohort`, sem
 `runOrganizationalSynthetic` e sem misturar com `/showcase` das bandas

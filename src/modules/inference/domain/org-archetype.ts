@@ -4,6 +4,7 @@ import { InvitationService } from '../../assessments/invitation-service.js';
 import { ParticipationService } from '../../assessments/participation-service.js';
 import { ProjectService } from '../../projects/project-service.js';
 import type { Database } from '../../../shared/database.js';
+import type { DecisionClient } from './decision-client.js';
 import { DiagnosticSamplePlanner, type SampleRole } from './diagnostic-sample-plan.js';
 import { InferenceService } from '../inference-service.js';
 
@@ -258,9 +259,55 @@ export function optionForArchetype(
     : optionByBand(node.options, script.fallback);
 }
 
+export type ResolveArchetypeOptionInput = {
+  node: Pick<AssessmentNode, 'id' | 'title' | 'prompt' | 'options'>;
+  role: SampleRole;
+  unitIndex: number;
+  archetypeId: OrgArchetypeId;
+  level?: OrgArchetypeLevel;
+  decisionClient?: DecisionClient;
+};
+
+function isDecisionClientSkipPath(
+  node: Pick<AssessmentNode, 'id' | 'options'>,
+  level?: OrgArchetypeLevel,
+): boolean {
+  if (node.id === 'respondent-context' || node.id === 'work-context') return true;
+  if (
+    node.id.startsWith('vignette-') ||
+    node.id.startsWith('literacy-') ||
+    node.id.startsWith('list-') ||
+    node.id.startsWith('free-text-')
+  ) {
+    return true;
+  }
+  return (
+    level === 'junior' &&
+    JUNIOR_VISIBILITY_NODES.has(node.id) &&
+    node.options.some((option) => option.id === CANNOT_OBSERVE_ID)
+  );
+}
+
+export function resolveArchetypeOption(input: ResolveArchetypeOptionInput): string {
+  const { node, role, unitIndex, archetypeId, level, decisionClient } = input;
+  if (isDecisionClientSkipPath(node, level) || !decisionClient) {
+    return optionForArchetype(node, role, unitIndex, archetypeId, level);
+  }
+
+  const state =
+    `archetype=${archetypeId};level=${level ?? 'unspecified'};unit=${unitIndex};` +
+    `role=${role.profile}/${role.workContext};node=${node.id};title=${node.title};prompt=${node.prompt}`;
+  const options = node.options.map((option) => ({ id: option.id, label: option.label }));
+  const chosen = decisionClient.choose({ state, options });
+  if (chosen !== null && options.some((option) => option.id === chosen)) {
+    return chosen;
+  }
+  return optionForArchetype(node, role, unitIndex, archetypeId, level);
+}
+
 export function runArchetypeCohort(
   db: Database,
-  options: { archetypeId: OrgArchetypeId; level?: OrgArchetypeLevel },
+  options: { archetypeId: OrgArchetypeId; level?: OrgArchetypeLevel; decisionClient?: DecisionClient },
 ): {
   plan: ReturnType<typeof DiagnosticSamplePlanner.forGate>;
   created: ReturnType<ProjectService['create']>;
@@ -283,6 +330,7 @@ export function runArchetypeCohort(
   const projectId = String(project.id);
   const units = projects.listUnits(projectId).filter((unit) => unit.isLeaf);
 
+  const decisionClient = options.decisionClient;
   plan.units.forEach((unitPlan, unitIndex) => {
     const unit = units.find((candidate) => candidate.name === spec.units[unitIndex]) ?? units[unitIndex]!;
     const tokens = invitations.createBatch(projectId, unit.id, unitPlan.roles.length).tokens;
@@ -296,6 +344,7 @@ export function runArchetypeCohort(
         unitIndex,
         archetypeId,
         level,
+        decisionClient,
       );
     });
   });
@@ -313,6 +362,7 @@ function completeArchetypeJourney(
   unitIndex: number,
   archetypeId: OrgArchetypeId,
   level?: OrgArchetypeLevel,
+  decisionClient?: DecisionClient,
 ): void {
   const claimed = invitations.claim(token) as { resumeToken: string };
   let guard = 0;
@@ -322,7 +372,14 @@ function completeArchetypeJourney(
     }
     const current = participations.find(claimed.resumeToken)!;
     const node = catalog.getNode(current.graph_version, current.current_node, current.profile)!;
-    const option = optionForArchetype(node, role, unitIndex, archetypeId, level);
+    const option = resolveArchetypeOption({
+      node,
+      role,
+      unitIndex,
+      archetypeId,
+      ...(level !== undefined ? { level } : {}),
+      ...(decisionClient !== undefined ? { decisionClient } : {}),
+    });
     const result = participations.answer(claimed.resumeToken, option);
     if (result === 'invalid') throw new Error(`Invalid archetype answer ${option} on ${node.id}`);
   }

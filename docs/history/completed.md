@@ -1,5 +1,14 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-14 — DecisionClient / Laya na coorte de arquétipo
+
+- `DecisionClient` sync + `LayaSystemOneClient` (`POST /v1/systemone`)
+  e `resolveArchetypeOption` com skip paths, choice válida e fallback
+  `optionForArchetype`; `runArchetypeCohort` aceita `decisionClient?`.
+  Persona sintética opcional — não calibra. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md) e
+  [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
 ## 2026-11-14 — Showcase /showcase/archetypes A/B
 
 - Rota `/showcase/archetypes` lista cartões A/B a partir de
