@@ -208,5 +208,8 @@ modo de entrega — `bureaucratic-fixed-scope` versus
 `digital-native-continuous` — com política de opções própria e
 `runArchetypeCohort` no fluxo de produto. Contrastam war room
 obrigatório (A) versus proibido (B) sem estender `POC_VALIDATION_ORGS`.
-Não calibram; nível de respondente, quando existir, não é maturidade.
+Não calibram. Nível `junior`/`pleno`/`senior` em
+`optionForArchetype`/`runArchetypeCohort` é só visibilidade
+(`cannot-observe` em causa/probe pinados para junior); não é maturidade
+nem altera discriminadores A/B.
 

@@ -1,4 +1,4 @@
-import type { AssessmentNode, Option } from '../../catalog/assessment-graph.js';
+import { CANNOT_OBSERVE_ID, type AssessmentNode, type Option } from '../../catalog/assessment-graph.js';
 import { CatalogService } from '../../catalog/catalog-service.js';
 import { InvitationService } from '../../assessments/invitation-service.js';
 import { ParticipationService } from '../../assessments/participation-service.js';
@@ -8,6 +8,10 @@ import { DiagnosticSamplePlanner, type SampleRole } from './diagnostic-sample-pl
 import { InferenceService } from '../inference-service.js';
 
 export type OrgArchetypeId = 'bureaucratic-fixed-scope' | 'digital-native-continuous';
+export type OrgArchetypeLevel = 'junior' | 'pleno' | 'senior';
+
+/** Visibility lens only — not maturity. Junior may exit these cause/probe nodes. */
+const JUNIOR_VISIBILITY_NODES = new Set(['improvement-cause', 'blocked-cause', 'deployment-probe']);
 
 export type OrgArchetypeStructure = 'bureaucratic' | 'digital-native';
 export type OrgArchetypeDeliveryMode = 'fixed-scope-batch' | 'continuous-flow';
@@ -219,6 +223,7 @@ export function optionForArchetype(
   role: SampleRole,
   unitIndex: number,
   archetypeId: OrgArchetypeId,
+  level?: OrgArchetypeLevel,
 ): string {
   if (node.id === 'respondent-context') return role.profile;
   if (node.id === 'work-context') return role.workContext;
@@ -236,6 +241,14 @@ export function optionForArchetype(
     return node.options.find((option) => option.id === 'skip')?.id ?? node.options[0]!.id;
   }
 
+  if (
+    level === 'junior' &&
+    JUNIOR_VISIBILITY_NODES.has(node.id) &&
+    node.options.some((option) => option.id === CANNOT_OBSERVE_ID)
+  ) {
+    return CANNOT_OBSERVE_ID;
+  }
+
   const script = scripts[archetypeId];
   if (!script) throw new Error(`Unknown archetypeId: ${archetypeId}`);
   const wanted =
@@ -247,7 +260,7 @@ export function optionForArchetype(
 
 export function runArchetypeCohort(
   db: Database,
-  options: { archetypeId: OrgArchetypeId },
+  options: { archetypeId: OrgArchetypeId; level?: OrgArchetypeLevel },
 ): {
   plan: ReturnType<typeof DiagnosticSamplePlanner.forGate>;
   created: ReturnType<ProjectService['create']>;
@@ -255,6 +268,7 @@ export function runArchetypeCohort(
   report: ReturnType<InferenceService['report']>;
 } {
   const archetypeId = options.archetypeId;
+  const level = options.level;
   const spec = ORG_ARCHETYPES.find((candidate) => candidate.id === archetypeId);
   if (!spec) throw new Error(`Unknown archetypeId: ${archetypeId}`);
 
@@ -281,6 +295,7 @@ export function runArchetypeCohort(
         role,
         unitIndex,
         archetypeId,
+        level,
       );
     });
   });
@@ -297,6 +312,7 @@ function completeArchetypeJourney(
   role: SampleRole,
   unitIndex: number,
   archetypeId: OrgArchetypeId,
+  level?: OrgArchetypeLevel,
 ): void {
   const claimed = invitations.claim(token) as { resumeToken: string };
   let guard = 0;
@@ -306,7 +322,7 @@ function completeArchetypeJourney(
     }
     const current = participations.find(claimed.resumeToken)!;
     const node = catalog.getNode(current.graph_version, current.current_node, current.profile)!;
-    const option = optionForArchetype(node, role, unitIndex, archetypeId);
+    const option = optionForArchetype(node, role, unitIndex, archetypeId, level);
     const result = participations.answer(claimed.resumeToken, option);
     if (result === 'invalid') throw new Error(`Invalid archetype answer ${option} on ${node.id}`);
   }

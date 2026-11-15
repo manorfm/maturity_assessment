@@ -1,5 +1,14 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-14 — Nível junior/pleno/senior nos arquétipos org
+
+- `OrgArchetypeLevel` opcional em `optionForArchetype` e
+  `runArchetypeCohort`: junior → `cannot-observe` em
+  `improvement-cause`/`blocked-cause`/`deployment-probe`; pleno/senior
+  = prática do arquétipo; discriminadores A/B intactos. Nível ≠
+  maturidade. Ver [`domain-model.md`](../knowledge-base/domain-model.md)
+  e [`organizational-model.md`](../knowledge-base/organizational-model.md).
+
 ## 2026-11-14 — Coorte de arquétipos organizacionais
 
 - `ORG_ARCHETYPES` A/B (`bureaucratic-fixed-scope` /

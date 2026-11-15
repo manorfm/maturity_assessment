@@ -107,8 +107,12 @@
   política determinística (discriminadores em `team-pressure`,
   `ready-to-release`, `improvement-loop`); `runArchetypeCohort` percorre
   create → interview → report como `runRealFlowCohort`, sem seed sintético
-  nem `SyntheticCaseId`. Nível junior/pleno/sênior, quando existir, é lente
-  de observação/autoridade — não nota de maturidade. Não confundir com
+  nem `SyntheticCaseId`. `OrgArchetypeLevel` (`junior` | `pleno` |
+  `senior`) é lente opcional de observação/autoridade — não nota de
+  maturidade: `junior` escolhe `cannot-observe` em
+  `improvement-cause`, `blocked-cause` e `deployment-probe` quando a
+  opção existe; `pleno`/`senior` e omitir `level` usam a prática do
+  arquétipo; discriminadores A/B não mudam por nível. Não confundir com
   `systemic-archetypes-v1` (hipótese de realimentação no laudo).
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,
