@@ -68,6 +68,9 @@ no mesmo script (`--level` opcional; exclusão mútua com
 `/private/tmp/maturity-assessment-real-flow-*.log`, sem secrets.
 O `/showcase` apresenta três situações — menos madura, intermediária
 e madura. A madura ainda publica o resto observado.
+`/showcase/archetypes` contrasta A/B via `runArchetypeCohort` (não
+mistura com as bandas POC); `npm run showcase:archetypes` semeia o
+SQLite isolado.
 O contrato de família de capacidade, os cinco packs e as famílias
 causais noisy-OR (`causal-catalog-v11`) estão na base. O grafo vigente
 afunila por reforço.

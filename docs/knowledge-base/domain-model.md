@@ -116,7 +116,9 @@
   (`scripts/run-real-flow-cohort.ts`, alias `npm run simulate:archetype`)
   aceita `--archetype` e `--level` opcional; JSON com `archetypeId`
   (+ `level` se pedido), sem `caseId`/`overridesApplied`; exclusão
-  mútua com `--case`/`--override`. Não confundir com
+  mútua com `--case`/`--override`. A superfície
+  `/showcase/archetypes` (seed `npm run showcase:archetypes`) apresenta
+  A/B lado a lado sem misturar com o deck POC. Não confundir com
   `systemic-archetypes-v1` (hipótese de realimentação no laudo).
 - **ItemReview:** entrevista cognitiva sobre um nó (compreensão, correspondência da
   interpretação, encaixe e sobreposição de alternativas, recuperação de um evento,

@@ -7,6 +7,11 @@ import { registerAssessmentRoutes } from '../modules/assessments/assessment-rout
 import { configureErrorHandling } from './error-handling.js';
 import { registerProjectApiRoutes } from '../modules/projects/project-api-routes.js';
 import { collectShowcaseSimulations, renderShowcaseDeck, type ShowcaseManifestEntry } from '../modules/projects/showcase-deck.js';
+import {
+  collectArchetypeShowcase,
+  renderArchetypeShowcase,
+  type ArchetypeShowcaseManifestEntry,
+} from '../modules/projects/archetype-showcase.js';
 
 export async function createApp(db: Database) {
   const app = Fastify({ logger: { redact: ['req.url', 'request.url', 'req.headers.authorization', 'request.headers.authorization'] } });
@@ -34,6 +39,10 @@ export async function createApp(db: Database) {
     }
     return reply.type('text/html').send(renderShowcaseDeck([]));
   });
+  app.get('/showcase/archetypes', async (_request, reply) => {
+    const cards = collectArchetypeShowcase(db, { manifest: readArchetypeShowcaseManifest() });
+    return reply.type('text/html').send(renderArchetypeShowcase(cards));
+  });
   return app;
 }
 
@@ -47,6 +56,19 @@ function readShowcaseManifest(): ShowcaseManifestEntry[] | undefined {
   if (!existsSync(manifestPath)) return undefined;
   try {
     const parsed = JSON.parse(readFileSync(manifestPath, 'utf8')) as ShowcaseManifestEntry[];
+    return Array.isArray(parsed) ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function readArchetypeShowcaseManifest(): ArchetypeShowcaseManifestEntry[] | undefined {
+  const manifestPath = process.env.SHOWCASE_ARCHETYPE_MANIFEST
+    ?? '/private/tmp/maturity-assessment-archetype-showcase.json';
+  if (!manifestPath.startsWith('/private/tmp/maturity-assessment') || manifestPath.includes('..')) return undefined;
+  if (!existsSync(manifestPath)) return undefined;
+  try {
+    const parsed = JSON.parse(readFileSync(manifestPath, 'utf8')) as ArchetypeShowcaseManifestEntry[];
     return Array.isArray(parsed) ? parsed : undefined;
   } catch {
     return undefined;

@@ -1,5 +1,15 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-14 — Showcase /showcase/archetypes A/B
+
+- Rota `/showcase/archetypes` lista cartões A/B a partir de
+  `runArchetypeCohort` (structure, deliveryMode, hint de expect,
+  manage via manifesto); seed opcional
+  `npm run showcase:archetypes` em SQLite isolado. Não altera
+  `/showcase` POC. Ver
+  [`organizational-model.md`](../knowledge-base/organizational-model.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-14 — CLI --archetype / --level na coorte
 
 - `scripts/run-real-flow-cohort.ts` aceita `--archetype` e `--level`

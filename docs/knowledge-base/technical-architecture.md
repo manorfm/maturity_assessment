@@ -412,6 +412,16 @@ serve a porta 3217. `demo:test-server` faz o mesmo seed para o E2E;
 `demo:serve` reabre a mesma base. O catálogo `capability-narrative.ts` continua o único contrato
 de prosa para investigação e preservação.
 
+`/showcase/archetypes` é rota irmã: coleta projetos cujos nomes batem
+com `ORG_ARCHETYPES` e opcionalmente lê
+`SHOWCASE_ARCHETYPE_MANIFEST` (default
+`/private/tmp/maturity-assessment-archetype-showcase.json`) só para
+`adminPath` — o secret fica no `href`, como o manifesto POC.
+`npm run showcase:archetypes` semeia A/B com `runArchetypeCohort` em
+`/private/tmp/maturity-assessment-archetype-showcase-*.sqlite` e serve
+a porta 3218. Não usa `runOrganizationalSynthetic` e não altera o
+deck `/showcase`.
+
 Agendamento local da coorte real-flow usa exatamente
 `npm run simulate:cohort` no diretório do repositório (substitua
 `REPO_ROOT`). O mesmo script aceita `--archetype` (alias

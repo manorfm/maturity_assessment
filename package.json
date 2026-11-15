@@ -16,6 +16,7 @@
     "demo:serve": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e-pilot-v1.sqlite SHOWCASE_MANIFEST=/private/tmp/maturity-assessment-showcase-poc.json PORT=3217 node --import tsx src/server.ts",
     "demo": "npm run test:e2e && npm run demo:serve",
     "showcase": "DATABASE_PATH=/private/tmp/maturity-assessment-e2e-pilot-v1.sqlite PORT=3217 node --import tsx test/e2e/demo-server.ts",
+    "showcase:archetypes": "DATABASE_PATH=/private/tmp/maturity-assessment-archetype-showcase-v1.sqlite PORT=3218 node --import tsx scripts/showcase-archetypes.ts",
     "check": "tsc -p tsconfig.json --noEmit"
   },
   "engines": {

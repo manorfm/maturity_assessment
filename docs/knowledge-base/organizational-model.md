@@ -217,5 +217,11 @@ obrigatório (A) versus proibido (B) sem estender `POC_VALIDATION_ORGS`.
 Não calibram. Nível `junior`/`pleno`/`senior` em
 `optionForArchetype`/`runArchetypeCohort` é só visibilidade
 (`cannot-observe` em causa/probe pinados para junior); não é maturidade
-nem altera discriminadores A/B.
+nem altera discriminadores A/B. A página `/showcase/archetypes` lista
+os dois cartões (structure, deliveryMode, hint de expect e link
+manage) a partir dos projetos semeados por `runArchetypeCohort`, sem
+`runOrganizationalSynthetic` e sem misturar com `/showcase` das bandas
+POC. `npm run showcase:archetypes` recria o SQLite isolado
+`/private/tmp/maturity-assessment-archetype-showcase-*.sqlite` e o
+manifesto com os `adminPath`.
 
