@@ -1,5 +1,14 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-20 — Laya allowlist, factory sync e wire CLI
+
+- Allowlist SSRF `isAllowedLayaBaseUrl`, `createLayaDecisionClient` (sync
+  sobre `chooseAsync`), `resolveArchetypeDecisionClient` e CLI
+  `--no-laya` / `LAYA_BASE_URL=http://127.0.0.1:8000` com venv
+  `.venv-laya`. Sem env ou com `--no-laya` a coorte permanece
+  determinística. Ver
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-14 — DecisionClient / Laya na coorte de arquétipo
 
 - `DecisionClient` sync + `LayaSystemOneClient` (`POST /v1/systemone`)

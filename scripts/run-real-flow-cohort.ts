@@ -1,4 +1,7 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createDatabase } from '../src/shared/database.js';
+import { resolveArchetypeDecisionClient } from '../src/modules/inference/domain/archetype-laya-wire.js';
 import {
   ORG_ARCHETYPES,
   runArchetypeCohort,
@@ -14,16 +17,18 @@ type Override = { nodeId: string; optionId: string };
 const ARCHETYPE_IDS = new Set<string>(ORG_ARCHETYPES.map((entry) => entry.id));
 const LEVEL_IDS = new Set<string>(['junior', 'pleno', 'senior']);
 
-type ParsedArgs =
+export type ParsedArgs =
   | {
       mode: 'case';
       caseId: string;
       overrides: Override[];
+      noLaya?: boolean;
     }
   | {
       mode: 'archetype';
       archetypeId: OrgArchetypeId;
       level?: OrgArchetypeLevel;
+      noLaya?: boolean;
     };
 
 function requireValue(flag: string, value: string | undefined): string {
@@ -33,12 +38,13 @@ function requireValue(flag: string, value: string | undefined): string {
   return value;
 }
 
-function parseArgs(argv: string[]): ParsedArgs {
+export function parseArgs(argv: string[]): ParsedArgs {
   let caseId = 'engineering-practice';
   let caseProvided = false;
   const overrides: Override[] = [];
   let archetypeId: string | undefined;
   let level: string | undefined;
+  let noLaya = false;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index]!;
@@ -67,6 +73,10 @@ function parseArgs(argv: string[]): ParsedArgs {
       level = requireValue('--level', argv[++index]);
       continue;
     }
+    if (arg === '--no-laya') {
+      noLaya = true;
+      continue;
+    }
     throw new Error(`Unknown argument: ${arg}`);
   }
 
@@ -91,10 +101,16 @@ function parseArgs(argv: string[]): ParsedArgs {
       mode: 'archetype',
       archetypeId: archetypeId as OrgArchetypeId,
       ...(level !== undefined ? { level: level as OrgArchetypeLevel } : {}),
+      ...(noLaya ? { noLaya: true } : {}),
     };
   }
 
-  return { mode: 'case', caseId, overrides };
+  return {
+    mode: 'case',
+    caseId,
+    overrides,
+    ...(noLaya ? { noLaya: true } : {}),
+  };
 }
 
 function main(): number {
@@ -103,9 +119,15 @@ function main(): number {
     const db = createDatabase(':memory:');
 
     if (args.mode === 'archetype') {
+      const decisionClient = resolveArchetypeDecisionClient({
+        mode: args.mode,
+        env: process.env,
+        noLaya: args.noLaya === true,
+      });
       const { plan, report } = runArchetypeCohort(db, {
         archetypeId: args.archetypeId,
         ...(args.level !== undefined ? { level: args.level } : {}),
+        ...(decisionClient !== undefined ? { decisionClient } : {}),
       });
       const patterns = uniqueFindingsByPattern(report.findings).map((finding) => finding.pattern);
       const summary: Record<string, unknown> = {
@@ -144,4 +166,10 @@ function main(): number {
   }
 }
 
-process.exitCode = main();
+const invokedAsCli =
+  process.argv[1] !== undefined &&
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
+
+if (invokedAsCli) {
+  process.exitCode = main();
+}
