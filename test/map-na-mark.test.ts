@@ -1,9 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectEngineeringDomains, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 import { layout } from '../src/shared/html.js';
+
+const map = OrganizationalAreaProjector.empty();
+const gapDomains = projectEngineeringDomains({ map });
 
 const gapOverview: MapOverview = {
   lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
@@ -56,7 +59,7 @@ test('eixo não avaliado do radar usa --na, não --unknown', () => {
 });
 
 test('mapa estrutural sem cobertura usa coverage-gap e não inventa exemplo', () => {
-  const columns = disciplineColumns(OrganizationalAreaProjector.empty());
+  const columns = disciplineColumns(map);
   const structure = projectStructureMatrix({
     minimum: 5,
     columns,
@@ -66,11 +69,12 @@ test('mapa estrutural sem cobertura usa coverage-gap e não inventa exemplo', ()
     ],
   });
   const html = renderMapPage({
-    map: OrganizationalAreaProjector.empty(),
+    map,
     cut: 'est',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: gapDomains,
     structure,
   });
   const gama = html.slice(html.indexOf('Gama'), html.indexOf('Delta'));

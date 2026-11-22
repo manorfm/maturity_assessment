@@ -10,6 +10,7 @@ import {
   runOrganizationalSynthetic,
   type SyntheticCaseId,
 } from '../src/modules/inference/domain/organizational-synthetic.js';
+import { projectEngineeringDomains } from '../src/modules/inference/domain/map-matrix.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 import { renderAudienceBriefs, renderAreaRecorte, renderDisciplineDetail, renderFirstScreen } from '../src/modules/projects/project-routes.js';
 
@@ -273,6 +274,7 @@ function mapOf(report: ReturnType<typeof runOrganizationalSynthetic>['report']) 
       method: 'Sistemas na ordem do modelo, não por resultado.',
       notice: 'Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas.',
     },
+    engineeringDomains: projectEngineeringDomains({ map: report.organizationalAreas }),
     structure: { columns: [], rows: [] },
     perspectives: { columns: [], rows: [], withoutOwnRow: [], withheld: null, notice: '' },
   });

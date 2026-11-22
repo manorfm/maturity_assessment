@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectPerspectiveMatrix, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectEngineeringDomains, projectPerspectiveMatrix, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 import { layout } from '../src/shared/html.js';
 
-const columns = disciplineColumns(OrganizationalAreaProjector.empty());
+const map = OrganizationalAreaProjector.empty();
+const columns = disciplineColumns(map);
+const gapDomains = projectEngineeringDomains({ map });
 
 const gapOverview: MapOverview = {
   lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
@@ -52,11 +54,12 @@ function perspectiveFixture() {
 test('célula coberta (unpublished) ganha marca accent ChartMark, sem %', () => {
   const structure = structureFixture();
   const html = renderMapPage({
-    map: OrganizationalAreaProjector.empty(),
+    map,
     cut: 'est',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: gapDomains,
     structure,
   });
   const delta = html.slice(html.indexOf('Delta'));
@@ -78,11 +81,12 @@ test('célula coberta (unpublished) ganha marca accent ChartMark, sem %', () => 
 test('uncovered e swatch NA permanecem SCobertura', () => {
   const structure = structureFixture();
   const html = renderMapPage({
-    map: OrganizationalAreaProjector.empty(),
+    map,
     cut: 'est',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: gapDomains,
     structure,
   });
   const gama = html.slice(html.indexOf('Gama'), html.indexOf('Delta'));
@@ -101,11 +105,12 @@ test('uncovered e swatch NA permanecem SCobertura', () => {
 test('divergência marca ◆ + outline ink', () => {
   const perspectives = perspectiveFixture();
   const html = renderMapPage({
-    map: OrganizationalAreaProjector.empty(),
+    map,
     cut: 'per',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: gapDomains,
     perspectives,
   });
   assert.match(html, /divergence-cell/);
@@ -128,11 +133,12 @@ test('divergência marca ◆ + outline ink', () => {
 test('legenda estrutural: swatch coberto + swatch NA', () => {
   const structure = structureFixture();
   const html = renderMapPage({
-    map: OrganizationalAreaProjector.empty(),
+    map,
     cut: 'est',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: gapDomains,
     structure,
   });
   assert.match(html, /coverage-swatch/);

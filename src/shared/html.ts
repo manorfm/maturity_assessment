@@ -88,6 +88,11 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .area-map-systems { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:12px 0 8px }
     .map-overview-systems { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:12px 0 8px }
     .map-overview-index { font-family:Newsreader, Georgia, serif; font-size:32px; line-height:1.1; margin:0 }
+    .map-engineering-domains { margin:20px 0 12px }
+    .map-engineering-domain-list { display:grid; gap:10px; margin:12px 0 0 }
+    .map-engineering-domain { display:grid; grid-template-columns:minmax(140px,220px) minmax(120px,1fr) auto auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line) }
+    .map-engineering-domain h3 { margin:0; font-size:1rem }
+    .map-engineering-domain--na { color:var(--na-ink) }
     .area-tile { background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:20px }
     .area-tile.unobserved { color:var(--muted) }
     .area-tile.observed { border-color:var(--accent) }

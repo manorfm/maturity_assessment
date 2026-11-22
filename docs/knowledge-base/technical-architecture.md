@@ -369,7 +369,10 @@ e `coverage-swatch` — sem inventar percentual. Acima das abas, o
 `projectMapOverview` publica lead causal (path do achado), índice
 Tecnologia quando o índice global publica, e quatro cartões de sistema
 com `publishSystemSlices` (índice só se a faixa do sistema publicar);
-método e aviso de uso vêm no overview.
+método e aviso de uso vêm no overview. Em seguida,
+`projectEngineeringDomains` lista os grupos de Engenharia na ordem do
+modelo com `publishDomainSlices` — índice/faixa só se o domínio
+publicar; senão “Não avaliado” (não zero).
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
 `capability-reference-v19`. `CapabilityReference` rejeita base de avaliação nominal,

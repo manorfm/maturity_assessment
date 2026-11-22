@@ -1,4 +1,4 @@
-import { publishSystemSlices } from './diagnostic-report.js';
+import { publishDomainSlices, publishSystemSlices } from './diagnostic-report.js';
 import type { IndexPublication, MaturitySlice } from './stage-posterior.js';
 import { projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from './organizational-areas.js';
 
@@ -99,6 +99,44 @@ function overviewTechnology(index?: IndexPublication): MapOverview['technology']
     coverage: index.coverage,
     ...(index.target !== undefined ? { target: index.target } : {}),
   };
+}
+
+export type EngineeringDomain = {
+  id: string;
+  label: string;
+  reading?: MaturitySlice;
+  state: 'published' | 'unevaluated';
+  note?: string;
+};
+
+export type EngineeringDomains = {
+  title: string;
+  method: string;
+  legend: string;
+  domains: EngineeringDomain[];
+};
+
+const DOMAINS_TITLE = 'Engenharia por domínio';
+const DOMAINS_METHOD = 'Domínios na ordem do modelo, não por resultado.';
+const DOMAINS_LEGEND = 'losango = estimativa · traço = faixa · linha vertical = alvo';
+const DOMAIN_UNEVALUATED = 'Não avaliado';
+
+export function projectEngineeringDomains(input: {
+  map: OrganizationalAreaMap;
+  index?: IndexPublication;
+}): EngineeringDomains {
+  const engineering = input.map.systems.find((system) => system.id === 'engineering');
+  const groups = (engineering?.children ?? []).filter((child) => child.kind === 'group');
+  const slices = input.index?.published && input.index.leaves
+    ? publishDomainSlices(input.index.leaves, input.map)
+    : {};
+  const domains = groups.map((group) => {
+    const reading = slices[group.id as keyof typeof slices];
+    return reading
+      ? { id: group.id, label: group.label, state: 'published' as const, reading }
+      : { id: group.id, label: group.label, state: 'unevaluated' as const, note: DOMAIN_UNEVALUATED };
+  });
+  return { title: DOMAINS_TITLE, method: DOMAINS_METHOD, legend: DOMAINS_LEGEND, domains };
 }
 
 export const mapCopy = {

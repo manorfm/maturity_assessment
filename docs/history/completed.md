@@ -1,5 +1,21 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-22 — Mapa Engenharia por domínio (Onda 6b)
+
+- Cinco grupos canônicos com `publishDomainSlices`; published com
+  índice/faixa ou “Não avaliado”; bloco entre overview e abas; ordem
+  do modelo, sem Dados e IA inventado. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
+## 2026-11-22 — Auditoria completa do protótipo (além do mapa)
+
+- Confrontadas as 30 telas de `anaminese_maturity_v3` / standalone com o
+  inventário: Ficha, Prontidão, Fronteira, Plano e Histórico eram “só
+  CSS” e são déficits estruturais (nuvem/3 colunas, grade p_k, escada
+  F0–F5, matriz autoridade×horizonte, comparador de bands). Conclusão
+  da entrevista não pede “compromisso de devolução”. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-11-22 — Mapa visão geral (Onda 6a)
 
 - Lead causal a partir do path do achado; índice Tecnologia condicionado;

@@ -6,7 +6,7 @@ import type { TreatmentConduct } from '../inference/domain/treatment-contract.js
 import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
-import { mapCopy, type MapLegend, type MapOverview, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
+import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierBrief } from '../inference/domain/learning-frontier.js';
@@ -279,6 +279,7 @@ export function renderMapPage(input: {
   areaBase: string;
   capabilityBase: string;
   overview: MapOverview;
+  engineeringDomains: EngineeringDomains;
   structure?: StructureMatrix;
   perspectives?: PerspectiveMatrix;
   legend?: MapLegend;
@@ -295,9 +296,25 @@ export function renderMapPage(input: {
       : renderCapabilityCut(input.map, input.areaBase, input.capabilityBase);
   return `<header class="report-hero"><p class="report-kicker">Mapa navegável</p><h1>Onde está cada parte do sistema</h1><p>${escapeHtml(input.overview.lead)}</p></header>
     ${renderMapOverview(input.overview)}
+    ${renderEngineeringDomains(input.engineeringDomains)}
     <div class="report-tabs" role="tablist" aria-label="Corte">${tabs}</div>
     ${body}
     ${input.legend ? renderLegend(input.legend) : ''}`;
+}
+
+function renderEngineeringDomains(domains: EngineeringDomains): string {
+  const rows = domains.domains.map((domain) => {
+    if (domain.state === 'published' && domain.reading) {
+      return `<article class="map-engineering-domain" data-domain="${escapeHtml(domain.id)}"><h3>${escapeHtml(domain.label)}</h3>${renderGauge(domain.reading.index, domain.reading.band)}<p>${domain.reading.index}%</p><p>faixa ${domain.reading.band[0]}–${domain.reading.band[1]}%</p></article>`;
+    }
+    return `<article class="map-engineering-domain map-engineering-domain--na" data-domain="${escapeHtml(domain.id)}"><h3>${escapeHtml(domain.label)}</h3><p class="coverage-gap report-gap">${escapeHtml(domain.note ?? 'Não avaliado')}</p></article>`;
+  }).join('');
+  return `<section class="map-engineering-domains" aria-label="${escapeHtml(domains.title)}">
+    <h2>${escapeHtml(domains.title)}</h2>
+    <p>${escapeHtml(domains.method)}</p>
+    <p>${escapeHtml(domains.legend)}</p>
+    <div class="map-engineering-domain-list">${rows}</div>
+  </section>`;
 }
 
 function renderMapOverview(overview: MapOverview): string {

@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectEngineeringDomains, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 
-const columns = disciplineColumns(OrganizationalAreaProjector.empty());
+const emptyMap = OrganizationalAreaProjector.empty();
+const columns = disciplineColumns(emptyMap);
+const gapDomains = projectEngineeringDomains({ map: emptyMap });
 
 const gapOverview: MapOverview = {
   lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
@@ -29,11 +31,12 @@ test('matriz de estrutura pinta a célula que o domínio publicou e não um zero
     ],
   });
   const html = renderMapPage({
-    map: OrganizationalAreaProjector.empty(),
+    map: emptyMap,
     cut: 'est',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: gapDomains,
     structure,
   });
   assert.match(html, /Times × capacidades, na ordem da estrutura, não por resultado/);
@@ -59,11 +62,12 @@ test('matriz de perspectiva desenha os dois relatos e omite quem ficou abaixo do
     ],
   });
   const html = renderMapPage({
-    map: OrganizationalAreaProjector.empty(),
+    map: emptyMap,
     cut: 'per',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: gapDomains,
     perspectives,
   });
   assert.match(html, /Não mostra quem está certo/);
@@ -86,6 +90,7 @@ test('sistema não atravessado não abre disciplinas e a legenda omite o alvo se
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: projectEngineeringDomains({ map }),
     legend: projectMapLegend(undefined),
   });
   const product = html.slice(html.indexOf('data-area="product"'), html.indexOf('data-area="engineering"'));

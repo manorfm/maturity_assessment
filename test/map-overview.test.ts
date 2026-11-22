@@ -15,6 +15,7 @@ import {
 } from '../src/modules/inference/domain/diagnostic-report.js';
 import {
   disciplineColumns,
+  projectEngineeringDomains,
   projectPerspectiveMatrix,
   projectStructureMatrix,
 } from '../src/modules/inference/domain/map-matrix.js';
@@ -303,6 +304,7 @@ test('renderMapPage coloca overview acima das abas com Tecnologia e quatro siste
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: publishedOverview,
+    engineeringDomains: projectEngineeringDomains({ map }),
   });
   const overviewAt = html.indexOf('map-overview');
   const tabsAt = html.indexOf('report-tabs');
@@ -340,6 +342,7 @@ test('renderMapPage overview sem publicação não inventa Orbital nem percentua
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains: projectEngineeringDomains({ map }),
   });
   assert.match(html, /map-overview/);
   assert.equal(html.includes('Orbital'), false);
@@ -350,12 +353,14 @@ test('renderMapPage overview sem publicação não inventa Orbital nem percentua
 });
 
 test('renderMapPage com overview preserva cortes cap, est e per', () => {
+  const engineeringDomains = projectEngineeringDomains({ map });
   const cap = renderMapPage({
     map,
     cut: 'cap',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains,
   });
   assert.match(cap, /report-tabs/);
   assert.match(cap, /Por capacidade/);
@@ -367,6 +372,7 @@ test('renderMapPage com overview preserva cortes cap, est e per', () => {
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains,
     structure: structureFixture(),
   });
   assert.match(est, /report-tabs/);
@@ -380,6 +386,7 @@ test('renderMapPage com overview preserva cortes cap, est e per', () => {
     areaBase: '/areas',
     capabilityBase: '/capabilities',
     overview: gapOverview,
+    engineeringDomains,
     perspectives: perspectiveFixture(),
   });
   assert.match(per, /report-tabs/);

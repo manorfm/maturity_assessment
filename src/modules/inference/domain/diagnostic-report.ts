@@ -285,6 +285,35 @@ export function publishSystemSlices(
   return published;
 }
 
+const domainSliceIds = ['delivery', 'software-quality', 'architecture', 'platform', 'security'] as const;
+type DomainSliceId = (typeof domainSliceIds)[number];
+
+/** Agrega leaves por domínio (grupo) sob Engenharia; omite faixa larga (mesma regra de `publishSystemSlices`). */
+export function publishDomainSlices(
+  leaves: ReadonlyArray<{ id: string; distribution: LeafDistribution }>,
+  map: OrganizationalAreaMap,
+): Partial<Record<DomainSliceId, MaturitySlice>> {
+  const byDomain: Record<DomainSliceId, Record<string, LeafDistribution>> = {
+    delivery: {},
+    'software-quality': {},
+    architecture: {},
+    platform: {},
+    security: {},
+  };
+  for (const leaf of leaves) {
+    const path = findAreaPath(map, leaf.id);
+    if (path?.[0]?.id !== 'engineering') continue;
+    const domainId = path[1]?.id;
+    if (domainId && domainId in byDomain) byDomain[domainId as DomainSliceId][leaf.id] = leaf.distribution;
+  }
+  const published: Partial<Record<DomainSliceId, MaturitySlice>> = {};
+  for (const id of domainSliceIds) {
+    const slice = sliceWhenPublished(byDomain[id]);
+    if (slice) published[id] = slice;
+  }
+  return published;
+}
+
 function sliceWhenPublished(leaves: Record<string, LeafDistribution>): MaturitySlice | undefined {
   const ids = Object.keys(leaves);
   if (!ids.length) return undefined;

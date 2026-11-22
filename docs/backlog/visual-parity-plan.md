@@ -1,220 +1,266 @@
 # Plano: paridade visual com o protótipo
 
-Referência visual vigente: protótipo Design Graph
-`anaminese_maturity_v3` **e** o standalone
-`Workspace/prototipos/Anamnese de Tecnologia v3.html` (mesma arte).
-O Graph descreve o standalone; quando o inventário divergir, prevalece o
-HTML standalone. Não é licença para copiar números de exemplo (Orbital,
-13%/24%, “Integração contínua” fixa). Onde o modelo não mede, o bloco
+Referência visual vigente: Design Graph `anaminese_maturity_v3`
+(espelho `maturity`) **e** o standalone
+`Workspace/prototipos/Anamnese de Tecnologia v3.html`. O Graph descreve
+o standalone; quando divergirem, prevalece o HTML standalone. Não é
+licença para copiar números de exemplo (Orbital, 13%/24%, “Integração
+contínua” fixa, Chaos 1%, alvo 45%). Onde o modelo não mede, o bloco
 declara lacuna.
 
 ## Problema
 
-Quem compara o protótipo com o produto encontra blocos de texto no lugar
-de gráficos, cartões e grades. No **mapa**, o descompasso é estrutural:
-o produto entrega um shell de abas + matriz qualitativa; o protótipo é
-um **dashboard** (índices, charts de domínio, radars, matrizes com %).
+Quem compara o protótipo com o produto encontra **shells de conteúdo**
+(listas, cartões de texto, abas) no lugar de **composições tipadas**
+(grades numeradas, chart marks, matrizes autoridade×horizonte, escadas
+F0–F5, dual-band de histórico). O mapa foi o primeiro erro de
+inventário corrigido; a auditoria de 2026-11-22 mostrou o mesmo padrão
+em Ficha, Prontidão, Fronteira, Plano, Histórico e Marcos do
+walkthrough.
 
 ## Hipótese de resultado
 
-Cada página do relatório, da administração e da entrevista usa os mesmos
-blocos visuais do protótipo, preenchidos com a leitura publicada. Célula
-sem cobertura continua neutra. Nenhum gráfico publica o exemplo numérico
-do protótipo.
+Cada página do relatório, da administração e da entrevista usa os
+mesmos blocos visuais do protótipo, preenchidos com a leitura
+publicada. Célula sem cobertura continua neutra. Nenhum gráfico publica
+o exemplo numérico do protótipo.
+
+## Catálogo completo do protótipo (30 telas)
+
+Fonte: `list_screens` em `anaminese_maturity_v3` + alts do standalone.
+Pares (web)/(celular) compartilham a mesma intenção; o produto hoje é
+responsivo único, não duas artes.
+
+### Relatório (chrome de 9 itens)
+
+| # | Tela | Componentes (Graph) | Classificação vigente |
+| --- | --- | --- | --- |
+| 1 | Laudo (+ variante tema escuro) | 15 | Casca + condicionado (Ondas 3–4) |
+| 2 | Mapa navegável | 52 | **6a–6b feitos**; 6c–6d abertas |
+| 3 | Ficha do nó | 35 | **Déficit estrutural** (não “só CSS”) |
+| 4 | Prontidão para práticas avançadas | 15 | **Déficit estrutural** |
+| 5 | Fronteira de aprendizado | 20 | **Déficit estrutural** (escada F0–F5) |
+| 6 | Plano de tratamento | 17 | **Déficit estrutural** (matriz autoridade×horizonte) |
+| 7 | Walkthrough: Operação | 25 | Seções ok; **Marcos/Caminho** subcompostos |
+| 8 | Histórico e reavaliação | 24 | **Déficit estrutural** (comparador + bands) |
+| 9 | Visão por público | 17 | Campos próximos; falta **DecisãoPolíticaStack** tipado |
+
+### Administração (wizard 1–4)
+
+| Tela | Notas |
+| --- | --- |
+| Criar projeto | `Projeto`: nome, motivo, **Salvar rascunho**; fieldsets de porte / setor regulado / estágio no markup do protótipo — **domínio não persiste** |
+| Estrutura organizacional | Tribo/Squad/`AdicionarSquad` — produto tem cartões; polimento + rótulos |
+| Convites e participação | Amostra, lote, células de participação — produto tem lote; polimento |
+| Termo de uso | `TermoUsoItem` × cláusulas — aceite formal que trava convites = hipótese de domínio |
+
+### Entrevista (web + celular)
+
+| Tela | Intenção do protótipo | Produto / gap |
+| --- | --- | --- |
+| Boas-vindas | Anonimato + links (incl. **Como tratamos os dados**) | Link/política ainda não publicados pelo domínio |
+| Contexto | **Senioridade na profissão** + **Tempo na empresa** (`Stack2`) | Fora do domínio até contrato |
+| Sua perspectiva | Fieldset de perspectiva | Fluxo existe; polimento CapsBold |
+| Pergunta de evento | Fieldset + Voltar | Fluxo existe |
+| Pedido de exemplo | Field + Link | Fluxo existe |
+| Aprofundamento de pressão | Fieldset | Fluxo existe |
+| Pergunta de leitura | **LeituraQuadroChartMark** (figura do quadro) | Produto tem figura semanal — validar paridade do ChartMark |
+| Conclusão | “Obrigado.” / respostas registradas / pode fechar | Inventário antigo pedia “compromisso de devolução” — **o protótipo não tem esse bloco**; não inventar |
 
 ## Menu — vigente
 
-Ordem do protótipo, já no chrome:
+1. Laudo · 2. Mapa · 3. Ficha · 4. Prontidão · 5. Fronteira · 6. Plano ·
+7. Área: Operação · 8. Histórico · 9. Visão por público.
 
-1. Laudo
-2. Mapa
-3. Ficha da capacidade aberta, ou do primeiro achado publicado
-4. Prontidão para práticas avançadas
-5. Fronteira de aprendizado
-6. Plano de tratamento
-7. Área: Operação
-8. Histórico e reavaliação
-9. Visão por público
+Rodapé do protótipo: `Instrumento v21 · modelo m2` **e** `Estimativas
+provisórias`. No produto o rótulo v21/m2 **não entra**. Rotas
+`/walkthrough/product|engineering|organization` acessíveis, fora do menu.
 
-Rodapé do menu no protótipo: `Instrumento v21 · modelo m2` **e**
-`Estimativas provisórias`. No produto: só “Instrumento vigente /
-Estimativas provisórias” — o rótulo v21/m2 **não entra**. As rotas
-`/walkthrough/product`, `/engineering` e `/organization` continuam
-acessíveis; só saíram do menu.
+## Auditoria 2026-11-22 — erros de inventário (além do mapa)
 
-## Reavaliação pós-rebuild (2026-11-21)
+O plano classificava Ficha → Histórico como “só CSS”. O Graph e o
+standalone mostram **outra composição**, no mesmo sentido em que o mapa
+era dashboard e não abas.
 
-O banco do Design Graph foi reconstruído. `get_build_diff` nesta carga
-reportou **primeira build** (sem delta automático vs. build anterior);
-a reavaliação abaixo foi feita contra `get_screen`/`get_full`/`search`
-em `anaminese_maturity_v3` e contra o HTML/CSS do produto.
+### Laudo — tabela “o que falta” estava obsoleta
 
-### O que o inventário anterior capturou errado ou de forma incompleta
+Ondas 3–4 já entregaram casca tipográfica, gauge, barra de divergência,
+restrição accent, prognóstico em 2 cartões. O que ainda falta no laudo é
+polimento fino / prova transversal — **não** reabrir casca como gap
+principal.
 
-| Assunto | Antes (plano) | Agora (protótipo reconstruído) |
+### Mapa — parcial (6a–6b)
+
+Feito: lead causal, Tecnologia, 4 sistemas, method/notice,
+`publishSystemSlices`, grade 4 colunas, índice 32px; Engenharia por
+domínio (`publishDomainSlices` / `projectEngineeringDomains`). Aberto:
+6c radars; 6d matrizes com % + interpretação.
+
+### Ficha — déficit estrutural
+
+| Bloco no protótipo | Produto hoje | Backend / mensagem |
 | --- | --- | --- |
-| Identidade do doc | genérico `maturity` | Doc ativo `anaminese_maturity_v3` (espelho `maturity` ainda listado) |
-| Índice tipográfico no laudo | “~34px” | **88px** Newsreader no índice principal de Tecnologia; prognóstico usa **36px**; restrição título **40px** |
-| Citação do motivo | “citação” sem escala | **38px** itálico serif; autor 14px |
-| H1 do laudo | implícito “hero” | **52px** Newsreader; produto hoje ~`clamp(2rem,4vw,2.75rem)` |
-| Mecanismo (leitura geral) | texto corrido | **25px** serif, max ~40ch |
-| Seções do laudo | `h2` simples | Trilho esquerdo **numerado 1–8** (serif 15px) + título 15px/600 + lead 13px |
-| Hero / amostra | sample só no rodapé | Hero em duas colunas: contexto à esquerda; **respondentes · unidades · perspectivas** + janela de coleta à direita |
-| Aviso de uso | só rodapé / parágrafo | **Note** com borda `1.5px solid var(--ink)` no hero **e** coluna no footer |
-| Leitura + medidor | “medidor” vago / bloqueado | Índice grande + linha de faixa/cobertura/alvo + **gauge** (trilho, banda `accent-soft`, marcador) por recorte |
-| Achados | cartões empilhados | Grade **3 colunas**; path caps + ordem serif; fato 21px; dots de sustentação |
-| Divergências | dois textos lado a lado | Título + “N pontos de distância” + **barra comparativa** (Direção/Operação com %) — produto ainda é texto |
-| Restrição | bloco de texto | Cartão `accent-soft` + borda accent; título 40px; métrica lateral (ex. “6 a 15 dias”) |
-| Conduta 30 dias | cartões empilhados | **Tabela** Experimento \| Dono \| Critério (não só `report-conduct`) |
-| Prognóstico | “só lacuna de domínio” | Layout **dois cartões** (Sem tratamento / Com tratamento) + índice 36px + gauge; domínio ainda não publica distribuição — a **casca visual** faltava no inventário |
-| Lacunas / exames | listas sob h3 | Grade **2 colunas** Lacunas \| Exames |
-| Footer | pilha de `<p>` | Grade **2 colunas** “Sobre estas estimativas” \| “Aviso de uso” |
-| Criar projeto | “faltam porte/regulação/estágio” | Protótipo já desenha fieldsets: **Porte da área de tecnologia**, **Setor regulado**, **Estágio da organização**, motivo com nota de citação, “Salvar rascunho” |
-| Contexto (entrevista) | “senioridade fora do domínio” | Tela dedicada com seção **Senioridade na profissão** (`SenioridadeProfissãoFieldset`); “Como tratamos os dados” nas boas-vindas |
-| Mapa “já existe / —” | Onda 2a+5 como se bastassem | **Erro de inventário (2026-11-22):** marcas de célula ≠ mapa. Standalone = dashboard completo (ver secção Mapa) |
+| Trilho numerado 1–N (serif 15) + Grid2 200px\|1fr | `report-block` empilhado sem números de seção | Casca HTML |
+| Como está: legenda estágio 0–4; nuvem de **20 pontos** (cenários); 3 colunas por perspectiva com %·faixa·Alvo | Barras `stage-distribution` + texto | Posterior/faixa por perspectiva já parcial; **falta** ChartMark de nuvem + cartões 3 colunas |
+| Relatos em grade tipada | Listas “Por perspectiva / Por time” | Conteúdo existe; falta grade |
+| O que fazer: cartão accent “Menor experimento” + Cynefin · grau A–D · forma de aprendizado + legenda A–D | Um parágrafo em `ficha-card` | Conduta/cynefin/evidência existem no domínio do plano — **projector da ficha não monta o cartão tipado** |
+| ChartMark5/6/7, Alvo, CapsBold path | Ausentes ou texto | Só publicar marcas com posterior |
 
-### Correção 2026-11-22 — Mapa vs standalone
+### Prontidão — déficit estrutural
 
-Fonte: decompress da tela 14 do standalone (`6521d0cb-…`). Design Graph
-lista as mesmas seções (`Engenharia por domínio`, `Times ×…`,
-`Perspectivas ×…`, `ChartGrid`/`ChartMark*`). O produto **não** as
-renderiza.
-
-| Bloco no standalone | Produto hoje | Backend |
+| Bloco | Produto | Backend |
 | --- | --- | --- |
-| Lead causal + CTA (“aparece mais em X, domínio Y. Abra…”) | Lead genérico | **Falta** projector de lead a partir do achado/path |
-| Índice **Tecnologia** + gauge + 4 sistemas (Produto/Engenharia/Operação/Organização) com %·faixa·cobertura·alvo | 4 tiles só com status textual | Índice global existe no laudo; **falta** índice **por sistema** (e open-state “aberto”) |
-| Engenharia por domínio (chart horizontal, losango/faixa/alvo) | ausente | **Falta** posterior/índice por domínio (Entrega, Qualidade, Arquitetura, Dados, Plataforma, Segurança) |
-| Radar 6 domínios + radar 8 capacidades | radar só em recorte de área | **Falta** publicação tipada para o mapa (eixos + “não avaliado fora do polígono”) |
-| Times × capacidades com **%** e hover faixa/cobertura | matriz uncovered/unpublished/divergence sem % | Célula precisa de magnitude publicada; hoje `unpublished` = “índice não publicado” |
-| Perspectivas: dual radar + ◆ + “divergência · N pts” + interpretação | matriz qualitativa + ◆ CSS | Magnitudes/distance no mapa **faltam**; interpretação (“quem decide vê…”) **falta** |
-| Agregação &lt; limiar (“entram no índice da área”) | `withoutOwnRow` parcial | Refinar copy e escopo |
+| Cartão prática: título 30px, tag Pronto/Não pronto, **P(pronto) 48px**, trilho, lead | `readiness-card` com `P(pronto)` em texto | `p_k` / band existem |
+| Grade pré-requisitos: ○/● · nome · barra · % · rótulo **gargalo** (red-soft) | Lista `p_k` em `<li>` | Checklist existe; falta composição Grid6/Grid7 |
+| Nota final: probabilidade nunca vira índice da org | Frase no hero — ok em espírito | — |
 
-### Mensagem do protótipo (intenções — mapa e laudo)
+### Fronteira — déficit estrutural (não listas)
 
-Padrão de comunicação do standalone (copiar a **função**, não o caso Orbital):
+Protótipo: **escada F0–F5** (Condições humanas → Fluxo e decisão →
+Práticas técnicas → Entrega → Operação confiável → Práticas avançadas)
+com práticas posicionadas (`ChartMark6`) e stacks de condições humanas.
+“Comece por” em Grid4. Produto: três listas Dominado / Pode aprender /
+Ainda bloqueado + card “Comece por”. Reclassificar: **substituir listas
+pela escada** quando o grafo publicar degraus; listas podem permanecer
+como fallback de lacuna.
 
-1. **Orientar o olhar** — lead nomeia *onde* o problema se concentra (sistema + domínio) e convida a aprofundar (“Abra qualquer bloco…”).
-2. **Separar método de resultado** — “na ordem do modelo, não por resultado”; eixos/células na ordem canônica.
-3. **Honestidade de cobertura** — abaixo do mínimo → cinza / “Não avaliado” / fora do polígono; **não** zero.
-4. **Agregação anônima** — &lt; N pessoas: sem linha própria; respostas sobem ao nível acima; frase explícita.
-5. **Divergência sem juiz** — mostra dois lados + distância; interpreta o *sistema* (“quem decide vê análise; quem opera vê pressa”), nunca a pessoa.
-6. **Problema → lugar → próximo passo** — achado aponta capacidade; “Ver ficha”; conduta/plano ficam no laudo/tratamento, não no mapa.
-7. **Aviso de uso** — diagnóstico do sistema de trabalho; não avalia pessoas nem meta de bônus.
-8. **Legenda tipada** — “losango = estimativa · traço = faixa · linha = alvo”; “eixo não avaliado não vale zero”.
+### Plano — déficit estrutural
 
-### O que continua correto
+Protótipo: matriz **linhas = autoridade** (Direção, Gestão, …) ×
+**colunas = horizonte** (0–30 · 1–3 · 3–12), contador “Ativas: N de M”,
+setas de dependência, Cynefin em Grid3. Produto: três colunas de conduta
+achatadas + pulso + Cynefin em lista. Backend de horizonte/autoridade já
+existe em `TreatmentConduct`; **falta projector de matriz**.
 
-- Menu de 9 itens e exclusão de walkthroughs Product/Engineering/Org do menu.
-- Proibição de copiar Orbital / 13% / 24% / Integração contínua fixa.
-- Domínio bloqueia prognóstico real (duas distribuições) e aceite formal do termo.
-- Tokens; Onda 1; laudo casca/condicionado (3–4); marcas NA/ChartMark (2a/5) como *detalhe* de célula, não como mapa completo.
+### Walkthrough Operação — semi-estrutural
 
-## Relatório — o que falta desenhar (revisado)
+Seções batem com o produto (onde / chegamos / funciona / próxima /
+caminho / marcos / riscos / premissas). Gaps: trilho numerado; Alvo no
+hero; **Marcos = tabela Prazo \| Marco \| Critério** (produto = bullets);
+CaminhoStack/Tag. Não inventar % de índice de Operação do mock.
 
-| Tela | Já existe no produto | Falta no visual (protótipo) |
+### Histórico — déficit estrutural
+
+Protótipo: seletor “Leitura anterior”; bloco Tecnologia com **dois % +
+bandas comparativas + linha de alvo**; chips de perfil; “Cada
+capacidade”; grade Melhorou \| Piorou; Achados; Note Atenção. Produto:
+texto P(melhora)/P(piora) + evolução. Comparar duas leituras publicadas
+é domínio parcial; **casca do comparador visual falta**.
+
+### Visão por público — composição
+
+Protótipo: path CapsBold + fato; **duas colunas** DecisãoPolíticaStack
+(campos Decisão pedida / Política / Investimento / Risco / Acompanhar
+vs versão do time). Produto: três blocos direção/time/recorrer em
+parágrafos. Estrutura de campos do domínio (`AudienceReading`) é
+próxima; falta o stack tipado. **Proibir** gravar CTO/CFO/Orbital como
+copy fixa (o mock usa; o produto usa “quem autoriza”).
+
+### Admin / entrevista — confirmações
+
+- Contexto: labels **Senioridade na profissão** e **Tempo na empresa**
+  confirmados no Graph (`Stack2`).
+- Boas-vindas: **Como tratamos os dados** confirmado.
+- Criar projeto: **Salvar rascunho** + motivo; porte/setor/estágio no
+  desenho — domínio bloqueia persistência.
+- Conclusão: **não** exige compromisso de devolução no protótipo atual.
+
+## Mensagem do protótipo (gramática transversal)
+
+Copiar a **função**, nunca o caso Orbital:
+
+1. **Orientar o olhar** — lead nomeia onde o problema se concentra + CTA.
+2. **Método ≠ ranking** — ordem do modelo; eixos/células canônicos.
+3. **Cobertura honestidade** — abaixo do mínimo → cinza / “Não avaliado”
+   / fora do polígono; **não** zero.
+4. **Agregação anônima** — &lt; N: sem linha própria; frase explícita.
+5. **Divergência sem juiz** — dois lados + distância; interpreta o sistema.
+6. **Problema → lugar → próximo passo** — Ver ficha / Ver prontidão / Ver plano.
+7. **Aviso de uso** — sistema de trabalho; não pessoas nem bônus.
+8. **Legenda tipada** — losango/faixa/alvo; eixo não avaliado ≠ zero.
+9. **Ficha/Prontidão** — “menor experimento” + Cynefin + grau de evidência;
+   P(pronto) nunca vira índice da organização.
+10. **Fronteira** — degraus e condições humanas em paralelo; não culpa.
+11. **Histórico** — mudança só com limiar de P(melhora/piora/estável);
+    alvo como referência visual, não meta de bônus.
+12. **Público** — mesmo achado; muda a decisão pedida, não a verdade.
+
+## Relatório — o que falta (revisado 2026-11-22)
+
+| Tela | Já existe | Falta (protótipo) |
 | --- | --- | --- |
-| Laudo | Casca tipográfica e composição (Onda 3): h1 52 / quote 38 itálico / mecanismo 25 / índice 88; seções 1–8; note com borda ink + amostra no hero; achados em 3 colunas; conduta Experimento\|Dono\|Critério; lacunas/exames e footer em 2 colunas; tema via botão | Gauge de faixa; divergência com barra; restrição em cartão accent; prognóstico em 2 cartões+gauge (números só se publicados). Tema escuro no protótipo é tela variante; produto mantém toggle |
-| Mapa | Shell abas + tiles + matrizes qualitativas + marcas célula (2a/5) | **Dashboard standalone:** lead causal; índice Tecnologia + 4 sistemas; chart por domínio; 2 radars; matrizes com %; dual radar de perspectiva + interpretação. CapsBold path; disciplina sem pilar pai (**domínio**) |
-| Ficha | Trilha, definição, pesos, relatos, close | Ritmo de cartões/quadrantes, ChartMark de estágio, Alvo tipográfico do mock (sem copiar %) |
-| Prontidão | `p_k` / lacuna | Grades Grid6/Grid7 do protótipo — **sem** % de exemplo |
-| Fronteira | Faixas textuais | Marcas ChartMark6 F0–F5 só com posterior; stacks de condições humanas |
-| Plano | Colunas de horizonte | DiasAtivasStack / tags; setas de dependência no visual do protótipo |
-| Walkthrough Operação | Texto + trilha | CaminhoStack / CaminhoTag; marcos sem % de exemplo |
-| Histórico | Seletor, deltas | ChipsItem / alvo só com par publicado |
-| Visão por público | Dois lados | DecisãoPolíticaStack; proibir CTO/CFO/Orbital |
+| Laudo | Casca 3 + gauge/barra/prognóstico 4 | Polimento; prova transversal |
+| Mapa | 6a overview · 6b domínio | 6c radars · 6d % + interpretação |
+| Ficha | Trilha + seções textuais + stage bars | Trilho numerado; nuvem/3 colunas Como está; cartão Menor experimento (Cynefin·grau·forma); grades tipadas |
+| Prontidão | `p_k`, band, gargalo em texto | Cartão 48px + grade pré-requisitos com barra/%/gargalo |
+| Fronteira | Listas + Comece por | Escada F0–F5 + ChartMark6 + stacks humanas |
+| Plano | 3 horizontes + pulso + Cynefin lista | Matriz autoridade×horizonte + Ativas N/M + setas |
+| Walkthrough | Seções + trilha | Marcos tabela; CaminhoStack; Alvo; trilho |
+| Histórico | Seletor + P(·) + evolução | Comparador Tecnologia (bands+alvo); Melhorou\|Piorou; chips |
+| Visão por público | Dois lados + recorrer | DecisãoPolíticaStack tipado (sem CTO/CFO/Orbital) |
 
-## Administração (revisado)
+## Administração / entrevista — inalterado em espírito
 
-| Tela | Já existe | Falta |
-| --- | --- | --- |
-| Criar projeto | Nome + 4 passos numerados (admin já próximo) | Persistir/exibir **Porte**, **Setor regulado**, **Estágio da organização**, motivo→citação do laudo, “Salvar rascunho” — **bloqueado no domínio** até contrato; visual dos radios já especificado no protótipo (`NovoDiagnósticoLabel`) |
-| Estrutura | Cartões | Polimento fino |
-| Convites | Lote / amostra | Polimento fino |
-| Termo | Cinco cláusulas + aviso | Aceite formal que trava convites — hipótese |
+Bloqueios de domínio (porte/setor/estágio/motivo, senioridade/tempo,
+política de dados, aceite do termo) antes de UI. Visual dos radios e
+fieldsets já especificado no Graph.
 
-## Entrevista (revisado)
+## Hipóteses abertas
 
-| Tela | Já existe | Falta |
-| --- | --- | --- |
-| Boas-vindas | Anonimato, tempo, começar | Link **Como tratamos os dados** (texto no protótipo; domínio ainda não publica política) |
-| Contexto | Tela do grafo | **Senioridade na profissão** (fieldset no protótipo); tempo de empresa se existir no markup — fora do domínio até contrato |
-| Perspectiva / evento / exemplo / pressão / leitura | Fluxo | Polimento; leitura já tem figura semanal |
-| Conclusão | Limiar 5 | Compromisso de devolução do resumo — domínio não registra |
-
-## Hipóteses abertas do recorte do laudo (revisadas)
-
-1. ~~**Casca tipográfica e de layout do laudo (só CSS/HTML).**~~ Feito na Onda 3.
-2. ~~**Gauge + índice por recorte.**~~ Feito na Onda 4: trilho/banda/marcador só com índice/faixa publicados; lacuna no mesmo encaixe sem %.
-3. ~~**Divergência em barra.**~~ Feito na Onda 4: barra + “pontos de distância” só com magnitudes opcionais no item; senão texto/lacuna.
-4. ~~**Prognóstico em dois cartões.**~~ Feito na Onda 4: casca Sem|Com tratamento sempre; números/gauge só se o laudo publicar os dois lados.
-5. **Lacunas de prova** (banda 50 pts, `maturitySliceDraws`) e fixture e2e sem faixa — inalteradas.
-6. **Contexto do projeto (porte / setor regulado / estágio / motivo).** Protótipo completo; produto sem campos — contrato de domínio antes do green de UI.
+1. ~~Casca laudo~~ · ~~Gauge/barra/prognóstico~~ · ~~Mapa 6a~~ feitos.
+2. Lacunas de prova (banda 50 pts, fixture e2e) — inalteradas.
+3. Contexto do projeto + senioridade — domínio antes do green de UI.
+4. Escada da fronteira vs listas: a escada é a arte alvo; listas só como
+   lacuna se o grafo não publicar posição F0–F5.
+5. Matriz do plano: reusar `authority` + `horizon` já no
+   `TreatmentConduct`.
 
 ## Fora deste plano
 
-- Copiar índices, faixas e alvos desenhados no protótipo.
-- Colocar as quatro áreas de volta no menu.
-- React ou outro framework de interface.
-- Calibração, piloto humano e folhas candidatas — continuam nos planos
-  de instrumento.
-- Gravar o rótulo “Instrumento v21 · modelo m2” no chrome do produto.
+- Copiar índices/faixas/alvos do mock.
+- Quatro áreas de volta no menu.
+- React.
+- Calibração / piloto / folhas candidatas.
+- Rótulo “Instrumento v21 · modelo m2” no chrome.
+- “Compromisso de devolução” na conclusão (não está no protótipo).
 
-## Menor experimento
+## Menor experimento e sequência
 
-Uma página de cada vez, em TDD do HTML: presença do bloco visual e
-ausência de Orbital/`13%`/`24%`.
+Uma tela (ou bloco) por vez, TDD do HTML: presença do bloco + ausência
+de Orbital/`13%`/`24%`.
 
-Ordem revisada (2026-11-22 — mapa corrigido pelo standalone):
+1. ~~Tokens · laudo · marcas célula · mapa 6a · mapa 6b~~.
+2. **Mapa 6c → 6d** (fecha o dashboard do mapa).
+3. **Ficha estrutural** (trilho + Como está + Menor experimento).
+4. **Prontidão** cartão + grade pré-requisitos.
+5. **Fronteira** escada F0–F5.
+6. **Plano** matriz autoridade×horizonte.
+7. **Histórico** comparador visual.
+8. Walkthrough Marcos/Caminho · Visão DecisãoPolíticaStack.
+9. Admin + entrevista (domínio primeiro).
+10. Prova transversal.
 
-1. ~~Tokens + shell~~ · ~~Laudo casca/condicionado~~ · ~~marcas célula mapa~~ (feitos; marcas ≠ mapa).
-2. ~~**Mapa 6a — visão geral**~~ (feito): lead causal + Tecnologia + 4 sistemas + method/notice; índice por sistema só com `publishSystemSlices`.
-3. **Mapa 6b — Engenharia por domínio** (chart + “Não avaliado”) — exige publicação por domínio.
-4. **Mapa 6c — Radars do mapa** (6 domínios + 8 capacidades).
-5. **Mapa 6d — Matrizes com magnitude** (estrutura/perspectiva + hover/faixa) + interpretação de divergência.
-6. Ficha → Prontidão → Fronteira → Plano.
-7. Walkthrough → Histórico → Público.
-8. Admin + entrevista (domínio primeiro).
-9. Prova transversal.
-
-## Inventário (atualizado 2026-11-22)
-
-| Tela (protótipo) | View atual | Classificação | Notas |
-| --- | --- | --- | --- |
-| Laudo / Laudo escuro | `renderLaudo` | **casca** (Onda 3) + **condicionado** (Onda 4) | Gauge/barra/métrica só com publicação; prognóstico 2 cartões com gap |
-| Mapa navegável | `renderMapPage` | **6a feito**; 6b–6d abertas | Overview (lead + Tecnologia + 4 sistemas); faltam chart domínio, radars, % células |
-| Ficha do nó | `renderNodeCard` | só CSS | |
-| Prontidão | `renderReadinessPage` | só CSS | |
-| Fronteira | `renderFrontierPage` | só CSS | |
-| Plano | `renderTreatmentPage` | só CSS | |
-| Walkthrough Operação | `renderWalkthrough` | só CSS | |
-| Histórico | `renderHistoryPage` | só CSS | |
-| Visão por público | `renderAudiencePage` | só CSS | |
-| Criar projeto | admin | **bloqueado** + só CSS | Radios porte/setor/estágio no protótipo |
-| Estrutura / Convites | admin | só CSS fino | |
-| Termo | admin | bloqueado (aceite) | |
-| Entrevista | `interview-view` | só CSS fino + bloqueado | Senioridade + link de dados |
-
-### Fundação visual
+## Fundação visual
 
 | Item | Estado |
 | --- | --- |
-| Tokens `.diagnostic-report` + `:root --na` | feito (Ondas 1 e 2a) |
-| ChartMark mapa (coverage-cell / ◆ / swatches) | feito (Onda 5) |
-| Shell nav 9 itens + tema | vigente |
-| Anti-exemplo Orbital/13%/24% | vigente nos testes |
+| Tokens + `:root --na` | feito |
+| ChartMark célula mapa | feito (Onda 5) |
+| Mapa overview 6a | feito |
+| Mapa domínio 6b | feito |
+| Shell nav 9 + tema | vigente |
+| Anti-Orbital/13%/24% | vigente nos testes |
 
 ## Sequência de implementação
 
-0–5. Tokens, laudo, marcas de célula — feitos (ver history).
-6a. ~~**Mapa visão geral** (lead + Tecnologia + 4 sistemas)~~ — feito.
-6b. Engenharia por domínio.
-6c. Radars do mapa.
-6d. Matrizes com % + interpretação de divergência.
-7. Ficha → Prontidão → Fronteira → Plano.
-8. Walkthrough → Histórico → Público.
-9. Admin + entrevista.
-10. Prova transversal.
-
-Fora: React, copiar números do mock, recolocar 4 áreas no menu,
-calibração/piloto/folhas candidatas.
+0–5 · 6a · 6b — feitos.
+6c. Radars do mapa — **próximo**.
+6d. Matrizes com % + interpretação.
+7. Ficha estrutural.
+8. Prontidão estrutural.
+9. Fronteira escada.
+10. Plano matriz.
+11. Histórico comparador.
+12. Walkthrough Marcos + Visão stack.
+13. Admin + entrevista.
+14. Prova transversal.
