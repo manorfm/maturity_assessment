@@ -134,7 +134,7 @@ ainda não emite (permanece lacuna).
 | Tela (protótipo) | View atual | Classificação | Notas |
 | --- | --- | --- | --- |
 | Laudo / Laudo escuro | `renderLaudo` + shell | só CSS (+ hipóteses) | Seções e cartões existem; falta densidade Grid2 / índice tipográfico. Prognóstico e medidor por recorte → **bloqueado** se exigir dado novo |
-| Mapa navegável | `renderMapPage` | só CSS (+ 1 domínio) | Radar/matrizes existem; falta ChartGrid/marcas. Disciplina sem pilar pai → **bloqueado** (`organizational-area-map-plan`) |
+| Mapa navegável | `renderMapPage` | só CSS (+ 1 domínio) | Célula SCobertura (`border-radius:4px`, `--na`) e radar não avaliado (`--na` em `:root`) feitos (Onda 2a). Falta ChartGrid/densidade. Disciplina sem pilar pai → **bloqueado** (`organizational-area-map-plan`) |
 | Ficha do nó | `renderNodeCard` | só CSS | Conteúdo publicado; falta ritmo de cartões/quadrantes |
 | Prontidão | `renderReadinessPage` | só CSS | Sem grade-% do mock |
 | Fronteira | `renderFrontierPage` | só CSS | Marcas F0–F5 só com posterior |
@@ -159,7 +159,7 @@ ainda não emite (permanece lacuna).
 
 0. Inventário (esta seção) — feito.
 1. Tokens + shell do relatório (sem mudar inferência) — feito.
-2. Mapa (visual; domínio só se disciplina-sem-pai entrar no ciclo).
+2. Mapa (visual; domínio só se disciplina-sem-pai entrar no ciclo) — Onda 2a (marca NA) feita; ChartGrid ainda aberto.
 3. Laudo (layout; prognóstico/medidor só com publicação).
 4. Ficha → Prontidão → Fronteira → Plano (um ciclo por tela).
 5. Walkthrough → Histórico → Público.

@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-21 — Marca NA do mapa (Onda 2a)
+
+- `.coverage-gap` / `.coverage-swatch` com `border-radius:4px`; radar
+  não avaliado usa `--na` em vez de `--unknown`; `:root` declara
+  `--na` / `--na-ink` para o radar fora do shell. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-11-21 — Tokens do shell do relatório (Onda 1)
 
 - `.diagnostic-report` claro/escuro alinhado a `.interview` com o
