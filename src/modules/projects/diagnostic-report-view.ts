@@ -2,10 +2,10 @@ import { escapeHtml } from '../../shared/html.js';
 import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
 import { uniqueFindingsByPattern, type OutcomeFinding } from '../inference/domain/report-outcome.js';
 import type { DiagnosticLaudo, AudienceReading } from '../inference/domain/diagnostic-report.js';
-import type { TreatmentConduct } from '../inference/domain/treatment-contract.js';
+import type { EvidenceGrade, TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
-import type { FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
+import type { FichaAction, FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
 import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, type MapRadarPanel, type MapRadars, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
@@ -80,8 +80,12 @@ export function renderReportShell(input: {
   </script>`;
 }
 
-function laudoSectionTitle(order: number, title: string): string {
+function reportSectionTitle(order: number, title: string): string {
   return `<h2><span class="report-section-num" aria-hidden="true">${order}</span> ${escapeHtml(title)}</h2>`;
+}
+
+function laudoSectionTitle(order: number, title: string): string {
+  return reportSectionTitle(order, title);
 }
 
 export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: string; reportBase: string }): string {
@@ -473,7 +477,8 @@ function renderCells(cells: Array<{
 }
 
 export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; definition: NodeDefinition; how: HowItIs; reported: ReportedReadings; detail?: string; preserve: PreservePublication; close: FichaClose }): string {
-  const block = (heading: string, body: string) => `<section class="report-block"><h2>${escapeHtml(heading)}</h2>${body}</section>`;
+  const block = (order: number, heading: string, body: string) =>
+    `<section class="report-block">${reportSectionTitle(order, heading)}${body}</section>`;
   const trail = input.trail.map((crumb, index) => {
     const separator = index === 0 ? '' : '<span aria-hidden="true">›</span>';
     const item = crumb.href
@@ -482,22 +487,36 @@ export function renderNodeCard(input: { title: string; trail: FichaCrumb[]; defi
     return `${separator}${item}`;
   }).join('');
   return `<header class="report-hero"><nav class="ficha-trail" aria-label="Caminho">${trail}</nav><p class="report-kicker">Ficha do nó</p><h1>${escapeHtml(input.title)}</h1></header>
-    ${block('O que é e por que importa', `<p>${escapeHtml(input.definition.what)}</p><p>${escapeHtml(input.definition.why)}</p>`)}
-    ${block('Como está', renderHowItIs(input.how))}
-    ${block('O que as pessoas relataram', `${renderReported(input.reported)}${input.detail ?? ''}`)}
-    ${block('Por que provavelmente acontece', renderFichaLine(input.close.cause))}
-    ${block('Onde se resolve', renderFichaLine(input.close.place))}
-    ${block('O que fazer', renderFichaLine(input.close.action))}
-    ${block('Como saber se funcionou', renderFichaLine(input.close.check))}
-    ${block('O que já funciona', `<p class="${input.preserve.shown ? '' : 'report-gap'}">${escapeHtml(input.preserve.body)}</p>`)}
-    ${block('Relações com outros nós', renderRelations(input.close.relations))}
-    ${block('O que não sabemos', renderFichaLine(input.close.unknown))}
-    ${block('Referências', renderFichaLine(input.close.references))}`;
+    ${block(1, 'O que é e por que importa', `<p>${escapeHtml(input.definition.what)}</p><p>${escapeHtml(input.definition.why)}</p>`)}
+    ${block(2, 'Como está', renderHowItIs(input.how))}
+    ${block(3, 'O que as pessoas relataram', `${renderReported(input.reported)}${input.detail ?? ''}`)}
+    ${block(4, 'Por que provavelmente acontece', renderFichaLine(input.close.cause))}
+    ${block(5, 'Onde se resolve', renderFichaLine(input.close.place))}
+    ${block(6, 'O que fazer', renderFichaAction(input.close.action))}
+    ${block(7, 'Como saber se funcionou', renderFichaLine(input.close.check))}
+    ${block(8, 'O que já funciona', `<p class="${input.preserve.shown ? '' : 'report-gap'}">${escapeHtml(input.preserve.body)}</p>`)}
+    ${block(9, 'Relações com outros nós', renderRelations(input.close.relations))}
+    ${block(10, 'O que não sabemos', renderFichaLine(input.close.unknown))}
+    ${block(11, 'Referências', renderFichaLine(input.close.references))}`;
 }
 
 function renderFichaLine(line: FichaLine): string {
   const tone = line.published ? 'ficha-card' : 'ficha-card report-gap';
   return `<article class="${tone}"><p>${escapeHtml(line.body)}</p></article>`;
+}
+
+function renderFichaAction(action: FichaAction): string {
+  if (!action.published) return renderFichaLine(action);
+  const meta = [
+    action.cynefin ? `<p><strong>Cynefin.</strong> ${escapeHtml(cynefinLine(action.cynefin))}</p>` : '',
+    action.evidenceGrade ? `<p><strong>Grau de evidência.</strong> ${escapeHtml(action.evidenceGrade)}</p>` : '',
+    action.learningMode ? `<p><strong>Forma de aprendizado.</strong> ${escapeHtml(learningModeReading[action.learningMode])}</p>` : '',
+  ].join('');
+  const grades = (['A', 'B', 'C', 'D'] as const satisfies readonly EvidenceGrade[]);
+  const legend = action.evidenceGrade
+    ? `<ul class="ficha-evidence-legend">${grades.map((grade) => `<li><strong>${grade}</strong> — ${escapeHtml(evidenceGradeReading[grade])}</li>`).join('')}</ul>`
+    : '';
+  return `<article class="ficha-experiment"><p class="report-kicker">Menor experimento</p><p>${escapeHtml(action.body)}</p>${meta}${legend}</article>`;
 }
 
 function renderRelations(relations: FichaRelations): string {

@@ -215,11 +215,12 @@ mostra estimativa e faixa quando o índice está publicado, e o alvo só
 quando o modelo inclui o alvo. A ficha abre com a trilha do mapa
 (`projectFichaTrail`): Tecnologia e os ancestrais da área são links; o
 nome da capacidade aberta não é link. O corpo da ficha sai de
-`ficha-node`: o que a capacidade abrange e o que ela trata, sem nome de
-ferramenta; a distribuição de estágio 0–4 desenha os cinco pesos da
-posterior da folha quando o índice publicado a traz, senão a frase
-“ainda não publicamos”; perspectiva e unidade abaixo do limiar não
-ganham série própria; o quadrante sofisticação ×
+`ficha-node` e `renderNodeCard` numera as seções 1–11 com
+`report-section-num` (mesmo trilho do laudo): o que a capacidade abrange
+e o que ela trata, sem nome de ferramenta; a distribuição de estágio 0–4
+desenha os cinco pesos da posterior da folha quando o índice publicado a
+traz, senão a frase “ainda não publicamos”; perspectiva e unidade abaixo
+do limiar não ganham série própria; o quadrante sofisticação ×
 apropriação só com as duas leituras, e a conduta do quadrante “as
 pessoas querem; o meio não ajuda” começa pelo meio. “O que já funciona”
 só entra quando a leitura do laudo é de preservação. O relato da ficha
@@ -228,7 +229,11 @@ acima do limiar, sem índice percentual. Quem ficou abaixo do limiar
 não ganha linha própria: as respostas entram só no total. Causa, lugar,
 ação, critério, lacuna e referência saem de `projectFichaClose`:
 texto publicado vira cartão; campo vazio vira a lacuna, sem o caso de
-exemplo do protótipo. Relações são as arestas publicadas do nó
+exemplo do protótipo. A ação publicada vira `ficha-experiment` com
+kicker “Menor experimento”; Cynefin, grau A–D e forma de aprendizado só
+entram quando o projector recebe essas metas tipadas
+(`treatment-contract`) junto com a action — sem inventar meta nem
+legenda A–D sem grau. Relações são as arestas publicadas do nó
 (evidencia, amplifica, bloqueia, depende-de); o cartão mostra o outro
 lado e o tipo. Tipo sem aresta naquele nó fica de fora. Nó sem aresta
 mantém a lacuna de que o grafo não ligou aquele nó. O plano de tratamento

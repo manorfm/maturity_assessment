@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-22 — Ficha casca estrutural (Onda 7a)
+
+- Seções 1–11 com `report-section-num`; `FichaAction` com metas tipadas;
+  cartão `ficha-experiment` (Menor experimento + Cynefin/grau/modo +
+  legenda A–D só com grau). Sem 7b. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-22 — Mapa matrizes com magnitude (Onda 6d)
 
 - `MapCell` `estimate`; divergência com `distancePoints`/interpretação

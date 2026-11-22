@@ -103,10 +103,10 @@ perspectiva permanece fora.
 
 | Bloco no protótipo | Produto hoje | Backend / mensagem |
 | --- | --- | --- |
-| Trilho numerado 1–N (serif 15) + Grid2 200px\|1fr | `report-block` empilhado sem números de seção | Casca HTML |
-| Como está: legenda estágio 0–4; nuvem de **20 pontos** (cenários); 3 colunas por perspectiva com %·faixa·Alvo | Barras `stage-distribution` + texto | Posterior/faixa por perspectiva já parcial; **falta** ChartMark de nuvem + cartões 3 colunas |
+| Trilho numerado 1–N (serif 15) + Grid2 200px\|1fr | **feito (7a):** `report-section-num` 1–11 | Casca HTML |
+| Como está: legenda estágio 0–4; nuvem de **20 pontos** (cenários); 3 colunas por perspectiva com %·faixa·Alvo | Barras `stage-distribution` + texto | Posterior/faixa por perspectiva já parcial; **falta (7b)** ChartMark de nuvem + cartões 3 colunas |
 | Relatos em grade tipada | Listas “Por perspectiva / Por time” | Conteúdo existe; falta grade |
-| O que fazer: cartão accent “Menor experimento” + Cynefin · grau A–D · forma de aprendizado + legenda A–D | Um parágrafo em `ficha-card` | Conduta/cynefin/evidência existem no domínio do plano — **projector da ficha não monta o cartão tipado** |
+| O que fazer: cartão accent “Menor experimento” + Cynefin · grau A–D · forma de aprendizado + legenda A–D | **feito (7a):** `ficha-experiment` + metas opcionais no `projectFichaClose` | Wire das metas a partir da conduta do finding ainda não — projector cobre o contrato |
 | ChartMark5/6/7, Alvo, CapsBold path | Ausentes ou texto | Só publicar marcas com posterior |
 
 ### Prontidão — déficit estrutural
@@ -233,7 +233,7 @@ Uma tela (ou bloco) por vez, TDD do HTML: presença do bloco + ausência
 de Orbital/`13%`/`24%`.
 
 1. ~~Tokens · laudo · marcas célula · mapa 6a–6d~~.
-2. **Ficha estrutural** (trilho + Como está + Menor experimento).
+2. ~~Ficha 7a (trilho 1–11 + Menor experimento)~~ · **Ficha 7b** (Como está nuvem/3 colunas).
 3. **Prontidão** cartão + grade pré-requisitos.
 4. **Fronteira** escada F0–F5.
 5. **Plano** matriz autoridade×horizonte.
@@ -257,8 +257,8 @@ de Orbital/`13%`/`24%`.
 
 ## Sequência de implementação
 
-0–5 · 6a · 6b · 6c · 6d — feitos.
-7. Ficha estrutural — **próximo**.
+0–5 · 6a · 6b · 6c · 6d · 7a — feitos.
+7b. Ficha Como está (nuvem/3 colunas) — **próximo**.
 8. Prontidão estrutural.
 9. Fronteira escada.
 10. Plano matriz.

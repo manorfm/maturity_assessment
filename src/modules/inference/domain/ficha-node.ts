@@ -4,6 +4,7 @@ import type { ReportOutcomeKind } from './report-outcome.js';
 import { disciplineScope } from './discipline-brief.js';
 import { projectNodeRelations, type FichaRelations } from './node-relations.js';
 import { classifySophisticationQuadrant, type SophisticationQuadrant } from './sophistication-matrix.js';
+import type { CynefinDomain, EvidenceGrade, LearningMode } from './treatment-contract.js';
 
 export type NodeDefinition = { what: string; why: string };
 
@@ -125,12 +126,18 @@ function withheldLine(label: string, completed: number): string {
 
 export type FichaLine = { published: boolean; body: string };
 
+export type FichaAction = FichaLine & {
+  cynefin?: CynefinDomain;
+  evidenceGrade?: EvidenceGrade;
+  learningMode?: LearningMode;
+};
+
 export type { FichaRelation, FichaRelations } from './node-relations.js';
 
 export type FichaClose = {
   cause: FichaLine;
   place: FichaLine;
-  action: FichaLine;
+  action: FichaAction;
   check: FichaLine;
   relations: FichaRelations;
   unknown: FichaLine;
@@ -151,6 +158,9 @@ export function projectFichaClose(input: {
   cause?: string;
   place?: string;
   action?: string;
+  cynefin?: CynefinDomain;
+  evidenceGrade?: EvidenceGrade;
+  learningMode?: LearningMode;
   check?: string;
   unknown?: string;
   references?: string;
@@ -159,10 +169,20 @@ export function projectFichaClose(input: {
     const body = value?.trim();
     return body ? { published: true, body } : { published: false, body: closeGaps[key] };
   };
+  const actionBody = input.action?.trim();
+  const action: FichaAction = actionBody
+    ? {
+      published: true,
+      body: actionBody,
+      ...(input.cynefin ? { cynefin: input.cynefin } : {}),
+      ...(input.evidenceGrade ? { evidenceGrade: input.evidenceGrade } : {}),
+      ...(input.learningMode ? { learningMode: input.learningMode } : {}),
+    }
+    : { published: false, body: closeGaps.action };
   return {
     cause: line('cause', input.cause),
     place: line('place', input.place),
-    action: line('action', input.action),
+    action,
     check: line('check', input.check),
     relations: projectNodeRelations(input.nodeId),
     unknown: line('unknown', input.unknown),
