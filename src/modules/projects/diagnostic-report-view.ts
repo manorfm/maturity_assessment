@@ -119,11 +119,11 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
     }).join('')}</ul>`
     : '';
   const divergences = Array.isArray(laudo.divergences)
-    ? `<p>Divergência mostra que as perspectivas vivem sistemas diferentes. Não mostra quem está certo.</p>${laudo.divergences.map((item) => `<article class="report-divergence"><h3>${escapeHtml(item.title)}</h3><div class="report-divergence-sides"><p>${escapeHtml(item.left)}</p><p>${escapeHtml(item.right)}</p></div></article>`).join('')}`
+    ? `<p>Divergência mostra que as perspectivas vivem sistemas diferentes. Não mostra quem está certo.</p>${laudo.divergences.map(renderDivergence).join('')}`
     : `<p class="report-gap">${escapeHtml(laudo.divergences.gap)}</p>`;
   const constraint = 'gap' in laudo.constraint
     ? `<p class="report-gap">${escapeHtml(laudo.constraint.gap)}</p>`
-    : `<h3>${escapeHtml(laudo.constraint.title)}</h3><p>${escapeHtml(laudo.constraint.body)}</p>`;
+    : renderConstraint(laudo.constraint);
   const thirtyDay = laudo.conduct.filter((item) => item.horizon === '0-30');
   const conduct = thirtyDay.length
     ? renderConductGrid(thirtyDay)
@@ -139,15 +139,36 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
     <section class="report-block">${laudoSectionTitle(4, 'Divergências')}${divergences}</section>
     <section class="report-block">${laudoSectionTitle(5, 'Restrição principal')}${constraint}</section>
     <section class="report-block">${laudoSectionTitle(6, 'Conduta para 30 dias')}${conduct}<p><a href="${escapeHtml(`${urls.reportBase}/treatment`)}">Ver o plano de tratamento completo →</a></p></section>
-    <section class="report-block">${laudoSectionTitle(7, 'Prognóstico')}<p class="report-gap">${escapeHtml(laudo.prognosis.gap)}</p></section>
+    <section class="report-block">${laudoSectionTitle(7, 'Prognóstico')}${renderPrognosis(laudo.prognosis)}</section>
     <section class="report-block">${laudoSectionTitle(8, 'O que ainda não sabemos')}<div class="report-unknowns-grid"><div><h3>Lacunas</h3><ul>${unknowns}</ul></div><div><h3>Exames complementares sugeridos</h3>${exams}</div></div></section>
     ${renderFooter(laudo)}`;
 }
 
+function clampPercent(value: number): number {
+  return Math.max(0, Math.min(100, value));
+}
+
+/** Zero length omits `%` so style geometry is not mistaken for a published 0% index. */
+function cssPercent(value: number): string {
+  const clamped = clampPercent(value);
+  return clamped === 0 ? '0' : `${clamped}%`;
+}
+
+function renderGauge(index: number, band: [number, number]): string {
+  const left = clampPercent(band[0]);
+  const right = Math.max(left, clampPercent(band[1]));
+  const marker = clampPercent(index);
+  return `<div class="report-gauge"><div class="report-gauge-track"><div class="report-gauge-band" style="left:${cssPercent(left)};width:${cssPercent(right - left)}"></div><i class="report-gauge-marker" style="left:${cssPercent(marker)}"></i></div></div>`;
+}
+
+function renderGaugeGap(message: string): string {
+  return `<div class="report-gauge report-gauge-gap"><p class="report-gap">${escapeHtml(message)}</p></div>`;
+}
+
 function renderReading(reading: DiagnosticLaudo['reading']): string {
-  if ('gap' in reading) return `<p class="report-gap">${escapeHtml(reading.gap)}</p>`;
+  if ('gap' in reading) return renderGaugeGap(reading.gap);
   const target = reading.target !== undefined ? ` · alvo ${reading.target}%` : '';
-  const overall = `<p class="report-index">${reading.index}%</p><p>faixa ${reading.band[0]}–${reading.band[1]}% · cobertura ${Math.round(reading.coverage * 100)}%${target}</p><p>${escapeHtml(reading.narrative)}</p>`;
+  const overall = `${renderGauge(reading.index, reading.band)}<p class="report-index">${reading.index}%</p><p>faixa ${reading.band[0]}–${reading.band[1]}% · cobertura ${Math.round(reading.coverage * 100)}%${target}</p><p>${escapeHtml(reading.narrative)}</p>`;
   const slices = [
     renderMaturitySlice('Maturidade técnica', reading.technical, 'Esta leitura ainda não publica a maturidade técnica com faixa.'),
     renderMaturitySlice('Maturidade organizacional', reading.organizational, 'Esta leitura ainda não publica a maturidade organizacional com faixa.'),
@@ -157,7 +178,51 @@ function renderReading(reading: DiagnosticLaudo['reading']): string {
 
 function renderMaturitySlice(label: string, slice: { index: number; band: [number, number] } | undefined, gap: string): string {
   if (!slice) return `<li class="report-slice report-slice-gap"><p class="report-slice-note">${escapeHtml(gap)}</p></li>`;
-  return `<li class="report-slice"><p class="report-slice-reading">${escapeHtml(label)} ${slice.index}% · faixa ${slice.band[0]}–${slice.band[1]}%</p></li>`;
+  return `<li class="report-slice">${renderGauge(slice.index, slice.band)}<p class="report-slice-reading">${escapeHtml(label)} ${slice.index}% · faixa ${slice.band[0]}–${slice.band[1]}%</p></li>`;
+}
+
+function renderDivergence(item: {
+  title: string;
+  left: string;
+  right: string;
+  leftMagnitude?: number;
+  rightMagnitude?: number;
+  distancePoints?: number;
+}): string {
+  const leftMagnitude = item.leftMagnitude;
+  const rightMagnitude = item.rightMagnitude;
+  const distancePoints = item.distancePoints;
+  const published = leftMagnitude !== undefined
+    && rightMagnitude !== undefined
+    && distancePoints !== undefined;
+  const bar = published
+    ? `<div class="report-divergence-bar" aria-hidden="true"><i style="width:${cssPercent(leftMagnitude)}"></i><i style="width:${cssPercent(rightMagnitude)}"></i></div><p class="report-divergence-distance">${distancePoints} pontos de distância</p><p class="report-divergence-magnitudes">${leftMagnitude}% · ${rightMagnitude}%</p>`
+    : '';
+  return `<article class="report-divergence"><h3>${escapeHtml(item.title)}</h3>${bar}<div class="report-divergence-sides"><p>${escapeHtml(item.left)}</p><p>${escapeHtml(item.right)}</p></div></article>`;
+}
+
+function renderConstraint(constraint: { title: string; body: string; metric?: string }): string {
+  const metric = constraint.metric
+    ? `<p class="report-constraint-metric">${escapeHtml(constraint.metric)}</p>`
+    : '';
+  return `<article class="report-constraint"><div><h3 class="report-constraint-title">${escapeHtml(constraint.title)}</h3><p>${escapeHtml(constraint.body)}</p></div>${metric}</article>`;
+}
+
+function renderPrognosisSide(label: string, body: string): string {
+  return `<article class="report-prognosis-card"><h3>${escapeHtml(label)}</h3>${body}</article>`;
+}
+
+function renderPublishedPrognosisSide(side: { index: number; band: [number, number]; coverage: number; target?: number }): string {
+  const target = side.target !== undefined ? ` · alvo ${side.target}%` : '';
+  return `${renderGauge(side.index, side.band)}<p class="report-prognosis-index">${side.index}%</p><p>faixa ${side.band[0]}–${side.band[1]}% · cobertura ${Math.round(side.coverage * 100)}%${target}</p>`;
+}
+
+function renderPrognosis(prognosis: DiagnosticLaudo['prognosis']): string {
+  if ('gap' in prognosis) {
+    const gap = `<p class="report-gap">${escapeHtml(prognosis.gap)}</p>`;
+    return `<div class="report-prognosis">${renderPrognosisSide('Sem tratamento', gap)}${renderPrognosisSide('Com tratamento', gap)}</div>`;
+  }
+  return `<div class="report-prognosis">${renderPrognosisSide('Sem tratamento', renderPublishedPrognosisSide(prognosis.withoutTreatment))}${renderPrognosisSide('Com tratamento', renderPublishedPrognosisSide(prognosis.withTreatment))}</div>`;
 }
 
 function supportMarks(support: string): number {

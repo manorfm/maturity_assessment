@@ -59,7 +59,21 @@ export type LaudoOtherFinding = {
 
 export type LaudoComplaint = ReportGap | { quote: string; author: string };
 
-export type LaudoDivergence = { title: string; left: string; right: string };
+export type LaudoDivergence = {
+  title: string;
+  left: string;
+  right: string;
+  leftMagnitude?: number;
+  rightMagnitude?: number;
+  distancePoints?: number;
+};
+
+export type LaudoPublishedReading = {
+  index: number;
+  band: [number, number];
+  coverage: number;
+  target?: number;
+};
 
 export type DiagnosticLaudo = {
   version: 'diagnostic-report-v2';
@@ -70,9 +84,9 @@ export type DiagnosticLaudo = {
   findings: LaudoFinding[];
   otherFindings: LaudoOtherFinding[];
   divergences: LaudoDivergence[] | ReportGap;
-  constraint: { title: string; body: string } | ReportGap;
+  constraint: { title: string; body: string; metric?: string } | ReportGap;
   conduct: TreatmentConduct[];
-  prognosis: ReportGap;
+  prognosis: ReportGap | { withoutTreatment: LaudoPublishedReading; withTreatment: LaudoPublishedReading };
   unknowns: string[];
   exams: string[];
   footer: { sample: string; instrument: string; calibration: string };

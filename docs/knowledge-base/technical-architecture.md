@@ -134,11 +134,16 @@ O HTML renderizado no servidor segue divulgação progressiva. A first screen
 é o laudo (`diagnostic-report-v2`): motivo em citação ou lacuna, leitura
 geral com frase de mecanismo (`.report-mechanism`), até três achados em
 grade de três colunas (`.report-findings`), divergências nos dois lados,
-restrição principal, conduta 0–30 dias em grade Experimento|Dono|Critério,
-prognóstico como direção (ainda lacuna tipográfica, sem dois cartões),
-lacunas e exames em duas colunas, e rodapé em duas colunas (estimativas |
-aviso de uso). Seções 1–8 no trilho; note de aviso com borda ink e amostra
-no hero. Cartões `.report-finding` e itens `.report-other` com padrão
+restrição principal em cartão `.report-constraint` (métrica lateral só se
+o laudo trouxer), conduta 0–30 dias em grade Experimento|Dono|Critério,
+prognóstico em dois cartões (Sem tratamento | Com tratamento) com gap ou
+números/gauge só quando publicados, lacunas e exames em duas colunas, e
+rodapé em duas colunas (estimativas | aviso de uso). Seções 1–8 no trilho;
+note de aviso com borda ink e amostra no hero. Índice/faixa publicados
+desenham `.report-gauge` (trilho, banda accent-soft, marcador); sem
+publicação o mesmo encaixe fica em lacuna. Divergência desenha barra +
+“pontos de distância” só com magnitudes opcionais no item; senão permanece
+texto ou gap. Cartões `.report-finding` e itens `.report-other` com padrão
 sociotécnico publicado carregam `data-finding-pattern` para ancoragem
 estável no HTML (achados além dos três primeiros entram em “outros” com
 o mesmo gancho).

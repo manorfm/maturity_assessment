@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-21 — Laudo condicionado (Onda 4)
+
+- Gauge (trilho/banda/marcador) e fatias só com índice/faixa publicados;
+  divergência com barra + pontos só com magnitudes opcionais; prognóstico
+  em dois cartões (Sem|Com tratamento) com gap ou números publicados;
+  restrição em cartão accent-soft sem métrica inventada. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-11-21 — Casca tipográfica do laudo (Onda 3)
 
 - Tipografia (h1 52 / quote 38 itálico / mecanismo 25 / índice 88),

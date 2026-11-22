@@ -311,6 +311,23 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-quote p { margin:0; font-family:Newsreader, Georgia, serif; font-size:38px; line-height:1.25; font-weight:500; font-style:italic; text-wrap:pretty }
     .report-quote footer { margin-top:8px; color:var(--ink3); font-size:13px }
     .report-divergence-sides { display:grid; grid-template-columns:1fr 1fr; gap:16px }
+    .report-divergence-bar { display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:end; min-height:48px; margin:12px 0 8px }
+    .report-divergence-bar > i { display:block; height:12px; background:var(--accent-soft); border:1px solid var(--accent); border-radius:999px; justify-self:stretch; max-width:100% }
+    .report-divergence-distance { margin:0 0 4px; font-size:14px; font-weight:600; color:var(--ink2) }
+    .report-divergence-magnitudes { margin:0 0 12px; font-size:13px; color:var(--ink3) }
+    .report-gauge { margin:12px 0 16px; max-width:28rem }
+    .report-gauge-track { position:relative; height:10px; background:var(--rule); border-radius:999px }
+    .report-gauge-band { position:absolute; top:0; bottom:0; background:var(--accent-soft); border:1px solid var(--accent); border-radius:999px; box-sizing:border-box }
+    .report-gauge-marker { position:absolute; top:50%; width:2px; height:18px; background:var(--ink); transform:translate(-50%,-50%) }
+    .report-gauge-gap { margin:0 0 12px }
+    .report-prognosis { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:0 }
+    .report-prognosis-card { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:20px; min-width:0 }
+    .report-prognosis-card h3 { margin:0 0 12px; font-size:15px; font-weight:600 }
+    .report-prognosis-index { margin:0; font-family:Newsreader, Georgia, serif; font-size:36px; line-height:1.1; font-weight:500 }
+    .report-constraint { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:20px; align-items:start; background:var(--accent-soft); border:1.5px solid var(--accent); border-radius:10px; padding:24px 28px; margin:0 }
+    .report-constraint-title { margin:0 0 12px; font-family:Newsreader, Georgia, serif; font-size:40px; line-height:1.15; font-weight:500 }
+    .report-constraint p { margin:0; color:var(--ink2) }
+    .report-constraint-metric { font-family:Newsreader, Georgia, serif; font-size:28px; font-weight:500; color:var(--ink); white-space:nowrap }
     .walk-trail { list-style:none; margin:0; padding:0; display:flex; flex-direction:column }
     .walk-trail li { border-left:2px solid var(--accent); padding:0 0 18px 16px }
     .walk-horizon { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink3); margin:0 0 4px }
@@ -369,7 +386,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness.near { color:var(--ink); background:#F5E6D0 }
     .readiness.blocked { color:var(--red); background:var(--red-soft) }
     .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides{grid-template-columns:1fr} .area-map-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems{grid-template-columns:1fr} }
   </style>
 </head>

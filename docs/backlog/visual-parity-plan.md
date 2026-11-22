@@ -117,9 +117,9 @@ em `anaminese_maturity_v3` e contra o HTML/CSS do produto.
 ## Hipóteses abertas do recorte do laudo (revisadas)
 
 1. ~~**Casca tipográfica e de layout do laudo (só CSS/HTML).**~~ Feito na Onda 3.
-2. **Gauge + índice por recorte.** O protótipo desenha gauge; o domínio só entra com faixa/cobertura/alvo publicados. Sem publicação → lacuna estilizada no mesmo encaixe. Hipótese antiga “~34px” está **obsoleta**.
-3. **Divergência em barra.** Hoje o produto publica lados em texto; o protótipo usa barra + “pontos de distância”. Pode ser só apresentação se já houver magnitudes; senão permanece lacuna ou texto.
-4. **Prognóstico em dois cartões.** Layout visual pode existir com gap; números/gauge só com duas distribuições (domínio).
+2. ~~**Gauge + índice por recorte.**~~ Feito na Onda 4: trilho/banda/marcador só com índice/faixa publicados; lacuna no mesmo encaixe sem %.
+3. ~~**Divergência em barra.**~~ Feito na Onda 4: barra + “pontos de distância” só com magnitudes opcionais no item; senão texto/lacuna.
+4. ~~**Prognóstico em dois cartões.**~~ Feito na Onda 4: casca Sem|Com tratamento sempre; números/gauge só se o laudo publicar os dois lados.
 5. **Lacunas de prova** (banda 50 pts, `maturitySliceDraws`) e fixture e2e sem faixa — inalteradas.
 6. **Contexto do projeto (porte / setor regulado / estágio / motivo).** Protótipo completo; produto sem campos — contrato de domínio antes do green de UI.
 
@@ -141,8 +141,8 @@ Ordem revisada pós-rebuild:
 
 1. ~~Tokens + shell~~ (feito).
 2. ~~Mapa marca NA~~ (feito); ChartGrid permanece aberto.
-3. ~~Laudo — casca tipográfica e composição~~ (feito; sem medidor numérico).
-4. Laudo — gauge/divergência-barra/prognóstico-cartões condicionados à publicação.
+3. ~~Laudo — casca tipográfica e composição~~ (feito).
+4. ~~Laudo — gauge/divergência-barra/prognóstico-cartões condicionados à publicação~~ (feito).
 5. Mapa ChartGrid (sem %).
 6. Ficha → Prontidão → Fronteira → Plano.
 7. Walkthrough → Histórico → Público.
@@ -153,7 +153,7 @@ Ordem revisada pós-rebuild:
 
 | Tela (protótipo) | View atual | Classificação | Notas |
 | --- | --- | --- | --- |
-| Laudo / Laudo escuro | `renderLaudo` | **casca feita** (Onda 3) + **bloqueado** (gauge/prognóstico numérico) | Falta Onda 4 condicionada à publicação |
+| Laudo / Laudo escuro | `renderLaudo` | **casca** (Onda 3) + **condicionado** (Onda 4) | Gauge/barra/métrica só com publicação; prognóstico 2 cartões com gap |
 | Mapa navegável | `renderMapPage` | só CSS (+ domínio disciplina-sem-pai) | Onda 2a feita; ChartGrid aberto |
 | Ficha do nó | `renderNodeCard` | só CSS | |
 | Prontidão | `renderReadinessPage` | só CSS | |
@@ -181,7 +181,7 @@ Ordem revisada pós-rebuild:
 1. Tokens + shell — feito (`f9c1713`).
 2. Mapa NA — feito (`a65be16`); ChartGrid aberto.
 3. Laudo casca (tipografia, números de seção, grades, tabela conduta, footer) — feito.
-4. Laudo condicionado (gauge, barra de divergência, prognóstico 2 cartões) — **próximo**.
+4. Laudo condicionado (gauge, barra de divergência, prognóstico 2 cartões, restrição accent-soft) — feito.
 5. Mapa ChartGrid.
 6. Ficha → Prontidão → Fronteira → Plano.
 7. Walkthrough → Histórico → Público.

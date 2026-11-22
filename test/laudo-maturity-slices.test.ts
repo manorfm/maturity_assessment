@@ -250,7 +250,8 @@ test('os recortes formam um grupo nomeado pelo kicker e a lacuna tem variante pr
   assert.equal(mixed.match(/<ul class="report-slice-list">/g)?.length, 1);
   assert.equal(mixed.match(/<li class="report-slice[ "]/g)?.length, 2);
   assert.ok(mixed.includes(`<li class="report-slice report-slice-gap"><p class="report-slice-note">${technicalGap}</p></li>`));
-  assert.ok(mixed.includes(`<li class="report-slice"><p class="report-slice-reading">Maturidade organizacional ${organizational.index}% · faixa ${organizational.band[0]}–${organizational.band[1]}%</p></li>`));
+  assert.ok(mixed.includes(`<p class="report-slice-reading">Maturidade organizacional ${organizational.index}% · faixa ${organizational.band[0]}–${organizational.band[1]}%</p>`));
+  assert.match(mixed, /report-slice[\s\S]*report-gauge[\s\S]*report-slice-reading/);
   assert.equal(mixed.match(/report-slice-gap/g)?.length, 1);
   assert.equal(mixed.includes('<span'), false);
 
