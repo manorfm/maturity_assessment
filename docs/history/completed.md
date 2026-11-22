@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-22 — Mapa ChartGrid (Onda 5)
+
+- Célula coberta (`unpublished`) com `.coverage-cell` (accent +
+  `border-radius:4px`); divergência com `◆` `aria-hidden` e
+  `outline` ink; legenda estrutural com `covered-swatch` +
+  `coverage-swatch`/`--na`. Sem % inventados nem CapsBold de path. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-11-21 — Laudo condicionado (Onda 4)
 
 - Gauge (trilho/banda/marcador) e fatias só com índice/faixa publicados;

@@ -362,7 +362,10 @@ Organização), sem recalcular nível nem reparentar o motor. Um sistema acende 
 publicada ou finding, mesmo quando o pilar correspondente não fecha duas crianças.
 O drill-down de área usa `/areas/:id`; folhas continuam em `/capabilities/:id`.
 Radares de recorte de unidade ainda consomem `capabilityGroups`. A UI não
-recalcula níveis.
+recalcula níveis. No mapa, células `unpublished` usam `.coverage-cell`
+(accent + radius 4px), `uncovered` permanece hatch `--na`, divergência
+marca `◆` com outline ink, e a legenda estrutural mostra `covered-swatch`
+e `coverage-swatch` — sem inventar percentual.
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
 `capability-reference-v19`. `CapabilityReference` rejeita base de avaliação nominal,

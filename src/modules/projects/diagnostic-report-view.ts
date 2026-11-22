@@ -321,7 +321,7 @@ function renderStructureCut(matrix: StructureMatrix | undefined): string {
   if (!matrix?.rows.length) return '<p class="report-gap">Nenhuma unidade com leitura publicada.</p>';
   const headers = matrix.columns.map((column) => `<th scope="col">${escapeHtml(column.label)}</th>`).join('');
   const rows = matrix.rows.map((row) => `<tr><th scope="row">${escapeHtml(row.label)} (${row.completed})</th>${renderCells(row.cells)}</tr>`).join('');
-  return `<section class="report-matrix-block"><div class="report-matrix-legend"><p>${escapeHtml(mapCopy.structureLead)}</p><p><span class="coverage-swatch" aria-hidden="true"></span>${escapeHtml(mapCopy.uncovered)}</p></div><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></section>`;
+  return `<section class="report-matrix-block"><div class="report-matrix-legend"><p>${escapeHtml(mapCopy.structureLead)}</p><p><span class="covered-swatch" aria-hidden="true"></span>${escapeHtml(mapCopy.unpublished)}</p><p><span class="coverage-swatch" aria-hidden="true"></span>${escapeHtml(mapCopy.uncovered)}</p></div><table class="report-matrix"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
 function renderPerspectiveCut(matrix: PerspectiveMatrix | undefined): string {
@@ -339,8 +339,10 @@ function renderPerspectiveCut(matrix: PerspectiveMatrix | undefined): string {
 
 function renderCells(cells: Array<{ kind: 'uncovered' | 'unpublished' | 'divergence'; left?: string; right?: string }>): string {
   return cells.map((cell) => {
-    if (cell.kind === 'divergence') return `<td class="divergence-cell"><p>${escapeHtml(cell.left ?? '')}</p><p>${escapeHtml(cell.right ?? '')}</p></td>`;
-    if (cell.kind === 'unpublished') return `<td class="index-gap">${escapeHtml(mapCopy.unpublished)}</td>`;
+    if (cell.kind === 'divergence') {
+      return `<td class="divergence-cell"><span aria-hidden="true">◆</span><p>${escapeHtml(cell.left ?? '')}</p><p>${escapeHtml(cell.right ?? '')}</p></td>`;
+    }
+    if (cell.kind === 'unpublished') return `<td class="coverage-cell index-gap">${escapeHtml(mapCopy.unpublished)}</td>`;
     return `<td class="coverage-gap">${escapeHtml(mapCopy.uncovered)}</td>`;
   }).join('');
 }

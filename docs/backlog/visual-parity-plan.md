@@ -73,21 +73,21 @@ em `anaminese_maturity_v3` e contra o HTML/CSS do produto.
 | Footer | pilha de `<p>` | Grade **2 colunas** “Sobre estas estimativas” \| “Aviso de uso” |
 | Criar projeto | “faltam porte/regulação/estágio” | Protótipo já desenha fieldsets: **Porte da área de tecnologia**, **Setor regulado**, **Estágio da organização**, motivo com nota de citação, “Salvar rascunho” |
 | Contexto (entrevista) | “senioridade fora do domínio” | Tela dedicada com seção **Senioridade na profissão** (`SenioridadeProfissãoFieldset`); “Como tratamos os dados” nas boas-vindas |
-| Mapa “já existe / —” | coluna “Falta” vazia | Subestimou densidade: ChartGrid, ChartMark*, células perspectivas×capacidades, SCobertura — Onda 2a só fechou marca NA |
+| Mapa “já existe / —” | coluna “Falta” vazia | SCobertura (Onda 2a) + ChartMark coberta/divergência/swatches (Onda 5); CapsBold de path ainda aberto |
 
 ### O que continua correto
 
 - Menu de 9 itens e exclusão de walkthroughs Product/Engineering/Org do menu.
 - Proibição de copiar Orbital / 13% / 24% / Integração contínua fixa.
 - Domínio bloqueia prognóstico real (duas distribuições) e aceite formal do termo.
-- Tokens claros/escuros alinhados; Onda 1 e Onda 2a (NA) feitas.
+- Tokens claros/escuros alinhados; Onda 1, Onda 2a (NA) e Onda 5 (ChartMark/swatches) feitas.
 
 ## Relatório — o que falta desenhar (revisado)
 
 | Tela | Já existe no produto | Falta no visual (protótipo) |
 | --- | --- | --- |
 | Laudo | Casca tipográfica e composição (Onda 3): h1 52 / quote 38 itálico / mecanismo 25 / índice 88; seções 1–8; note com borda ink + amostra no hero; achados em 3 colunas; conduta Experimento\|Dono\|Critério; lacunas/exames e footer em 2 colunas; tema via botão | Gauge de faixa; divergência com barra; restrição em cartão accent; prognóstico em 2 cartões+gauge (números só se publicados). Tema escuro no protótipo é tela variante; produto mantém toggle |
-| Mapa | Cortes, matrizes, radar, SCobertura/`--na` (Onda 2a) | ChartGrid / ChartMark*, densidade perspectivas×capacidades, trilhas CapsBold; disciplina sem pilar pai permanece **domínio** |
+| Mapa | Cortes, matrizes, radar, SCobertura/`--na` (Onda 2a); ChartMark coberta/divergência + swatches (Onda 5) | Densidade CapsBold de path/rowgroup; disciplina sem pilar pai permanece **domínio** |
 | Ficha | Trilha, definição, pesos, relatos, close | Ritmo de cartões/quadrantes, ChartMark de estágio, Alvo tipográfico do mock (sem copiar %) |
 | Prontidão | `p_k` / lacuna | Grades Grid6/Grid7 do protótipo — **sem** % de exemplo |
 | Fronteira | Faixas textuais | Marcas ChartMark6 F0–F5 só com posterior; stacks de condições humanas |
@@ -140,10 +140,10 @@ ausência de Orbital/`13%`/`24%`.
 Ordem revisada pós-rebuild:
 
 1. ~~Tokens + shell~~ (feito).
-2. ~~Mapa marca NA~~ (feito); ChartGrid permanece aberto.
+2. ~~Mapa marca NA~~ (feito).
 3. ~~Laudo — casca tipográfica e composição~~ (feito).
 4. ~~Laudo — gauge/divergência-barra/prognóstico-cartões condicionados à publicação~~ (feito).
-5. Mapa ChartGrid (sem %).
+5. ~~Mapa ChartGrid (sem %)~~ (feito); CapsBold de path permanece aberto.
 6. Ficha → Prontidão → Fronteira → Plano.
 7. Walkthrough → Histórico → Público.
 8. Admin contexto + entrevista (só após contrato de domínio).
@@ -154,7 +154,7 @@ Ordem revisada pós-rebuild:
 | Tela (protótipo) | View atual | Classificação | Notas |
 | --- | --- | --- | --- |
 | Laudo / Laudo escuro | `renderLaudo` | **casca** (Onda 3) + **condicionado** (Onda 4) | Gauge/barra/métrica só com publicação; prognóstico 2 cartões com gap |
-| Mapa navegável | `renderMapPage` | só CSS (+ domínio disciplina-sem-pai) | Onda 2a feita; ChartGrid aberto |
+| Mapa navegável | `renderMapPage` | só CSS (+ domínio disciplina-sem-pai) | Onda 2a + Onda 5 ChartMark/swatches; CapsBold path aberto |
 | Ficha do nó | `renderNodeCard` | só CSS | |
 | Prontidão | `renderReadinessPage` | só CSS | |
 | Fronteira | `renderFrontierPage` | só CSS | |
@@ -172,6 +172,7 @@ Ordem revisada pós-rebuild:
 | Item | Estado |
 | --- | --- |
 | Tokens `.diagnostic-report` + `:root --na` | feito (Ondas 1 e 2a) |
+| ChartMark mapa (coverage-cell / ◆ / swatches) | feito (Onda 5) |
 | Shell nav 9 itens + tema | vigente |
 | Anti-exemplo Orbital/13%/24% | vigente nos testes |
 
@@ -179,10 +180,10 @@ Ordem revisada pós-rebuild:
 
 0. Inventário Onda 0 — feito; **reavaliação pós-rebuild** — esta seção.
 1. Tokens + shell — feito (`f9c1713`).
-2. Mapa NA — feito (`a65be16`); ChartGrid aberto.
+2. Mapa NA — feito (`a65be16`).
 3. Laudo casca (tipografia, números de seção, grades, tabela conduta, footer) — feito.
 4. Laudo condicionado (gauge, barra de divergência, prognóstico 2 cartões, restrição accent-soft) — feito.
-5. Mapa ChartGrid.
+5. Mapa ChartGrid — feito (coverage-cell / ◆ / covered-swatch; CapsBold path aberto).
 6. Ficha → Prontidão → Fronteira → Plano.
 7. Walkthrough → Histórico → Público.
 8. Admin + entrevista (domínio primeiro).

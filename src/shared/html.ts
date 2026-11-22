@@ -367,12 +367,14 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .report-matrix-legend { display:flex; flex-direction:column; gap:8px; max-width:64ch; color:var(--ink2); font-size:15px }
     .report-matrix-legend p { margin:0 }
     .coverage-swatch { display:inline-block; width:22px; height:12px; margin-right:6px; border-radius:4px; border:1px solid var(--na); background:repeating-linear-gradient(45deg, var(--na) 0 2px, transparent 2px 6px); vertical-align:-1px }
+    .covered-swatch { display:inline-block; width:22px; height:12px; margin-right:6px; border-radius:4px; border:1px solid var(--accent); background:var(--accent-soft); vertical-align:-1px }
     .report-matrix { width:100%; border-collapse:separate; border-spacing:0 }
     .report-matrix th, .report-matrix td { padding:8px 4px; text-align:center; font-size:12px; color:var(--ink2); font-weight:600 }
     .report-matrix th[scope="row"] { text-align:left; width:170px; font-size:14px }
     .coverage-gap { background:repeating-linear-gradient(45deg, var(--na) 0 2px, transparent 2px 6px); color:var(--na-ink); border:1px solid var(--na); border-radius:4px }
+    .coverage-cell { background:var(--accent-soft); border:1px solid var(--accent); border-radius:4px; color:var(--ink3); font-weight:500 }
     .index-gap { color:var(--ink3); font-weight:500 }
-    .divergence-cell { text-align:left; font-weight:500; color:var(--ink2); border:1px solid var(--accent); background:var(--accent-soft) }
+    .divergence-cell { text-align:left; font-weight:500; color:var(--ink2); border:1px solid var(--accent); background:var(--accent-soft); outline:3px solid var(--ink) }
     .divergence-cell p { margin:0 }
     .legend-mark { display:inline-block; margin-right:6px; vertical-align:middle }
     .legend-estimate { width:8px; height:8px; background:var(--accent); transform:rotate(45deg) }
