@@ -1,20 +1,21 @@
 # Plano: paridade visual com o protótipo
 
-O protótipo `maturity` no design-graph é a referência visual. As telas
-do relatório, da administração e da entrevista já abrem. O que ainda
-falta desenhar porque o motor não publica o bloco está em
-`sdd-docs/maturity-model-publication`, fora deste repositório. Este
-arquivo guarda o inventário. Não é licença para copiar os números de
-exemplo (Orbital Pagamentos, índice 13%, “Integração contínua” como
-dado fixo). Onde o modelo não mede, o bloco continua declarando a
+Referência visual vigente: protótipo Design Graph
+`anaminese_maturity_v3` (alias carregado também como `maturity`).
+As telas do relatório, da administração e da entrevista já abrem no
+produto. O que ainda falta desenhar porque o motor não publica o bloco
+está em `sdd-docs/maturity-model-publication`, fora deste repositório.
+Este arquivo guarda o inventário. Não é licença para copiar os números
+de exemplo (Orbital Pagamentos, índice 13%/24%, “Integração contínua”
+como dado fixo). Onde o modelo não mede, o bloco continua declarando a
 lacuna.
 
 ## Problema
 
 Quem compara o protótipo com o produto encontra blocos de texto no lugar
-de gráficos, cartões e grades. O menu chegou a listar walkthroughs de
-Produto, Engenharia e Organização, que o protótipo não tem: essas áreas
-vivem no mapa.
+de gráficos, cartões e grades — e, no laudo, tipografia e composição
+muito abaixo do que o protótipo define (índice 88px, citação 38px
+itálica, grades e medidores).
 
 ## Hipótese de resultado
 
@@ -37,77 +38,90 @@ Ordem do protótipo, já no chrome:
 8. Histórico e reavaliação
 9. Visão por público
 
-Rodapé do menu: instrumento vigente e estimativas provisórias. O rótulo
-“Instrumento v21 · modelo m2” do protótipo não entra. As rotas
+Rodapé do menu no protótipo: `Instrumento v21 · modelo m2` **e**
+`Estimativas provisórias`. No produto: só “Instrumento vigente /
+Estimativas provisórias” — o rótulo v21/m2 **não entra**. As rotas
 `/walkthrough/product`, `/engineering` e `/organization` continuam
 acessíveis; só saíram do menu.
 
-## Relatório — o que falta desenhar
+## Reavaliação pós-rebuild (2026-11-21)
 
-| Tela | Já existe | Falta no visual |
+O banco do Design Graph foi reconstruído. `get_build_diff` nesta carga
+reportou **primeira build** (sem delta automático vs. build anterior);
+a reavaliação abaixo foi feita contra `get_screen`/`get_full`/`search`
+em `anaminese_maturity_v3` e contra o HTML/CSS do produto.
+
+### O que o inventário anterior capturou errado ou de forma incompleta
+
+| Assunto | Antes (plano) | Agora (protótipo reconstruído) |
 | --- | --- | --- |
-| Laudo | Motivo em citação ou lacuna, leitura com mecanismo, até três achados em cartão (caminho, sustentação, “Ver ficha”), divergência nos dois lados, restrição com efeito, conduta, prognóstico sem promessa, lacunas e exames separados, rodapé | Tema escuro é variante de tela no protótipo; o produto usa um botão no chrome |
-| Mapa | Três cortes, sistema observado abre disciplinas, matrizes com célula do domínio, radar, perfil e legenda de estimativa, faixa e alvo só quando o modelo publica | — |
-| Ficha | Trilha até o mapa; definição; “como está” com os cinco pesos 0–4 quando a posterior da folha está publicada, senão a lacuna; quadrante só com leitura; relatos por perspectiva e por time; cartões de causa, lugar, ação, critério, lacuna e referência; relações são as arestas publicadas do nó e, sem aresta, a lacuna; “o que já funciona” só na preservação | — |
-| Prontidão | Com posterior de estágio, a página publica `p_k`, o pré-requisito mais fraco e a conduta; sem leitura, a lacuna. A grade de percentuais do exemplo não é o produto | — |
-| Fronteira | Faixas dominado, pode aprender agora e ainda bloqueado; “Comece por”; condições humanas em paralelo com “Ver prontidão →”. A marca F0–F5 é a posterior publicada; sem posterior, a faixa fica textual. As marcas 0–5 do exemplo não são o produto | — |
-| Plano | Cartão (ação, dono, critério, Cynefin, evidência) nas colunas 0–30 dias, 1–3 meses e 3–12 meses, publicadas pela dependência e pelo modo de aprendizado; seta “depende de” ou “sem dependência”; coluna vazia diz que não há conduta naquele horizonte; grau D como experimento; pulso só com item-âncora | — |
-| Walkthrough de Operação | Abertura com estado ou lacuna; próxima fase dentro da fronteira; trilha 30/90/180 com o que esperar; o marco é a conduta publicada (ação, horizonte e critério; percentual só quando o índice inclui alvo); riscos e premissas fecham. A grade de marcos com prazo e alvo percentual do exemplo não é o produto | — |
-| Histórico | Seletor quando há mais de uma leitura anterior; estados do índice e das folhas guardadas; achados encerrados e novos; correspondência de unidades; nota de que a melhora não prova causa. O chip de alvo é o par de alvos guardados nas duas leituras; sem alvo numa delas, a página compara estágio e folha e não mostra percentual. Os chips de alvo do exemplo não são o produto | — |
-| Visão por público | Um achado por vez, com caminho e fato; versão da direção e versão do time; papéis em “A quem recorrer”; acompanhamento que não vira bônus | Nomes de cargo do exemplo (CTO, CFO) e o caso de Pagamentos |
+| Identidade do doc | genérico `maturity` | Doc ativo `anaminese_maturity_v3` (espelho `maturity` ainda listado) |
+| Índice tipográfico no laudo | “~34px” | **88px** Newsreader no índice principal de Tecnologia; prognóstico usa **36px**; restrição título **40px** |
+| Citação do motivo | “citação” sem escala | **38px** itálico serif; autor 14px |
+| H1 do laudo | implícito “hero” | **52px** Newsreader; produto hoje ~`clamp(2rem,4vw,2.75rem)` |
+| Mecanismo (leitura geral) | texto corrido | **25px** serif, max ~40ch |
+| Seções do laudo | `h2` simples | Trilho esquerdo **numerado 1–8** (serif 15px) + título 15px/600 + lead 13px |
+| Hero / amostra | sample só no rodapé | Hero em duas colunas: contexto à esquerda; **respondentes · unidades · perspectivas** + janela de coleta à direita |
+| Aviso de uso | só rodapé / parágrafo | **Note** com borda `1.5px solid var(--ink)` no hero **e** coluna no footer |
+| Leitura + medidor | “medidor” vago / bloqueado | Índice grande + linha de faixa/cobertura/alvo + **gauge** (trilho, banda `accent-soft`, marcador) por recorte |
+| Achados | cartões empilhados | Grade **3 colunas**; path caps + ordem serif; fato 21px; dots de sustentação |
+| Divergências | dois textos lado a lado | Título + “N pontos de distância” + **barra comparativa** (Direção/Operação com %) — produto ainda é texto |
+| Restrição | bloco de texto | Cartão `accent-soft` + borda accent; título 40px; métrica lateral (ex. “6 a 15 dias”) |
+| Conduta 30 dias | cartões empilhados | **Tabela** Experimento \| Dono \| Critério (não só `report-conduct`) |
+| Prognóstico | “só lacuna de domínio” | Layout **dois cartões** (Sem tratamento / Com tratamento) + índice 36px + gauge; domínio ainda não publica distribuição — a **casca visual** faltava no inventário |
+| Lacunas / exames | listas sob h3 | Grade **2 colunas** Lacunas \| Exames |
+| Footer | pilha de `<p>` | Grade **2 colunas** “Sobre estas estimativas” \| “Aviso de uso” |
+| Criar projeto | “faltam porte/regulação/estágio” | Protótipo já desenha fieldsets: **Porte da área de tecnologia**, **Setor regulado**, **Estágio da organização**, motivo com nota de citação, “Salvar rascunho” |
+| Contexto (entrevista) | “senioridade fora do domínio” | Tela dedicada com seção **Senioridade na profissão** (`SenioridadeProfissãoFieldset`); “Como tratamos os dados” nas boas-vindas |
+| Mapa “já existe / —” | coluna “Falta” vazia | Subestimou densidade: ChartGrid, ChartMark*, células perspectivas×capacidades, SCobertura — Onda 2a só fechou marca NA |
 
-## Administração
+### O que continua correto
 
-Os quatro passos são links na criação e no painel: Projeto, Estrutura,
-Convites e participação, Termo de uso. A estrutura é cartão de unidade,
-com adicionar abaixo e remover. O lote mostra estado, amostra agregada
-e o lembrete, sem fingir envio. O termo usa as cinco cláusulas no nome
-da organização e avisa que o aceite não é gravado.
+- Menu de 9 itens e exclusão de walkthroughs Product/Engineering/Org do menu.
+- Proibição de copiar Orbital / 13% / 24% / Integração contínua fixa.
+- Domínio bloqueia prognóstico real (duas distribuições) e aceite formal do termo.
+- Tokens claros/escuros alinhados; Onda 1 e Onda 2a (NA) feitas.
 
-| Tela | Já existe | Falta no visual |
+## Relatório — o que falta desenhar (revisado)
+
+| Tela | Já existe no produto | Falta no visual (protótipo) |
 | --- | --- | --- |
-| Criar projeto | Nome, os quatro passos e a lacuna dos passos que só existem depois do projeto | Campos de contexto (porte, regulação, estágio). Continuam fora do domínio; ver `future-evolution.md` |
-| Estrutura | Cartões, adicionar abaixo e remover; unidade com convite permanece final | — |
-| Convites | Amostra agregada, estado do lote, revogar, reemitir e lembrar | — |
-| Termo | Cinco cláusulas e a frase de que o aceite não é gravado | Aceite formal antes de liberar convites. Ainda é hipótese, não compromisso |
+| Laudo | Casca tipográfica e composição (Onda 3): h1 52 / quote 38 itálico / mecanismo 25 / índice 88; seções 1–8; note com borda ink + amostra no hero; achados em 3 colunas; conduta Experimento\|Dono\|Critério; lacunas/exames e footer em 2 colunas; tema via botão | Gauge de faixa; divergência com barra; restrição em cartão accent; prognóstico em 2 cartões+gauge (números só se publicados). Tema escuro no protótipo é tela variante; produto mantém toggle |
+| Mapa | Cortes, matrizes, radar, SCobertura/`--na` (Onda 2a) | ChartGrid / ChartMark*, densidade perspectivas×capacidades, trilhas CapsBold; disciplina sem pilar pai permanece **domínio** |
+| Ficha | Trilha, definição, pesos, relatos, close | Ritmo de cartões/quadrantes, ChartMark de estágio, Alvo tipográfico do mock (sem copiar %) |
+| Prontidão | `p_k` / lacuna | Grades Grid6/Grid7 do protótipo — **sem** % de exemplo |
+| Fronteira | Faixas textuais | Marcas ChartMark6 F0–F5 só com posterior; stacks de condições humanas |
+| Plano | Colunas de horizonte | DiasAtivasStack / tags; setas de dependência no visual do protótipo |
+| Walkthrough Operação | Texto + trilha | CaminhoStack / CaminhoTag; marcos sem % de exemplo |
+| Histórico | Seletor, deltas | ChipsItem / alvo só com par publicado |
+| Visão por público | Dois lados | DecisãoPolíticaStack; proibir CTO/CFO/Orbital |
 
-## Entrevista
+## Administração (revisado)
 
-O convite abre na boas-vindas: anonimato, minutos estimados, pausa e
-Começar. Perspectiva e contexto são telas próprias e avisam que não
-pontuam. O evento separa a prática de “não observo”. O exemplo limita
-os caracteres e pede para não citar nomes. O aprofundamento só entra
-quando o grafo pede. A leitura usa o estímulo publicado. A conclusão
-lembra o limiar de 5 e que o percurso não reabre. No celular a coluna
-empilha.
-
-| Tela | Já existe | Falta no visual |
+| Tela | Já existe | Falta |
 | --- | --- | --- |
-| Boas-vindas | Anonimato, tempo estimado, pausa e começar | Link “Como tratamos os dados”, que o domínio ainda não publica |
-| Contexto e perspectiva | Telas do grafo, sem pontuação | Senioridade e tempo de empresa. Continuam fora do domínio |
-| Evento, exemplo, pressão e leitura | Moldura do passo, limite do texto, probe só no grafo; leitura desenha área empilhada da série semanal do item | — |
-| Conclusão | Limiar de 5 e percurso que não reabre | Compromisso da organização de devolver o resumo, que o domínio não registra |
+| Criar projeto | Nome + 4 passos numerados (admin já próximo) | Persistir/exibir **Porte**, **Setor regulado**, **Estágio da organização**, motivo→citação do laudo, “Salvar rascunho” — **bloqueado no domínio** até contrato; visual dos radios já especificado no protótipo (`NovoDiagnósticoLabel`) |
+| Estrutura | Cartões | Polimento fino |
+| Convites | Lote / amostra | Polimento fino |
+| Termo | Cinco cláusulas + aviso | Aceite formal que trava convites — hipótese |
 
-## Hipóteses abertas do recorte do laudo
+## Entrevista (revisado)
 
-Descobertas ao fechar o recorte técnico/organizacional do laudo. São hipóteses
-abertas, não compromisso, ordem ou prazo.
+| Tela | Já existe | Falta |
+| --- | --- | --- |
+| Boas-vindas | Anonimato, tempo, começar | Link **Como tratamos os dados** (texto no protótipo; domínio ainda não publica política) |
+| Contexto | Tela do grafo | **Senioridade na profissão** (fieldset no protótipo); tempo de empresa se existir no markup — fora do domínio até contrato |
+| Perspectiva / evento / exemplo / pressão / leitura | Fluxo | Polimento; leitura já tem figura semanal |
+| Conclusão | Limiar 5 | Compromisso de devolução do resumo — domínio não registra |
 
-1. **Rótulo e índice separados.** O protótipo mostra o rótulo do recorte
-   (15px/600) à esquerda, o índice serifado (~34px) à direita e a faixa numa
-   linha secundária. Exigiria elemento próprio para o índice e um contrato de
-   teste por texto acessível, não por HTML literal. O `quality-reviewer` precisa
-   aceitar esse contrato antes de qualquer código de produção.
-2. **Medidor, cobertura e alvo por recorte.** O protótipo os desenha, mas o
-   domínio não tem fonte para eles. Só entram se a publicação os trouxer; o
-   valor de exemplo continua proibido.
-3. **Lacunas de prova no teste do recorte.** Hoje o teste não é sensível ao
-   limite de 50 pontos da faixa (subir o corte para 60 continua verde) nem ao
-   número de sorteios (`maturitySliceDraws` de 8000 para 500 continua verde).
-   Cabe um teste de fronteira e outro sensível à amostragem.
-4. **Duas lacunas no e2e.** O estado em que os recortes técnico e organizacional
-   ficam sem faixa só tem teste unitário. Nenhum caso da fixture e2e o renderiza.
-   Falta um caso de fixture que o exiba.
+## Hipóteses abertas do recorte do laudo (revisadas)
+
+1. ~~**Casca tipográfica e de layout do laudo (só CSS/HTML).**~~ Feito na Onda 3.
+2. **Gauge + índice por recorte.** O protótipo desenha gauge; o domínio só entra com faixa/cobertura/alvo publicados. Sem publicação → lacuna estilizada no mesmo encaixe. Hipótese antiga “~34px” está **obsoleta**.
+3. **Divergência em barra.** Hoje o produto publica lados em texto; o protótipo usa barra + “pontos de distância”. Pode ser só apresentação se já houver magnitudes; senão permanece lacuna ou texto.
+4. **Prognóstico em dois cartões.** Layout visual pode existir com gap; números/gauge só com duas distribuições (domínio).
+5. **Lacunas de prova** (banda 50 pts, `maturitySliceDraws`) e fixture e2e sem faixa — inalteradas.
+6. **Contexto do projeto (porte / setor regulado / estágio / motivo).** Protótipo completo; produto sem campos — contrato de domínio antes do green de UI.
 
 ## Fora deste plano
 
@@ -116,55 +130,63 @@ abertas, não compromisso, ordem ou prazo.
 - React ou outro framework de interface.
 - Calibração, piloto humano e folhas candidatas — continuam nos planos
   de instrumento.
+- Gravar o rótulo “Instrumento v21 · modelo m2” no chrome do produto.
 
 ## Menor experimento
 
-Uma página de cada vez, em TDD do HTML: o teste afirma a presença do
-bloco visual (trilha, cartão, marca de não avaliado) e a ausência do
-número de exemplo. A primeira candidata, depois do menu, é o mapa:
-radar e célula cinza sem índice.
+Uma página de cada vez, em TDD do HTML: presença do bloco visual e
+ausência de Orbital/`13%`/`24%`.
 
-## Inventário Onda 0 (2026-11-21)
+Ordem revisada pós-rebuild:
 
-Classificação por tela do protótipo `maturity`. **domínio ok** = motor
-já publica ou declara lacuna honesta; **só CSS** = dado existe, falta
-composição visual; **bloqueado** = protótipo desenha o que o domínio
-ainda não emite (permanece lacuna).
+1. ~~Tokens + shell~~ (feito).
+2. ~~Mapa marca NA~~ (feito); ChartGrid permanece aberto.
+3. ~~Laudo — casca tipográfica e composição~~ (feito; sem medidor numérico).
+4. Laudo — gauge/divergência-barra/prognóstico-cartões condicionados à publicação.
+5. Mapa ChartGrid (sem %).
+6. Ficha → Prontidão → Fronteira → Plano.
+7. Walkthrough → Histórico → Público.
+8. Admin contexto + entrevista (só após contrato de domínio).
+9. Prova transversal (e2e sem faixa; testes de banda/amostragem).
+
+## Inventário (atualizado 2026-11-21)
 
 | Tela (protótipo) | View atual | Classificação | Notas |
 | --- | --- | --- | --- |
-| Laudo / Laudo escuro | `renderLaudo` + shell | só CSS (+ hipóteses) | Seções e cartões existem; falta densidade Grid2 / índice tipográfico. Prognóstico e medidor por recorte → **bloqueado** se exigir dado novo |
-| Mapa navegável | `renderMapPage` | só CSS (+ 1 domínio) | Célula SCobertura (`border-radius:4px`, `--na`) e radar não avaliado (`--na` em `:root`) feitos (Onda 2a). Falta ChartGrid/densidade. Disciplina sem pilar pai → **bloqueado** (`organizational-area-map-plan`) |
-| Ficha do nó | `renderNodeCard` | só CSS | Conteúdo publicado; falta ritmo de cartões/quadrantes |
-| Prontidão | `renderReadinessPage` | só CSS | Sem grade-% do mock |
-| Fronteira | `renderFrontierPage` | só CSS | Marcas F0–F5 só com posterior |
-| Plano de tratamento | `renderTreatmentPage` | só CSS | Colunas/horizontes no domínio |
-| Walkthrough: Operação | `renderWalkthrough` | só CSS | Sem marcos-% do mock |
-| Histórico e reavaliação | `renderHistoryPage` | só CSS | Chip de alvo só com par publicado |
-| Visão por público | `renderAudiencePage` | só CSS | Proibido CTO/CFO/Orbital |
-| Criar projeto | admin | bloqueado + só CSS | porte/regulação/estágio fora do domínio |
-| Estrutura / Convites | admin | só CSS fino | Fluxo vigente |
-| Termo de uso | admin | bloqueado (aceite) | Hipótese; tela já avisa |
-| Entrevista (web/celular) | `interview-view` | só CSS fino + bloqueado | Senioridade, “Como tratamos os dados”, compromisso de devolução |
+| Laudo / Laudo escuro | `renderLaudo` | **casca feita** (Onda 3) + **bloqueado** (gauge/prognóstico numérico) | Falta Onda 4 condicionada à publicação |
+| Mapa navegável | `renderMapPage` | só CSS (+ domínio disciplina-sem-pai) | Onda 2a feita; ChartGrid aberto |
+| Ficha do nó | `renderNodeCard` | só CSS | |
+| Prontidão | `renderReadinessPage` | só CSS | |
+| Fronteira | `renderFrontierPage` | só CSS | |
+| Plano | `renderTreatmentPage` | só CSS | |
+| Walkthrough Operação | `renderWalkthrough` | só CSS | |
+| Histórico | `renderHistoryPage` | só CSS | |
+| Visão por público | `renderAudiencePage` | só CSS | |
+| Criar projeto | admin | **bloqueado** + só CSS | Radios porte/setor/estágio no protótipo |
+| Estrutura / Convites | admin | só CSS fino | |
+| Termo | admin | bloqueado (aceite) | |
+| Entrevista | `interview-view` | só CSS fino + bloqueado | Senioridade + link de dados |
 
-### Fundação visual (pré-páginas)
+### Fundação visual
 
-| Item | Classificação |
+| Item | Estado |
 | --- | --- |
-| Tokens design-graph (`--ink`, `--rule`, `--sunk`, claro/escuro) | feito no `.diagnostic-report` (18 tokens, incl. `--on-accent`, `--ochre-soft`, `--focus`, claro/escuro) |
-| Shell sidebar + nav 9 itens | domínio ok / chrome vigente; tema via `data-theme` + botão; polimento fino **só CSS** restante |
-| Proibir dados de exemplo do protótipo | vigente nos testes (`Orbital`, `13%`) |
+| Tokens `.diagnostic-report` + `:root --na` | feito (Ondas 1 e 2a) |
+| Shell nav 9 itens + tema | vigente |
+| Anti-exemplo Orbital/13%/24% | vigente nos testes |
 
 ## Sequência de implementação
 
-0. Inventário (esta seção) — feito.
-1. Tokens + shell do relatório (sem mudar inferência) — feito.
-2. Mapa (visual; domínio só se disciplina-sem-pai entrar no ciclo) — Onda 2a (marca NA) feita; ChartGrid ainda aberto.
-3. Laudo (layout; prognóstico/medidor só com publicação).
-4. Ficha → Prontidão → Fronteira → Plano (um ciclo por tela).
-5. Walkthrough → Histórico → Público.
-6. Admin + entrevista (contexto/aceite só após contrato de domínio).
-7. Prova transversal (e2e sem faixa; testes de banda/amostragem).
+0. Inventário Onda 0 — feito; **reavaliação pós-rebuild** — esta seção.
+1. Tokens + shell — feito (`f9c1713`).
+2. Mapa NA — feito (`a65be16`); ChartGrid aberto.
+3. Laudo casca (tipografia, números de seção, grades, tabela conduta, footer) — feito.
+4. Laudo condicionado (gauge, barra de divergência, prognóstico 2 cartões) — **próximo**.
+5. Mapa ChartGrid.
+6. Ficha → Prontidão → Fronteira → Plano.
+7. Walkthrough → Histórico → Público.
+8. Admin + entrevista (domínio primeiro).
+9. Prova transversal.
 
 Fora: React, copiar números do mock, recolocar 4 áreas no menu,
 calibração/piloto/folhas candidatas.

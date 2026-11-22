@@ -1,5 +1,23 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-21 — Casca tipográfica do laudo (Onda 3)
+
+- Tipografia (h1 52 / quote 38 itálico / mecanismo 25 / índice 88),
+  seções 1–8, note com borda ink e amostra no hero, achados em 3
+  colunas, conduta Experimento|Dono|Critério, lacunas/exames e footer
+  em 2 colunas — sem Orbital/13%/24%, sem gauge nem prognóstico em
+  cartões. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
+## 2026-11-21 — Reavaliação do protótipo Anamnese (rebuild)
+
+- Inventário de paridade visual revisado contra
+  `anaminese_maturity_v3` pós-rebuild do Design Graph: tipografia do
+  laudo (índice 88px, citação 38px), composição (gauge, barra de
+  divergência, conduta em tabela, prognóstico em 2 cartões) e campos
+  de Criar projeto / Contexto que o plano anterior subestimou. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-11-21 — Marca NA do mapa (Onda 2a)
 
 - `.coverage-gap` / `.coverage-swatch` com `border-radius:4px`; radar

@@ -80,12 +80,16 @@ export function renderReportShell(input: {
   </script>`;
 }
 
+function laudoSectionTitle(order: number, title: string): string {
+  return `<h2><span class="report-section-num" aria-hidden="true">${order}</span> ${escapeHtml(title)}</h2>`;
+}
+
 export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: string; reportBase: string }): string {
   const complaint = 'gap' in laudo.complaint
     ? `<p class="report-gap">${escapeHtml(laudo.complaint.gap)}</p>`
     : `<blockquote class="report-quote"><p>${escapeHtml(laudo.complaint.quote)}</p><footer>${escapeHtml(laudo.complaint.author)}</footer></blockquote>`;
   const mechanism = typeof laudo.mechanism === 'string'
-    ? `<p>${escapeHtml(laudo.mechanism)}</p>`
+    ? `<p class="report-mechanism">${escapeHtml(laudo.mechanism)}</p>`
     : `<p class="report-gap">${escapeHtml(laudo.mechanism.gap)}</p>`;
   const queue = 'gap' in laudo.constraint
     ? ''
@@ -103,6 +107,9 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
       : '';
     return `<article class="report-finding"${patternAttr}><div class="report-finding-path"><span>${escapeHtml(finding.path)}</span><span>${finding.order}</span></div><p class="report-finding-fact">${escapeHtml(finding.title)}</p><p>${escapeHtml(finding.reading)}</p><p class="report-finding-meta"><span>${escapeHtml(areas)}</span><span class="report-support"><span aria-hidden="true">${dots}</span>${escapeHtml(finding.support)}</span></p><a href="${escapeHtml(href)}">Ver ficha →</a></article>`;
   }).join('');
+  const findingsBlock = findings
+    ? `<div class="report-findings">${findings}</div>`
+    : '';
   const others = laudo.otherFindings.length
     ? `<ul class="report-other">${laudo.otherFindings.map((item) => {
       const patternAttr = item.pattern
@@ -118,21 +125,22 @@ export function renderLaudo(laudo: DiagnosticLaudo, urls: { capabilityBase: stri
     ? `<p class="report-gap">${escapeHtml(laudo.constraint.gap)}</p>`
     : `<h3>${escapeHtml(laudo.constraint.title)}</h3><p>${escapeHtml(laudo.constraint.body)}</p>`;
   const thirtyDay = laudo.conduct.filter((item) => item.horizon === '0-30');
-  const conduct = thirtyDay.map((item, index) => renderConduct(item, index + 1)).join('')
-    || '<p class="report-gap">Nenhuma conduta de 30 dias foi publicada.</p>';
+  const conduct = thirtyDay.length
+    ? renderConductGrid(thirtyDay)
+    : '<p class="report-gap">Nenhuma conduta de 30 dias foi publicada.</p>';
   const unknowns = laudo.unknowns.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   const exams = laudo.exams.length
     ? `<ul>${laudo.exams.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
     : '<p class="report-gap">Nenhum exame complementar foi sugerido nesta leitura.</p>';
-  return `<header class="report-hero"><p class="report-kicker">Laudo · primeira página</p><h1>Diagnóstico da área de tecnologia</h1><p class="report-note">Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas nem como meta de bônus.</p><p class="report-context">${escapeHtml(laudo.context)}</p><p>${escapeHtml(laudo.footer.sample)}</p></header>
-    <section class="report-block"><h2>Motivo da avaliação</h2>${complaint}</section>
-    <section class="report-block"><h2>Leitura geral</h2>${mechanism}${queue}${reading}</section>
-    <section class="report-block"><h2>Achados</h2><p>O que está acontecendo, em ordem de impacto no motivo da avaliação.</p>${findings}${others}</section>
-    <section class="report-block"><h2>Divergências</h2>${divergences}</section>
-    <section class="report-block"><h2>Restrição principal</h2>${constraint}</section>
-    <section class="report-block"><h2>Conduta para 30 dias</h2>${conduct}<p><a href="${escapeHtml(`${urls.reportBase}/treatment`)}">Ver o plano de tratamento completo →</a></p></section>
-    <section class="report-block"><h2>Prognóstico</h2><p class="report-gap">${escapeHtml(laudo.prognosis.gap)}</p></section>
-    <section class="report-block"><h2>O que ainda não sabemos</h2><h3>Lacunas</h3><ul>${unknowns}</ul><h3>Exames complementares sugeridos</h3>${exams}</section>
+  return `<header class="report-hero"><p class="report-kicker">Laudo · primeira página</p><h1>Diagnóstico da área de tecnologia</h1><p class="report-note" role="note">Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas nem como meta de bônus.</p><p class="report-context">${escapeHtml(laudo.context)}</p><p>${escapeHtml(laudo.footer.sample)}</p></header>
+    <section class="report-block">${laudoSectionTitle(1, 'Motivo da avaliação')}${complaint}</section>
+    <section class="report-block">${laudoSectionTitle(2, 'Leitura geral')}${mechanism}${queue}${reading}</section>
+    <section class="report-block">${laudoSectionTitle(3, 'Achados')}<p>O que está acontecendo, em ordem de impacto no motivo da avaliação.</p>${findingsBlock}${others}</section>
+    <section class="report-block">${laudoSectionTitle(4, 'Divergências')}${divergences}</section>
+    <section class="report-block">${laudoSectionTitle(5, 'Restrição principal')}${constraint}</section>
+    <section class="report-block">${laudoSectionTitle(6, 'Conduta para 30 dias')}${conduct}<p><a href="${escapeHtml(`${urls.reportBase}/treatment`)}">Ver o plano de tratamento completo →</a></p></section>
+    <section class="report-block">${laudoSectionTitle(7, 'Prognóstico')}<p class="report-gap">${escapeHtml(laudo.prognosis.gap)}</p></section>
+    <section class="report-block">${laudoSectionTitle(8, 'O que ainda não sabemos')}<div class="report-unknowns-grid"><div><h3>Lacunas</h3><ul>${unknowns}</ul></div><div><h3>Exames complementares sugeridos</h3>${exams}</div></div></section>
     ${renderFooter(laudo)}`;
 }
 
@@ -158,7 +166,7 @@ function supportMarks(support: string): number {
   return 1;
 }
 
-function renderConduct(item: TreatmentConduct, order: number): string {
+function renderConductNotes(item: TreatmentConduct): string {
   const cynefin = item.cynefin ? `<p>${escapeHtml(cynefinLine(item.cynefin))}</p>` : '';
   const grade = item.evidenceGrade
     ? `<p>Evidência ${item.evidenceGrade}. ${escapeHtml(evidenceGradeReading[item.evidenceGrade])}.</p>${item.evidenceGrade === 'D' ? '<p>Conduta D entra como experimento explícito.</p>' : ''}`
@@ -177,11 +185,27 @@ function renderConduct(item: TreatmentConduct, order: number): string {
     ? '<p class="report-gap">Aviso: baixa transferência — treinamento sem mudar o ambiente raramente vira prática.</p>'
     : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
-  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p class="report-conduct-action">${escapeHtml(item.action)}</p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${cynefin}${grade}${dependency}${archetype}${learning}${unlocks}${transfer}${limit}</article>`;
+  return `${cynefin}${grade}${dependency}${archetype}${learning}${unlocks}${transfer}${limit}`;
+}
+
+function renderConduct(item: TreatmentConduct, order: number): string {
+  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p class="report-conduct-action">${escapeHtml(item.action)}</p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${renderConductNotes(item)}</article>`;
+}
+
+function renderConductGrid(items: TreatmentConduct[]): string {
+  const header = '<p>Experimento</p><p>Dono</p><p>Critério</p>';
+  const rows = items.map((item) => (
+    `<p class="report-conduct-action">${escapeHtml(item.action)}</p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>`
+  )).join('');
+  const notes = items.map((item, index) => {
+    const body = renderConductNotes(item);
+    return body ? `<article class="report-conduct"><p class="report-kicker">${index + 1} Experimento</p>${body}</article>` : '';
+  }).join('');
+  return `<div class="report-conduct-grid">${header}${rows}</div>${notes}`;
 }
 
 function renderFooter(laudo: DiagnosticLaudo): string {
-  return `<footer class="report-footer"><p>Aviso de uso. Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas nem como meta de bônus.</p><p>Amostra desta leitura. ${escapeHtml(laudo.footer.sample)}</p><p>${escapeHtml(laudo.footer.instrument)} · ${escapeHtml(laudo.footer.calibration)}</p></footer>`;
+  return `<footer class="report-footer"><div><h3>Sobre estas estimativas</h3><p>Amostra desta leitura. ${escapeHtml(laudo.footer.sample)}</p><p>${escapeHtml(laudo.footer.instrument)} · ${escapeHtml(laudo.footer.calibration)}</p></div><div><h3>Aviso de uso</h3><p>Aviso de uso. Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas nem como meta de bônus.</p></div></footer>`;
 }
 
 export function renderMapPage(input: {

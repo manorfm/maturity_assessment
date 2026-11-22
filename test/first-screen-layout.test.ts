@@ -207,8 +207,8 @@ test('first screen é o laudo, com no máximo três achados e lacuna de índice'
   assert.doesNotMatch(html, /Aguarde mais respostas/);
   assert.doesNotMatch(html, /aria-label="Gestão"/);
   assert.doesNotMatch(html, /24%/);
-  const achados = html.indexOf('>Achados<');
-  const conduta = html.indexOf('Conduta para 30 dias');
+  const achados = html.indexOf(' Achados</h2>');
+  const conduta = html.indexOf(' Conduta para 30 dias</h2>');
   assert.ok(achados >= 0 && conduta > achados);
 });
 

@@ -18,7 +18,7 @@ test('A — real-flow cohort manage HTML baseline shows war-room finding', async
   assert.match(String(response.headers['content-type'] ?? ''), /text\/html/);
   assert.match(response.body, /id="report-diagnosis"/);
   assert.match(response.body, /Laudo · primeira página/);
-  assert.match(response.body, />Achados</);
+  assert.match(response.body, / Achados<\/h2>/);
   assert.match(response.body, /Diagnóstico da área de tecnologia/);
   assert.match(response.body, /O war room virou o modo de ver e gerir o sistema/);
   assert.ok(

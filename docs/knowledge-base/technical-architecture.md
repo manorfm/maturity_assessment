@@ -132,13 +132,16 @@ framework de frontend.
 
 O HTML renderizado no servidor segue divulgação progressiva. A first screen
 é o laudo (`diagnostic-report-v2`): motivo em citação ou lacuna, leitura
-geral com frase de mecanismo, até três achados em cartão, divergências
-nos dois lados, restrição principal, conduta cujo horizonte publicado é 0–30 dias, prognóstico
-como direção, lacunas e exames em listas separadas, e rodapé de amostra
-e calibração. Cartões `.report-finding` e itens `.report-other` com
-padrão sociotécnico publicado carregam `data-finding-pattern` para
-ancoragem estável no HTML (achados além dos três primeiros entram em
-“outros” com o mesmo gancho).
+geral com frase de mecanismo (`.report-mechanism`), até três achados em
+grade de três colunas (`.report-findings`), divergências nos dois lados,
+restrição principal, conduta 0–30 dias em grade Experimento|Dono|Critério,
+prognóstico como direção (ainda lacuna tipográfica, sem dois cartões),
+lacunas e exames em duas colunas, e rodapé em duas colunas (estimativas |
+aviso de uso). Seções 1–8 no trilho; note de aviso com borda ink e amostra
+no hero. Cartões `.report-finding` e itens `.report-other` com padrão
+sociotécnico publicado carregam `data-finding-pattern` para ancoragem
+estável no HTML (achados além dos três primeiros entram em “outros” com
+o mesmo gancho).
 A maturidade técnica, a maturidade organizacional e o alvo de contexto
 aparecem só com a faixa que a publicação do índice incluiu. Recorte
 ausente continua lacuna e não herda o índice geral. Porte, regulação e
