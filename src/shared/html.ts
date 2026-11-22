@@ -386,8 +386,10 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .coverage-gap { background:repeating-linear-gradient(45deg, var(--na) 0 2px, transparent 2px 6px); color:var(--na-ink); border:1px solid var(--na); border-radius:4px }
     .coverage-cell { background:var(--accent-soft); border:1px solid var(--accent); border-radius:4px; color:var(--ink3); font-weight:500 }
     .index-gap { color:var(--ink3); font-weight:500 }
-    .divergence-cell { text-align:left; font-weight:500; color:var(--ink2); border:1px solid var(--accent); background:var(--accent-soft); outline:3px solid var(--ink) }
+    .report-matrix td.divergence-cell { text-align:left; font-weight:500; color:var(--ink2); border:1px solid var(--accent); background:var(--accent-soft); outline:3px solid var(--ink) }
     .divergence-cell p { margin:0 }
+    .divergence-distance { margin:0; font-size:11px; font-weight:600; color:var(--ink3); line-height:1.3 }
+    .divergence-interpretation, .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0 }
     .legend-mark { display:inline-block; margin-right:6px; vertical-align:middle }
     .legend-estimate { width:8px; height:8px; background:var(--accent); transform:rotate(45deg) }
     .legend-band { width:22px; height:8px; border-radius:4px; background:var(--accent-soft); border:1px solid var(--accent) }

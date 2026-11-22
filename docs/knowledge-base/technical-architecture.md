@@ -203,9 +203,13 @@ Engenharia, Operação e Organização — e três cortes: por capacidade, por
 estrutura e por perspectiva. As células saem do domínio (`map-matrix`):
 unidade abaixo do limiar, ou disciplina sem cobertura temática, publica
 “sem cobertura”; disciplina coberta sem índice publica “índice não
-publicado”. A perspectiva abaixo do limiar não ganha linha. Divergência
-traz os dois relatos e não declara quem está certo. Nenhuma célula
-publica 0. Sistema observado abre as disciplinas; sistema não atravessado
+publicado”; disciplina coberta com `index` opcional na entrada vira
+`estimate` (`{index}%`, faixa/cobertura no title/aria quando vierem).
+A rota do mapa só repassa `index`/`band` se o report já os publicar —
+não inventa a partir de `level`. A perspectiva abaixo do limiar não
+ganha linha. Divergência traz os dois relatos e não declara quem está
+certo; `distancePoints` e interpretação sistêmica entram só quando
+ambos os lados publicam magnitude opcional. Nenhuma célula publica 0. Sistema observado abre as disciplinas; sistema não atravessado
 diz “entrevista não atravessou” e não lista disciplinas. A legenda
 mostra estimativa e faixa quando o índice está publicado, e o alvo só
 quando o modelo inclui o alvo. A ficha abre com a trilha do mapa
@@ -363,16 +367,20 @@ publicada ou finding, mesmo quando o pilar correspondente não fecha duas crian�
 O drill-down de área usa `/areas/:id`; folhas continuam em `/capabilities/:id`.
 Radares de recorte de unidade ainda consomem `capabilityGroups`. A UI não
 recalcula níveis. No mapa, células `unpublished` usam `.coverage-cell`
-(accent + radius 4px), `uncovered` permanece hatch `--na`, divergência
-marca `◆` com outline ink, e a legenda estrutural mostra `covered-swatch`
-e `coverage-swatch` — sem inventar percentual. Acima das abas, o
-`projectMapOverview` publica lead causal (path do achado), índice
-Tecnologia quando o índice global publica, e quatro cartões de sistema
-com `publishSystemSlices` (índice só se a faixa do sistema publicar);
-método e aviso de uso vêm no overview. Em seguida,
-`projectEngineeringDomains` lista os grupos de Engenharia na ordem do
-modelo com `publishDomainSlices` — índice/faixa só se o domínio
-publicar; senão “Não avaliado” (não zero). Em seguida,
+(accent + radius 4px), `uncovered` permanece hatch `--na`, `estimate`
+mostra o percentual publicado, divergência marca `◆` com outline ink
+(`.report-matrix td.divergence-cell` alinha à esquerda sobre a tabela;
+pts em `.divergence-distance` ≤12px; interpretação em title/aria ou
+`.divergence-interpretation`, sem `<p>` empilhado), e a legenda
+estrutural mostra `covered-swatch` e `coverage-swatch` — sem inventar
+percentual. O lead estrutural convida a passar o mouse para
+ver faixa e cobertura. Acima das abas, o `projectMapOverview` publica
+lead causal (path do achado), índice Tecnologia quando o índice global
+publica, e quatro cartões de sistema com `publishSystemSlices` (índice
+só se a faixa do sistema publicar); método e aviso de uso vêm no
+overview. Em seguida, `projectEngineeringDomains` lista os grupos de
+Engenharia na ordem do modelo com `publishDomainSlices` — índice/faixa
+só se o domínio publicar; senão “Não avaliado” (não zero). Em seguida,
 `projectMapRadars` monta dois radars (5 domínios de Engenharia e 8
 pilares via `publishPillarSlices`), com polígono só para eixos
 publicados (≥3) na escala de índice 0–100; eixo não avaliado fica fora

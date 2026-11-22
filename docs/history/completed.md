@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-22 — Mapa matrizes com magnitude (Onda 6d)
+
+- `MapCell` `estimate`; divergência com `distancePoints`/interpretação
+  só com magnitudes opcionais; lead com hover/faixa; wire sem inventar
+  `%` de `level`. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-22 — Mapa radars (Onda 6c)
 
 - Dois radars no mapa (domínios 6b + 8 pilares); `publishPillarSlices`;

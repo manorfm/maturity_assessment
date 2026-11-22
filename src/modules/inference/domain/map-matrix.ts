@@ -8,7 +8,8 @@ export type MapColumn = { id: string; label: string; leafIds: string[] };
 export type MapCell =
   | { kind: 'uncovered' }
   | { kind: 'unpublished' }
-  | { kind: 'divergence'; left: string; right: string };
+  | { kind: 'estimate'; index: number; band?: [number, number]; coverage?: number }
+  | { kind: 'divergence'; left: string; right: string; distancePoints?: number; interpretation?: string };
 
 export type StructureMatrix = {
   columns: MapColumn[];
@@ -26,7 +27,7 @@ export type PerspectiveMatrix = {
 export type PerspectiveSample = {
   label: string;
   completed: number;
-  readings: Array<{ capabilityId: string; signals: number; mean: number }>;
+  readings: Array<{ capabilityId: string; signals: number; mean: number; index?: number }>;
 };
 
 export type MapLegendMark = { id: 'estimate' | 'band' | 'target'; label: string; value: string };
@@ -202,12 +203,14 @@ export function projectMapRadars(input: {
 export const mapCopy = {
   uncovered: 'sem cobertura',
   unpublished: 'índice não publicado',
-  structureLead: 'Times × capacidades, na ordem da estrutura, não por resultado.',
+  structureLead: 'Times × capacidades, na ordem da estrutura, não por resultado. Passe o mouse para ver faixa e cobertura.',
   estimateGap: 'Estimativa, faixa e alvo só entram quando o modelo publicar a célula.',
   perspectiveLead: 'Perspectivas × capacidades. A célula com os dois relatos marca divergência. Não mostra quem está certo.',
   noOwnRow: 'Sem linha própria',
   noDivergence: 'Nenhuma divergência de perspectiva publicada acima do limiar.',
 };
+
+type StructureCapability = { id: string; coverage: number; index?: number; band?: [number, number] };
 
 const leafIdsOf = (node: OrganizationalAreaNode): string[] => {
   const own = node.leafId ? [node.leafId] : [];
@@ -225,7 +228,7 @@ export function disciplineColumns(map: OrganizationalAreaMap): MapColumn[] {
 export function projectStructureMatrix(input: {
   minimum: number;
   columns: MapColumn[];
-  units: Array<{ path: string; completed: number; capabilities: Array<{ id: string; coverage: number }> }>;
+  units: Array<{ path: string; completed: number; capabilities: StructureCapability[] }>;
 }): StructureMatrix {
   const rows = input.units.map((unit) => ({
     label: unit.path.split('/').at(-1) ?? unit.path,
@@ -236,11 +239,22 @@ export function projectStructureMatrix(input: {
 }
 
 function structureCell(
-  unit: { completed: number; capabilities: Array<{ id: string; coverage: number }> },
+  unit: { completed: number; capabilities: StructureCapability[] },
   column: MapColumn,
   minimum: number,
 ): MapCell {
   if (unit.completed < minimum) return { kind: 'uncovered' };
+  const published = column.leafIds
+    .map((leafId) => unit.capabilities.find((capability) => capability.id === leafId && capability.coverage >= 1 && typeof capability.index === 'number'))
+    .find((capability): capability is StructureCapability & { index: number } => capability !== undefined && typeof capability.index === 'number');
+  if (published) {
+    return {
+      kind: 'estimate',
+      index: published.index,
+      ...(published.band ? { band: published.band } : {}),
+      ...(published.coverage !== undefined ? { coverage: published.coverage } : {}),
+    };
+  }
   const covered = unit.capabilities.some((capability) => column.leafIds.includes(capability.id) && capability.coverage >= 1);
   return covered ? { kind: 'unpublished' } : { kind: 'uncovered' };
 }
@@ -288,15 +302,30 @@ function perspectiveCell(sample: PerspectiveSample, column: MapColumn, eligible:
   const own = readingOf(sample, column);
   if (!own) return { kind: 'uncovered' };
   const ownSide = side(own.mean);
-  const labelsOn = (wanted: 'looser' | 'tighter') => eligible
-    .filter((candidate) => side(readingOf(candidate, column)?.mean ?? 0) === wanted)
-    .map((candidate) => candidate.label);
-  const left = labelsOn('looser');
-  const right = labelsOn('tighter');
+  const onSide = (wanted: 'looser' | 'tighter') => eligible
+    .filter((candidate) => side(readingOf(candidate, column)?.mean ?? 0) === wanted);
+  const leftSamples = onSide('looser');
+  const rightSamples = onSide('tighter');
+  const left = leftSamples.map((candidate) => candidate.label);
+  const right = rightSamples.map((candidate) => candidate.label);
   if (ownSide === 'none' || !left.length || !right.length) return { kind: 'unpublished' };
-  return {
+  const cell: MapCell = {
     kind: 'divergence',
     left: `${left.join(', ')} descreve um sistema mais folgado.`,
     right: `${right.join(', ')} descreve a restrição no mesmo recorte.`,
+  };
+  const leftIndexes = leftSamples.map((candidate) => readingOf(candidate, column)?.index);
+  const rightIndexes = rightSamples.map((candidate) => readingOf(candidate, column)?.index);
+  const bothPublished = leftIndexes.length > 0
+    && rightIndexes.length > 0
+    && leftIndexes.every((value) => typeof value === 'number')
+    && rightIndexes.every((value) => typeof value === 'number');
+  if (!bothPublished) return cell;
+  const leftIndex = leftIndexes[0] as number;
+  const rightIndex = rightIndexes[0] as number;
+  return {
+    ...cell,
+    distancePoints: Math.round(Math.abs(leftIndex - rightIndex)),
+    interpretation: `${left.join(', ')} vê mais folga; ${right.join(', ')} vê a restrição no mesmo recorte.`,
   };
 }

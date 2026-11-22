@@ -432,10 +432,40 @@ function renderPerspectiveCut(matrix: PerspectiveMatrix | undefined): string {
   return `<section class="report-matrix-block">${table}${withheld}</section>`;
 }
 
-function renderCells(cells: Array<{ kind: 'uncovered' | 'unpublished' | 'divergence'; left?: string; right?: string }>): string {
+function renderCells(cells: Array<{
+  kind: 'uncovered' | 'unpublished' | 'estimate' | 'divergence';
+  left?: string;
+  right?: string;
+  index?: number;
+  band?: [number, number];
+  coverage?: number;
+  distancePoints?: number;
+  interpretation?: string;
+}>): string {
   return cells.map((cell) => {
     if (cell.kind === 'divergence') {
-      return `<td class="divergence-cell"><span aria-hidden="true">◆</span><p>${escapeHtml(cell.left ?? '')}</p><p>${escapeHtml(cell.right ?? '')}</p></td>`;
+      const distance = typeof cell.distancePoints === 'number'
+        ? `<p class="divergence-distance">divergência · ${cell.distancePoints} pts</p>`
+        : '';
+      const interpretationText = cell.interpretation ? escapeHtml(cell.interpretation) : '';
+      const attrs = interpretationText
+        ? ` title="${interpretationText}" aria-label="${interpretationText}"`
+        : '';
+      const interpretation = interpretationText
+        ? `<span class="divergence-interpretation sr-only">${interpretationText}</span>`
+        : '';
+      return `<td class="divergence-cell"${attrs}><span aria-hidden="true">◆</span><p>${escapeHtml(cell.left ?? '')}</p><p>${escapeHtml(cell.right ?? '')}</p>${distance}${interpretation}</td>`;
+    }
+    if (cell.kind === 'estimate' && typeof cell.index === 'number') {
+      const details = [
+        cell.band ? `faixa ${cell.band[0]}–${cell.band[1]}%` : undefined,
+        cell.coverage !== undefined ? `cobertura ${cell.coverage}` : undefined,
+      ].filter(Boolean).join(' · ');
+      const label = details ? `${cell.index}%. ${details}` : `${cell.index}%`;
+      const attrs = details
+        ? ` title="${escapeHtml(details)}" aria-label="${escapeHtml(label)}"`
+        : ` aria-label="${escapeHtml(label)}"`;
+      return `<td class="coverage-cell estimate-cell"${attrs}>${cell.index}%</td>`;
     }
     if (cell.kind === 'unpublished') return `<td class="coverage-cell index-gap">${escapeHtml(mapCopy.unpublished)}</td>`;
     return `<td class="coverage-gap">${escapeHtml(mapCopy.uncovered)}</td>`;

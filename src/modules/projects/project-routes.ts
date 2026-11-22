@@ -484,7 +484,15 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
         units: report.scopes.filter((scope) => scope.path.split('/').length > 1).map((scope) => ({
           path: scope.path,
           completed: scope.completed,
-          capabilities: scope.capabilities.map((capability) => ({ id: capability.id, coverage: capability.coverage ?? 0 })),
+          capabilities: scope.capabilities.map((capability) => {
+            const published = capability as { index?: number; band?: [number, number] };
+            return {
+              id: capability.id,
+              coverage: capability.coverage ?? 0,
+              ...(typeof published.index === 'number' ? { index: published.index } : {}),
+              ...(published.band ? { band: published.band } : {}),
+            };
+          }),
         })),
       }),
       perspectives: projectPerspectiveMatrix({ minimum, columns, samples: report.perspectiveSamples }),
