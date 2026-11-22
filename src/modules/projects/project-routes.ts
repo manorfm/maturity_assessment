@@ -30,7 +30,7 @@ import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js';
 import { evidenceGradeGap, leavesForReadinessPage, projectAudienceReadings, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import { enablementCatalog, evaluateEnablementEdges, frontierLeaves, projectFrontierBrief } from '../inference/domain/learning-frontier.js';
-import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
+import { disciplineColumns, projectMapLegend, projectMapOverview, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, reportMenuFicha, type ReportFicha, type ReportPageId } from './diagnostic-report-view.js';
@@ -449,11 +449,25 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
     const selected = cut === 'est' || cut === 'per' ? cut : 'cap';
     const columns = disciplineColumns(report.organizationalAreas);
     const minimum = Number(auth.project.minimum_group_size);
+    const overview = projectMapOverview({
+      map: report.organizationalAreas,
+      findings: uniqueFindingsByPattern(report.findings)
+        .filter((finding) => finding.confidence >= 0.5 && finding.detailCapability)
+        .map((finding) => {
+          const trail = findAreaPath(report.organizationalAreas, finding.detailCapability);
+          return {
+            path: trail?.length ? trail.map((node) => node.label).join(' › ') : '',
+            title: finding.title,
+          };
+        }),
+      ...(report.index ? { index: report.index } : {}),
+    });
     const body = renderMapPage({
       map: report.organizationalAreas,
       cut: selected,
       areaBase: `/projects/${params.publicId}/manage/${params.adminSecret}/areas`,
       capabilityBase: `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`,
+      overview,
       structure: projectStructureMatrix({
         minimum,
         columns,

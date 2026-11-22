@@ -1,9 +1,22 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectStructureMatrix } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 import { layout } from '../src/shared/html.js';
+
+const gapOverview: MapOverview = {
+  lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
+  technology: { published: false, gap: 'Menos de 5 respondentes neste recorte.' },
+  systems: [
+    { id: 'product', label: 'Produto', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'engineering', label: 'Engenharia', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'operations', label: 'Operação', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'organization', label: 'Organização', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+  ],
+  method: 'Sistemas na ordem do modelo, não por resultado.',
+  notice: 'Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas.',
+};
 
 function cssRuleBody(served: string, selector: RegExp): string {
   const match = served.match(selector);
@@ -57,6 +70,7 @@ test('mapa estrutural sem cobertura usa coverage-gap e não inventa exemplo', ()
     cut: 'est',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    overview: gapOverview,
     structure,
   });
   const gama = html.slice(html.indexOf('Gama'), html.indexOf('Delta'));

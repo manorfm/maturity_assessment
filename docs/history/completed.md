@@ -1,5 +1,20 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-22 — Mapa visão geral (Onda 6a)
+
+- Lead causal a partir do path do achado; índice Tecnologia condicionado;
+  `publishSystemSlices` por sistema; quatro cartões na ordem canônica;
+  method/notice; grade 4 colunas e índice compacto 32px. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
+## 2026-11-22 — Correção do inventário do Mapa (standalone)
+
+- Confrontado `Anamnese de Tecnologia v3.html` (tela Mapa navegável)
+  com o produto: Ondas 2a/5 eram só marcas de célula. Plano de
+  paridade atualizado com blocos 6a–6d, gaps de backend e padrão de
+  mensagem (lead causal, cobertura≠zero, divergência sem juiz). Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-11-22 — Mapa ChartGrid (Onda 5)
 
 - Célula coberta (`unpublished`) com `.coverage-cell` (accent +

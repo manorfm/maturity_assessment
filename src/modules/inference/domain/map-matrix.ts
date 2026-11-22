@@ -1,5 +1,6 @@
-import type { IndexPublication } from './stage-posterior.js';
-import type { OrganizationalAreaMap, OrganizationalAreaNode } from './organizational-areas.js';
+import { publishSystemSlices } from './diagnostic-report.js';
+import type { IndexPublication, MaturitySlice } from './stage-posterior.js';
+import { projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from './organizational-areas.js';
 
 export type MapColumn = { id: string; label: string; leafIds: string[] };
 
@@ -39,6 +40,65 @@ export function projectMapLegend(index?: IndexPublication): MapLegend {
   ];
   if (index.target !== undefined) marks.push({ id: 'target', label: 'alvo', value: `${index.target}%` });
   return { marks, gap: null };
+}
+
+export type MapOverview = {
+  lead: string;
+  technology:
+    | { published: true; index: number; band: [number, number]; coverage: number; target?: number }
+    | { published: false; gap: string };
+  systems: Array<{
+    id: string;
+    label: string;
+    status: string;
+    reading?: MaturitySlice;
+    gap?: string;
+  }>;
+  method: string;
+  notice: string;
+};
+
+const SYSTEM_GAP = 'Sem índice publicado neste sistema.';
+const OVERVIEW_METHOD = 'Sistemas na ordem do modelo, não por resultado.';
+const OVERVIEW_NOTICE = 'Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas.';
+const OVERVIEW_LEAD_GAP = 'Ainda não há achado publicado para localizar o problema no mapa.';
+
+export function projectMapOverview(input: {
+  map: OrganizationalAreaMap;
+  findings?: Array<{ path: string; title?: string; mechanism?: string }>;
+  index?: IndexPublication;
+}): MapOverview {
+  const path = input.findings?.find((finding) => finding.path.trim())?.path.trim();
+  const lead = path ? overviewLeadFromPath(path) : OVERVIEW_LEAD_GAP;
+  const technology = overviewTechnology(input.index);
+  const slices = input.index?.published && input.index.leaves
+    ? publishSystemSlices(input.index.leaves, input.map)
+    : {};
+  const systems = projectSystemTiles(input.map).map((tile) => {
+    const reading = slices[tile.id as keyof typeof slices];
+    return reading
+      ? { id: tile.id, label: tile.label, status: tile.status, reading }
+      : { id: tile.id, label: tile.label, status: tile.status, gap: SYSTEM_GAP };
+  });
+  return { lead, technology, systems, method: OVERVIEW_METHOD, notice: OVERVIEW_NOTICE };
+}
+
+function overviewLeadFromPath(path: string): string {
+  const segments = path.split('›').map((part) => part.trim()).filter(Boolean);
+  const place = segments.slice(0, 2).join(' › ');
+  return `O problema aparece em ${place}. Abra qualquer bloco para descer até a capacidade.`;
+}
+
+function overviewTechnology(index?: IndexPublication): MapOverview['technology'] {
+  if (!index) return { published: false, gap: mapCopy.estimateGap };
+  if (!index.published) return { published: false, gap: index.reason };
+  return {
+    published: true,
+    index: index.index,
+    band: index.band,
+    coverage: index.coverage,
+    ...(index.target !== undefined ? { target: index.target } : {}),
+  };
 }
 
 export const mapCopy = {

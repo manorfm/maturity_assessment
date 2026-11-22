@@ -59,12 +59,10 @@ do cartão, em
 [`executive-decision-narrative-plan.md`](executive-decision-narrative-plan.md).
 
 A paridade das telas com o protótipo está no
-[`plano de paridade visual`](visual-parity-plan.md) (reavaliado em
-2026-11-21 contra `anaminese_maturity_v3` pós-rebuild): o menu e as
-páginas já abrem; o maior gap visual revisado é a casca tipográfica e
-de composição do laudo. A publicação do motor para o desenho (fases
-1–10) fechou em `sdd-docs/maturity-model-publication`, fora deste
-repositório. Isso não é calibração nem piloto humano.
+[`plano de paridade visual`](visual-parity-plan.md) (mapa 6a entregue;
+próximo: 6b engenharia por domínio). A publicação do motor para o
+desenho (fases 1–10) fechou em `sdd-docs/maturity-model-publication`,
+fora deste repositório. Isso não é calibração nem piloto humano.
 
 A decisão de deixar de se apresentar como framework de maturidade e passar a
 ser um diagnóstico de engenharia está em

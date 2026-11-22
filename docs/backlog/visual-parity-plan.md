@@ -1,21 +1,19 @@
 # Plano: paridade visual com o protótipo
 
 Referência visual vigente: protótipo Design Graph
-`anaminese_maturity_v3` (alias carregado também como `maturity`).
-As telas do relatório, da administração e da entrevista já abrem no
-produto. O que ainda falta desenhar porque o motor não publica o bloco
-está em `sdd-docs/maturity-model-publication`, fora deste repositório.
-Este arquivo guarda o inventário. Não é licença para copiar os números
-de exemplo (Orbital Pagamentos, índice 13%/24%, “Integração contínua”
-como dado fixo). Onde o modelo não mede, o bloco continua declarando a
-lacuna.
+`anaminese_maturity_v3` **e** o standalone
+`Workspace/prototipos/Anamnese de Tecnologia v3.html` (mesma arte).
+O Graph descreve o standalone; quando o inventário divergir, prevalece o
+HTML standalone. Não é licença para copiar números de exemplo (Orbital,
+13%/24%, “Integração contínua” fixa). Onde o modelo não mede, o bloco
+declara lacuna.
 
 ## Problema
 
 Quem compara o protótipo com o produto encontra blocos de texto no lugar
-de gráficos, cartões e grades — e, no laudo, tipografia e composição
-muito abaixo do que o protótipo define (índice 88px, citação 38px
-itálica, grades e medidores).
+de gráficos, cartões e grades. No **mapa**, o descompasso é estrutural:
+o produto entrega um shell de abas + matriz qualitativa; o protótipo é
+um **dashboard** (índices, charts de domínio, radars, matrizes com %).
 
 ## Hipótese de resultado
 
@@ -73,21 +71,51 @@ em `anaminese_maturity_v3` e contra o HTML/CSS do produto.
 | Footer | pilha de `<p>` | Grade **2 colunas** “Sobre estas estimativas” \| “Aviso de uso” |
 | Criar projeto | “faltam porte/regulação/estágio” | Protótipo já desenha fieldsets: **Porte da área de tecnologia**, **Setor regulado**, **Estágio da organização**, motivo com nota de citação, “Salvar rascunho” |
 | Contexto (entrevista) | “senioridade fora do domínio” | Tela dedicada com seção **Senioridade na profissão** (`SenioridadeProfissãoFieldset`); “Como tratamos os dados” nas boas-vindas |
-| Mapa “já existe / —” | coluna “Falta” vazia | SCobertura (Onda 2a) + ChartMark coberta/divergência/swatches (Onda 5); CapsBold de path ainda aberto |
+| Mapa “já existe / —” | Onda 2a+5 como se bastassem | **Erro de inventário (2026-11-22):** marcas de célula ≠ mapa. Standalone = dashboard completo (ver secção Mapa) |
+
+### Correção 2026-11-22 — Mapa vs standalone
+
+Fonte: decompress da tela 14 do standalone (`6521d0cb-…`). Design Graph
+lista as mesmas seções (`Engenharia por domínio`, `Times ×…`,
+`Perspectivas ×…`, `ChartGrid`/`ChartMark*`). O produto **não** as
+renderiza.
+
+| Bloco no standalone | Produto hoje | Backend |
+| --- | --- | --- |
+| Lead causal + CTA (“aparece mais em X, domínio Y. Abra…”) | Lead genérico | **Falta** projector de lead a partir do achado/path |
+| Índice **Tecnologia** + gauge + 4 sistemas (Produto/Engenharia/Operação/Organização) com %·faixa·cobertura·alvo | 4 tiles só com status textual | Índice global existe no laudo; **falta** índice **por sistema** (e open-state “aberto”) |
+| Engenharia por domínio (chart horizontal, losango/faixa/alvo) | ausente | **Falta** posterior/índice por domínio (Entrega, Qualidade, Arquitetura, Dados, Plataforma, Segurança) |
+| Radar 6 domínios + radar 8 capacidades | radar só em recorte de área | **Falta** publicação tipada para o mapa (eixos + “não avaliado fora do polígono”) |
+| Times × capacidades com **%** e hover faixa/cobertura | matriz uncovered/unpublished/divergence sem % | Célula precisa de magnitude publicada; hoje `unpublished` = “índice não publicado” |
+| Perspectivas: dual radar + ◆ + “divergência · N pts” + interpretação | matriz qualitativa + ◆ CSS | Magnitudes/distance no mapa **faltam**; interpretação (“quem decide vê…”) **falta** |
+| Agregação &lt; limiar (“entram no índice da área”) | `withoutOwnRow` parcial | Refinar copy e escopo |
+
+### Mensagem do protótipo (intenções — mapa e laudo)
+
+Padrão de comunicação do standalone (copiar a **função**, não o caso Orbital):
+
+1. **Orientar o olhar** — lead nomeia *onde* o problema se concentra (sistema + domínio) e convida a aprofundar (“Abra qualquer bloco…”).
+2. **Separar método de resultado** — “na ordem do modelo, não por resultado”; eixos/células na ordem canônica.
+3. **Honestidade de cobertura** — abaixo do mínimo → cinza / “Não avaliado” / fora do polígono; **não** zero.
+4. **Agregação anônima** — &lt; N pessoas: sem linha própria; respostas sobem ao nível acima; frase explícita.
+5. **Divergência sem juiz** — mostra dois lados + distância; interpreta o *sistema* (“quem decide vê análise; quem opera vê pressa”), nunca a pessoa.
+6. **Problema → lugar → próximo passo** — achado aponta capacidade; “Ver ficha”; conduta/plano ficam no laudo/tratamento, não no mapa.
+7. **Aviso de uso** — diagnóstico do sistema de trabalho; não avalia pessoas nem meta de bônus.
+8. **Legenda tipada** — “losango = estimativa · traço = faixa · linha = alvo”; “eixo não avaliado não vale zero”.
 
 ### O que continua correto
 
 - Menu de 9 itens e exclusão de walkthroughs Product/Engineering/Org do menu.
 - Proibição de copiar Orbital / 13% / 24% / Integração contínua fixa.
 - Domínio bloqueia prognóstico real (duas distribuições) e aceite formal do termo.
-- Tokens claros/escuros alinhados; Onda 1, Onda 2a (NA) e Onda 5 (ChartMark/swatches) feitas.
+- Tokens; Onda 1; laudo casca/condicionado (3–4); marcas NA/ChartMark (2a/5) como *detalhe* de célula, não como mapa completo.
 
 ## Relatório — o que falta desenhar (revisado)
 
 | Tela | Já existe no produto | Falta no visual (protótipo) |
 | --- | --- | --- |
 | Laudo | Casca tipográfica e composição (Onda 3): h1 52 / quote 38 itálico / mecanismo 25 / índice 88; seções 1–8; note com borda ink + amostra no hero; achados em 3 colunas; conduta Experimento\|Dono\|Critério; lacunas/exames e footer em 2 colunas; tema via botão | Gauge de faixa; divergência com barra; restrição em cartão accent; prognóstico em 2 cartões+gauge (números só se publicados). Tema escuro no protótipo é tela variante; produto mantém toggle |
-| Mapa | Cortes, matrizes, radar, SCobertura/`--na` (Onda 2a); ChartMark coberta/divergência + swatches (Onda 5) | Densidade CapsBold de path/rowgroup; disciplina sem pilar pai permanece **domínio** |
+| Mapa | Shell abas + tiles + matrizes qualitativas + marcas célula (2a/5) | **Dashboard standalone:** lead causal; índice Tecnologia + 4 sistemas; chart por domínio; 2 radars; matrizes com %; dual radar de perspectiva + interpretação. CapsBold path; disciplina sem pilar pai (**domínio**) |
 | Ficha | Trilha, definição, pesos, relatos, close | Ritmo de cartões/quadrantes, ChartMark de estágio, Alvo tipográfico do mock (sem copiar %) |
 | Prontidão | `p_k` / lacuna | Grades Grid6/Grid7 do protótipo — **sem** % de exemplo |
 | Fronteira | Faixas textuais | Marcas ChartMark6 F0–F5 só com posterior; stacks de condições humanas |
@@ -137,24 +165,24 @@ em `anaminese_maturity_v3` e contra o HTML/CSS do produto.
 Uma página de cada vez, em TDD do HTML: presença do bloco visual e
 ausência de Orbital/`13%`/`24%`.
 
-Ordem revisada pós-rebuild:
+Ordem revisada (2026-11-22 — mapa corrigido pelo standalone):
 
-1. ~~Tokens + shell~~ (feito).
-2. ~~Mapa marca NA~~ (feito).
-3. ~~Laudo — casca tipográfica e composição~~ (feito).
-4. ~~Laudo — gauge/divergência-barra/prognóstico-cartões condicionados à publicação~~ (feito).
-5. ~~Mapa ChartGrid (sem %)~~ (feito); CapsBold de path permanece aberto.
+1. ~~Tokens + shell~~ · ~~Laudo casca/condicionado~~ · ~~marcas célula mapa~~ (feitos; marcas ≠ mapa).
+2. ~~**Mapa 6a — visão geral**~~ (feito): lead causal + Tecnologia + 4 sistemas + method/notice; índice por sistema só com `publishSystemSlices`.
+3. **Mapa 6b — Engenharia por domínio** (chart + “Não avaliado”) — exige publicação por domínio.
+4. **Mapa 6c — Radars do mapa** (6 domínios + 8 capacidades).
+5. **Mapa 6d — Matrizes com magnitude** (estrutura/perspectiva + hover/faixa) + interpretação de divergência.
 6. Ficha → Prontidão → Fronteira → Plano.
 7. Walkthrough → Histórico → Público.
-8. Admin contexto + entrevista (só após contrato de domínio).
-9. Prova transversal (e2e sem faixa; testes de banda/amostragem).
+8. Admin + entrevista (domínio primeiro).
+9. Prova transversal.
 
-## Inventário (atualizado 2026-11-21)
+## Inventário (atualizado 2026-11-22)
 
 | Tela (protótipo) | View atual | Classificação | Notas |
 | --- | --- | --- | --- |
 | Laudo / Laudo escuro | `renderLaudo` | **casca** (Onda 3) + **condicionado** (Onda 4) | Gauge/barra/métrica só com publicação; prognóstico 2 cartões com gap |
-| Mapa navegável | `renderMapPage` | só CSS (+ domínio disciplina-sem-pai) | Onda 2a + Onda 5 ChartMark/swatches; CapsBold path aberto |
+| Mapa navegável | `renderMapPage` | **6a feito**; 6b–6d abertas | Overview (lead + Tecnologia + 4 sistemas); faltam chart domínio, radars, % células |
 | Ficha do nó | `renderNodeCard` | só CSS | |
 | Prontidão | `renderReadinessPage` | só CSS | |
 | Fronteira | `renderFrontierPage` | só CSS | |
@@ -178,16 +206,15 @@ Ordem revisada pós-rebuild:
 
 ## Sequência de implementação
 
-0. Inventário Onda 0 — feito; **reavaliação pós-rebuild** — esta seção.
-1. Tokens + shell — feito (`f9c1713`).
-2. Mapa NA — feito (`a65be16`).
-3. Laudo casca (tipografia, números de seção, grades, tabela conduta, footer) — feito.
-4. Laudo condicionado (gauge, barra de divergência, prognóstico 2 cartões, restrição accent-soft) — feito.
-5. Mapa ChartGrid — feito (coverage-cell / ◆ / covered-swatch; CapsBold path aberto).
-6. Ficha → Prontidão → Fronteira → Plano.
-7. Walkthrough → Histórico → Público.
-8. Admin + entrevista (domínio primeiro).
-9. Prova transversal.
+0–5. Tokens, laudo, marcas de célula — feitos (ver history).
+6a. ~~**Mapa visão geral** (lead + Tecnologia + 4 sistemas)~~ — feito.
+6b. Engenharia por domínio.
+6c. Radars do mapa.
+6d. Matrizes com % + interpretação de divergência.
+7. Ficha → Prontidão → Fronteira → Plano.
+8. Walkthrough → Histórico → Público.
+9. Admin + entrevista.
+10. Prova transversal.
 
 Fora: React, copiar números do mock, recolocar 4 áreas no menu,
 calibração/piloto/folhas candidatas.

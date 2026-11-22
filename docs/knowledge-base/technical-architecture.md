@@ -365,7 +365,11 @@ Radares de recorte de unidade ainda consomem `capabilityGroups`. A UI não
 recalcula níveis. No mapa, células `unpublished` usam `.coverage-cell`
 (accent + radius 4px), `uncovered` permanece hatch `--na`, divergência
 marca `◆` com outline ink, e a legenda estrutural mostra `covered-swatch`
-e `coverage-swatch` — sem inventar percentual.
+e `coverage-swatch` — sem inventar percentual. Acima das abas, o
+`projectMapOverview` publica lead causal (path do achado), índice
+Tecnologia quando o índice global publica, e quatro cartões de sistema
+com `publishSystemSlices` (índice só se a faixa do sistema publicar);
+método e aviso de uso vêm no overview.
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
 `capability-reference-v19`. `CapabilityReference` rejeita base de avaliação nominal,

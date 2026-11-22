@@ -259,6 +259,32 @@ export function publishMaturitySlices(
   };
 }
 
+const systemSliceIds = ['product', 'engineering', 'operations', 'organization'] as const;
+type SystemSliceId = (typeof systemSliceIds)[number];
+
+/** Agrega leaves por sistema canônico; omite faixa larga (mesma regra de `publishMaturitySlices`). */
+export function publishSystemSlices(
+  leaves: ReadonlyArray<{ id: string; distribution: LeafDistribution }>,
+  map: OrganizationalAreaMap,
+): Partial<Record<SystemSliceId, MaturitySlice>> {
+  const bySystem: Record<SystemSliceId, Record<string, LeafDistribution>> = {
+    product: {},
+    engineering: {},
+    operations: {},
+    organization: {},
+  };
+  for (const leaf of leaves) {
+    const systemId = findAreaPath(map, leaf.id)?.[0]?.id;
+    if (systemId && systemId in bySystem) bySystem[systemId as SystemSliceId][leaf.id] = leaf.distribution;
+  }
+  const published: Partial<Record<SystemSliceId, MaturitySlice>> = {};
+  for (const id of systemSliceIds) {
+    const slice = sliceWhenPublished(bySystem[id]);
+    if (slice) published[id] = slice;
+  }
+  return published;
+}
+
 function sliceWhenPublished(leaves: Record<string, LeafDistribution>): MaturitySlice | undefined {
   const ids = Object.keys(leaves);
   if (!ids.length) return undefined;

@@ -21,6 +21,7 @@ import { frontierLeaves, projectFrontierBrief } from '../src/modules/inference/d
 import { projectHistoryComparison } from '../src/modules/inference/domain/reading-history.js';
 import { runOrganizationalSynthetic } from '../src/modules/inference/domain/organizational-synthetic.js';
 import { OrganizationalAreaProjector, projectFichaTrail } from '../src/modules/inference/domain/organizational-areas.js';
+import type { MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { InferenceService } from '../src/modules/inference/inference-service.js';
 import { ProjectService } from '../src/modules/projects/project-service.js';
 import {
@@ -33,6 +34,19 @@ import {
   renderTreatmentPage,
   renderWalkthrough,
 } from '../src/modules/projects/diagnostic-report-view.js';
+
+const gapOverview: MapOverview = {
+  lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
+  technology: { published: false, gap: 'Menos de 5 respondentes neste recorte.' },
+  systems: [
+    { id: 'product', label: 'Produto', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'engineering', label: 'Engenharia', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'operations', label: 'Operação', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'organization', label: 'Organização', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+  ],
+  method: 'Sistemas na ordem do modelo, não por resultado.',
+  notice: 'Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas.',
+};
 import {
   renderCapabilityRadar,
   renderFirstScreen,
@@ -169,6 +183,7 @@ test('travessia das nove páginas só encontra número emitido pela publicação
     cut: 'cap',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    overview: gapOverview,
   });
 
   const leafDist = leafStageDistribution(publishedIndex, 'continuous-integration');

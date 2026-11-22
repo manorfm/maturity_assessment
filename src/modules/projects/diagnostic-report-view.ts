@@ -6,7 +6,7 @@ import type { TreatmentConduct } from '../inference/domain/treatment-contract.js
 import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
-import { mapCopy, type MapLegend, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
+import { mapCopy, type MapLegend, type MapOverview, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierBrief } from '../inference/domain/learning-frontier.js';
@@ -278,6 +278,7 @@ export function renderMapPage(input: {
   cut: 'cap' | 'est' | 'per';
   areaBase: string;
   capabilityBase: string;
+  overview: MapOverview;
   structure?: StructureMatrix;
   perspectives?: PerspectiveMatrix;
   legend?: MapLegend;
@@ -292,10 +293,29 @@ export function renderMapPage(input: {
     : input.cut === 'per'
       ? renderPerspectiveCut(input.perspectives)
       : renderCapabilityCut(input.map, input.areaBase, input.capabilityBase);
-  return `<header class="report-hero"><p class="report-kicker">Mapa navegável</p><h1>Onde está cada parte do sistema</h1><p>Abra um bloco para descer até a capacidade. Célula sem cobertura não é zero.</p></header>
+  return `<header class="report-hero"><p class="report-kicker">Mapa navegável</p><h1>Onde está cada parte do sistema</h1><p>${escapeHtml(input.overview.lead)}</p></header>
+    ${renderMapOverview(input.overview)}
     <div class="report-tabs" role="tablist" aria-label="Corte">${tabs}</div>
     ${body}
     ${input.legend ? renderLegend(input.legend) : ''}`;
+}
+
+function renderMapOverview(overview: MapOverview): string {
+  const technology = overview.technology.published
+    ? `${renderGauge(overview.technology.index, overview.technology.band)}<p class="map-overview-index">${overview.technology.index}%</p><p>faixa ${overview.technology.band[0]}–${overview.technology.band[1]}% · cobertura ${Math.round(overview.technology.coverage * 100)}%</p>`
+    : `<p class="report-gap">${escapeHtml(overview.technology.gap)}</p>`;
+  const systems = overview.systems.map((system) => {
+    const reading = system.reading
+      ? `<p>${system.reading.index}%</p>`
+      : `<p class="report-gap">${escapeHtml(system.gap ?? system.status)}</p>`;
+    return `<article><h3>${escapeHtml(system.label)}</h3>${reading}</article>`;
+  }).join('');
+  return `<section class="map-overview" aria-label="Visão geral do mapa">
+    <div><h2>Tecnologia</h2>${technology}</div>
+    <div class="map-overview-systems">${systems}</div>
+    <p>${escapeHtml(overview.method)}</p>
+    <p>${escapeHtml(overview.notice)}</p>
+  </section>`;
 }
 
 function renderLegend(legend: MapLegend): string {

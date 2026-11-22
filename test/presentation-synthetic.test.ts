@@ -261,6 +261,18 @@ function mapOf(report: ReturnType<typeof runOrganizationalSynthetic>['report']) 
     cut: 'cap',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    overview: {
+      lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
+      technology: { published: false, gap: 'Menos de 5 respondentes neste recorte.' },
+      systems: [
+        { id: 'product', label: 'Produto', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+        { id: 'engineering', label: 'Engenharia', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+        { id: 'operations', label: 'Operação', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+        { id: 'organization', label: 'Organização', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+      ],
+      method: 'Sistemas na ordem do modelo, não por resultado.',
+      notice: 'Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas.',
+    },
     structure: { columns: [], rows: [] },
     perspectives: { columns: [], rows: [], withoutOwnRow: [], withheld: null, notice: '' },
   });

@@ -1,10 +1,23 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectMapLegend, projectPerspectiveMatrix, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 
 const columns = disciplineColumns(OrganizationalAreaProjector.empty());
+
+const gapOverview: MapOverview = {
+  lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
+  technology: { published: false, gap: 'Menos de 5 respondentes neste recorte.' },
+  systems: [
+    { id: 'product', label: 'Produto', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'engineering', label: 'Engenharia', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'operations', label: 'Operação', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+    { id: 'organization', label: 'Organização', status: 'entrevista não atravessou', gap: 'Sem índice publicado neste sistema.' },
+  ],
+  method: 'Sistemas na ordem do modelo, não por resultado.',
+  notice: 'Este diagnóstico descreve o sistema de trabalho. Não use para avaliar pessoas.',
+};
 
 test('matriz de estrutura pinta a célula que o domínio publicou e não um zero', () => {
   const structure = projectStructureMatrix({
@@ -20,6 +33,7 @@ test('matriz de estrutura pinta a célula que o domínio publicou e não um zero
     cut: 'est',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    overview: gapOverview,
     structure,
   });
   assert.match(html, /Times × capacidades, na ordem da estrutura, não por resultado/);
@@ -49,6 +63,7 @@ test('matriz de perspectiva desenha os dois relatos e omite quem ficou abaixo do
     cut: 'per',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    overview: gapOverview,
     perspectives,
   });
   assert.match(html, /Não mostra quem está certo/);
@@ -70,6 +85,7 @@ test('sistema não atravessado não abre disciplinas e a legenda omite o alvo se
     cut: 'cap',
     areaBase: '/areas',
     capabilityBase: '/capabilities',
+    overview: gapOverview,
     legend: projectMapLegend(undefined),
   });
   const product = html.slice(html.indexOf('data-area="product"'), html.indexOf('data-area="engineering"'));
