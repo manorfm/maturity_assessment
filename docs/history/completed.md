@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-21 — Tokens do shell do relatório (Onda 1)
+
+- `.diagnostic-report` claro/escuro alinhado a `.interview` com o
+  conjunto completo de tokens (`--on-accent`, `--ochre-soft`, `--focus`
+  entre outros). Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md).
+
 ## 2026-11-20 — Laya allowlist, factory sync e wire CLI
 
 - Allowlist SSRF `isAllowedLayaBaseUrl`, `createLayaDecisionClient` (sync

@@ -123,3 +123,48 @@ Uma página de cada vez, em TDD do HTML: o teste afirma a presença do
 bloco visual (trilha, cartão, marca de não avaliado) e a ausência do
 número de exemplo. A primeira candidata, depois do menu, é o mapa:
 radar e célula cinza sem índice.
+
+## Inventário Onda 0 (2026-11-21)
+
+Classificação por tela do protótipo `maturity`. **domínio ok** = motor
+já publica ou declara lacuna honesta; **só CSS** = dado existe, falta
+composição visual; **bloqueado** = protótipo desenha o que o domínio
+ainda não emite (permanece lacuna).
+
+| Tela (protótipo) | View atual | Classificação | Notas |
+| --- | --- | --- | --- |
+| Laudo / Laudo escuro | `renderLaudo` + shell | só CSS (+ hipóteses) | Seções e cartões existem; falta densidade Grid2 / índice tipográfico. Prognóstico e medidor por recorte → **bloqueado** se exigir dado novo |
+| Mapa navegável | `renderMapPage` | só CSS (+ 1 domínio) | Radar/matrizes existem; falta ChartGrid/marcas. Disciplina sem pilar pai → **bloqueado** (`organizational-area-map-plan`) |
+| Ficha do nó | `renderNodeCard` | só CSS | Conteúdo publicado; falta ritmo de cartões/quadrantes |
+| Prontidão | `renderReadinessPage` | só CSS | Sem grade-% do mock |
+| Fronteira | `renderFrontierPage` | só CSS | Marcas F0–F5 só com posterior |
+| Plano de tratamento | `renderTreatmentPage` | só CSS | Colunas/horizontes no domínio |
+| Walkthrough: Operação | `renderWalkthrough` | só CSS | Sem marcos-% do mock |
+| Histórico e reavaliação | `renderHistoryPage` | só CSS | Chip de alvo só com par publicado |
+| Visão por público | `renderAudiencePage` | só CSS | Proibido CTO/CFO/Orbital |
+| Criar projeto | admin | bloqueado + só CSS | porte/regulação/estágio fora do domínio |
+| Estrutura / Convites | admin | só CSS fino | Fluxo vigente |
+| Termo de uso | admin | bloqueado (aceite) | Hipótese; tela já avisa |
+| Entrevista (web/celular) | `interview-view` | só CSS fino + bloqueado | Senioridade, “Como tratamos os dados”, compromisso de devolução |
+
+### Fundação visual (pré-páginas)
+
+| Item | Classificação |
+| --- | --- |
+| Tokens design-graph (`--ink`, `--rule`, `--sunk`, claro/escuro) | feito no `.diagnostic-report` (18 tokens, incl. `--on-accent`, `--ochre-soft`, `--focus`, claro/escuro) |
+| Shell sidebar + nav 9 itens | domínio ok / chrome vigente; tema via `data-theme` + botão; polimento fino **só CSS** restante |
+| Proibir dados de exemplo do protótipo | vigente nos testes (`Orbital`, `13%`) |
+
+## Sequência de implementação
+
+0. Inventário (esta seção) — feito.
+1. Tokens + shell do relatório (sem mudar inferência) — feito.
+2. Mapa (visual; domínio só se disciplina-sem-pai entrar no ciclo).
+3. Laudo (layout; prognóstico/medidor só com publicação).
+4. Ficha → Prontidão → Fronteira → Plano (um ciclo por tela).
+5. Walkthrough → Histórico → Público.
+6. Admin + entrevista (contexto/aceite só após contrato de domínio).
+7. Prova transversal (e2e sem faixa; testes de banda/amostragem).
+
+Fora: React, copiar números do mock, recolocar 4 áreas no menu,
+calibração/piloto/folhas candidatas.
