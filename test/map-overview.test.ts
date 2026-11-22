@@ -16,6 +16,7 @@ import {
 import {
   disciplineColumns,
   projectEngineeringDomains,
+  projectMapRadars,
   projectPerspectiveMatrix,
   projectStructureMatrix,
 } from '../src/modules/inference/domain/map-matrix.js';
@@ -305,6 +306,7 @@ test('renderMapPage coloca overview acima das abas com Tecnologia e quatro siste
     capabilityBase: '/capabilities',
     overview: publishedOverview,
     engineeringDomains: projectEngineeringDomains({ map }),
+    mapRadars: projectMapRadars({ map }),
   });
   const overviewAt = html.indexOf('map-overview');
   const tabsAt = html.indexOf('report-tabs');
@@ -343,6 +345,7 @@ test('renderMapPage overview sem publicação não inventa Orbital nem percentua
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: projectEngineeringDomains({ map }),
+    mapRadars: projectMapRadars({ map }),
   });
   assert.match(html, /map-overview/);
   assert.equal(html.includes('Orbital'), false);
@@ -354,6 +357,7 @@ test('renderMapPage overview sem publicação não inventa Orbital nem percentua
 
 test('renderMapPage com overview preserva cortes cap, est e per', () => {
   const engineeringDomains = projectEngineeringDomains({ map });
+  const mapRadars = projectMapRadars({ map });
   const cap = renderMapPage({
     map,
     cut: 'cap',
@@ -361,6 +365,7 @@ test('renderMapPage com overview preserva cortes cap, est e per', () => {
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains,
+    mapRadars,
   });
   assert.match(cap, /report-tabs/);
   assert.match(cap, /Por capacidade/);
@@ -373,6 +378,7 @@ test('renderMapPage com overview preserva cortes cap, est e per', () => {
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains,
+    mapRadars,
     structure: structureFixture(),
   });
   assert.match(est, /report-tabs/);
@@ -387,6 +393,7 @@ test('renderMapPage com overview preserva cortes cap, est e per', () => {
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains,
+    mapRadars,
     perspectives: perspectiveFixture(),
   });
   assert.match(per, /report-tabs/);

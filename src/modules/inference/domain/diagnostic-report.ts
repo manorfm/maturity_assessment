@@ -1,3 +1,4 @@
+import { capabilityPillarIds, pillarIdForLeaf } from './capability-taxonomy.js';
 import { findAreaPath, type OrganizationalAreaMap } from './organizational-areas.js';
 import type { OutcomeFinding, ReportOutcome } from './report-outcome.js';
 import { uniqueFindingsByPattern } from './report-outcome.js';
@@ -309,6 +310,27 @@ export function publishDomainSlices(
   const published: Partial<Record<DomainSliceId, MaturitySlice>> = {};
   for (const id of domainSliceIds) {
     const slice = sliceWhenPublished(byDomain[id]);
+    if (slice) published[id] = slice;
+  }
+  return published;
+}
+
+/** Agrega leaves por pilar da taxonomia; omite faixa larga (mesma regra de `publishDomainSlices`). */
+export function publishPillarSlices(
+  leaves: ReadonlyArray<{ id: string; distribution: LeafDistribution }>,
+): Partial<Record<(typeof capabilityPillarIds)[number], MaturitySlice>> {
+  const byPillar: Record<string, Record<string, LeafDistribution>> = {};
+  for (const id of capabilityPillarIds) byPillar[id] = {};
+  for (const leaf of leaves) {
+    const pillarId = pillarIdForLeaf(leaf.id);
+    const bucket = pillarId ? byPillar[pillarId] : undefined;
+    if (bucket) bucket[leaf.id] = leaf.distribution;
+  }
+  const published: Partial<Record<(typeof capabilityPillarIds)[number], MaturitySlice>> = {};
+  for (const id of capabilityPillarIds) {
+    const bucket = byPillar[id];
+    if (!bucket) continue;
+    const slice = sliceWhenPublished(bucket);
     if (slice) published[id] = slice;
   }
   return published;

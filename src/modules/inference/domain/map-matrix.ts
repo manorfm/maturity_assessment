@@ -1,4 +1,5 @@
-import { publishDomainSlices, publishSystemSlices } from './diagnostic-report.js';
+import { CapabilityTaxonomy, capabilityPillarIds } from './capability-taxonomy.js';
+import { publishDomainSlices, publishPillarSlices, publishSystemSlices } from './diagnostic-report.js';
 import type { IndexPublication, MaturitySlice } from './stage-posterior.js';
 import { projectSystemTiles, type OrganizationalAreaMap, type OrganizationalAreaNode } from './organizational-areas.js';
 
@@ -137,6 +138,65 @@ export function projectEngineeringDomains(input: {
       : { id: group.id, label: group.label, state: 'unevaluated' as const, note: DOMAIN_UNEVALUATED };
   });
   return { title: DOMAINS_TITLE, method: DOMAINS_METHOD, legend: DOMAINS_LEGEND, domains };
+}
+
+export type MapRadarAxis = {
+  id: string;
+  label: string;
+  state: 'published' | 'unevaluated';
+  reading?: MaturitySlice;
+  note?: string;
+};
+
+export type MapRadarPanel = {
+  title: string;
+  notice: string;
+  axes: MapRadarAxis[];
+};
+
+export type MapRadars = {
+  domains: MapRadarPanel;
+  capabilities: MapRadarPanel;
+};
+
+const RADARS_NOTICE = 'Eixo não avaliado fica fora do polígono e não vale zero.';
+const DOMAINS_RADAR_TITLE = 'Engenharia: perfil dos domínios';
+const CAPABILITIES_RADAR_TITLE = 'Tecnologia: perfil das capacidades';
+
+export function projectMapRadars(input: {
+  map: OrganizationalAreaMap;
+  index?: IndexPublication;
+}): MapRadars {
+  const engineering = input.map.systems.find((system) => system.id === 'engineering');
+  const groups = (engineering?.children ?? []).filter((child) => child.kind === 'group');
+  const domainSlices = input.index?.published && input.index.leaves
+    ? publishDomainSlices(input.index.leaves, input.map)
+    : {};
+  const pillarSlices = input.index?.published && input.index.leaves
+    ? publishPillarSlices(input.index.leaves)
+    : {};
+  return {
+    domains: {
+      title: DOMAINS_RADAR_TITLE,
+      notice: RADARS_NOTICE,
+      axes: groups.map((group) => {
+        const reading = domainSlices[group.id as keyof typeof domainSlices];
+        return reading
+          ? { id: group.id, label: group.label, state: 'published' as const, reading }
+          : { id: group.id, label: group.label, state: 'unevaluated' as const, note: DOMAIN_UNEVALUATED };
+      }),
+    },
+    capabilities: {
+      title: CAPABILITIES_RADAR_TITLE,
+      notice: RADARS_NOTICE,
+      axes: capabilityPillarIds.map((id) => {
+        const reading = pillarSlices[id];
+        return reading
+          ? { id, label: CapabilityTaxonomy.labelFor(id), state: 'published' as const, reading }
+          : { id, label: CapabilityTaxonomy.labelFor(id), state: 'unevaluated' as const, note: DOMAIN_UNEVALUATED };
+      }),
+    },
+  };
 }
 
 export const mapCopy = {

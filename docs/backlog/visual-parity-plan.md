@@ -36,7 +36,7 @@ responsivo único, não duas artes.
 | # | Tela | Componentes (Graph) | Classificação vigente |
 | --- | --- | --- | --- |
 | 1 | Laudo (+ variante tema escuro) | 15 | Casca + condicionado (Ondas 3–4) |
-| 2 | Mapa navegável | 52 | **6a–6b feitos**; 6c–6d abertas |
+| 2 | Mapa navegável | 52 | **6a–6c feitos**; 6d aberta |
 | 3 | Ficha do nó | 35 | **Déficit estrutural** (não “só CSS”) |
 | 4 | Prontidão para práticas avançadas | 15 | **Déficit estrutural** |
 | 5 | Fronteira de aprendizado | 20 | **Déficit estrutural** (escada F0–F5) |
@@ -93,8 +93,9 @@ principal.
 
 Feito: lead causal, Tecnologia, 4 sistemas, method/notice,
 `publishSystemSlices`, grade 4 colunas, índice 32px; Engenharia por
-domínio (`publishDomainSlices` / `projectEngineeringDomains`). Aberto:
-6c radars; 6d matrizes com % + interpretação.
+domínio (`publishDomainSlices` / `projectEngineeringDomains`); radars
+6c (`publishPillarSlices` / `projectMapRadars`, índice 0–100). Aberto:
+6d matrizes com % + interpretação.
 
 ### Ficha — déficit estrutural
 
@@ -190,7 +191,7 @@ Copiar a **função**, nunca o caso Orbital:
 | Tela | Já existe | Falta (protótipo) |
 | --- | --- | --- |
 | Laudo | Casca 3 + gauge/barra/prognóstico 4 | Polimento; prova transversal |
-| Mapa | 6a overview · 6b domínio | 6c radars · 6d % + interpretação |
+| Mapa | 6a overview · 6b domínio · 6c radars | 6d % + interpretação |
 | Ficha | Trilha + seções textuais + stage bars | Trilho numerado; nuvem/3 colunas Como está; cartão Menor experimento (Cynefin·grau·forma); grades tipadas |
 | Prontidão | `p_k`, band, gargalo em texto | Cartão 48px + grade pré-requisitos com barra/%/gargalo |
 | Fronteira | Listas + Comece por | Escada F0–F5 + ChartMark6 + stacks humanas |
@@ -229,8 +230,8 @@ fieldsets já especificado no Graph.
 Uma tela (ou bloco) por vez, TDD do HTML: presença do bloco + ausência
 de Orbital/`13%`/`24%`.
 
-1. ~~Tokens · laudo · marcas célula · mapa 6a · mapa 6b~~.
-2. **Mapa 6c → 6d** (fecha o dashboard do mapa).
+1. ~~Tokens · laudo · marcas célula · mapa 6a · mapa 6b · mapa 6c~~.
+2. **Mapa 6d** (fecha o dashboard do mapa).
 3. **Ficha estrutural** (trilho + Como está + Menor experimento).
 4. **Prontidão** cartão + grade pré-requisitos.
 5. **Fronteira** escada F0–F5.
@@ -248,14 +249,14 @@ de Orbital/`13%`/`24%`.
 | ChartMark célula mapa | feito (Onda 5) |
 | Mapa overview 6a | feito |
 | Mapa domínio 6b | feito |
+| Mapa radars 6c | feito |
 | Shell nav 9 + tema | vigente |
 | Anti-Orbital/13%/24% | vigente nos testes |
 
 ## Sequência de implementação
 
-0–5 · 6a · 6b — feitos.
-6c. Radars do mapa — **próximo**.
-6d. Matrizes com % + interpretação.
+0–5 · 6a · 6b · 6c — feitos.
+6d. Matrizes com % + interpretação — **próximo**.
 7. Ficha estrutural.
 8. Prontidão estrutural.
 9. Fronteira escada.

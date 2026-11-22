@@ -93,6 +93,11 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .map-engineering-domain { display:grid; grid-template-columns:minmax(140px,220px) minmax(120px,1fr) auto auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line) }
     .map-engineering-domain h3 { margin:0; font-size:1rem }
     .map-engineering-domain--na { color:var(--na-ink) }
+    .map-radars { margin:20px 0 12px }
+    .map-radars-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px }
+    .map-radar-panel h3 { margin:0 0 .35rem; font-size:1.05rem }
+    .map-radar-panel p { margin:0 0 .75rem; color:var(--ink2); font-size:14px; max-width:46ch }
+    .map-radar-unassessed { fill:var(--na-ink) }
     .area-tile { background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:20px }
     .area-tile.unobserved { color:var(--muted) }
     .area-tile.observed { border-color:var(--accent) }
@@ -395,7 +400,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness.near { color:var(--ink); background:#F5E6D0 }
     .readiness.blocked { color:var(--red); background:var(--red-soft) }
     .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems,.map-overview-systems{grid-template-columns:1fr} }
   </style>
 </head>

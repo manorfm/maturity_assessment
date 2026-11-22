@@ -6,7 +6,7 @@ import type { TreatmentConduct } from '../inference/domain/treatment-contract.js
 import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
-import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
+import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, type MapRadarPanel, type MapRadars, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import type { FrontierBrief } from '../inference/domain/learning-frontier.js';
@@ -280,6 +280,7 @@ export function renderMapPage(input: {
   capabilityBase: string;
   overview: MapOverview;
   engineeringDomains: EngineeringDomains;
+  mapRadars: MapRadars;
   structure?: StructureMatrix;
   perspectives?: PerspectiveMatrix;
   legend?: MapLegend;
@@ -297,9 +298,66 @@ export function renderMapPage(input: {
   return `<header class="report-hero"><p class="report-kicker">Mapa navegável</p><h1>Onde está cada parte do sistema</h1><p>${escapeHtml(input.overview.lead)}</p></header>
     ${renderMapOverview(input.overview)}
     ${renderEngineeringDomains(input.engineeringDomains)}
+    ${renderMapRadars(input.mapRadars)}
     <div class="report-tabs" role="tablist" aria-label="Corte">${tabs}</div>
     ${body}
     ${input.legend ? renderLegend(input.legend) : ''}`;
+}
+
+function renderMapRadars(radars: MapRadars): string {
+  return `<section class="map-radars" aria-label="Radars do mapa">
+    <div class="map-radars-grid">
+      ${renderMapRadarPanel(radars.domains)}
+      ${renderMapRadarPanel(radars.capabilities)}
+    </div>
+  </section>`;
+}
+
+function renderMapRadarPanel(panel: MapRadarPanel): string {
+  return `<article class="map-radar-panel">
+    <h3>${escapeHtml(panel.title)}</h3>
+    <p>${escapeHtml(panel.notice)}</p>
+    ${renderMapRadarSvg(panel)}
+  </article>`;
+}
+
+function renderMapRadarSvg(panel: MapRadarPanel): string {
+  const axes = panel.axes;
+  const center = 210;
+  const radius = 130;
+  const point = (index: number, scale: number) => {
+    const angle = -Math.PI / 2 + (Math.PI * 2 * index) / Math.max(axes.length, 1);
+    return `${(center + Math.cos(angle) * radius * scale).toFixed(1)},${(center + Math.sin(angle) * radius * scale).toFixed(1)}`;
+  };
+  const rings = [1, 2, 3, 4].map((level) => (
+    `<polygon points="${axes.map((_, index) => point(index, level / 4)).join(' ')}" />`
+  )).join('');
+  const spokes = axes.map((_, index) => {
+    const [x, y] = point(index, 1).split(',');
+    return `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" />`;
+  }).join('');
+  const published = axes.flatMap((axis, index) => (
+    axis.state === 'published' && axis.reading ? [{ index, reading: axis.reading }] : []
+  ));
+  const polygon = published.length >= 3
+    ? `<polygon class="radar-result" points="${published.map(({ index, reading }) => point(index, reading.index / 100)).join(' ')}" />`
+    : '';
+  const labels = axes.map((axis, index) => {
+    const [x, y] = point(index, 1.18).split(',');
+    if (axis.state !== 'published' || !axis.reading) {
+      return `<text class="radar-axis-label map-radar-unassessed" x="${x}" y="${y}">${escapeHtml(axis.label)}<tspan x="${x}" dy="12">${escapeHtml(axis.note ?? 'Não avaliado')}</tspan></text>`;
+    }
+    return `<text class="radar-axis-label" x="${x}" y="${y}">${escapeHtml(axis.label)}<tspan x="${x}" dy="12">${axis.reading.index}%</tspan></text>`;
+  }).join('');
+  const markers = axes.map((axis, index) => {
+    if (axis.state !== 'published' || !axis.reading) {
+      const [x, y] = point(index, 1.18).split(',');
+      return `<g class="radar-marker map-radar-unassessed" role="img" aria-label="${escapeHtml(axis.label)}: Não avaliado"><circle cx="${x}" cy="${y}" r="6"/></g>`;
+    }
+    const [x, y] = point(index, axis.reading.index / 100).split(',');
+    return `<g class="radar-point" role="img" aria-label="${escapeHtml(axis.label)}: ${axis.reading.index}%"><circle cx="${x}" cy="${y}" r="7"/></g>`;
+  }).join('');
+  return `<svg class="radar map-radar" viewBox="0 0 420 420" role="img" aria-label="${escapeHtml(panel.title)}"><g class="radar-grid">${rings}${spokes}</g>${polygon}<g class="radar-labels">${labels}</g><g class="radar-markers">${markers}</g></svg>`;
 }
 
 function renderEngineeringDomains(domains: EngineeringDomains): string {

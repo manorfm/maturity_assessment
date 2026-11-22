@@ -21,7 +21,7 @@ import { frontierLeaves, projectFrontierBrief } from '../src/modules/inference/d
 import { projectHistoryComparison } from '../src/modules/inference/domain/reading-history.js';
 import { runOrganizationalSynthetic } from '../src/modules/inference/domain/organizational-synthetic.js';
 import { OrganizationalAreaProjector, projectFichaTrail } from '../src/modules/inference/domain/organizational-areas.js';
-import { projectEngineeringDomains, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
+import { projectEngineeringDomains, projectMapRadars, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { InferenceService } from '../src/modules/inference/inference-service.js';
 import { ProjectService } from '../src/modules/projects/project-service.js';
 import {
@@ -185,6 +185,7 @@ test('travessia das nove páginas só encontra número emitido pela publicação
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: projectEngineeringDomains({ map }),
+    mapRadars: projectMapRadars({ map }),
   });
 
   const leafDist = leafStageDistribution(publishedIndex, 'continuous-integration');

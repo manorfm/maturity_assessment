@@ -372,7 +372,12 @@ com `publishSystemSlices` (índice só se a faixa do sistema publicar);
 método e aviso de uso vêm no overview. Em seguida,
 `projectEngineeringDomains` lista os grupos de Engenharia na ordem do
 modelo com `publishDomainSlices` — índice/faixa só se o domínio
-publicar; senão “Não avaliado” (não zero).
+publicar; senão “Não avaliado” (não zero). Em seguida,
+`projectMapRadars` monta dois radars (5 domínios de Engenharia e 8
+pilares via `publishPillarSlices`), com polígono só para eixos
+publicados (≥3) na escala de índice 0–100; eixo não avaliado fica fora
+do polígono e não vale zero. O radar de recorte de unidade
+(`renderCapabilityRadar`) permanece em estágio 0–4.
 
 `capability-reference.ts` mantém o catálogo comparativo imutável
 `capability-reference-v19`. `CapabilityReference` rejeita base de avaliação nominal,

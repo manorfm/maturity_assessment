@@ -1,5 +1,12 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-22 — Mapa radars (Onda 6c)
+
+- Dois radars no mapa (domínios 6b + 8 pilares); `publishPillarSlices`;
+  polígono só published (≥3) em índice 0–100; anti-Orbital/Dados e IA.
+  Ver [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-22 — Mapa Engenharia por domínio (Onda 6b)
 
 - Cinco grupos canônicos com `publishDomainSlices`; published com

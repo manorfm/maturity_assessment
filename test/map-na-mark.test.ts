@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectEngineeringDomains, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectEngineeringDomains, projectMapRadars, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 import { layout } from '../src/shared/html.js';
 
 const map = OrganizationalAreaProjector.empty();
 const gapDomains = projectEngineeringDomains({ map });
+const gapRadars = projectMapRadars({ map });
 
 const gapOverview: MapOverview = {
   lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
@@ -75,6 +76,7 @@ test('mapa estrutural sem cobertura usa coverage-gap e não inventa exemplo', ()
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
+    mapRadars: gapRadars,
     structure,
   });
   const gama = html.slice(html.indexOf('Gama'), html.indexOf('Delta'));

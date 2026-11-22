@@ -14,6 +14,7 @@ import {
 } from '../src/modules/inference/domain/diagnostic-report.js';
 import {
   disciplineColumns,
+  projectMapRadars,
   projectPerspectiveMatrix,
   projectStructureMatrix,
 } from '../src/modules/inference/domain/map-matrix.js';
@@ -322,7 +323,8 @@ test('renderMapPage coloca Engenharia por domínio entre overview e abas', () =>
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: publishedDomains,
-  } as Parameters<typeof renderMapPage>[0] & { engineeringDomains: EngineeringDomains });
+    mapRadars: projectMapRadars({ map }),
+  });
   const overviewAt = html.indexOf('map-overview');
   const domainsAt = html.indexOf('map-engineering-domains');
   const tabsAt = html.indexOf('report-tabs');
@@ -349,7 +351,8 @@ test('renderMapPage Engenharia por domínio sem publicação não inventa Orbita
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
-  } as Parameters<typeof renderMapPage>[0] & { engineeringDomains: EngineeringDomains });
+    mapRadars: projectMapRadars({ map }),
+  });
   assert.match(html, /map-engineering-domains/);
   assert.equal(html.includes('Orbital'), false);
   assert.equal(html.includes('13%'), false);
@@ -357,12 +360,13 @@ test('renderMapPage Engenharia por domínio sem publicação não inventa Orbita
   assert.equal(html.includes('Dados e IA'), false);
   const domainsBlock = html.slice(
     html.indexOf('map-engineering-domains'),
-    html.indexOf('report-tabs'),
+    html.indexOf('map-radars') >= 0 ? html.indexOf('map-radars') : html.indexOf('report-tabs'),
   );
   assert.equal(domainsBlock.includes('Integração contínua'), false);
 });
 
 test('renderMapPage com engineeringDomains preserva overview e cortes cap, est e per', () => {
+  const mapRadars = projectMapRadars({ map });
   const cap = renderMapPage({
     map,
     cut: 'cap',
@@ -370,7 +374,8 @@ test('renderMapPage com engineeringDomains preserva overview e cortes cap, est e
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
-  } as Parameters<typeof renderMapPage>[0] & { engineeringDomains: EngineeringDomains });
+    mapRadars,
+  });
   assert.match(cap, /map-overview/);
   assert.match(cap, /map-engineering-domains/);
   assert.match(cap, /report-tabs/);
@@ -384,8 +389,9 @@ test('renderMapPage com engineeringDomains preserva overview e cortes cap, est e
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
+    mapRadars,
     structure: structureFixture(),
-  } as Parameters<typeof renderMapPage>[0] & { engineeringDomains: EngineeringDomains });
+  });
   assert.match(est, /map-overview/);
   assert.match(est, /report-tabs/);
   assert.match(est, /Por estrutura/);
@@ -399,8 +405,9 @@ test('renderMapPage com engineeringDomains preserva overview e cortes cap, est e
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
+    mapRadars,
     perspectives: perspectiveFixture(),
-  } as Parameters<typeof renderMapPage>[0] & { engineeringDomains: EngineeringDomains });
+  });
   assert.match(per, /map-overview/);
   assert.match(per, /report-tabs/);
   assert.match(per, /Por perspectiva/);

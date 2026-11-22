@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { disciplineColumns, projectEngineeringDomains, projectPerspectiveMatrix, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
+import { disciplineColumns, projectEngineeringDomains, projectMapRadars, projectPerspectiveMatrix, projectStructureMatrix, type MapOverview } from '../src/modules/inference/domain/map-matrix.js';
 import { OrganizationalAreaProjector } from '../src/modules/inference/domain/organizational-areas.js';
 import { renderMapPage } from '../src/modules/projects/diagnostic-report-view.js';
 import { layout } from '../src/shared/html.js';
@@ -8,6 +8,7 @@ import { layout } from '../src/shared/html.js';
 const map = OrganizationalAreaProjector.empty();
 const columns = disciplineColumns(map);
 const gapDomains = projectEngineeringDomains({ map });
+const gapRadars = projectMapRadars({ map });
 
 const gapOverview: MapOverview = {
   lead: 'Ainda não há achado publicado para localizar o problema no mapa.',
@@ -60,6 +61,7 @@ test('célula coberta (unpublished) ganha marca accent ChartMark, sem %', () => 
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
+    mapRadars: gapRadars,
     structure,
   });
   const delta = html.slice(html.indexOf('Delta'));
@@ -87,6 +89,7 @@ test('uncovered e swatch NA permanecem SCobertura', () => {
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
+    mapRadars: gapRadars,
     structure,
   });
   const gama = html.slice(html.indexOf('Gama'), html.indexOf('Delta'));
@@ -111,6 +114,7 @@ test('divergência marca ◆ + outline ink', () => {
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
+    mapRadars: gapRadars,
     perspectives,
   });
   assert.match(html, /divergence-cell/);
@@ -139,6 +143,7 @@ test('legenda estrutural: swatch coberto + swatch NA', () => {
     capabilityBase: '/capabilities',
     overview: gapOverview,
     engineeringDomains: gapDomains,
+    mapRadars: gapRadars,
     structure,
   });
   assert.match(html, /coverage-swatch/);

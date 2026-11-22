@@ -30,7 +30,7 @@ import { projectAreaChapter } from '../inference/domain/area-chapter.js';
 import { projectAreaWalkthrough } from '../inference/domain/area-walkthrough.js';
 import { evidenceGradeGap, leavesForReadinessPage, projectAudienceReadings, projectCatalogReadiness, projectDiagnosticLaudo, projectReadinessSteps, projectTreatmentPlan } from '../inference/domain/diagnostic-report.js';
 import { enablementCatalog, evaluateEnablementEdges, frontierLeaves, projectFrontierBrief } from '../inference/domain/learning-frontier.js';
-import { disciplineColumns, projectEngineeringDomains, projectMapLegend, projectMapOverview, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
+import { disciplineColumns, projectEngineeringDomains, projectMapLegend, projectMapOverview, projectMapRadars, projectPerspectiveMatrix, projectStructureMatrix } from '../inference/domain/map-matrix.js';
 import type { LeafEvidence } from '../inference/domain/advanced-readiness.js';
 import type { IndexPublication } from '../inference/domain/stage-posterior.js';
 import { renderAudiencePage, renderFrontierPage, renderHistoryPage, renderLaudo, renderMapPage, renderNodeCard, renderReadinessPage, renderReportShell, renderTreatmentPage, renderWalkthrough, reportMenuFicha, type ReportFicha, type ReportPageId } from './diagnostic-report-view.js';
@@ -466,6 +466,10 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       map: report.organizationalAreas,
       ...(report.index ? { index: report.index } : {}),
     });
+    const mapRadars = projectMapRadars({
+      map: report.organizationalAreas,
+      ...(report.index ? { index: report.index } : {}),
+    });
     const body = renderMapPage({
       map: report.organizationalAreas,
       cut: selected,
@@ -473,6 +477,7 @@ export function registerProjectRoutes(app: FastifyInstance, db: Database): void 
       capabilityBase: `/projects/${params.publicId}/manage/${params.adminSecret}/capabilities`,
       overview,
       engineeringDomains,
+      mapRadars,
       structure: projectStructureMatrix({
         minimum,
         columns,
