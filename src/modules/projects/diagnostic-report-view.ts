@@ -5,7 +5,7 @@ import type { DiagnosticLaudo, AudienceReading } from '../inference/domain/diagn
 import type { EvidenceGrade, TreatmentConduct } from '../inference/domain/treatment-contract.js';
 import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
-import type { FichaAction, FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings } from '../inference/domain/ficha-node.js';
+import type { FichaAction, FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings, StageReading } from '../inference/domain/ficha-node.js';
 import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, type MapRadarPanel, type MapRadars, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
@@ -534,21 +534,36 @@ function renderReported(readings: ReportedReadings): string {
   return `${list('Por perspectiva', readings.perspectives)}${list('Por time', readings.units)}${withheld}`;
 }
 
-function renderStageWeights(shares: readonly number[], label?: string): string {
-  const rows = shares.map((share, index) => {
-    const percent = Math.round(share * 100);
-    return `<li><span>Estágio ${index}</span><span class="stage-track" aria-hidden="true"><span class="stage-fill" style="width:${percent}%"></span></span><span>${percent}%</span></li>`;
-  }).join('');
-  const caption = label ? `<p><strong>${escapeHtml(label)}</strong></p>` : '';
-  return `${caption}<ol class="stage-distribution">${rows}</ol>`;
-}
+const howItIsLegend =
+  'Estágio de 0 a 4 (0 Não existe · 1 Esporádico · 2 Repetível · 3 Consistente · 4 Adaptativo). Cada ponto é 1 de 20 cenários igualmente prováveis: quanto mais espalhados, menos certeza.';
 
 function renderHowItIs(how: HowItIs): string {
-  const stage = how.stage.published
-    ? `${renderStageWeights(how.stage.shares)}${how.stage.series.map((series) => renderStageWeights(series.shares, series.label)).join('')}${how.stage.withheld.map((line) => `<p class="report-gap">${escapeHtml(line)}</p>`).join('')}`
-    : `<p class="report-gap">${escapeHtml(how.stage.gap)}</p>`;
   const quadrant = how.quadrant.published ? `<p>${escapeHtml(how.quadrant.conduct)}</p>` : '';
-  return `${stage}${quadrant}`;
+  if (!how.stage.published) {
+    return `<p class="report-gap">${escapeHtml(how.stage.gap)}</p>${quadrant}`;
+  }
+  const columns = how.stage.series.length > 0
+    ? how.stage.series.map((series) => renderPerspectiveColumn(series.label, series.reading, series.target))
+    : [renderPerspectiveColumn('Combinado', how.stage.reading, how.stage.target)];
+  const heading = how.stage.series.length > 0
+    ? '<p class="report-kicker">Por perspectiva, lado a lado</p>'
+    : '';
+  const withheld = how.stage.withheld.map((line) => `<p class="report-gap">${escapeHtml(line)}</p>`).join('');
+  return `<p>${escapeHtml(howItIsLegend)}</p>${heading}<div class="ficha-perspective-columns">${columns.join('')}</div>${withheld}${quadrant}`;
+}
+
+function renderPerspectiveColumn(label: string, reading: StageReading, target?: number): string {
+  const targetLine = target === undefined ? '' : `<p>alvo ${target}%</p>`;
+  const bins = ([0, 1, 2, 3, 4] as const)
+    .map((stage) => {
+      const dots = reading.cloud
+        .filter((value) => value === stage)
+        .map(() => `<i class="ficha-stage-dot" data-stage="${stage}"></i>`)
+        .join('');
+      return `<div class="ficha-stage-bin" data-stage="${stage}">${dots}</div>`;
+    })
+    .join('');
+  return `<div class="ficha-perspective-column"><p><strong>${escapeHtml(label)}</strong></p><p class="ficha-stage-reading"><span class="ficha-stage-index">${reading.index}%</span><span class="ficha-stage-band">faixa ${reading.band[0]}–${reading.band[1]}%</span></p>${targetLine}<div class="ficha-stage-cloud" aria-hidden="true">${bins}</div></div>`;
 }
 
 export function renderTreatmentPage(plan: {

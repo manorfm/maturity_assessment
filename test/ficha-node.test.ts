@@ -39,14 +39,21 @@ test('posterior publicada desenha os cinco pesos; sem posterior e abaixo do mín
     close: projectFichaClose({}),
   };
   const html = renderNodeCard({ ...card, how });
-  for (const stage of [0, 1, 2, 3, 4]) assert.match(html, new RegExp(`Estágio ${stage}`));
-  assert.match(html, /class="stage-distribution"/);
-  assert.match(html, /40%/);
-  assert.match(html, /Gestão/);
-  assert.doesNotMatch(html, /70%/);
+  const howSection = [...html.matchAll(/<section class="report-block">([\s\S]*?)<\/section>/g)]
+    .map((m) => m[1]!)
+    .find((body) => body.includes('Como está')) ?? '';
+  assert.match(howSection, /Estágio de 0 a 4 \(0 Não existe/);
+  assert.match(howSection, /Por perspectiva, lado a lado/);
+  assert.match(howSection, /class="ficha-perspective-columns"/);
+  assert.match(howSection, /class="ficha-stage-cloud"/);
+  assert.doesNotMatch(howSection, /class="stage-distribution"/);
+  assert.match(howSection, /Gestão/);
+  assert.doesNotMatch(howSection, /70%/);
   const empty = renderNodeCard({ ...card, how: projectHowItIs({}) });
   assert.match(empty, /Ainda não publicamos a distribuição de estágio 0–4/);
   assert.doesNotMatch(empty, /class="stage-distribution"/);
+  assert.doesNotMatch(empty, /class="ficha-stage-cloud"/);
+  assert.doesNotMatch(empty, /class="ficha-perspective-columns"/);
   const onlySmall = projectHowItIs({
     minimum: 5,
     slices: [{ label: 'Engenharia', completed: 2, distribution: [0.7, 0.1, 0.1, 0.05, 0.05] }],

@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-22 — Ficha Como está nuvem/colunas (Onda 7b)
+
+- `projectStageReading` (índice, `credibleBand`, nuvem 20); colunas
+  `ficha-perspective-columns` + `ficha-stage-cloud`; alvo só com
+  `target`; sem `stage-distribution`. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-22 — Ficha casca estrutural (Onda 7a)
 
 - Seções 1–11 com `report-section-num`; `FichaAction` com metas tipadas;

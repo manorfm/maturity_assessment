@@ -217,12 +217,16 @@ quando o modelo inclui o alvo. A ficha abre com a trilha do mapa
 nome da capacidade aberta não é link. O corpo da ficha sai de
 `ficha-node` e `renderNodeCard` numera as seções 1–11 com
 `report-section-num` (mesmo trilho do laudo): o que a capacidade abrange
-e o que ela trata, sem nome de ferramenta; a distribuição de estágio 0–4
-desenha os cinco pesos da posterior da folha quando o índice publicado a
-traz, senão a frase “ainda não publicamos”; perspectiva e unidade abaixo
-do limiar não ganham série própria; o quadrante sofisticação ×
-apropriação só com as duas leituras, e a conduta do quadrante “as
-pessoas querem; o meio não ajuda” começa pelo meio. “O que já funciona”
+e o que ela trata, sem nome de ferramenta; a seção “Como está” publica a
+posterior 0–4 da folha como leitura `projectStageReading` (índice
+E[S]/4·100, faixa `credibleBand`, nuvem de 20 cenários por maior resto)
+em colunas `ficha-perspective-columns` com `ficha-stage-cloud` — uma
+coluna por série elegível ou “Combinado” sem séries; alvo só quando o
+input traz `target`; sem barras `stage-distribution`; senão a frase
+“ainda não publicamos”; perspectiva e unidade abaixo do limiar não
+ganham série própria; o quadrante sofisticação × apropriação só com as
+duas leituras, e a conduta do quadrante “as pessoas querem; o meio não
+ajuda” começa pelo meio. “O que já funciona”
 só entra quando a leitura do laudo é de preservação. O relato da ficha
 (`projectReportedReadings`) publica perspectiva e time com cobertura
 acima do limiar, sem índice percentual. Quem ficou abaixo do limiar

@@ -309,6 +309,16 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .ficha-evidence-legend li { margin:0 }
     .ficha-relations { list-style:none; margin:0; padding:0; display:grid; gap:12px }
     .ficha-relations li { margin:0; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; color:var(--ink) }
+    .ficha-perspective-columns { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px; padding:20px 24px; background:var(--surface); border:1px solid var(--rule); border-radius:10px }
+    .ficha-perspective-column { display:grid; gap:8px; font-size:14px; color:var(--ink2) }
+    .ficha-perspective-column p { margin:0 }
+    .ficha-perspective-column strong { color:var(--ink) }
+    .ficha-stage-reading { display:flex; align-items:baseline; gap:8px; margin:0 }
+    .ficha-stage-index { font-family:Newsreader, Georgia, serif; font-size:30px; line-height:1; color:var(--ink) }
+    .ficha-stage-band { font-size:13px; color:var(--ink2) }
+    .ficha-stage-cloud { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); align-items:end; gap:4px; width:min(100%,260px); min-height:82px }
+    .ficha-stage-bin { display:flex; flex-direction:column-reverse; align-items:center; gap:2px }
+    .ficha-stage-dot { width:10px; height:10px; border-radius:50%; background:var(--ochre); flex:none }
     .stage-distribution { list-style:none; margin:12px 0 0; padding:0; display:grid; gap:8px }
     .stage-distribution li { display:grid; grid-template-columns:5.5rem 1fr 3rem; align-items:center; gap:10px; font-size:13px; color:var(--ink2) }
     .stage-track { display:block; height:8px; background:var(--rule); border-radius:99px; overflow:hidden }

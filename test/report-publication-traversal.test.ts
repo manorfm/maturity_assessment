@@ -314,9 +314,11 @@ test('travessia das nove páginas só encontra número emitido pela publicação
   assert.equal(JSON.stringify(laudo).includes('modelo m1'), false);
   assert.equal(laudo.footer.instrument.includes('m2'), true);
 
-  // Ficha: distribuição publicada sem detail/radar paralelo com ordinal de 4.
+  // Ficha: distribuição publicada como nuvem/colunas, sem barras nem ordinal de 4.
   assert.equal(how.stage.published, true);
-  assert.match(fichaHtml, /class="stage-distribution"/);
+  assert.doesNotMatch(fichaHtml, /class="stage-distribution"/);
+  assert.match(fichaHtml, /class="ficha-stage-cloud"/);
+  assert.match(fichaHtml, /class="ficha-perspective-columns"/);
   assert.doesNotMatch(fichaHtml, /de 4|Estimativa ordinal interna|formatMaturityLevel/);
   assert.doesNotMatch(fichaRoute.body, /de 4|Estimativa ordinal interna/);
 

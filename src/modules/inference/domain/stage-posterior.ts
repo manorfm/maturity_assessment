@@ -61,7 +61,7 @@ function layerGate(stage: Stage, responses: AnchoredResponse[]): number {
   return highest >= 4 ? 1 : 0.25;
 }
 
-function credibleBand(probabilities: StagePosterior['probabilities']): [number, number] {
+export function credibleBand(probabilities: StagePosterior['probabilities']): [number, number] {
   const ranked = probabilities.map((probability, stage) => ({ stage, probability })).sort((left, right) => right.probability - left.probability);
   let mass = 0;
   const kept: number[] = [];

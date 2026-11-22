@@ -1,4 +1,4 @@
-import type { IndexPublication } from './stage-posterior.js';
+import { credibleBand, type IndexPublication, type Stage } from './stage-posterior.js';
 import type { PerspectiveSample } from './map-matrix.js';
 import type { ReportOutcomeKind } from './report-outcome.js';
 import { disciplineScope } from './discipline-brief.js';
@@ -10,13 +10,19 @@ export type NodeDefinition = { what: string; why: string };
 
 export type StageShares = readonly [number, number, number, number, number];
 
-export type StageSeries = { label: string; shares: StageShares };
+export type StageReading = {
+  index: number;
+  band: [number, number];
+  cloud: ReadonlyArray<Stage>;
+};
 
-export type StageSlice = { label: string; completed: number; distribution?: StageShares };
+export type StageSeries = { label: string; shares: StageShares; reading: StageReading; target?: number };
+
+export type StageSlice = { label: string; completed: number; distribution?: StageShares; target?: number };
 
 export type StagePublication =
   | { published: false; gap: string }
-  | { published: true; shares: StageShares; series: StageSeries[]; withheld: string[] };
+  | { published: true; shares: StageShares; reading: StageReading; target?: number; series: StageSeries[]; withheld: string[] };
 
 export type QuadrantPublication =
   | { published: false }
@@ -45,15 +51,32 @@ export function leafStageDistribution(index: IndexPublication | undefined, leafI
   return index.leaves?.find((leaf) => leaf.id === leafId)?.distribution;
 }
 
+/** Índice E[S]/4·100, faixa credibleBand e nuvem de 20 cenários (maior resto). */
+export function projectStageReading(shares: StageShares): StageReading {
+  const expectation = shares.reduce((sum, probability, stage) => sum + probability * stage, 0);
+  return {
+    index: Math.round((expectation / 4) * 100),
+    band: credibleBand([...shares] as [number, number, number, number, number]),
+    cloud: stageCloud(shares),
+  };
+}
+
 export function projectHowItIs(input: {
   stageDistribution?: StageShares;
   minimum?: number;
   slices?: StageSlice[];
   phase?: number;
   appropriation?: number;
+  target?: number;
 }): HowItIs {
   const stage: StagePublication = input.stageDistribution
-    ? { published: true, shares: input.stageDistribution, ...stageSlices(input.slices ?? [], input.minimum ?? 5) }
+    ? {
+      published: true,
+      shares: input.stageDistribution,
+      reading: projectStageReading(input.stageDistribution),
+      ...(input.target !== undefined ? { target: input.target } : {}),
+      ...stageSlices(input.slices ?? [], input.minimum ?? 5),
+    }
     : { published: false, gap: stageGap };
   if (input.phase === undefined || input.appropriation === undefined) return { stage, quadrant: { published: false } };
   const quadrant = classifySophisticationQuadrant({ phase: input.phase, appropriation: input.appropriation });
@@ -114,9 +137,35 @@ function stageSlices(slices: StageSlice[], minimum: number): { series: StageSeri
       withheld.push(`${slice.label} teve ${slice.completed} ${slice.completed === 1 ? 'pessoa' : 'pessoas'}. A distribuição entra só no total.`);
       continue;
     }
-    if (slice.distribution) series.push({ label: slice.label, shares: slice.distribution });
+    if (!slice.distribution) continue;
+    series.push({
+      label: slice.label,
+      shares: slice.distribution,
+      reading: projectStageReading(slice.distribution),
+      ...(slice.target !== undefined ? { target: slice.target } : {}),
+    });
   }
   return { series, withheld };
+}
+
+function stageCloud(shares: StageShares, n = 20): Stage[] {
+  const raw = shares.map((share) => share * n);
+  const floors = raw.map((value) => Math.floor(value));
+  let remaining = n - floors.reduce((sum, value) => sum + value, 0);
+  const order = raw
+    .map((value, index) => ({ index, frac: value - floors[index]! }))
+    .sort((left, right) => right.frac - left.frac || left.index - right.index);
+  const counts = [...floors] as [number, number, number, number, number];
+  for (let step = 0; step < remaining; step += 1) {
+    const slot = order[step]?.index;
+    if (slot === undefined) break;
+    counts[slot as 0 | 1 | 2 | 3 | 4] += 1;
+  }
+  const cloud: Stage[] = [];
+  for (let stage = 0; stage <= 4; stage += 1) {
+    for (let i = 0; i < counts[stage]!; i += 1) cloud.push(stage as Stage);
+  }
+  return cloud;
 }
 
 function withheldLine(label: string, completed: number): string {
