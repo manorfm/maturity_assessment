@@ -176,7 +176,7 @@ export function nextStepTowardPractice(
     leafId: bottleneck.leafId,
     probability,
     band: assessment.band,
-    reading: `Para ${practice.label}: próximo degrau é ${bottleneck.label} (gargalo · p_k ${probability.toFixed(2)}); um degrau por vez até a prática.`,
+    reading: `Para ${practice.label}: próximo degrau é ${bottleneck.label} (gargalo · ${Math.round(probability * 100)}%); um degrau por vez até a prática.`,
   };
 }
 

@@ -322,15 +322,20 @@ test('travessia das nove páginas só encontra número emitido pela publicação
   assert.doesNotMatch(fichaHtml, /de 4|Estimativa ordinal interna|formatMaturityLevel/);
   assert.doesNotMatch(fichaRoute.body, /de 4|Estimativa ordinal interna/);
 
-  // Prontidão: folhas só com level não geram p_k; só entram folhas com distribution.
+  // Prontidão: folhas só com level não geram % inventado; só entram folhas com distribution.
   const levelOnlyReadiness = projectCatalogReadiness(levelOnlyLeaves);
   assert.ok(levelOnlyReadiness.every((item) => item.gap && !item.assessment));
-  assert.equal(/p_k \d/.test(renderReadinessPage(levelOnlyReadiness)), false);
+  const levelOnlyHtml = renderReadinessPage(levelOnlyReadiness);
+  assert.equal(/p_k \d/.test(levelOnlyHtml), false);
+  assert.equal(levelOnlyHtml.includes('readiness-prereq-grid'), false);
+  assert.equal(levelOnlyHtml.includes('readiness-probability'), false);
   for (const item of readiness) {
     if (!item.assessment) continue;
     assert.equal(prontidaoHtml.includes(item.conduct!), true);
+    assert.equal(prontidaoHtml.includes('readiness-prereq-grid'), true);
     for (const row of item.assessment.checklist) {
-      assert.equal(prontidaoHtml.includes(`p_k ${row.probability.toFixed(2)}`), true);
+      assert.equal(prontidaoHtml.includes(`${Math.round(row.probability * 100)}%`), true);
+      assert.equal(prontidaoHtml.includes(`p_k ${row.probability.toFixed(2)}`), false);
     }
   }
 

@@ -113,8 +113,8 @@ perspectiva permanece fora.
 
 | Bloco | Produto | Backend |
 | --- | --- | --- |
-| Cartão prática: título 30px, tag Pronto/Não pronto, **P(pronto) 48px**, trilho, lead | `readiness-card` com `P(pronto)` em texto | `p_k` / band existem |
-| Grade pré-requisitos: ○/● · nome · barra · % · rótulo **gargalo** (red-soft) | Lista `p_k` em `<li>` | Checklist existe; falta composição Grid6/Grid7 |
+| Cartão prática: título 30px, tag Pronto/Não pronto, **P(pronto) 48px**, trilho, lead | **feito:** `readiness-card` + tag `.readiness` + `.readiness-probability` + trilho | `p_k` / band existem |
+| Grade pré-requisitos: ○/● · nome · barra · % · rótulo **gargalo** (red-soft) | **feito:** `.readiness-prereq-grid` (markers/status/barra/%/gargalo) | Checklist alimenta a grade |
 | Nota final: probabilidade nunca vira índice da org | Frase no hero — ok em espírito | — |
 
 ### Fronteira — déficit estrutural (não listas)
@@ -195,7 +195,7 @@ Copiar a **função**, nunca o caso Orbital:
 | Laudo | Casca 3 + gauge/barra/prognóstico 4 | Polimento; prova transversal |
 | Mapa | 6a–6d (estimate + divergência tipada) | Dual radar por perspectiva (fora de 6d) |
 | Ficha | Trilha + seções textuais + stage bars | Trilho numerado; nuvem/3 colunas Como está; cartão Menor experimento (Cynefin·grau·forma); grades tipadas |
-| Prontidão | `p_k`, band, gargalo em texto | Cartão 48px + grade pré-requisitos com barra/%/gargalo |
+| Prontidão | Cartão 30px/48px + grade pré-requisitos (barra/%/gargalo) | Polimento visual fino |
 | Fronteira | Listas + Comece por | Escada F0–F5 + ChartMark6 + stacks humanas |
 | Plano | 3 horizontes + pulso + Cynefin lista | Matriz autoridade×horizonte + Ativas N/M + setas |
 | Walkthrough | Seções + trilha | Marcos tabela; CaminhoStack; Alvo; trilho |
@@ -234,7 +234,7 @@ de Orbital/`13%`/`24%`.
 
 1. ~~Tokens · laudo · marcas célula · mapa 6a–6d~~.
 2. ~~Ficha 7a (trilho 1–11 + Menor experimento)~~ · **Ficha 7b** (Como está nuvem/3 colunas).
-3. **Prontidão** cartão + grade pré-requisitos.
+3. ~~**Prontidão** cartão + grade pré-requisitos~~.
 4. **Fronteira** escada F0–F5.
 5. **Plano** matriz autoridade×horizonte.
 6. **Histórico** comparador visual.
@@ -257,9 +257,9 @@ de Orbital/`13%`/`24%`.
 
 ## Sequência de implementação
 
-0–5 · 6a · 6b · 6c · 6d · 7a · 7b — feitos.
-8. Prontidão estrutural — **próximo**.
-9. Fronteira escada.
+0–5 · 6a · 6b · 6c · 6d · 7a · 7b · 8 — feitos.
+8. ~~Prontidão estrutural~~.
+9. Fronteira escada — **próximo**.
 10. Plano matriz.
 11. Histórico comparador.
 12. Walkthrough Marcos + Visão stack.

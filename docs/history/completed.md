@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-23 — Prontidão estrutural (Onda 8)
+
+- Cartão com tag Pronto/Perto/Não pronto, probabilidade 48px + trilho;
+  grade `.readiness-prereq-grid` (○/◐/●, status, barra, %, gargalo
+  red-soft); conduta do degrau em %. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`recommendation-model.md`](../knowledge-base/recommendation-model.md).
+
 ## 2026-11-22 — Ficha Como está nuvem/colunas (Onda 7b)
 
 - `projectStageReading` (índice, `credibleBand`, nuvem 20); colunas

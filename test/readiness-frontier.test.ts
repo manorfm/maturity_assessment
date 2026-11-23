@@ -94,7 +94,7 @@ test('próximo passo da prontidão não é um degrau bloqueado na fronteira', ()
   }
 });
 
-test('cartão de prontidão lista p_k, o gargalo e omite o passo bloqueado', () => {
+test('cartão de prontidão lista %, o gargalo e omite o passo bloqueado', () => {
   const practice = advancedPracticeCatalog.find((item) => item.id === 'chaos-engineering')!;
   const assessment = projectPracticeReadiness([
     { id: 'obs', label: 'Observabilidade dos serviços críticos', essential: true, probability: 0.12 },
@@ -108,8 +108,12 @@ test('cartão de prontidão lista p_k, o gargalo e omite o passo bloqueado', () 
     withheld: 'Observabilidade dos serviços críticos está bloqueado na fronteira e não é o próximo passo.',
     premature: true,
   }]);
-  assert.match(html, /p_k 0\.12/);
-  assert.match(html, /p_k 0\.80/);
+  assert.match(html, /class="readiness-prereq-grid"/);
+  assert.match(html, /12%/);
+  assert.match(html, /80%/);
+  assert.doesNotMatch(html, /p_k 0\.12/);
+  assert.doesNotMatch(html, /p_k 0\.80/);
+  assert.match(html, /readiness-prereq-bottleneck/);
   assert.match(html, /A média não decide/);
   assert.match(html, /não culpa de uma pessoa/);
   assert.match(html, /não é o próximo passo/);

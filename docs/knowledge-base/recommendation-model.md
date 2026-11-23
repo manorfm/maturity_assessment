@@ -137,15 +137,16 @@ A prontidão para práticas avançadas (`advancedPracticeCatalog`) calcula
 `p_k = P(S ≥ mínimo)` por pré-requisito e, quando o pré-requisito declara
 `minimumPhase`, multiplica por `P(F ≥ fase)` (12); `P(pronto) = Π p_k`
 essencial (22 §1.1). A função de fórmula ainda aceita nível com
-cobertura; a página só publica `p_k`, o pré-requisito mais fraco e a
-conduta quando há posterior de estágio com pelo menos 5 respondentes.
-Sem essa leitura, declara lacuna e não inventa 0% nem “Pronto”. A
-probabilidade de pronto não é índice da organização. A biblioteca 22 §5
-(13 práticas) entra na página de prontidão. O status visível segue o essencial mais fraco; a média dos
-`p_k` não decide. **Adoção prematura** (F da prática ≥ 3 e algum essencial com
-`p_k < 0,3`) vira achado de risco no laudo com conduta de reduzir escopo,
-e o texto não atribui culpa a uma pessoa. Degrau que a fronteira marca
-como bloqueado não aparece como próximo passo da prontidão.
+cobertura; a página só publica a probabilidade em %, o pré-requisito mais
+fraco e a conduta quando há posterior de estágio com pelo menos 5
+respondentes. Sem essa leitura, declara lacuna e não inventa 0% nem
+“Pronto”. A probabilidade de pronto não é índice da organização. A
+biblioteca 22 §5 (13 práticas) entra na página de prontidão. O status
+visível segue o essencial mais fraco; a média dos `p_k` não decide.
+**Adoção prematura** (F da prática ≥ 3 e algum essencial com `p_k < 0,3`)
+vira achado de risco no laudo com conduta de reduzir escopo, e o texto
+não atribui culpa a uma pessoa. Degrau que a fronteira marca como
+bloqueado não aparece como próximo passo da prontidão.
 As perguntas de evento de chaos (`chaos-dependency-exercise`, 22 §2.5),
 remediação automática (`aiops-auto-remediation`, 22 §5), QA
 (`quality-break-detection` + pressão `quality-flaky-pressure`, 22 §3.4),
@@ -163,10 +164,12 @@ prontidão e adoção prematura. A conduta desses sinais de evento de
 prática avançada vem da prontidão, não do catálogo de intervenções:
 eles medem a fase e não geram achado nem hipótese diagnóstica. As 13
 práticas da biblioteca 22 §5 têm pergunta de evento no grafo. A página
-de prontidão lista o checklist de `p_k` por pré-requisito. O walkthrough
-pode mirar uma prática avançada na “próxima fase”:
-`nextStepTowardPractice` aponta o gargalo essencial e um degrau por
-vez, sem pular para a prática.
+de prontidão publica cartão com tag Pronto/Perto/Não pronto, probabilidade
+em % com trilho, e grade de pré-requisitos (marker ○/◐/●, status, barra,
+% e rótulo gargalo no essencial mais fraco). A conduta do próximo degrau
+usa a mesma % do gargalo. O walkthrough pode mirar uma prática avançada
+na “próxima fase”: `nextStepTowardPractice` aponta o gargalo essencial e
+um degrau por vez, sem pular para a prática.
 O grafo de habilitação (`enablementCatalog`, 23 §3.3) avalia
 `P(desbloqueado)` por aresta; a fronteira exige ≥ 0,6, o bloqueio
 aparece abaixo de 0,25, e a próxima fase do walkthrough só sobe dentro

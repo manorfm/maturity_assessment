@@ -366,8 +366,30 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .history-selector a[aria-current="page"] { background:var(--accent-soft); color:var(--accent-ink); font-weight:600 }
     .audience-side + .audience-side { margin-top:22px }
     .audience-side h3 { font-family:Newsreader, Georgia, serif; font-size:18px; font-weight:500; margin:0 0 8px }
-    .readiness-card, .report-conduct { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:22px; margin:0 0 16px }
-    .readiness-card h2 { margin:0 0 8px; font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500 }
+    .readiness-card, .report-conduct { background:var(--surface); border:1px solid var(--rule); margin:0 0 16px }
+    .report-conduct { border-radius:10px; padding:22px }
+    .readiness-card { display:grid; grid-template-columns:300px minmax(0,1fr); gap:20px 40px; padding:28px; border-radius:12px }
+    .readiness-card > :only-child { grid-column:1 / -1 }
+    .readiness-card h2 { margin:0 0 8px; font-family:Newsreader, Georgia, serif; font-size:30px; font-weight:500; line-height:1.1 }
+    .readiness-probability-label { margin:0; font-size:13px; color:var(--ink2) }
+    .readiness-probability { margin:0; font-family:Newsreader, Georgia, serif; font-size:48px; line-height:1; font-weight:500 }
+    .readiness-probability-track { position:relative; width:240px; height:10px; margin:8px 0 12px; border-radius:5px; background:var(--sunk); border:1px solid var(--rule); box-sizing:border-box }
+    .readiness-probability-track > i { display:block; height:8px; margin:0; border-radius:4px; background:var(--ink2) }
+    .readiness-prereq-grid { display:flex; flex-direction:column; gap:4px; margin:0 }
+    .readiness-prereq-head, .readiness-prereq-row { display:grid; grid-template-columns:24px minmax(0,1fr) 230px 56px; gap:14px; align-items:center }
+    .readiness-prereq-head { padding:0 12px 6px; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3) }
+    .readiness-prereq-row { padding:10px 12px; border-radius:8px; border:1.5px solid transparent }
+    .readiness-prereq-bottleneck { background:var(--red-soft); border-color:var(--red) }
+    .readiness-prereq-marker { font-size:15px; color:var(--ink2); text-align:center }
+    .readiness-prereq-copy { display:flex; flex-direction:column; gap:2px; min-width:0 }
+    .readiness-prereq-label { font-size:15px; font-weight:500 }
+    .readiness-prereq-bottleneck .readiness-prereq-label { font-weight:600 }
+    .readiness-prereq-status { display:flex; gap:10px; align-items:center; font-size:12px; color:var(--ink3) }
+    .readiness-prereq-bottleneck-label { font-size:12px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:.06em }
+    .readiness-prereq-track { position:relative; width:220px; height:10px; border-radius:5px; background:var(--sunk); border:1px solid var(--rule); box-sizing:border-box }
+    .readiness-prereq-bar { display:block; height:8px; border-radius:4px; background:var(--accent); max-width:100% }
+    .readiness-prereq-bottleneck .readiness-prereq-bar { background:var(--red) }
+    .readiness-prereq-percent { font-size:15px; font-weight:600; text-align:right }
     .report-conduct-action { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; margin:0 0 8px }
     .treatment-depends { color:var(--ink2); font-size:14px }
     .treatment-horizons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; width:100%; margin-top:28px; padding-top:28px; border-top:1px solid var(--rule) }
@@ -412,12 +434,12 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .ficha-trail { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:14px; color:var(--ink3); margin:0 0 12px }
     .ficha-trail a { color:var(--ink2); text-decoration:none }
     .ficha-trail span:last-child { color:var(--ink); font-weight:500 }
-    .readiness { padding:2px 10px; border-radius:999px; font-weight:700; font-size:12px }
-    .readiness.ready { color:var(--accent-ink); background:var(--accent-soft) }
-    .readiness.near { color:var(--ink); background:#F5E6D0 }
-    .readiness.blocked { color:var(--red); background:var(--red-soft) }
+    .readiness { padding:4px 12px; border-radius:999px; font-weight:700; font-size:13px }
+    .readiness.ready { color:var(--accent-ink); background:var(--accent-soft); border:1.5px solid var(--accent) }
+    .readiness.near { color:var(--ink); background:#F5E6D0; border:1.5px solid var(--ochre) }
+    .readiness.blocked { color:var(--red); background:var(--red-soft); border:1.5px solid var(--red) }
     .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint,.readiness-card{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems,.map-overview-systems{grid-template-columns:1fr} }
   </style>
 </head>

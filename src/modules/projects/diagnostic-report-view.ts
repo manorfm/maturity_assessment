@@ -640,15 +640,40 @@ export function renderWalkthrough(input: AreaWalkthrough): string {
     ${list('Premissas a revisar', input.sections.assumptions)}`;
 }
 
+function readinessBandMeta(band: ReadinessAssessment['band']): { className: 'ready' | 'near' | 'blocked'; label: string } {
+  if (band === 'ready') return { className: 'ready', label: 'Pronto' };
+  if (band === 'near') return { className: 'near', label: 'Perto' };
+  return { className: 'blocked', label: 'Não pronto' };
+}
+
+function readinessPrereqMeta(probability: number): { marker: string; status: string } {
+  if (probability >= 0.6) return { marker: '●', status: 'atendido' };
+  if (probability >= 0.25) return { marker: '◐', status: 'parcial' };
+  return { marker: '○', status: 'não atendido' };
+}
+
+function readinessPercent(probability: number): string {
+  return `${Math.round(probability * 100)}%`;
+}
+
 export function renderReadinessPage(items: Array<{ id?: string; label: string; assessment?: ReadinessAssessment; gap?: string; verdict?: ReturnType<typeof bottleneckStatus>; nextStep?: string; conduct?: string; withheld?: string; premature?: boolean }>): string {
-  const bandLabel = (band: ReadinessAssessment['band']) => band === 'ready' ? 'Pronto' : band === 'near' ? 'Perto' : 'Não pronto';
   const cards = items.map((item) => {
     if (item.gap || !item.assessment) return `<article class="report-block"><h2>${escapeHtml(item.label)}</h2><p class="report-gap">${escapeHtml(item.gap ?? 'Sem posterior.')}</p></article>`;
     const verdict = item.verdict ?? bottleneckStatus(item.assessment);
-    const checklist = item.assessment.checklist?.length
-      ? `<ul class="readiness-checklist">${item.assessment.checklist.map((row) => (
-        `<li>${escapeHtml(row.label)}${row.essential ? ' (essencial)' : ''}${row.label === verdict.bottleneck ? ' · gargalo' : ''}: p_k ${row.probability.toFixed(2)}</li>`
-      )).join('')}</ul>`
+    const band = readinessBandMeta(verdict.band);
+    const heroPercent = readinessPercent(item.assessment.probability);
+    const heroTrack = cssPercent(Math.round(item.assessment.probability * 100));
+    const grid = item.assessment.checklist?.length
+      ? `<div class="readiness-prereq-grid"><div class="readiness-prereq-head" aria-hidden="true"><span></span><span>Pré-requisito</span><span>Probabilidade de atendido</span><span></span></div>${item.assessment.checklist.map((row) => {
+        const { marker, status } = readinessPrereqMeta(row.probability);
+        const percent = readinessPercent(row.probability);
+        const isBottleneck = row.label === verdict.bottleneck;
+        const rowClass = isBottleneck ? 'readiness-prereq-row readiness-prereq-bottleneck' : 'readiness-prereq-row';
+        const statusLine = isBottleneck
+          ? `${escapeHtml(status)} · <span class="readiness-prereq-bottleneck-label">gargalo</span>`
+          : escapeHtml(status);
+        return `<div class="${rowClass}"><span class="readiness-prereq-marker" aria-hidden="true">${marker}</span><span class="readiness-prereq-copy"><span class="readiness-prereq-label">${escapeHtml(row.label)}</span><span class="readiness-prereq-status">${statusLine}</span></span><span class="readiness-prereq-track" aria-hidden="true"><span class="readiness-prereq-bar" style="width:${cssPercent(Math.round(row.probability * 100))}"></span></span><span class="readiness-prereq-percent">${percent}</span></div>`;
+      }).join('')}</div>`
       : '';
     const premature = item.premature || item.assessment.premature
       ? '<p>Adoção prematura: a fase técnica está à frente de um pré-requisito essencial. É risco do sistema de trabalho, não culpa de uma pessoa.</p>'
@@ -659,7 +684,8 @@ export function renderReadinessPage(items: Array<{ id?: string; label: string; a
       : conduct
         ? `<p>${escapeHtml(conduct)}</p>`
         : '';
-    return `<article class="readiness-card"><h2>${escapeHtml(item.label)}</h2><p>${bandLabel(verdict.band)}</p><p>${escapeHtml(verdict.line)}</p><p>P(pronto) ${item.assessment.probability}. Isto não é índice da organização.</p>${premature}<p>Pré-requisitos</p>${checklist}${step}</article>`;
+    const summary = `<div><h2>${escapeHtml(item.label)}</h2><span class="readiness ${band.className}">${band.label}</span><p class="readiness-probability-label">Probabilidade de estar pronto hoje</p><p class="readiness-probability">${heroPercent}</p><div class="readiness-probability-track" aria-hidden="true"><i style="width:${heroTrack}"></i></div><p>${escapeHtml(verdict.line)}</p><p>Isto não é índice da organização.</p>${premature}${step}</div>`;
+    return `<article class="readiness-card">${summary}${grid}</article>`;
   }).join('');
   return `<header class="report-hero"><p class="report-kicker">Prontidão para práticas avançadas</p><h1>Prontidão para práticas avançadas</h1><p>A probabilidade de pronto nunca passa a ser índice da organização. O gargalo decide.</p></header>
     <p>O essencial mais fraco decide. <span class="readiness ready">Pronto</span> p_k ≥ 0,6 · <span class="readiness near">Perto</span> p_k ≥ 0,25 · <span class="readiness blocked">Não pronto</span> p_k abaixo de 0,25. A conduta é uma linha à parte.</p>
@@ -675,7 +701,7 @@ export function renderFrontierPage(input: FrontierBrief & { readinessHref?: stri
   );
   const start = 'gap' in input.start
     ? `<p class="report-gap">${escapeHtml(input.start.gap)}</p>`
-    : `<article class="readiness-card"><p class="report-conduct-action">${escapeHtml(input.start.step)}${input.start.mark ? ` ${escapeHtml(input.start.mark)}` : ''}</p><p>Destrava: ${escapeHtml(input.start.unlocks)}</p></article>`;
+    : `<article class="readiness-card"><div><p class="report-conduct-action">${escapeHtml(input.start.step)}${input.start.mark ? ` ${escapeHtml(input.start.mark)}` : ''}</p><p>Destrava: ${escapeHtml(input.start.unlocks)}</p></div></article>`;
   const parallel = input.parallel.map((item) => `<p><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`).join('')
     || '<p class="report-gap">Nenhuma condição humana publicada neste grafo.</p>';
   const href = input.readinessHref ?? '/readiness';

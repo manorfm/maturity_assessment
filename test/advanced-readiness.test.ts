@@ -86,7 +86,7 @@ test('nível pontual sem distribution não inventa p_k', () => {
   assert.equal(posteriors, undefined);
 });
 
-test('checklist de prontidão lista p_k de cada pré-requisito', () => {
+test('checklist de prontidão publica grade com % de cada pré-requisito', () => {
   const assessment = projectPracticeReadiness(chaosEngineeringExample());
   assert.ok(assessment.checklist.length >= 5);
   assert.ok(assessment.checklist.every((item) => typeof item.probability === 'number' && item.label));
@@ -95,8 +95,14 @@ test('checklist de prontidão lista p_k de cada pré-requisito', () => {
     label: 'Chaos engineering',
     assessment,
   }]);
-  assert.match(html, /p_k|pré-requisito/i);
+  assert.match(html, /class="readiness-prereq-grid"/);
+  assert.doesNotMatch(html, /readiness-checklist/);
+  assert.match(html, /pré-requisito/i);
   assert.match(html, /Observabilidade|Estado estável/i);
+  for (const row of assessment.checklist) {
+    assert.equal(html.includes(`${Math.round(row.probability * 100)}%`), true);
+    assert.equal(html.includes(`p_k ${row.probability.toFixed(2)}`), false);
+  }
 });
 
 test('próximo degrau rumo à prática aponta o gargalo, um de cada vez', () => {

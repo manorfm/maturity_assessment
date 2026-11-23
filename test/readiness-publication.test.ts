@@ -59,8 +59,12 @@ test('prática com posterior publica p_k, o mais fraco e a conduta; nível sem p
   const html = renderReadinessPage(page);
   assert.equal(html.includes(chaos.weakest), true);
   assert.equal(html.includes(chaos.conduct!), true);
+  assert.match(html, /class="readiness-prereq-grid"/);
+  assert.doesNotMatch(html, /readiness-checklist/);
   for (const row of chaos.assessment.checklist) {
-    assert.equal(html.includes(`p_k ${row.probability.toFixed(2)}`), true);
+    const percent = `${Math.round(row.probability * 100)}%`;
+    assert.equal(html.includes(percent), true);
+    assert.equal(html.includes(`p_k ${row.probability.toFixed(2)}`), false);
   }
   assert.equal(html.includes('não é índice da organização'), true);
   assert.equal(html.includes('Orbital'), false);
@@ -82,7 +86,8 @@ test('prática com posterior publica p_k, o mais fraco e a conduta; nível sem p
   assert.ok(levelOnly.every((item) => item.gap && !item.assessment));
   const gapHtml = renderReadinessPage(levelOnly);
   assert.equal(gapHtml.includes('class="readiness-card"'), false);
-  assert.equal(gapHtml.includes('readiness-checklist'), false);
+  assert.equal(gapHtml.includes('readiness-prereq-grid'), false);
+  assert.equal(gapHtml.includes('readiness-probability'), false);
   assert.equal(/p_k \d/.test(gapHtml), false);
   assert.equal(gapHtml.includes('P(pronto)'), false);
   assert.equal(gapHtml.includes('13%'), false);

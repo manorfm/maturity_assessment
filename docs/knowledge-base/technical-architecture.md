@@ -191,13 +191,14 @@ A marca F0–F5 aparece só quando a folha tem posterior de sofisticação;
 sem essa posterior, a faixa permanece textual. “Comece por” é um degrau
 desbloqueado. Condição humana (aresta social ou cognitiva) fica em
 paralelo, com link para a prontidão. Cada prática do
-catálogo publica `p_k`, o pré-requisito mais fraco e a conduta só quando
-o pré-requisito essencial tem posterior de estágio com pelo menos 5
-respondentes; sem essa leitura, a página mantém a lacuna. Nível pontual
-não vira `p_k`, 0% nem “Pronto”. A probabilidade de pronto não é índice da
-organização. O status segue o pré-requisito essencial mais fraco; a
-média não decide. Degrau bloqueado na fronteira não entra como próximo
-passo da prontidão. Achado de prática avançada no laudo abre essa página; a ficha
+catálogo publica cartão com probabilidade em %, grade de pré-requisitos
+(marker/status/barra/%/gargalo) e a conduta só quando o pré-requisito
+essencial tem posterior de estágio com pelo menos 5 respondentes; sem
+essa leitura, a página mantém a lacuna. Nível pontual não vira `p_k`,
+0% nem “Pronto”. A probabilidade de pronto não é índice da organização.
+O status segue o pré-requisito essencial mais fraco; a média não
+decide. Degrau bloqueado na fronteira não entra como próximo passo da
+prontidão. Achado de prática avançada no laudo abre essa página; a ficha
 de capacidade fica para a capacidade publicada. O mapa tem quatro sistemas — Produto,
 Engenharia, Operação e Organização — e três cortes: por capacidade, por
 estrutura e por perspectiva. As células saem do domínio (`map-matrix`):
