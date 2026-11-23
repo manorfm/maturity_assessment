@@ -9,7 +9,7 @@ import type { FichaAction, FichaClose, FichaLine, FichaRelations, HowItIs, NodeD
 import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, type MapRadarPanel, type MapRadars, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
-import type { FrontierBrief } from '../inference/domain/learning-frontier.js';
+import { projectFrontierLadder, type FrontierBrief, type FrontierLadderPlace } from '../inference/domain/learning-frontier.js';
 import type { AreaWalkthrough } from '../inference/domain/area-walkthrough.js';
 import type { EvolutionReport } from '../inference/domain/evolution-report.js';
 
@@ -702,16 +702,48 @@ export function renderFrontierPage(input: FrontierBrief & { readinessHref?: stri
   const start = 'gap' in input.start
     ? `<p class="report-gap">${escapeHtml(input.start.gap)}</p>`
     : `<article class="readiness-card"><div><p class="report-conduct-action">${escapeHtml(input.start.step)}${input.start.mark ? ` ${escapeHtml(input.start.mark)}` : ''}</p><p>Destrava: ${escapeHtml(input.start.unlocks)}</p></div></article>`;
-  const parallel = input.parallel.map((item) => `<p><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`).join('')
-    || '<p class="report-gap">Nenhuma condição humana publicada neste grafo.</p>';
   const href = input.readinessHref ?? '/readiness';
   const gap = input.gap ? `<p class="report-gap">${escapeHtml(input.gap)}</p>` : '';
-  return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1><p>Degraus com P(desbloqueado) ≥ 0,6 entram na fronteira; abaixo de 0,25 ficam bloqueados.</p></header>${gap}
+  const hasMark = [...input.mastered, ...input.learnable, ...input.blocked].some((item) => item.mark);
+  if (!hasMark) {
+    const parallel = input.parallel.map((item) => `<p><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`).join('')
+      || '<p class="report-gap">Nenhuma condição humana publicada neste grafo.</p>';
+    return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1><p>Degraus com P(desbloqueado) ≥ 0,6 entram na fronteira; abaixo de 0,25 ficam bloqueados.</p></header>${gap}
     <section class="report-block"><h2>Dominado</h2>${place(input.mastered, 'Nenhum degrau dominado nesta leitura.', (item) => titled(item))}</section>
     <section class="report-block"><h2>Pode aprender agora</h2>${place(input.learnable, 'Nenhum degrau desbloqueado para aprender agora.', (item) => `${titled(item)} — pode aprender agora`)}</section>
     <section class="report-block"><h2>Ainda bloqueado</h2>${place(input.blocked, 'Nenhum degrau bloqueado nesta leitura.', (item) => `${titled(item)} — ainda bloqueado${item.blockedBy.length ? ` · bloqueado por ${escapeHtml(item.blockedBy.join(', '))}` : ''}`)}</section>
     <section class="report-block"><h2>Comece por</h2>${start}</section>
     <section class="report-block"><h2>Em paralelo</h2>${parallel}<p>${escapeHtml(input.advancedAside)}</p><p><a href="${escapeHtml(href)}">Ver prontidão →</a></p></section>`;
+  }
+  const ladder = projectFrontierLadder(input);
+  const parallelLines = input.parallel.map((item) => `<p><strong>${escapeHtml(item.label)}.</strong> ${escapeHtml(item.body)}</p>`).join('');
+  const humanConditions = parallelLines
+    ? `<div class="frontier-human-conditions">${parallelLines}</div>`
+    : '';
+  const practiceStatus = (item: FrontierLadderPlace): string => {
+    if (item.status === 'mastered') return 'dominado';
+    if (item.status === 'learnable') return 'na fronteira: pode aprender agora';
+    return item.blockedBy.length
+      ? `bloqueado por ${escapeHtml(item.blockedBy.join(', '))}`
+      : 'bloqueado';
+  };
+  const practice = (item: FrontierLadderPlace): string => (
+    `<article class="frontier-practice frontier-practice-${item.status}"><p>${escapeHtml(item.label)}${item.mark ? ` ${escapeHtml(item.mark)}` : ''}</p><p>${practiceStatus(item)}</p></article>`
+  );
+  const rungs = ladder.rungs.map((rung) => {
+    const extras = rung.phase === 0 ? humanConditions : '';
+    const places = rung.places.map(practice).join('');
+    return `<section class="frontier-rung" data-phase="${rung.phase}"><div class="frontier-rung-label"><span class="frontier-rung-phase">${rung.phase}</span><h2 class="frontier-rung-title">${escapeHtml(rung.label)}</h2></div><div>${extras}<div class="frontier-rung-practices">${places}</div></div></section>`;
+  }).join('');
+  const unplaced = ladder.unplaced.length
+    ? `<section class="frontier-unplaced report-block"><h2>Sem marca de sofisticação</h2><ul>${ladder.unplaced.map((item) => `<li>${escapeHtml(item.label)}</li>`).join('')}</ul></section>`
+    : '';
+  const legend = `<div class="frontier-legend" aria-label="Legenda"><span class="frontier-legend-item"><span class="frontier-legend-swatch frontier-legend-mastered" aria-hidden="true"></span>dominado</span><span class="frontier-legend-item"><span class="frontier-legend-swatch frontier-legend-learnable" aria-hidden="true"></span>na fronteira: pode aprender agora</span><span class="frontier-legend-item"><span class="frontier-legend-swatch frontier-legend-blocked" aria-hidden="true"></span>bloqueado</span></div>`;
+  const parallelCard = parallelLines
+    || '<p class="report-gap">Nenhuma condição humana publicada neste grafo.</p>';
+  const startGrid = `<section class="frontier-start-grid"><article class="frontier-start-card"><p class="frontier-start-kicker">Comece por</p>${start}</article><article class="frontier-start-card"><p class="frontier-start-kicker">Em paralelo</p>${parallelCard}</article><aside class="frontier-start-card"><p class="frontier-start-kicker">Ainda não</p><p>${escapeHtml(input.advancedAside)}</p><p><a href="${escapeHtml(href)}">Ver prontidão →</a></p></aside></section>`;
+  return `<header class="report-hero"><p class="report-kicker">Fronteira de aprendizado</p><h1>O que a organização pode aprender agora</h1><p>Degraus com P(desbloqueado) ≥ 0,6 entram na fronteira; abaixo de 0,25 ficam bloqueados.</p></header>${gap}
+    ${legend}<div class="frontier-ladder">${rungs}</div>${unplaced}${startGrid}`;
 }
 
 export function renderHistoryPage(input: {

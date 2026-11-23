@@ -38,9 +38,11 @@ test('fronteira marca F0–F5 só quando a folha tem posterior de sofisticação
   for (const token of marks) {
     assert.equal(html.includes(token), published.has(token));
   }
-  assert.equal(html.includes('Dominado'), true);
-  assert.equal(html.includes('Pode aprender agora'), true);
-  assert.equal(html.includes('Ainda bloqueado'), true);
+  assert.ok(published.size > 0, 'fixture com posterior deve publicar pelo menos um mark');
+  assert.match(html, /class="[^"]*\bfrontier-ladder\b/);
+  assert.doesNotMatch(html, /<h2>Dominado<\/h2>/);
+  assert.doesNotMatch(html, /<h2>Pode aprender agora<\/h2>/);
+  assert.doesNotMatch(html, /<h2>Ainda bloqueado<\/h2>/);
   assert.equal(html.includes('13%'), false);
   assert.equal(html.includes('Orbital'), false);
 
@@ -54,6 +56,7 @@ test('fronteira marca F0–F5 só quando a folha tem posterior de sofisticação
   assert.equal(plain.includes('Dominado'), true);
   assert.equal(plain.includes('Pode aprender agora'), true);
   assert.equal(plain.includes('Ainda bloqueado'), true);
+  assert.doesNotMatch(plain, /frontier-ladder/);
   assert.equal(plain.includes('13%'), false);
   assert.equal(plain.includes('Orbital'), false);
 });
@@ -84,7 +87,8 @@ test('a folha da fronteira recebe a posterior publicada e o nível 4 não vira F
   const html = renderFrontierPage({ ...brief, readinessHref: '/report/readiness' });
   assert.equal(html.includes('F2'), true);
   assert.equal(html.includes('F4'), false);
-  assert.equal(html.includes('Dominado'), true);
-  assert.equal(html.includes('Pode aprender agora'), true);
-  assert.equal(html.includes('Ainda bloqueado'), true);
+  assert.match(html, /class="[^"]*\bfrontier-ladder\b/);
+  assert.doesNotMatch(html, /<h2>Dominado<\/h2>/);
+  assert.doesNotMatch(html, /<h2>Pode aprender agora<\/h2>/);
+  assert.doesNotMatch(html, /<h2>Ainda bloqueado<\/h2>/);
 });

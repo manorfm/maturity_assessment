@@ -341,6 +341,10 @@ test('travessia das nove páginas só encontra número emitido pela publicação
 
   // Fronteira: folhas só com level não inventam faixa/F via peakedDistribution(level).
   assert.equal(places(levelOnlyFrontier).length, 0, 'folha só com level não entra na fronteira');
+  const frontierMarks = places(frontierBrief).flatMap((item) => (item.mark ? [item.mark] : []));
+  assert.ok(frontierMarks.length > 0, 'fixture de travessia publica marks F0–F5');
+  assert.match(fronteiraHtml, /class="[^"]*\bfrontier-ladder\b/);
+  assert.doesNotMatch(fronteiraHtml, /<h2>Dominado<\/h2>/);
   for (const token of ['F0', 'F1', 'F2', 'F3', 'F4', 'F5'] as const) {
     assert.equal(
       fronteiraHtml.includes(token),

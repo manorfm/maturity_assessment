@@ -39,7 +39,7 @@ responsivo único, não duas artes.
 | 2 | Mapa navegável | 52 | **6a–6d feitos** (dual radar perspectiva fora) |
 | 3 | Ficha do nó | 35 | **Déficit estrutural** (não “só CSS”) |
 | 4 | Prontidão para práticas avançadas | 15 | **Déficit estrutural** |
-| 5 | Fronteira de aprendizado | 20 | **Déficit estrutural** (escada F0–F5) |
+| 5 | Fronteira de aprendizado | 20 | **Escada F0–F5 feita** (listas = fallback) |
 | 6 | Plano de tratamento | 17 | **Déficit estrutural** (matriz autoridade×horizonte) |
 | 7 | Walkthrough: Operação | 25 | Seções ok; **Marcos/Caminho** subcompostos |
 | 8 | Histórico e reavaliação | 24 | **Déficit estrutural** (comparador + bands) |
@@ -117,15 +117,17 @@ perspectiva permanece fora.
 | Grade pré-requisitos: ○/● · nome · barra · % · rótulo **gargalo** (red-soft) | **feito:** `.readiness-prereq-grid` (markers/status/barra/%/gargalo) | Checklist alimenta a grade |
 | Nota final: probabilidade nunca vira índice da org | Frase no hero — ok em espírito | — |
 
-### Fronteira — déficit estrutural (não listas)
+### Fronteira — escada F0–F5 (feita)
 
 Protótipo: **escada F0–F5** (Condições humanas → Fluxo e decisão →
 Práticas técnicas → Entrega → Operação confiável → Práticas avançadas)
-com práticas posicionadas (`ChartMark6`) e stacks de condições humanas.
-“Comece por” em Grid4. Produto: três listas Dominado / Pode aprender /
-Ainda bloqueado + card “Comece por”. Reclassificar: **substituir listas
-pela escada** quando o grafo publicar degraus; listas podem permanecer
-como fallback de lacuna.
+com práticas posicionadas e stacks de condições humanas. Produto:
+`projectFrontierLadder` + `.frontier-ladder` / `.frontier-rung` /
+`.frontier-practice-*` / `.frontier-human-conditions` quando há mark;
+legenda, fase+título por degrau, grade de práticas e
+`.frontier-start-grid`; três listas Dominado / Pode aprender / Ainda
+bloqueado só como fallback sem mark; place sem mark com irmãos marcados
+em `.frontier-unplaced`.
 
 ### Plano — déficit estrutural
 
@@ -196,7 +198,7 @@ Copiar a **função**, nunca o caso Orbital:
 | Mapa | 6a–6d (estimate + divergência tipada) | Dual radar por perspectiva (fora de 6d) |
 | Ficha | Trilha + seções textuais + stage bars | Trilho numerado; nuvem/3 colunas Como está; cartão Menor experimento (Cynefin·grau·forma); grades tipadas |
 | Prontidão | Cartão 30px/48px + grade pré-requisitos (barra/%/gargalo) | Polimento visual fino |
-| Fronteira | Listas + Comece por | Escada F0–F5 + ChartMark6 + stacks humanas |
+| Fronteira | Escada F0–F5 + stacks + fallback listas | Polimento fino ChartMark6 |
 | Plano | 3 horizontes + pulso + Cynefin lista | Matriz autoridade×horizonte + Ativas N/M + setas |
 | Walkthrough | Seções + trilha | Marcos tabela; CaminhoStack; Alvo; trilho |
 | Histórico | Seletor + P(·) + evolução | Comparador Tecnologia (bands+alvo); Melhorou\|Piorou; chips |
@@ -213,8 +215,8 @@ fieldsets já especificado no Graph.
 1. ~~Casca laudo~~ · ~~Gauge/barra/prognóstico~~ · ~~Mapa 6a~~ feitos.
 2. Lacunas de prova (banda 50 pts, fixture e2e) — inalteradas.
 3. Contexto do projeto + senioridade — domínio antes do green de UI.
-4. Escada da fronteira vs listas: a escada é a arte alvo; listas só como
-   lacuna se o grafo não publicar posição F0–F5.
+4. ~~Escada da fronteira vs listas~~: escada quando há mark; listas só
+   como fallback sem posição F0–F5.
 5. Matriz do plano: reusar `authority` + `horizon` já no
    `TreatmentConduct`.
 
@@ -235,7 +237,7 @@ de Orbital/`13%`/`24%`.
 1. ~~Tokens · laudo · marcas célula · mapa 6a–6d~~.
 2. ~~Ficha 7a (trilho 1–11 + Menor experimento)~~ · **Ficha 7b** (Como está nuvem/3 colunas).
 3. ~~**Prontidão** cartão + grade pré-requisitos~~.
-4. **Fronteira** escada F0–F5.
+4. ~~**Fronteira** escada F0–F5~~.
 5. **Plano** matriz autoridade×horizonte.
 6. **Histórico** comparador visual.
 7. Walkthrough Marcos/Caminho · Visão DecisãoPolíticaStack.

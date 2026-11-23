@@ -188,9 +188,16 @@ folhas com posterior de estágio publicada (`frontierLeaves` / mesmo
 critério de `leavesForReadinessPage`): dominado, pode aprender agora e
 ainda bloqueado. Nível pontual não inventa distribuição nem faixa.
 A marca F0–F5 aparece só quando a folha tem posterior de sofisticação;
-sem essa posterior, a faixa permanece textual. “Comece por” é um degrau
-desbloqueado. Condição humana (aresta social ou cognitiva) fica em
-paralelo, com link para a prontidão. Cada prática do
+sem essa posterior, a faixa permanece textual. Quando ao menos uma
+place publica mark, `projectFrontierLadder` agrupa as places em seis
+degraus F0–F5 (Condições humanas → Práticas avançadas) e a view renderiza
+`.frontier-ladder` / `.frontier-rung`; place sem mark fica em
+`.frontier-unplaced`. Sem nenhum mark, a página mantém as três listas
+como fallback. “Comece por” é um degrau desbloqueado. Condição humana
+(aresta social ou cognitiva) entra no degrau F0 (`.frontier-human-conditions`)
+quando a escada está ativa, ou em paralelo no fallback, com link para a
+prontidão. A escada usa legenda de status, degraus com fase+título e
+rodapé `.frontier-start-grid` (Comece por | Em paralelo | Ainda não). Cada prática do
 catálogo publica cartão com probabilidade em %, grade de pré-requisitos
 (marker/status/barra/%/gargalo) e a conduta só quando o pré-requisito
 essencial tem posterior de estágio com pelo menos 5 respondentes; sem

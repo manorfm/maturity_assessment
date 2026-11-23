@@ -147,6 +147,53 @@ export type FrontierBrief = {
   advancedAside: string;
 };
 
+export type FrontierPlaceStatus = 'mastered' | 'learnable' | 'blocked';
+
+export type FrontierLadderPlace = FrontierPlace & { status: FrontierPlaceStatus };
+
+export type FrontierLadder = {
+  rungs: Array<{ phase: number; label: string; places: FrontierLadderPlace[] }>;
+  unplaced: FrontierPlace[];
+};
+
+const FRONTIER_RUNG_LABELS = [
+  'Condições humanas',
+  'Fluxo e decisão',
+  'Práticas técnicas',
+  'Entrega',
+  'Operação confiável',
+  'Práticas avançadas',
+] as const;
+
+/** Agrupa places com mark F0–F5 em seis degraus; sem mark fica em unplaced. */
+export function projectFrontierLadder(brief: FrontierBrief): FrontierLadder {
+  const rungs = FRONTIER_RUNG_LABELS.map((label, phase) => ({
+    phase,
+    label,
+    places: [] as FrontierLadderPlace[],
+  }));
+  const unplaced: FrontierPlace[] = [];
+  const placeOnRung = (item: FrontierPlace, status: FrontierPlaceStatus): void => {
+    const phase = markPhase(item.mark);
+    if (phase === undefined) {
+      unplaced.push(item);
+      return;
+    }
+    rungs[phase]!.places.push({ ...item, status });
+  };
+  for (const item of brief.mastered) placeOnRung(item, 'mastered');
+  for (const item of brief.learnable) placeOnRung(item, 'learnable');
+  for (const item of brief.blocked) placeOnRung(item, 'blocked');
+  return { rungs, unplaced };
+}
+
+function markPhase(mark?: FrontierSophisticationMark): number | undefined {
+  if (!mark) return undefined;
+  const phase = Number(mark.slice(1));
+  if (!Number.isInteger(phase) || phase < 0 || phase > 5) return undefined;
+  return phase;
+}
+
 const frontierRespondentMinimum = 5;
 
 /**

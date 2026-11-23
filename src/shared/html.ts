@@ -439,7 +439,35 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness.near { color:var(--ink); background:#F5E6D0; border:1.5px solid var(--ochre) }
     .readiness.blocked { color:var(--red); background:var(--red-soft); border:1.5px solid var(--red) }
     .diagnostic-report[data-theme="escuro"] .readiness.near { background:#382B1A }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint,.readiness-card{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    .frontier-ladder { display:flex; flex-direction:column-reverse; gap:0; margin:0 0 28px; border:1px solid var(--rule); border-radius:12px; overflow:hidden }
+    .frontier-rung { background:transparent; border:0; border-top:1px solid var(--rule); border-radius:0; padding:16px 20px; display:grid; grid-template-columns:180px 1fr; gap:16px 20px; align-items:start }
+    .frontier-rung:nth-child(odd) { background:var(--sunk) }
+    .frontier-rung-label { display:flex; flex-direction:column; gap:2px }
+    .frontier-rung-phase { font-family:Newsreader,Georgia,serif; font-size:28px; line-height:1; color:var(--ink3) }
+    .frontier-rung-title { font-size:14px; font-weight:600; margin:0 }
+    .frontier-rung-practices { display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:12px }
+    .frontier-practice { margin:0; padding:10px 12px; border-radius:8px; min-height:104px; box-sizing:border-box; display:flex; flex-direction:column; gap:3px; line-height:1.3 }
+    .frontier-practice p { margin:0; font-size:14px; font-weight:600 }
+    .frontier-practice p + p { margin:0; font-size:12px; font-weight:600 }
+    .frontier-practice-mastered { background:var(--accent); color:var(--on-accent); border:1.5px solid var(--accent) }
+    .frontier-practice-mastered p + p { color:inherit; opacity:.9; font-weight:400 }
+    .frontier-practice-learnable { background:var(--surface); color:var(--ink); border:2.5px solid var(--accent) }
+    .frontier-practice-learnable p + p { color:var(--accent-ink) }
+    .frontier-practice-blocked { background:var(--bg); color:var(--ink2); border:1.5px dashed var(--ink3) }
+    .frontier-practice-blocked p + p { color:var(--ink2); font-weight:400 }
+    .frontier-human-conditions { margin:0 0 14px; padding:12px 14px; border-left:3px solid var(--accent); color:var(--ink2) }
+    .frontier-human-conditions p { margin:0 0 8px }
+    .frontier-legend { display:flex; flex-wrap:wrap; gap:28px; align-items:center; font-size:13px; color:var(--ink2); margin:0 0 20px }
+    .frontier-legend-item { display:inline-flex; gap:8px; align-items:center }
+    .frontier-legend-swatch { width:28px; height:18px; border-radius:4px; box-sizing:border-box; flex:none }
+    .frontier-legend-mastered { background:var(--accent) }
+    .frontier-legend-learnable { background:var(--surface); border:2.5px solid var(--accent) }
+    .frontier-legend-blocked { background:var(--bg); border:1.5px dashed var(--ink3) }
+    .frontier-start-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px }
+    .frontier-start-card { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:24px; display:flex; flex-direction:column; gap:14px }
+    .frontier-start-kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3); margin:0 }
+    .frontier-unplaced { margin:0 0 24px }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint,.readiness-card,.frontier-start-grid{grid-template-columns:1fr} .frontier-rung{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems,.map-overview-systems{grid-template-columns:1fr} }
   </style>
 </head>

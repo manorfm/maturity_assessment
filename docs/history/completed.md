@@ -1,5 +1,22 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-23 — Fronteira escada UX (legenda + start-grid)
+
+- Escada com `column-reverse`, faixa por degrau, status do protótipo,
+  legenda, `.frontier-rung-phase`/`.frontier-rung-title`, práticas em
+  grade e `.frontier-start-grid`; `.frontier-human-conditions` no F0
+  (rename sem `stack`). Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-11-23 — Fronteira escada F0–F5
+
+- `projectFrontierLadder` agrupa places com mark em seis degraus;
+  `renderFrontierPage` publica `.frontier-ladder` (ou fallback das três
+  listas sem mark); condição humana no F0; unplaced sem inventar F0.
+  Ver [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-23 — Prontidão estrutural (Onda 8)
 
 - Cartão com tag Pronto/Perto/Não pronto, probabilidade 48px + trilho;
