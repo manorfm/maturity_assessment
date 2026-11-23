@@ -40,7 +40,7 @@ responsivo único, não duas artes.
 | 3 | Ficha do nó | 35 | **Déficit estrutural** (não “só CSS”) |
 | 4 | Prontidão para práticas avançadas | 15 | **Déficit estrutural** |
 | 5 | Fronteira de aprendizado | 20 | **Escada F0–F5 feita** (listas = fallback) |
-| 6 | Plano de tratamento | 17 | **Déficit estrutural** (matriz autoridade×horizonte) |
+| 6 | Plano de tratamento | 17 | **Matriz autoridade×horizonte feita** |
 | 7 | Walkthrough: Operação | 25 | Seções ok; **Marcos/Caminho** subcompostos |
 | 8 | Histórico e reavaliação | 24 | **Déficit estrutural** (comparador + bands) |
 | 9 | Visão por público | 17 | Campos próximos; falta **DecisãoPolíticaStack** tipado |
@@ -129,13 +129,18 @@ legenda, fase+título por degrau, grade de práticas e
 bloqueado só como fallback sem mark; place sem mark com irmãos marcados
 em `.frontier-unplaced`.
 
-### Plano — déficit estrutural
+### Plano — matriz autoridade×horizonte (feita)
 
 Protótipo: matriz **linhas = autoridade** (Direção, Gestão, …) ×
 **colunas = horizonte** (0–30 · 1–3 · 3–12), contador “Ativas: N de M”,
-setas de dependência, Cynefin em Grid3. Produto: três colunas de conduta
-achatadas + pulso + Cynefin em lista. Backend de horizonte/autoridade já
-existe em `TreatmentConduct`; **falta projector de matriz**.
+setas de dependência, Cynefin em Grid3. Produto:
+`projectTreatmentMatrix` + `.treatment-matrix` / `.treatment-matrix-row`
+/ `.treatment-matrix-cell` com cartões compactos
+`.treatment-matrix-card`; coluna 0–30 com “ativas agora”,
+`.treatment-matrix-cell--now` e `accent-soft`; “Ativas: N de M” conta
+horizonte 0–30; sem conduta, lacuna sem matriz nem
+`.treatment-horizons`. Setas de dependência do mock ficam fora deste
+ciclo.
 
 ### Walkthrough Operação — semi-estrutural
 
@@ -238,7 +243,7 @@ de Orbital/`13%`/`24%`.
 2. ~~Ficha 7a (trilho 1–11 + Menor experimento)~~ · **Ficha 7b** (Como está nuvem/3 colunas).
 3. ~~**Prontidão** cartão + grade pré-requisitos~~.
 4. ~~**Fronteira** escada F0–F5~~.
-5. **Plano** matriz autoridade×horizonte.
+5. ~~**Plano** matriz autoridade×horizonte~~.
 6. **Histórico** comparador visual.
 7. Walkthrough Marcos/Caminho · Visão DecisãoPolíticaStack.
 8. Admin + entrevista (domínio primeiro).
@@ -259,11 +264,11 @@ de Orbital/`13%`/`24%`.
 
 ## Sequência de implementação
 
-0–5 · 6a · 6b · 6c · 6d · 7a · 7b · 8 — feitos.
+0–5 · 6a · 6b · 6c · 6d · 7a · 7b · 8 · 9 · 10 — feitos.
 8. ~~Prontidão estrutural~~.
-9. Fronteira escada — **próximo**.
-10. Plano matriz.
-11. Histórico comparador.
+9. ~~Fronteira escada~~.
+10. ~~Plano matriz~~.
+11. Histórico comparador — **próximo**.
 12. Walkthrough Marcos + Visão stack.
 13. Admin + entrevista.
 14. Prova transversal.

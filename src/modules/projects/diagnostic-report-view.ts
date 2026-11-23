@@ -3,7 +3,7 @@ import { CapabilityTaxonomy } from '../inference/domain/capability-taxonomy.js';
 import { uniqueFindingsByPattern, type OutcomeFinding } from '../inference/domain/report-outcome.js';
 import type { DiagnosticLaudo, AudienceReading } from '../inference/domain/diagnostic-report.js';
 import type { EvidenceGrade, TreatmentConduct } from '../inference/domain/treatment-contract.js';
-import { cynefinLine, evidenceGradeReading, learningModeReading } from '../inference/domain/treatment-contract.js';
+import { cynefinLine, evidenceGradeReading, learningModeReading, projectTreatmentMatrix } from '../inference/domain/treatment-contract.js';
 import type { PulseCatalogItem } from '../catalog/item-catalog.js';
 import type { FichaAction, FichaClose, FichaLine, FichaRelations, HowItIs, NodeDefinition, PreservePublication, ReportedReadings, StageReading } from '../inference/domain/ficha-node.js';
 import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, type MapRadarPanel, type MapRadars, type PerspectiveMatrix, type StructureMatrix } from '../inference/domain/map-matrix.js';
@@ -255,10 +255,6 @@ function renderConductNotes(item: TreatmentConduct): string {
     : '';
   const limit = item.doesNotSolve ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>` : '';
   return `${cynefin}${grade}${dependency}${archetype}${learning}${unlocks}${transfer}${limit}`;
-}
-
-function renderConduct(item: TreatmentConduct, order: number): string {
-  return `<article class="report-conduct"><p class="report-kicker">${order || ''} Experimento</p><p class="report-conduct-action">${escapeHtml(item.action)}</p><p>Dono provável: ${escapeHtml(item.owner)}</p><p>Critério de sucesso: ${escapeHtml(item.success)}</p>${renderConductNotes(item)}</article>`;
 }
 
 function renderConductGrid(items: TreatmentConduct[]): string {
@@ -573,10 +569,6 @@ export function renderTreatmentPage(plan: {
   pulse: PulseCatalogItem[];
 }, evidenceGap?: string): string {
   const published = [...plan.active, ...plan.waiting, ...plan.deferred];
-  const list = (horizon: TreatmentConduct['horizon']) => {
-    const items = published.filter((item) => item.horizon === horizon);
-    return items.map((item, index) => renderConduct(item, index + 1)).join('') || '<p class="report-gap">Nenhuma conduta neste horizonte.</p>';
-  };
   const grades = evidenceGap
     ? `<p class="report-gap">${escapeHtml(evidenceGap)}</p>`
     : '<p>O grau A–D descreve a base da prática, não o suporte local da amostra. Condutas D só entram como experimento explícito.</p>';
@@ -584,14 +576,88 @@ export function renderTreatmentPage(plan: {
     ? `<p>3 a 6 itens-âncora das folhas tratadas, nas mesmas unidades. Mudança só com P(melhora) ≥ 0,8.</p><ul>${plan.pulse.map((item) => `<li><strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.prompt)} <span class="report-meta">(${item.intervalWeeks.min}–${item.intervalWeeks.max} semanas · ${escapeHtml(item.leafId)})</span></li>`).join('')}</ul>`
     : '<p class="report-gap">Ainda não há folhas tratadas com item-âncora de pulso no catálogo.</p>';
   const domains = (['clear', 'complicated', 'complex', 'chaotic'] as const).map((domain) => `<li>${escapeHtml(cynefinLine(domain))}</li>`).join('');
+  const matrix = published.length ? renderTreatmentMatrix(projectTreatmentMatrix(published)) : '';
+  const gap = published.length ? '' : '<p class="report-gap">Ainda não há conduta publicada neste plano.</p>';
   return `<header class="report-hero"><p class="report-kicker">Plano de tratamento</p><h1>Quem faz o quê, e em que ordem</h1></header>
-    <div class="treatment-horizons">
-      <section class="treatment-horizon treatment-horizon-now"><h2>0–30 dias</h2>${list('0-30')}</section>
-      <section class="treatment-horizon"><h2>1–3 meses</h2>${list('1-3')}</section>
-      <section class="treatment-horizon"><h2>3–12 meses</h2>${list('3-12')}</section>
-    </div>
+    ${matrix}${gap}
     <section class="report-block"><h2>Pulso · 4–8 semanas</h2>${pulse}</section>
     <section class="report-block"><h2>Domínio Cynefin</h2><ul>${domains}</ul>${grades}</section>`;
+}
+
+function renderMatrixCardNotes(item: TreatmentConduct): string {
+  const parts = [
+    item.cynefin ? `<p>${escapeHtml(cynefinLine(item.cynefin))}</p>` : '',
+    item.evidenceGrade
+      ? `<p>Evidência ${item.evidenceGrade}. ${escapeHtml(evidenceGradeReading[item.evidenceGrade])}.</p>${item.evidenceGrade === 'D' ? '<p>Conduta D entra como experimento explícito.</p>' : ''}`
+      : '',
+    item.archetype
+      ? `<p>Arquétipo (padrão provável): ${escapeHtml(item.archetype)}.${item.prognosisWithoutTreatment ? ` Sem tratamento: ${escapeHtml(item.prognosisWithoutTreatment)}` : ''}</p>`
+      : '',
+    item.learningMode
+      ? `<p>Modalidade de aprendizado: ${escapeHtml(learningModeReading[item.learningMode])}.</p>`
+      : '',
+    item.unlocks?.length
+      ? `<p>Desbloqueia: ${escapeHtml(item.unlocks.join('; '))}.</p>`
+      : '',
+    item.lowTransferWarning
+      ? '<p class="report-gap">Aviso: baixa transferência — treinamento sem mudar o ambiente raramente vira prática.</p>'
+      : '',
+    item.doesNotSolve
+      ? `<p><strong>O que este caminho não resolve.</strong> ${escapeHtml(item.doesNotSolve)}</p>`
+      : '',
+  ].filter(Boolean);
+  if (!parts.length) return '';
+  return `<details class="treatment-matrix-card-notes"><summary>Notas</summary>${parts.join('')}</details>`;
+}
+
+function renderMatrixCard(item: TreatmentConduct, order: number, now: boolean): string {
+  const dependency = item.dependency
+    ? `<p class="treatment-matrix-card-depends">${escapeHtml(item.dependency)}</p>`
+    : '';
+  const cynefin = item.cynefin
+    ? `<span class="treatment-matrix-pill treatment-matrix-pill--cynefin">${escapeHtml(cynefinLine(item.cynefin).split(' — ')[0]!)}</span>`
+    : '';
+  const evidence = item.evidenceGrade
+    ? `<span class="treatment-matrix-pill treatment-matrix-pill--evidence">Evidência ${item.evidenceGrade}</span>`
+    : '';
+  const pills = cynefin || evidence
+    ? `<div class="treatment-matrix-card-pills">${cynefin}${evidence}</div>`
+    : '';
+  const nowClass = now ? ' treatment-matrix-card--now' : '';
+  return `<article class="treatment-matrix-card${nowClass}"><p class="treatment-matrix-card-order">${order}</p>${dependency}<p class="treatment-matrix-card-action">${escapeHtml(item.action)}</p><p class="treatment-matrix-card-owner">${escapeHtml(item.owner)}</p><p class="treatment-matrix-card-success">${escapeHtml(item.success)}</p>${pills}${renderMatrixCardNotes(item)}</article>`;
+}
+
+function renderAuthorityBars(activeCount: number, totalCount: number): string {
+  if (totalCount <= 0) return '';
+  const bars = Array.from({ length: totalCount }, (_, index) => {
+    const on = index < activeCount ? ' treatment-matrix-bar--on' : '';
+    return `<i class="treatment-matrix-bar${on}"></i>`;
+  }).join('');
+  return `<span class="treatment-matrix-bars" aria-hidden="true">${bars}</span>`;
+}
+
+function renderTreatmentMatrix(matrix: ReturnType<typeof projectTreatmentMatrix>): string {
+  const horizons = ['0-30', '1-3', '3-12'] as const;
+  const headers = horizons
+    .map((horizon) => {
+      const label = horizon === '0-30'
+        ? `${matrix.horizonHeaders[horizon]} · ativas agora`
+        : matrix.horizonHeaders[horizon];
+      return `<div class="treatment-matrix-header">${escapeHtml(label)}</div>`;
+    })
+    .join('');
+  const rows = matrix.rows.map((row) => {
+    const cells = horizons.map((horizon) => {
+      const items = row.cells[horizon];
+      const now = horizon === '0-30';
+      const body = items.map((item, index) => renderMatrixCard(item, index + 1, now)).join('');
+      const nowClass = now ? ' treatment-matrix-cell--now' : ' treatment-matrix-cell--later';
+      const nowStyle = now ? ' style="background:var(--accent-soft)"' : '';
+      return `<div data-horizon="${horizon}" class="treatment-matrix-cell${nowClass}"${nowStyle}>${body}</div>`;
+    }).join('');
+    return `<div class="treatment-matrix-row" data-authority="${row.authority}"><div class="treatment-matrix-authority"><p class="treatment-matrix-label">${escapeHtml(row.label)}</p><p class="treatment-matrix-subtitle">${escapeHtml(row.subtitle)}</p><p class="treatment-matrix-active"><strong>Ativas: ${row.activeCount} de ${row.totalCount}</strong>${renderAuthorityBars(row.activeCount, row.totalCount)}</p></div>${cells}</div>`;
+  }).join('');
+  return `<div class="treatment-matrix"><div class="treatment-matrix-head"><div class="treatment-matrix-corner"></div>${headers}</div>${rows}</div>`;
 }
 
 export function renderAudiencePage(readings: AudienceReading[]): string {

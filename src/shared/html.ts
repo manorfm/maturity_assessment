@@ -392,6 +392,32 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .readiness-prereq-percent { font-size:15px; font-weight:600; text-align:right }
     .report-conduct-action { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35; margin:0 0 8px }
     .treatment-depends { color:var(--ink2); font-size:14px }
+    .treatment-matrix { display:grid; gap:12px; width:100%; margin-top:28px; padding-top:28px; border-top:1px solid var(--rule) }
+    .treatment-matrix-head, .treatment-matrix-row { display:grid; grid-template-columns:minmax(140px,0.9fr) repeat(3,minmax(0,1fr)); gap:12px; align-items:start }
+    .treatment-matrix-header { font-family:"IBM Plex Sans",sans-serif; font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink2) }
+    .treatment-matrix-authority { min-width:0 }
+    .treatment-matrix-label { margin:0 0 4px; font-family:Newsreader, Georgia, serif; font-size:22px; font-weight:500; line-height:1.2 }
+    .treatment-matrix-subtitle { margin:0 0 4px; color:var(--ink3); font-size:13px }
+    .treatment-matrix-active { margin:0 0 4px; color:var(--ink2); font-size:13px; display:flex; flex-wrap:wrap; align-items:center; gap:8px }
+    .treatment-matrix-bars { display:inline-flex; gap:3px; align-items:center }
+    .treatment-matrix-bar { display:inline-block; width:18px; height:8px; border-radius:2px; background:var(--rule) }
+    .treatment-matrix-bar--on { background:var(--accent) }
+    .treatment-matrix-cell { min-width:0; display:flex; flex-direction:column; gap:10px; padding:10px; border-radius:10px; box-sizing:border-box }
+    .treatment-matrix-cell--now { background:var(--accent-soft) }
+    .treatment-matrix-cell--later { background:var(--sunk) }
+    .treatment-matrix-card { margin:0; padding:12px 14px; background:var(--surface); border:1px solid var(--rule); border-radius:8px; display:flex; flex-direction:column; gap:6px; box-sizing:border-box }
+    .treatment-matrix-card--now { border-color:var(--accent) }
+    .treatment-matrix-card-order { margin:0; font-size:12px; font-weight:700; color:var(--ink3) }
+    .treatment-matrix-card-depends { margin:0; font-size:12px; color:var(--ink3) }
+    .treatment-matrix-card-action { margin:0; font-size:14px; font-weight:600; line-height:1.35; color:var(--ink) }
+    .treatment-matrix-card-owner, .treatment-matrix-card-success { margin:0; font-size:12px; color:var(--ink2); line-height:1.35 }
+    .treatment-matrix-card-pills { margin-top:auto; display:flex; flex-wrap:wrap; gap:6px }
+    .treatment-matrix-pill { display:inline-flex; align-items:center; padding:3px 9px; border-radius:999px; font-size:12px; font-weight:500; white-space:nowrap }
+    .treatment-matrix-pill--cynefin { color:var(--ink2); background:var(--sunk); border:1px solid transparent }
+    .treatment-matrix-pill--evidence { color:var(--ink); background:transparent; border:1px solid var(--ink3) }
+    .treatment-matrix-card-notes { margin:0; font-size:12px; color:var(--ink2) }
+    .treatment-matrix-card-notes summary { cursor:pointer; font-weight:600 }
+    .treatment-matrix-card-notes p { margin:6px 0 0 }
     .treatment-horizons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; width:100%; margin-top:28px; padding-top:28px; border-top:1px solid var(--rule) }
     .treatment-horizon { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px; min-width:0 }
     .treatment-horizon-now { background:var(--accent-soft) }
@@ -467,7 +493,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .frontier-start-card { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:24px; display:flex; flex-direction:column; gap:14px }
     .frontier-start-kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3); margin:0 }
     .frontier-unplaced { margin:0 0 24px }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint,.readiness-card,.frontier-start-grid{grid-template-columns:1fr} .frontier-rung{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.treatment-matrix-head,.treatment-matrix-row,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint,.readiness-card,.frontier-start-grid{grid-template-columns:1fr} .frontier-rung{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems,.map-overview-systems{grid-template-columns:1fr} }
   </style>
 </head>

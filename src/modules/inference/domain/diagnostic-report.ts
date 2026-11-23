@@ -101,7 +101,7 @@ const supportLabel = (confidence: number): string => {
 };
 
 const authorityOwner = (authority?: string): TreatmentConduct['authority'] => {
-  if (authority === 'portfolio-leadership' || authority === 'organizational-governance') return 'direction';
+  if (authority === 'portfolio-leadership' || authority === 'organizational-governance' || authority === 'cross-team') return 'direction';
   if (authority === 'architecture' || authority === 'platform') return 'specialist';
   if (authority === 'team') return 'team';
   return 'management';

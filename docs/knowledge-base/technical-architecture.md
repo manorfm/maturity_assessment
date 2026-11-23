@@ -255,8 +255,17 @@ aprendizado: o que destrava agora fica em 0–30 dias, o que espera um
 pré-requisito fica em 1–3 meses e o que só cabe depois da fronteira fica
 em 3–12 meses. Conduta dependente não é experimento de 30 dias. O laudo
 recebe a mesma dependência do portfólio e a seção de 30 dias só lista
-horizonte 0–30. A tela mostra as três colunas; coluna vazia diz que não
-há conduta naquele horizonte. “depende de” fica no cartão. O pulso só aparece com item-âncora.
+horizonte 0–30. A tela do plano (`projectTreatmentMatrix` +
+`.treatment-matrix`) agrupa active ∪ waiting ∪ deferred em linhas de
+autoridade × colunas de horizonte, com “Ativas: N de M” contando só
+horizonte 0–30 por autoridade; o header 0–30 lê “ativas agora”, a coluna
+usa `.treatment-matrix-cell--now` com fundo `accent-soft` (demais com
+`sunk`) e cartões compactos `.treatment-matrix-card` (borda accent em
+0–30; Cynefin/evidência em pills; notas longas em `<details>`); sem
+conduta publicada, não há matriz nem as três colunas antigas. A autoridade da conduta no plano mapeia
+`portfolio-leadership`, `organizational-governance` e `cross-team` para
+a linha Direção; `team` para Times; `architecture`/`platform` para
+Especialistas; o restante para Gestão. “depende de” fica no cartão. O pulso só aparece com item-âncora.
 Organização deixou de ser faixa. O chrome do
 relatório, da entrevista e da administração usa os tokens claro/escuro do
 protótipo, Newsreader e IBM Plex Sans. A página manage (`manage-workspace`)

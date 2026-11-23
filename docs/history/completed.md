@@ -1,5 +1,22 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-23 — Plano matriz chrome UX (ativas agora)
+
+- Header 0–30 com “ativas agora”; `.treatment-matrix-cell--now` +
+  `accent-soft`; cartões `.treatment-matrix-card` compactos com pills e
+  notas em `<details>`; label de autoridade em Newsreader 22px. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
+## 2026-11-23 — Plano matriz autoridade×horizonte
+
+- `projectTreatmentMatrix` agrupa condutas em linhas de autoridade ×
+  colunas de horizonte; `renderTreatmentPage` publica `.treatment-matrix`
+  (ou lacuna sem grade); “Ativas: N de M” conta 0–30; `cross-team` mapeia
+  para a linha Direção. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-23 — Fronteira escada UX (legenda + start-grid)
 
 - Escada com `column-reverse`, faixa por degrau, status do protótipo,

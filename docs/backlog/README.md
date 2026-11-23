@@ -60,9 +60,9 @@ do cartão, em
 
 A paridade das telas com o protótipo está no
 [`plano de paridade visual`](visual-parity-plan.md) (auditoria completa
-2026-11-22: mapa 6a–6d, ficha 7a–7b e prontidão estrutural feitos;
-Fronteira/Plano/Histórico ainda déficit estrutural; próximo: fronteira
-escada). A publicação do motor para o desenho (fases 1–10) fechou em
+2026-11-22: mapa 6a–6d, ficha 7a–7b, prontidão, fronteira escada e
+plano matriz feitos; Histórico ainda déficit estrutural; próximo:
+histórico comparador). A publicação do motor para o desenho (fases 1–10) fechou em
 `sdd-docs/maturity-model-publication`, fora deste repositório. Isso não
 é calibração nem piloto humano.
 

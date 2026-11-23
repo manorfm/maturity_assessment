@@ -247,6 +247,8 @@ test('travessia das nove páginas só encontra número emitido pela publicação
 
   const plan = projectTreatmentPlan([finding]);
   const planoHtml = renderTreatmentPage(plan);
+  assert.match(planoHtml, /class="[^"]*\btreatment-matrix\b/);
+  assert.doesNotMatch(planoHtml, /class="[^"]*\btreatment-horizons\b/);
 
   const operations = map.systems.find((system) => system.id === 'operations')
     ?? map.systems.find((system) => system.id === 'engineering')!;

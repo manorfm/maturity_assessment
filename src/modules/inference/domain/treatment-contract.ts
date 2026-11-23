@@ -129,3 +129,67 @@ export function classifyLearningMode(action: string): LearningMode {
 export function transferWarningFor(mode: LearningMode): boolean {
   return mode === 'course';
 }
+
+export type TreatmentMatrixCellKey = TreatmentConduct['horizon'];
+
+export type TreatmentMatrixRow = {
+  authority: TreatmentConduct['authority'];
+  label: string;
+  subtitle: string;
+  activeCount: number;
+  totalCount: number;
+  cells: Record<TreatmentMatrixCellKey, TreatmentConduct[]>;
+};
+
+export type TreatmentMatrix = {
+  rows: TreatmentMatrixRow[];
+  horizonHeaders: Record<TreatmentMatrixCellKey, string>;
+};
+
+const MATRIX_AUTHORITIES = ['direction', 'management', 'team', 'specialist'] as const;
+
+const MATRIX_LABELS: Record<(typeof MATRIX_AUTHORITIES)[number], string> = {
+  direction: 'Direção',
+  management: 'Gestão',
+  team: 'Times',
+  specialist: 'Especialistas',
+};
+
+const MATRIX_SUBTITLES: Record<(typeof MATRIX_AUTHORITIES)[number], string> = {
+  direction: 'decisão, política, investimento',
+  management: 'processo e prioridades',
+  team: 'prática do dia a dia',
+  specialist: 'plataforma, SRE, segurança',
+};
+
+const MATRIX_HORIZON_HEADERS: Record<TreatmentMatrixCellKey, string> = {
+  '0-30': '0–30 dias',
+  '1-3': '1–3 meses',
+  '3-12': '3–12 meses',
+};
+
+const MATRIX_HORIZONS = ['0-30', '1-3', '3-12'] as const;
+
+/** Agrupa condutas publicadas em linhas de autoridade × colunas de horizonte. */
+export function projectTreatmentMatrix(conducts: TreatmentConduct[]): TreatmentMatrix {
+  const rows = MATRIX_AUTHORITIES.map((authority) => {
+    const cells: Record<TreatmentMatrixCellKey, TreatmentConduct[]> = {
+      '0-30': [],
+      '1-3': [],
+      '3-12': [],
+    };
+    for (const item of conducts) {
+      if (item.authority === authority) cells[item.horizon].push(item);
+    }
+    const totalCount = MATRIX_HORIZONS.reduce((sum, horizon) => sum + cells[horizon].length, 0);
+    return {
+      authority,
+      label: MATRIX_LABELS[authority],
+      subtitle: MATRIX_SUBTITLES[authority],
+      activeCount: cells['0-30'].length,
+      totalCount,
+      cells,
+    };
+  });
+  return { rows, horizonHeaders: { ...MATRIX_HORIZON_HEADERS } };
+}

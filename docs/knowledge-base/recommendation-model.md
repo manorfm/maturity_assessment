@@ -185,7 +185,9 @@ o plano diz “depende de” essa ação no cartão. Sem
 dependência, a linha é “sem dependência”. O laudo usa a mesma
 dependência, e a seção de 30 dias só lista horizonte 0–30. O horizonte sai dessa
 dependência e do modo de aprendizado: conduta dependente não é
-experimento de 30 dias, e coluna sem conduta declara a lacuna. O pulso de 4–8 semanas só
+experimento de 30 dias. O plano publica a matriz autoridade × horizonte
+(sem refiltrar o portfólio); célula vazia fica vazia, e sem conduta a
+página declara a lacuna sem grade. O pulso de 4–8 semanas só
 lista item-âncora das folhas ativas; sem âncora, a página declara a
 lacuna. Cynefin na conduta é uma linha (aplicar, analisar, experimentar,
 estabilizar). Grau D entra como experimento explícito.

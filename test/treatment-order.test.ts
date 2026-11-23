@@ -90,10 +90,11 @@ test('plano desenha o cartão, a seta e o pulso só com item-âncora', () => {
     }),
   ]);
   const html = renderTreatmentPage(plan);
+  assert.match(html, /class="[^"]*\btreatment-matrix\b/);
+  assert.doesNotMatch(html, /class="[^"]*\btreatment-horizons\b/);
   const activeAt = html.indexOf('Nomear quem responde pelo serviço');
-  const months = html.indexOf('1–3 meses');
   const waitingAt = html.indexOf('Integrar o trabalho no mesmo dia');
-  assert.ok(activeAt >= 0 && months > activeAt && waitingAt > months);
+  assert.ok(activeAt >= 0 && waitingAt > activeAt);
   assert.doesNotMatch(html, /depende da de origem/);
   assert.match(html, /sem dependência/);
   assert.match(html, /depende de Nomear quem responde pelo serviço/);
@@ -102,8 +103,10 @@ test('plano desenha o cartão, a seta e o pulso só com item-âncora', () => {
   assert.match(html, /Claro — aplicar|Complicado — analisar|Complexo — experimentar|Caótico — estabilizar/);
   assert.match(html, /Evidência D/);
   assert.match(html, /experimento explícito/);
-  assert.doesNotMatch(html, /depende de D1|Pix/);
+  assert.doesNotMatch(html, /depende de D1|Pix|Orbital/);
   const empty = renderTreatmentPage({ active: [], waiting: [], deferred: [], pulse: [] });
   assert.match(empty, /item-âncora/);
   assert.doesNotMatch(empty, /3 a 6 itens/);
+  assert.doesNotMatch(empty, /class="[^"]*\btreatment-matrix\b/);
+  assert.doesNotMatch(empty, /class="[^"]*\btreatment-horizons\b/);
 });
