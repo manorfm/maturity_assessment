@@ -171,8 +171,15 @@ marco repete a ação, o horizonte e o critério da conduta. O percentual
 só aparece quando a publicação do índice inclui alvo. Riscos e
 premissas fecham o percurso.
 O histórico compara a leitura mais recente com uma anterior. O seletor
-só entra quando há mais de uma anterior. Folha com posterior nas duas
-fotografias publica avançou, regrediu, estável ou incerto; sem essa
+só entra quando há mais de uma anterior. Com o par, a página publica
+`previousReading`/`currentReading` (label, índice, faixa e alvo opcional)
+e desenha `.history-compare` com percentuais, faixas e trilho dual
+(`.history-compare-bands`) na escala 0–100; a linha de alvo
+(`.history-compare-target`) só entra quando as duas fotografias
+guardaram alvo. A grade `.history-change-grid` lista Melhorou e Piorou
+a partir de `evolution.nodes` (advanced/regressed); sem evolução, as
+colunas ficam com lacuna e não inventam folhas. Folha com posterior nas
+duas fotografias publica avançou, regrediu, estável ou incerto; sem essa
 posterior, a página declara a lacuna. O chip de alvo aparece só quando
 as duas leituras guardadas incluem alvo; sem alvo numa delas, a página
 compara estágio e folha e não mostra percentual de alvo. A nota de

@@ -280,6 +280,13 @@ test('travessia das nove páginas só encontra número emitido pela publicação
     ],
   });
   const historicoHtml = renderHistoryPage(history);
+  assert.match(historicoHtml, /class="[^"]*\bhistory-compare\b/);
+  assert.match(historicoHtml, /Comparação/);
+  assert.equal(historicoHtml.includes('Orbital'), false);
+  assert.equal(historicoHtml.includes('13%'), false);
+  assert.equal(historicoHtml.includes('24%'), false);
+  assert.equal(historicoHtml.includes('45%'), false);
+  assert.doesNotMatch(historicoHtml, /0 a 60%/);
 
   const audiences = projectAudienceReadings({ findings: [finding], map });
   const audienciasHtml = renderAudiencePage(audiences);

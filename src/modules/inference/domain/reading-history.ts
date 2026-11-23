@@ -83,13 +83,33 @@ export function projectHistoryAssessment(input: {
 
 export type HistoryOption = { id: string; label: string; selected: boolean };
 
+/** Fatia publicada do comparador visual: só o que a fotografia guardou. */
+export type PublishedHistoryReading = {
+  label: string;
+  index: number;
+  band: [number, number];
+  target?: number;
+};
+
 export type HistoryPage = HistoryAssessment & {
   options: HistoryOption[];
   caution: string;
   capabilityGap?: string;
   /** Os dois alvos guardados. Ausente quando uma das fotografias não tem alvo. */
   targetChip?: string;
+  /** Ausente sem par de leituras. */
+  previousReading?: PublishedHistoryReading;
+  currentReading?: PublishedHistoryReading;
 };
+
+function publishReading(reading: IndexReading): PublishedHistoryReading {
+  return {
+    label: reading.label,
+    index: reading.index,
+    band: reading.band,
+    ...(reading.target !== undefined ? { target: reading.target } : {}),
+  };
+}
 
 /** Chip só com os percentuais já guardados. Uma leitura sem alvo não publica percentual. */
 function storedTargetChip(previous: IndexReading, current: IndexReading): string | undefined {
@@ -116,8 +136,12 @@ export function projectHistoryComparison(input: {
   const history = projectHistoryAssessment({ previous: selected, current });
   const targetChip = storedTargetChip(selected, current);
   const publishedChip = targetChip !== undefined ? { targetChip } : {};
+  const publishedPair = {
+    previousReading: publishReading(selected),
+    currentReading: publishReading(current),
+  };
   if (!selected.distribution || !current.distribution) {
-    return { ...history, options, caution: historyCaution, ...publishedChip };
+    return { ...history, options, caution: historyCaution, ...publishedChip, ...publishedPair };
   }
   const previousCapabilities = new Map((selected.context?.capabilities ?? []).map((item) => [item.id, item]));
   const leafNodes = (current.context?.capabilities ?? []).flatMap((item) => {
@@ -157,6 +181,7 @@ export function projectHistoryComparison(input: {
     options,
     caution: historyCaution,
     ...publishedChip,
+    ...publishedPair,
     ...(leavesCompared ? {} : { capabilityGap: 'A posterior de cada capacidade ainda não é guardada entre leituras.' }),
   };
 }

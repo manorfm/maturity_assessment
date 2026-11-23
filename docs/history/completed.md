@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-23 — Histórico comparador visual
+
+- Par de leituras publica `previousReading`/`currentReading`; view desenha
+  `.history-compare` (bands 0–100, alvo só com os dois), `.history-change-grid`
+  Melhorou\|Piorou a partir de `evolution.nodes`. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-23 — Plano matriz chrome UX (ativas agora)
 
 - Header 0–30 com “ativas agora”; `.treatment-matrix-cell--now` +

@@ -42,7 +42,7 @@ responsivo único, não duas artes.
 | 5 | Fronteira de aprendizado | 20 | **Escada F0–F5 feita** (listas = fallback) |
 | 6 | Plano de tratamento | 17 | **Matriz autoridade×horizonte feita** |
 | 7 | Walkthrough: Operação | 25 | Seções ok; **Marcos/Caminho** subcompostos |
-| 8 | Histórico e reavaliação | 24 | **Déficit estrutural** (comparador + bands) |
+| 8 | Histórico e reavaliação | 24 | Feito (comparador + bands + Melhorou\|Piorou) |
 | 9 | Visão por público | 17 | Campos próximos; falta **DecisãoPolíticaStack** tipado |
 
 ### Administração (wizard 1–4)
@@ -149,13 +149,15 @@ caminho / marcos / riscos / premissas). Gaps: trilho numerado; Alvo no
 hero; **Marcos = tabela Prazo \| Marco \| Critério** (produto = bullets);
 CaminhoStack/Tag. Não inventar % de índice de Operação do mock.
 
-### Histórico — déficit estrutural
+### Histórico — comparador visual
 
 Protótipo: seletor “Leitura anterior”; bloco Tecnologia com **dois % +
 bandas comparativas + linha de alvo**; chips de perfil; “Cada
 capacidade”; grade Melhorou \| Piorou; Achados; Note Atenção. Produto:
-texto P(melhora)/P(piora) + evolução. Comparar duas leituras publicadas
-é domínio parcial; **casca do comparador visual falta**.
+`previousReading`/`currentReading`, `.history-compare` (bands 0–100,
+alvo só com os dois guardados), `.history-change-grid` Melhorou\|Piorou
+a partir de `evolution.nodes`, mais P(·), evolução e Atenção. Escala do
+produto é 0–100 (não o “0 a 60%” do mock).
 
 ### Visão por público — composição
 
@@ -206,7 +208,7 @@ Copiar a **função**, nunca o caso Orbital:
 | Fronteira | Escada F0–F5 + stacks + fallback listas | Polimento fino ChartMark6 |
 | Plano | 3 horizontes + pulso + Cynefin lista | Matriz autoridade×horizonte + Ativas N/M + setas |
 | Walkthrough | Seções + trilha | Marcos tabela; CaminhoStack; Alvo; trilho |
-| Histórico | Seletor + P(·) + evolução | Comparador Tecnologia (bands+alvo); Melhorou\|Piorou; chips |
+| Histórico | Seletor + P(·) + evolução + comparador (bands+alvo) + Melhorou\|Piorou | Chips de perfil finos |
 | Visão por público | Dois lados + recorrer | DecisãoPolíticaStack tipado (sem CTO/CFO/Orbital) |
 
 ## Administração / entrevista — inalterado em espírito
@@ -244,7 +246,7 @@ de Orbital/`13%`/`24%`.
 3. ~~**Prontidão** cartão + grade pré-requisitos~~.
 4. ~~**Fronteira** escada F0–F5~~.
 5. ~~**Plano** matriz autoridade×horizonte~~.
-6. **Histórico** comparador visual.
+6. ~~**Histórico** comparador visual~~.
 7. Walkthrough Marcos/Caminho · Visão DecisãoPolíticaStack.
 8. Admin + entrevista (domínio primeiro).
 9. Prova transversal.
@@ -268,7 +270,7 @@ de Orbital/`13%`/`24%`.
 8. ~~Prontidão estrutural~~.
 9. ~~Fronteira escada~~.
 10. ~~Plano matriz~~.
-11. Histórico comparador — **próximo**.
-12. Walkthrough Marcos + Visão stack.
+11. ~~Histórico comparador~~.
+12. Walkthrough Marcos + Visão stack — **próximo**.
 13. Admin + entrevista.
 14. Prova transversal.

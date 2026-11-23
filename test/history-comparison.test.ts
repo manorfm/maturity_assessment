@@ -20,10 +20,16 @@ test('uma leitura só publica a lacuna, sem seletor e sem melhora', () => {
   });
   assert.match(page.gap ?? '', /duas leituras/);
   assert.equal(page.options.length, 0);
+  assert.equal('previousReading' in page ? (page as { previousReading?: unknown }).previousReading : undefined, undefined);
+  assert.equal('currentReading' in page ? (page as { currentReading?: unknown }).currentReading : undefined, undefined);
   const html = renderHistoryPage(page);
   assert.match(html, /duas leituras/);
   assert.doesNotMatch(html, /aria-label="Leitura anterior"/);
   assert.doesNotMatch(html, /Melhorou: P\(melhora\)/);
+  assert.doesNotMatch(html, /class="[^"]*\bhistory-compare\b/);
+  assert.doesNotMatch(html, /class="[^"]*\bhistory-change-grid\b/);
+  assert.equal(html.includes('Orbital'), false);
+  assert.equal(html.includes('45%'), false);
 });
 
 test('com mais de uma leitura anterior o seletor escolhe a fotografia comparada', () => {

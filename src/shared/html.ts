@@ -364,6 +364,28 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .history-selector { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0 }
     .history-selector a { border:1px solid var(--rule); border-radius:999px; padding:6px 12px; text-decoration:none; color:var(--ink2); font-size:14px }
     .history-selector a[aria-current="page"] { background:var(--accent-soft); color:var(--accent-ink); font-weight:600 }
+    .history-compare { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:24px; margin:16px 0; display:flex; flex-direction:column; gap:14px }
+    .history-compare h2 { margin:0; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3) }
+    .history-compare-row { display:grid; grid-template-columns:170px 90px minmax(0,1fr); gap:16px; align-items:center }
+    .history-compare-label { font-size:14px; color:var(--ink2) }
+    .history-compare-label--current { font-weight:600; color:var(--ink) }
+    .history-compare-index { font-family:Newsreader, Georgia, serif; font-size:34px; line-height:1; font-weight:500 }
+    .history-compare-band-text { font-size:13px; color:var(--ink2) }
+    .history-compare-bands { position:relative; width:100%; max-width:480px; height:34px; margin:4px 0 0 }
+    .history-compare-bands::before, .history-compare-bands::after { content:""; position:absolute; left:0; right:0; height:1px; background:var(--rule) }
+    .history-compare-bands::before { top:10px }
+    .history-compare-bands::after { top:24px }
+    .history-compare-band { position:absolute; height:5px; border-radius:3px; box-sizing:border-box }
+    .history-compare-band--previous { top:8px; background:var(--na-ink); opacity:.45 }
+    .history-compare-band--current { top:22px; background:var(--accent-soft); border:1px solid var(--accent) }
+    .history-compare-marker { position:absolute; width:10px; height:10px; border-radius:50%; box-sizing:border-box; transform:translateX(-50%) }
+    .history-compare-marker--previous { top:5px; background:var(--surface); border:2px solid var(--ink3) }
+    .history-compare-marker--current { top:18px; width:12px; height:12px; background:var(--accent); border:0 }
+    .history-compare-target { position:absolute; top:0; width:1px; height:34px; background:var(--ink); opacity:.4; transform:translateX(-50%) }
+    .history-change-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:40px; margin:20px 0; padding-top:24px; border-top:1px solid var(--rule) }
+    .history-change-column h3 { margin:0 0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3) }
+    .history-change-column ul { list-style:none; margin:0; padding:0 }
+    .history-change-column li { padding:10px 0; border-top:1px solid var(--rule); font-weight:600 }
     .audience-side + .audience-side { margin-top:22px }
     .audience-side h3 { font-family:Newsreader, Georgia, serif; font-size:18px; font-weight:500; margin:0 0 8px }
     .readiness-card, .report-conduct { background:var(--surface); border:1px solid var(--rule); margin:0 0 16px }
@@ -493,7 +515,7 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .frontier-start-card { background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:24px; display:flex; flex-direction:column; gap:14px }
     .frontier-start-kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink3); margin:0 }
     .frontier-unplaced { margin:0 0 24px }
-    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.treatment-matrix-head,.treatment-matrix-row,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint,.readiness-card,.frontier-start-grid{grid-template-columns:1fr} .frontier-rung{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
+    @media(max-width:980px){ .showcase-compare,.showcase-steps,.treatment-horizons,.treatment-matrix-head,.treatment-matrix-row,.report-findings,.report-conduct-grid,.report-unknowns-grid,.report-footer,.report-prognosis,.report-constraint,.readiness-card,.frontier-start-grid,.history-change-grid{grid-template-columns:1fr} .frontier-rung{grid-template-columns:1fr} .diagnostic-report{flex-direction:column} .report-sidebar{width:auto; position:static; max-height:none} .manage-report .report-sidebar{position:static; max-height:none} .report-block{grid-template-columns:1fr; gap:12px} .report-hero h1{font-size:1.85rem} .report-quote p{font-size:28px} .report-mechanism{font-size:21px} .report-index{font-size:56px} .report-main{padding:24px 16px 48px} .report-divergence-sides,.report-divergence-bar{grid-template-columns:1fr} .area-map-systems,.map-overview-systems,.map-radars-grid{grid-template-columns:1fr} .admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))} .admin-panel{grid-template-columns:1fr; gap:24px} .admin-body{flex-direction:column} .admin-steps{width:auto; border-right:0; border-bottom:1px solid var(--rule,#DCD4C6); flex-direction:row; flex-wrap:wrap; padding:16px} }
     @media(max-width:700px){ main{margin-top:28px}.card{padding:18px} table{font-size:.9rem}.hierarchy-row{margin-left:min(calc(var(--level) * 14px),28%);grid-template-columns:18px 1fr}.hierarchy-actions{grid-column:2}.capability-navigation{align-items:flex-start;flex-direction:column;gap:10px}.breadcrumb{width:100%}.executive-facts,.executive-action-grid,.decision-grid,.radar-drill-navigation,.observation-grid{grid-template-columns:1fr}.radar-axis-label{font-size:8.5px}.area-map-systems,.map-overview-systems{grid-template-columns:1fr} }
   </style>
 </head>

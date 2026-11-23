@@ -812,6 +812,42 @@ export function renderFrontierPage(input: FrontierBrief & { readinessHref?: stri
     ${legend}<div class="frontier-ladder">${rungs}</div>${unplaced}${startGrid}`;
 }
 
+type HistoryReadingView = {
+  label: string;
+  index: number;
+  band: [number, number];
+  target?: number;
+};
+
+function renderHistoryCompare(previous: HistoryReadingView, current: HistoryReadingView): string {
+  const row = (reading: HistoryReadingView, emphasis: boolean) => {
+    const labelClass = emphasis ? 'history-compare-label history-compare-label--current' : 'history-compare-label';
+    return `<div class="history-compare-row"><span class="${labelClass}">${escapeHtml(reading.label)}</span><span class="history-compare-index">${reading.index}%</span><span class="history-compare-band-text">faixa ${reading.band[0]}–${reading.band[1]}%</span></div>`;
+  };
+  const previousLeft = clampPercent(previous.band[0]);
+  const previousWidth = Math.max(0, clampPercent(previous.band[1]) - previousLeft);
+  const currentLeft = clampPercent(current.band[0]);
+  const currentWidth = Math.max(0, clampPercent(current.band[1]) - currentLeft);
+  const showTargets = previous.target !== undefined && current.target !== undefined;
+  const targets = showTargets
+    ? `<i class="history-compare-target" style="left:${cssPercent(previous.target!)}"></i><i class="history-compare-target" style="left:${cssPercent(current.target!)}"></i>`
+    : '';
+  const bands = `<div class="history-compare-bands" aria-hidden="true"><i class="history-compare-band history-compare-band--previous" style="left:${cssPercent(previousLeft)};width:${cssPercent(previousWidth)}"></i><i class="history-compare-marker history-compare-marker--previous" style="left:${cssPercent(previous.index)}"></i><i class="history-compare-band history-compare-band--current" style="left:${cssPercent(currentLeft)};width:${cssPercent(currentWidth)}"></i><i class="history-compare-marker history-compare-marker--current" style="left:${cssPercent(current.index)}"></i>${targets}</div>`;
+  return `<section class="history-compare"><h2>Comparação</h2>${row(previous, false)}${row(current, true)}${bands}</section>`;
+}
+
+function renderHistoryChangeGrid(evolution?: EvolutionReport): string {
+  const advanced = evolution?.nodes.filter((node) => node.state === 'advanced') ?? [];
+  const regressed = evolution?.nodes.filter((node) => node.state === 'regressed') ?? [];
+  const column = (heading: string, nodes: Array<{ label: string }>) => {
+    const body = nodes.length
+      ? `<ul>${nodes.map((node) => `<li>${escapeHtml(node.label)}</li>`).join('')}</ul>`
+      : '<p class="report-gap">Nenhuma mudança publicada neste intervalo.</p>';
+    return `<div class="history-change-column"><h3>${heading}</h3>${body}</div>`;
+  };
+  return `<section class="history-change-grid">${column('Melhorou', advanced)}${column('Piorou', regressed)}</section>`;
+}
+
 export function renderHistoryPage(input: {
   change?: string;
   gap?: string;
@@ -824,8 +860,23 @@ export function renderHistoryPage(input: {
   caution?: string;
   capabilityGap?: string;
   targetChip?: string;
+  previousReading?: HistoryReadingView;
+  currentReading?: HistoryReadingView;
 } = {}): string {
-  const { change, gap, pImprove, pRegress, pStable, threshold = 0.8, evolution, caution, capabilityGap, targetChip } = input;
+  const {
+    change,
+    gap,
+    pImprove,
+    pRegress,
+    pStable,
+    threshold = 0.8,
+    evolution,
+    caution,
+    capabilityGap,
+    targetChip,
+    previousReading,
+    currentReading,
+  } = input;
   const options = input.options ?? [];
   const selector = options.length > 1
     ? `<nav class="history-selector" aria-label="Leitura anterior">${options.map((item) => `<a href="?previous=${escapeHtml(item.id)}"${item.selected ? ' aria-current="page"' : ''}>${escapeHtml(item.label)}</a>`).join('')}</nav>`
@@ -848,7 +899,10 @@ export function renderHistoryPage(input: {
     : '';
   const leaves = capabilityGap ? `<p class="report-gap">${escapeHtml(capabilityGap)}</p>` : '';
   const chip = targetChip ? `<p class="history-target">${escapeHtml(targetChip)}</p>` : '';
-  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora), P(piora) ou P(estável) ≥ ${threshold.toFixed(2)}.</p>${selector}</header>${body}${chip}${evolution ? renderEvolution(evolution) : ''}${leaves}${note}`;
+  const hasPair = previousReading !== undefined && currentReading !== undefined;
+  const compare = hasPair ? renderHistoryCompare(previousReading, currentReading) : '';
+  const changeGrid = hasPair ? renderHistoryChangeGrid(evolution) : '';
+  return `<header class="report-hero"><p class="report-kicker">Histórico e reavaliação</p><h1>Compare duas leituras</h1><p>Cada avaliação fica guardada como uma leitura. Mudança só com P(melhora), P(piora) ou P(estável) ≥ ${threshold.toFixed(2)}.</p>${selector}</header>${body}${chip}${compare}${evolution ? renderEvolution(evolution) : ''}${changeGrid}${leaves}${note}`;
 }
 
 function renderEvolution(report: EvolutionReport): string {
