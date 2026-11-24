@@ -1,5 +1,13 @@
 # Histórico de evoluções concluídas
 
+## 2026-11-23 — Walkthrough Marcos tabela
+
+- `WalkthroughMilestone` tipado (`prazo`/`marco`/`criterio`); view
+  `.walk-milestones` com `.walk-milestone-row`; lacuna sem inventar
+  horizontes. Ver
+  [`visual-parity-plan.md`](../backlog/visual-parity-plan.md) e
+  [`technical-architecture.md`](../knowledge-base/technical-architecture.md).
+
 ## 2026-11-23 — Histórico comparador visual
 
 - Par de leituras publica `previousReading`/`currentReading`; view desenha

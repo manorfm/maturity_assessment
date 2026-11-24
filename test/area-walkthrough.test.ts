@@ -80,7 +80,12 @@ test('walkthrough da Operação projeta as 8 seções e a próxima fase da rubri
   assert.ok(walk.sections.next.some((line) => /1\s*→\s*2|Reativo.*Repetível|investiga/i.test(line)));
   assert.match(walk.sections.path.d30, /runbook/i);
   assert.match(walk.sections.path.d90, /plantão|rodízio/i);
-  assert.ok(walk.sections.milestones.some((line) => /investigar|pulso/i.test(line)));
+  assert.ok(walk.sections.milestones.some((row) => {
+    const text = typeof row === 'string'
+      ? row
+      : `${(row as { prazo?: string; marco?: string; criterio?: string }).prazo ?? ''} ${(row as { marco?: string }).marco ?? ''} ${(row as { criterio?: string }).criterio ?? ''}`;
+    return /investigar|pulso|runbook|plantão|rodízio/i.test(text);
+  }));
   assert.ok(walk.sections.risks.length);
   assert.ok(walk.sections.assumptions.length);
 
@@ -177,19 +182,26 @@ test('marco da Operação repete ação, horizonte e critério da conduta', () =
     band: [20, 40] as [number, number],
     coverage: 60,
   };
+  const prazoByHorizon = { '0-30': '30 dias', '1-3': '90 dias', '3-12': '6 meses' } as const;
   const walk = projectAreaWalkthrough({ ...base, index: publishedWithoutTarget });
+  type MilestoneRow = { prazo: string; marco: string; criterio: string };
+  const rows = walk.sections.milestones as unknown as MilestoneRow[];
   for (const conduct of conducts) {
-    assert.ok(
-      walk.sections.milestones.some((line) => line.includes(conduct.action) && line.includes(conduct.horizon) && line.includes(conduct.success)),
-      walk.sections.milestones.join(' | '),
-    );
+    const found = rows.find((row) => row.marco === conduct.action);
+    assert.ok(found, `marco tipado ausente: ${conduct.action}`);
+    assert.equal(found.prazo, prazoByHorizon[conduct.horizon]);
+    assert.equal(found.criterio, conduct.success);
   }
-  const pulseLine = walk.sections.milestones.find((line) => line.startsWith('Pulso:'));
-  assert.ok(pulseLine?.includes('Quem investigou o último problema?'));
-  assert.equal(pulseLine?.includes('%'), false);
+  const pulseRow = rows.find((row) => row.prazo === 'Pulso' || row.criterio === 'Quem investigou o último problema?');
+  assert.ok(pulseRow);
+  assert.equal(pulseRow.criterio, 'Quem investigou o último problema?');
+  assert.equal(pulseRow.criterio.includes('%'), false);
 
   const milestones = milestoneSection(renderWalkthrough(walk));
   assert.ok(milestones.includes(conducts[2]!.success));
+  assert.match(milestones, /class="[^"]*\bwalk-milestones\b/);
+  assert.match(milestones, /class="[^"]*\bwalk-milestone-row\b/);
+  assert.doesNotMatch(milestones, /<ul[\s>]/);
   assert.equal(milestones.includes('%'), false);
   assert.equal(milestones.includes('Orbital'), false);
   assert.equal(milestones.includes('45%'), false);
@@ -200,6 +212,10 @@ test('marco da Operação repete ação, horizonte e critério da conduta', () =
     ...base,
     index: { ...publishedWithoutTarget, target: 62 },
   });
+  const targetedRows = targeted.sections.milestones as unknown as MilestoneRow[];
+  const targetedLong = targetedRows.find((row) => row.marco === conducts[2]!.action);
+  assert.ok(targetedLong?.criterio.includes(conducts[2]!.success));
+  assert.ok(targetedLong?.criterio.includes('alvo 62%'));
   const targetedMilestones = milestoneSection(renderWalkthrough(targeted));
   assert.ok(targetedMilestones.includes(conducts[2]!.success));
   assert.ok(targetedMilestones.includes('alvo 62%'));
@@ -207,8 +223,8 @@ test('marco da Operação repete ação, horizonte e critério da conduta', () =
   assert.equal(targetedMilestones.includes('13%'), false);
   assert.equal(targetedMilestones.includes('Orbital'), false);
   assert.equal(targetedMilestones.includes('alvo 45%'), false);
-  const targetedPulse = targeted.sections.milestones.find((line) => line.startsWith('Pulso:'));
-  assert.equal(targetedPulse?.includes('%'), false);
+  const targetedPulse = targetedRows.find((row) => row.prazo === 'Pulso' || row.criterio.includes('Quem investigou'));
+  assert.equal(targetedPulse?.criterio.includes('%'), false);
 
   const empty = projectAreaWalkthrough({
     ...base,
@@ -216,13 +232,17 @@ test('marco da Operação repete ação, horizonte e critério da conduta', () =
     pulse: [],
     index: { ...publishedWithoutTarget, target: 62 },
   });
+  const emptyRows = empty.sections.milestones as unknown as MilestoneRow[];
+  assert.ok(
+    emptyRows.length === 0
+      || emptyRows.some((row) => /conduta publicada/.test(`${row.prazo} ${row.marco} ${row.criterio}`)),
+  );
   const emptyMilestones = milestoneSection(renderWalkthrough(empty));
-  assert.ok(empty.sections.milestones.some((line) => line.includes('conduta publicada')));
-  assert.ok(emptyMilestones.includes('conduta publicada'));
-  assert.equal(emptyMilestones.includes('%'), false);
+  assert.match(emptyMilestones, /report-gap|conduta publicada/);
   assert.equal(emptyMilestones.includes('Orbital'), false);
   assert.equal(emptyMilestones.includes('45%'), false);
   assert.equal(emptyMilestones.includes('13%'), false);
+  assert.equal(emptyMilestones.includes('38%'), false);
 });
 
 test('área sem achados locais declara lacuna sem inventar próxima fase', () => {

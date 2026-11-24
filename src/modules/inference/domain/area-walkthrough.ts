@@ -28,6 +28,12 @@ export type WalkthroughPulse = {
   leafId: string;
 };
 
+export type WalkthroughMilestone = {
+  prazo: string;
+  marco: string;
+  criterio: string;
+};
+
 export type AreaWalkthroughPath = {
   d30: string;
   d90: string;
@@ -40,7 +46,7 @@ export type AreaWalkthroughSections = {
   working: string;
   next: string[];
   path: AreaWalkthroughPath;
-  milestones: string[];
+  milestones: WalkthroughMilestone[];
   risks: string[];
   assumptions: string[];
 };
@@ -299,28 +305,37 @@ function projectPath(conducts: TreatmentConduct[]): AreaWalkthroughPath {
   };
 }
 
+const MILESTONE_PRAZO: Record<TreatmentConduct['horizon'], string> = {
+  '0-30': '30 dias',
+  '1-3': '90 dias',
+  '3-12': '6 meses',
+};
+
 function projectMilestones(
   pulse: WalkthroughPulse[],
   leaves: Set<string>,
   conducts: TreatmentConduct[],
   index?: IndexPublication,
-): string[] {
+): WalkthroughMilestone[] {
   const localPulse = pulse.filter((item) => leaves.has(item.leafId));
-  const fromPulse = localPulse.map((item) => `Pulso: ${item.prompt}`);
+  const fromPulse = localPulse.map((item): WalkthroughMilestone => ({
+    prazo: 'Pulso',
+    marco: 'Pulso',
+    criterio: item.prompt,
+  }));
   const target = publishedMilestoneTarget(index);
-  const fromConduct = conducts.map((conduct) => conductMilestone(conduct, target));
-  const lines = [...fromPulse, ...fromConduct];
-  return lines.length ? lines : ['O marco é o critério de sucesso da conduta publicada, não uma data inventada.'];
+  const fromConduct = conducts.map((conduct): WalkthroughMilestone => ({
+    prazo: MILESTONE_PRAZO[conduct.horizon],
+    marco: conduct.action,
+    criterio: target ? `${conduct.success} · alvo ${target}%` : conduct.success,
+  }));
+  return [...fromPulse, ...fromConduct];
 }
 
 /** O percentual do marco é o alvo da publicação do índice, quando ele existe. */
-function publishedMilestoneTarget(index?: IndexPublication): string {
-  if (!index?.published || index.target === undefined) return '';
-  return ` · alvo ${index.target}%`;
-}
-
-function conductMilestone(conduct: TreatmentConduct, target: string): string {
-  return `Marco: ${conduct.action} · horizonte ${conduct.horizon} · critério ${conduct.success}${target}`;
+function publishedMilestoneTarget(index?: IndexPublication): number | undefined {
+  if (!index?.published || index.target === undefined) return undefined;
+  return index.target;
 }
 
 function projectRisks(caps: Array<WalkthroughCapability & { finding?: OutcomeFinding }>, findings: OutcomeFinding[]): string[] {

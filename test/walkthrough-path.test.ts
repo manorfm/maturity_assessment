@@ -54,8 +54,11 @@ test('abertura traz o estado da área e a lacuna do índice, sem o caso do prot�
   assert.match(walk.trail[0]?.expect ?? '', /O próximo incidente muda o modo de investigar/);
   assert.match(walk.trail[1]?.gap ?? '', /Sem conduta/);
   assert.match(walk.trail[2]?.gap ?? '', /Sem conduta/);
-  assert.ok(walk.sections.milestones.some((line) => /modo de investigar/.test(line)));
-  assert.doesNotMatch(walk.sections.milestones.join(' '), /6 meses|38%/);
+  type MilestoneRow = { prazo: string; marco: string; criterio: string };
+  const rows = walk.sections.milestones as unknown as MilestoneRow[];
+  assert.ok(rows.some((row) => /modo de investigar/.test(`${row.marco} ${row.criterio}`)));
+  assert.equal(rows.some((row) => row.prazo === '6 meses'), false);
+  assert.equal(rows.some((row) => /38%/.test(`${row.prazo} ${row.marco} ${row.criterio}`)), false);
 });
 
 test('próxima fase não sobe quando a fronteira bloqueia o degrau', () => {

@@ -10,7 +10,7 @@ import { mapCopy, type EngineeringDomains, type MapLegend, type MapOverview, typ
 import { projectSystemTiles, type FichaCrumb, type OrganizationalAreaMap, type OrganizationalAreaNode } from '../inference/domain/organizational-areas.js';
 import { bottleneckStatus, type ReadinessAssessment } from '../inference/domain/advanced-readiness.js';
 import { projectFrontierLadder, type FrontierBrief, type FrontierLadderPlace } from '../inference/domain/learning-frontier.js';
-import type { AreaWalkthrough } from '../inference/domain/area-walkthrough.js';
+import type { AreaWalkthrough, WalkthroughMilestone } from '../inference/domain/area-walkthrough.js';
 import type { EvolutionReport } from '../inference/domain/evolution-report.js';
 
 export type ReportPageId = 'laudo' | 'map' | 'node' | 'readiness' | 'frontier' | 'treatment' | 'walkthrough' | 'history' | 'audiences';
@@ -679,6 +679,17 @@ export function renderAudiencePage(readings: AudienceReading[]): string {
   return `<header class="report-hero"><p class="report-kicker">Visão por público</p><h1>O mesmo achado, para quem decide e para quem faz</h1><p>O conteúdo é o mesmo. Muda o que cada público precisa fazer com ele.</p></header>${body}${bonus}`;
 }
 
+function renderWalkMilestones(rows: WalkthroughMilestone[]): string {
+  if (!rows.length) {
+    return '<section class="report-block"><h2>Marcos</h2><p class="report-gap">O marco é o critério de sucesso da conduta publicada, não uma data inventada.</p></section>';
+  }
+  const head = '<thead><tr><th>Prazo</th><th>Marco</th><th>Critério</th></tr></thead>';
+  const body = rows.map((row) => (
+    `<tr class="walk-milestone-row"><td>${escapeHtml(row.prazo)}</td><td>${escapeHtml(row.marco)}</td><td>${escapeHtml(row.criterio)}</td></tr>`
+  )).join('');
+  return `<section class="report-block"><h2>Marcos</h2><table class="walk-milestones">${head}<tbody>${body}</tbody></table></section>`;
+}
+
 export function renderWalkthrough(input: AreaWalkthrough): string {
   const list = (heading: string, lines: string[]) =>
     `<section class="report-block"><h2>${heading}</h2><ul>${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul></section>`;
@@ -701,7 +712,7 @@ export function renderWalkthrough(input: AreaWalkthrough): string {
     ${block('O que já funciona', input.sections.working)}
     <section class="report-block"><h2>Próxima fase</h2>${step}</section>
     <section class="report-block"><h2>Caminho</h2>${trail}</section>
-    ${list('Marcos', input.sections.milestones)}
+    ${renderWalkMilestones(input.sections.milestones)}
     ${list('Riscos de regressão', input.sections.risks)}
     ${list('Premissas a revisar', input.sections.assumptions)}`;
 }

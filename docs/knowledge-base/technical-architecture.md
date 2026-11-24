@@ -166,10 +166,12 @@ fora desse menu. O walkthrough usa
 `projectAreaWalkthrough` (`area-walkthrough-v1`) com as oito seções. A
 abertura traz a frase do estado e o chip da leitura publicada, ou a
 lacuna. A próxima fase é um degrau e não sobe quando a fronteira bloqueia.
-O caminho 30, 90 e 180 é uma trilha: cada etapa diz o que esperar. O
-marco repete a ação, o horizonte e o critério da conduta. O percentual
-só aparece quando a publicação do índice inclui alvo. Riscos e
-premissas fecham o percurso.
+O caminho 30, 90 e 180 é uma trilha: cada etapa diz o que esperar. Os
+marcos saem tipados (`WalkthroughMilestone`) e a view desenha a tabela
+`.walk-milestones` (Prazo \| Marco \| Critério) com
+`.walk-milestone-row`; sem conduta/pulso, `.report-gap`. O percentual só
+aparece quando a publicação do índice inclui alvo. Riscos e premissas
+fecham o percurso.
 O histórico compara a leitura mais recente com uma anterior. O seletor
 só entra quando há mais de uma anterior. Com o par, a página publica
 `previousReading`/`currentReading` (label, índice, faixa e alvo opcional)

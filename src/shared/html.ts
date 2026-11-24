@@ -360,6 +360,12 @@ export const layout = (title: string, content: string): string => `<!doctype htm
     .walk-horizon { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink3); margin:0 0 4px }
     .walk-state { font-family:Newsreader, Georgia, serif; font-size:21px; font-weight:500; line-height:1.35 }
     .walk-chip { display:inline-block; font-size:13px; color:var(--ink2); border:1px solid var(--rule); border-radius:999px; padding:4px 10px }
+    .walk-milestones { width:100%; border-collapse:collapse; table-layout:fixed; margin:0 }
+    .walk-milestones th { text-align:left; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3); font-weight:600; padding:0 20px 10px 0; border-bottom:1px solid var(--rule) }
+    .walk-milestones th:first-child, .walk-milestones td:first-child { width:120px }
+    .walk-milestones td { padding:14px 20px 14px 0; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink2) }
+    .walk-milestone-row td:first-child { color:var(--ink); font-family:Newsreader,Georgia,serif; font-size:20px; font-weight:400; white-space:nowrap }
+    .walk-milestone-row td:nth-child(2) { font-weight:600; color:var(--ink) }
     .history-target { display:inline-flex; align-self:flex-start; align-items:center; gap:8px; margin:12px 0 0; padding:6px 14px; border:1px solid var(--rule); border-radius:999px; background:var(--surface); color:var(--ink2); font-size:14px; font-weight:700 }
     .history-selector { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0 }
     .history-selector a { border:1px solid var(--rule); border-radius:999px; padding:6px 12px; text-decoration:none; color:var(--ink2); font-size:14px }

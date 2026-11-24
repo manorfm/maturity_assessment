@@ -145,9 +145,10 @@ ciclo.
 ### Walkthrough Operação — semi-estrutural
 
 Seções batem com o produto (onde / chegamos / funciona / próxima /
-caminho / marcos / riscos / premissas). Gaps: trilho numerado; Alvo no
-hero; **Marcos = tabela Prazo \| Marco \| Critério** (produto = bullets);
-CaminhoStack/Tag. Não inventar % de índice de Operação do mock.
+caminho / marcos / riscos / premissas). **Marcos = tabela Prazo \| Marco \|
+Critério** (`.walk-milestones` / `.walk-milestone-row`) fechado. Gaps:
+trilho numerado; Alvo no hero; CaminhoStack/Tag. Não inventar % de índice
+de Operação do mock.
 
 ### Histórico — comparador visual
 
@@ -207,7 +208,7 @@ Copiar a **função**, nunca o caso Orbital:
 | Prontidão | Cartão 30px/48px + grade pré-requisitos (barra/%/gargalo) | Polimento visual fino |
 | Fronteira | Escada F0–F5 + stacks + fallback listas | Polimento fino ChartMark6 |
 | Plano | 3 horizontes + pulso + Cynefin lista | Matriz autoridade×horizonte + Ativas N/M + setas |
-| Walkthrough | Seções + trilha | Marcos tabela; CaminhoStack; Alvo; trilho |
+| Walkthrough | Seções + trilha + Marcos tabela | CaminhoStack; Alvo; trilho |
 | Histórico | Seletor + P(·) + evolução + comparador (bands+alvo) + Melhorou\|Piorou | Chips de perfil finos |
 | Visão por público | Dois lados + recorrer | DecisãoPolíticaStack tipado (sem CTO/CFO/Orbital) |
 
@@ -271,6 +272,6 @@ de Orbital/`13%`/`24%`.
 9. ~~Fronteira escada~~.
 10. ~~Plano matriz~~.
 11. ~~Histórico comparador~~.
-12. Walkthrough Marcos + Visão stack — **próximo**.
+12. ~~Walkthrough Marcos tabela~~; Visão stack — **próximo**.
 13. Admin + entrevista.
 14. Prova transversal.
